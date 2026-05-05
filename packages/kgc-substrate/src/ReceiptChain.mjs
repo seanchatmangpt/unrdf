@@ -163,7 +163,7 @@ export class ReceiptChain {
    * const chain = new ReceiptChain();
    * const block = await chain.append({
    *   agent_id: 'agent-2',
-   *   toolchain_version: '1.0.0',
+   *   toolchain_version: '[VERSION]',
    *   artifacts: [{ type: 'code', path: 'foo.mjs', hash: 'abc123', size_bytes: 1024 }]
    * });
    */

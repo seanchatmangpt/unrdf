@@ -11,7 +11,7 @@ kgc:Oxigraph a kgc:RdfEngine ;
   rdfs:label "Oxigraph WASM SPARQL Engine" ;
   rdfs:comment "WASM-based SPARQL 1.1 engine, authoritative for all standard RDF operations" ;
   kgc:isPrimary true ;
-  kgc:version "0.5.2" ;
+  kgc:version "latest" ;
   kgc:capabilities [
     kgc:storage true ;
     kgc:sparql11 true ;

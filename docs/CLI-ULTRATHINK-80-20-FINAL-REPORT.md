@@ -90,7 +90,7 @@
 
 ```
 CLI Entry Points:    3 → 1    (-66%)
-Command Files:      48 → 39   (-18.75%)
+Command Files:      48 → 39   (-latest%)
 Stub Commands:      19 → 0    (-100%)
 TODO Placeholders:   9 → 2    (-77%)
 Duplicate Code:   1,778 → 0  (-100%)
@@ -321,10 +321,10 @@ $ find src/cli/commands -name "*.mjs" -type f | wc -l
 - [x] Help text accuracy (100%)
 - [x] Documentation updated (6 reports created)
 
-### Release Notes for v2.1.1
+### Release Notes for vlatest
 
 ```markdown
-## v2.1.1 - CLI Cleanup & Truthful Interface
+## vlatest - CLI Cleanup & Truthful Interface
 
 ### Changed
 - **BREAKING**: Removed 9 stub commands that never worked
@@ -336,7 +336,7 @@ $ find src/cli/commands -name "*.mjs" -type f | wc -l
 
 ### Improved
 - Help text now shows only working commands (100% accuracy)
-- CLI surface area reduced by 18.75% (48 → 39 files)
+- CLI surface area reduced by latest% (48 → 39 files)
 - Removed 1,778 lines of duplicate code
 - Clearer user expectations (no more "TODO" surprises)
 
@@ -398,14 +398,14 @@ All 37 production commands continue to work:
 
 ## 🎯 RECOMMENDATIONS
 
-### Immediate Actions (v2.1.1 Release)
+### Immediate Actions (vlatest Release)
 
 1. **Deploy cleaned CLI** - Production ready now
 2. **Update documentation** - Reflect actual command set
 3. **Communicate changes** - Help users migrate from removed stubs
 4. **Monitor feedback** - Track user satisfaction improvement
 
-### Short-term (v2.2 - Next 2 weeks)
+### Short-term (vlatest - Next 2 weeks)
 
 1. **Implement high-value TODOs**:
    - Complete `store import` RDF parsing (2h)
@@ -415,7 +415,7 @@ All 37 production commands continue to work:
    - CLI command reference (auto-generated)
    - Migration guide for removed commands
 
-### Long-term (v2.3+)
+### Long-term (vlatest+)
 
 1. **Prevent stub accumulation**:
    - CI check: Reject PRs with stub commands

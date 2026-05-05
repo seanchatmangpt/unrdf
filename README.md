@@ -6,7 +6,7 @@
 
 UNRDF is a JavaScript platform for building intelligent knowledge graph applications using semantic web standards (RDF, SPARQL, SHACL) with modern tooling.
 
-[![npm version](https://img.shields.io/badge/npm-v-26.5.4-blue)](https://www.npmjs.com/package/@unrdf/core)
+[![npm version](https://img.shields.io/badge/npm-v-latest)](https://www.npmjs.com/package/@unrdf/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![tests](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](packages/daemon/test/)
@@ -95,7 +95,7 @@ pnpm add @unrdf/core
 1. **Autonomic Process Mining** - Discover and validate processes in real-time using PoWL v2.
 2. **Open Ontologies Sidecar** - High-performance semantic reasoning via a supervised Rust binary.
 3. **Knowledge Hooks** - Define autonomous behaviors that react to semantic inference.
-4. **RDF Graph Operations** - Parse Turtle/N-Triples/JSON-LD, SPARQL 1.1, export to any format.
+4. **RDF Graph Operations** - Parse Turtle/N-Triples/JSON-LD, SPARQL latest, export to any format.
 5. **SHACL Validation** - Define shapes, validate constraints, generate reports.
 6. **Streaming & Federation** - Process large, distributed graphs without memory bloat.
 7. **Native MCP Support** - Expose your knowledge graph directly to LLM agents.
@@ -172,7 +172,7 @@ pnpm test --coverage
 
 ## 🔒 Security
 
-- ✅ Zero CRITICAL/HIGH CVEs (as of v26.5.4)
+- ✅ Zero CRITICAL/HIGH CVEs (as of vlatest)
 - ✅ Input validation via Zod schemas
 - ✅ Sandboxed handler execution
 - ✅ API key authentication (BLAKE3 hashing)
@@ -296,7 +296,7 @@ git push
 - **[API Reference](docs/API_REFERENCE.md)** - Full API documentation
 - **[GitHub](https://github.com/seanchatmangpt)** - Source & issues
 - **[RDF Spec](https://www.w3.org/RDF/)** - W3C RDF standard
-- **[SPARQL Spec](https://www.w3.org/TR/sparql11-query/)** - SPARQL 1.1
+- **[SPARQL Spec](https://www.w3.org/TR/sparql11-query/)** - SPARQL latest
 
 ---
 

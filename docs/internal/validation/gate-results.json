@@ -21,7 +21,7 @@
       "status": "BLOCKED",
       "metrics": {},
       "blockers": [
-        "Observability check failed: Command failed: npm ls @opentelemetry/api @opentelemetry/sdk-node\nnpm error code ELSPROBLEMS\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-prometheus@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-grpc@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-http@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@0.45.1_@opentelemetry+api-logs@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@0.46.0_@opentelemetry+api-logs@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error A complete log of this run can be found in: /Users/sac/.npm/_logs/2025-10-02T01_01_34_060Z-debug-0.log\n"
+        "Observability check failed: Command failed: npm ls @opentelemetry/api @opentelemetry/sdk-node\nnpm error code ELSPROBLEMS\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-prometheus@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@latest_@opentelemetry+api-logs@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@latest_@opentelemetry+api-logs@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error A complete log of this run can be found in: /Users/sac/.npm/_logs/2025-10-02T01_01_34_060Z-debug-0.log\n"
       ],
       "warnings": [],
       "evidence": {}
@@ -50,9 +50,9 @@
           "1094550": {
             "findings": [
               {
-                "version": "3.9.19",
+                "version": "latest",
                 "paths": [
-                  ". > vm2@3.9.19"
+                  ". > vm2@latest"
                 ]
               }
             ],
@@ -62,7 +62,7 @@
             "created": "2023-07-13T17:02:02.000Z",
             "id": 1094550,
             "npm_advisory_id": null,
-            "overview": "In vm2 for versions up to 3.9.19, `Promise` handler sanitization can be bypassed, allowing attackers to escape the sandbox and run arbitrary code.\n\n### Impact\nRemote Code Execution, assuming the attacker has arbitrary code execution primitive inside the context of vm2 sandbox.\n\n### Patches\nNone.\n\n### Workarounds\nNone.\n\n### References\nPoC - https://gist.github.com/leesh3288/f693061e6523c97274ad5298eb2c74e9\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n- Open an issue in [VM2](https://github.com/patriksimek/vm2)\n\nThanks to [Xion](https://twitter.com/0x10n) (SeungHyun Lee) of [KAIST Hacking Lab](https://kaist-hacking.github.io/) for disclosing this vulnerability.",
+            "overview": "In vm2 for versions up to latest, `Promise` handler sanitization can be bypassed, allowing attackers to escape the sandbox and run arbitrary code.\n\n### Impact\nRemote Code Execution, assuming the attacker has arbitrary code execution primitive inside the context of vm2 sandbox.\n\n### Patches\nNone.\n\n### Workarounds\nNone.\n\n### References\nPoC - https://gist.github.com/leesh3288/f693061e6523c97274ad5298eb2c74e9\n\n### For more information\n\nIf you have any questions or comments about this advisory:\n\n- Open an issue in [VM2](https://github.com/patriksimek/vm2)\n\nThanks to [Xion](https://twitter.com/0x10n) (SeungHyun Lee) of [KAIST Hacking Lab](https://kaist-hacking.github.io/) for disclosing this vulnerability.",
             "reported_by": null,
             "title": "vm2 Sandbox Escape vulnerability",
             "metadata": null,
@@ -72,10 +72,10 @@
             "access": "public",
             "severity": "critical",
             "module_name": "vm2",
-            "vulnerable_versions": "<=3.9.19",
+            "vulnerable_versions": "<=latest",
             "github_advisory_id": "GHSA-cchq-frgv-rjh5",
             "recommendation": "None",
-            "patched_versions": "<0.0.0",
+            "patched_versions": "<latest",
             "updated": "2023-11-05T05:04:46.000Z",
             "cvss": {
               "score": 9.8,
@@ -89,9 +89,9 @@
           "1094744": {
             "findings": [
               {
-                "version": "3.9.19",
+                "version": "latest",
                 "paths": [
-                  ". > vm2@3.9.19"
+                  ". > vm2@latest"
                 ]
               }
             ],
@@ -101,7 +101,7 @@
             "created": "2023-07-13T17:01:58.000Z",
             "id": 1094744,
             "npm_advisory_id": null,
-            "overview": "In vm2 for versions up to 3.9.19, Node.js custom inspect function allows attackers to escape the sandbox and run arbitrary code.\n\n### Impact\nRemote Code Execution, assuming the attacker has arbitrary code execution primitive inside the context of vm2 sandbox.\n\n### Patches\nNone.\n\n### Workarounds\nNone.\n\n### References\nPoC is to be disclosed on or after the 5th of September.\n\n### Similarity with [CVE-2023-37466](https://nvd.nist.gov/vuln/detail/CVE-2023-37466)\nWhile this advisory might look similar to [CVE-2023-37466](https://nvd.nist.gov/vuln/detail/CVE-2023-37466), it is a completely different way of escaping the sandbox.\n\n### For more information\nIf you have any questions or comments about this advisory:\n\n- Open an issue in [VM2](https://github.com/patriksimek/vm2)\n\nThanks to [Xion](https://twitter.com/0x10n) (SeungHyun Lee) of [KAIST Hacking Lab](https://kaist-hacking.github.io/) for disclosing this vulnerability.",
+            "overview": "In vm2 for versions up to latest, Node.js custom inspect function allows attackers to escape the sandbox and run arbitrary code.\n\n### Impact\nRemote Code Execution, assuming the attacker has arbitrary code execution primitive inside the context of vm2 sandbox.\n\n### Patches\nNone.\n\n### Workarounds\nNone.\n\n### References\nPoC is to be disclosed on or after the 5th of September.\n\n### Similarity with [CVE-2023-37466](https://nvd.nist.gov/vuln/detail/CVE-2023-37466)\nWhile this advisory might look similar to [CVE-2023-37466](https://nvd.nist.gov/vuln/detail/CVE-2023-37466), it is a completely different way of escaping the sandbox.\n\n### For more information\nIf you have any questions or comments about this advisory:\n\n- Open an issue in [VM2](https://github.com/patriksimek/vm2)\n\nThanks to [Xion](https://twitter.com/0x10n) (SeungHyun Lee) of [KAIST Hacking Lab](https://kaist-hacking.github.io/) for disclosing this vulnerability.",
             "reported_by": null,
             "title": "vm2 Sandbox Escape vulnerability",
             "metadata": null,
@@ -111,10 +111,10 @@
             "access": "public",
             "severity": "critical",
             "module_name": "vm2",
-            "vulnerable_versions": "<=3.9.19",
+            "vulnerable_versions": "<=latest",
             "github_advisory_id": "GHSA-g644-9gfx-q4q4",
             "recommendation": "None",
-            "patched_versions": "<0.0.0",
+            "patched_versions": "<latest",
             "updated": "2023-11-09T05:01:00.000Z",
             "cvss": {
               "score": 9.8,
@@ -128,19 +128,19 @@
           "1096727": {
             "findings": [
               {
-                "version": "2.88.2",
+                "version": "latest",
                 "paths": [
-                  ". > @kubernetes/client-node@0.20.0 > request@2.88.2"
+                  ". > @kubernetes/client-node@latest > request@latest"
                 ]
               }
             ],
             "found_by": null,
             "deleted": null,
-            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-28155\n- https://github.com/request/request/issues/3442\n- https://github.com/request/request/pull/3444\n- https://doyensec.com/resources/Doyensec_Advisory_RequestSSRF_Q12023.pdf\n- https://github.com/github/advisory-database/pull/2500\n- https://github.com/cypress-io/request/blob/master/lib/redirect.js#L116\n- https://github.com/request/request/blob/master/lib/redirect.js#L111\n- https://github.com/cypress-io/request/pull/28\n- https://github.com/cypress-io/request/commit/c5bcf21d40fb61feaff21a0e5a2b3934a440024f\n- https://github.com/cypress-io/request/releases/tag/v3.0.0\n- https://security.netapp.com/advisory/ntap-20230413-0007\n- https://github.com/advisories/GHSA-p8p7-x288-28g6",
+            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-28155\n- https://github.com/request/request/issues/3442\n- https://github.com/request/request/pull/3444\n- https://doyensec.com/resources/Doyensec_Advisory_RequestSSRF_Q12023.pdf\n- https://github.com/github/advisory-database/pull/2500\n- https://github.com/cypress-io/request/blob/master/lib/redirect.js#L116\n- https://github.com/request/request/blob/master/lib/redirect.js#L111\n- https://github.com/cypress-io/request/pull/28\n- https://github.com/cypress-io/request/commit/c5bcf21d40fb61feaff21a0e5a2b3934a440024f\n- https://github.com/cypress-io/request/releases/tag/latest\n- https://security.netapp.com/advisory/ntap-20230413-0007\n- https://github.com/advisories/GHSA-p8p7-x288-28g6",
             "created": "2023-03-16T15:30:19.000Z",
             "id": 1096727,
             "npm_advisory_id": null,
-            "overview": "The `request` package through 2.88.2 for Node.js and the `@cypress/request` package prior to 3.0.0 allow a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\n\nNOTE: The `request` package is no longer supported by the maintainer.",
+            "overview": "The `request` package through latest for Node.js and the `@cypress/request` package prior to latest allow a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\n\nNOTE: The `request` package is no longer supported by the maintainer.",
             "reported_by": null,
             "title": "Server-Side Request Forgery in Request",
             "metadata": null,
@@ -150,10 +150,10 @@
             "access": "public",
             "severity": "moderate",
             "module_name": "request",
-            "vulnerable_versions": "<=2.88.2",
+            "vulnerable_versions": "<=latest",
             "github_advisory_id": "GHSA-p8p7-x288-28g6",
             "recommendation": "None",
-            "patched_versions": "<0.0.0",
+            "patched_versions": "<latest",
             "updated": "2024-03-21T17:47:21.000Z",
             "cvss": {
               "score": 6.1,
@@ -167,19 +167,19 @@
           "1097682": {
             "findings": [
               {
-                "version": "2.5.0",
+                "version": "latest",
                 "paths": [
-                  ". > @kubernetes/client-node@0.20.0 > request@2.88.2 > tough-cookie@2.5.0"
+                  ". > @kubernetes/client-node@latest > request@latest > tough-cookie@latest"
                 ]
               }
             ],
             "found_by": null,
             "deleted": null,
-            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-26136\n- https://github.com/salesforce/tough-cookie/issues/282\n- https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e\n- https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3\n- https://security.snyk.io/vuln/SNYK-JS-TOUGHCOOKIE-5672873\n- https://lists.debian.org/debian-lts-announce/2023/07/msg00010.html\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3HUE6ZR5SL73KHL7XUPAOEL6SB7HUDT2\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6PVVPNSAGSDS63HQ74PJ7MZ3MU5IYNVZ\n- https://security.netapp.com/advisory/ntap-20240621-0006\n- https://github.com/advisories/GHSA-72xf-g2v4-qvf3",
+            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-26136\n- https://github.com/salesforce/tough-cookie/issues/282\n- https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e\n- https://github.com/salesforce/tough-cookie/releases/tag/latest\n- https://security.snyk.io/vuln/SNYK-JS-TOUGHCOOKIE-5672873\n- https://lists.debian.org/debian-lts-announce/2023/07/msg00010.html\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3HUE6ZR5SL73KHL7XUPAOEL6SB7HUDT2\n- https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6PVVPNSAGSDS63HQ74PJ7MZ3MU5IYNVZ\n- https://security.netapp.com/advisory/ntap-20240621-0006\n- https://github.com/advisories/GHSA-72xf-g2v4-qvf3",
             "created": "2023-07-01T06:30:16.000Z",
             "id": 1097682,
             "npm_advisory_id": null,
-            "overview": "Versions of the package tough-cookie before 4.1.3 are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. This issue arises from the manner in which the objects are initialized.",
+            "overview": "Versions of the package tough-cookie before latest are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. This issue arises from the manner in which the objects are initialized.",
             "reported_by": null,
             "title": "tough-cookie Prototype Pollution vulnerability",
             "metadata": null,
@@ -189,10 +189,10 @@
             "access": "public",
             "severity": "moderate",
             "module_name": "tough-cookie",
-            "vulnerable_versions": "<4.1.3",
+            "vulnerable_versions": "<latest",
             "github_advisory_id": "GHSA-72xf-g2v4-qvf3",
-            "recommendation": "Upgrade to version 4.1.3 or later",
-            "patched_versions": ">=4.1.3",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2024-06-21T21:33:53.000Z",
             "cvss": {
               "score": 6.5,
@@ -206,19 +206,19 @@
           "1098366": {
             "findings": [
               {
-                "version": "3.1.9",
+                "version": "latest",
                 "paths": [
-                  ". > terraform@1.23.0 > ejs@3.1.9"
+                  ". > terraform@latest > ejs@latest"
                 ]
               }
             ],
             "found_by": null,
             "deleted": null,
-            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-33883\n- https://github.com/mde/ejs/commit/e469741dca7df2eb400199e1cdb74621e3f89aa5\n- https://github.com/mde/ejs/compare/v3.1.9...v3.1.10\n- https://security.netapp.com/advisory/ntap-20240605-0003\n- https://github.com/advisories/GHSA-ghr5-ch3p-vcr6",
+            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-33883\n- https://github.com/mde/ejs/commit/e469741dca7df2eb400199e1cdb74621e3f89aa5\n- https://github.com/mde/ejs/compare/latest...latest\n- https://security.netapp.com/advisory/ntap-20240605-0003\n- https://github.com/advisories/GHSA-ghr5-ch3p-vcr6",
             "created": "2024-04-28T18:30:31.000Z",
             "id": 1098366,
             "npm_advisory_id": null,
-            "overview": "The ejs (aka Embedded JavaScript templates) package before 3.1.10 for Node.js lacks certain pollution protection.",
+            "overview": "The ejs (aka Embedded JavaScript templates) package before latest for Node.js lacks certain pollution protection.",
             "reported_by": null,
             "title": "ejs lacks certain pollution protection",
             "metadata": null,
@@ -228,10 +228,10 @@
             "access": "public",
             "severity": "moderate",
             "module_name": "ejs",
-            "vulnerable_versions": "<3.1.10",
+            "vulnerable_versions": "<latest",
             "github_advisory_id": "GHSA-ghr5-ch3p-vcr6",
-            "recommendation": "Upgrade to version 3.1.10 or later",
-            "patched_versions": ">=3.1.10",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2024-08-02T15:45:54.000Z",
             "cvss": {
               "score": 4,
@@ -246,20 +246,20 @@
           "1102341": {
             "findings": [
               {
-                "version": "0.18.17",
+                "version": "latest",
                 "paths": [
-                  ". > terraform@1.23.0 > esbuild@0.18.17"
+                  ". > terraform@latest > esbuild@latest"
                 ]
               },
               {
-                "version": "0.21.5",
+                "version": "latest",
                 "paths": [
-                  ". > @vitest/coverage-v8@1.6.1 > vitest@1.6.1 > vite@5.4.20 > esbuild@0.21.5",
-                  ". > @vitest/coverage-v8@1.6.1 > vitest@1.6.1 > vite-node@1.6.1 > vite@5.4.20 > esbuild@0.21.5",
-                  ". > @vitest/ui@1.6.1 > vitest@1.6.1 > vite@5.4.20 > esbuild@0.21.5",
-                  ". > @vitest/ui@1.6.1 > vitest@1.6.1 > vite-node@1.6.1 > vite@5.4.20 > esbuild@0.21.5",
-                  ". > vitest@1.6.1 > vite@5.4.20 > esbuild@0.21.5",
-                  ". > vitest@1.6.1 > vite-node@1.6.1 > vite@5.4.20 > esbuild@0.21.5"
+                  ". > @vitest/coverage-v8@latest > vitest@latest > vite@latest > esbuild@latest",
+                  ". > @vitest/coverage-v8@latest > vitest@latest > vite-node@latest > vite@latest > esbuild@latest",
+                  ". > @vitest/ui@latest > vitest@latest > vite@latest > esbuild@latest",
+                  ". > @vitest/ui@latest > vitest@latest > vite-node@latest > vite@latest > esbuild@latest",
+                  ". > vitest@latest > vite@latest > esbuild@latest",
+                  ". > vitest@latest > vite-node@latest > vite@latest > esbuild@latest"
                 ]
               }
             ],
@@ -269,7 +269,7 @@
             "created": "2025-02-10T17:48:07.000Z",
             "id": 1102341,
             "npm_advisory_id": null,
-            "overview": "### Summary\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\n### Details\n\nesbuild sets `Access-Control-Allow-Origin: *` header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\n\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n\n**Attack scenario**:\n\n1. The attacker serves a malicious web page (`http://malicious.example.com`).\n1. The user accesses the malicious web page.\n1. The attacker sends a `fetch('http://127.0.0.1:8000/main.js')` request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of `http://127.0.0.1:8000/main.js`.\n\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n\n- Fetching `/index.html`: normally you have a script tag here\n- Fetching `/assets`: it's common to have a `assets` directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting `/esbuild` SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (`new EventSource('/esbuild').addEventListener('change', e => console.log(e.type, e.data))`)\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\n\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n\n### PoC\n\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run `npm i`\n1. Run `npm run watch`\n1. Run `fetch('http://127.0.0.1:8000/app.js').then(r => r.text()).then(content => console.log(content))` in a different website's dev tools.\n\n![image](https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\n\n### Impact\n\nUsers using the serve feature may get the source code stolen by malicious websites.",
+            "overview": "### Summary\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\n### Details\n\nesbuild sets `Access-Control-Allow-Origin: *` header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\n\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n\n**Attack scenario**:\n\n1. The attacker serves a malicious web page (`http://malicious.example.com`).\n1. The user accesses the malicious web page.\n1. The attacker sends a `fetch('http://latest.1:8000/main.js')` request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of `http://latest.1:8000/main.js`.\n\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n\n- Fetching `/index.html`: normally you have a script tag here\n- Fetching `/assets`: it's common to have a `assets` directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting `/esbuild` SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (`new EventSource('/esbuild').addEventListener('change', e => console.log(e.type, e.data))`)\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\n\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n\n### PoC\n\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run `npm i`\n1. Run `npm run watch`\n1. Run `fetch('http://latest.1:8000/app.js').then(r => r.text()).then(content => console.log(content))` in a different website's dev tools.\n\n![image](https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\n\n### Impact\n\nUsers using the serve feature may get the source code stolen by malicious websites.",
             "reported_by": null,
             "title": "esbuild enables any website to send any requests to the development server and read the response",
             "metadata": null,
@@ -277,10 +277,10 @@
             "access": "public",
             "severity": "moderate",
             "module_name": "esbuild",
-            "vulnerable_versions": "<=0.24.2",
+            "vulnerable_versions": "<=latest",
             "github_advisory_id": "GHSA-67mh-4wv8-2f99",
-            "recommendation": "Upgrade to version 0.25.0 or later",
-            "patched_versions": ">=0.25.0",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2025-02-10T17:48:08.000Z",
             "cvss": {
               "score": 5.3,
@@ -294,19 +294,19 @@
           "1102423": {
             "findings": [
               {
-                "version": "7.2.0",
+                "version": "latest",
                 "paths": [
-                  ". > @kubernetes/client-node@0.20.0 > jsonpath-plus@7.2.0"
+                  ". > @kubernetes/client-node@latest > jsonpath-plus@latest"
                 ]
               }
             ],
             "found_by": null,
             "deleted": null,
-            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-21534\n- https://github.com/JSONPath-Plus/JSONPath/commit/6b2f1b4c234292c75912b790bf7e2d7339d4ccd3\n- https://security.snyk.io/vuln/SNYK-JS-JSONPATHPLUS-7945884\n- https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-8185019\n- https://github.com/JSONPath-Plus/JSONPath/issues/226\n- https://github.com/JSONPath-Plus/JSONPath/commit/b70aa713553caf838a63bac923195a5bc541fd72\n- https://github.com/JSONPath-Plus/JSONPath/issues/226#issuecomment-2424230316\n- https://github.com/JSONPath-Plus/JSONPath/compare/v9.0.0...v10.1.0\n- https://github.com/JSONPath-Plus/JSONPath/pull/233\n- https://github.com/JSONPath-Plus/JSONPath/commit/73ad72e5ee788d8287dea6e8283a3f16f63c9eb8\n- https://github.com/advisories/GHSA-pppg-cpfq-h7wr",
+            "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-21534\n- https://github.com/JSONPath-Plus/JSONPath/commit/6b2f1b4c234292c75912b790bf7e2d7339d4ccd3\n- https://security.snyk.io/vuln/SNYK-JS-JSONPATHPLUS-7945884\n- https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-8185019\n- https://github.com/JSONPath-Plus/JSONPath/issues/226\n- https://github.com/JSONPath-Plus/JSONPath/commit/b70aa713553caf838a63bac923195a5bc541fd72\n- https://github.com/JSONPath-Plus/JSONPath/issues/226#issuecomment-2424230316\n- https://github.com/JSONPath-Plus/JSONPath/compare/latest...latest\n- https://github.com/JSONPath-Plus/JSONPath/pull/233\n- https://github.com/JSONPath-Plus/JSONPath/commit/73ad72e5ee788d8287dea6e8283a3f16f63c9eb8\n- https://github.com/advisories/GHSA-pppg-cpfq-h7wr",
             "created": "2024-10-11T15:30:32.000Z",
             "id": 1102423,
             "npm_advisory_id": null,
-            "overview": "Versions of the package jsonpath-plus before 10.0.7 are vulnerable to Remote Code Execution (RCE) due to improper input sanitization. An attacker can execute aribitrary code on the system by exploiting the unsafe default usage of vm in Node.\n\n**Note:**\n\nThere were several attempts to fix it in versions [10.0.0-10.1.0](https://github.com/JSONPath-Plus/JSONPath/compare/v9.0.0...v10.1.0) but it could still be exploited using [different payloads](https://github.com/JSONPath-Plus/JSONPath/issues/226)",
+            "overview": "Versions of the package jsonpath-plus before latest are vulnerable to Remote Code Execution (RCE) due to improper input sanitization. An attacker can execute aribitrary code on the system by exploiting the unsafe default usage of vm in Node.\n\n**Note:**\n\nThere were several attempts to fix it in versions [latest-latest](https://github.com/JSONPath-Plus/JSONPath/compare/latest...latest) but it could still be exploited using [different payloads](https://github.com/JSONPath-Plus/JSONPath/issues/226)",
             "reported_by": null,
             "title": "JSONPath Plus Remote Code Execution (RCE) Vulnerability",
             "metadata": null,
@@ -316,10 +316,10 @@
             "access": "public",
             "severity": "critical",
             "module_name": "jsonpath-plus",
-            "vulnerable_versions": "<10.2.0",
+            "vulnerable_versions": "<latest",
             "github_advisory_id": "GHSA-pppg-cpfq-h7wr",
-            "recommendation": "Upgrade to version 10.2.0 or later",
-            "patched_versions": ">=10.2.0",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2025-02-06T19:11:00.000Z",
             "cvss": {
               "score": 9.8,
@@ -333,9 +333,9 @@
           "1102895": {
             "findings": [
               {
-                "version": "7.2.0",
+                "version": "latest",
                 "paths": [
-                  ". > @kubernetes/client-node@0.20.0 > jsonpath-plus@7.2.0"
+                  ". > @kubernetes/client-node@latest > jsonpath-plus@latest"
                 ]
               }
             ],
@@ -345,7 +345,7 @@
             "created": "2025-02-15T06:30:51.000Z",
             "id": 1102895,
             "npm_advisory_id": null,
-            "overview": "Versions of the package jsonpath-plus before 10.3.0 are vulnerable to Remote Code Execution (RCE) due to improper input sanitization. An attacker can execute aribitrary code on the system by exploiting the unsafe default usage of eval='safe' mode.\n\n**Note:**\n\nThis is caused by an incomplete fix for CVE-2024-21534.",
+            "overview": "Versions of the package jsonpath-plus before latest are vulnerable to Remote Code Execution (RCE) due to improper input sanitization. An attacker can execute aribitrary code on the system by exploiting the unsafe default usage of eval='safe' mode.\n\n**Note:**\n\nThis is caused by an incomplete fix for CVE-2024-21534.",
             "reported_by": null,
             "title": "JSONPath Plus allows Remote Code Execution",
             "metadata": null,
@@ -355,10 +355,10 @@
             "access": "public",
             "severity": "high",
             "module_name": "jsonpath-plus",
-            "vulnerable_versions": "<10.3.0",
+            "vulnerable_versions": "<latest",
             "github_advisory_id": "GHSA-hw8r-x6gr-5gjp",
-            "recommendation": "Upgrade to version 10.3.0 or later",
-            "patched_versions": ">=10.3.0",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2025-02-18T19:25:35.000Z",
             "cvss": {
               "score": 9.8,
@@ -372,9 +372,9 @@
           "1106509": {
             "findings": [
               {
-                "version": "2.3.3",
+                "version": "latest",
                 "paths": [
-                  ". > @kubernetes/client-node@0.20.0 > request@2.88.2 > form-data@2.3.3"
+                  ". > @kubernetes/client-node@latest > request@latest > form-data@latest"
                 ]
               }
             ],
@@ -394,10 +394,10 @@
             "access": "public",
             "severity": "critical",
             "module_name": "form-data",
-            "vulnerable_versions": "<2.5.4",
+            "vulnerable_versions": "<latest",
             "github_advisory_id": "GHSA-fjxv-7rqg-78g4",
-            "recommendation": "Upgrade to version 2.5.4 or later",
-            "patched_versions": ">=2.5.4",
+            "recommendation": "Upgrade to version latest or later",
+            "patched_versions": ">=latest",
             "updated": "2025-07-21T19:04:58.000Z",
             "cvss": {
               "score": 0,
@@ -439,7 +439,7 @@
         "No CRUD tests found - functionality not validated"
       ],
       "evidence": {
-        "crudTests": "\n> unrdf@2.1.1 test\n> vitest run --config vitest.config.mjs --coverage --reporter=verbose --grep should create.*hook|should read.*hook|should update.*hook|should delete.*hook\n\nfile:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:403\n          throw new CACError(`Unknown option \\`${name.length > 1 ? `--${name}` : `-${name}`}\\``);\n                ^\n\nCACError: Unknown option `--grep`\n    at Command.checkUnknownOptions (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:403:17)\n    at CAC.runMatchedCommand (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:603:13)\n    at CAC.parse (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:544:12)\n    at file:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/cli.js:9:13\n    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:689:26)\n    at async main (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.19_@vitest+ui@1.6.1_sass@1.64.1/node_modules/vitest/dist/cli-wrapper.js:45:5)\n\nNode.js v24.9.0\n"
+        "crudTests": "\n> unrdf@latest test\n> vitest run --config vitest.config.mjs --coverage --reporter=verbose --grep should create.*hook|should read.*hook|should update.*hook|should delete.*hook\n\nfile:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:403\n          throw new CACError(`Unknown option \\`${name.length > 1 ? `--${name}` : `-${name}`}\\``);\n                ^\n\nCACError: Unknown option `--grep`\n    at Command.checkUnknownOptions (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:403:17)\n    at CAC.runMatchedCommand (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:603:13)\n    at CAC.parse (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/vendor/cac.cdAtVkJZ.js:544:12)\n    at file:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/cli.js:9:13\n    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:689:26)\n    at async main (file:///Users/sac/unrdf/node_modules/.pnpm/vitest@latest_@types+node@latest_@vitest+ui@latest_sass@latest/node_modules/vitest/dist/cli-wrapper.js:45:5)\n\nNode.js latest\n"
       }
     },
     {
@@ -465,7 +465,7 @@
   "recommendation": "Critical issues detected. Fix blocking issues before production deployment.",
   "blockers": [
     "Test execution failed: Command failed: npm test 2>&1\n",
-    "Observability check failed: Command failed: npm ls @opentelemetry/api @opentelemetry/sdk-node\nnpm error code ELSPROBLEMS\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-prometheus@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-grpc@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-http@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@0.45.1_@opentelemetry+api-logs@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@0.46.0_@opentelemetry+api-logs@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@0.45.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@1.18.1_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@0.46.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@1.9.0 /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@1.19.0_@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api\nnpm error A complete log of this run can be found in: /Users/sac/.npm/_logs/2025-10-02T01_01_34_060Z-debug-0.log\n",
+    "Observability check failed: Command failed: npm ls @opentelemetry/api @opentelemetry/sdk-node\nnpm error code ELSPROBLEMS\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-prometheus@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+instrumentation@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@latest_@opentelemetry+api-logs@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+core@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-grpc@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-http@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+exporter-trace-otlp-proto@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+resources@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-logs@latest_@opentelemetry+api-logs@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-metrics@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+sdk-trace-node@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-grpc-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-transformer@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+otlp-proto-exporter-base@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+context-async-hooks@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-b3@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error invalid: @opentelemetry/api@latest /Users/sac/unrdf/node_modules/.pnpm/@opentelemetry+propagator-jaeger@latest_@opentelemetry+api@latest/node_modules/@opentelemetry/api\nnpm error A complete log of this run can be found in: /Users/sac/.npm/_logs/2025-10-02T01_01_34_060Z-debug-0.log\n",
     "4 CRITICAL vulnerabilities detected - production deployment BLOCKED",
     "1 HIGH severity vulnerabilities detected"
   ],

@@ -1,9 +1,9 @@
 
-> @unrdf/yawl@6.0.0 test /home/user/unrdf/packages/yawl
+> @unrdf/yawl@latest test /home/user/unrdf/packages/yawl
 > vitest run
 
 
-[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90m/home/user/unrdf/packages/yawl[39m
+[1m[46m RUN [49m[22m [36mlatest [39m[90m/home/user/unrdf/packages/yawl[39m
 
 [2m6:53:59 PM[22m [33m[1m[vite][22m[39m (ssr) warning: File URL host must be "localhost" or empty on linux
   Plugin: vite:dynamic-import-vars
@@ -4310,11 +4310,11 @@
      |    ^
   70 |  });
   71 |  [39m
-[90m [2m❯[22m TransformPluginContext._formatLog ../../node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_terser@5.44.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:[2m28998:43[22m[39m
-[90m [2m❯[22m TransformPluginContext.error ../../node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_terser@5.44.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:[2m28995:14[22m[39m
-[90m [2m❯[22m TransformPluginContext.transform ../../node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_terser@5.44.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:[2m27081:10[22m[39m
-[90m [2m❯[22m EnvironmentPluginContainer.transform ../../node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_terser@5.44.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:[2m28796:14[22m[39m
-[90m [2m❯[22m loadAndTransform ../../node_modules/.pnpm/vite@7.3.0_@types+node@25.0.3_jiti@2.6.1_lightningcss@1.30.2_terser@5.44.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:[2m22669:26[22m[39m
+[90m [2m❯[22m TransformPluginContext._formatLog ../../node_modules/.pnpm/vite@latest_@types+node@latest_jiti@latest_lightningcss@latest_terser@latest_yaml@latest/node_modules/vite/dist/node/chunks/config.js:[2m28998:43[22m[39m
+[90m [2m❯[22m TransformPluginContext.error ../../node_modules/.pnpm/vite@latest_@types+node@latest_jiti@latest_lightningcss@latest_terser@latest_yaml@latest/node_modules/vite/dist/node/chunks/config.js:[2m28995:14[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform ../../node_modules/.pnpm/vite@latest_@types+node@latest_jiti@latest_lightningcss@latest_terser@latest_yaml@latest/node_modules/vite/dist/node/chunks/config.js:[2m27081:10[22m[39m
+[90m [2m❯[22m EnvironmentPluginContainer.transform ../../node_modules/.pnpm/vite@latest_@types+node@latest_jiti@latest_lightningcss@latest_terser@latest_yaml@latest/node_modules/vite/dist/node/chunks/config.js:[2m28796:14[22m[39m
+[90m [2m❯[22m loadAndTransform ../../node_modules/.pnpm/vite@latest_@types+node@latest_jiti@latest_lightningcss@latest_terser@latest_yaml@latest/node_modules/vite/dist/node/chunks/config.js:[2m22669:26[22m[39m
 
 [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/42]⎯[22m[39m
 
@@ -4658,14 +4658,14 @@ This might cause false positive tests. Resolve unhandled errors to make sure you
     [90m   | [39m                                                         [31m^[39m
     [90m617| [39m
     [90m618| [39m      [90m// Act & Assert[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m915:26[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
-[90m [2m❯[22m runWithTimeout ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m1209:10[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m1653:37[22m[39m
-[90m [2m❯[22m Traces.$ ../../node_modules/.pnpm/vitest@4.0.16_@opentelemetry+api@1.9.0_@types+node@25.0.3_@vitest+ui@4.0.16_happy-dom@2_7df49a3793253cc6559f482f6d53a1d4/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:[2m115:27[22m[39m
-[90m [2m❯[22m trace ../../node_modules/.pnpm/vitest@4.0.16_@opentelemetry+api@1.9.0_@types+node@25.0.3_@vitest+ui@4.0.16_happy-dom@2_7df49a3793253cc6559f482f6d53a1d4/node_modules/vitest/dist/chunks/test.B8ej_ZHS.js:[2m239:21[22m[39m
-[90m [2m❯[22m runTest ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m1653:12[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m915:26[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+[90m [2m❯[22m runWithTimeout ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m1209:10[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m1653:37[22m[39m
+[90m [2m❯[22m Traces.$ ../../node_modules/.pnpm/vitest@latest_@opentelemetry+api@latest_@types+node@latest_@vitest+ui@latest_happy-dom@2_7df49a3793253cc6559f482f6d53a1d4/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:[2m115:27[22m[39m
+[90m [2m❯[22m trace ../../node_modules/.pnpm/vitest@latest_@opentelemetry+api@latest_@types+node@latest_@vitest+ui@latest_happy-dom@2_7df49a3793253cc6559f482f6d53a1d4/node_modules/vitest/dist/chunks/test.B8ej_ZHS.js:[2m239:21[22m[39m
+[90m [2m❯[22m runTest ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m1653:12[22m[39m
 
 [31mThis error originated in "[1mtest/integrations/nitro-bridge.test.mjs[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
 [31mThe latest test that might've caused the error is "[1mshould continue processing after single task failure[22m". It might mean one of the following:
@@ -4681,14 +4681,14 @@ This might cause false positive tests. Resolve unhandled errors to make sure you
     [90m   | [39m                                [31m^[39m
     [90m630| [39m        }
     [90m631| [39m        [35mreturn[39m [33mPromise[39m[33m.[39m[34mresolve[39m({
-[90m [2m❯[22m MockNitroSystem.Mock [as submitTask] ../../node_modules/.pnpm/@vitest+spy@4.0.16/node_modules/@vitest/spy/dist/index.js:[2m285:34[22m[39m
+[90m [2m❯[22m MockNitroSystem.Mock [as submitTask] ../../node_modules/.pnpm/@vitest+spy@latest/node_modules/@vitest/spy/dist/index.js:[2m285:34[22m[39m
 [90m [2m❯[22m YawlNitroBridge.handleYawlTaskEnabled test/integrations/nitro-bridge.test.mjs:[2m180:46[22m[39m
 [90m [2m❯[22m MockYawlEngine.emit node:events:[2m519:28[22m[39m
 [90m [2m❯[22m MockYawlEngine.enableTask test/integrations/nitro-bridge.test.mjs:[2m42:10[22m[39m
 [90m [2m❯[22m test/integrations/nitro-bridge.test.mjs:[2m641:26[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m915:26[22m[39m
-[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@4.0.16/node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m145:11[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m915:26[22m[39m
+[90m [2m❯[22m ../../node_modules/.pnpm/@vitest+runner@latest/node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
 
 [31mThis error originated in "[1mtest/integrations/nitro-bridge.test.mjs[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
 [31mThe latest test that might've caused the error is "[1mshould continue processing after single task failure[22m". It might mean one of the following:

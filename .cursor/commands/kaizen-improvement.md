@@ -75,7 +75,7 @@ Step 1: Identify Opportunity → Step 2: Plan Change (with Success Criteria & Me
 
 **Action**: Design minimal change that improves code.
 
-#### 2.1: Define Improvement
+#### latest: Define Improvement
 
 **Action**: Clearly define what will improve.
 
@@ -100,7 +100,7 @@ Step 1: Identify Opportunity → Step 2: Plan Change (with Success Criteria & Me
    **Risk**: Low - simple refactoring, no logic change
 ```
 
-#### 2.2: Define Success Criteria (DMAIC Measurement)
+#### latest: Define Success Criteria (DMAIC Measurement)
 
 **Action**: Define measurable success criteria for the improvement.
 
@@ -134,7 +134,7 @@ Step 1: Identify Opportunity → Step 2: Plan Change (with Success Criteria & Me
 - Code review: Improvement approved
 ```
 
-#### 2.3: Collect Baseline Data (DMAIC Measurement)
+#### latest: Collect Baseline Data (DMAIC Measurement)
 
 **Action**: Measure current state before improvement.
 
@@ -170,7 +170,7 @@ grep -r "DEFAULT_TIMEOUT" src/
 **Maintainability**: Low (value hardcoded in multiple places)
 ```
 
-#### 2.4: Verify Safety
+#### latest: Verify Safety
 
 **Action**: Ensure change is safe.
 
@@ -197,7 +197,7 @@ pnpm lint
 
 **Action**: Implement the improvement.
 
-#### 3.1: Make Change
+#### latest: Make Change
 
 **Action**: Implement the planned change.
 
@@ -225,7 +225,7 @@ function connect() => Promise<Connection | Error> {
 });
 ```
 
-#### 3.2: Verify Compilation
+#### latest: Verify Compilation
 
 **Action**: Ensure code compiles.
 
@@ -241,7 +241,7 @@ pnpm lint
 
 **Action**: Verify improvement achieved its goal.
 
-#### 4.1: Verify Functionality
+#### latest: Verify Functionality
 
 **Action**: Ensure functionality preserved.
 
@@ -251,7 +251,7 @@ pnpm test
 
 **Expected**: All tests pass
 
-#### 4.2: Verify Improvement
+#### latest: Verify Improvement
 
 **Action**: Check that improvement achieved its goal.
 
@@ -274,7 +274,7 @@ pnpm test
 // ✅ Functionality preserved: Tests pass
 ```
 
-#### 4.3: Measure Improvement (DMAIC Measurement)
+#### latest: Measure Improvement (DMAIC Measurement)
 
 **Action**: Measure improvement against baseline data and success criteria.
 
@@ -319,7 +319,7 @@ grep -r "DEFAULT_TIMEOUT" src/
 - Maintainability: Improved (constant can be changed in one place) ✅
 ```
 
-#### 4.4: Check for Regressions
+#### latest: Check for Regressions
 
 **Action**: Ensure no regressions introduced.
 
@@ -346,7 +346,7 @@ grep -r "DEFAULT_TIMEOUT" src/
 
 **Action**: Standardize the improvement if successful.
 
-#### 5.1: Apply Pattern Consistently
+#### latest: Apply Pattern Consistently
 
 **Action**: Apply improvement pattern to similar code.
 
@@ -365,7 +365,7 @@ const MAX_RETRY_ATTEMPTS: number = 3; // Applied same pattern
 const CONNECTION_POOL_SIZE: number = 10; // Applied same pattern
 ```
 
-#### 5.2: Document Pattern
+#### latest: Document Pattern
 
 **Action**: Document improvement pattern for future use.
 
@@ -389,7 +389,7 @@ const CONNECTION_POOL_SIZE: number = 10; // Applied same pattern
 const DEFAULT_TIMEOUT_SECONDS: number = 42;
 ```
 
-#### 5.3: Establish Standard
+#### latest: Establish Standard
 
 **Action**: Make improvement part of coding standards.
 
@@ -410,7 +410,7 @@ const DEFAULT_TIMEOUT_SECONDS: number = 42;
 **When**: For configuration values, repeated literals, values that may change
 ```
 
-#### 5.4: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to ensure improvement is sustained.
 
@@ -465,7 +465,7 @@ const DEFAULT_TIMEOUT_SECONDS: number = 42;
 
 **Principle**: Implement controls to sustain improvement, don't just document them. Todos track progress, controls prevent regression.
 
-#### 5.5: Monitor (DMAIC Control)
+#### latest: Monitor (DMAIC Control)
 
 **Action**: Monitor to ensure improvement is sustained.
 

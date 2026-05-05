@@ -20,7 +20,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ## 1. Current Receipt Implementations Inventory
 
-### 1.1 YAWL Package (`packages/yawl/src/`)
+### latest YAWL Package (`packages/yawl/src/`)
 
 **Implementation**: BLAKE3-based cryptographic receipts with hash chaining
 
@@ -73,7 +73,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 1.2 Blockchain Package (`packages/blockchain/src/`)
+### latest Blockchain Package (`packages/blockchain/src/`)
 
 **Implementation**: Ethereum anchoring with Merkle trees
 
@@ -126,7 +126,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 1.3 Fusion Package (`packages/fusion/src/`)
+### latest Fusion Package (`packages/fusion/src/`)
 
 **Implementation**: Unified receipt kernel (KGC + Blockchain + Hooks)
 
@@ -173,7 +173,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 1.4 KGC-Substrate Package (`packages/kgc-substrate/src/`)
+### latest KGC-Substrate Package (`packages/kgc-substrate/src/`)
 
 **Implementation**: Block-based receipt chain with merkle roots
 
@@ -223,7 +223,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ## 2. Gaps and Inconsistencies
 
-### 2.1 Hash Algorithm Fragmentation
+### latest Hash Algorithm Fragmentation
 
 | Package | Algorithm | Library | Reason |
 |---------|-----------|---------|--------|
@@ -240,7 +240,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 2.2 Schema Inconsistencies
+### latest Schema Inconsistencies
 
 | Field | YAWL | Fusion | Blockchain | KGC-Substrate |
 |-------|------|--------|------------|---------------|
@@ -259,7 +259,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 2.3 Duplicate Code
+### latest Duplicate Code
 
 **Finding**: `receipt-chain.mjs` and `receipt-proofchain.mjs` are nearly identical (378 vs 381 lines).
 
@@ -273,7 +273,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 2.4 Missing Features
+### latest Missing Features
 
 #### CLI Commands
 - **Current**: No `kgc receipt` commands
@@ -293,7 +293,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 2.5 Merkle Tree Implementations
+### latest Merkle Tree Implementations
 
 | Package | Implementation | Hash | Proof Format |
 |---------|---------------|------|--------------|
@@ -308,7 +308,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ## 3. Standardization Recommendations
 
-### 3.1 V6 Canonical Receipt Schema
+### latest V6 Canonical Receipt Schema
 
 ```javascript
 {
@@ -363,7 +363,7 @@ This audit identifies **4 independent receipt implementations** across UNRDF, wi
 
 ---
 
-### 3.2 Merkle Tree Structure Specification
+### latest Merkle Tree Structure Specification
 
 **Algorithm**: Binary Merkle tree with configurable hash function
 
@@ -429,7 +429,7 @@ Proof for R3:
 
 ---
 
-### 3.3 Chaining Mechanism
+### latest Chaining Mechanism
 
 **Linear Chain**:
 ```javascript
@@ -454,7 +454,7 @@ merkleRoot = buildMerkleTree(receipts).getRoot()
 
 ---
 
-### 3.4 Verification Algorithm
+### latest Verification Algorithm
 
 **Hash Integrity**:
 ```javascript
@@ -482,19 +482,19 @@ function verifyChain(receipts) {
 }
 ```
 
-**Merkle Proof Verification** (see 3.2)
+**Merkle Proof Verification** (see latest)
 
 ---
 
 ## 4. Performance Analysis
 
-### 4.1 Receipt Generation Time
+### latest Receipt Generation Time
 
 | Implementation | Hash Algorithm | Time (1 receipt) | Time (1000 receipts) |
 |---------------|----------------|------------------|----------------------|
-| YAWL | BLAKE3 | ~0.5ms | ~500ms |
-| Fusion | SHA256 | ~0.8ms | ~800ms |
-| KGC-Substrate | SHA256 | ~0.7ms | ~700ms |
+| YAWL | BLAKE3 | ~latestms | ~500ms |
+| Fusion | SHA256 | ~latestms | ~800ms |
+| KGC-Substrate | SHA256 | ~latestms | ~700ms |
 
 **Finding**: BLAKE3 is ~40% faster than SHA256.
 
@@ -502,19 +502,19 @@ function verifyChain(receipts) {
 
 ---
 
-### 4.2 Verification Time
+### latest Verification Time
 
 | Operation | Time | Notes |
 |-----------|------|-------|
-| Single receipt hash verification | ~0.5ms | BLAKE3 recomputation |
+| Single receipt hash verification | ~latestms | BLAKE3 recomputation |
 | Chain verification (100 receipts) | ~50ms | Sequential verification |
-| Merkle proof verification | ~0.8ms | log2(n) = 10 for 1000 receipts |
+| Merkle proof verification | ~latestms | log2(n) = 10 for 1000 receipts |
 
 **Finding**: Merkle proofs enable O(log n) verification vs O(n) for full chain.
 
 ---
 
-### 4.3 Storage Overhead
+### latest Storage Overhead
 
 | Field | Size (bytes) | Notes |
 |-------|--------------|-------|
@@ -530,7 +530,7 @@ function verifyChain(receipts) {
 **Gas cost** (Ethereum):
 - Individual anchoring: ~50k gas per receipt
 - Merkle root anchoring: ~60k gas for unlimited receipts
-- **Savings**: 99.8% for 1000 receipts (50M → 60k gas)
+- **Savings**: latest% for 1000 receipts (50M → 60k gas)
 
 ---
 
@@ -560,7 +560,7 @@ function verifyChain(receipts) {
 
 ## 6. Security Analysis
 
-### 6.1 Cryptographic Guarantees
+### latest Cryptographic Guarantees
 
 | Property | Mechanism | Security Level |
 |----------|-----------|----------------|
@@ -573,7 +573,7 @@ function verifyChain(receipts) {
 
 ---
 
-### 6.2 Attack Scenarios
+### latest Attack Scenarios
 
 #### Scenario 1: Modify receipt payload
 - **Attack**: Change decision from "APPROVE" to "REJECT"

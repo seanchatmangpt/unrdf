@@ -33,7 +33,7 @@
 // 3T METHODOLOGY (Original)
 // ============================================================================
 
-export const METHODOLOGY_VERSION = '1.0.0';
+export const METHODOLOGY_VERSION = '[VERSION]';
 export const COMPONENTS = ['TOML', 'Tera', 'Turtle'];
 
 /**

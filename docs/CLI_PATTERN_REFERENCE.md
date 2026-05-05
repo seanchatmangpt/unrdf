@@ -362,7 +362,7 @@ describe('@unrdf/cli - Graph Commands', () => {
 ```json
 {
   "name": "@unrdf/cli",
-  "version": "5.0.0-alpha.0",
+  "version": "latest.0",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
@@ -374,9 +374,9 @@ describe('@unrdf/cli - Graph Commands', () => {
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/streaming": "workspace:*",
-    "citty": "^0.1.6",
-    "table": "^6.9.0",
-    "yaml": "^2.8.1"
+    "citty": "^latest",
+    "table": "^latest",
+    "yaml": "^latest"
   },
   "scripts": {
     "test": "vitest run --coverage",

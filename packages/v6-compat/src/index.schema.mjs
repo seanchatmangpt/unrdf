@@ -11,7 +11,7 @@ import { z } from 'zod';
 /**
  * Schema for VERSION constant
  */
-export const VERSIONSchema = z.literal('6.0.0-alpha.1');
+export const VERSIONSchema = z.literal('[VERSION]-alpha.1');
 
 /**
  * Schema for COMPAT_VERSION constant

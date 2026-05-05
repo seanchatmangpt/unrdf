@@ -11,7 +11,7 @@
 
 **OVERALL READINESS**: ⚠️ **NOT PRODUCTION READY FOR FORTUNE 5 DEPLOYMENT**
 
-**Critical Risk Score**: **7.8/10** (High Risk)
+**Critical Risk Score**: **latest/10** (High Risk)
 
 The UNRDF knowledge-engine project contains **solid foundational Kubernetes infrastructure** but lacks **critical enterprise-grade capabilities** required for Fortune 5 deployment. While the Terraform configurations demonstrate good DevOps practices for **E2E testing environments**, they fall dramatically short of enterprise production requirements in **6 critical areas**:
 
@@ -396,7 +396,7 @@ FROM node:20-alpine  # ❌ No SHA digest, no scanning
 **Fortune 5 Requirement**:
 ```dockerfile
 # Pin to specific SHA256 digest + vulnerability scan
-FROM node:20.11.1-alpine3.19@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS base
+FROM node:latest.19@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS base
 
 # Add security scanning in CI/CD
 # Trivy, Snyk, or Anchore scan before deployment
@@ -494,7 +494,7 @@ jobs:
           syft packages dir:. -o spdx-json > sbom-spdx.json
 
       - name: License Compliance
-        run: npx license-checker --onlyAllow 'MIT;Apache-2.0;BSD-3-Clause;ISC'
+        run: npx license-checker --onlyAllow 'MIT;Apache-latest;BSD-3-Clause;ISC'
 
   container-scan:
     runs-on: ubuntu-latest
@@ -559,7 +559,7 @@ jobs:
           terraform validate
 
       - name: tfsec Security Scan
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: aquasecurity/tfsec-action@vlatest
         with:
           working_directory: terraform/
 
@@ -646,7 +646,7 @@ resource "kubernetes_cron_job" "dr_test" {
           spec {
             container {
               name  = "dr-test"
-              image = "velero/velero:v1.12"
+              image = "velero/velero:vlatest"
               command = ["/bin/sh", "-c"]
               args = [
                 "velero restore create --from-backup daily-knowledge-engine-backup --namespace=knowledge-engine-dr-test"
@@ -679,7 +679,7 @@ resource "kubernetes_cron_job" "dr_test" {
 **Issue**: Testcontainer observability not suitable for production
 **Impact**:
 - **Alerting**: No PagerDuty/OpsGenie integration
-- **SLA Tracking**: Cannot measure 99.99% uptime SLA
+- **SLA Tracking**: Cannot measure latest% uptime SLA
 - **Incident Response**: No runbooks or automated remediation
 
 **Fortune 5 Requirement**:
@@ -697,9 +697,9 @@ module "observability" {
   }
 
   sla_targets = {
-    availability = 99.99
+    availability = latest
     latency_p99  = 100  # milliseconds
-    error_rate   = 0.01 # 1%
+    error_rate   = latest # 1%
   }
 }
 
@@ -717,7 +717,7 @@ resource "kubernetes_manifest" "slo_kgc_knowledge-engine" {
       slos = [
         {
           name = "availability"
-          objective = 99.99
+          objective = latest
           sli = {
             events = {
               error_query = "sum(rate(http_requests_total{job='knowledge-engine',code=~'5..'}[5m]))"
@@ -814,7 +814,7 @@ resource "aws_cloudwatch_log_subscription_filter" "audit_to_splunk" {
 | P1 | Audit logging to SIEM | 1-2 days | HIGH |
 
 **Total Effort**: ~3-4 weeks
-**Business Impact**: Required for 99.99% SLA commitments
+**Business Impact**: Required for latest% SLA commitments
 
 ---
 
@@ -837,7 +837,7 @@ resource "aws_cloudwatch_log_subscription_filter" "audit_to_splunk" {
 ### Internal Resources
 - **DevOps Engineers (Senior)**: 2 FTEs x 6 weeks = 480 hours
 - **Security Engineer**: 1 FTE x 2 weeks = 80 hours
-- **Cloud Architect**: 0.5 FTE x 4 weeks = 80 hours
+- **Cloud Architect**: latest FTE x 4 weeks = 80 hours
 
 **Total Internal Cost**: ~$120,000 - $180,000 USD
 

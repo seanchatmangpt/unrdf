@@ -7,8 +7,8 @@ This document provides empirical evidence of the performance characteristics of 
 - **CPU**: Intel(R) Core(TM) i9-10885H CPU @ 2.40GHz
 - **Memory**: 32 GB RAM
 - **OS**: macOS 14.5
-- **Node.js**: v20.14.0
-- **Package Version**: 26.5.4
+- **Node.js**: [VERSION]
+- **Package Version**: [VERSION]
 
 ## Benchmark Results: RDF Pipeline
 

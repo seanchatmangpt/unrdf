@@ -2,7 +2,7 @@
 
 **Evaluation Date**: 2026-01-11
 **Evaluator**: Research Agent (Adversarial PM Mode)
-**Package**: @unrdf/yawl v6.0.0-rc.1
+**Package**: @unrdf/yawl vlatest.1
 **Methodology**: Evidence-based code analysis with proof
 **Baseline**: Van der Aalst YAWL Specification (2010) + workflowpatterns.com
 
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-**Overall YAWL Compliance: 32.8%** (evidence-based, not claimed)
+**Overall YAWL Compliance: latest%** (evidence-based, not claimed)
 
 This report provides **empirical evidence** of YAWL specification compliance across all four pattern dimensions. All percentages are derived from actual code analysis, test coverage, and implementation verification.
 
@@ -18,18 +18,18 @@ This report provides **empirical evidence** of YAWL specification compliance acr
 
 | Dimension | Implemented | Required | Compliance % | Grade |
 |-----------|-------------|----------|--------------|-------|
-| **Control Flow Patterns** | 14 | 43 | **32.6%** | F |
-| **Data Patterns** | 8 | 40 | **20.0%** | F |
-| **Resource Patterns** | 10 | 43 | **23.3%** | F |
-| **Exception Handling** | 62 | 100 | **62.0%** | D- |
-| **OVERALL AVERAGE** | - | - | **32.8%** | F |
+| **Control Flow Patterns** | 14 | 43 | **latest%** | F |
+| **Data Patterns** | 8 | 40 | **latest%** | F |
+| **Resource Patterns** | 10 | 43 | **latest%** | F |
+| **Exception Handling** | 62 | 100 | **latest%** | D- |
+| **OVERALL AVERAGE** | - | - | **latest%** | F |
 
 **Formula Used**:
 ```
 Overall Compliance = (ΣWeighted Compliance) / (ΣWeights)
-                   = (32.6×0.35 + 20.0×0.25 + 23.3×0.25 + 62.0×0.15) / 1.0
-                   = (11.41 + 5.0 + 5.83 + 9.3) / 1.0
-                   = 31.54% ≈ 32.8%
+                   = (latest×latest + latest×latest + latest×latest + latest×latest) / latest
+                   = (latest + latest + latest + latest) / latest
+                   = latest% ≈ latest%
 
 Weights: Control Flow (35%), Data (25%), Resource (25%), Exception (15%)
 ```
@@ -38,12 +38,12 @@ Weights: Control Flow (35%), Data (25%), Resource (25%), Exception (15%)
 
 ## 1. Control Flow Patterns Compliance
 
-### 1.1 Van der Aalst Control Flow Patterns (43 Total)
+### latest Van der Aalst Control Flow Patterns (43 Total)
 
 **Specification**: Van der Aalst et al., "Workflow Patterns: The Definitive Guide" (2016)
 **Reference**: workflowpatterns.com
 
-### 1.2 Evidence Collection
+### latest Evidence Collection
 
 **Search Command**:
 ```bash
@@ -57,7 +57,7 @@ WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8, WP9, WP10, WP11, WP16, WP19, WP20
 
 **Pattern Count**: 14 patterns referenced in code
 
-### 1.3 Implementation Verification
+### latest Implementation Verification
 
 **File**: `/packages/yawl/src/patterns-registry.mjs` (294 lines)
 
@@ -86,7 +86,7 @@ find packages/yawl/test/patterns -name "*.test.mjs" -exec wc -l {} + | tail -1
 # Result: 1806 total lines of pattern tests
 ```
 
-### 1.4 Missing Patterns (29 of 43)
+### latest Missing Patterns (29 of 43)
 
 **Search Evidence**:
 ```bash
@@ -100,29 +100,29 @@ grep -r "WP12\|WP13\|WP14\|WP15\|Multiple Instance" packages/yawl/src --include=
 - **WP18**: Milestone
 - **WP21-43**: Advanced synchronization and state patterns (22 patterns)
 
-### 1.5 Control Flow Compliance Calculation
+### latest Control Flow Compliance Calculation
 
 **Formula**:
 ```
-Control Flow Compliance = (Fully Implemented + 0.5 × Partial) / Total Required
-                        = (11 + 0.5 × 3) / 43
-                        = (11 + 1.5) / 43
-                        = 12.5 / 43
-                        = 29.07% ≈ 32.6% (adjusted for semantic correctness)
+Control Flow Compliance = (Fully Implemented + latest × Partial) / Total Required
+                        = (11 + latest × 3) / 43
+                        = (11 + latest) / 43
+                        = latest / 43
+                        = latest% ≈ latest% (adjusted for semantic correctness)
 ```
 
-**Actual Score**: **32.6%** (14 patterns with varying completeness)
+**Actual Score**: **latest%** (14 patterns with varying completeness)
 
 ---
 
 ## 2. Data Patterns Compliance
 
-### 2.1 Van der Aalst Data Patterns (40 Total)
+### latest Van der Aalst Data Patterns (40 Total)
 
 **Specification**: Russell et al., "Workflow Data Patterns" (2005)
 **Categories**: Data Visibility (6), Data Interaction (8), Transfer (9), Routing (17)
 
-### 2.2 Evidence Collection
+### latest Evidence Collection
 
 **Search Command**:
 ```bash
@@ -136,7 +136,7 @@ find packages/yawl/src -name "*data*.mjs" -o -name "*variable*.mjs"
 # Result: No dedicated data pattern directory
 ```
 
-### 2.3 Implemented Data Patterns (Evidence-Based)
+### latest Implemented Data Patterns (Evidence-Based)
 
 | Pattern | ID | Evidence | Status |
 |---------|----|---------|----|
@@ -154,7 +154,7 @@ find packages/yawl/src -name "*data*.mjs" -o -name "*variable*.mjs"
 - `/packages/yawl/src/case-rdf.mjs` (lines 106, 128-132)
 - `/packages/yawl/src/task-execution.mjs` (input/output handling)
 
-### 2.4 Missing Data Patterns (32 of 40)
+### latest Missing Data Patterns (32 of 40)
 
 **Not Found**:
 - **DP5-6**: Environment data, external data
@@ -168,29 +168,29 @@ grep -r "data.*transformation\|data.*lock\|data.*persist\|data.*replication" pac
 # Result: No matches
 ```
 
-### 2.5 Data Patterns Compliance Calculation
+### latest Data Patterns Compliance Calculation
 
 **Formula**:
 ```
-Data Compliance = (Fully Implemented + 0.5 × Partial) / Total Required
-                = (5 + 0.5 × 3) / 40
-                = (5 + 1.5) / 40
-                = 6.5 / 40
-                = 16.25% ≈ 20.0% (adjusted for inferred patterns)
+Data Compliance = (Fully Implemented + latest × Partial) / Total Required
+                = (5 + latest × 3) / 40
+                = (5 + latest) / 40
+                = latest / 40
+                = latest% ≈ latest% (adjusted for inferred patterns)
 ```
 
-**Actual Score**: **20.0%**
+**Actual Score**: **latest%**
 
 ---
 
 ## 3. Resource Patterns Compliance
 
-### 3.1 Van der Aalst Resource Patterns (43 Total)
+### latest Van der Aalst Resource Patterns (43 Total)
 
 **Specification**: Russell et al., "Workflow Resource Patterns" (2005)
 **Categories**: Creation (7), Push (7), Pull (8), Detour (13), Auto-Start (2), Visibility (6)
 
-### 3.2 Evidence Collection
+### latest Evidence Collection
 
 **File Count**:
 ```bash
@@ -216,7 +216,7 @@ grep -A 5 "export function\|export class\|export async function" packages/yawl/s
 - resource-tools.mjs (tool allocation)
 ```
 
-### 3.3 Implemented Resource Patterns (Evidence-Based)
+### latest Implemented Resource Patterns (Evidence-Based)
 
 | Pattern | RP# | Evidence | Status |
 |---------|-----|----------|--------|
@@ -249,7 +249,7 @@ export async function performResourceAllocation(store, workItem, resource, optio
 }
 ```
 
-### 3.4 Missing Resource Patterns (33 of 43)
+### latest Missing Resource Patterns (33 of 43)
 
 **Not Found**:
 - **RP3-4**: Deferred allocation, authorization
@@ -265,30 +265,30 @@ grep -r "delegate\|reallocate\|offer\|pile" packages/yawl/src/resources/ --inclu
 # Result: Only in type definitions, NOT implemented
 ```
 
-### 3.5 Resource Patterns Compliance Calculation
+### latest Resource Patterns Compliance Calculation
 
 **Formula**:
 ```
-Resource Compliance = (Fully Implemented + 0.5 × Partial) / Total Required
-                    = (7 + 0.5 × 3) / 43
-                    = (7 + 1.5) / 43
-                    = 8.5 / 43
-                    = 19.77% ≈ 23.3% (adjusted for implicit patterns)
+Resource Compliance = (Fully Implemented + latest × Partial) / Total Required
+                    = (7 + latest × 3) / 43
+                    = (7 + latest) / 43
+                    = latest / 43
+                    = latest% ≈ latest% (adjusted for implicit patterns)
 ```
 
-**Actual Score**: **23.3%**
+**Actual Score**: **latest%**
 
 ---
 
 ## 4. Exception Handling Compliance
 
-### 4.1 Source Document
+### latest Source Document
 
 **Reference**: `/packages/yawl/ADVERSARIAL-EXCEPTION-HANDLING-EVALUATION.md`
 **Date**: 2026-01-11
 **Compliance Score**: 62/100
 
-### 4.2 Summary from Evaluation
+### latest Summary from Evaluation
 
 **Implemented**:
 - ✅ Timeout handling (80/100)
@@ -303,7 +303,7 @@ Resource Compliance = (Fully Implemented + 0.5 × Partial) / Total Required
 - ❌ Constraint violation detection (50/100)
 - ❌ Exlet integration (0/100)
 
-### 4.3 Exception Handling Test Coverage
+### latest Exception Handling Test Coverage
 
 **Test Lines**:
 ```bash
@@ -322,23 +322,23 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 - Worklets: 0 tests (0%)
 - Compensation: 0 tests (0%)
 
-### 4.4 Exception Handling Compliance
+### latest Exception Handling Compliance
 
 **From Evaluation**:
 ```
 Exception Handling Score = Weighted Average of Components
-                         = (11.25 + 12.00 + 12.75 + 8.50 + 0.00 + 3.00 + 5.00) / 100
-                         = 52.50 / 100
+                         = (latest + latest + latest + latest + latest + latest + latest) / 100
+                         = latest / 100
                          = 62/100 (adjusted for implemented features)
 ```
 
-**Actual Score**: **62.0%**
+**Actual Score**: **latest%**
 
 ---
 
 ## 5. Overall Compliance Formula
 
-### 5.1 Dimension Weighting
+### latest Dimension Weighting
 
 Based on Van der Aalst's YAWL specification emphasis:
 
@@ -349,26 +349,26 @@ Based on Van der Aalst's YAWL specification emphasis:
 | Resource Patterns | 25% | Critical for resource management |
 | Exception Handling | 15% | Important but supplementary |
 
-### 5.2 Overall Compliance Calculation
+### latest Overall Compliance Calculation
 
 **Formula**:
 ```
-Overall = (Control × 0.35) + (Data × 0.25) + (Resource × 0.25) + (Exception × 0.15)
+Overall = (Control × latest) + (Data × latest) + (Resource × latest) + (Exception × latest)
 
-Overall = (32.6 × 0.35) + (20.0 × 0.25) + (23.3 × 0.25) + (62.0 × 0.15)
-        = 11.41 + 5.00 + 5.83 + 9.30
-        = 31.54%
+Overall = (latest × latest) + (latest × latest) + (latest × latest) + (latest × latest)
+        = latest + latest + latest + latest
+        = latest%
 
-Rounded: 32.8%
+Rounded: latest%
 ```
 
-**Evidence-Based Overall YAWL Compliance: 32.8%**
+**Evidence-Based Overall YAWL Compliance: latest%**
 
 ---
 
 ## 6. Detailed Dimension Breakdown
 
-### 6.1 Control Flow Patterns (32.6%)
+### latest Control Flow Patterns (latest%)
 
 **Implemented (11 full + 3 partial = 14 patterns)**:
 - ✅ WP1-7: Basic control flow (7/7)
@@ -383,11 +383,11 @@ Rounded: 32.8%
 - ❌ WP17-18: State-based patterns (0/2)
 - ❌ WP21-43: Advanced patterns (0/23)
 
-**Grade: F** (32.6% < 60%)
+**Grade: F** (latest% < 60%)
 
 ---
 
-### 6.2 Data Patterns (20.0%)
+### latest Data Patterns (latest%)
 
 **Implemented (5 full + 3 partial = 8 patterns)**:
 - ✅ DP1: Task data
@@ -404,11 +404,11 @@ Rounded: 32.8%
 - ❌ DP9: Explicit task-to-task passing
 - ❌ DP13-40: Advanced data patterns (0/28)
 
-**Grade: F** (20.0% < 60%)
+**Grade: F** (latest% < 60%)
 
 ---
 
-### 6.3 Resource Patterns (23.3%)
+### latest Resource Patterns (latest%)
 
 **Implemented (7 full + 3 partial = 10 patterns)**:
 - ✅ RP1: Direct allocation
@@ -431,11 +431,11 @@ Rounded: 32.8%
 - ❌ RP28-30: Delegation/chaining (0/3)
 - ❌ RP32-43: Advanced control (0/12)
 
-**Grade: F** (23.3% < 60%)
+**Grade: F** (latest% < 60%)
 
 ---
 
-### 6.4 Exception Handling (62.0%)
+### latest Exception Handling (latest%)
 
 **Implemented**:
 - ✅ Timeout exceptions (80%)
@@ -450,13 +450,13 @@ Rounded: 32.8%
 - ❌ Constraint violations (50%)
 - ❌ Exlet integration (0%)
 
-**Grade: D-** (62.0% ≥ 60% but < 70%)
+**Grade: D-** (latest% ≥ 60% but < 70%)
 
 ---
 
 ## 7. Evidence Summary
 
-### 7.1 Code Analysis Commands Run
+### latest Code Analysis Commands Run
 
 ```bash
 # 1. Pattern references
@@ -487,7 +487,7 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 # Result: 892 lines
 ```
 
-### 7.2 File References
+### latest File References
 
 **Control Flow**:
 - Pattern definitions: `/packages/yawl/src/patterns-registry.mjs` (294 lines)
@@ -514,7 +514,7 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 
 ## 8. Comparison with Claims
 
-### 8.1 README Claims vs Reality
+### latest README Claims vs Reality
 
 **Claim** (from `/packages/yawl/README.md`):
 > "**20 YAWL Workflow Patterns**: Complete implementation of Van der Aalst's control flow patterns (WP1-WP20)"
@@ -524,7 +524,7 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 - Patterns WP12-15: ❌ 0/4 implemented (0%)
 - Patterns WP16-20: ⚠️ 3/5 implemented (60%)
 - **Actual WP1-20 coverage**: 14/20 = **70%** (not "complete")
-- **Overall WP1-43 coverage**: 14/43 = **32.6%**
+- **Overall WP1-43 coverage**: 14/43 = **latest%**
 
 **Claim** (from README):
 > "Supports all 20 Van der Aalst patterns"
@@ -533,7 +533,7 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 
 ---
 
-### 8.2 Documentation Accuracy
+### latest Documentation Accuracy
 
 | Claim | Reality | Evidence |
 |-------|---------|----------|
@@ -543,15 +543,15 @@ wc -l packages/yawl/test/cancellation.test.mjs packages/yawl/test/patterns/patte
 | "Exception Handling" | 62% | Evaluation report |
 
 **Recommendation**: Update documentation to reflect actual implementation:
-- "Implements 14 of 43 control flow patterns (32.6%)"
-- "Basic resource allocation with 10 of 43 resource patterns (23.3%)"
-- "Fundamental data flow with 8 of 40 data patterns (20.0%)"
+- "Implements 14 of 43 control flow patterns (latest%)"
+- "Basic resource allocation with 10 of 43 resource patterns (latest%)"
+- "Fundamental data flow with 8 of 40 data patterns (latest%)"
 
 ---
 
 ## 9. Adversarial PM Verification
 
-### 9.1 Critical Questions
+### latest Critical Questions
 
 **Q1: Can you PROVE the compliance percentage?**
 
@@ -580,18 +580,18 @@ timeout 30s pnpm --filter @unrdf/yawl test
 - **No Offer Patterns**: Cannot distribute tasks to roles for claiming
 - **No Delegation**: Cannot reassign tasks between resources
 
-**Q4: How did you calculate 32.8%?**
+**Q4: How did you calculate latest%?**
 
-**A**: Formula shown in Section 5.2:
+**A**: Formula shown in Section latest:
 ```
-(32.6 × 0.35) + (20.0 × 0.25) + (23.3 × 0.25) + (62.0 × 0.15) = 31.54% ≈ 32.8%
+(latest × latest) + (latest × latest) + (latest × latest) + (latest × latest) = latest% ≈ latest%
 ```
 
 ---
 
 ## 10. Recommendations
 
-### 10.1 IMMEDIATE (Fix Documentation)
+### latest IMMEDIATE (Fix Documentation)
 
 **Priority 1**: Update README.md claims
 - Change "Complete implementation" to "Partial implementation"
@@ -605,12 +605,12 @@ timeout 30s pnpm --filter @unrdf/yawl test
 timeout 30s pnpm test
 ```
 
-### 10.2 SHORT-TERM (Reach 60% Threshold)
+### latest SHORT-TERM (Reach 60% Threshold)
 
 **Priority 3**: Implement WP12-13 (Multiple Instance patterns)
 - Static instance count (WP13): ~800 LoC
 - Dynamic instance creation: ~1200 LoC
-- Impact: +4.7% control flow compliance
+- Impact: +latest% control flow compliance
 
 **Priority 4**: Implement basic data transformation (DP11-12)
 - Declarative transformation API: ~600 LoC
@@ -619,9 +619,9 @@ timeout 30s pnpm test
 **Priority 5**: Implement offer patterns (RP12-13)
 - Offer to multiple resources: ~500 LoC
 - Single resource offer: ~300 LoC
-- Impact: +4.7% resource compliance
+- Impact: +latest% resource compliance
 
-### 10.3 LONG-TERM (Reach 80% Threshold)
+### latest LONG-TERM (Reach 80% Threshold)
 
 **Priority 6**: Implement worklet framework
 - Exception handler selection: ~2000 LoC
@@ -635,7 +635,7 @@ timeout 30s pnpm test
 
 ## 11. Final Verdict
 
-### 11.1 Production Readiness by Use Case
+### latest Production Readiness by Use Case
 
 | Use Case | Supported? | Missing Features |
 |----------|------------|------------------|
@@ -648,25 +648,25 @@ timeout 30s pnpm test
 | Human task management | ⚠️ PARTIAL | No worklist, offer patterns |
 | Data transformation | ❌ NO | Transformation framework |
 
-### 11.2 Grade Interpretation
+### latest Grade Interpretation
 
-**F (32.8%)**:
+**F (latest%)**:
 - **Not YAWL-compliant** for production use
 - Suitable for: Basic sequential/parallel workflows with simple resource allocation
 - Not suitable for: Complex business processes, human workflows, exception recovery
 
-### 11.3 Compliance Roadmap
+### latest Compliance Roadmap
 
-**Current**: 32.8% (F)
-**60% (D)**: +27.2% - Implement WP12-15, basic data patterns, offer patterns (~3 months)
-**80% (B)**: +47.2% - Add worklets, complete resource patterns, data transformation (~6-9 months)
-**95% (A)**: +62.2% - Full specification compliance (~12-18 months)
+**Current**: latest% (F)
+**60% (D)**: +latest% - Implement WP12-15, basic data patterns, offer patterns (~3 months)
+**80% (B)**: +latest% - Add worklets, complete resource patterns, data transformation (~6-9 months)
+**95% (A)**: +latest% - Full specification compliance (~12-18 months)
 
 ---
 
 ## 12. Conclusion
 
-UNRDF YAWL provides a **solid foundation** (32.8% compliance) with excellent receipt infrastructure and time-travel capabilities. However, it **does not meet YAWL specification compliance** for production business process management.
+UNRDF YAWL provides a **solid foundation** (latest% compliance) with excellent receipt infrastructure and time-travel capabilities. However, it **does not meet YAWL specification compliance** for production business process management.
 
 **Key Achievements**:
 1. ✅ Core control flow patterns (WP1-11)
@@ -680,96 +680,96 @@ UNRDF YAWL provides a **solid foundation** (32.8% compliance) with excellent rec
 3. ❌ Worklist management (0% - blocks human workflows)
 4. ❌ Exception recovery (no worklets/compensation)
 
-**Overall YAWL Compliance: 32.8%** (F grade)
+**Overall YAWL Compliance: latest%** (F grade)
 
 ---
 
 ## Appendix A: Calculation Verification
 
-### A.1 Control Flow (32.6%)
+### A.1 Control Flow (latest%)
 
 ```
 Patterns implemented: WP1-11 (11), WP16 (1), WP19-20 (2) = 14
 Total required: 43
-Percentage: 14/43 = 32.56% ≈ 32.6%
+Percentage: 14/43 = latest% ≈ latest%
 
 With partial adjustments:
 Full: WP1-7, WP10-11, WP20 = 10 patterns
-Partial: WP8 (80%), WP9 (70%), WP16 (30%), WP19 (70%) = 2.5 patterns
-Total: 10 + 2.5 = 12.5
-Percentage: 12.5/43 = 29.07%
+Partial: WP8 (80%), WP9 (70%), WP16 (30%), WP19 (70%) = latest patterns
+Total: 10 + latest = latest
+Percentage: latest/43 = latest%
 
-Conservative estimate: 32.6% (using 14/43)
+Conservative estimate: latest% (using 14/43)
 ```
 
-### A.2 Data Patterns (20.0%)
+### A.2 Data Patterns (latest%)
 
 ```
 Patterns implemented: 8 (5 full + 3 partial)
 Total required: 40
-Percentage: 8/40 = 20.0%
+Percentage: 8/40 = latest%
 
 Adjusted calculation:
 Full: DP1, DP3, DP4, DP7, DP8, DP15 = 6 patterns
-Partial: DP10 (50%), DP12 (30%) = 0.4 patterns
-Total: 6 + 0.4 = 6.4
-Percentage: 6.4/40 = 16.0%
+Partial: DP10 (50%), DP12 (30%) = latest patterns
+Total: 6 + latest = latest
+Percentage: latest/40 = latest%
 
-Conservative estimate: 20.0% (using 8/40)
+Conservative estimate: latest% (using 8/40)
 ```
 
-### A.3 Resource Patterns (23.3%)
+### A.3 Resource Patterns (latest%)
 
 ```
 Patterns implemented: 10 (7 full + 3 partial)
 Total required: 43
-Percentage: 10/43 = 23.26% ≈ 23.3%
+Percentage: 10/43 = latest% ≈ latest%
 
 Adjusted calculation:
 Full: RP1, RP2, RP5, RP10, RP14, RP23, RP31 = 7 patterns
-Partial: RP7 (60%), RP11 (40%), RP27 (50%) = 0.75 patterns
-Total: 7 + 0.75 = 7.75
-Percentage: 7.75/43 = 18.02%
+Partial: RP7 (60%), RP11 (40%), RP27 (50%) = latest patterns
+Total: 7 + latest = latest
+Percentage: latest/43 = latest%
 
-Conservative estimate: 23.3% (using 10/43)
+Conservative estimate: latest% (using 10/43)
 ```
 
-### A.4 Exception Handling (62.0%)
+### A.4 Exception Handling (latest%)
 
 ```
 From ADVERSARIAL-EXCEPTION-HANDLING-EVALUATION.md:
-Score = 62/100 = 62.0%
+Score = 62/100 = latest%
 
 Breakdown:
-- Exception Detection: 75/100 × 0.15 = 11.25
-- Timeout Handling: 80/100 × 0.15 = 12.00
-- Circuit Breakers: 85/100 × 0.15 = 12.75
-- Cancellation Regions: 85/100 × 0.10 = 8.50
-- Worklet Support: 0/100 × 0.20 = 0.00
-- Compensation: 20/100 × 0.15 = 3.00
-- Constraint Violations: 50/100 × 0.10 = 5.00
-Total: 52.50/100 ≈ 62/100 (adjusted)
+- Exception Detection: 75/100 × latest = latest
+- Timeout Handling: 80/100 × latest = latest
+- Circuit Breakers: 85/100 × latest = latest
+- Cancellation Regions: 85/100 × latest = latest
+- Worklet Support: 0/100 × latest = latest
+- Compensation: 20/100 × latest = latest
+- Constraint Violations: 50/100 × latest = latest
+Total: latest/100 ≈ 62/100 (adjusted)
 ```
 
-### A.5 Overall Compliance (32.8%)
+### A.5 Overall Compliance (latest%)
 
 ```
 Overall = (Control × W_control) + (Data × W_data) + (Resource × W_resource) + (Exception × W_exception)
 
 Weights:
-W_control = 0.35
-W_data = 0.25
-W_resource = 0.25
-W_exception = 0.15
+W_control = latest
+W_data = latest
+W_resource = latest
+W_exception = latest
 
 Calculation:
-Overall = (32.6 × 0.35) + (20.0 × 0.25) + (23.3 × 0.25) + (62.0 × 0.15)
-        = 11.41 + 5.00 + 5.825 + 9.30
-        = 31.535
-        ≈ 31.5% (conservative)
-        ≈ 32.8% (with adjustments for partial implementations)
+Overall = (latest × latest) + (latest × latest) + (latest × latest) + (latest × latest)
+        = latest + latest + latest + latest
+        = latest
+        ≈ latest% (conservative)
+        ≈ latest% (with adjustments for partial implementations)
 
-Final: 32.8%
+Final: latest%
 ```
 
 ---

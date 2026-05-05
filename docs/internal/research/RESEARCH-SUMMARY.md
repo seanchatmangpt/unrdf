@@ -11,8 +11,8 @@
 
 ### ✅ CRITICAL SUCCESS FACTORS (20% effort → 80% value)
 
-1. **Zod Already Included** - Template uses `zod@^4.1.11` - minimal validation work needed
-2. **Nuxt 4 Compatible** - Template runs on `nuxt@^4.1.2` - matches sidecar version
+1. **Zod Already Included** - Template uses `zod@^latest` - minimal validation work needed
+2. **Nuxt 4 Compatible** - Template runs on `nuxt@^latest` - matches sidecar version
 3. **Single Composable** - Only ONE composable (`useDashboard.ts`) needs conversion
 4. **4 API Routes** - Simple mock data endpoints, easy to convert
 5. **File-Based Routing** - Zero configuration needed, just copy pages
@@ -153,19 +153,19 @@ const users = ref([])
 ## 📦 Dependencies
 
 ### ✅ Already Compatible
-- `nuxt@^4.1.2`
-- `zod@^4.1.11` ← Already included!
-- `date-fns@^4.1.0`
-- `@vueuse/nuxt@^13.9.0`
+- `nuxt@^latest`
+- `zod@^latest` ← Already included!
+- `date-fns@^latest`
+- `@vueuse/nuxt@^latest`
 
 ### 📥 Need to Add
 ```bash
-pnpm add @nuxt/ui@^4.0.0
-pnpm add @iconify-json/lucide@^1.2.68
-pnpm add @iconify-json/simple-icons@^1.2.53
-pnpm add @unovis/ts@^1.6.1
-pnpm add @unovis/vue@^1.6.1
-pnpm add -D @nuxt/eslint@^1.9.0
+pnpm add @nuxt/ui@^latest
+pnpm add @iconify-json/lucide@^latest
+pnpm add @iconify-json/simple-icons@^latest
+pnpm add @unovis/ts@^latest
+pnpm add @unovis/vue@^latest
+pnpm add -D @nuxt/eslint@^latest
 ```
 
 ### 🗑️ Can Remove After Conversion

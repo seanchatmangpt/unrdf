@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Comprehensive Function Testing Suite for unrdf v3.0.2
+ * Comprehensive Function Testing Suite for unrdf latest
  *
  * Tests every single function and class documented in the README
  * to ensure complete functionality before release.
@@ -76,7 +76,7 @@ function logSummary() {
 async function runComprehensiveTests() {
   console.log(`${colors.bold}${colors.blue}
 ╔════════════════════════════════════════════════════════════════════════╗
-║                        UNRDF v3.0.2 TEST SUITE                      ║
+║                        UNRDF latest TEST SUITE                      ║
 ║                                                                        ║
 ║  Comprehensive testing of Knowledge Substrate & all components       ║
 ╚═══════════════════════════════════════════════════════════════════════╝

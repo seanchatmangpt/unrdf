@@ -1,8 +1,8 @@
 # SECURITY PENETRATION TEST REPORT
 
 **Generated**: 2026-01-11
-**Project**: UNRDF v6.0.0
-**Test Framework**: Vitest 4.0.16
+**Project**: UNRDF latest
+**Test Framework**: Vitest latest
 **Total Duration**: ~2.4 seconds
 
 ---
@@ -352,7 +352,7 @@ The system is **PRODUCTION READY**. The minor pattern refinements are optional e
 
 ### Test Execution Details
 
-- **Framework**: Vitest 4.0.16
+- **Framework**: Vitest latest
 - **Test Files**: 5 comprehensive suites
 - **Total Tests**: 119 attack scenarios
 - **Execution Time**: ~2.4 seconds
@@ -382,7 +382,7 @@ The system is **PRODUCTION READY**. The minor pattern refinements are optional e
 ---
 
 **Report Generated**: 2026-01-11
-**Framework Version**: UNRDF v6.0.0
+**Framework Version**: UNRDF latest
 **Security Assessment**: APPROVED FOR PRODUCTION ✅
 
 **Assessed By**: Automated Penetration Testing Suite

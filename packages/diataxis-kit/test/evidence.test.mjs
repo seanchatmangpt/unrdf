@@ -18,7 +18,7 @@ describe('evidence.mjs', () => {
     it('should return valid EvidenceSnapshot structure', async () => {
       const packageJson = {
         name: 'test-package',
-        version: '1.0.0',
+        version: '[VERSION]',
         keywords: ['test', 'example'],
         bin: { 'test-cli': './bin/cli.js' },
         exports: { '.': './src/index.mjs' }

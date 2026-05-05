@@ -37,13 +37,13 @@ $ wc -l microfw-9-graph-routing.mjs
 
 | ID | Severity | Type | Line | CVSS | Status |
 |----|----------|------|------|------|--------|
-| SEC-001 | **CRITICAL** | Handler Injection + Process Access | 192-202 | 9.8 | CONFIRMED |
-| SEC-002 | **CRITICAL** | Information Disclosure via Exceptions | 200-202 | 8.6 | CONFIRMED |
-| SEC-003 | **HIGH** | Cross-Site Scripting (XSS) | 221, 234 | 7.5 | CONFIRMED |
-| SEC-004 | **HIGH** | No Authentication/Authorization | All routes | 7.3 | CONFIRMED |
-| SEC-005 | **MEDIUM** | Prototype Pollution via Path | 221 | 6.5 | CONFIRMED |
-| SEC-006 | **MEDIUM** | RDF Triple Injection | 102-109 | 6.0 | CONFIRMED |
-| SEC-007 | **LOW** | Memory Exhaustion | 14-21 | 4.0 | CONFIRMED |
+| SEC-001 | **CRITICAL** | Handler Injection + Process Access | 192-202 | latest | CONFIRMED |
+| SEC-002 | **CRITICAL** | Information Disclosure via Exceptions | 200-202 | latest | CONFIRMED |
+| SEC-003 | **HIGH** | Cross-Site Scripting (XSS) | 221, 234 | latest | CONFIRMED |
+| SEC-004 | **HIGH** | No Authentication/Authorization | All routes | latest | CONFIRMED |
+| SEC-005 | **MEDIUM** | Prototype Pollution via Path | 221 | latest | CONFIRMED |
+| SEC-006 | **MEDIUM** | RDF Triple Injection | 102-109 | latest | CONFIRMED |
+| SEC-007 | **LOW** | Memory Exhaustion | 14-21 | latest | CONFIRMED |
 
 ---
 
@@ -51,7 +51,7 @@ $ wc -l microfw-9-graph-routing.mjs
 
 ### SEC-001: Handler Injection + Process Access [CRITICAL]
 
-**CVSS 3.1: 9.8 (CRITICAL)**
+**CVSS latest: latest (CRITICAL)**
 **CWE:** CWE-94 (Improper Control of Generation of Code)
 **OWASP Top 10:** A03:2021 – Injection
 
@@ -121,7 +121,7 @@ async handleRequest(req) {
 
 ### SEC-002: Information Disclosure via Exceptions [CRITICAL]
 
-**CVSS 3.1: 8.6 (HIGH)**
+**CVSS latest: latest (HIGH)**
 **CWE:** CWE-209 (Generation of Error Message Containing Sensitive Information)
 **OWASP Top 10:** A01:2021 – Broken Access Control
 
@@ -177,7 +177,7 @@ router.defineRoute('crash', '/crash', 'GET', async (ctx) => {
 
 ### SEC-003: Cross-Site Scripting (XSS) [HIGH]
 
-**CVSS 3.1: 7.5 (HIGH)**
+**CVSS latest: latest (HIGH)**
 **CWE:** CWE-79 (Improper Neutralization of Input During Web Page Generation)
 **OWASP Top 10:** A03:2021 – Injection
 
@@ -241,7 +241,7 @@ router.defineRoute('customer_detail', '/customers/', 'GET', async (ctx) => {
 
 ### SEC-004: No Authentication/Authorization [HIGH]
 
-**CVSS 3.1: 7.3 (HIGH)**
+**CVSS latest: latest (HIGH)**
 **CWE:** CWE-306 (Missing Authentication for Critical Function)
 **OWASP Top 10:** A01:2021 – Broken Access Control
 
@@ -310,7 +310,7 @@ class GraphAwareRouter {
 
 ### SEC-005: Prototype Pollution via Path [MEDIUM]
 
-**CVSS 3.1: 6.5 (MEDIUM)**
+**CVSS latest: latest (MEDIUM)**
 **CWE:** CWE-1321 (Improperly Controlled Modification of Object Prototype Attributes)
 **OWASP Top 10:** A08:2021 – Software and Data Integrity Failures
 
@@ -361,7 +361,7 @@ router.defineRoute('customer_detail', '/customers/', 'GET', async (ctx) => {
 
 ### SEC-006: RDF Triple Injection [MEDIUM]
 
-**CVSS 3.1: 6.0 (MEDIUM)**
+**CVSS latest: latest (MEDIUM)**
 **CWE:** CWE-74 (Improper Neutralization of Special Elements in Output)
 
 **Location:** `/home/user/unrdf/microfw-9-graph-routing.mjs:102-109`
@@ -423,7 +423,7 @@ defineRelationship(subject, predicate, object) {
 
 ### SEC-007: Memory Exhaustion [LOW]
 
-**CVSS 3.1: 4.0 (MEDIUM)**
+**CVSS latest: latest (MEDIUM)**
 **CWE:** CWE-770 (Allocation of Resources Without Limits)
 **OWASP Top 10:** A04:2021 – Insecure Design
 
@@ -448,7 +448,7 @@ for (let i = 0; i < 10000; i++) {
 ```
 Triples Added: 10,000
 Time Taken: 11 ms
-Memory Delta: 1.69 MB
+Memory Delta: latest MB
 ```
 
 **Impact:**
@@ -549,7 +549,7 @@ $ npm audit --json
 
 ## Risk Assessment
 
-### Overall Risk Score: **CRITICAL (9.8/10)**
+### Overall Risk Score: **CRITICAL (latest/10)**
 
 **Breakdown:**
 - Confidentiality Impact: HIGH (process access, env vars)

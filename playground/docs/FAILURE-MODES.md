@@ -9,7 +9,7 @@
     "triz": "urn:playground:triz:",
     "dflss": "urn:playground:dflss:"
   },
-  "@id": "urn:playground:failure-modes:v1.0.0",
+  "@id": "urn:playground:failure-modes:latest",
   "@type": "fmea:FailureModeAnalysis"
 }
 ```
@@ -206,7 +206,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?defense ?date
 WHERE {
   ?defense thesis:defenseDate ?date .
-  FILTER(?date < "2020-01-01"^^xsd:date || ?date > "2030-01-01"^^xsd:date)
+  FILTER(?date < "2020-01-01"^^xsd:date || ?date > "Autonomic-01-01"^^xsd:date)
 }
 ```
 

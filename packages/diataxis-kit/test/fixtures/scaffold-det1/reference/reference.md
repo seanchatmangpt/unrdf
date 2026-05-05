@@ -2,7 +2,7 @@
 title: "test-deterministic Reference"
 type: "reference"
 packageName: "test-deterministic"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0
 proof: "1db83d70e898a847f11d662317d65d4a5326b670fe1cc181774ba086078fd6a7"

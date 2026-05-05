@@ -40,7 +40,7 @@ This document integrates:
 ### Evidence Quality
 - **19 evidence items** gathered across 5 axioms
 - **100% acceptance rate** (all ≥70/100 score)
-- **Average score**: 81.6/100
+- **Average score**: latest/100
 - **5 falsifications published first** (Bitcoin, ProBFT, FLP, economic incentives, quantum)
 
 ---
@@ -160,8 +160,8 @@ where:
 
 **Expected Metrics** (from thesis):
 - Implementation time: 2-3 hours
-- Correctness: ≥99.99%
-- Code reuse: 64.3%
+- Correctness: ≥latest%
+- Code reuse: latest%
 - Static analysis coverage: 98%
 
 ---
@@ -189,7 +189,7 @@ reference-impl/
 | **Core Functions** | 5 | ✅ Sufficient |
 | **Data Types** | 3 | ✅ Necessary |
 | **Formal Proofs** | 7/7 | ✅ All valid |
-| **Correctness** | 99.99%+ | ✅ Proven |
+| **Correctness** | latest%+ | ✅ Proven |
 
 ### Axiom Coverage
 
@@ -313,8 +313,8 @@ const receipt = validator.receipt(inputs, verification);
 
 | Outcome | Measurement |
 |---------|------------|
-| **Specification → Code Time** | ~2.5 hours (vs. 2-3 weeks traditional) |
-| **Code Correctness** | 99.99%+ (proven, vs. 70-80% tested) |
+| **Specification → Code Time** | ~latest hours (vs. 2-3 weeks traditional) |
+| **Code Correctness** | latest%+ (proven, vs. 70-80% tested) |
 | **Implementation Size** | ~150 lines (vs. 500+ traditional) |
 | **Test Suite Size** | 7 proofs (vs. 100+ tests traditional) |
 | **Debugging Time** | 0 (bugs impossible by construction) |
@@ -440,7 +440,7 @@ Remove it:
 
 ### 6. Production Ready = Proven Correct
 - Traditional: "Tests pass" (80% confident, bugs found in production)
-- Holographic: "Proofs valid" (99.99%+ confident, bugs impossible)
+- Holographic: "Proofs valid" (latest%+ confident, bugs impossible)
 
 **Metric**: OFMF + formal verification = production ready immediately
 
@@ -488,14 +488,14 @@ Step 4: Verify by Construction (15 min)
         → 7 formal proofs
         → OFMF theorem check
 
-Timeline: ~2.5 hours
-Confidence: 99.99%+
+Timeline: ~latest hours
+Confidence: latest%+
 Correctness: Proven mathematically
 Bugs: Impossible (proven by construction)
 ```
 
-**Speedup**: 2-3 weeks → 2.5 hours = **40-70x faster**
-**Confidence**: 70-80% → 99.99%+ = **100,000x more certain**
+**Speedup**: 2-3 weeks → latest hours = **40-70x faster**
+**Confidence**: 70-80% → latest%+ = **100,000x more certain**
 
 ---
 
@@ -505,7 +505,7 @@ Bugs: Impossible (proven by construction)
 1. **Well-specified domains** (RDF, cryptography, APIs)
 2. **Irreversible actions** (blockchain, gene editing, orbital mechanics)
 3. **High-stakes systems** (medical devices, finance, aviation)
-4. **Performance-critical** (99.99% availability required)
+4. **Performance-critical** (latest% availability required)
 5. **Formally-verified domains** (crypto, consensus, formal logic)
 
 ### ⚠️ Difficult Use Cases
@@ -589,7 +589,7 @@ This reference implementation demonstrates that the thesis is not just theoretic
 - ✅ OFMF theorem holds: 1 file per domain
 - ✅ Formal verification proves correctness by construction
 - ✅ Production systems can be built in hours, not weeks
-- ✅ Correctness can be 99.99%+ guaranteed, not probabilistic
+- ✅ Correctness can be latest%+ guaranteed, not probabilistic
 
 **What we demonstrated**:
 - The unrdf/kgc-4d + sync pipeline works as designed

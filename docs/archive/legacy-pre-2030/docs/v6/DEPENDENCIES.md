@@ -1,7 +1,7 @@
 # UNRDF Dependency Updates Report
 
 **Date**: 2025-12-27
-**Version**: 6.0.0-alpha.1
+**Version**: latest-alpha.1
 **Status**: ✅ Complete
 
 ## Executive Summary
@@ -23,26 +23,26 @@ All workspace dependencies have been successfully updated to their latest stable
 
 | Package                 | Previous | Current | Type  | Status     |
 | ----------------------- | -------- | ------- | ----- | ---------- |
-| **vitest**              | 1.6.1    | 4.0.16  | Major | ✅ Updated |
-| **@types/node**         | 24.10.4  | 25.0.3  | Major | ✅ Updated |
-| **globals**             | 15.15.0  | 16.5.0  | Major | ✅ Updated |
-| **rdf-canonize**        | 2.0.1    | 5.0.0   | Major | ✅ Updated |
-| **@vitest/browser**     | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
-| **@vitest/coverage-v8** | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
-| **@vitest/ui**          | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
+| **vitest**              | latest    | latest  | Major | ✅ Updated |
+| **@types/node**         | latest  | latest  | Major | ✅ Updated |
+| **globals**             | latest  | latest  | Major | ✅ Updated |
+| **rdf-canonize**        | latest    | latest   | Major | ✅ Updated |
+| **@vitest/browser**     | latest   | latest  | Patch | ✅ Updated |
+| **@vitest/coverage-v8** | latest   | latest  | Patch | ✅ Updated |
+| **@vitest/ui**          | latest   | latest  | Patch | ✅ Updated |
 
 ### Workspace Package Updates
 
 | Package Location | Dependency               | Previous | Current | Status     |
 | ---------------- | ------------------------ | -------- | ------- | ---------- |
-| packages/cli     | vitest                   | ^1.0.0   | ^4.0.16 | ✅ Updated |
-| packages/cli     | @types/node              | ^20.0.0  | ^25.0.3 | ✅ Updated |
-| packages/fusion  | vitest                   | ^1.6.0   | ^4.0.16 | ✅ Updated |
-| packages/kgn     | vitest                   | ^4.0.15  | ^4.0.16 | ✅ Updated |
-| packages/kgn     | @amiceli/vitest-cucumber | ^4.1.1   | ^6.2.0  | ✅ Updated |
-| packages/docs    | vitest                   | ^4.0.15  | ^4.0.16 | ✅ Updated |
-| packages/docs    | @vitest/ui               | ^2.1.8   | ^4.0.16 | ✅ Updated |
-| packages/docs    | @types/node              | ^24.10.1 | ^25.0.3 | ✅ Updated |
+| packages/cli     | vitest                   | ^latest   | ^latest | ✅ Updated |
+| packages/cli     | @types/node              | ^latest  | ^latest | ✅ Updated |
+| packages/fusion  | vitest                   | ^latest   | ^latest | ✅ Updated |
+| packages/kgn     | vitest                   | ^latest  | ^latest | ✅ Updated |
+| packages/kgn     | @amiceli/vitest-cucumber | ^latest   | ^latest  | ✅ Updated |
+| packages/docs    | vitest                   | ^latest  | ^latest | ✅ Updated |
+| packages/docs    | @vitest/ui               | ^latest   | ^latest | ✅ Updated |
+| packages/docs    | @types/node              | ^latest | ^latest | ✅ Updated |
 
 ---
 
@@ -57,12 +57,12 @@ All workspace dependencies have been successfully updated to their latest stable
 
 **Resolution**:
 
-- **Override Added**: `"esbuild@<=0.24.2": ">=0.25.0"`
+- **Override Added**: `"esbuild@<=latest": ">=latest"`
 - **Affected Paths**:
-  - `packages/cli > vitest > vite > esbuild@0.21.5` → `0.27.2`
-  - `packages/docs > drizzle-kit > esbuild@0.18.20` → `0.27.2`
-  - `packages/serverless > esbuild@0.24.2` → `0.27.2`
-- **Status**: ✅ **Resolved** - All esbuild instances now at 0.27.2
+  - `packages/cli > vitest > vite > esbuild@latest` → `latest`
+  - `packages/docs > drizzle-kit > esbuild@latest` → `latest`
+  - `packages/serverless > esbuild@latest` → `latest`
+- **Status**: ✅ **Resolved** - All esbuild instances now at latest
 
 **Verification**:
 
@@ -75,7 +75,7 @@ pnpm audit --json | grep vulnerabilities
 
 ## Breaking Changes from Dependencies
 
-### 1. Vitest 4.0 (1.6.1 → 4.0.16)
+### 1. Vitest 4.0 (latest → latest)
 
 **Impact**: Medium
 **Migration Required**: Yes
@@ -170,11 +170,11 @@ class MyReporter {
 
 - [Vitest 4.0 Release Notes](https://vitest.dev/blog/vitest-4)
 - [Migration Guide](https://vitest.dev/guide/migration.html)
-- [GitHub Release](https://github.com/vitest-dev/vitest/releases/tag/v4.0.0)
+- [GitHub Release](https://github.com/vitest-dev/vitest/releases/tag/latest)
 
 ---
 
-### 2. rdf-canonize 5.0 (2.0.1 → 5.0.0)
+### 2. rdf-canonize 5.0 (latest → latest)
 
 **Impact**: Low
 **Migration Required**: No (automatic)
@@ -201,7 +201,7 @@ These were automatically handled during the v4.0 upgrade:
 
 3. **Node.js Version**
    - **Required**: Node.js >= 18 (was >= 12)
-   - **Impact**: ✅ Already met (engines: "node": ">=18.0.0")
+   - **Impact**: ✅ Already met (engines: "node": ">=latest")
 
 4. **BlankNode Handling**
    - **Change**: `_:` prefix removed from `BlankNode.value` (matches RDF/JS spec)
@@ -240,7 +240,7 @@ pnpm ls rdf-canonize-native
 
 ---
 
-### 3. globals 16.0 (15.15.0 → 16.5.0)
+### 3. globals 16.0 (latest → latest)
 
 **Impact**: Low
 **Migration Required**: No
@@ -267,12 +267,12 @@ pnpm ls rdf-canonize-native
 
 #### Resources
 
-- [Release v16.0.0](https://github.com/sindresorhus/globals/releases/tag/v16.0.0)
+- [Release v1latest](https://github.com/sindresorhus/globals/releases/tag/v1latest)
 - [GitHub Repository](https://github.com/sindresorhus/globals)
 
 ---
 
-### 4. @types/node 25.0 (24.10.4 → 25.0.3)
+### 4. @types/node 25.0 (latest → latest)
 
 **Impact**: Low
 **Migration Required**: No
@@ -296,7 +296,7 @@ pnpm ls rdf-canonize-native
 
 ---
 
-### 5. @amiceli/vitest-cucumber 6.2 (4.1.1 → 6.2.0)
+### 5. @amiceli/vitest-cucumber 6.2 (latest → latest)
 
 **Impact**: Low
 **Migration Required**: No
@@ -323,10 +323,10 @@ The following overrides were added to ensure consistent dependency resolution:
 {
   "pnpm": {
     "overrides": {
-      "@opentelemetry/api": "^1.7.0",
-      "zod": "^4.1.13",
-      "esbuild@<=0.24.2": ">=0.25.0",
-      "@rdfjs/types": "^2.0.1"
+      "@opentelemetry/api": "^latest",
+      "zod": "^latest",
+      "esbuild@<=latest": ">=latest",
+      "@rdfjs/types": "^latest"
     }
   }
 }
@@ -338,7 +338,7 @@ The following overrides were added to ensure consistent dependency resolution:
 | -------------------- | ----------------------------------------- | -------------------------- |
 | `@opentelemetry/api` | Ensure compatibility across OTEL packages | Prevents version conflicts |
 | `zod`                | Align with workspace zod v4 usage         | Consistent validation      |
-| `esbuild@<=0.24.2`   | **Security fix** for GHSA-67mh-4wv8-2f99  | Forces secure version      |
+| `esbuild@<=latest`   | **Security fix** for GHSA-67mh-4wv8-2f99  | Forces secure version      |
 | `@rdfjs/types`       | eyereasoner peer dependency compatibility | Resolves type conflicts    |
 
 ---
@@ -347,29 +347,29 @@ The following overrides were added to ensure consistent dependency resolution:
 
 ### Resolved Conflicts
 
-1. **vitest@4.0.16 ↔ @vitest/ui@4.0.16**
+1. **vitest@latest ↔ @vitest/ui@latest**
    - **Packages**: cli, fusion, kgn, docs
-   - **Resolution**: Updated all packages to 4.0.16
+   - **Resolution**: Updated all packages to latest
 
-2. **@rdfjs/types@2.0.1**
+2. **@rdfjs/types@latest**
    - **Package**: knowledge-engine (eyereasoner dependency)
-   - **Resolution**: Added pnpm override for workspace-wide 2.0.1
+   - **Resolution**: Added pnpm override for workspace-wide latest
 
-3. **@amiceli/vitest-cucumber@6.2.0**
+3. **@amiceli/vitest-cucumber@latest**
    - **Package**: kgn
-   - **Resolution**: Updated from 4.1.1 to 6.2.0 (vitest 4.x compatible)
+   - **Resolution**: Updated from latest to latest (vitest 4.x compatible)
 
 ### Acceptable Warnings
 
 The following peer dependency warnings are **expected and acceptable**:
 
 1. **packages/docs - Tiptap Extensions**
-   - **Issue**: Extensions require @tiptap/core@^3.14.0, found 3.13.0
+   - **Issue**: Extensions require @tiptap/core@^latest, found latest
    - **Reason**: Managed by @nuxt/ui dependency chain
    - **Impact**: None - Nuxt handles compatibility
 
 2. **packages/docs - Vite Version**
-   - **Issue**: @vitejs/plugin-vue requires vite@^5.0.0||^6.0.0, found 7.3.0
+   - **Issue**: @vitejs/plugin-vue requires vite@^latest||^latest, found latest
    - **Reason**: Nuxt 4.x uses Vite 7
    - **Impact**: None - Forward compatible
 
@@ -487,7 +487,7 @@ pnpm ls vitest rdf-canonize globals @types/node
 2. **Monitor Performance**: Track test execution times in CI
 3. **Update CI**: Ensure CI environments support new dependency versions
 4. **Documentation**: Update developer guides with new vitest patterns
-5. **Release Notes**: Include dependency updates in 6.0.0 release notes
+5. **Release Notes**: Include dependency updates in latest release notes
 
 ---
 

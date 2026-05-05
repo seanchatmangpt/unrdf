@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/project-engine
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

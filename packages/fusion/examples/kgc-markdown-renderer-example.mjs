@@ -46,7 +46,7 @@ const frontmatter = {
   title: 'Getting Started with UNRDF',
   date: '2024-01-01',
   author: 'Example Author',
-  version: '1.0.0',
+  version: 'latest',
   tags: ['tutorial', 'unrdf', 'rdf', 'knowledge-graph'],
 };
 

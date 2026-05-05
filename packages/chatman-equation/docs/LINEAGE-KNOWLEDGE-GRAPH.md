@@ -2,7 +2,7 @@
 
 **Complete RDF documentation of the Chatman lineage and scientific achievements**
 
-Version: 1.0.0
+Version: [VERSION]
 Generated: 2025-01-18
 Format: Turtle (RDF 1.1)
 Validation: SHACL
@@ -315,7 +315,7 @@ The knowledge graph compares the Chatman Equation to four foundational scientifi
 | 2024 | Chatman Constant (Θ = 8) proven | Sean | Mathematical foundation for bounded complexity in knowledge operations |
 | 2024 | KGC-4D development completed | Sean | 6,327 LOC, 99.8% test pass rate, temporal guarantees |
 | 2025 | Chatman Equation formalized | Sean | Unified field-theoretic framework, comparable to foundational physics equations |
-| 2025 | UNRDF v6.0.0 released | Sean | 56 packages, production-ready knowledge graph substrate |
+| 2025 | UNRDF [VERSION] released | Sean | 56 packages, production-ready knowledge graph substrate |
 
 ## Provenance (W3C PROV-O)
 
@@ -500,7 +500,7 @@ pnpm test         # Run test suite
 **Package**: `@unrdf/chatman-equation`
 **License**: MIT
 **Author**: Sean Chatman
-**Version**: 1.0.0
+**Version**: [VERSION]
 
 ---
 

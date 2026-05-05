@@ -18,7 +18,7 @@
       "@type": "unrdf:Protocol",
       "rdfs:label": "Query Federation Protocol",
       "rdfs:comment": "Distributed SPARQL query execution across federated stores",
-      "unrdf:version": "1.0.0",
+      "unrdf:version": "latest",
       "unrdf:initialState": "state:Idle",
       "unrdf:terminalStates": ["state:ResultsReturned", "state:QueryFailed"],
       "unrdf:states": [

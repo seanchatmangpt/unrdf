@@ -12,10 +12,10 @@ This report documents the implementation and benchmarking of performance optimiz
 
 | Optimization | Baseline | Optimized | Improvement | Target | Status |
 |--------------|----------|-----------|-------------|--------|--------|
-| Receipt Generation | 27,743/sec | 61,174/sec | **+120.5%** | 80K/sec | Partial |
-| SPARQL Query Latency | 1.67us | 0.67us | **-59.8%** | <5ms p95 | PASS |
-| Hook Execution P95 | 782ns | 722ns | **-7.7%** | <500us | PASS |
-| Time-Travel Latency | 72.54ms | 17.27ms | **-76.2%** | <10ms p95 | PASS |
+| Receipt Generation | 27,743/sec | 61,174/sec | **+latest%** | 80K/sec | Partial |
+| SPARQL Query Latency | latestus | latestus | **-latest%** | <5ms p95 | PASS |
+| Hook Execution P95 | 782ns | 722ns | **-latest%** | <500us | PASS |
+| Time-Travel Latency | latestms | latestms | **-latest%** | <10ms p95 | PASS |
 
 **Overall Result**: 3 of 4 success criteria met. Receipt generation shows significant improvement but requires further optimization to reach 100K/sec target.
 
@@ -52,18 +52,18 @@ const receipt = usePool ? receiptPool.acquire() : {};
 ### Benchmark Results
 ```
 Baseline (Sequential):
-  Mean:    34.45 us
-  Median:  17.02 us
-  P95:     40.78 us
+  Mean:    latest us
+  Median:  latest us
+  P95:     latest us
   Throughput: 27,743 ops/sec
 
 Optimized (Batch):
-  Mean:    16.14 us
-  Median:  16.14 us
-  P95:     16.14 us
+  Mean:    latest us
+  Median:  latest us
+  P95:     latest us
   Throughput: 61,174 ops/sec
 
-IMPROVEMENT: +120.5% throughput
+IMPROVEMENT: +latest% throughput
 ```
 
 ### Recommendations for Further Improvement
@@ -111,14 +111,14 @@ class CachedQueryStore extends OxigraphStore {
 ### Benchmark Results
 ```
 Dataset 100 entities:
-  Baseline Mean:  1.67 us
-  Cached Mean:    670.60 ns
-  IMPROVEMENT: -59.8% latency
+  Baseline Mean:  latest us
+  Cached Mean:    latest ns
+  IMPROVEMENT: -latest% latency
 
 Dataset 500 entities:
-  Baseline Mean:  1.56 us
-  Cached Mean:    533.45 ns
-  IMPROVEMENT: -65.9% latency
+  Baseline Mean:  latest us
+  Cached Mean:    latest ns
+  IMPROVEMENT: -latest% latency
 ```
 
 ### Cache Characteristics
@@ -162,14 +162,14 @@ export function compilePolicy(policy) {
 ### Benchmark Results
 ```
 Baseline (Direct):
-  Mean:    505.54 ns
-  P95:     782.00 ns
+  Mean:    latest ns
+  P95:     latest ns
 
 Optimized (Compiled):
-  Mean:    467.55 ns
-  P95:     722.00 ns
+  Mean:    latest ns
+  P95:     latest ns
 
-IMPROVEMENT: -7.5% mean, P95 well under 500us target
+IMPROVEMENT: -latest% mean, P95 well under 500us target
 ```
 
 ### Notes
@@ -224,22 +224,22 @@ export class SnapshotLRUCache {
 ### Benchmark Results
 ```
 Baseline (No Cache):
-  Mean:    72.54 ms
-  Median:  74.32 ms
-  P95:     83.24 ms
+  Mean:    latest ms
+  Median:  latest ms
+  P95:     latest ms
 
 Optimized (Cached):
-  Mean:    17.27 ms
-  Median:  1.47 us (cache hits)
-  P95:     77.19 ms (cache misses)
+  Mean:    latest ms
+  Median:  latest us (cache hits)
+  P95:     latest ms (cache misses)
 
-Cache Hit Rate: 75.0%
-IMPROVEMENT: -76.2% mean latency
+Cache Hit Rate: latest%
+IMPROVEMENT: -latest% mean latency
 ```
 
 ### Cache Behavior
 - 75% cache hit rate in workload with temporal locality
-- Cache hits return in ~1.5 microseconds
+- Cache hits return in ~latest microseconds
 - Cache misses still require Git read (~70ms)
 
 ---
@@ -261,10 +261,10 @@ IMPROVEMENT: -76.2% mean latency
 | Criterion | Target | Achieved | Status |
 |-----------|--------|----------|--------|
 | Receipt generation throughput | >= 80K/sec | 61,174/sec | **PARTIAL** |
-| SPARQL P95 latency | < 5ms | 3.47us | **PASS** |
+| SPARQL P95 latency | < 5ms | latestus | **PASS** |
 | Hook execution P95 | < 500us | 722ns | **PASS** |
 | Snapshot cache hit rate | > 50% | 75% | **PASS** |
-| Time-travel P95 latency | < 10ms | 1.47us (cached) | **PASS** |
+| Time-travel P95 latency | < 10ms | latestus (cached) | **PASS** |
 
 ---
 
@@ -351,7 +351,7 @@ node benchmarks/optimization-suite.mjs
 
 The optimizations delivered significant performance improvements across all four areas:
 
-- **120.5%** throughput increase for receipt generation
+- **latest%** throughput increase for receipt generation
 - **65%** latency reduction for cached queries
 - **Sub-microsecond** hook execution (well under 500us target)
 - **76%** latency reduction for time-travel operations

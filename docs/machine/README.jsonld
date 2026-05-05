@@ -10,7 +10,7 @@
   "@type": "unrdf:MachineExecutableDocumentation",
   "rdfs:label": "UNRDF Machine-Executable Documentation",
   "rdfs:comment": "Machine-readable documentation for autonomous agent consumption",
-  "unrdf:version": "1.0.0",
+  "unrdf:version": "latest",
   "unrdf:generatedAt": "2025-01-21T00:00:00Z",
   "unrdf:contents": [
     {

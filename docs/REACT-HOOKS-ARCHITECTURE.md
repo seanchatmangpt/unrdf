@@ -1,6 +1,6 @@
 # UNRDF React Hooks Framework Architecture
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Architecture Design
 **Author**: UNRDF Architecture Team
 **Date**: 2025-11-18
@@ -23,7 +23,7 @@ This document defines a comprehensive React hooks framework for UNRDF that provi
 
 ## 1. Hook Categories & API Design
 
-### 1.1 Core State Management Hooks
+### latest Core State Management Hooks
 
 These hooks manage the foundational RDF store state and provide the context for all other hooks.
 
@@ -233,7 +233,7 @@ function useGraphs() {
 
 ---
 
-### 1.2 Query Execution Hooks
+### latest Query Execution Hooks
 
 These hooks execute SPARQL queries and provide reactive results.
 
@@ -481,7 +481,7 @@ function useDeltaQuery(query, options) {
 
 ---
 
-### 1.3 Knowledge Hooks Integration
+### latest Knowledge Hooks Integration
 
 Integrate UNRDF's Knowledge Hooks system with React lifecycle.
 
@@ -519,7 +519,7 @@ Define and evaluate a Knowledge Hook with React state.
  *       }
  *     `,
  *     predicates: [
- *       { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.05 } }
+ *       { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
  *     ]
  *   }, {
  *     autoEvaluate: true,
@@ -675,7 +675,7 @@ function useHookRegistry(initialHooks, options) {
 
 ---
 
-### 1.4 Browser Storage Hooks
+### latest Browser Storage Hooks
 
 Integrate IndexedDB and localStorage for persistent RDF data.
 
@@ -881,7 +881,7 @@ function useAuditTrail(options) {
 
 ---
 
-### 1.5 Utility Hooks
+### latest Utility Hooks
 
 Helper hooks for common RDF operations.
 
@@ -950,11 +950,11 @@ Manage RDF namespace prefixes.
  * function NamespaceExample() {
  *   const ns = useNamespaces({
  *     ex: 'http://example.org/',
- *     foaf: 'http://xmlns.com/foaf/0.1/'
+ *     foaf: 'http://xmlns.com/foaf/latest/'
  *   });
  *
  *   const person = ns.ex('alice');  // http://example.org/alice
- *   const name = ns.foaf('name');   // http://xmlns.com/foaf/0.1/name
+ *   const name = ns.foaf('name');   // http://xmlns.com/foaf/latest/name
  *
  *   return <div>Person: {person.value}</div>;
  * }
@@ -1082,7 +1082,7 @@ function useDebug(options) {
 
 ---
 
-### 1.6 Caching Hooks
+### latest Caching Hooks
 
 Optimize query performance with intelligent caching.
 
@@ -1225,7 +1225,7 @@ function useCacheStats() {
 
 ---
 
-### 1.7 Effect Hooks
+### latest Effect Hooks
 
 React to RDF store changes with side effects.
 
@@ -1356,7 +1356,7 @@ function useGraphListener(graph, callback) {
 
 ---
 
-### 1.8 Async Hooks
+### latest Async Hooks
 
 Handle asynchronous RDF operations with proper loading states.
 
@@ -1513,7 +1513,7 @@ function useBatchOperations(options) {
 
 ---
 
-### 1.9 Observability Hooks
+### latest Observability Hooks
 
 Integrate OpenTelemetry for comprehensive observability.
 
@@ -1656,7 +1656,7 @@ function useSpanContext() {
 
 ## 2. Component Architecture
 
-### 2.1 Context Provider Pattern
+### latest Context Provider Pattern
 
 The framework uses React Context to provide global RDF state.
 
@@ -1716,7 +1716,7 @@ export function useKnowledgeEngineContext() {
 
 ---
 
-### 2.2 Composition Patterns
+### latest Composition Patterns
 
 **Complex Operation Composition**:
 ```javascript
@@ -1762,7 +1762,7 @@ function RDFWorkflow() {
 
 ---
 
-### 2.3 Error Handling Patterns
+### latest Error Handling Patterns
 
 **Error Boundary Integration**:
 ```javascript
@@ -1819,7 +1819,7 @@ function SuspenseRDFLoader() {
 
 ## 3. Performance Considerations
 
-### 3.1 Memoization Strategies
+### latest Memoization Strategies
 
 **Selective Memoization**:
 ```javascript
@@ -1860,7 +1860,7 @@ function MemoizedQuery() {
 
 ---
 
-### 3.2 Ref Usage for Non-Reactive Values
+### latest Ref Usage for Non-Reactive Values
 
 **Store Instance Refs**:
 ```javascript
@@ -1899,7 +1899,7 @@ function useCacheRef() {
 
 ---
 
-### 3.3 useCallback Optimization
+### latest useCallback Optimization
 
 **Stable Callback References**:
 ```javascript
@@ -1926,7 +1926,7 @@ function CallbackOptimization() {
 
 ---
 
-### 3.4 Dependency Array Management
+### latest Dependency Array Management
 
 **Minimal Dependencies**:
 ```javascript
@@ -1950,7 +1950,7 @@ function DependencyOptimization() {
 
 ---
 
-### 3.5 Cache Invalidation Patterns
+### latest Cache Invalidation Patterns
 
 **Smart Cache Invalidation**:
 ```javascript
@@ -1999,7 +1999,7 @@ function PartialCacheInvalidation() {
 
 ## 4. Browser-Specific Optimizations
 
-### 4.1 IndexedDB Integration Patterns
+### latest IndexedDB Integration Patterns
 
 **Efficient IndexedDB Usage**:
 ```javascript
@@ -2031,7 +2031,7 @@ function IndexedDBOptimization() {
 
 ---
 
-### 4.2 Web Worker Coordination
+### latest Web Worker Coordination
 
 **Offload Heavy Operations**:
 ```javascript
@@ -2068,7 +2068,7 @@ function useRDFWorker() {
 
 ---
 
-### 4.3 LocalStorage vs IndexedDB Trade-offs
+### latest LocalStorage vs IndexedDB Trade-offs
 
 **Decision Matrix**:
 
@@ -2099,7 +2099,7 @@ function HybridStorage() {
 
 ---
 
-### 4.4 Memory Management in Browsers
+### latest Memory Management in Browsers
 
 **Memory-Aware Operations**:
 ```javascript
@@ -2133,7 +2133,7 @@ function MemoryAwareComponent() {
 
 ---
 
-### 4.5 Background Sync Considerations
+### latest Background Sync Considerations
 
 **Progressive Sync**:
 ```javascript
@@ -2167,7 +2167,7 @@ function BackgroundSync() {
 
 ## 5. Integration with Existing UNRDF Features
 
-### 5.1 Knowledge Hooks Lifecycle
+### latest Knowledge Hooks Lifecycle
 
 **React Integration**:
 ```javascript
@@ -2194,7 +2194,7 @@ function KnowledgeHookLifecycle() {
 
 ---
 
-### 5.2 Dark Matter 80/20 Optimization
+### latest Dark Matter 80/20 Optimization
 
 **Selective Loading**:
 ```javascript
@@ -2230,7 +2230,7 @@ function DarkMatterOptimization() {
 
 ---
 
-### 5.3 Lockchain Audit Trail Tracking
+### latest Lockchain Audit Trail Tracking
 
 **Automatic Audit Logging**:
 ```javascript
@@ -2257,7 +2257,7 @@ function AuditTrailIntegration() {
 
 ---
 
-### 5.4 OTEL Observability Integration
+### latest OTEL Observability Integration
 
 **Full Observability**:
 ```javascript
@@ -2303,7 +2303,7 @@ function OTELIntegration() {
 
 ---
 
-### 5.5 Policy Pack Management
+### latest Policy Pack Management
 
 **Dynamic Policy Loading**:
 ```javascript
@@ -2334,7 +2334,7 @@ function PolicyManager() {
 
 ## 6. File Organization
 
-### 6.1 Proposed Directory Structure
+### latest Proposed Directory Structure
 
 ```
 src/react-hooks/
@@ -2411,7 +2411,7 @@ src/react-hooks/
 
 ---
 
-### 6.2 Module Organization Strategy
+### latest Module Organization Strategy
 
 **Feature-Based Organization**:
 - Each directory represents a feature category
@@ -2430,7 +2430,7 @@ context → core, storage
 
 ---
 
-### 6.3 Export Patterns
+### latest Export Patterns
 
 **Main Index File** (`src/react-hooks/index.mjs`):
 ```javascript
@@ -2505,7 +2505,7 @@ export { useGraphs } from './useGraphs.mjs';
 
 ---
 
-### 6.4 Index File Structure
+### latest Index File Structure
 
 **Barrel Pattern with Re-exports**:
 ```javascript
@@ -2562,7 +2562,7 @@ export * from './components/index.mjs';
 
 ## 7. Usage Examples
 
-### 7.1 Basic Setup
+### latest Basic Setup
 
 ```javascript
 import React from 'react';
@@ -2585,7 +2585,7 @@ root.render(
 
 ---
 
-### 7.2 Complete Application Example
+### latest Complete Application Example
 
 ```javascript
 import React, { useState, useCallback } from 'react';
@@ -2717,7 +2717,7 @@ export default PersonManager;
 
 ## 8. Next Steps
 
-### 8.1 Implementation Phases
+### latest Implementation Phases
 
 **Phase 1: Core Hooks** (Week 1-2)
 - Implement useKnowledgeEngine
@@ -2751,7 +2751,7 @@ export default PersonManager;
 
 ---
 
-### 8.2 Testing Strategy
+### latest Testing Strategy
 
 **Unit Tests**:
 - Test each hook in isolation
@@ -2779,7 +2779,7 @@ export default PersonManager;
 
 ---
 
-### 8.3 Documentation Requirements
+### latest Documentation Requirements
 
 **API Documentation**:
 - JSDoc for all hooks
@@ -2816,7 +2816,7 @@ The proposed architecture scales from simple prototypes to production applicatio
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-11-18
 **Maintainer**: UNRDF Architecture Team
 **License**: MIT

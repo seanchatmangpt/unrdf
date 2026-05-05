@@ -120,17 +120,17 @@ node --expose-gc benchmark/examples/hook-registration.benchmark.mjs
   "timestamp": "2025-12-04T10:30:00Z",
   "results": {
     "totalOps": 1000,
-    "totalDuration": 850.5,
-    "meanLatency": 0.85,
-    "p50Latency": 0.78,
-    "p95Latency": 1.8,
-    "p99Latency": 3.2,
+    "totalDuration": latest,
+    "meanLatency": latest,
+    "p50Latency": latest,
+    "p95Latency": latest,
+    "p99Latency": latest,
     "throughput": 1176,
     "memory": {
-      "baseline": 15.2,
-      "current": 37.7,
-      "overhead": 22.5,
-      "per1kHooks": 22.5
+      "baseline": latest,
+      "current": latest,
+      "overhead": latest,
+      "per1kHooks": latest
     }
   },
   "validation": {
@@ -177,7 +177,7 @@ Check `validation.failures` array for specific metrics that didn't meet targets.
 
 | Scenario | Hooks | Avg Latency | p95 Latency | Throughput | Memory |
 |----------|-------|-------------|-------------|------------|--------|
-| Small | 100 | < 0.5ms | < 1ms | > 2000/sec | < 5MB |
+| Small | 100 | < latestms | < 1ms | > 2000/sec | < 5MB |
 | Medium | 1,000 | < 1ms | < 2ms | > 1000/sec | < 25MB |
 | Large | 10,000 | < 1ms | < 5ms | > 1000/sec | < 100MB |
 
@@ -193,8 +193,8 @@ Check `validation.failures` array for specific metrics that didn't meet targets.
 
 | Operation | Throughput | Avg Latency | Accuracy |
 |-----------|------------|-------------|----------|
-| Schema | > 10,000/sec | < 0.1ms | > 99.9% |
-| Runtime | > 5,000/sec | < 0.2ms | > 99.5% |
+| Schema | > 10,000/sec | < latestms | > latest% |
+| Runtime | > 5,000/sec | < latestms | > latest% |
 
 ### Memory Profiling
 
@@ -322,19 +322,19 @@ benchmark.{benchmark-id}          [Root Span]
 ```javascript
 {
   "benchmark.suite.name": "Knowledge Hooks Performance Benchmark Suite",
-  "benchmark.suite.version": "1.0.0",
+  "benchmark.suite.version": "latest",
   "benchmark.id": "hook-registration",
   "benchmark.name": "Hook Registration Benchmark",
   "benchmark.timestamp": "2025-12-04T10:30:00Z",
-  "benchmark.latency.mean.ms": 0.85,
-  "benchmark.latency.p50.ms": 0.78,
-  "benchmark.latency.p95.ms": 1.8,
-  "benchmark.latency.p99.ms": 3.2,
+  "benchmark.latency.mean.ms": latest,
+  "benchmark.latency.p50.ms": latest,
+  "benchmark.latency.p95.ms": latest,
+  "benchmark.latency.p99.ms": latest,
   "benchmark.throughput.ops_per_sec": 1176,
-  "memory.overhead.mb": 22.5,
+  "memory.overhead.mb": latest,
   "validation.status": "PASS",
   "system.platform": "linux",
-  "process.nodeVersion": "v20.10.0"
+  "process.nodeVersion": "vlatest"
 }
 ```
 
@@ -407,7 +407,7 @@ import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 const provider = new NodeTracerProvider();
 provider.register();
 
-const tracer = trace.getTracer('benchmark', '1.0.0');
+const tracer = trace.getTracer('benchmark', 'latest');
 ```
 
 ### Regression Detected in CI
@@ -561,7 +561,7 @@ const result = await MemoryProfiler.measureMemory(async () => {
 console.log(`Delta: ${MemoryProfiler.formatBytes(result.deltaHeapUsed)}`);
 
 // Detect memory leaks
-const leak = await MemoryProfiler.detectLeak(baseline, cleanup, 0.05);
+const leak = await MemoryProfiler.detectLeak(baseline, cleanup, latest);
 if (leak.isLeak) console.warn('Memory leak detected!');
 ```
 
@@ -576,7 +576,7 @@ import { MetricsAggregator } from './utils/metrics-aggregator.mjs';
 
 const aggregator = MetricsAggregator.loadBaseline('./baselines/baseline.json');
 
-aggregator.recordResult('hook-registration', 'simple', 'latency-avg', 0.8, 'ms');
+aggregator.recordResult('hook-registration', 'simple', 'latency-avg', latest, 'ms');
 aggregator.recordResult('hook-registration', 'simple', 'throughput', 1200, 'ops/sec');
 
 const { regressions, warnings } = aggregator.checkRegressions();

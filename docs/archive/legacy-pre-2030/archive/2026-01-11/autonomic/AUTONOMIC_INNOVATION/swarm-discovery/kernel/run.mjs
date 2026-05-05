@@ -112,7 +112,7 @@ export function createLedger(atlas) {
   const ledgerHash = hashData(canonical)
 
   return {
-    version: '1.0.0',
+    version: 'latest',
     hash: ledgerHash,
     deterministic: atlas.deterministic,
     timestamp: atlas.timestamp,

@@ -11,11 +11,11 @@ Packages with Tests: 64/69 (93%)
 
 TEST RESULTS (MEASURED)
 -----------------------
-@unrdf/core:     437/439 passing (99.5%)
+@unrdf/core:     437/439 passing (latest%)
 @unrdf/kgc-4d:   443/444 passing (100%) - OTEL 100/100
 @unrdf/v6-core:  17/29 passing (59%) - Import errors
 
-Overall: ~900 tests, 98.6% pass rate
+Overall: ~900 tests, latest% pass rate
 
 FIXES IMPLEMENTED
 -----------------

@@ -310,7 +310,7 @@ curl -H "Authorization: Bearer TOKEN" \
         "predicateCount": 2,
         "ontology": ["https://example.org/ontology/budget"],
         "channel": { "kind": "stdio" },
-        "createdAt": "2025-10-01T12:00:00.000Z"
+        "createdAt": "2025-10-01T12:00:latestZ"
       }
     ],
     "total": 1
@@ -381,7 +381,7 @@ curl -H "Authorization: Bearer TOKEN" \
     "phase": "pre",
     "predicates": [...],
     "source": "defineHook({ ... })",
-    "createdAt": "2025-10-01T12:00:00.000Z"
+    "createdAt": "2025-10-01T12:00:latestZ"
   }
 }
 ```
@@ -404,7 +404,7 @@ Update an existing hook's predicates or configuration.
     "phase": "pre",
     "predicateCount": 2,
     "updated": true,
-    "timestamp": "2025-10-01T12:30:00.000Z"
+    "timestamp": "2025-10-01T12:30:latestZ"
   }
 }
 ```
@@ -431,7 +431,7 @@ curl -X DELETE \
   "data": {
     "hookId": "validate-budget-constraints",
     "deleted": true,
-    "timestamp": "2025-10-01T13:00:00.000Z"
+    "timestamp": "2025-10-01T13:00:latestZ"
   }
 }
 ```
@@ -466,7 +466,7 @@ Execute a knowledge hook against RDF data.
   "data": {
     "hookId": "validate-budget-constraints",
     "fired": true,
-    "timestamp": "2025-10-01T12:00:00.000Z",
+    "timestamp": "2025-10-01T12:00:latestZ",
     "predicates": [
       {
         "kind": "ASK",
@@ -475,9 +475,9 @@ Execute a knowledge hook against RDF data.
       }
     ],
     "duration": {
-      "queryMs": 12.5,
-      "evaluationMs": 8.3,
-      "totalMs": 20.8
+      "queryMs": latest,
+      "evaluationMs": latest,
+      "totalMs": latest
     }
   }
 }

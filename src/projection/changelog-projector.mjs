@@ -250,7 +250,7 @@ export class ChangelogProjector {
 
     return {
       projectName: metadata.projectName || 'UNRDF',
-      version: metadata.version || '1.0.0',
+      version: metadata.version || '[VERSION]',
       generatedAt: new Date().toISOString(),
       entries: sortedEntries,
       summary: {

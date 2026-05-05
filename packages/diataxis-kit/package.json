@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/diataxis-kit",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
   "type": "module",
   "exports": {

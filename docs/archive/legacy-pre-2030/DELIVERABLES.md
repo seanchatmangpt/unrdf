@@ -52,10 +52,10 @@ Discovered observable performance proxies and created measurement infrastructure
 ```
 Performance Measurements (CSV):
 operation,time_ms,memory_delta_bytes,result_size
-parse-nquads-100,0.110,19752,9491
-parse-nquads-500,0.088,61128,48291
-parse-nquads-1000,0.276,130528,96791
-query-select-all,0.060,2040,10
+parse-nquads-100,latest,19752,9491
+parse-nquads-500,latest,61128,48291
+parse-nquads-1000,latest,130528,96791
+query-select-all,latest,2040,10
 ...
 
 Budget Summary: 5 passed, 0 failed
@@ -183,9 +183,9 @@ Budget Summary: 5 passed, 0 failed
 
 | Operation                      | p50 Budget | p95 Budget | p99 Budget | Current (est) |
 | ------------------------------ | ---------- | ---------- | ---------- | ------------- |
-| Parse 1000 quads               | 20ms       | 50ms       | 100ms      | ~0.3ms ✅     |
+| Parse 1000 quads               | 20ms       | 50ms       | 100ms      | ~latestms ✅     |
 | Freeze universe (1000 quads)   | 30ms       | 100ms      | 200ms      | Unknown       |
-| SPARQL SELECT                  | 5ms        | 20ms       | 50ms       | ~0.1ms ✅     |
+| SPARQL SELECT                  | 5ms        | 20ms       | 50ms       | ~latestms ✅     |
 | Hook execution                 | 10ms       | 50ms       | 100ms      | Unknown       |
 | Reconstruct state (100 events) | 50ms       | 200ms      | 500ms      | Unknown       |
 

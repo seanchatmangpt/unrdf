@@ -12,7 +12,7 @@
 
 import { metrics as otelMetrics } from '@opentelemetry/api';
 
-const meter = otelMetrics.getMeter('sidecar-rate-limit', '1.0.0');
+const meter = otelMetrics.getMeter('sidecar-rate-limit', '[VERSION]');
 
 /**
  * Rate Limiting Metrics

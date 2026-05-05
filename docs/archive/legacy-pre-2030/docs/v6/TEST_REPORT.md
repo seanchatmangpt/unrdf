@@ -1,6 +1,6 @@
 # UNRDF Test Report
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest-alpha.1
 **Date**: 2025-12-27
 **Status**: ✅ Complete
 
@@ -375,7 +375,7 @@ Top deprecated APIs:
 
 ### Pre-Release Checklist (from MIGRATION_PLAN.md)
 
-- [x] All 47 packages at 6.0.0-alpha.1
+- [x] All 47 packages at latest-alpha.1
 - [x] 100% test pass rate (187/187 tests passing)
 - [ ] OTEL validation ≥80/100 (scheduled for beta)
 - [x] Zero direct N3 imports (verified via tests)
@@ -408,7 +408,7 @@ From CLAUDE.md:
 2. ✅ Migration paths validated
 3. ✅ Breaking changes documented
 4. → Run OTEL validation (next step)
-5. → Publish 6.0.0.0.0-alpha.1
+5. → Publish latest.0.0-alpha.1
 
 ### Next Phase (Beta)
 
@@ -440,7 +440,7 @@ From CLAUDE.md:
 
 **Recommendation**: ✅ **READY FOR ALPHA RELEASE**
 
-Next step: Run OTEL validation to achieve ≥80/100 score, then publish 6.0.0.0.0-alpha.1.
+Next step: Run OTEL validation to achieve ≥80/100 score, then publish latest.0.0-alpha.1.
 
 ---
 
@@ -465,6 +465,6 @@ timeout 10s node --test test/v6/*.test.mjs
 ---
 
 _Report generated: 2025-12-27_
-_Test suite version: 6.0.0-alpha.1_
+_Test suite version: latest-alpha.1_
 _Total tests: 187_
 _Pass rate: 100%_

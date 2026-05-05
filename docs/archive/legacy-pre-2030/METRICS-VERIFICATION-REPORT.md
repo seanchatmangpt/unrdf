@@ -24,7 +24,7 @@ After rigorous verification of all quantitative claims in the UNRDF thesis docum
 
 | Metric | Thesis Claim | Measurement | Discrepancy | Status |
 |--------|-------------|-------------|-------------|---------|
-| **Microframework LOC** | 13,027 | 1,856 | **7.0x inflation** | ❌ FAILED |
+| **Microframework LOC** | 13,027 | 1,856 | **latestx inflation** | ❌ FAILED |
 
 **Evidence**:
 ```bash
@@ -133,20 +133,20 @@ $ ls -1 /home/user/unrdf/packages | wc -l
 
 ---
 
-### 🚨 CRITICAL #5: Test Pass Rate (64.1% presented as success)
+### 🚨 CRITICAL #5: Test Pass Rate (latest% presented as success)
 
 | Metric | Claim | Reality | Status |
 |--------|-------|---------|---------|
-| **YAWL test pass rate** | "64.1%, production-ready" | 168/262 passing, 94/262 FAILING | ❌ FAILING |
+| **YAWL test pass rate** | "latest%, production-ready" | 168/262 passing, 94/262 FAILING | ❌ FAILING |
 
 **Evidence**:
-- Commit a37453f: "168/262 tests passing (64.1%)"
+- Commit a37453f: "168/262 tests passing (latest%)"
 - Cannot independently verify (vitest not installed)
 
 **Academic Standard**:
 - Production code requires ≥95% pass rate
 - Research prototype acceptable at 80-90%
-- **64.1% is a FAILING GRADE** in any context
+- **latest% is a FAILING GRADE** in any context
 
 **Claim Conflicts**:
 - THESIS-BIGBANG-80-20.md: "Zero defects"
@@ -228,7 +228,7 @@ $ git log --since="2024-01-01" --until="2024-12-31" --oneline | wc -l
 
 | Metric | Thesis Claim | Measurement | Accuracy | Status |
 |--------|-------------|-------------|----------|---------|
-| **YAWL total LOC** | 26,826 | 26,449 | **98.6%** | ✅ VERIFIED |
+| **YAWL total LOC** | 26,826 | 26,449 | **latest%** | ✅ VERIFIED |
 
 **Evidence**:
 ```bash
@@ -243,7 +243,7 @@ $ git show a37453f --stat | grep "files changed"
 - Commit a37453f: "26,826 insertions"
 - `THESIS-UPGRADE-SYNTHESIS-2025.md`, line 36: "YAWL (26,449 LOC)"
 
-**Reality**: Claim is **accurate within 1.4%**. Difference likely due to minor post-commit changes.
+**Reality**: Claim is **accurate within latest%**. Difference likely due to minor post-commit changes.
 
 ---
 
@@ -333,7 +333,7 @@ $ find /home/user/unrdf/packages/yawl/src -name "*.mjs" | xargs wc -l | tail -1
 | "Single-pass implementation" | Git commit only | ❓ Insufficient evidence |
 | "Zero rework" | No diff history | ❓ Cannot verify |
 | "3 hours implementation" | No time logs | ❓ Cannot verify |
-| "99.997% correctness" | Theoretical only | ❓ Not measured |
+| "latest% correctness" | Theoretical only | ❓ Not measured |
 
 **Cannot Verify**: A single large Git commit could be:
 - ✅ True single-pass implementation
@@ -364,15 +364,15 @@ $ find /home/user/unrdf/packages/yawl/src -name "*.mjs" | xargs wc -l | tail -1
 | Metric | Thesis Claim | Actual Measurement | Status | Correction |
 |--------|-------------|-------------------|---------|------------|
 | Total repository LOC | 192,332 | 269,806 | ❌ +40% | Update to 269,806 |
-| YAWL total LOC | 26,826 | 26,449 | ✅ -1.4% | Accept as accurate |
+| YAWL total LOC | 26,826 | 26,449 | ✅ -latest% | Accept as accurate |
 | YAWL src LOC | (implicit 26,826) | 19,618 | ⚠️ -27% | Clarify src vs total |
 | KGC-4D LOC (original) | 700 | 5,465 | ❌ 8x under | Update to 5,465 |
 | KGC-4D LOC (upgrade) | 5,465 | 5,465 | ✅ 100% | Already corrected |
 | Microframework LOC | 13,027 | 1,856 | ❌ 7x over | Update to 1,856 |
-| Microframework count | 20 | 3 | ❌ 6.7x over | Update to 3 |
+| Microframework count | 20 | 3 | ❌ latestx over | Update to 3 |
 | Package count | 32 | 20 | ❌ -37% | Update to 20 |
 | Workflow patterns | 14 (or 20) | 14 | ✅ 100% | Clarify as 14 |
-| Test pass rate | "Production ready" | 64.1% | ❌ FAILING | Fix or relabel |
+| Test pass rate | "Production ready" | latest% | ❌ FAILING | Fix or relabel |
 | Commits | (not claimed) | 332 | ✅ N/A | N/A |
 | Timeline | Nov 2024 | Dec 2025 | ❌ 13mo off | Fix dates |
 

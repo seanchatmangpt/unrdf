@@ -91,7 +91,7 @@ export class UniverseStore {
       metadata: {
         name: config.metadata.name,
         description: config.metadata.description,
-        version: config.metadata.version || '1.0.0',
+        version: config.metadata.version || '[VERSION]',
         created: new Date(),
         updated: new Date(),
       },

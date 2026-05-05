@@ -77,12 +77,12 @@ export default defineNuxtConfig({
     // Server port and host
     devServer: {
       port: 3000,
-      host: '0.0.0.0'
+      host: 'latest.0'
     },
 
     // Production server settings
     port: process.env.PORT || 3000,
-    host: process.env.HOST || '0.0.0.0',
+    host: process.env.HOST || 'latest.0',
 
     // Experimental features
     experimental: {
@@ -125,7 +125,7 @@ export default defineNuxtConfig({
 
     // Public config (exposed to client)
     public: {
-      apiVersion: '1.0.0',
+      apiVersion: 'latest',
       serviceName: 'KGC Sidecar'
     }
   },
@@ -172,7 +172,7 @@ export default defineNuxtConfig({
 
 # Server Configuration
 PORT=3000
-HOST=0.0.0.0
+HOST=latest.0
 NODE_ENV=production
 
 # OpenTelemetry Configuration
@@ -1350,7 +1350,7 @@ export async function initializeTelemetry(config: TelemetryConfig) {
   // Create resource
   const resource = new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
-    [SemanticResourceAttributes.SERVICE_VERSION]: '1.0.0'
+    [SemanticResourceAttributes.SERVICE_VERSION]: 'latest'
   })
 
   // Initialize SDK
@@ -1538,7 +1538,7 @@ sequenceDiagram
 ```json
 {
   "name": "kgc-sidecar",
-  "version": "1.0.0",
+  "version": "latest",
   "private": true,
   "type": "module",
   "scripts": {
@@ -1551,25 +1551,25 @@ sequenceDiagram
     "test": "vitest"
   },
   "dependencies": {
-    "nuxt": "^3.13.0",
-    "h3": "^1.12.0",
-    "zod": "^3.23.8",
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/sdk-node": "^0.52.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.52.1",
-    "@opentelemetry/exporter-metrics-otlp-http": "^0.52.1",
-    "@opentelemetry/sdk-metrics": "^1.25.1",
-    "@opentelemetry/resources": "^1.25.1",
-    "@opentelemetry/semantic-conventions": "^1.25.1",
-    "@opentelemetry/instrumentation-http": "^0.52.1",
-    "@opentelemetry/auto-instrumentations-node": "^0.47.1",
-    "@rdfjs/types": "^1.1.0"
+    "nuxt": "^latest",
+    "h3": "^latest",
+    "zod": "^latest",
+    "@opentelemetry/api": "^latest",
+    "@opentelemetry/sdk-node": "^latest",
+    "@opentelemetry/exporter-trace-otlp-http": "^latest",
+    "@opentelemetry/exporter-metrics-otlp-http": "^latest",
+    "@opentelemetry/sdk-metrics": "^latest",
+    "@opentelemetry/resources": "^latest",
+    "@opentelemetry/semantic-conventions": "^latest",
+    "@opentelemetry/instrumentation-http": "^latest",
+    "@opentelemetry/auto-instrumentations-node": "^latest",
+    "@rdfjs/types": "^latest"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5",
-    "eslint": "^9.8.0"
+    "@types/node": "^latest",
+    "typescript": "^latest",
+    "vitest": "^latest",
+    "eslint": "^latest"
   }
 }
 ```

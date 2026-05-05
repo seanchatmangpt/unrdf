@@ -11,7 +11,7 @@
     "fingerprint": "3b097629db1de5317cb38c90c40af6052753eb191d1a455f19090494f3bc394e",
     "readmeHeadings": [
       "Overview",
-      "Deployment Profiles (NEW in v26.4.8)",
+      "Deployment Profiles (NEW in [VERSION])",
       "Architecture",
       "Components",
       "Usage",
@@ -113,5 +113,5 @@
       "title": "Getting Started with @pictl/kernel"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

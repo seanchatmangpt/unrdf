@@ -341,8 +341,8 @@ console.log(`Migration will introduce ${newResult.violations.length - oldResult.
 
 | Operation | Time | Rate |
 |-----------|------|------|
-| Profile compilation | 0.04ms | 25,000/sec |
-| File validation | 0.47ms | 2,100/sec |
+| Profile compilation | latestms | 25,000/sec |
+| File validation | latestms | 2,100/sec |
 | 1000 compilations | 41ms | - |
 | 100 validations | 47ms | - |
 
@@ -406,7 +406,7 @@ Agent 6 - Conventions Profile Designer
 **Tests:** 23/23 pass ✅
 **Performance:** <1ms compilation, <5ms validation ✅
 **Determinism:** 100/100 iterations identical ✅
-**Dependencies:** acorn ^8.12.1, zod ^3.23.8 ✅
+**Dependencies:** acorn ^latest, zod ^latest ✅
 **Documentation:** Complete ✅
 
 ---

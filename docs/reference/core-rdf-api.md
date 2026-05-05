@@ -1,6 +1,6 @@
 # Core RDF API Reference
 
-**Version**: v4.1.1
+**Version**: latest
 **Package**: `unrdf`
 **Module**: `knowledge-engine`
 
@@ -52,7 +52,7 @@ console.log('Parsed', store.size, 'quads');
 
 **See Also**: [toTurtle](#toturtle), [parseJsonLd](#parsejsonld)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -91,7 +91,7 @@ console.log(turtle);
 
 **See Also**: [parseTurtle](#parseturtle), [toNQuads](#tonquads)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -121,7 +121,7 @@ console.log(nquads);
 
 **See Also**: [toTurtle](#toturtle), [parseTurtle](#parseturtle)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -158,7 +158,7 @@ console.log('Parsed', store.size, 'quads');
 
 **See Also**: [toJsonLd](#tojsonld), [parseTurtle](#parseturtle)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -193,7 +193,7 @@ console.log(JSON.stringify(jsonld, null, 2));
 
 **See Also**: [parseJsonLd](#parsejsonld), [toTurtle](#toturtle)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -241,7 +241,7 @@ console.log(results); // [{ s: '...', o: '...' }, ...]
 
 **See Also**: [select](#select), [ask](#ask), [construct](#construct), [describe](#describe), [update](#update)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -279,7 +279,7 @@ console.log(bindings);
 
 **See Also**: [query](#query), [ask](#ask)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -315,7 +315,7 @@ console.log('Store has data:', hasData);
 
 **See Also**: [query](#query), [select](#select)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -353,7 +353,7 @@ console.log('Constructed', constructed.size, 'quads');
 
 **See Also**: [query](#query), [describe](#describe)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -387,7 +387,7 @@ console.log('Described', described.size, 'quads');
 
 **See Also**: [query](#query), [construct](#construct)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -423,7 +423,7 @@ console.log('Updated store has', updated.size, 'quads');
 
 **See Also**: [query](#query)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -477,7 +477,7 @@ console.log('Results:', report.results);
 
 **See Also**: [validateShaclMultiple](#validateshaclmultiple), [formatValidationReport](#formatvalidationreport)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -520,7 +520,7 @@ console.log('Shape-specific results:', report.shapeResults);
 
 **See Also**: [validateShacl](#validateshacl)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -556,7 +556,7 @@ console.log(formatted);
 
 **See Also**: [validateShacl](#validateshacl), [hasValidationErrors](#hasvalidationerrors)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -583,7 +583,7 @@ if (hasValidationErrors(report)) {
 
 **See Also**: [validateShacl](#validateshacl), [getValidationErrors](#getvalidationerrors)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -612,7 +612,7 @@ errors.forEach(error => {
 
 **See Also**: [validateShacl](#validateshacl), [getValidationWarnings](#getvalidationwarnings)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -641,7 +641,7 @@ warnings.forEach(warning => {
 
 **See Also**: [validateShacl](#validateshacl), [getValidationErrors](#getvalidationerrors)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -688,7 +688,7 @@ console.log('Reasoned quads:', reasonedStore.size);
 
 **See Also**: [reasonMultiple](#reasonmultiple), [extractInferred](#extractinferred)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -725,7 +725,7 @@ console.log('Applied', rulesList.length, 'rule sets');
 
 **See Also**: [reason](#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -756,7 +756,7 @@ console.log('Inferred', inferred.size, 'new quads');
 
 **See Also**: [reason](#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -783,7 +783,7 @@ console.log('Reasoning stats:', stats);
 
 **See Also**: [reason](#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -816,7 +816,7 @@ console.log('Rules valid:', valid);
 
 **See Also**: [reason](#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -839,7 +839,7 @@ const result = await session.reason(store);
 
 **See Also**: [reason](#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -877,7 +877,7 @@ console.log('Canonical N-Quads:', canonical);
 
 **See Also**: [isIsomorphic](#isisomorphic), [getCanonicalHash](#getcanonicalhash)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -914,7 +914,7 @@ console.log('Stores are isomorphic:', isomorphic);
 
 **See Also**: [canonicalize](#canonicalize)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -946,7 +946,7 @@ console.log('Canonical hash:', hash);
 
 **See Also**: [canonicalize](#canonicalize), [isIsomorphic](#isisomorphic)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -974,7 +974,7 @@ console.log('Found', groups.length, 'isomorphism classes');
 
 **See Also**: [isIsomorphic](#isisomorphic), [findDuplicates](#findduplicates)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1002,7 +1002,7 @@ console.log('Found', duplicates.length, 'sets of duplicates');
 
 **See Also**: [isIsomorphic](#isisomorphic), [groupByIsomorphism](#groupbyisomorphism)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1027,7 +1027,7 @@ console.log('Canonicalization stats:', stats);
 
 **See Also**: [canonicalize](#canonicalize)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1050,7 +1050,7 @@ const canonical2 = await session.canonicalize(store2);
 
 **See Also**: [canonicalize](#canonicalize)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1071,7 +1071,7 @@ const store = new Store();
 
 **External Documentation**: [N3.js Store](https://github.com/rdfjs/N3.js#store)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1088,7 +1088,7 @@ const parser = new Parser();
 
 **External Documentation**: [N3.js Parser](https://github.com/rdfjs/N3.js#parsing)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1105,7 +1105,7 @@ const writer = new Writer({ format: 'Turtle' });
 
 **External Documentation**: [N3.js Writer](https://github.com/rdfjs/N3.js#writing)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -1127,7 +1127,7 @@ const triple = quad(
 
 **External Documentation**: [RDF/JS DataFactory](https://rdf.js.org/data-model-spec/#datafactory-interface)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 

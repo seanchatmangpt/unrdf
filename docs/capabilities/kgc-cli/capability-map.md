@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/kgc-cli
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -28,8 +28,8 @@ KGC CLI - Deterministic extension registry for ~40 workspace packages
 
 ### Dependencies
 
-- `citty`: ^0.1.6
-- `zod`: ^3.23.0
+- `citty`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

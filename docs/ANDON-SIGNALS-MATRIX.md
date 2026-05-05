@@ -141,7 +141,7 @@ Criticality: Low (warning only)
 **Thresholds**:
 ```
 GREEN  = ≥ threshold AND no regression
-YELLOW = Below threshold OR regression 0.5-2%
+YELLOW = Below threshold OR regression latest%
 RED    = Well below threshold (<70%) OR regression >2%
 ```
 

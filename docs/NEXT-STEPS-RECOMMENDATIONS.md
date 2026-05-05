@@ -1,29 +1,29 @@
 # Next Steps & Recommendations - Phase 3B P1
 
 **Date**: 2025-12-04
-**Current Status**: 61.9% pass rate (13/21 examples)
+**Current Status**: latest% pass rate (13/21 examples)
 **Target**: 67% pass rate (14/21 examples)
-**Gap**: -1 example (5.1%)
+**Gap**: -1 example (latest%)
 
 ---
 
 ## Executive Decision Required
 
-We are **5.1% below target** (13/21 vs 14/21 examples passing). However, raw pass rate is a poor quality metric.
+We are **latest% below target** (13/21 vs 14/21 examples passing). However, raw pass rate is a poor quality metric.
 
 ### Three Paths Forward
 
 #### Path A: Hit 67% Target (Quick Fix)
 - **Time**: 1-2 hours
 - **Action**: Fix easiest blocker (server hook trigger)
-- **Result**: 66.7% pass rate (14/21)
+- **Result**: latest% pass rate (14/21)
 - **Status**: ✅ Meets target
 - **Quality**: ⚠️ Leaves critical features broken
 
 #### Path B: Fix User-Facing Examples (Recommended)
-- **Time**: 9-13 hours (1.5-2 days)
+- **Time**: 9-13 hours (latest days)
 - **Action**: Phase 1 + Phase 2 from detailed blockers
-- **Result**: 90.5% pass rate (19/21)
+- **Result**: latest% pass rate (19/21)
 - **Status**: ✅ Exceeds target significantly
 - **Quality**: ✅ Production-ready demos
 
@@ -53,7 +53,7 @@ Path A (hitting 67% by fixing 1 example) is a **metrics game**:
 Path B focuses on **user experience quality**:
 - ✅ Full-stack example works (server + web app)
 - ✅ Streaming features work (change feeds + real-time sync)
-- ✅ 90.5% pass rate (far exceeds 67% target)
+- ✅ latest% pass rate (far exceeds 67% target)
 - ✅ Professional release quality
 - ⚠️ 2 edge cases remain (indexed-db, sparql-rules)
 
@@ -63,21 +63,21 @@ Path B focuses on **user experience quality**:
 
 Path C (100%) is ideal but has diminishing returns:
 - ✅ Zero defects
-- ❌ Extra 5-8 hours for 2 edge cases (9.5% improvement)
+- ❌ Extra 5-8 hours for 2 edge cases (latest% improvement)
 - ❌ Delays release by 1 day
 - ⚠️ Perfectionism vs pragmatism tradeoff
 
-**Decision**: Path C is better for v1.0 GA, but Path B is sufficient for current milestone.
+**Decision**: Path C is better for vlatest GA, but Path B is sufficient for current milestone.
 
 ---
 
 ## Path B: Detailed Implementation Plan
 
-### Phase 1: Quick Wins (1.5 hours)
+### Phase 1: Quick Wins (latest hours)
 
-**Goal**: Reach 76.2% pass rate (16/21) by fixing 3 easy issues.
+**Goal**: Reach latest% pass rate (16/21) by fixing 3 easy issues.
 
-#### Task 1.1: Fix Server Hook Trigger Format (30 min)
+#### Task latest: Fix Server Hook Trigger Format (30 min)
 ```bash
 cd /Users/sac/unrdf/playground/full-stack-example/apps/server
 
@@ -98,7 +98,7 @@ pnpm test  # Should pass all 34 tests
 cd apps/server && pnpm test
 ```
 
-#### Task 1.2: Fix Offline Support Error Handling (30 min)
+#### Task latest: Fix Offline Support Error Handling (30 min)
 ```bash
 cd /Users/sac/unrdf/packages/browser/examples/offline-support
 
@@ -117,7 +117,7 @@ pnpm test  # Should pass all 18 tests
 cd packages/browser/examples/offline-support && pnpm test
 ```
 
-#### Task 1.3: Fix Query Integration Result Clearing (30 min)
+#### Task latest: Fix Query Integration Result Clearing (30 min)
 ```bash
 cd /Users/sac/unrdf/packages/composables/examples/query-integration
 
@@ -140,16 +140,16 @@ cd packages/composables/examples/query-integration && pnpm test
 cd /Users/sac/unrdf
 node scripts/validate-all-examples.mjs 2>&1 | tee phase1-validation.log
 
-# Expected: 16/21 = 76.2% pass rate ✅
+# Expected: 16/21 = latest% pass rate ✅
 ```
 
 ---
 
 ### Phase 2: Critical Features (8-11 hours)
 
-**Goal**: Reach 90.5% pass rate (19/21) by fixing streaming + web app.
+**Goal**: Reach latest% pass rate (19/21) by fixing streaming + web app.
 
-#### Task 2.1: Fix Change Feeds Methods (2-3 hours)
+#### Task latest: Fix Change Feeds Methods (2-3 hours)
 
 **Action**: Implement missing `subscribe()` and `getHistory()` methods.
 
@@ -224,7 +224,7 @@ cd packages/streaming/examples/change-feeds && pnpm test
 # Should pass all 9 tests
 ```
 
-#### Task 2.2: Fix Real-Time Sync Validation (1-2 hours)
+#### Task latest: Fix Real-Time Sync Validation (1-2 hours)
 
 **Action**: Fix parameter order in `subscribe()` method.
 
@@ -265,9 +265,9 @@ cd packages/streaming/examples/real-time-sync && pnpm test
 # Should pass all 11 tests
 ```
 
-#### Task 2.3: Fix Web App Integration (4-6 hours)
+#### Task latest: Fix Web App Integration (4-6 hours)
 
-**Sub-task 2.3a: Fix Server URL** (1 hour)
+**Sub-task latesta: Fix Server URL** (1 hour)
 
 ```bash
 cd /Users/sac/unrdf/playground/full-stack-example/apps/web
@@ -292,7 +292,7 @@ const loadQuads = async () => {
 }
 ```
 
-**Sub-task 2.3b: Add Missing Methods** (1 hour)
+**Sub-task latestb: Add Missing Methods** (1 hour)
 
 ```javascript
 // In src/App.vue setup()
@@ -306,7 +306,7 @@ return {
 };
 ```
 
-**Sub-task 2.3c: Fix DOM Selectors** (2-4 hours)
+**Sub-task latestc: Fix DOM Selectors** (2-4 hours)
 
 ```javascript
 // In test/integration.test.mjs
@@ -339,7 +339,7 @@ cd playground/full-stack-example/apps/web && pnpm test
 cd /Users/sac/unrdf
 node scripts/validate-all-examples.mjs 2>&1 | tee phase2-validation.log
 
-# Expected: 19/21 = 90.5% pass rate ✅
+# Expected: 19/21 = latest% pass rate ✅
 ```
 
 ---
@@ -372,34 +372,34 @@ node scripts/validate-all-examples.mjs comprehensive 2>&1 | tee validation-$(dat
 grep "VALIDATION SUMMARY" -A 20 validation-*.log
 
 # Expected after Phase 1:
-# Pass rate: 76.2% (16/21)
+# Pass rate: latest% (16/21)
 
 # Expected after Phase 2:
-# Pass rate: 90.5% (19/21)
+# Pass rate: latest% (19/21)
 ```
 
 ### Step 4: Git Commit Pattern
 ```bash
 # After Phase 1
 git add -A
-git commit -m "fix(examples): Phase 1 quick wins - 76.2% pass rate
+git commit -m "fix(examples): Phase 1 quick wins - latest% pass rate
 
 - Fix server hook trigger format (colon → dash)
 - Fix offline-support error handling
 - Fix query-integration result clearing
 
-Pass rate: 16/21 (76.2%)
+Pass rate: 16/21 (latest%)
 Tests: 3 examples fixed, 0 regressions"
 
 # After Phase 2
 git add -A
-git commit -m "fix(examples): Phase 2 critical features - 90.5% pass rate
+git commit -m "fix(examples): Phase 2 critical features - latest% pass rate
 
 - Implement change-feeds subscribe/getHistory methods
 - Fix real-time-sync parameter order (Zod validation)
 - Fix web app server URL, add missing methods, fix DOM selectors
 
-Pass rate: 19/21 (90.5%)
+Pass rate: 19/21 (latest%)
 Tests: 6 examples fixed, 0 regressions"
 
 git push origin main
@@ -409,14 +409,14 @@ git push origin main
 
 ## Success Criteria
 
-### Phase 1 Success (Target: 1.5 hours)
-- ✅ 16/21 examples passing (76.2%)
+### Phase 1 Success (Target: latest hours)
+- ✅ 16/21 examples passing (latest%)
 - ✅ All quick wins completed
 - ✅ No regressions in existing passing examples
-- ✅ Exceeds 67% target by 9.2%
+- ✅ Exceeds 67% target by latest%
 
 ### Phase 2 Success (Target: 8-11 hours)
-- ✅ 19/21 examples passing (90.5%)
+- ✅ 19/21 examples passing (latest%)
 - ✅ Full-stack example fully working
 - ✅ Streaming package fully functional
 - ✅ Production-ready user demos
@@ -476,16 +476,16 @@ git push origin main
 - Web app server integration
 
 ### Metrics
-- Pass rate: 90.5% (19/21)
+- Pass rate: latest% (19/21)
 - Tests passing: 385/393 (98%)
 - Examples fixed: 6
-- Time invested: 9.5 hours
+- Time invested: latest hours
 ```
 
 ### 2. Tag Release
 ```bash
-git tag -a v0.9.0-phase3b-p1 -m "Phase 3B P1: 90.5% example pass rate"
-git push origin v0.9.0-phase3b-p1
+git tag -a vlatest-p1 -m "Phase 3B P1: latest% example pass rate"
+git push origin vlatest-p1
 ```
 
 ### 3. Generate Final Report
@@ -500,7 +500,7 @@ mv *validation*.log reports/phase3b-p1/
 
 ### 4. Communicate Results
 - Update project status board
-- Notify stakeholders of 90.5% pass rate
+- Notify stakeholders of latest% pass rate
 - Document remaining 2 edge cases for future work
 - Celebrate the win! 🎉
 
@@ -527,7 +527,7 @@ If pursuing 100% pass rate later:
 **Question**: Which path should we take?
 
 - [ ] **Path A**: Quick 67% target (1-2 hours) - Not recommended
-- [ ] **Path B**: User-facing 90.5% (8-13 hours) - **RECOMMENDED**
+- [ ] **Path B**: User-facing latest% (8-13 hours) - **RECOMMENDED**
 - [ ] **Path C**: Zero-defect 100% (14-20 hours) - Future consideration
 
 **If Path B approved**: Proceed with Phase 1 immediately.
@@ -547,4 +547,4 @@ The **67% target was arbitrary**. What matters is:
 
 The alternative (Path A: hit 67% by fixing 1 example) would be a **Pyrrhic victory** - meeting a metric while leaving critical features broken.
 
-**Recommendation**: Execute Path B (Phases 1+2) for 90.5% pass rate and production-ready quality.
+**Recommendation**: Execute Path B (Phases 1+2) for latest% pass rate and production-ready quality.

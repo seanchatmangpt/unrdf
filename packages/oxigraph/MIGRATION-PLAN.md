@@ -145,9 +145,9 @@ export class BrowserQueryExecutor {
 
 **Remove:**
 ```json
-"@comunica/query-sparql": "^3.0.0",
-"rdf-ext": "^2.0.0",
-"rdf-validate-shacl": "^0.6.5"  // SHACL validation (can be separate)
+"@comunica/query-sparql": "^[VERSION]",
+"rdf-ext": "^[VERSION]",
+"rdf-validate-shacl": "^[VERSION]"  // SHACL validation (can be separate)
 ```
 
 **Add:**
@@ -294,7 +294,7 @@ If Oxigraph doesn't work out:
    - Easy rollback
 
 2. **Semantic versioning**
-   - Version bump: 5.0.0 → 5.1.0
+   - Version bump: [VERSION] → [VERSION]
    - Mark Comunica as "legacy"
    - Maintain support for 2 releases
 
@@ -368,7 +368,7 @@ If Oxigraph doesn't work out:
 - [ ] OTEL integration testing
 - [ ] Browser testing (WASM)
 - [ ] Cleanup and optimization
-- [ ] Release: v5.1.0-oxigraph
+- [ ] Release: [VERSION]-oxigraph
 
 ---
 

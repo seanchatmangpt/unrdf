@@ -15,7 +15,7 @@
    Gap: 85% missing
    
 2. SECURITY VULNERABILITIES  
-   7 exploits found (CVSS up to 9.8)
+   7 exploits found (CVSS up to latest)
    - Handler injection RCE
    - Information disclosure
    - XSS vulnerabilities
@@ -36,10 +36,10 @@
 ✅ WHAT ACTUALLY WORKS
 
 • YAWL Performance: 95/100
-  - 0.539ms startup (185x under target)
+  - latestms startup (185x under target)
   - 5,372 cases/second throughput
   - No memory leaks
-  - KGC-4D 6.3% FASTER than without
+  - KGC-4D latest% FASTER than without
   
 • Standalone Demo
   - Executes perfectly
@@ -110,7 +110,7 @@ Test Suites Created:
 
 Claims That SURVIVE Scrutiny:
   ✅ "YAWL achieves 5,372 cases/second" (MEASURED)
-  ✅ "Startup time 0.539ms" (MEASURED)
+  ✅ "Startup time latestms" (MEASURED)
   ✅ "No memory leaks" (GC traces prove it)
   ✅ "Standalone demo works" (EXECUTED)
 

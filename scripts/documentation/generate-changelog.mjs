@@ -196,7 +196,7 @@ function updateChangelog(newContent) {
     existingContent = existingContent.replace(/^# Changelog\n\n/, '');
   }
 
-  const fullChangelog = `# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n${newContent}${existingContent}`;
+  const fullChangelog = `# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/latest/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/latest.html).\n\n${newContent}${existingContent}`;
 
   writeFileSync(changelogPath, fullChangelog);
 }
@@ -222,7 +222,7 @@ function getNextVersion(categories) {
     }
   } catch (error) {
     console.error('Failed to determine version:', error.message);
-    return '0.0.1';
+    return 'latest';
   }
 }
 

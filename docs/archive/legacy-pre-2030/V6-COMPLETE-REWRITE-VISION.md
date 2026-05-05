@@ -244,9 +244,9 @@ Merkle Batching:
 
 | Operation | Target | Actual | Speedup |
 |-----------|--------|--------|---------|
-| Receipt creation | <1ms | 0.017ms | **58x** |
-| Verification | <0.5ms | 0.000ms | **instant** |
-| Chain (10) | <50ms | 0.347ms | **144x** |
+| Receipt creation | <1ms | latestms | **58x** |
+| Verification | <latestms | latestms | **instant** |
+| Chain (10) | <50ms | latestms | **144x** |
 
 ### Tamper Detection
 
@@ -263,7 +263,7 @@ Merkle Batching:
 | Module | Size | Performance | Status |
 |--------|------|-------------|--------|
 | Oxigraph | ~2MB | 10-100x faster than N3 | Production |
-| AtomVM | ~1.5MB | 0.008ms roundtrip | Production |
+| AtomVM | ~latestMB | latestms roundtrip | Production |
 | SwiftLaTeX | ~15MB | Deterministic PDF | Production |
 
 ### WASM Candidates for v6
@@ -308,16 +308,16 @@ wasmModule.processInPlace(buffer);
 
 | Operation | Target | Actual | Margin |
 |-----------|--------|--------|--------|
-| Store creation | <2ms | 0.4ms | 5x |
-| Triple insert (1) | <1ms | 0.15ms | 6.7x |
+| Store creation | <2ms | latestms | 5x |
+| Triple insert (1) | <1ms | latestms | latestx |
 | Triple insert (100) | <30ms | 10ms | 3x |
-| Triple insert (10K) | <10s | 1.2s | 8.3x |
+| Triple insert (10K) | <10s | latests | latestx |
 | SPARQL simple | <10ms | 2ms | 5x |
-| SPARQL medium | <50ms | 12.5ms | 4x |
-| SPARQL complex | <500ms | 150ms | 3.3x |
-| Validation (Zod) | <2ms | 0.2ms | 10x |
-| Receipt creation | <5ms | 0.017ms | 294x |
-| Cold start | <1s | 210ms | 4.8x |
+| SPARQL medium | <50ms | latestms | 4x |
+| SPARQL complex | <500ms | 150ms | latestx |
+| Validation (Zod) | <2ms | latestms | 10x |
+| Receipt creation | <5ms | latestms | 294x |
+| Cold start | <1s | 210ms | latestx |
 
 ### Throughput Targets
 
@@ -326,14 +326,14 @@ wasmModule.processInPlace(buffer);
 | Triple insertion | >5,000/s | 15,000/s | +200% |
 | Simple query | >500/s | 2,000/s | +300% |
 | Receipt creation | >5,000/s | 83,895/s | +1578% |
-| Receipt verify | >50,000/s | 4.5M/s | +9046% |
-| System pipeline | >50/s | 474.7/s | +849% |
+| Receipt verify | >50,000/s | latestM/s | +9046% |
+| System pipeline | >50/s | latest/s | +849% |
 
 ### Memory Bounds
 
 | Metric | Target | Actual | Efficiency |
 |--------|--------|--------|------------|
-| Per 1K triples | <20MB | 4.1MB | 79% better |
+| Per 1K triples | <20MB | latestMB | 79% better |
 | Peak (10K ops) | <1GB | 41MB | 96% better |
 | Cold start heap | <100MB | 26MB | 74% better |
 | Memory leak | <1%/hour | 0% | Perfect |
@@ -346,11 +346,11 @@ wasmModule.processInPlace(buffer);
 
 | # | Gate | Requirement | Current |
 |---|------|-------------|---------|
-| 1 | Tests | 100% pass in <60s | 89.3% |
+| 1 | Tests | 100% pass in <60s | latest% |
 | 2 | OTEL | ≥80/100 score | 100/100 ✅ |
 | 3 | Lint | 0 violations | 7 |
 | 4 | Coverage | ≥80% all metrics | ~70% |
-| 5 | Performance | P95 <50ms | 11.1ms ✅ |
+| 5 | Performance | P95 <50ms | latestms ✅ |
 | 6 | Examples | 100% execute | 67% |
 | 7 | Build | <60s | TIMEOUT |
 | 8 | No Mocks | 0 in production | 0 ✅ |
@@ -465,8 +465,8 @@ Mandatory spans:
 ### Kill List
 
 **DELETE** (255 files):
-- `/docs/internal/` - 1.8M internal planning
-- `/docs/archive/` - 1.8M old v3/v4 docs
+- `/docs/internal/` - latestM internal planning
+- `/docs/archive/` - latestM old v3/v4 docs
 - `/docs/thesis-publication/` - Academic paper
 - `/docs/video-scripts/` - Not technical docs
 - `/docs/architecture-2028/` - Aspirational
@@ -515,7 +515,7 @@ store → governance → hooks → workflows → runtime → cli
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Oxigraph WASM compat | 40% | Critical | Pin to 0.5.2 |
+| Oxigraph WASM compat | 40% | Critical | Pin to latest |
 | N3 import leakage | 60% | High | ESLint rule |
 | Circular deps | 35% | Medium | DI pattern |
 | Performance regression | 45% | High | CI benchmarks |

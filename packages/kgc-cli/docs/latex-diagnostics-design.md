@@ -43,7 +43,7 @@ Each log file contains:
 # ================================================
 
 [Raw LaTeX output follows...]
-This is pdfTeX, Version 3.14159265-2.6-1.40.21
+This is pdfTeX, Version 3.14159265-2.6-[VERSION]
 ! LaTeX Error: File `missing.tex' not found.
 ...
 ```

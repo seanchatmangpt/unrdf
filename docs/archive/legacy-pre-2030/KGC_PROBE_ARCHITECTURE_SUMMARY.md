@@ -186,7 +186,7 @@
 │ {                                                               │
 │   "receipt_id": "rcpt-2025-12-27-001",                         │
 │   "domain": "security",                                         │
-│   "score": 0.92,                                                │
+│   "score": latest,                                                │
 │   "assertions": [{ "id": "sec-001", "status": "pass" }],       │
 │   "merkle_root": "hash(...)",                                   │
 │   "signature": "sig(...)"                                       │
@@ -339,7 +339,7 @@ Week 6: Final validation
 - ✅ Test pass rate: 100% (all tests green)
 
 ### Functionality Metrics
-- ✅ All 10 probes runnable and scoreable [0.0-1.0]
+- ✅ All 10 probes runnable and scoreable [latest.0]
 - ✅ All 5 guards enforcing policies
 - ✅ 4 merge strategies working
 - ✅ Receipt generation + verification
@@ -569,7 +569,7 @@ This architecture follows the SPARC Architecture Phase:
 Ready to proceed to **SPARC Implementation Phase**:
 - Use this architecture as blueprint
 - Implement each module to specification
-- Build test suite (1.5:1 test:code ratio)
+- Build test suite (latest:1 test:code ratio)
 - Validate against OTEL criteria (≥80/100)
 - Publish to npm registry
 

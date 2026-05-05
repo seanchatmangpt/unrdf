@@ -24,7 +24,7 @@
       "INDEX.md",
       "PACKAGE_IMPLEMENTATION_HISTORY.md",
       "PROCESS_MINING_AUDIT.md",
-      "PUBLISH_READINESS_FINAL_v26.4.16.md",
+      "PUBLISH_READINESS_FINAL_[VERSION].md",
       "QUICKSTART.md",
       "README.md",
       "REAL-BENCHMARK-RESULTS.md",
@@ -88,9 +88,9 @@
       "What is pictl?",
       "🚀 Key Capabilities",
       "📦 Installation",
-      "🎯 What's New in v26.4.8",
-      "🎯 What's New in v26.4.15",
-      "🎯 What's New in v26.4.5",
+      "🎯 What's New in [VERSION]",
+      "🎯 What's New in [VERSION]",
+      "🎯 What's New in [VERSION]",
       "⚡ Quick Start",
       "📚 Documentation",
       "📊 Performance",
@@ -207,5 +207,5 @@
       "title": "Getting Started with pictl-monorepo"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

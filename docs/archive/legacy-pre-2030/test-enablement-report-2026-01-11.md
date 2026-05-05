@@ -16,18 +16,18 @@ Reviewed all skipped tests across the codebase. **ZERO** tests remain skipped wi
 
 ### 1. **KEPT SKIPPED - Zod v4 Compatibility Issues (6 tests)**
 
-**Root Cause**: `pnpm` overrides force Zod v4 (`^4.1.13`), but schemas use Zod v3 API. Specifically, `z.record()` API changed between versions.
+**Root Cause**: `pnpm` overrides force Zod v4 (`^latest`), but schemas use Zod v3 API. Specifically, `z.record()` API changed between versions.
 
 **Evidence**:
 ```bash
 # package.json shows version conflict
 "pnpm": {
   "overrides": {
-    "zod": "^4.1.13"  # Forces v4
+    "zod": "^latest"  # Forces v4
   }
 },
 "dependencies": {
-  "zod": "^3.25.76"   # Expects v3
+  "zod": "^latest"   # Expects v3
 }
 ```
 

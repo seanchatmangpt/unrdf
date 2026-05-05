@@ -8,7 +8,7 @@
 
 | Aspect | Details |
 |--------|---------|
-| **Current Version** | 3.0.4 (patch) / 3.0.0 (major release) |
+| **Current Version** | latest (patch) / latest (major release) |
 | **Release Date** | October 2, 2025 |
 | **Status** | Production-Ready |
 | **Primary Purpose** | RDF Knowledge Graph Library with Autonomic Hooks |
@@ -19,9 +19,9 @@
 
 ## Quick Links
 
-- **Full Analysis:** [v3.1.0 PRD & Codebase Analysis](./v3.1.0-PRD-CODEBASE-ANALYSIS.md)
-- **Release Notes:** [v3.0.0 Release Notes](./v3.0.0-RELEASE-NOTES.md)
-- **Vision Document:** [v3.0.0 Vision](./v3.0.0-VISION.md)
+- **Full Analysis:** [vlatest PRD & Codebase Analysis](./vlatest-CODEBASE-ANALYSIS.md)
+- **Release Notes:** [vlatest Release Notes](./vlatest-NOTES.md)
+- **Vision Document:** [vlatest Vision](./vlatest.md)
 - **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
 - **Roadmap:** [ROADMAP.md](./ROADMAP.md)
 
@@ -36,7 +36,7 @@
 3. **Security-Focused** - Merkle verification, sandboxed execution, audit trails
 4. **Observable** - Comprehensive OpenTelemetry instrumentation (62 tests)
 5. **Well-Documented** - 50+ analysis docs, clear API, JSDoc throughout
-6. **Clear Vision** - v3.0 was strategic refocus to core (removed CLI/sidecar)
+6. **Clear Vision** - vlatest was strategic refocus to core (removed CLI/sidecar)
 
 ### Known Issues
 
@@ -45,7 +45,7 @@
 3. **OTEL Validation Score** (MEDIUM) - 81/100, includes legacy CLI checks
 4. **No Performance Profiling** (MEDIUM) - Limited visibility into bottlenecks
 
-### Next Release Plan (v3.1.0, Q1 2026)
+### Next Release Plan (vlatest, Q1 2026)
 
 **Primary Objectives:**
 1. Replace vm2 with isolated-vm (security fix)
@@ -75,14 +75,14 @@
 - Effect Sandboxing
 - Query Optimization & Caching
 
-### Planned for v3.1.0
+### Planned for vlatest
 
 - Isolated-vm sandbox replacement
 - Browser compatibility fixes
 - Performance profiling dashboard
 - CLI/sidecar package design docs
 
-### Future Roadmap (v3.2.0+)
+### Future Roadmap (vlatest+)
 
 - Streaming RDF processing
 - Advanced query optimization
@@ -95,7 +95,7 @@
 
 **Language & Runtime:**
 - JavaScript (ESM, .mjs only)
-- Node.js 18.0.0+
+- Node.js latest+
 - No TypeScript (JSDoc + Zod for types)
 
 **Core Dependencies:**
@@ -136,15 +136,15 @@ test/
 └── e2e/                 # End-to-end integration tests
 
 docs/
-├── v3.1.0-PRD-CODEBASE-ANALYSIS.md  # THIS ANALYSIS
-├── v3.0.0-RELEASE-NOTES.md
+├── vlatest-CODEBASE-ANALYSIS.md  # THIS ANALYSIS
+├── vlatest-NOTES.md
 ├── ROADMAP.md
 └── 50+ other docs
 ```
 
 ---
 
-## Success Metrics (v3.1.0 Target)
+## Success Metrics (vlatest Target)
 
 | Metric | Current | Target |
 |--------|---------|--------|
@@ -157,7 +157,7 @@ docs/
 
 ---
 
-## Decision Checklist for v3.1.0
+## Decision Checklist for vlatest
 
 **Before Kickoff:**
 - [ ] Finalize vm2 → isolated-vm strategy
@@ -174,7 +174,7 @@ docs/
 - [ ] Performance baseline establishment
 
 **Before Release:**
-- [ ] All v3.0.0 tests still pass
+- [ ] All vlatest tests still pass
 - [ ] Security validation complete
 - [ ] Browser examples runnable
 - [ ] OTEL score ≥85/100
@@ -184,13 +184,13 @@ docs/
 
 ## References
 
-**Full Analysis Document:** `/home/user/unrdf/docs/v3.1.0-PRD-CODEBASE-ANALYSIS.md`
+**Full Analysis Document:** `/home/user/unrdf/docs/vlatest-CODEBASE-ANALYSIS.md`
 
 **Repository:** https://github.com/unrdf/unrdf
 
 **Key Documentation Files:**
-- v3.0.0 Vision: `docs/v3.0.0-VISION.md`
-- Release Notes: `docs/v3.0.0-RELEASE-NOTES.md`
+- vlatest Vision: `docs/vlatest.md`
+- Release Notes: `docs/vlatest-NOTES.md`
 - Roadmap: `docs/ROADMAP.md`
 - FAQ: `docs/FAQ.md`
 - Troubleshooting: `docs/TROUBLESHOOTING.md`
@@ -199,4 +199,4 @@ docs/
 
 **Prepared:** November 16, 2025  
 **Analyst:** Claude Code (Codebase Explorer)  
-**Status:** Analysis Complete - Ready for v3.1.0 Planning
+**Status:** Analysis Complete - Ready for vlatest Planning

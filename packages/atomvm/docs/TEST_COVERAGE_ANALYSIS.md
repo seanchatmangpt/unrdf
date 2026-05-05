@@ -1,7 +1,7 @@
 # AtomVM Package - Deep Test Coverage and Edge Case Analysis
 
 **Date**: 2025-12-21
-**Analyzed Version**: 5.0.1
+**Analyzed Version**: [VERSION]
 **Analysis Type**: Comprehensive Test Gap, Edge Case, and Quality Assessment
 
 ---

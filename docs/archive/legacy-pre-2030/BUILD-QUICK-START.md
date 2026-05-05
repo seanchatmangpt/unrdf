@@ -9,7 +9,7 @@
 ### 🚀 Fast Build (TDD - Core Packages Only)
 
 ```bash
-pnpm build:fast              # 1.54s - Only builds core, yawl, kgc-4d, hooks
+pnpm build:fast              # latests - Only builds core, yawl, kgc-4d, hooks
 ```
 
 **Use when**:
@@ -21,7 +21,7 @@ pnpm build:fast              # 1.54s - Only builds core, yawl, kgc-4d, hooks
 ### 🏃 Dev Build (No Type Generation)
 
 ```bash
-pnpm build:dev               # 10.80s - Skips TypeScript declarations
+pnpm build:dev               # latests - Skips TypeScript declarations
 ```
 
 **Use when**:
@@ -33,7 +33,7 @@ pnpm build:dev               # 10.80s - Skips TypeScript declarations
 ### 📦 Default Build (Parallel, All Packages)
 
 ```bash
-pnpm build                   # 12.64s - Parallel build with concurrency=10
+pnpm build                   # latests - Parallel build with concurrency=10
 ```
 
 **Use when**:
@@ -57,7 +57,7 @@ pnpm build:prod              # ~15s - Includes type declarations, concurrency=8
 ### 🐌 Sequential Build (Debugging Only)
 
 ```bash
-pnpm build:sequential        # 37.87s - No parallelization (for debugging)
+pnpm build:sequential        # latests - No parallelization (for debugging)
 ```
 
 **Use when**:
@@ -72,11 +72,11 @@ pnpm build:sequential        # 37.87s - No parallelization (for debugging)
 
 | Command            | Time   | Improvement      | Use Case            |
 | ------------------ | ------ | ---------------- | ------------------- |
-| `build:fast`       | 1.54s  | **95.9% faster** | TDD (core packages) |
-| `build:dev`        | 10.80s | **71.5% faster** | Development         |
-| `build`            | 12.64s | **66.6% faster** | Default             |
-| `build:prod`       | ~15s   | **60.4% faster** | Pre-commit          |
-| `build:sequential` | 37.87s | Baseline         | Debugging           |
+| `build:fast`       | latests  | **latest% faster** | TDD (core packages) |
+| `build:dev`        | latests | **latest% faster** | Development         |
+| `build`            | latests | **latest% faster** | Default             |
+| `build:prod`       | ~15s   | **latest% faster** | Pre-commit          |
+| `build:sequential` | latests | Baseline         | Debugging           |
 
 ---
 
@@ -92,20 +92,20 @@ pnpm test:watch
 pnpm build:fast && pnpm test:core
 ```
 
-**Feedback Loop**: 1.54s + test time = **~5s per iteration**
+**Feedback Loop**: latests + test time = **~5s per iteration**
 
 ### Development Workflow (Balanced)
 
 ```bash
 # Make changes to any package
-pnpm build:dev              # 10.80s - No type generation
+pnpm build:dev              # latests - No type generation
 pnpm test:fast              # Run fast tests
 
 # Optional: Check types separately
 pnpm typecheck              # Only when needed
 ```
 
-**Feedback Loop**: 10.80s + test time = **~15s per iteration**
+**Feedback Loop**: latests + test time = **~15s per iteration**
 
 ### Pre-Commit Workflow (Complete)
 
@@ -125,19 +125,19 @@ pnpm test                   # Full test suite
 
 - **What**: Builds multiple packages simultaneously
 - **How**: `--workspace-concurrency=10` flag
-- **Impact**: 66.6% faster (37.87s → 12.64s)
+- **Impact**: latest% faster (latests → latests)
 
 ### 2. Conditional Type Generation
 
 - **What**: Skips TypeScript declarations in dev mode
 - **How**: `NODE_ENV=development` → `declaration: false` in build.config.ts
-- **Impact**: 28.5% additional speedup (12.64s → 10.80s)
+- **Impact**: latest% additional speedup (latests → latests)
 
 ### 3. Filtered Builds
 
 - **What**: Only builds packages you're actively working on
 - **How**: `--filter='@unrdf/core'` flag
-- **Impact**: 95.9% faster for core packages (37.87s → 1.54s)
+- **Impact**: latest% faster for core packages (latests → latests)
 
 ---
 
@@ -193,19 +193,19 @@ cat packages/PACKAGE_NAME/package.json | grep build
 
 ### @unrdf/kgc-4d
 
-- **Before**: `unbuild && tsc --emitDeclarationOnly` (16.79s sequential)
+- **Before**: `unbuild && tsc --emitDeclarationOnly` (latests sequential)
 - **After**: `unbuild` (conditional types via build.config.ts, ~7s)
 - **Optimization**: Unified build eliminates sequential execution
 
 ### @unrdf/yawl
 
 - **Status**: Already optimized with `build.config.ts`
-- **Build Time**: 9.70s (no further optimization needed)
+- **Build Time**: latests (no further optimization needed)
 
 ### @unrdf/core
 
 - **Build Script**: `node build.config.mjs` (custom build)
-- **Build Time**: 0.63s (very fast)
+- **Build Time**: latests (very fast)
 
 ### @unrdf/docs
 
@@ -307,8 +307,8 @@ grep "BUILD TIME" build-times.log | awk '{print $4}'
 
 ## Questions?
 
-**Q**: Why is `build:dev` still 10.80s when target was <5s?
-**A**: Full monorepo includes 31 packages. Use `build:fast` (1.54s) for core packages only.
+**Q**: Why is `build:dev` still latests when target was <5s?
+**A**: Full monorepo includes 31 packages. Use `build:fast` (latests) for core packages only.
 
 **Q**: Can I skip builds entirely during development?
 **A**: Depends on package. Some use direct source imports (`src/index.mjs`), others need dist output.

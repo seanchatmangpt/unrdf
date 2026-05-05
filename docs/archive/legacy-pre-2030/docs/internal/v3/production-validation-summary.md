@@ -12,7 +12,7 @@
 ### Key Findings
 
 **CRITICAL BLOCKER IDENTIFIED**:
-- `eyereasoner` package (v1.14.1) is incompatible with current Vitest/Vite build system
+- `eyereasoner` package (latest) is incompatible with current Vitest/Vite build system
 - Uses top-level await that cannot be transpiled by Rollup during test execution
 - **Impact**: Blocks 23 reasoning tests from executing
 - **Resolution**: Requires architectural decision (see recommendations below)
@@ -338,7 +338,7 @@ Target (v3): ≥80% (currently below target)
 2. **Prepare v3 Release** (2 hours)
    - Update CHANGELOG with reasoning caveat
    - Create GitHub release notes
-   - Tag v3.0.0-beta or v3.0.0-rc1
+   - Tag latest-beta or latest-rc1
 
 ### Medium-term (v3.1 - Q1 2026)
 

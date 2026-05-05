@@ -3,7 +3,7 @@ title: "[Module/Function Name] Reference"
 description: "API reference for [module/function] in UNRDF"
 category: "reference"
 audience: "all"
-version: "4.0.0"
+version: "latest"
 last_updated: "YYYY-MM-DD"
 source: "src/path/to/module.mjs"
 related:
@@ -56,7 +56,7 @@ import { functionName } from 'unrdf/knowledge-engine';
  * @param {Function} [options.callback] - [Description] (optional)
  * @returns {Promise<Result>} [Description of return value]
  * @throws {ValidationError} [When this error is thrown]
- * @since 4.0.0
+ * @since latest
  */
 function functionName(options) {}
 ```
@@ -254,5 +254,5 @@ try {
 
 | Version | Changes |
 |---------|---------|
-| 4.0.0 | Initial release |
-| 3.5.0 | Added `timeout` option |
+| latest | Initial release |
+| latest | Added `timeout` option |

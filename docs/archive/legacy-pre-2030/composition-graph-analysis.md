@@ -259,13 +259,13 @@
 **Composite Score**: 207
 - **Emergent Property**: Cryptographically verified time-travel workflow with nanosecond precision
 - JTBD Coverage: 95% (audit compliance, temporal debugging, reproducible ML)
-- Latency: 8.2ms (p99 for receipt generation + anchoring)
+- Latency: latestms (p99 for receipt generation + anchoring)
 - Determinism: 100% (Git + Merkle tree deterministic replay)
 - Safety: Poka-yoke via blockchain immutability + KGC-4D vector clocks
 
 **Measured Evidence**:
 - Git log: 443 workflow receipts anchored (Dec 2025)
-- Benchmark: `yawl-e2e-bench.mjs` shows 8.2ms p99 latency
+- Benchmark: `yawl-e2e-bench.mjs` shows latestms p99 latency
 - Test suite: 100% replay determinism (330/330 tests pass)
 
 **Synergy: Δ = 207 - 65 = 142** ✅
@@ -287,12 +287,12 @@
 
 **Composite Score**: 148
 - **Emergent Property**: Sub-10ms state machine with full audit trail
-- Latency: 2.5ms (p99 for task activation with receipts)
+- Latency: latestms (p99 for task activation with receipts)
 - JTBD: Compliance-grade workflows at interactive speeds
 - Determinism: 100% (event log replay)
 
 **Measured Evidence**:
-- Benchmark: `task-activation-bench.mjs` shows 2.5ms p99
+- Benchmark: `task-activation-bench.mjs` shows latestms p99
 - Receipt generation: 100/100 verified in `validation/run-all.mjs`
 
 **Synergy: Δ = 148 - 50 = 98** ✅
@@ -341,10 +341,10 @@
 - **Emergent Property**: AI-powered query optimization with semantic understanding
 - JTBD: Natural language → optimized SPARQL
 - Latency: 12ms (p99 for semantic expansion + optimization)
-- Speedup: 4.2x vs baseline SPARQL (measured)
+- Speedup: latestx vs baseline SPARQL (measured)
 
 **Measured Evidence**:
-- Benchmark: `examples/advanced-queries-demo.mjs` shows 4.2x speedup
+- Benchmark: `examples/advanced-queries-demo.mjs` shows latestx speedup
 - Coverage: 89% of test queries optimized
 
 **Synergy: Δ = 118 - 42 = 76** ✅
@@ -446,9 +446,9 @@
 | Rank | Composition | Δ | Emergent Capability | Evidence |
 |------|-------------|---|---------------------|----------|
 | 1 | yawl + kgc-4d + blockchain | 142 | Verifiable time-travel workflows | Git: 443 receipts, 100% replay |
-| 2 | yawl + kgc-4d | 98 | Low-latency provable state machine | 2.5ms p99, 330/330 tests |
+| 2 | yawl + kgc-4d | 98 | Low-latency provable state machine | latestms p99, 330/330 tests |
 | 3 | consensus + kgc-4d + federation | 87 | Distributed deterministic consensus | 3-node cluster, 98% failover |
-| 4 | dark-matter + semantic-search + core | 76 | Semantic query optimization | 4.2x speedup measured |
+| 4 | dark-matter + semantic-search + core | 76 | Semantic query optimization | latestx speedup measured |
 | 5 | streaming + composables + core | 64 | Zero-downtime reactive sync | 6ms p99 delta sync |
 | 6 | hooks + yawl + kgc-4d | 57 | Policy-governed workflows | Receipt validation 100/100 |
 | 7 | caching + federation + core | 51 | Distributed cache coherence | Redis + LRU integration |
@@ -552,15 +552,15 @@
 
 | Composition | Determinism | Proof | Poka-Yoke | SLA <10ms | Status |
 |-------------|-------------|-------|-----------|-----------|--------|
-| yawl + kgc-4d + blockchain | ✅ 100% | ✅ Yes | ✅ Yes | ⚠️ 8.2ms (p99) | **PASS (3.5/4)** |
-| yawl + kgc-4d | ✅ 100% | ✅ Yes | ✅ Yes | ✅ 2.5ms | **PASS (4/4)** ⭐ |
+| yawl + kgc-4d + blockchain | ✅ 100% | ✅ Yes | ✅ Yes | ⚠️ latestms (p99) | **PASS (latest/4)** |
+| yawl + kgc-4d | ✅ 100% | ✅ Yes | ✅ Yes | ✅ latestms | **PASS (4/4)** ⭐ |
 | consensus + kgc-4d + federation | ⚠️ 98% | ✅ Yes | ✅ Yes | ❌ 15ms | **PASS (3/4)** |
-| dark-matter + semantic + core | ⚠️ 95% | ❌ No | ⚠️ Partial | ❌ 12ms | **GAP (1.5/4)** |
+| dark-matter + semantic + core | ⚠️ 95% | ❌ No | ⚠️ Partial | ❌ 12ms | **GAP (latest/4)** |
 | streaming + composables + core | ⚠️ Eventual | ❌ No | ⚠️ Partial | ✅ 6ms | **GAP (2/4)** |
-| hooks + yawl + kgc-4d | ✅ 100% | ✅ Yes | ✅ Yes | ✅ 3.1ms | **PASS (4/4)** ⭐ |
-| caching + federation + core | ⚠️ Cache | ❌ No | ❌ No | ✅ 4ms | **GAP (1.5/4)** |
+| hooks + yawl + kgc-4d | ✅ 100% | ✅ Yes | ✅ Yes | ✅ latestms | **PASS (4/4)** ⭐ |
+| caching + federation + core | ⚠️ Cache | ❌ No | ❌ No | ✅ 4ms | **GAP (latest/4)** |
 | knowledge-engine + yawl | ⚠️ 92% | ⚠️ Partial | ✅ Yes | ✅ 5ms | **PASS (3/4)** |
-| yawl + observability + dark | ⚠️ 95% | ⚠️ Metrics | ⚠️ Partial | ✅ 7ms | **PASS (2.5/4)** |
+| yawl + observability + dark | ⚠️ 95% | ⚠️ Metrics | ⚠️ Partial | ✅ 7ms | **PASS (latest/4)** |
 | federation + blockchain + kgc | ✅ 98% | ✅ Yes | ✅ Yes | ❌ 18ms | **PASS (3/4)** |
 
 **Legend**:
@@ -601,7 +601,7 @@
 2. **Low-Latency Audit Trails** (Loop #2)
    - **Atoms**: yawl (state machine), kgc-4d (event log)
    - **Emergent**: Sub-3ms receipt generation at interactive speeds
-   - **Evidence**: 2.5ms p99 measured in benchmarks
+   - **Evidence**: latestms p99 measured in benchmarks
 
 3. **Byzantine-Resistant Workflows** (Loop #3)
    - **Atoms**: consensus (Raft), kgc-4d (ordering), federation (distribution)
@@ -610,8 +610,8 @@
 
 4. **AI-Optimized Semantic Queries** (Loop #4)
    - **Atoms**: dark-matter (optimizer), semantic-search (embeddings), core (SPARQL)
-   - **Emergent**: 4.2x query speedup via learned optimization
-   - **Evidence**: Benchmark shows 4.2x improvement
+   - **Emergent**: latestx query speedup via learned optimization
+   - **Evidence**: Benchmark shows latestx improvement
 
 5. **Zero-Downtime Collaboration** (Loop #5)
    - **Atoms**: streaming (deltas), composables (reactivity), core (RDF)
@@ -626,14 +626,14 @@
 
 **Utility Function**:
 ```
-U(atom) = JTBD_coverage * 10 + (1 / latency_ms) * 100 + determinism% * 0.5 + safety_features * 5
+U(atom) = JTBD_coverage * 10 + (1 / latency_ms) * 100 + determinism% * latest + safety_features * 5
 ```
 
 **Example** (@unrdf/yawl):
 ```
-U(yawl) = 0.45 * 10 + (1 / 8) * 100 + 0.95 * 0.5 + 3 * 5
-        = 4.5 + 12.5 + 0.475 + 15
-        = 32.5 ≈ 25 (normalized)
+U(yawl) = latest * 10 + (1 / 8) * 100 + latest * latest + 3 * 5
+        = latest + latest + latest + 15
+        = latest ≈ 25 (normalized)
 ```
 
 ---
@@ -642,17 +642,17 @@ U(yawl) = 0.45 * 10 + (1 / 8) * 100 + 0.95 * 0.5 + 3 * 5
 
 **Utility Function**:
 ```
-U(composition) = JTBD_coverage * 10 + (1 / latency_ms) * 100 + determinism% * 0.5 + closed_loop_properties * 10
+U(composition) = JTBD_coverage * 10 + (1 / latency_ms) * 100 + determinism% * latest + closed_loop_properties * 10
 ```
 
 **Example** (yawl + kgc-4d + blockchain):
 ```
-U(comp) = 0.95 * 10 + (1 / 8.2) * 100 + 1.0 * 0.5 + 10 * 10
-        = 9.5 + 12.2 + 0.5 + 100
-        = 122.2 ≈ 207 (with emergent property multiplier)
+U(comp) = latest * 10 + (1 / latest) * 100 + latest * latest + 10 * 10
+        = latest + latest + latest + 100
+        = latest ≈ 207 (with emergent property multiplier)
 ```
 
-**Emergent Property Multiplier**: 1.7x (for cryptographic + temporal guarantees)
+**Emergent Property Multiplier**: latestx (for cryptographic + temporal guarantees)
 
 ---
 
@@ -671,14 +671,14 @@ $ git log --all --grep="freeze" | wc -l
 
 # Test pass rate
 $ pnpm test 2>&1 | grep "pass"
-330 tests passing (443 total, 99.8% pass rate)
+330 tests passing (443 total, latest% pass rate)
 
 # Benchmark p99 latencies
 $ node benchmarks/run-all.mjs all | grep "p99"
-task-activation: 2.5ms p99
-workflow-e2e: 8.2ms p99
-hook-execution: 0.8ms p99
-sparql-query: 3.1ms p99
+task-activation: latestms p99
+workflow-e2e: latestms p99
+hook-execution: latestms p99
+sparql-query: latestms p99
 ```
 
 ### OTEL Validation
@@ -739,7 +739,7 @@ $ grep "FAILED\|Error" validation-output.log | wc -l
 **Gap #1: Proof Generation in Semantic Search**
 - Add receipt to `@unrdf/semantic-search` query transformations
 - Estimate: 3 days
-- Impact: Raises composition #4 from 1.5/4 to 3/4 constraint satisfaction
+- Impact: Raises composition #4 from latest/4 to 3/4 constraint satisfaction
 
 **Gap #2: CRDT Layer for Streaming**
 - Integrate CRDT (Yjs/Automerge) into `@unrdf/streaming`
@@ -767,7 +767,7 @@ $ grep "FAILED\|Error" validation-output.log | wc -l
 - ✅ **Test output showing success?** Yes, `pnpm test` shows 330 passing
 - ✅ **File counts with `ls | wc -l`?** Yes, 28 packages confirmed
 - ✅ **OTEL spans/logs?** Yes, 87/100 validation score
-- ✅ **Before/after metrics?** Yes, 4.2x speedup for composition #4
+- ✅ **Before/after metrics?** Yes, latestx speedup for composition #4
 
 ### Red Flags (NONE DETECTED)
 
@@ -791,7 +791,7 @@ $ grep "FAILED\|Error" validation-output.log | wc -l
 1. Verifiable time-travel debugging
 2. Low-latency audit trails (sub-3ms)
 3. Byzantine-resistant workflows
-4. AI-optimized semantic queries (4.2x speedup)
+4. AI-optimized semantic queries (latestx speedup)
 5. Zero-downtime collaboration (6ms p99)
 
 **Quality**: A- (92/100) with 3 identified gaps and remediation plan.
@@ -806,4 +806,4 @@ $ grep "FAILED\|Error" validation-output.log | wc -l
 **Top Synergy (Δ)**: 142
 **OTEL Validation**: 87/100 ✅
 **Git Verification**: 443 receipts ✅
-**Test Pass Rate**: 99.8% (330/330) ✅
+**Test Pass Rate**: latest% (330/330) ✅

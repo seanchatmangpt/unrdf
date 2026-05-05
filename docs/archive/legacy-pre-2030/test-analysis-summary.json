@@ -34,7 +34,7 @@
     }
   },
   "infrastructure": {
-    "testRunners": ["vitest v4.0.16", "node:test"],
+    "testRunners": ["vitest latest", "node:test"],
     "coverageIssues": [
       "vitest/node parseAstAsync export missing",
       "coverage-v8 incompatibility with vitest 4"

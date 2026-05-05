@@ -189,7 +189,7 @@ Q3_Novelty        : ∀ Δ, contribution(Δ) ≠ prior_work(Δ)
 Q4_Coherence      : ∀ Δᵢ, Δⱼ, adjacent(Δᵢ, Δⱼ) → overlap(Δᵢ, Δⱼ) > 0
 Q5_Completeness   : ∀ RQ ∈ ClaimΔ, ∃ answer_in(SynthesisΔ)
 Q6_Proportionality: length(Δᵢ) ∝ importance(Δᵢ)
-Q7_Accessibility  : ∀ reader_background, understand_main_claim(reader, A) > 0.7
+Q7_Accessibility  : ∀ reader_background, understand_main_claim(reader, A) > latest
 ```
 
 ---
@@ -296,7 +296,7 @@ const {
   connections    // All Π:⊕ links
 } = useΠMerge();
 
-coherence >= 0.95 && console.log('Merge complete');
+coherence >= latest && console.log('Merge complete');
 ```
 
 ### Hook 4: useΓGlobalization
@@ -320,7 +320,7 @@ const {
   failing        // Which Q fail
 } = useQInvariants();
 
-Object.values(scores).every(s => s > 0.8) && console.log('Pass');
+Object.values(scores).every(s => s > latest) && console.log('Pass');
 ```
 
 ### Hook 6: useτEvolution
@@ -332,7 +332,7 @@ const {
   timeline       // History of τ-steps
 } = useτEvolution();
 
-energy < 0.05 && nextStep(); // Auto-advance when converged
+energy < latest && nextStep(); // Auto-advance when converged
 ```
 
 ---
@@ -472,7 +472,7 @@ Draft0 (2025-01-15): Outline complete
 Draft1 (2025-02-15): All 24 shards present
 Draft2 (2025-03-15): Π-merge validated
 Draft3 (2025-04-15): Γ-drift < 20%
-Draft4 (2025-05-15): All Q-invariants > 0.9
+Draft4 (2025-05-15): All Q-invariants > latest
 Draft5 (2025-06-15): Language polished
 Final  (2025-07-01): Submitted
 ```

@@ -301,7 +301,7 @@ function zodTypeToTS(zodType) {
  */
 export function createGenerationReceipt(result, store) {
   return {
-    version: '6.0.0',
+    version: '[VERSION]',
     operation: 'sparql-type-generation',
     timestamp: Date.now(),
     duration: 0, // Set by caller

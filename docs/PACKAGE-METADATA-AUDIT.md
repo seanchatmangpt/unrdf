@@ -10,11 +10,11 @@
 
 ### Overall Statistics
 - **Total Packages**: 19
-- **Public Packages**: 16 (84.2%)
-- **Private Packages**: 3 (15.8%)
-- **Missing Descriptions**: 1 (5.3%)
+- **Public Packages**: 16 (latest%)
+- **Private Packages**: 3 (latest%)
+- **Missing Descriptions**: 1 (latest%)
 - **Missing Licenses**: 0 (0%)
-- **Missing Repository Fields**: 3 (15.8%)
+- **Missing Repository Fields**: 3 (latest%)
 - **Missing Keywords**: 0 (0%)
 - **Missing README.md**: 0 (0%)
 - **Missing LICENSE File**: 19 (100%) ⚠️
@@ -337,7 +337,7 @@
 
 **Issues**:
 - No LICENSE file
-- Zod dependency version mismatch (3.24.1 vs 4.1.13 in other packages)
+- Zod dependency version mismatch (latest vs latest in other packages)
 
 **Format**: ✓ CANONICAL (except dependency version)
 
@@ -516,10 +516,10 @@ Permission is hereby granted, free of charge...
 **Impact**: Build consistency
 
 **Issues**:
-- streaming: Zod 3.24.1 (all others: 4.1.13)
+- streaming: Zod latest (all others: latest)
 
 **Action**:
-- Update streaming package.json to Zod 4.1.13
+- Update streaming package.json to Zod latest
 - Verify no breaking changes
 
 ---
@@ -590,20 +590,20 @@ Permission is hereby granted, free of charge...
 ### Current State
 | Metric | Score | Target |
 |--------|-------|--------|
-| Description Coverage | 94.7% (18/19) | 100% |
-| License Field Coverage | 94.7% (18/19) | 100% |
-| Repository Field Coverage | 63.2% (12/19) | 100% (public packages) |
-| Keywords Coverage | 84.2% (16/19) | 100% |
+| Description Coverage | latest% (18/19) | 100% |
+| License Field Coverage | latest% (18/19) | 100% |
+| Repository Field Coverage | latest% (12/19) | 100% (public packages) |
+| Keywords Coverage | latest% (16/19) | 100% |
 | README Coverage | 100% (19/19) | 100% ✓ |
 | LICENSE File Coverage | 0% (0/19) | 100% |
 
 ### After Standardization
 | Metric | Score | Improvement |
 |--------|-------|-------------|
-| Description Coverage | 100% | +5.3% |
-| License Field Coverage | 100% | +5.3% |
-| Repository Field Coverage | 100% | +36.8% |
-| Keywords Coverage | 100% | +15.8% |
+| Description Coverage | 100% | +latest% |
+| License Field Coverage | 100% | +latest% |
+| Repository Field Coverage | 100% | +latest% |
+| Keywords Coverage | 100% | +latest% |
 | README Coverage | 100% | 0% (already perfect) |
 | LICENSE File Coverage | 100% | +100% |
 
@@ -621,7 +621,7 @@ Permission is hereby granted, free of charge...
 
 ---
 
-### Phase 2: Metadata Completion (1.5 hours)
+### Phase 2: Metadata Completion (latest hours)
 1. Add repository fields to 6 packages
 2. Fix streaming Zod version
 3. Add description to docs
@@ -646,7 +646,7 @@ Permission is hereby granted, free of charge...
 ```json
 {
   "name": "@unrdf/<package-name>",
-  "version": "5.0.1",
+  "version": "latest",
   "description": "<Package Name> - <Functionality>",
   "type": "module",
   "main": "src/index.mjs",
@@ -671,12 +671,12 @@ Permission is hereby granted, free of charge...
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "vitest": "^4.0.15"
+    "@types/node": "^latest",
+    "vitest": "^latest"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=7.0.0"
+    "node": ">=latest",
+    "pnpm": ">=latest"
   },
   "repository": {
     "type": "git",
@@ -699,7 +699,7 @@ Permission is hereby granted, free of charge...
 ## Conclusion
 
 **Current State**:
-- Metadata **84.2% complete** (average across all fields)
+- Metadata **latest% complete** (average across all fields)
 - **Critical blocker**: ZERO LICENSE files present
 - **High-priority issues**: 7 packages missing repository fields, 1 wrong repository URL
 

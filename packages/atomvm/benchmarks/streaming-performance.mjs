@@ -8,7 +8,7 @@
  * - Memory usage during streaming
  * - Transform stream performance
  *
- * @version 1.0.0
+ * @version [VERSION]
  */
 
 import { performance } from 'node:perf_hooks';

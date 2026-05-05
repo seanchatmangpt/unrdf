@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/serverless
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -30,10 +30,10 @@ UNRDF Serverless - One-click AWS deployment for RDF applications
 
 - `@unrdf/core`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
-- `aws-cdk-lib`: ^2.165.0
-- `constructs`: ^10.4.2
-- `esbuild`: ^0.24.2
-- `zod`: ^4.1.13
+- `aws-cdk-lib`: ^[VERSION]
+- `constructs`: ^[VERSION]
+- `esbuild`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

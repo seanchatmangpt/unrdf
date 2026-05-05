@@ -4,7 +4,7 @@
  * These utilities cover the 80/20 dark matter of RDF validation
  * that every project ends up reimplementing.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

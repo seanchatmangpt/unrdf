@@ -1,6 +1,6 @@
 # CLI Command Matrix Reference
 
-**Version**: v6.0.0-alpha.1
+**Version**: vlatest.1
 **Last Updated**: 2025-12-27
 
 ---
@@ -76,7 +76,7 @@ This reference documents all valid `noun × verb` combinations.
 
 ### Legend
 - ✅ = Implemented
-- 🚧 = Planned (v6.1+)
+- 🚧 = Planned (vlatest+)
 - ❌ = Invalid combination
 
 ---

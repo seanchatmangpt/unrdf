@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       'http.target': path,
       'http.user_agent': event.node.req.headers['user-agent'] || 'unknown',
       'service.name': 'unrdf-sidecar',
-      'service.version': config.kgcVersion || '1.0.0',
+      'service.version': config.kgcVersion || '[VERSION]',
       'deployment.environment': config.kgcEnvironment || 'development',
     }
   })

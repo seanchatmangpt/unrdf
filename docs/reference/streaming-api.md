@@ -1,6 +1,6 @@
 # Streaming API Reference
 
-**Version**: 5.0.0+
+**Version**: latest+
 **Package**: `@unrdf/core/rdf/n3-justified-only`, `@unrdf/streaming`
 **Stability**: Stable
 
@@ -97,7 +97,7 @@ console.log(`Parsed ${quads.length} quads`);
 - Speed: 10,000-50,000 quads/sec
 - Suitable for: Large files (>100MB)
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -151,7 +151,7 @@ console.log(turtle);
 // ex:alice foaf:name "Alice" .
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -218,7 +218,7 @@ createReadStream('input.ttl')
   .pipe(createWriteStream('output.nt'));
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -259,7 +259,7 @@ for (const quad of largeQuadArray) {
 writer.end();
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -297,7 +297,7 @@ const quad = UnrdfDataFactory.quad(subject, predicate, object);
 import { namedNode, literal, blankNode } from '@unrdf/core';
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -347,7 +347,7 @@ store.add(subject, predicate, object);
 // -> Emits 'change' event
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -384,7 +384,7 @@ const subscription = manager.subscribe({
 subscription.unsubscribe();
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -421,7 +421,7 @@ processor.on('data', (transformed) => {
 });
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -467,7 +467,7 @@ console.log('Checksum:', message.checksum);
 console.log('Message:', message);
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -495,7 +495,7 @@ if (syncMsg.valid) {
 }
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -525,7 +525,7 @@ console.log('Checksum:', checksum);
 // "a1b2c3d4..."
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -550,7 +550,7 @@ console.log('Total additions:', merged.additions.length);
 console.log('Total removals:', merged.removals.length);
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -627,6 +627,6 @@ parser.on('data', (quad) => {
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-25
 **Maintainer**: UNRDF Team

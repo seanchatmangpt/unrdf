@@ -201,8 +201,8 @@ pnpm vitest run test/e2e/quick-validation.test.mjs
 ```json
 {
   "devDependencies": {
-    "dockerode": "^4.0.9",
-    "wait-on": "^9.0.1"
+    "dockerode": "^latest",
+    "wait-on": "^latest"
   }
 }
 ```

@@ -12,7 +12,7 @@
 **Problem:** `pnpm install` timed out after 60 seconds
 **Root Cause:** Automatic `postinstall` script in `packages/docs/package.json` ran `nuxt prepare`, which exceeded timeout
 **Solution:** Renamed `postinstall` to `dev:prepare` (non-lifecycle script)
-**Result:** Installation now completes in **48.2 seconds** (19.7% faster than timeout threshold)
+**Result:** Installation now completes in **latest seconds** (latest% faster than timeout threshold)
 
 ---
 
@@ -21,8 +21,8 @@
 ### Phase 1: Initial Assessment
 
 **Environment Check:**
-- pnpm version: `10.25.0`
-- pnpm-lock.yaml size: `1.6MB`
+- pnpm version: `latest`
+- pnpm-lock.yaml size: `latestMB`
 - Disk space: `30G available` (99% free)
 - node_modules: Exists (created Dec 27 08:34)
 - Workspace packages: `69 packages` across 53 package.json files
@@ -110,7 +110,7 @@ Exit: TIMEOUT (postinstall script)
 ```
 Command: timeout 60s pnpm install
 Result: Done ✅
-Duration: 48.2 seconds
+Duration: latest seconds
 Packages resolved: 4193
 Packages reused: 3914
 Exit: SUCCESS (exit code 0)
@@ -121,14 +121,14 @@ Exit: SUCCESS (exit code 0)
 **Test 1: node_modules population**
 ```bash
 $ ls -lh /home/user/unrdf/node_modules/.bin/vitest
--rwxr-xr-x 1 root root 1.3K Dec 27 11:23 vitest
+-rwxr-xr-x 1 root root latestK Dec 27 11:23 vitest
 ✅ Binary dependencies installed correctly
 ```
 
 **Test 2: Package imports work**
 ```bash
 $ timeout 10s pnpm --filter @unrdf/v6-core test
-> @unrdf/v6-core@6.0.0-alpha.1 test
+> @unrdf/v6-core@latest.1 test
 > node --test test/**/*.test.mjs
 
 TAP version 13
@@ -141,8 +141,8 @@ ok 1 - Grammar Parser - valid SPARQL query parses successfully
 **Test 3: Performance improvement**
 ```
 Timeout threshold: 60 seconds
-Actual duration: 48.2 seconds
-Improvement: 11.8 seconds (19.7% faster)
+Actual duration: latest seconds
+Improvement: latest seconds (latest% faster)
 ```
 
 ---
@@ -162,16 +162,16 @@ This will generate the Nuxt TypeScript types needed for development.
 ### For Repository Maintainers
 
 **Peer Dependency Warnings (non-blocking):**
-- vitest version mismatches across packages (1.6.1 vs 4.0.16)
-- @tiptap/core version mismatches (3.13.0 vs 3.14.0)
-- vite version mismatch (5.0.0 || 6.0.0 vs 7.3.0)
+- vitest version mismatches across packages (latest vs latest)
+- @tiptap/core version mismatches (latest vs latest)
+- vite version mismatch (latest || latest vs latest)
 
 These are warnings, not errors. The repository builds and tests run successfully despite these warnings.
 
 **Deprecation Warnings (28 packages):**
-- eslint@8.57.1 (migrate to v9)
+- eslint@latest (migrate to v9)
 - Various level-* packages (migrate to newer leveldb interfaces)
-- rimraf@2.7.1, rimraf@3.0.2 (migrate to rimraf@4 or native fs.rm)
+- rimraf@latest, rimraf@latest (migrate to rimraf@4 or native fs.rm)
 
 ---
 
@@ -210,9 +210,9 @@ The following script names trigger **automatic execution** during `pnpm install`
 **Key metrics:**
 - Workspace packages: 69
 - Total dependencies resolved: 4,193
-- Cache reuse rate: 93.3% (3,914 / 4,193)
+- Cache reuse rate: latest% (3,914 / 4,193)
 - Network downloads: 0 (all from cache)
-- Installation time: 48.2s (before fix: >60s)
+- Installation time: latests (before fix: >60s)
 
 ---
 
@@ -220,7 +220,7 @@ The following script names trigger **automatic execution** during `pnpm install`
 
 **Root cause:** Automatic postinstall script running expensive type generation
 **Fix:** Converted to manual script invocation
-**Impact:** 19.7% faster installation, no functionality loss
+**Impact:** latest% faster installation, no functionality loss
 **Risk:** Low - docs developers must remember to run `dev:prepare` manually
 **Verification:** ✅ All tests pass, dependencies resolve correctly
 
@@ -231,4 +231,4 @@ The following script names trigger **automatic execution** during `pnpm install`
 - ✅ Provided complete evidence trail
 - ✅ No assumptions - all claims backed by logs
 
-**Time budget:** 30 minutes / 4 hours allocated (87.5% under budget)
+**Time budget:** 30 minutes / 4 hours allocated (latest% under budget)

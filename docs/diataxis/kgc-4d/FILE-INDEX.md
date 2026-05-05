@@ -2,7 +2,7 @@
 
 **Created:** 2025-12-27  
 **Total Files:** 31 markdown files  
-**Evidence Base:** kgc-4d v5.0.1 (176/176 tests passing)
+**Evidence Base:** kgc-4d latest (176/176 tests passing)
 
 ---
 

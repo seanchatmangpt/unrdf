@@ -2,7 +2,7 @@
 
 Production-grade SLO definitions for daemon+yawl workflow orchestration, including performance baselines, Prometheus metrics, Grafana dashboards, and AlertManager rules.
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-10
 **Measurement Period**: Monthly (30-day rolling window)
 **Measurement Source**: Prometheus metrics + structured logging (JSON)

@@ -1,8 +1,8 @@
-# v5.0.0-beta3 Requirements - Evidence-Based Planning
+# vlatest Requirements - Evidence-Based Planning
 
 **Date**: 2025-12-06
-**Current Version**: 5.0.0-beta.1
-**Target**: 5.0.0-beta.3 (or beta.2 depending on numbering)
+**Current Version**: latest.1
+**Target**: latest.3 (or beta.2 depending on numbering)
 **Branch**: `claude/v5-beta2-requirements-01NKQfQKwKizGRkgaAsnhRuC`
 
 ---
@@ -73,7 +73,7 @@ Beta.1 achieved **190 tests passing**, **83/100 OTEL validation**, and **verifie
    - test/project-engine/**/*.test.mjs
    - test/knowledge-engine/**/*.test.mjs
    - test/streaming/streaming.test.mjs
-   - test/validation/otel-validation-v3.1.test.mjs
+   - test/validation/otel-validation-vlatest.test.mjs
 
 **Evidence Required**:
 - Show output of each test file
@@ -216,12 +216,12 @@ Option B: Remove Unverified Claims
 
 ### Phase 4: Release (1 day)
 
-- [ ] Bump version to 5.0.0-beta.3
+- [ ] Bump version to latest.3
 - [ ] Update CHANGELOG for beta.3
 - [ ] Regenerate pnpm-lock.yaml
 - [ ] Git commit and push
 - [ ] Create release notes
-- [ ] Tag release: `git tag v5.0.0-beta.3`
+- [ ] Tag release: `git tag vlatest.3`
 
 ---
 
@@ -331,7 +331,7 @@ Option B: Remove Unverified Claims
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Status**: 📋 PLANNING
 **Next Step**: Start with Quick Wins (run tests, security audit)

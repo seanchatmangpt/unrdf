@@ -32,7 +32,7 @@ const lensRegistry = new Map();
  * @example
  * defineLens({
  *   name: 'user-profile',
- *   version: '1.0.0',
+ *   version: 'latest',
  *   toSubstrate: (req) => ({ type: 'UPSERT_USER', payload: req.body }),
  *   fromSubstrate: (data) => ({ id: data.id, name: data.name }),
  * });
@@ -62,7 +62,7 @@ export function defineLens(config) {
   // Validate version format (basic semver check)
   const versionRegex = /^\d+\.\d+\.\d+$/;
   if (!versionRegex.test(config.version)) {
-    throw new Error(`Invalid version format: ${config.version}. Expected semver (e.g., 1.0.0)`);
+    throw new Error(`Invalid version format: ${config.version}. Expected semver (e.g., latest)`);
   }
 
   // Create lens definition

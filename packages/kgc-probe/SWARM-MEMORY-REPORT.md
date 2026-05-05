@@ -42,7 +42,7 @@
     type: "threat",
     severity: "high",
     category: "behavioral-change",
-    description: "Event loop ordering in Node.js v22.21.1 differs from documented behavior",
+    description: "Event loop ordering in Node.js [VERSION] differs from documented behavior",
     location: "concurrency.event_loop_ordering",
     details: {
       observed: ["queueMicrotask", "promise", "nextTick", "setImmediate"],
@@ -148,7 +148,7 @@
   value: {
     type: "discovery",
     category: "information",
-    description: "AsyncLocalStorage fully functional in Node.js v22.21.1",
+    description: "AsyncLocalStorage fully functional in Node.js [VERSION]",
     location: "concurrency.async_local_storage",
     importance: "medium",
     details: {
@@ -209,7 +209,7 @@
       }
     },
     runtime: {
-      node_version: "v22.21.1",
+      node_version: "[VERSION]",
       platform: "linux"
     },
     concurrency_capabilities: "high",

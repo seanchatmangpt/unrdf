@@ -20,7 +20,7 @@ import { join } from 'path';
  */
 class BenchmarkRunner {
   constructor() {
-    this.tracer = trace.getTracer('benchmark-integration-test', '1.0.0');
+    this.tracer = trace.getTracer('benchmark-integration-test', 'latest');
     this.results = [];
   }
 
@@ -219,7 +219,7 @@ class BenchmarkRunner {
   async runAll() {
     return await this.tracer.startActiveSpan('benchmark.suite.all', async (span) => {
       span.setAttribute('benchmark.suite.name', 'Knowledge Hooks Performance Benchmark Suite');
-      span.setAttribute('benchmark.suite.version', '1.0.0');
+      span.setAttribute('benchmark.suite.version', 'latest');
       span.setAttribute('benchmark.timestamp', new Date().toISOString());
 
       const results = [];
@@ -254,7 +254,7 @@ class BenchmarkRunner {
   aggregateResults() {
     return {
       suite: 'Knowledge Hooks Performance Benchmark Suite',
-      version: '1.0.0',
+      version: 'latest',
       timestamp: new Date().toISOString(),
       platform: process.platform,
       arch: process.arch,
@@ -340,7 +340,7 @@ describe('Benchmark Integration Tests', () => {
     const aggregated = runner.aggregateResults();
 
     expect(aggregated.suite).toBe('Knowledge Hooks Performance Benchmark Suite');
-    expect(aggregated.version).toBe('1.0.0');
+    expect(aggregated.version).toBe('latest');
     expect(aggregated.timestamp).toBeTruthy();
     expect(aggregated.platform).toBe(process.platform);
     expect(aggregated.arch).toBe(process.arch);

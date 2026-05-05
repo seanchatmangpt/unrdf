@@ -252,8 +252,8 @@ Return reconstructed state as new store
 
 ### New
 
-- `isomorphic-git` ^1.25.0 - Git operations in Node.js + Browser
-- `lightning-fs` ^4.6.0 - IndexedDB-backed filesystem for Browser
+- `isomorphic-git` ^[VERSION] - Git operations in Node.js + Browser
+- `lightning-fs` ^[VERSION] - IndexedDB-backed filesystem for Browser
 
 ### Total New External Dependencies: 2
 

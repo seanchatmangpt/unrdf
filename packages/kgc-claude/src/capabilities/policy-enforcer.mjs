@@ -523,7 +523,7 @@ export function createPolicyEnforcer(name, options = {}) {
   const policy = {
     id: crypto.randomUUID(),
     name,
-    version: options.version || '1.0.0',
+    version: options.version || 'latest',
     defaultAction: options.defaultAction || 'deny',
     rules: options.rules || [],
     allowlist: options.allowlist || [],
@@ -588,7 +588,7 @@ export function createReadOnlyPolicy() {
   return {
     id: crypto.randomUUID(),
     name: 'read-only',
-    version: '1.0.0',
+    version: 'latest',
     defaultAction: 'deny',
     allowlist: ['Read', 'Glob', 'Grep', 'WebFetch'],
     rules: [
@@ -618,7 +618,7 @@ export function createSafeDevelopmentPolicy() {
   return {
     id: crypto.randomUUID(),
     name: 'safe-development',
-    version: '1.0.0',
+    version: 'latest',
     defaultAction: 'ask',
     blocklist: ['Bash(rm -rf *)', 'Bash(sudo:*)', 'Bash(chmod 777:*)'],
     rules: [
@@ -655,7 +655,7 @@ export function createProductionPolicy() {
   return {
     id: crypto.randomUUID(),
     name: 'production',
-    version: '1.0.0',
+    version: 'latest',
     defaultAction: 'deny',
     strictMode: true,
     allowlist: ['Read', 'Grep', 'Glob'],

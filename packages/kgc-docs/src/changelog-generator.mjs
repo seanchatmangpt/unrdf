@@ -10,7 +10,7 @@ import { parseFrontmatter } from './parser.mjs';
 
 /**
  * Semver comparison function
- * @param {string} v1 - First version (e.g., "1.2.3")
+ * @param {string} v1 - First version (e.g., "[VERSION]")
  * @param {string} v2 - Second version
  * @returns {number} -1 if v1 < v2, 0 if equal, 1 if v1 > v2
  */
@@ -42,7 +42,7 @@ export function parseVersionInfo(filePath) {
   const frontmatter = parseFrontmatter(content);
 
   return {
-    version: frontmatter.version || '0.0.0',
+    version: frontmatter.version || '[VERSION]',
     author: frontmatter.author || 'Unknown',
     created: frontmatter.created || null,
     updated: frontmatter.updated || null,
@@ -104,8 +104,8 @@ export function generateChangelog(versions) {
 
   let changelog = '# Changelog\n\n';
   changelog += `All notable changes to this document are tracked here.\n\n`;
-  changelog += `Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\n`;
-  changelog += `and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n`;
+  changelog += `Format based on [Keep a Changelog](https://keepachangelog.com/en/[VERSION]/),\n`;
+  changelog += `and this project adheres to [Semantic Versioning](https://semver.org/spec/[VERSION].html).\n\n`;
 
   for (const version of sorted) {
     const date = version.updated || version.created || 'Unknown date';

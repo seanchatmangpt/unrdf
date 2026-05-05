@@ -1,6 +1,6 @@
 # Knowledge Hooks API Reference
 
-**Version**: v4.1.1
+**Version**: latest
 **Package**: `unrdf`
 **Module**: `knowledge-engine`
 
@@ -113,7 +113,7 @@ const hook = defineHook({
 
 **See Also**: [registerHook](#registerhook), [evaluateHook](#evaluatehook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -149,7 +149,7 @@ await registerHook(hook);
 
 **See Also**: [defineHook](#definehook), [deregisterHook](#deregisterhook), [getRegisteredHooks](#getregisteredhooks)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -174,7 +174,7 @@ console.log('Hook removed:', removed);
 
 **See Also**: [registerHook](#registerhook), [getRegisteredHooks](#getregisteredhooks)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -196,7 +196,7 @@ console.log('Registered hooks:', hooks);
 
 **See Also**: [registerHook](#registerhook), [deregisterHook](#deregisterhook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -216,7 +216,7 @@ resetGlobalHookManager();
 
 **See Also**: [registerHook](#registerhook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -260,7 +260,7 @@ console.log('Hook evaluation result:', result);
 
 **See Also**: [defineHook](#definehook), [registerHook](#registerhook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -295,7 +295,7 @@ const result = await executor.execute(hook, event);
 
 **See Also**: [evaluateHook](#evaluatehook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -327,7 +327,7 @@ const satisfied = await evaluator.isSatisfied(condition, store, context);
 
 **See Also**: [evaluateHook](#evaluatehook)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 

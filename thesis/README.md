@@ -96,7 +96,7 @@ Each package is documented with:
 Property & Value \\
 \hline
 Package & \pkg{@unrdf/oxigraph} \\
-Version & 1.0.0 \\
+Version & [VERSION] \\
 Observable $\Oobs$ & RDF files, SPARQL endpoints \\
 Artifact $\Aout$ & Oxigraph store $\store$ \\
 Type $\SigmaType$ & RDFJS DatasetCore \\

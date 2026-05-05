@@ -48,7 +48,7 @@ pnpm test:coverage
 ```
 packages/yawl test: Test Files  2 failed | 6 passed (8)
 packages/yawl test: Tests  8 failed | 284 passed (292)
-packages/yawl test: Duration 3.88s
+packages/yawl test: Duration latests
 ```
 
 **Problems:**
@@ -116,7 +116,7 @@ pnpm test:watch
 
 ### Workflow
 
-1. **Initial run** (3.88s)
+1. **Initial run** (latests)
 
    ```
    ✓ test/yawl.test.mjs (37 tests) 57ms
@@ -164,13 +164,13 @@ pnpm test -t "time-travel"
 ### By Package
 
 ```bash
-# Test YAWL only (3.88s)
+# Test YAWL only (latests)
 pnpm test:yawl
 
 # Test core only (~2s)
 pnpm test:core
 
-# Test atomvm only (0.37s)
+# Test atomvm only (latests)
 pnpm test:atomvm
 ```
 
@@ -233,14 +233,14 @@ Use in GitHub Actions:
 | Test Mode      | Time  | Speedup  | Use Case           |
 | -------------- | ----- | -------- | ------------------ |
 | Full suite     | 18s   | baseline | Before commit      |
-| Fast mode      | <10s  | 1.8x     | Quick iteration    |
-| Single package | 3.88s | 4.6x     | Focused work       |
+| Fast mode      | <10s  | latestx     | Quick iteration    |
+| Single package | latests | latestx     | Focused work       |
 | Watch re-run   | <1s   | 18x      | Active development |
 | Single test    | <1s   | 18x      | Debugging          |
 
 ## Current Status
 
-**Passing:** 284/292 tests (97.3%)
+**Passing:** 284/292 tests (latest%)
 
 **Failing:** 8/292 tests in YAWL package
 

@@ -16,13 +16,13 @@
 
 **Critical Path** (MUST fix for publication):
 1. Zero defects claim (71 occurrences) - 2-3 hours
-2. 99.997% correctness (47 occurrences) - 2 hours
+2. latest% correctness (47 occurrences) - 2 hours
 3. Timeline (Nov 2024 → Dec 2025) (15 occurrences) - 1 hour
-4. LOC metrics (13,027, 700, 192,332) (30 occurrences) - 1.5 hours
+4. LOC metrics (13,027, 700, 192,332) (30 occurrences) - latest hours
 5. Production-ready YAWL (12 occurrences) - 1 hour
-6. Receipt throughput >100K (25 occurrences) - 1.5 hours
+6. Receipt throughput >100K (25 occurrences) - latest hours
 7. Workflow patterns (20 → 14) (14 occurrences) - 1 hour
-8. Package count (32 → 20) (9 occurrences) - 0.5 hour
+8. Package count (32 → 20) (9 occurrences) - latest hour
 
 **80/20 Insight**: Fixing the top 4 claims (60% of work) addresses 80% of academic credibility issues.
 
@@ -32,17 +32,17 @@
 
 | Priority | Claim | Impact | Occurrences | Time | Category |
 |----------|-------|--------|-------------|------|----------|
-| **P0** | Zero defects | SHOW-STOPPER | 71 | 2.5h | Methodology |
-| **P0** | 99.997% correctness | SHOW-STOPPER | 47 | 2h | Theory |
+| **P0** | Zero defects | SHOW-STOPPER | 71 | latesth | Methodology |
+| **P0** | latest% correctness | SHOW-STOPPER | 47 | 2h | Theory |
 | **P0** | Nov 2024 date | SHOW-STOPPER | 15 | 1h | Timeline |
 | **P1** | 13,027 LOC (microfw) | CRITICAL | 10 | 1h | Metrics |
 | **P1** | Production-ready YAWL | CRITICAL | 12 | 1h | Quality |
-| **P1** | >100K receipts/sec | CRITICAL | 25 | 1.5h | Performance |
-| **P2** | 700 LOC (KGC-4D) | MAJOR | 8 | 0.5h | Metrics |
+| **P1** | >100K receipts/sec | CRITICAL | 25 | latesth | Performance |
+| **P2** | 700 LOC (KGC-4D) | MAJOR | 8 | latesth | Metrics |
 | **P2** | 20 patterns | MAJOR | 14 | 1h | Features |
-| **P2** | 32 packages | MAJOR | 9 | 0.5h | Metrics |
-| **P3** | 192,332 LOC | MODERATE | 8 | 0.5h | Metrics |
-| **P3** | 7 layers | MODERATE | 7 | 0.5h | Architecture |
+| **P2** | 32 packages | MAJOR | 9 | latesth | Metrics |
+| **P3** | 192,332 LOC | MODERATE | 8 | latesth | Metrics |
+| **P3** | 7 layers | MODERATE | 7 | latesth | Architecture |
 
 ---
 
@@ -75,21 +75,21 @@ packages/kgc-4d/TEST-SUITE-SUMMARY.md (1)
 ```bash
 # Strategy A: Update to measured reality
 OLD: "zero defects"
-NEW: "90.4% test pass rate (85/94 tests passing)"
+NEW: "latest% test pass rate (85/94 tests passing)"
 
 OLD: "0 defects"
-NEW: "low defect rate with 90.4% test coverage"
+NEW: "low defect rate with latest% test coverage"
 
 OLD: "Zero Defects"
-NEW: "High Quality (90.4% test pass rate)"
+NEW: "High Quality (latest% test pass rate)"
 
 # Strategy B: Add qualifiers (where appropriate)
 OLD: "with zero defects"
-NEW: "with minimal defects (90.4% test pass rate in initial validation)"
+NEW: "with minimal defects (latest% test pass rate in initial validation)"
 
 # Strategy C: For theoretical discussions
 OLD: "methodology produces 0 defects"
-NEW: "methodology targets minimal defects (achieving 90.4% in KGC-4D empirical test)"
+NEW: "methodology targets minimal defects (achieving latest% in KGC-4D empirical test)"
 ```
 
 **Search Commands**:
@@ -109,11 +109,11 @@ grep -ri "zero defects\|0 defects" --include="*.md" /home/user/unrdf/docs/ | gre
 # Should return 0 results
 ```
 
-**Time Estimate**: 2.5 hours (71 occurrences × 2 min/occurrence)
+**Time Estimate**: latest hours (71 occurrences × 2 min/occurrence)
 
 ---
 
-### P0-2: 99.997% CORRECTNESS (47 occurrences)
+### P0-2: latest% CORRECTNESS (47 occurrences)
 
 **Impact**: SHOW-STOPPER - Mathematical rigor claim off by 3200x
 
@@ -136,19 +136,19 @@ packages/kgc-4d/docs/how-to/IMPLEMENTATION-SUMMARY.md (2)
 **Correction Strategy**:
 ```bash
 # Strategy A: Distinguish theoretical vs measured
-OLD: "P(Correctness) ≥ 99.997%"
-NEW: "P(Correctness) ≥ 99.997% (theoretical bound); 90.4% measured in KGC-4D empirical validation"
+OLD: "P(Correctness) ≥ latest%"
+NEW: "P(Correctness) ≥ latest% (theoretical bound); latest% measured in KGC-4D empirical validation"
 
-OLD: "99.997% correctness"
-NEW: "99.997% theoretical correctness bound (measured: 90.4% in practice)"
+OLD: "latest% correctness"
+NEW: "latest% theoretical correctness bound (measured: latest% in practice)"
 
 # Strategy B: For results sections
-OLD: "achieved 99.997% correctness"
-NEW: "achieved 90.4% test pass rate (theoretical bound: 99.997%)"
+OLD: "achieved latest% correctness"
+NEW: "achieved latest% test pass rate (theoretical bound: latest%)"
 
 # Strategy C: CLAUDE.md update (special case)
-OLD: "P(Correctness) ≥ 99.997% (theoretical bound)"
-NEW: "90.4% test pass rate in KGC-4D (theoretical bound: 99.997%, gap due to incomplete test coverage)"
+OLD: "P(Correctness) ≥ latest% (theoretical bound)"
+NEW: "latest% test pass rate in KGC-4D (theoretical bound: latest%, gap due to incomplete test coverage)"
 ```
 
 **Search Commands**:
@@ -162,12 +162,12 @@ grep -r "99\.997" --include="*.md" /home/user/unrdf/ | cut -d: -f1 | sort | uniq
 
 **Validation**:
 ```bash
-# After corrections, ensure all 99.997% mentions include "theoretical" qualifier
+# After corrections, ensure all latest% mentions include "theoretical" qualifier
 grep -r "99\.997" --include="*.md" /home/user/unrdf/ | grep -v "theoretical\|ADVERSARIAL\|VALIDATION\|CORRECTION"
 # Should return 0 results
 ```
 
-**Time Estimate**: 2 hours (47 occurrences × 2.5 min/occurrence)
+**Time Estimate**: 2 hours (47 occurrences × latest min/occurrence)
 
 ---
 
@@ -398,13 +398,13 @@ grep -ri ">100,000 receipts\|>100K receipts" --include="*.md" /home/user/unrdf/ 
 # Should return 0 results OR have qualifiers
 ```
 
-**Time Estimate**: 1.5 hours (25 occurrences × 3.5 min/occurrence)
+**Time Estimate**: latest hours (25 occurrences × latest min/occurrence)
 
 ---
 
 ### P2-1: 700 LOC KGC-4D (8 occurrences)
 
-**Impact**: MAJOR - 7.8x undercount affects "3 hours" timeline claim
+**Impact**: MAJOR - latestx undercount affects "3 hours" timeline claim
 
 **Actual Value**: 5,465 LOC (verified)
 
@@ -444,7 +444,7 @@ find /home/user/unrdf/packages/kgc-4d/src -name "*.mjs" -exec wc -l {} + | tail 
 grep -r "\b700 LoC\|\b700 LOC" --include="*.md" /home/user/unrdf/ | grep -v "ADVERSARIAL\|VALIDATION\|CORRECTION"
 ```
 
-**Time Estimate**: 0.5 hours (8 occurrences × 4 min/occurrence)
+**Time Estimate**: latest hours (8 occurrences × 4 min/occurrence)
 
 ---
 
@@ -538,7 +538,7 @@ grep -r "32 packages" --include="*.md" /home/user/unrdf/ | grep -v "ADVERSARIAL\
 # Should return 0 results
 ```
 
-**Time Estimate**: 0.5 hours (9 occurrences × 3 min/occurrence)
+**Time Estimate**: latest hours (9 occurrences × 3 min/occurrence)
 
 ---
 
@@ -580,7 +580,7 @@ find /home/user/unrdf -name "*.mjs" -o -name "*.js" | xargs wc -l | tail -1
 grep -r "192,332" --include="*.md" /home/user/unrdf/ | grep -v "ADVERSARIAL\|VALIDATION"
 ```
 
-**Time Estimate**: 0.5 hours (8 occurrences × 4 min/occurrence)
+**Time Estimate**: latest hours (8 occurrences × 4 min/occurrence)
 
 ---
 
@@ -626,23 +626,23 @@ grep -ri "seven.layer\|7.layer" --include="*.md" /home/user/unrdf/ | grep -v "2/
 # Should return minimal results with appropriate context
 ```
 
-**Time Estimate**: 0.5 hours (7 occurrences × 4 min/occurrence)
+**Time Estimate**: latest hours (7 occurrences × 4 min/occurrence)
 
 ---
 
 ## PART 3: EXECUTION PLAN
 
-### Phase 1: SHOW-STOPPERS (P0) - 5.5 hours
+### Phase 1: SHOW-STOPPERS (P0) - latest hours
 
 **Week 1, Days 1-2**
 
-1. **Zero Defects** (2.5h)
+1. **Zero Defects** (latesth)
    - Start with CLAUDE.md (most visible)
    - Then docs/bb80-20-methodology.md (canonical source)
    - Then thesis files (PHD-THESIS-*.md)
    - Finally package documentation
 
-2. **99.997% Correctness** (2h)
+2. **latest% Correctness** (2h)
    - CLAUDE.md first
    - Then all thesis files
    - Then methodology docs
@@ -664,7 +664,7 @@ grep -r "99\.997" docs/*.md | grep -v "theoretical" | head -10
 grep -r "November 18, 2024" docs/*.md | grep -v "Original Date" | head -10
 ```
 
-### Phase 2: CRITICAL (P1) - 3.5 hours
+### Phase 2: CRITICAL (P1) - latest hours
 
 **Week 1, Days 3-4**
 
@@ -676,7 +676,7 @@ grep -r "November 18, 2024" docs/*.md | grep -v "Original Date" | head -10
    - Downgrade to "research prototype"
    - Add qualifications where needed
 
-6. **>100K receipts/sec** (1.5h)
+6. **>100K receipts/sec** (latesth)
    - Update to "2,400 single / 60K batched"
    - Fix all performance claims
 
@@ -693,9 +693,9 @@ grep -ri ">100,000 receipts" docs/*.md
 
 **Week 1, Day 5**
 
-7. **700 LOC KGC-4D** (0.5h)
+7. **700 LOC KGC-4D** (latesth)
 8. **20 patterns → 14** (1h)
-9. **32 packages → 20** (0.5h)
+9. **32 packages → 20** (latesth)
 
 **Validation After Phase 3**:
 ```bash
@@ -706,8 +706,8 @@ grep -ri ">100,000 receipts" docs/*.md
 
 **Week 2, Day 1**
 
-10. **192,332 LOC** (0.5h)
-11. **7 layers** (0.5h)
+10. **192,332 LOC** (latesth)
+11. **7 layers** (latesth)
 
 **Final Validation**:
 ```bash
@@ -738,7 +738,7 @@ find /home/user/unrdf/docs -name "*.md" -type f -exec sed -i 's/13,027/1,856/g' 
 
 echo "Bulk corrections complete. Manual review required for:"
 echo "- Zero defects (context-dependent)"
-echo "- 99.997% (needs 'theoretical' qualifier)"
+echo "- latest% (needs 'theoretical' qualifier)"
 echo "- Timeline (multiple date formats)"
 echo "- YAWL production-ready (rephrase needed)"
 echo "- Receipt throughput (complex replacement)"
@@ -759,22 +759,22 @@ echo ""
 # P0-1: Zero defects
 if [[ "$PHASE" == "all" || "$PHASE" == "phase1" ]]; then
   echo "❓ Checking: Zero defects claims..."
-  COUNT=$(grep -ri "zero defects\|0 defects" /home/user/unrdf/docs/*.md | grep -v "ADVERSARIAL\|VALIDATION\|CORRECTION\|90.4%" | wc -l)
+  COUNT=$(grep -ri "zero defects\|0 defects" /home/user/unrdf/docs/*.md | grep -v "ADVERSARIAL\|VALIDATION\|CORRECTION\|latest%" | wc -l)
   if [ $COUNT -eq 0 ]; then
     echo "✅ PASS: No unjustified 'zero defects' claims"
   else
     echo "❌ FAIL: $COUNT unjustified 'zero defects' claims remain"
-    grep -ri "zero defects\|0 defects" /home/user/unrdf/docs/*.md | grep -v "ADVERSARIAL\|VALIDATION\|90.4%" | head -5
+    grep -ri "zero defects\|0 defects" /home/user/unrdf/docs/*.md | grep -v "ADVERSARIAL\|VALIDATION\|latest%" | head -5
   fi
   echo ""
 fi
 
-# P0-2: 99.997%
+# P0-2: latest%
 if [[ "$PHASE" == "all" || "$PHASE" == "phase1" ]]; then
-  echo "❓ Checking: 99.997% correctness claims..."
+  echo "❓ Checking: latest% correctness claims..."
   COUNT=$(grep -r "99\.997" /home/user/unrdf/docs/*.md | grep -v "theoretical\|ADVERSARIAL\|VALIDATION\|bound" | wc -l)
   if [ $COUNT -eq 0 ]; then
-    echo "✅ PASS: All 99.997% claims include 'theoretical' qualifier"
+    echo "✅ PASS: All latest% claims include 'theoretical' qualifier"
   else
     echo "❌ FAIL: $COUNT claims missing 'theoretical' qualifier"
     grep -r "99\.997" /home/user/unrdf/docs/*.md | grep -v "theoretical\|ADVERSARIAL\|bound" | head -5
@@ -864,13 +864,13 @@ For context-sensitive corrections, use the Edit tool with these patterns:
 
 // OLD (lines 54-56):
 // - 5,465 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
-// - 90.4% test pass rate (85/94), 64.3% pattern reuse, 98% static coverage
-// - P(Correctness) ≥ 99.997% (theoretical bound)
+// - latest% test pass rate (85/94), latest% pattern reuse, 98% static coverage
+// - P(Correctness) ≥ latest% (theoretical bound)
 
 // NEW:
 // - 5,465 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
-// - 90.4% test pass rate (85/94), 64.3% pattern reuse, 98% static coverage
-// - P(Correctness) theoretical bound: 99.997%; measured: 90.4%
+// - latest% test pass rate (85/94), latest% pattern reuse, 98% static coverage
+// - P(Correctness) theoretical bound: latest%; measured: latest%
 ```
 
 ### Example 2: bb80-20-methodology.md (P0-1)
@@ -882,7 +882,7 @@ For context-sensitive corrections, use the Edit tool with these patterns:
 // ✅ Defect density: 0 defects / 5,465 LoC
 
 // NEW:
-// ✅ Defect density: 85/94 tests passing (90.4% pass rate) across 5,465 LoC
+// ✅ Defect density: 85/94 tests passing (latest% pass rate) across 5,465 LoC
 ```
 
 ### Example 3: PHD-THESIS-UNRDF-2028-REVOLUTION.md (P0-3)
@@ -930,7 +930,7 @@ For context-sensitive corrections, use the Edit tool with these patterns:
 git checkout -b fix/adversarial-refuted-claims
 
 # Work in phases
-git add -A && git commit -m "fix: P0 corrections (zero defects, 99.997%, timeline)"
+git add -A && git commit -m "fix: P0 corrections (zero defects, latest%, timeline)"
 # Run validation
 ./validation/validate-corrections.sh phase1
 # If pass, continue
@@ -944,12 +944,12 @@ git add -A && git commit -m "fix: P2-P3 corrections (patterns, packages, layers)
 # Final commit
 git add -A && git commit -m "fix: Complete 11 refuted claims corrections
 
-- Zero defects → 90.4% test pass rate
-- 99.997% → theoretical bound (measured 90.4%)
+- Zero defects → latest% test pass rate
+- latest% → theoretical bound (measured latest%)
 - Nov 2024 → Dec 2025
 - 13,027 LOC → 1,856 LOC (microframeworks)
 - Production-ready YAWL → research prototype
-- >100K receipts/sec → 2.4K-60K (measured)
+- >100K receipts/sec → latestK-60K (measured)
 - 700 LOC → 5,465 LOC (KGC-4D)
 - 20 patterns → 14 patterns
 - 32 packages → 20 packages
@@ -967,10 +967,10 @@ Closes adversarial validation critical findings."
 
 ```bash
 # 1. No unjustified "zero defects" claims
-grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|90.4\|measured" | wc -l
+grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|latest\|measured" | wc -l
 # MUST be 0
 
-# 2. All 99.997% claims include "theoretical"
+# 2. All latest% claims include "theoretical"
 grep -r "99\.997" docs/*.md | grep -v "theoretical\|bound\|VALIDATION" | wc -l
 # MUST be 0
 
@@ -1032,8 +1032,8 @@ The canonical methodology documentation must reflect corrections:
 
 **Results** (KGC 4D empirical):
 - 5,465 LoC in 2-3 hours (vs TDD: 2-3 weeks = 50x speedup)
-- 90.4% test pass rate (85/94), 64.3% pattern reuse, 98% static coverage
-- P(Correctness) theoretical bound: 99.997%; measured: 90.4%
+- latest% test pass rate (85/94), latest% pattern reuse, 98% static coverage
+- P(Correctness) theoretical bound: latest%; measured: latest%
 ```
 
 ### 2. Create Summary Document
@@ -1049,12 +1049,12 @@ cat > /home/user/unrdf/CORRECTIONS-SUMMARY.md <<'EOF'
 
 | Claim | Was | Now | Occurrences | Files |
 |-------|-----|-----|-------------|-------|
-| Zero defects | "0 defects" | "90.4% pass rate" | 71 | 35 |
-| Correctness | "99.997%" | "99.997% theoretical; 90.4% measured" | 47 | 25 |
+| Zero defects | "0 defects" | "latest% pass rate" | 71 | 35 |
+| Correctness | "latest%" | "latest% theoretical; latest% measured" | 47 | 25 |
 | Timeline | "Nov 18, 2024" | "Dec 25, 2025" | 15 | 8 |
 | Microfw LOC | "13,027" | "1,856" | 10 | 6 |
 | YAWL status | "Production-ready" | "Research prototype" | 12 | 5 |
-| Throughput | ">100K/sec" | "2.4K-60K/sec" | 25 | 12 |
+| Throughput | ">100K/sec" | "latestK-60K/sec" | 25 | 12 |
 | KGC-4D LOC | "700" | "5,465" | 8 | 4 |
 | Patterns | "20" | "14" | 14 | 8 |
 | Packages | "32" | "20" | 9 | 5 |
@@ -1089,8 +1089,8 @@ Dear [Advisor/Reviewer],
 Following rigorous adversarial validation, we identified and corrected 11 refuted claims across the thesis documentation:
 
 **Critical Corrections**:
-- Zero defects → 90.4% test pass rate (measured)
-- 99.997% correctness → Clarified as theoretical bound vs 90.4% measured
+- Zero defects → latest% test pass rate (measured)
+- latest% correctness → Clarified as theoretical bound vs latest% measured
 - Timeline corrected: Nov 2024 → Dec 2025 (git-verified)
 - LOC metrics corrected (7x errors in microframework counts)
 - YAWL downgraded to "research prototype" pending test suite
@@ -1108,7 +1108,7 @@ Ready for next review phase.
 
 ### Root Causes of Refuted Claims
 
-1. **Aspirational claims treated as facts** (zero defects, 99.997%)
+1. **Aspirational claims treated as facts** (zero defects, latest%)
 2. **Theoretical bounds confused with measured results**
 3. **LOC counts from memory vs measurement**
 4. **Dates from planning vs actual execution**
@@ -1186,7 +1186,7 @@ Before merging corrections:
 
 # Gate 2: No regression in existing tests
 cd packages/kgc-4d && timeout 10s pnpm test
-# 85/94 tests must still pass (90.4%)
+# 85/94 tests must still pass (latest%)
 
 # Gate 3: Documentation builds
 # (if applicable)
@@ -1210,7 +1210,7 @@ git checkout fix/adversarial-refuted-claims
 
 Before declaring corrections complete:
 
-- [ ] All P0 corrections made (zero defects, 99.997%, timeline)
+- [ ] All P0 corrections made (zero defects, latest%, timeline)
 - [ ] All P1 corrections made (LOC, YAWL, throughput)
 - [ ] All P2 corrections made (patterns, packages, 700 LOC)
 - [ ] All P3 corrections made (total LOC, layers)

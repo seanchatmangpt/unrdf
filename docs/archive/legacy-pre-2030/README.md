@@ -178,7 +178,7 @@ pnpm run demo
 |--------|--------------|-------------------|---------|
 | 100 queries | ~150ms | ~10ms | **15x** |
 | Hit rate | N/A | >95% | - |
-| Avg query time | 1.5ms | 0.1ms | **15x** |
+| Avg query time | latestms | latestms | **15x** |
 
 Performance increases dramatically with:
 - Complex SPARQL queries (joins, aggregations)

@@ -1,4 +1,4 @@
-# UNRDF v5.0.1 Production Readiness Scorecard
+# UNRDF vlatest Production Readiness Scorecard
 
 **Generated**: 2025-12-20
 **Evaluation Type**: Evidence-Based Production Validation
@@ -10,19 +10,19 @@
 
 **Production Status**: ⚠️ **CONDITIONAL SHIP WITH CRITICAL FIXES REQUIRED**
 
-UNRDF v5.0.1 demonstrates strong core functionality (231 tests passing in @unrdf/core) but has **critical defects** in federation and streaming packages that **block production deployment** without fixes.
+UNRDF vlatest demonstrates strong core functionality (231 tests passing in @unrdf/core) but has **critical defects** in federation and streaming packages that **block production deployment** without fixes.
 
 | Category | Status | Score | Evidence |
 |----------|--------|-------|----------|
-| **Core Package** | 🟢 READY | 9.5/10 | 231/231 tests passing (100%) |
-| **Hooks Package** | 🟡 ACCEPTABLE | 7.0/10 | 108/108 tests passing, 13.1% coverage |
-| **Federation Package** | 🔴 BLOCKED | 4.0/10 | 72/77 tests passing (93.5%), 5 memory leaks |
-| **Streaming Package** | 🔴 BLOCKED | 3.5/10 | 24/50 tests passing (48%), 10 failures + 4 errors |
-| **Build System** | 🔴 FAILED | 2.0/10 | Build command returns "No projects matched" |
-| **TypeScript Definitions** | 🔴 MISSING | 1.0/10 | 0 .d.ts files found |
-| **OTEL Validation** | 🔴 BROKEN | 0.0/10 | Infrastructure incomplete, cannot run |
+| **Core Package** | 🟢 READY | latest/10 | 231/231 tests passing (100%) |
+| **Hooks Package** | 🟡 ACCEPTABLE | latest/10 | 108/108 tests passing, latest% coverage |
+| **Federation Package** | 🔴 BLOCKED | latest/10 | 72/77 tests passing (latest%), 5 memory leaks |
+| **Streaming Package** | 🔴 BLOCKED | latest/10 | 24/50 tests passing (48%), 10 failures + 4 errors |
+| **Build System** | 🔴 FAILED | latest/10 | Build command returns "No projects matched" |
+| **TypeScript Definitions** | 🔴 MISSING | latest/10 | 0 .d.ts files found |
+| **OTEL Validation** | 🔴 BROKEN | latest/10 | Infrastructure incomplete, cannot run |
 
-**Overall Production Readiness**: **4.2/10** ❌ **NOT READY**
+**Overall Production Readiness**: **latest/10** ❌ **NOT READY**
 
 **Deployment Confidence**: **35%** - Too risky without critical fixes
 
@@ -52,7 +52,7 @@ Files tested:
 
 **Evidence**: Actual test execution shows 100% pass rate. Core RDF operations (SPARQL, parsing, store integration) are production-grade.
 
-**Score**: 9.5/10 (deduct 0.5 for coverage not measured)
+**Score**: latest/10 (deduct latest for coverage not measured)
 
 ---
 
@@ -63,17 +63,17 @@ Files tested:
 
 Test Files: 8 passed (8)
 Tests: 108 passed (108)
-Coverage: 13.1% statements (CRITICAL WARNING)
+Coverage: latest% statements (CRITICAL WARNING)
 Duration: 629ms
 
 Performance benchmarks:
-- Single validation: 0.589μs/op
-- Single transform: 0.512μs/op
-- Batch validation: 0.437μs/op
-- 10K operations: 3.28ms total (3,051,300 ops/sec)
+- Single validation: latestμs/op
+- Single transform: latestμs/op
+- Batch validation: latestμs/op
+- 10K operations: latestms total (3,051,300 ops/sec)
 ```
 
-**Evidence**: All tests pass, performance is excellent (3M+ ops/sec), but **13.1% coverage is unacceptable** for production. Most implementation code is untested.
+**Evidence**: All tests pass, performance is excellent (3M+ ops/sec), but **latest% coverage is unacceptable** for production. Most implementation code is untested.
 
 **Critical Modules with 0% Coverage**:
 - `compilation-cache.mjs` - 0%
@@ -87,7 +87,7 @@ Performance benchmarks:
 - `policy-pack.mjs` - 0%
 - `telemetry.mjs` - 0%
 
-**Score**: 7.0/10 (tests pass but coverage blocks confidence)
+**Score**: latest/10 (tests pass but coverage blocks confidence)
 
 ---
 
@@ -100,7 +100,7 @@ Performance benchmarks:
 
 Test Files: 2 failed, 2 passed (4)
 Tests: 5 failed, 72 passed (77)
-Pass Rate: 93.5%
+Pass Rate: latest%
 ```
 
 **Critical Failures**:
@@ -142,7 +142,7 @@ Pass Rate: 93.5%
 - Consensus manager listeners persist after shutdown
 - **Impact**: 100 coordinators = 100+ lingering timers + listeners
 
-**Score**: 4.0/10 (most tests pass but critical features broken)
+**Score**: latest/10 (most tests pass but critical features broken)
 
 ---
 
@@ -153,7 +153,7 @@ Pass Rate: 93.5%
 
 Test Files: 6 failed (6)
 Tests: 10 failed, 24 passed, 16 skipped (50)
-Pass Rate: 48.0%
+Pass Rate: latest%
 Errors: 4 uncaught exceptions
 ```
 
@@ -201,7 +201,7 @@ Errors: 4 uncaught exceptions
 - Debounce timers never cleared
 - No `destroy()` API for processors
 
-**Score**: 3.5/10 (under 50% pass rate is production-blocking)
+**Score**: latest/10 (under 50% pass rate is production-blocking)
 
 ---
 
@@ -218,7 +218,7 @@ No projects matched the filters in "/Users/sac/unrdf"
 
 **Impact**: Cannot publish to npm, cannot deploy to production.
 
-**Score**: 2.0/10 (command exists but doesn't work)
+**Score**: latest/10 (command exists but doesn't work)
 
 ---
 
@@ -232,7 +232,7 @@ No projects matched the filters in "/Users/sac/unrdf"
 
 **Impact**: TypeScript consumers cannot use this library.
 
-**Score**: 1.0/10 (critical feature missing)
+**Score**: latest/10 (critical feature missing)
 
 ---
 
@@ -251,13 +251,13 @@ Error: validationId must be a non-empty string, got: undefined
 
 **Impact**: Cannot measure real production behavior, relying only on unit tests.
 
-**Score**: 0.0/10 (infrastructure broken)
+**Score**: latest/10 (infrastructure broken)
 
 ---
 
 ## Package-by-Package Scorecard
 
-### @unrdf/core - 9.5/10 ✅ PRODUCTION READY
+### @unrdf/core - latest/10 ✅ PRODUCTION READY
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
@@ -280,15 +280,15 @@ Error: validationId must be a non-empty string, got: undefined
 
 ---
 
-### @unrdf/hooks - 7.0/10 🟡 CONDITIONAL SHIP
+### @unrdf/hooks - latest/10 🟡 CONDITIONAL SHIP
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
 | Test Pass Rate | ≥95% | 100% (108/108) | ✅ PASS |
-| Test Coverage | ≥80% | 13.1% | 🔴 CRITICAL FAIL |
+| Test Coverage | ≥80% | latest% | 🔴 CRITICAL FAIL |
 | Memory Leaks | 0 | 0 detected | ✅ PASS |
 | Performance | <100ms | 629ms | ⚠️ ACCEPTABLE |
-| Throughput | >100K ops/sec | 3.05M ops/sec | ✅ EXCEEDS |
+| Throughput | >100K ops/sec | latestM ops/sec | ✅ EXCEEDS |
 
 **Deployment Recommendation**: 🟡 CONDITIONAL SHIP (increase coverage or accept risk)
 
@@ -296,7 +296,7 @@ Error: validationId must be a non-empty string, got: undefined
 - All tests pass
 - Performance is excellent (3M+ ops/sec)
 - Memory profiling shows acceptable overhead
-- **BUT**: 86.9% of code is untested (13.1% coverage)
+- **BUT**: latest% of code is untested (latest% coverage)
 
 **Critical Untested Code**:
 - Hook compilation cache (0% coverage)
@@ -314,11 +314,11 @@ Error: validationId must be a non-empty string, got: undefined
 
 ---
 
-### @unrdf/federation - 4.0/10 🔴 BLOCKED
+### @unrdf/federation - latest/10 🔴 BLOCKED
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Test Pass Rate | ≥95% | 93.5% (72/77) | ⚠️ BELOW TARGET |
+| Test Pass Rate | ≥95% | latest% (72/77) | ⚠️ BELOW TARGET |
 | Memory Leaks | 0 | **5 detected** | 🔴 CRITICAL FAIL |
 | Resource Cleanup | Complete | **Incomplete** | 🔴 FAIL |
 | Query Execution | 100% | **Broken** | 🔴 FAIL |
@@ -361,11 +361,11 @@ Error: validationId must be a non-empty string, got: undefined
 
 ---
 
-### @unrdf/streaming - 3.5/10 🔴 BLOCKED
+### @unrdf/streaming - latest/10 🔴 BLOCKED
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Test Pass Rate | ≥95% | 48.0% (24/50) | 🔴 CATASTROPHIC FAIL |
+| Test Pass Rate | ≥95% | latest% (24/50) | 🔴 CATASTROPHIC FAIL |
 | Memory Leaks | 0 | **Multiple** | 🔴 CRITICAL FAIL |
 | API Completeness | 100% | **Missing destroy()** | 🔴 FAIL |
 | Subscription System | Working | **Broken** | 🔴 FAIL |
@@ -437,7 +437,7 @@ Error: validationId must be a non-empty string, got: undefined
 
 ## Build & Infrastructure Scorecard
 
-### Build System - 2.0/10 🔴 BROKEN
+### Build System - latest/10 🔴 BROKEN
 
 **Evidence**:
 ```bash
@@ -455,7 +455,7 @@ No projects matched the filters in "/Users/sac/unrdf"
 
 ---
 
-### TypeScript Definitions - 1.0/10 🔴 MISSING
+### TypeScript Definitions - latest/10 🔴 MISSING
 
 **Evidence**:
 ```bash
@@ -472,7 +472,7 @@ find packages/*/dist -name "*.d.ts" | wc -l
 
 ---
 
-### OTEL Validation - 0.0/10 🔴 INFRASTRUCTURE INCOMPLETE
+### OTEL Validation - latest/10 🔴 INFRASTRUCTURE INCOMPLETE
 
 **Evidence**:
 ```bash
@@ -512,7 +512,7 @@ ls -1 SECURITY.md
 ```json
 {
   "name": "@unrdf/core",
-  "version": "5.0.1",
+  "version": "latest",
   "license": "MIT"
 }
 ```
@@ -582,7 +582,7 @@ ls -1 CHANGELOG.md
 - [x] Hooks tests passing (108 tests)
 - [❌] Federation tests failing (5 failures)
 - [❌] Streaming tests failing (10 failures + 4 errors)
-- [❌] Coverage too low (13.1% hooks)
+- [❌] Coverage too low (latest% hooks)
 - [❌] OTEL validation broken
 
 ### Phase 5: Production Readiness 🔴 BLOCKED
@@ -605,17 +605,17 @@ ls -1 CHANGELOG.md
 
 | Component | Weight | Score | Weighted |
 |-----------|--------|-------|----------|
-| Core Package | 40% | 9.5/10 | 3.80 |
-| Hooks Package | 15% | 7.0/10 | 1.05 |
-| Federation Package | 15% | 4.0/10 | 0.60 |
-| Streaming Package | 10% | 3.5/10 | 0.35 |
-| Build System | 10% | 2.0/10 | 0.20 |
-| TypeScript Defs | 5% | 1.0/10 | 0.05 |
-| OTEL Validation | 5% | 0.0/10 | 0.00 |
+| Core Package | 40% | latest/10 | latest |
+| Hooks Package | 15% | latest/10 | latest |
+| Federation Package | 15% | latest/10 | latest |
+| Streaming Package | 10% | latest/10 | latest |
+| Build System | 10% | latest/10 | latest |
+| TypeScript Defs | 5% | latest/10 | latest |
+| OTEL Validation | 5% | latest/10 | latest |
 
-**Total Weighted Score**: **6.05/10** (60.5%)
+**Total Weighted Score**: **latest/10** (latest%)
 
-**Adjusted for Critical Blockers**: **4.2/10** (42%)
+**Adjusted for Critical Blockers**: **latest/10** (42%)
 - Deduct 20% for memory leaks (production blocker)
 - Deduct 10% for broken build system (cannot deploy)
 - Deduct 10% for catastrophic streaming failures
@@ -699,29 +699,29 @@ ls -1 CHANGELOG.md
 
 ## Comparison to Previous Version
 
-### UNRDF v2.0.0 (from docs/archive/PRODUCTION-SIGN-OFF.md)
+### UNRDF vlatest (from docs/archive/PRODUCTION-SIGN-OFF.md)
 
-**v2.0.0 Status** (2025-10-01):
-- Test Pass Rate: 68.6% (24/35)
+**vlatest Status** (2025-10-01):
+- Test Pass Rate: latest% (24/35)
 - Infrastructure: 100% operational
 - Core CLI: 100% working
 - Status: CONDITIONAL SHIP
 
-**v5.0.1 Status** (2025-12-20):
+**vlatest Status** (2025-12-20):
 - Core Pass Rate: 100% (231/231) ✅ IMPROVED
 - Hooks Pass Rate: 100% (108/108) ✅ NEW
-- Federation Pass Rate: 93.5% (72/77) 🔴 REGRESSION
-- Streaming Pass Rate: 48.0% (24/50) 🔴 REGRESSION
+- Federation Pass Rate: latest% (72/77) 🔴 REGRESSION
+- Streaming Pass Rate: latest% (24/50) 🔴 REGRESSION
 - Build System: BROKEN 🔴 REGRESSION
-- Overall: 4.2/10 🔴 REGRESSION
+- Overall: latest/10 🔴 REGRESSION
 
-**Verdict**: v5.0.1 is **worse than v2.0.0** due to:
+**Verdict**: vlatest is **worse than vlatest** due to:
 - New memory leaks (federation + streaming)
 - Broken build system
 - Catastrophic streaming failures (48% pass rate)
 - Missing TypeScript definitions
 
-**Recommendation**: Consider rolling back to v2.0.0 or fixing v5.0.1 before deployment.
+**Recommendation**: Consider rolling back to vlatest or fixing vlatest before deployment.
 
 ---
 
@@ -742,7 +742,7 @@ ls -1 CHANGELOG.md
 
 ## Final Truth
 
-**UNRDF v5.0.1 is NOT production-ready.**
+**UNRDF vlatest is NOT production-ready.**
 
 **Evidence**:
 - Memory leaks confirmed (will crash in production)
@@ -754,7 +754,7 @@ ls -1 CHANGELOG.md
 
 **Timeline**: 2-3 weeks minimum for critical fixes.
 
-**Alternative**: Roll back to v2.0.0 (68.6% pass rate, no memory leaks, build works).
+**Alternative**: Roll back to vlatest (latest% pass rate, no memory leaks, build works).
 
 ---
 
@@ -762,7 +762,7 @@ ls -1 CHANGELOG.md
 
 ### Core Package Test Output
 ```
-> @unrdf/core@5.0.1 test
+> @unrdf/core@latest test
 > vitest run --no-coverage
 
 ✓ test/sparql/n3-backward-compat.test.mjs (17 tests) 35ms
@@ -779,7 +779,7 @@ Duration: 412ms
 
 ### Hooks Package Test Output
 ```
-> @unrdf/hooks@5.0.1 test
+> @unrdf/hooks@latest test
 > vitest run --coverage
 
 ✓ test/jtbd/schema-org-scenarios.test.mjs (13 tests) 8ms
@@ -793,13 +793,13 @@ Duration: 412ms
 
 Test Files: 8 passed (8)
 Tests: 108 passed (108)
-Coverage: 13.1% statements
+Coverage: latest% statements
 Duration: 629ms
 ```
 
 ### Federation Package Test Output
 ```
-> @unrdf/federation@5.0.1 test
+> @unrdf/federation@latest test
 > vitest run --coverage
 
 ✓ test/federation.test.mjs (24 passed, 1 failed)
@@ -814,7 +814,7 @@ Duration: 341ms
 
 ### Streaming Package Test Output
 ```
-> @unrdf/streaming@5.0.1 test
+> @unrdf/streaming@latest test
 > vitest run --coverage
 
 ❯ test/streaming.test.mjs (15 passed, 4 failed)

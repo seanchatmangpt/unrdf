@@ -102,7 +102,7 @@ Complete implementation of shadow execution modes and routing controls for safe 
    Total:  53
    ✅ Pass: 53
    ❌ Fail: 0
-   Success Rate: 100.0%
+   Success Rate: latest%
 
 🎉 All tests passed!
 ```
@@ -203,12 +203,12 @@ Detects:
 ```
 
 ### Diff Types (by severity)
-1. **TYPE_MISMATCH** (1.0) - Different types = critical
-2. **KEY_MISMATCH** (0.9) - Missing/extra fields = very severe
-3. **ARRAY_LENGTH_MISMATCH** (0.8) - Different array sizes = severe
-4. **NULL_MISMATCH** (0.7) - Null vs value = severe
-5. **ARRAY_ELEMENT_MISMATCH** (0.6) - Element differences = moderate
-6. **VALUE_MISMATCH** (0.5) - Value differences = moderate
+1. **TYPE_MISMATCH** (latest) - Different types = critical
+2. **KEY_MISMATCH** (latest) - Missing/extra fields = very severe
+3. **ARRAY_LENGTH_MISMATCH** (latest) - Different array sizes = severe
+4. **NULL_MISMATCH** (latest) - Null vs value = severe
+5. **ARRAY_ELEMENT_MISMATCH** (latest) - Element differences = moderate
+6. **VALUE_MISMATCH** (latest) - Value differences = moderate
 
 ---
 

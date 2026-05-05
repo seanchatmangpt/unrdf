@@ -49,7 +49,7 @@ describe('Receipt Constants', () => {
   });
 
   it('should export RECEIPT_VERSION', () => {
-    expect(RECEIPT_VERSION).toBe('1.0.0');
+    expect(RECEIPT_VERSION).toBe('[VERSION]');
   });
 
   it('should export RECEIPT_TYPES', () => {
@@ -414,7 +414,7 @@ describe('Merge Receipt', () => {
       });
 
       expect(receipt.mergeAlgorithm.algorithm).toBe('lww-deterministic');
-      expect(receipt.mergeAlgorithm.version).toBe('1.0.0');
+      expect(receipt.mergeAlgorithm.version).toBe('[VERSION]');
       expect(receipt.mergeAlgorithm.parameters.hashFunction).toBe(HASH_ALGORITHM);
     });
 

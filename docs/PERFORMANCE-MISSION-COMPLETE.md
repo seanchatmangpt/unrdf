@@ -269,7 +269,7 @@ const plan = await optimizer.optimizeQuery(query, 'sparql-ask', graph);
 ```json
 {
   "dependencies": {
-    "lru-cache": "^11.2.2"
+    "lru-cache": "^latest"
   }
 }
 ```

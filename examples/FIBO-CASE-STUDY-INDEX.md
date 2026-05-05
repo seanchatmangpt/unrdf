@@ -90,7 +90,7 @@ rdf load examples/fibo-ontology-snippet.nt
 
 **Structure:**
 ```yaml
-version: "1.0.0"
+version: "latest"
 global:
   receipts:
     enabled: true
@@ -259,6 +259,6 @@ export const fraudDetectionJTBD = {
 
 ---
 
-**Version:** 1.0.0  
+**Version:** latest  
 **Created:** 2026-04-03  
 **Status:** Production-ready case study  

@@ -1,8 +1,8 @@
 # UNRDF v6 Testing Strategy - Deliverables Summary
 
 **Delivered**: 2025-12-27
-**Package**: @unrdf/v6-core v6.0.0-alpha.1
-**Execution Time**: 1.26 seconds
+**Package**: @unrdf/v6-core vlatest.1
+**Execution Time**: latest seconds
 **Test Framework**: Node.js native `node:test`
 
 ---
@@ -16,7 +16,7 @@ Delivered comprehensive test suite for UNRDF v6 with **142 working tests** acros
 - **Total Tests**: 142
 - **Passing Tests**: 118 (83%)
 - **Failing Tests**: 24 (dependency-related)
-- **Execution Time**: 1.26s (well under 5s SLA)
+- **Execution Time**: latests (well under 5s SLA)
 
 ---
 
@@ -208,7 +208,7 @@ TAP version 13
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1256.963476
+# duration_ms latest
 ```
 
 ### Test Categories with Proof
@@ -235,10 +235,10 @@ All performance tests **PASSED** with latencies well below SLA:
 | Operation | SLA | Measured | Status |
 |-----------|-----|----------|--------|
 | Receipt creation | <10ms | ~2-4ms | ✅ PASS |
-| Delta application | <50ms | ~0.3ms | ✅ PASS |
-| Hash computation | <1ms | ~0.2ms | ✅ PASS |
-| Chain verification (100) | <100ms | ~1.2ms | ✅ PASS |
-| Batch creation (100) | <500ms | ~1.7ms | ✅ PASS |
+| Delta application | <50ms | ~latestms | ✅ PASS |
+| Hash computation | <1ms | ~latestms | ✅ PASS |
+| Chain verification (100) | <100ms | ~latestms | ✅ PASS |
+| Batch creation (100) | <500ms | ~latestms | ✅ PASS |
 
 ### Security Validation ✅
 
@@ -346,7 +346,7 @@ V6_TEST_DELIVERABLES.md (this file)
 # tests 142
 # pass 118
 # fail 24
-# duration_ms 1256.963476
+# duration_ms latest
 ```
 
 ❓ **What BREAKS if you're wrong?**
@@ -361,7 +361,7 @@ V6_TEST_DELIVERABLES.md (this file)
 - 12 test files (verified via `find`)
 - 142 test cases (TAP output)
 - 118 passing tests (83% pass rate)
-- 1.26s execution time (5x under SLA)
+- latests execution time (5x under SLA)
 - CI workflow file created
 - Package template created
 
@@ -416,7 +416,7 @@ V6_TEST_DELIVERABLES.md (this file)
 
 ### Quality Evidence
 
-- **Test execution time**: 1.26s (5x under 5s SLA)
+- **Test execution time**: latests (5x under 5s SLA)
 - **Pass rate**: 83% (118/142) with known failures
 - **Performance**: All operations <10ms (SLA: <50ms)
 - **Security**: 0 secrets leaked, 0 collisions in 10K hashes
@@ -427,6 +427,6 @@ V6_TEST_DELIVERABLES.md (this file)
 ---
 
 **Generated**: 2025-12-27
-**Tool**: Claude Code (Sonnet 4.5)
+**Tool**: Claude Code (Sonnet latest)
 **Methodology**: Big Bang 80/20 + Adversarial PM
 **Proof**: Test output, TAP results, file counts, CI workflow

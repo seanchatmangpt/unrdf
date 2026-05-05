@@ -2,7 +2,7 @@
 title: "Integrate with yawl"
 type: "how-to"
 packageName: "@unrdf/yawl-langchain"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "1f1789ad2ccb6bf8f4a277b5744850cc80d6e01f28fdb882c8faba45e9b38c0e"

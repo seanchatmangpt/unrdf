@@ -16,7 +16,7 @@ A comprehensive autonomous research swarm conducted evidence gathering on the th
 | Accepted (≥70/100) | 19 | 100% |
 | Rejected (<70/100) | 0 | - |
 | **Falsifications Found** | **5** | **CRITICAL** |
-| Average Score | 82.6/100 | Strong |
+| Average Score | latest/100 | Strong |
 | Axioms Well-Covered (≥3 items) | 4/5 | 80% |
 | Comprehensiveness | 33% | Incomplete |
 
@@ -37,13 +37,13 @@ A comprehensive autonomous research swarm conducted evidence gathering on the th
 #### 2. **Bitcoin Probabilistic Finality (2008)** — Score: 95/100
 - **Source**: Nakamoto, S. (2008). Bitcoin: A Peer-to-Peer Electronic Cash System (Whitepaper)
 - **Claim**: Non-deterministic system (P(reversal) = (1/2)^n) achieves civilization-scale security
-- **Formal Statement**: Bitcoin serves 1000+ TPS with P(reversal after 6 confirmations) ≈ 1.56%, economically acceptable
+- **Formal Statement**: Bitcoin serves 1000+ TPS with P(reversal after 6 confirmations) ≈ latest%, economically acceptable
 - **Strength**: MEDIUM falsification (practical achievement, but economic incentives, not formal proof)
 - **Interpretation**: STRONG COUNTER-EXAMPLE: Probabilistic system achieved financial system scale without deterministic safety proofs
 - **Thesis Impact**: HIGH - Shows non-deterministic systems CAN work at scale (for finance)
 
 #### 3. **Probabilistic Byzantine Fault Tolerance (ProBFT) (2024)** — Score: 95/100
-- **Source**: Avelãs, D., et al. (2024). Probabilistic Byzantine Fault Tolerance. PODC 2024 & ArXiv 2405.04606
+- **Source**: Avelãs, D., et al. (2024). Probabilistic Byzantine Fault Tolerance. PODC 2024 & ArXiv latest
 - **Claim**: Probabilistic consensus outperforms deterministic (O(n√n) vs O(n²) message complexity)
 - **Formal Statement**: ProBFT achieves 20% message reduction vs PBFT while maintaining safety w.h.p. (with high probability)
 - **Strength**: MEDIUM falsification (real efficiency gain, but statistical safety)
@@ -81,13 +81,13 @@ A comprehensive autonomous research swarm conducted evidence gathering on the th
 
 2. **Decision Quality Degrades Under Load** — Score: 80/100
    - Cognitive load causes systematic performance decline
-   - Practical limit: ~0.3-1.4 decisions/sec per reviewer = 1000-5000/hour
+   - Practical limit: ~latest.4 decisions/sec per reviewer = 1000-5000/hour
    - **Impact**: Empirical confirmation of theoretical limits
 
 3. **Air Traffic Control Bottleneck** — Score: 85/100
    - Real-world system: 50-100 simultaneous aircraft per sector
    - Human decision latency: 3-10 seconds per action
-   - **Impact**: Proof that humans cannot exceed ~0.3 decisions/sec without automation
+   - **Impact**: Proof that humans cannot exceed ~latest decisions/sec without automation
 
 ### REVERSIBILITY AXIOM: Irreversible Actions Cannot Be Corrected Post-Execution
 
@@ -178,7 +178,7 @@ A comprehensive autonomous research swarm conducted evidence gathering on the th
 | 70-79       | 4     | 21% |
 | <70         | 0     | 0%  |
 
-**Average Score**: 82.6/100 — **Strong evidence quality**
+**Average Score**: latest/100 — **Strong evidence quality**
 
 ### Evidence Class Breakdown
 
@@ -378,7 +378,7 @@ All counter-claims exist in **constrained domains**:
 - **Falsifications Found**: 4 strong counter-claims (scores 90-95)
 - **Supporting Evidence**: 15 items (all scoring 75-85)
 - **Axiom Coverage**: 4/5 complete, 1/5 partial
-- **Average Evidence Quality**: 82.6/100 (strong)
+- **Average Evidence Quality**: latest/100 (strong)
 
 **Conclusion**: The thesis correctly identifies fundamental constraints (scale, reversibility, coordination) but oversimplifies the determinism requirement. Non-deterministic systems have proven viable at civilization scale (Bitcoin) and more efficient (ProBFT). The path forward is domain-specific analysis: determinism may be required for **irreversible physical systems** but not **economic systems with incentive alignment**.
 
@@ -387,6 +387,6 @@ All counter-claims exist in **constrained domains**:
 **Report Generated**: 2026-01-07
 **Methodology**: 4-phase autonomous swarm evidence gathering
 **Evaluation**: 19 evidence items, 5 counter-claims, 15 supporting claims
-**Quality**: 100% acceptance rate, 82.6/100 average score, 87% primary sources
+**Quality**: 100% acceptance rate, latest/100 average score, 87% primary sources
 
 Sources for all evidence available in `evidence-report-final.json`

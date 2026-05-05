@@ -37,7 +37,7 @@ describe('Config Parser', () => {
     const configContent = `
 [project]
 name = "test-project"
-version = "1.0.0"
+version = "[VERSION]"
 
 [ontology]
 source = "schema/domain.ttl"
@@ -109,7 +109,7 @@ output_file = "out2.mjs"
     }
 
     // serializeConfig round-trip
-    const config = { project: { name: 'test', version: '1.0.0' }, generation: { incremental: true } };
+    const config = { project: { name: 'test', version: '[VERSION]' }, generation: { incremental: true } };
     const toml = serializeConfig(config);
     expect(toml).toContain('[project]');
     expect(toml).toContain('name = "test"');

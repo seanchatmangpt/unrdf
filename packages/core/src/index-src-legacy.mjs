@@ -17,7 +17,7 @@
  * Composables everywhere. Every aspect of RDF — graphs, queries, validation,
  * reasoning, serialization — is accessible through consistent composable functions.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

@@ -34,8 +34,8 @@
 
 5. **Version Conflicts**
    - Multiple `@opentelemetry/api` versions across packages
-   - Root: `^1.7.0` (peer) and `^1.9.0` (dev)
-   - Packages: `^1.8.0`, `^1.9.0`
+   - Root: `^latest` (peer) and `^latest` (dev)
+   - Packages: `^latest`, `^latest`
    - Global state not shared across API instances
 
 ---
@@ -174,7 +174,7 @@ This suggests:
 
 ## Validation Scoring Breakdown
 
-Based on run-all.mjs expectations (v3.1.0):
+Based on run-all.mjs expectations (vlatest):
 
 ### Feature Weights
 1. Knowledge Engine Core: 30%
@@ -244,7 +244,7 @@ Each feature validates:
    - Verify global state propagation
 
 2. **Standardize OTEL API Version**
-   - Pin all packages to `@opentelemetry/api@^1.9.0`
+   - Pin all packages to `@opentelemetry/api@^latest`
    - Add to root package.json peerDependencies
    - Run `pnpm install` to deduplicate
 
@@ -351,7 +351,7 @@ But evidence is conclusive - ran 3+ times, consistent failure.
 ```
 [OTEL Provider] Existing provider detected, will replace: ProxyTracerProvider
 [OTEL Provider] Registration failed - provider not active
-🎯 UNRDF OTEL Span-Based Validation (v3.1.0)
+🎯 UNRDF OTEL Span-Based Validation (vlatest)
 
 [ValidationRunner] runSuite: START
 [ValidationRunner] Features count: 6

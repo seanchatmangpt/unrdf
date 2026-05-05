@@ -60,7 +60,7 @@ const PROVIDER_RESPONSE_KEYS = {
  * Create a tracer for LLM operations.
  */
 export function getLLMTracer(name = 'unrdf-llm') {
-  return trace.getTracer(name, '1.0.0');
+  return trace.getTracer(name, 'latest');
 }
 
 /**

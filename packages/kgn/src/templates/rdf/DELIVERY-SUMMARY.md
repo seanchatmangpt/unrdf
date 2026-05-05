@@ -112,7 +112,7 @@ Example ontology output:
 
 <http://example.org/ontology/library> a owl:Ontology ;
     dc:title "Library Ontology"@en ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 <http://example.org/ontology/library#Book> a owl:Class ;
     rdfs:label "Book"@en ;

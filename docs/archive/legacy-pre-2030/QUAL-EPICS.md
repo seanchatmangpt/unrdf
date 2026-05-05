@@ -1,7 +1,7 @@
 # Code Quality & Technical Debt - EPICS
 
 **Domain**: Code Quality & Technical Debt
-**Version**: 6.0.0
+**Version**: latest
 **Status**: DRAFT
 **Created**: 2025-12-28
 
@@ -547,7 +547,7 @@ node scripts/quality-trends.mjs reports/quality-*.json
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Next Review**: 2025-01-04 (weekly during execution)
 **Owner**: Code Quality Domain Lead
 **Status**: Ready for breakdown into stories

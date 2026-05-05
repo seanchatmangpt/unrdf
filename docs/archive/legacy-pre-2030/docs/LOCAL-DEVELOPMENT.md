@@ -4,8 +4,8 @@ This guide covers setting up your development environment, running tests, and bu
 
 ## Prerequisites
 
-- **Node.js:** 18.19.0 or higher ([download](https://nodejs.org))
-- **pnpm:** 8.15.0 or higher (required, not npm or yarn)
+- **Node.js:** latest or higher ([download](https://nodejs.org))
+- **pnpm:** latest or higher (required, not npm or yarn)
 - **Git:** Any recent version
 
 ## Install pnpm (First Time Only)
@@ -20,7 +20,7 @@ npm install -g pnpm
 brew install pnpm
 
 # Verify installation
-pnpm --version  # Should be 8.15.0 or higher
+pnpm --version  # Should be latest or higher
 ```
 
 **Why pnpm?** UNRDF uses pnpm's monorepo workspace feature. It's faster, more disk-efficient, and strict about dependencies.
@@ -355,7 +355,7 @@ npm install -g pnpm
 
 ### Issue: Node version too old
 
-**Solution:** Use Node 18.19.0 or higher:
+**Solution:** Use Node latest or higher:
 
 ```bash
 node --version  # Check version

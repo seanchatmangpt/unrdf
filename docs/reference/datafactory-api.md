@@ -1,6 +1,6 @@
 # DataFactory API Reference
 
-**Version**: 5.0.0+
+**Version**: latest+
 **Package**: `@unrdf/core`, `@unrdf/oxigraph`
 **Stability**: Stable
 **Standard**: [RDF/JS Data Model Specification](https://rdf.js.org/data-model-spec/)
@@ -87,7 +87,7 @@ namedNode('example'); // Relative IRI
 namedNode('http://example.org/spaces are bad');
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -185,7 +185,7 @@ console.log(price.datatype.value); // 'http://www.w3.org/2001/XMLSchema#decimal'
 | Date | `http://www.w3.org/2001/XMLSchema#date` |
 | DateTime | `http://www.w3.org/2001/XMLSchema#dateTime` |
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -258,7 +258,7 @@ store.add(address, namedNode('http://example.org/city'), literal('Springfield'))
 store.add(address, namedNode('http://example.org/zip'), literal('12345'));
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -297,7 +297,7 @@ console.log(subject.termType); // 'Variable'
 
 **Note**: Variables are primarily for internal SPARQL processing. Application code rarely needs to create Variable objects directly.
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -333,7 +333,7 @@ console.log(q.graph.value); // ''
 
 **Note**: Default graph is implicit. Most quad operations use default graph if graph parameter is omitted.
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -416,7 +416,7 @@ const q = quad(
 console.log(q.subject.termType); // 'BlankNode'
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -447,7 +447,7 @@ const t = triple(
 // quad(subject, predicate, object, defaultGraph())
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -591,6 +591,6 @@ function safeNamedNode(iri) {
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-25
 **Maintainer**: UNRDF Team

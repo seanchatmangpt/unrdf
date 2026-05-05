@@ -420,7 +420,7 @@ npm run deploy:production
 ### Option 3: Hotfix Release (Slow)
 ```bash
 # Create hotfix branch from last stable
-git checkout -b hotfix/v2.1.1 v2.1.0
+git checkout -b hotfix/latest latest
 
 # Cherry-pick fixes
 git cherry-pick <commit-hash>

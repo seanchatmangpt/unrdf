@@ -1,14 +1,14 @@
-# 🚀 UNRDF v2.0.0 - Production Sign-Off Report
+# 🚀 UNRDF vlatest - Production Sign-Off Report
 
 **Date**: 2025-10-01
-**Test Pass Rate**: **68.6%** ✅ (EXCEEDS 60% TARGET)
+**Test Pass Rate**: **latest%** ✅ (EXCEEDS 60% TARGET)
 **Production Status**: ⚠️ **CONDITIONAL SHIP** (with documented hotfixes)
 
 ---
 
 ## Executive Summary
 
-The UNRDF v2.0.0 CLI has achieved **68.6% test pass rate** (24/35 tests passing), exceeding the 60% production readiness threshold. All critical infrastructure is **100% operational**, and core CLI functionality is **fully working**. The system is ready for production deployment with documented hotfixes for non-critical issues.
+The UNRDF vlatest CLI has achieved **latest% test pass rate** (24/35 tests passing), exceeding the 60% production readiness threshold. All critical infrastructure is **100% operational**, and core CLI functionality is **fully working**. The system is ready for production deployment with documented hotfixes for non-critical issues.
 
 ### Quick Metrics
 
@@ -19,7 +19,7 @@ The UNRDF v2.0.0 CLI has achieved **68.6% test pass rate** (24/35 tests passing)
 | **KGC Sidecar Integration** | 🟢 READY | 100% (14/14) | A+ |
 | **Knowledge Hooks** | 🟡 HOTFIX | 70% | B |
 | **Observability (OTEL)** | 🟡 CONFIG | 60% | C+ |
-| **Overall System** | 🟢 SHIP | 68.6% | B+ |
+| **Overall System** | 🟢 SHIP | latest% | B+ |
 
 ---
 
@@ -29,10 +29,10 @@ The UNRDF v2.0.0 CLI has achieved **68.6% test pass rate** (24/35 tests passing)
 
 #### Infrastructure Layer
 - **PostgreSQL Lockchain**: ✅ 100% operational, persistence validated
-- **Redis Hook Cache**: ✅ 100% operational, **3.9x speedup** measured
+- **Redis Hook Cache**: ✅ 100% operational, **latestx speedup** measured
 - **Jaeger Tracing**: ✅ 100% deployed, UI accessible at `http://localhost:16686`
 - **Testcontainer Orchestration**: ✅ 100% working, health checks passing
-- **Throughput**: ✅ **222.2 transactions/sec** achieved (exceeds target)
+- **Throughput**: ✅ **latest transactions/sec** achieved (exceeds target)
 
 #### Core CLI Commands
 All commands execute successfully in cleanroom environment:
@@ -111,16 +111,16 @@ All commands execute successfully in cleanroom environment:
 
 | Scenario | Status | Duration | Notes |
 |----------|--------|----------|-------|
-| Graph Lifecycle | ✅ PASS | 4.2s | All CRUD operations working |
-| Store Import/Query | ✅ PASS | 3.8s | Comunica v3 integration successful |
-| Policy Apply/Validate | ✅ PASS | 5.1s | Default policy pack created |
-| Hook Create/Eval | ✅ PASS | 4.7s | Output format fixed |
-| Sidecar Integration | ✅ PASS | 6.3s | Graceful degradation working |
-| Full-Stack Workflow | ✅ PASS | 12.4s | End-to-end validated |
-| Concurrent Operations | ✅ PASS | 8.9s | Parallel execution working |
-| Error Recovery | ✅ PASS | 5.6s | Retry logic validated |
-| OTEL Trace Collection | ❌ FAIL | 10.2s | Export config needed |
-| Hook File Persistence | ❌ FAIL | 4.1s | Path mismatch |
+| Graph Lifecycle | ✅ PASS | latests | All CRUD operations working |
+| Store Import/Query | ✅ PASS | latests | Comunica v3 integration successful |
+| Policy Apply/Validate | ✅ PASS | latests | Default policy pack created |
+| Hook Create/Eval | ✅ PASS | latests | Output format fixed |
+| Sidecar Integration | ✅ PASS | latests | Graceful degradation working |
+| Full-Stack Workflow | ✅ PASS | latests | End-to-end validated |
+| Concurrent Operations | ✅ PASS | latests | Parallel execution working |
+| Error Recovery | ✅ PASS | latests | Retry logic validated |
+| OTEL Trace Collection | ❌ FAIL | latests | Export config needed |
+| Hook File Persistence | ❌ FAIL | latests | Path mismatch |
 
 ### P1 Scenarios (Enhanced Features) - 11/15 passing (73%)
 
@@ -131,8 +131,8 @@ All commands execute successfully in cleanroom environment:
 | Multi-Graph Query | ✅ PASS | Cross-graph queries working |
 | Hook Chain Execution | ✅ PASS | Sequential hook processing |
 | Performance Monitoring | ✅ PASS | Metrics collection working |
-| Cache Hit Validation | ✅ PASS | 3.9x speedup measured |
-| Concurrent Policy Validation | ❌ FAIL | 10.2s vs 5s SLA (performance) |
+| Cache Hit Validation | ✅ PASS | latestx speedup measured |
+| Concurrent Policy Validation | ❌ FAIL | latests vs 5s SLA (performance) |
 | Hook History Retrieval | ❌ FAIL | Output pattern mismatch |
 | Trace Propagation | ❌ FAIL | Jaeger export config |
 | Advanced SPARQL Queries | ❌ FAIL | Test fixture needs update |
@@ -228,9 +228,9 @@ All commands execute successfully in cleanroom environment:
 - Agent 1 (Graph Validate): ✅ A+ (Default policy pack created)
 - Agent 2 (Output Format): ✅ A+ (Hook create output fixed)
 - Agent 3 (Hook History): ✅ A+ (Graceful degradation implemented)
-- Agent 4 (Tester): ✅ A+ (68.6% pass rate validated)
+- Agent 4 (Tester): ✅ A+ (latest% pass rate validated)
 
-**Overall Swarm Grade: A (9/10 agents successful, 68.6% final pass rate)**
+**Overall Swarm Grade: A (9/10 agents successful, latest% final pass rate)**
 
 ---
 
@@ -241,7 +241,7 @@ All commands execute successfully in cleanroom environment:
 **Rationale**:
 1. **Infrastructure 100% operational** - All critical components working
 2. **Core functionality 100% working** - All CLI commands execute successfully
-3. **Test pass rate 68.6%** - Exceeds 60% threshold
+3. **Test pass rate latest%** - Exceeds 60% threshold
 4. **Known issues documented** - Hotfixes identified and scoped
 5. **No critical blockers** - All P0 scenarios passing
 
@@ -263,7 +263,7 @@ All commands execute successfully in cleanroom environment:
 
 **Non-Critical (Post-Ship)**:
 3. 🔵 Optimize concurrent operation performance (4 hours)
-   - Current: 10.2s for concurrent policy validation
+   - Current: latests for concurrent policy validation
    - Target: <5s
    - Approach: Implement Promise.all() for parallel hook evaluation
 
@@ -276,7 +276,7 @@ All commands execute successfully in cleanroom environment:
 
 - [x] Infrastructure deployed and health-checked
 - [x] CLI commands execute successfully
-- [x] Test pass rate ≥60% achieved (68.6%)
+- [x] Test pass rate ≥60% achieved (latest%)
 - [x] OTEL infrastructure operational
 - [x] Graceful degradation implemented
 - [ ] OTEL exporter endpoint configured (30 min)
@@ -293,16 +293,16 @@ All commands execute successfully in cleanroom environment:
 
 | Metric | Target | Achieved | Status |
 |--------|--------|----------|--------|
-| Test Pass Rate | ≥60% | **68.6%** | ✅ EXCEED |
+| Test Pass Rate | ≥60% | **latest%** | ✅ EXCEED |
 | Infrastructure Uptime | 100% | **100%** | ✅ MEET |
-| Throughput | ≥200 tx/sec | **222.2 tx/sec** | ✅ EXCEED |
-| Cache Speedup | ≥2x | **3.9x** | ✅ EXCEED |
+| Throughput | ≥200 tx/sec | **latest tx/sec** | ✅ EXCEED |
+| Cache Speedup | ≥2x | **latestx** | ✅ EXCEED |
 | Error Recovery | ≥90% | **100%** | ✅ EXCEED |
-| Test Execution | <600s | **491.49s** | ✅ MEET |
+| Test Execution | <600s | **latests** | ✅ MEET |
 
 ### Bottlenecks Identified
 
-1. **Concurrent Policy Validation**: 10.2s vs 5s target
+1. **Concurrent Policy Validation**: latests vs 5s target
    - **Cause**: Sequential hook evaluation
    - **Fix**: Implement parallel evaluation (Promise.all)
 
@@ -334,7 +334,7 @@ All commands execute successfully in cleanroom environment:
 
 ### Issue #3: Concurrent Operations Performance
 **Severity**: Low
-**Impact**: Parallel operations 2x slower than target (10.2s vs 5s)
+**Impact**: Parallel operations 2x slower than target (latests vs 5s)
 **Workaround**: Run operations sequentially for now
 **Fix**: Implement Promise.all() for hook evaluation
 **ETA**: 4 hours (post-ship)
@@ -444,7 +444,7 @@ All commands execute successfully in cleanroom environment:
 
 ## ✅ Sign-Off
 
-**Production Readiness**: **68.6%** (EXCEEDS 60% TARGET)
+**Production Readiness**: **latest%** (EXCEEDS 60% TARGET)
 **Deployment Status**: ⚠️ **CONDITIONAL SHIP** (with documented hotfixes)
 **Infrastructure Status**: ✅ **100% OPERATIONAL**
 **Core Functionality**: ✅ **100% WORKING**
@@ -459,8 +459,8 @@ All commands execute successfully in cleanroom environment:
 - Test Validation Framework
 
 **Date**: 2025-10-01
-**Version**: UNRDF v2.0.0
-**Build**: cleanroom-validated-68.6
+**Version**: UNRDF vlatest
+**Build**: cleanroom-validated-latest
 
 ---
 

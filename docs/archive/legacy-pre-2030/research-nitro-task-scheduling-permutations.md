@@ -2,7 +2,7 @@
 
 **Research Mission**: Investigate combinatorial complexity in Nitro task scheduling
 **Date**: 2026-01-11
-**Codebase**: UNRDF v6.0.0-rc.1
+**Codebase**: UNRDF latest-rc.1
 **Files Analyzed**: 72 daemon package files
 
 ---

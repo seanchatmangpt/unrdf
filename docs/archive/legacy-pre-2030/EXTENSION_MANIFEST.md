@@ -216,7 +216,7 @@ TOTAL:         1066 lines
 ```bash
 # Create a triple
 kgc triple:create --subject="http://example.org/alice" \
-                  --predicate="http://xmlns.com/foaf/0.1/knows" \
+                  --predicate="http://xmlns.com/foaf/latest/knows" \
                   --object="http://example.org/bob"
 
 # Execute SPARQL query

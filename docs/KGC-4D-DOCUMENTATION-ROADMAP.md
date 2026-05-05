@@ -1,6 +1,6 @@
 # KGC-4D Documentation Implementation Roadmap
 
-**Version:** 1.0
+**Version:** latest
 **Date:** 2025-12-27
 **Status:** Execution Plan
 
@@ -31,7 +31,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 #### Day 1-2: Core Tutorial
 
-**Deliverable 1.1: "Getting Started with KGC-4D"**
+**Deliverable latest: "Getting Started with KGC-4D"**
 - **Type:** Tutorial
 - **Length:** 1,500-2,000 words
 - **Code Examples:** 5 runnable examples
@@ -65,7 +65,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 ---
 
-**Deliverable 1.2: "Why 4 Dimensions?" (Explanation)**
+**Deliverable latest: "Why 4 Dimensions?" (Explanation)**
 - **Type:** Explanation
 - **Length:** 1,000-1,500 words
 - **Audience:** Architects, Advanced Users
@@ -99,7 +99,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 #### Day 3-4: API Reference (Priority 1)
 
-**Deliverable 1.3: "KGCStore API Reference"**
+**Deliverable latest: "KGCStore API Reference"**
 - **Type:** Reference
 - **Length:** 3,000-4,000 words
 - **Audience:** App Builders, All Developers
@@ -164,7 +164,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 ---
 
-**Deliverable 1.4: "Time Utilities Reference"**
+**Deliverable latest: "Time Utilities Reference"**
 - **Type:** Reference
 - **Length:** 1,500-2,000 words
 - **Audience:** All Developers
@@ -202,7 +202,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 #### Day 5: Receipt Schema
 
-**Deliverable 1.5: "Receipt Schema Reference"**
+**Deliverable latest: "Receipt Schema Reference"**
 - **Type:** Reference
 - **Length:** 800-1,000 words
 - **Audience:** App Builders, DevOps
@@ -254,7 +254,7 @@ This roadmap defines the concrete execution plan for creating KGC-4D documentati
 
 #### Day 6-7: Application Tutorial
 
-**Deliverable 2.1: "Build Your First Event-Sourced App"**
+**Deliverable latest: "Build Your First Event-Sourced App"**
 - **Type:** Tutorial
 - **Length:** 2,500-3,000 words
 - **Code Examples:** Complete working app
@@ -328,7 +328,7 @@ examples/task-manager/
 
 #### Day 8-9: Time-Travel Tutorial
 
-**Deliverable 2.2: "Time-Travel Queries Tutorial"**
+**Deliverable latest: "Time-Travel Queries Tutorial"**
 - **Type:** Tutorial
 - **Length:** 2,000-2,500 words
 - **Time to Complete:** 45 minutes
@@ -378,7 +378,7 @@ examples/task-manager/
 
 #### Day 10: DevOps How-To
 
-**Deliverable 2.3: "How to Verify Receipts in Production"**
+**Deliverable latest: "How to Verify Receipts in Production"**
 - **Type:** How-To Guide
 - **Length:** 1,200-1,500 words
 - **Audience:** DevOps Engineers
@@ -448,7 +448,7 @@ if (result.valid) {
 
 #### Day 11-12: HDIT Tutorial
 
-**Deliverable 3.1: "HDIT Event Similarity Tutorial"**
+**Deliverable latest: "HDIT Event Similarity Tutorial"**
 - **Type:** Tutorial
 - **Length:** 2,500-3,000 words
 - **Time to Complete:** 60 minutes
@@ -479,7 +479,7 @@ const coords = coordsForEvent(event, context);
 import { cosineSimilarity, findKNearest } from '@unrdf/kgc-4d';
 
 const sim = cosineSimilarity(coords1, coords2);
-// 0.0 = orthogonal, 1.0 = identical
+// latest = orthogonal, latest = identical
 ```
 
 ## Step 3: Cluster Events (15 min)
@@ -508,7 +508,7 @@ const sim = cosineSimilarity(coords1, coords2);
 
 #### Day 13-14: Distributed Systems
 
-**Deliverable 3.2: "Vector Clocks & Causality" (Explanation)**
+**Deliverable latest: "Vector Clocks & Causality" (Explanation)**
 - **Type:** Explanation
 - **Length:** 2,000-2,500 words
 - **Audience:** Architects, Advanced Builders
@@ -571,7 +571,7 @@ class VectorClock {
 
 #### Day 15: Performance Guide
 
-**Deliverable 3.3: "How to Optimize Snapshot Frequency"**
+**Deliverable latest: "How to Optimize Snapshot Frequency"**
 - **Type:** How-To Guide
 - **Length:** 1,500-2,000 words
 - **Audience:** App Builders, DevOps
@@ -590,7 +590,7 @@ class VectorClock {
 ```bash
 # Time a reconstruction
 time node reconstruct.mjs --target "2025-01-01"
-# Output: 5.2s (too slow?)
+# Output: latests (too slow?)
 ```
 
 ### 2. Calculate Optimal Frequency
@@ -635,7 +635,7 @@ async function maybeSnapshot(store, git) {
 
 #### Day 16-17: Operations Guide
 
-**Deliverable 4.1: "Production Deployment Checklist"**
+**Deliverable latest: "Production Deployment Checklist"**
 - **Type:** How-To Guide
 - **Length:** 2,000-2,500 words
 - **Audience:** DevOps Engineers
@@ -707,7 +707,7 @@ async function maybeSnapshot(store, git) {
 
 #### Day 18-19: Disaster Recovery
 
-**Deliverable 4.2: "How to Disaster Recovery from Git"**
+**Deliverable latest: "How to Disaster Recovery from Git"**
 - **Type:** How-To Guide
 - **Length:** 1,500-2,000 words
 - **Audience:** DevOps Engineers
@@ -777,7 +777,7 @@ node recovery/verify.mjs --compare-with-backup
 
 #### Day 20: Troubleshooting
 
-**Deliverable 4.3: "Common Production Issues"**
+**Deliverable latest: "Common Production Issues"**
 - **Type:** Troubleshooting Guide
 - **Length:** 2,500-3,000 words
 - **Audience:** DevOps, App Builders
@@ -846,7 +846,7 @@ node recovery/verify.mjs --compare-with-backup
 
 #### Day 21-23: HDIT Deep Dive
 
-**Deliverable 5.1: "HDIT Theory and Applications" (Explanation)**
+**Deliverable latest: "HDIT Theory and Applications" (Explanation)**
 - **Type:** Explanation
 - **Length:** 3,000-4,000 words
 - **Audience:** Data Scientists, Researchers
@@ -902,7 +902,7 @@ node recovery/verify.mjs --compare-with-backup
 
 #### Day 24-25: Performance Optimization
 
-**Deliverable 5.2: "Performance Tuning Guide"**
+**Deliverable latest: "Performance Tuning Guide"**
 - **Type:** Best Practices
 - **Length:** 2,500-3,000 words
 - **Audience:** Advanced Builders, Architects
@@ -957,10 +957,10 @@ console.log(`Operation took ${duration.toFixed(2)}ms`);
 
 | Operation | Baseline | Optimized | Improvement |
 |-----------|----------|-----------|-------------|
-| appendEvent | 2.5ms | 0.8ms | 3.1x |
-| freezeUniverse (10K quads) | 500ms | 120ms | 4.2x |
-| reconstructState | 5000ms | 800ms | 6.3x |
-| HDIT similarity (100 events) | 300ms | 45ms | 6.7x |
+| appendEvent | latestms | latestms | latestx |
+| freezeUniverse (10K quads) | 500ms | 120ms | latestx |
+| reconstructState | 5000ms | 800ms | latestx |
+| HDIT similarity (100 events) | 300ms | 45ms | latestx |
 ```
 
 **Quality Gate:**
@@ -1119,7 +1119,7 @@ This roadmap is successful if:
 ### 3 Months Post-Launch
 - ✅ 1000+ unique visitors to docs
 - ✅ 70% reduction in support tickets
-- ✅ 4.5/5 average documentation rating
+- ✅ latest/5 average documentation rating
 - ✅ 5+ community contributions (examples, fixes)
 
 ---

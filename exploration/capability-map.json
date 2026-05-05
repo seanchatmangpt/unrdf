@@ -1,12 +1,12 @@
 {
   "timestamp": "2025-12-27T02:54:56.820Z",
-  "scannerVersion": "1.0.0",
+  "scannerVersion": "latest",
   "totalPackages": 40,
   "packages": [
     {
       "name": "@unrdf/atomvm",
       "path": "packages/atomvm",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
       "role": ["utility"],
       "exports": ["src/index.mjs", "src/service-worker-manager.mjs", "{"],
@@ -17,7 +17,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["atomvm", "erlang", "beam", "wasm", "browser", "service-worker"],
@@ -27,7 +27,7 @@
     {
       "name": "@unrdf/blockchain",
       "path": "packages/blockchain",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
       "role": ["io", "render"],
       "exports": [
@@ -44,7 +44,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -68,7 +68,7 @@
     {
       "name": "@unrdf/caching",
       "path": "packages/caching",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Multi-layer caching system for RDF queries with Redis and LRU",
       "role": ["utility"],
       "exports": [
@@ -85,7 +85,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["cache", "redis", "lru", "rdf", "sparql", "performance"],
@@ -95,7 +95,7 @@
     {
       "name": "@unrdf/cli",
       "path": "packages/cli",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
       "role": ["io", "render"],
       "exports": ["src/index.mjs", "src/commands/index.mjs"],
@@ -106,7 +106,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "cli", "command-line", "graph", "sparql"],
@@ -127,7 +127,7 @@
     {
       "name": "@unrdf/collab",
       "path": "packages/collab",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
       "role": ["utility"],
       "exports": [
@@ -144,7 +144,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -162,7 +162,7 @@
     {
       "name": "@unrdf/composables",
       "path": "packages/composables",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/graph.mjs", "src/delta.mjs", "{"],
@@ -173,7 +173,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "vue", "composables", "reactive", "web"],
@@ -183,7 +183,7 @@
     {
       "name": "@unrdf/consensus",
       "path": "packages/consensus",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Production-grade Raft consensus for distributed workflow coordination",
       "role": ["io"],
       "exports": [
@@ -201,7 +201,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -218,7 +218,7 @@
     {
       "name": "@unrdf/core",
       "path": "packages/core",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
       "role": ["io", "render"],
       "exports": [
@@ -240,7 +240,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "knowledge-graph", "sparql", "semantic-web", "linked-data"],
@@ -263,7 +263,7 @@
     {
       "name": "@unrdf/dark-matter",
       "path": "packages/dark-matter",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/optimizer.mjs", "src/analyzer.mjs", "{", "function"],
@@ -274,7 +274,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "optimization", "performance", "sparql", "80-20"],
@@ -284,7 +284,7 @@
     {
       "name": "@unrdf/diataxis-kit",
       "path": "packages/diataxis-kit",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
       "role": ["io"],
       "exports": [
@@ -303,7 +303,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": ["diataxis", "documentation", "monorepo", "inventory"],
@@ -313,7 +313,7 @@
     {
       "name": "@unrdf/engine-gateway",
       "path": "packages/engine-gateway",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
       "role": ["store", "derive", "enforce", "render"],
       "exports": [
@@ -330,7 +330,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [],
@@ -340,7 +340,7 @@
     {
       "name": "@unrdf/federation",
       "path": "packages/federation",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
       "role": ["io"],
       "exports": [
@@ -356,7 +356,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "federation", "distributed", "peer-to-peer", "sparql"],
@@ -373,7 +373,7 @@
     {
       "name": "@unrdf/fusion",
       "path": "packages/fusion",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
       "role": ["io", "enforce"],
       "exports": ["src/index.mjs", "{"],
@@ -384,7 +384,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -413,7 +413,7 @@
     {
       "name": "@unrdf/graph-analytics",
       "path": "packages/graph-analytics",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
       "role": ["derive", "render"],
       "exports": [
@@ -431,7 +431,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -451,7 +451,7 @@
     {
       "name": "@unrdf/hooks",
       "path": "packages/hooks",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
       "role": ["io", "derive", "enforce"],
       "exports": ["src/index.mjs", "src/define.mjs", "src/executor.mjs", "{"],
@@ -462,7 +462,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "knowledge-graph", "hooks", "policy", "validation"],
@@ -472,7 +472,7 @@
     {
       "name": "@unrdf/kgc-4d",
       "path": "packages/kgc-4d",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
       "role": ["io", "derive"],
       "exports": ["src/index.mjs", "src/client.mjs", "src/hdit/index.mjs", "{"],
@@ -483,7 +483,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "knowledge", "4d", "event-sourcing", "time-travel", "git", "nanosecond"],
@@ -493,7 +493,7 @@
     {
       "name": "@unrdf/kgc-claude",
       "path": "packages/kgc-claude",
-      "version": "5.0.0",
+      "version": "latest",
       "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
       "role": ["io"],
       "exports": [
@@ -514,7 +514,7 @@
         "hasExamples": false,
         "hasReadme": false,
         "hasChangeLog": false,
-        "version": "5.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -544,7 +544,7 @@
     {
       "name": "@unrdf/kgc-cli",
       "path": "packages/kgc-cli",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/lib/registry.mjs", "src/manifest/extensions.mjs", "{"],
@@ -555,7 +555,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": null,
       "keywords": ["kgc", "cli", "extension-registry", "deterministic", "rdf"],
@@ -565,7 +565,7 @@
     {
       "name": "@unrdf/kgc-substrate",
       "path": "packages/kgc-substrate",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
       "role": ["store", "derive"],
       "exports": ["src/index.mjs", "src/types.mjs", "src/KnowledgeStore.mjs", "{"],
@@ -576,7 +576,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -598,7 +598,7 @@
     {
       "name": "@unrdf/kgn",
       "path": "packages/kgn",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
       "role": ["utility"],
       "exports": ["src/templates/*"],
@@ -609,7 +609,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -635,7 +635,7 @@
     {
       "name": "@unrdf/knowledge-engine",
       "path": "packages/knowledge-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
       "role": ["io", "derive"],
       "exports": [
@@ -653,7 +653,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "knowledge-engine", "inference", "reasoning", "rules"],
@@ -670,7 +670,7 @@
     {
       "name": "@unrdf/ml-inference",
       "path": "packages/ml-inference",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
       "role": ["io", "derive"],
       "exports": [
@@ -688,7 +688,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "ml", "onnx", "inference", "streaming", "real-time", "machine-learning"],
@@ -705,7 +705,7 @@
     {
       "name": "@unrdf/ml-versioning",
       "path": "packages/ml-versioning",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
       "role": ["io"],
       "exports": [
@@ -721,7 +721,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -747,7 +747,7 @@
     {
       "name": "@unrdf/observability",
       "path": "packages/observability",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
       "role": ["utility"],
       "exports": [
@@ -764,7 +764,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -790,7 +790,7 @@
     {
       "name": "@unrdf/oxigraph",
       "path": "packages/oxigraph",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
       "role": ["store", "io", "derive", "render"],
       "exports": ["src/index.mjs", "src/store.mjs", "src/types.mjs", "function", "const"],
@@ -801,7 +801,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "sparql", "graph-database", "oxigraph", "knowledge-graph", "benchmark"],
@@ -811,7 +811,7 @@
     {
       "name": "@unrdf/project-engine",
       "path": "packages/project-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
       "role": ["derive"],
       "exports": ["src/index.mjs", "{"],
@@ -822,7 +822,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["unrdf", "project-engine", "development", "infrastructure"],
@@ -832,7 +832,7 @@
     {
       "name": "@unrdf/rdf-graphql",
       "path": "packages/rdf-graphql",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
       "role": ["io", "derive", "render"],
       "exports": [
@@ -848,7 +848,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -866,7 +866,7 @@
     {
       "name": "@unrdf/semantic-search",
       "path": "packages/semantic-search",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
       "role": ["derive", "render"],
       "exports": [
@@ -882,7 +882,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -901,7 +901,7 @@
     {
       "name": "@unrdf/serverless",
       "path": "packages/serverless",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
       "role": ["io"],
       "exports": [
@@ -920,7 +920,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "serverless", "aws", "lambda", "cdk", "infrastructure", "deployment"],
@@ -937,7 +937,7 @@
     {
       "name": "@unrdf/streaming",
       "path": "packages/streaming",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/processor.mjs", "{"],
@@ -948,7 +948,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": true,
-        "version": "5.0.1"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["rdf", "streaming", "real-time", "change-feed", "synchronization"],
@@ -967,7 +967,7 @@
     {
       "name": "@unrdf/yawl",
       "path": "packages/yawl",
-      "version": "5.0.0",
+      "version": "latest",
       "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
       "role": ["io", "derive"],
       "exports": [
@@ -989,7 +989,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "5.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["workflow", "yawl", "van-der-aalst", "petri-net", "bpmn", "rdf", "time-travel"],
@@ -1010,7 +1010,7 @@
     {
       "name": "@unrdf/yawl-ai",
       "path": "packages/yawl-ai",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
       "role": ["io"],
       "exports": [
@@ -1028,7 +1028,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": ["ai", "ml", "tensorflow", "workflow", "yawl", "optimization", "prediction"],
@@ -1038,7 +1038,7 @@
     {
       "name": "@unrdf/yawl-api",
       "path": "packages/yawl-api",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
       "role": ["io"],
       "exports": ["src/server.mjs"],
@@ -1049,7 +1049,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -1077,7 +1077,7 @@
     {
       "name": "@unrdf/yawl-durable",
       "path": "packages/yawl-durable",
-      "version": "0.1.0",
+      "version": "latest",
       "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
       "role": ["io"],
       "exports": ["src/engine.mjs", "src/saga.mjs", "src/activity.mjs", "src/replay.mjs"],
@@ -1088,7 +1088,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "0.1.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": ["workflow", "durable-execution", "temporal", "saga", "event-sourcing", "yawl"],
@@ -1098,7 +1098,7 @@
     {
       "name": "@unrdf/yawl-kafka",
       "path": "packages/yawl-kafka",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/producer.mjs", "src/consumer.mjs", "src/schemas.mjs", "{"],
@@ -1109,7 +1109,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": ["yawl", "kafka", "event-streaming", "avro", "workflow", "analytics"],
@@ -1119,7 +1119,7 @@
     {
       "name": "@unrdf/yawl-langchain",
       "path": "packages/yawl-langchain",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
       "role": ["io", "derive"],
       "exports": ["src/index.mjs", "src/adapter.mjs", "examples/code-review-workflow.mjs", "{"],
@@ -1130,7 +1130,7 @@
         "hasExamples": true,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": "examples",
       "keywords": [
@@ -1157,7 +1157,7 @@
     {
       "name": "@unrdf/yawl-observability",
       "path": "packages/yawl-observability",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
       "role": ["utility"],
       "exports": ["src/index.mjs", "src/metrics.mjs", "src/tracing.mjs", "src/sli.mjs", "{"],
@@ -1168,7 +1168,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -1195,7 +1195,7 @@
     {
       "name": "@unrdf/yawl-queue",
       "path": "packages/yawl-queue",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Distributed YAWL workflow execution using BullMQ and Redis",
       "role": ["io"],
       "exports": ["src/adapter.mjs", "src/examples/data-pipeline.mjs"],
@@ -1206,7 +1206,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": ["yawl", "bullmq", "workflow", "distributed", "queue", "redis", "task-execution"],
@@ -1216,7 +1216,7 @@
     {
       "name": "@unrdf/yawl-realtime",
       "path": "packages/yawl-realtime",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
       "role": ["io"],
       "exports": ["src/index.mjs", "src/server.mjs", "src/client.mjs", "{"],
@@ -1227,7 +1227,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [
@@ -1245,7 +1245,7 @@
     {
       "name": "@unrdf/yawl-viz",
       "path": "packages/yawl-viz",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
       "role": ["io", "render"],
       "exports": ["src/visualizer.mjs"],
@@ -1256,7 +1256,7 @@
         "hasExamples": false,
         "hasReadme": true,
         "hasChangeLog": false,
-        "version": "1.0.0"
+        "version": "latest"
       },
       "examples": null,
       "keywords": [

@@ -29,27 +29,27 @@ import {
 export const FEATURE_PACKAGES = {
   '@unrdf/core': {
     dependencies: [],
-    version: '5.1.0',
+    version: '[VERSION]',
     path: 'packages/core'
   },
   '@unrdf/types': {
     dependencies: ['@unrdf/core'],
-    version: '5.1.0',
+    version: '[VERSION]',
     path: 'packages/types'
   },
   '@unrdf/utils': {
     dependencies: ['@unrdf/core', '@unrdf/types'],
-    version: '5.1.0',
+    version: '[VERSION]',
     path: 'packages/utils'
   },
   '@unrdf/streaming': {
     dependencies: ['@unrdf/core', '@unrdf/utils'],
-    version: '5.1.0',
+    version: '[VERSION]',
     path: 'packages/streaming'
   },
   '@unrdf/cli': {
     dependencies: ['@unrdf/core', '@unrdf/utils', '@unrdf/streaming'],
-    version: '5.1.0',
+    version: '[VERSION]',
     path: 'packages/cli'
   }
 };

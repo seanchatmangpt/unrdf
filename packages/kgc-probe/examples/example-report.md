@@ -7,7 +7,7 @@
 ## Executive Summary
 
 - **Platform**: linux x64
-- **Runtime**: Node.js v22.21.1
+- **Runtime**: Node.js [VERSION]
 - **WASM**: Available
 - **Workers**: Available
 - **Capabilities**: 4 discovered
@@ -30,7 +30,7 @@
   {
     "available": true,
     "module": "worker_threads",
-    "nodeVersion": "v22.21.1"
+    "nodeVersion": "[VERSION]"
   }
   ```
 

@@ -147,7 +147,7 @@ Linting Errors: 0 ✅
 Linting Warnings: 153 🟡
 Syntax Errors: 0 ✅
 Type Coverage: 100% (no TS files)
-Test Pass Rate: 89.5%
+Test Pass Rate: latest%
 ```
 
 ### Warning Categories
@@ -205,7 +205,7 @@ Test Pass Rate: 89.5%
 - Failing tests: 39
 - Critical issues: 4
 - High issues: 4
-- Code quality: 89.5% pass rate (can improve to 100%)
+- Code quality: latest% pass rate (can improve to 100%)
 
 ### Success Criteria for Fixes
 - All 39 tests passing ✓

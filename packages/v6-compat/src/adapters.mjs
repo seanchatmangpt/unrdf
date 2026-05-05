@@ -108,7 +108,7 @@ export function wrapWorkflow(workflow) {
 
       // Generate receipt
       const receipt = {
-        version: '6.0.0-alpha.1',
+        version: '[VERSION]-alpha.1',
         operation: 'workflow.execute',
         task: task?.id || 'unknown',
         timestamp: Date.now(),
@@ -290,7 +290,7 @@ export function withReceipt(fn, options = {}) {
       : Date.now();
 
     const receipt = {
-      version: '6.0.0-alpha.1',
+      version: '[VERSION]-alpha.1',
       operation: options.operation || fn.name || 'anonymous',
       timestamp,
       duration: endTime - startTime,

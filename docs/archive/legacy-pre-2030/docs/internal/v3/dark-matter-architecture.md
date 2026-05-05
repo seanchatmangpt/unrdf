@@ -1,6 +1,6 @@
 # Dark Matter 80/20 Architecture
 
-**Version**: 3.0.0
+**Version**: latest
 **Status**: ✅ Production Ready (18/18 Tests Passing)
 **Last Updated**: 2025-10-01
 **Architect**: System Architecture Designer

@@ -33,7 +33,7 @@ kind was chosen because:
 1. It's just Docker containers — no VM overhead
 2. It matches CI environments (GitHub Actions, GitLab CI both use kind)
 3. `extraPortMappings` give direct host access without port-forward
-4. The user already has it installed (v0.30.0)
+4. The user already has it installed (latest)
 
 ## Why NodePort instead of Ingress?
 
@@ -55,8 +55,8 @@ The UNRDF application needs to be built as a Docker image before it can run in K
 
 Users can enable it after loading the image:
 ```bash
-docker build -t unrdf:6.0.0-rc.1 .
-kind load docker-image unrdf:6.0.0-rc.1 --name unrdf
+docker build -t unrdf:latest-rc.1 .
+kind load docker-image unrdf:latest-rc.1 --name unrdf
 helm upgrade --set unrdf.enabled=true ...
 ```
 

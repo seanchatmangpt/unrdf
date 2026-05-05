@@ -26,7 +26,7 @@
     ]
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-26.4.3-blue) ![Production Ready](https://img.shields.",
+    "architecture": "![Version](https://img.shields.io/badge/version-[VERSION]-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "rdf",
       "validation",
@@ -134,5 +134,5 @@
       "title": "Getting Started with @unrdf/validation"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

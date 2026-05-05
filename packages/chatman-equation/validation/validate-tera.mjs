@@ -170,7 +170,7 @@ async function validateAllTera() {
   // Default test context for rendering
   const testContext = {
     name: 'Test',
-    version: '1.0.0',
+    version: '[VERSION]',
     items: ['item1', 'item2', 'item3'],
     enabled: true,
     metadata: {

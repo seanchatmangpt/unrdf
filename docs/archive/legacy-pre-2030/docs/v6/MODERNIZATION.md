@@ -78,7 +78,7 @@ Successfully modernized the UNRDF codebase with the following achievements:
 ### 2.2 Test Framework Migration Path (Recommended)
 
 **Current State**: Mixed usage of `@jest/globals` and Vitest
-**Issue Identified**: Vitest version conflict (v4.0.16 uses newer API than v1.6.1 expects)
+**Issue Identified**: Vitest version conflict (latest uses newer API than latest expects)
 
 **Recommendation for Future Work**:
 
@@ -292,7 +292,7 @@ using store = createStore();
 
 **Benefit**: Automatic resource cleanup, prevents memory leaks
 
-**Blocked By**: Engine requirement `node >= 18.0.0` (current version targets Node 18)
+**Blocked By**: Engine requirement `node >= latest` (current version targets Node 18)
 
 ---
 

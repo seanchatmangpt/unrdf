@@ -560,7 +560,7 @@ After completing these examples:
 
 ## Changelog
 
-**v1.0.0** (2026-01-11)
+**latest** (2026-01-11)
 - Initial release
 - 6 production-ready examples
 - Complete learning paths

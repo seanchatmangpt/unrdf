@@ -1,7 +1,7 @@
 /**
  * @file use-distributed-query.mjs
  * @description React hook for executing distributed SPARQL queries across federated stores
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect } from 'react';
@@ -57,7 +57,7 @@ const DistributedQueryOptionsSchema = z
 /**
  * Hook for distributed SPARQL query execution with intelligent routing
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {string|null} sparql - SPARQL query string (null for manual execution)
  * @param {Object} options - Query options
  * @param {string[]} [options.stores] - Specific stores to query

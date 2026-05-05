@@ -215,7 +215,7 @@ RATE_LIMIT_ENABLE_PER_API_KEY=true
   message: 'Rate limit exceeded',
   retryAfter: 60, // seconds
   resetAt: 1704988800000, // timestamp
-  identifier: 'ratelimit:ip:192.168.1.1'
+  identifier: 'ratelimit:ip:[VERSION].1'
 }
 ```
 
@@ -381,7 +381,7 @@ Total:                         1958+ lines
 import { createRateLimiter } from '@unrdf/daemon/middleware/rate-limiter';
 
 const limiter = createRateLimiter();
-const result = limiter.check({ ip: '192.168.1.1' });
+const result = limiter.check({ ip: '[VERSION].1' });
 
 if (result.allowed) {
   // Process request
@@ -483,7 +483,7 @@ grep -r "DEFERRED_ACTION(#gap-closure)" src/middleware/rate-limiter*.mjs
 const limiter = createRateLimiter({ maxRequests: 100 });
 
 for (let i = 0; i < 1000; i++) {
-  limiter.check({ ip: '192.168.1.1' });
+  limiter.check({ ip: '[VERSION].1' });
 }
 
 // Results:

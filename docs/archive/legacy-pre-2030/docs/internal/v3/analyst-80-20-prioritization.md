@@ -49,7 +49,7 @@ ls .github/workflows                 # 3 CI/CD workflows exist
 
 ---
 
-## 🎯 Critical 20% Analysis (Must Ship for v3.0.0)
+## 🎯 Critical 20% Analysis (Must Ship for latest)
 
 ### Component Value Distribution (Evidence-Based)
 
@@ -65,7 +65,7 @@ ls .github/workflows                 # 3 CI/CD workflows exist
 | **Documentation** | 2% | ✅ COMPLETE | 12,000+ lines | P0 |
 | **TOTAL CRITICAL 20%** | **105%** | ✅ **COMPLETE** | Validated with evidence | **SHIP** |
 
-**Remaining 80% (Low Priority for v3.0.0)**:
+**Remaining 80% (Low Priority for latest)**:
 - Monaco Editor polish: 5% value (basic works, advanced pending)
 - Full CLI v2 parity: 10% value (foundation solid, can iterate)
 - N3 reasoning: 3% value (technical blocker, defer to v3.1)
@@ -434,7 +434,7 @@ $ grep -r "skip\|todo" sidecar/test/*monaco* | wc -l
 
 ## 🎯 Prioritized Implementation Roadmap
 
-### v3.0.0 Launch (Ready Now) - Critical 20%
+### latest Launch (Ready Now) - Critical 20%
 
 **What's Shipping**:
 - ✅ Dark Matter 80/20 (18/18 tests passing)
@@ -521,7 +521,7 @@ $ grep -r "skip\|todo" sidecar/test/*monaco* | wc -l
 
 ### Sidecar UI Implementation Priority
 
-#### P0 - Must Ship for v3.0.0 (✅ ALL COMPLETE)
+#### P0 - Must Ship for latest (✅ ALL COMPLETE)
 
 **Pages**:
 - ✅ `/sidecar/app/pages/index.vue` - Landing page
@@ -699,7 +699,7 @@ $ grep -r "skip\|todo" sidecar/test/*monaco* | wc -l
 ### Week 1-2: Fix Quick Wins
 1. Fix business logic tests (6 tests, 2-3 hours)
 2. Fix testing QA tests (5 tests, 2-3 hours)
-3. Update documentation for v3.0.0 release
+3. Update documentation for latest release
 4. Monitor npm downloads and GitHub issues
 
 ### Week 3-4: CLI Startup Optimization
@@ -732,8 +732,8 @@ $ grep -r "skip\|todo" sidecar/test/*monaco* | wc -l
 
 ### Launch Success Criteria (24 Hours)
 
-**v3.0.0 is successful when**:
-- ✅ npm shows v3.0.0
+**latest is successful when**:
+- ✅ npm shows latest
 - ✅ CI/CD all green
 - ✅ No critical bugs reported
 - ✅ Documentation accessible
@@ -859,14 +859,14 @@ npm run lint
 
 ### Day 1: Version Bump
 ```bash
-# Update to v3.0.0
-pnpm version major  # 2.1.1 → 3.0.0
+# Update to latest
+pnpm version major  # latest → latest
 ```
 
 ### Day 2: Release
 ```bash
 # Create git tag
-git tag v3.0.0
+git tag latest
 
 # Push (triggers CI/CD)
 git push origin main --tags
@@ -883,6 +883,6 @@ git push origin main --tags
 **Analyst Agent**: Hive Mind Swarm - Analyst
 **Analysis Method**: Tests + File System + OTEL (No Agent Claims)
 **Confidence**: 95%
-**Recommendation**: **SHIP v3.0.0 NOW** 🚀
+**Recommendation**: **SHIP latest NOW** 🚀
 
 **Next Step**: Execute launch checklist in `/Users/sac/unrdf/docs/v3/LAUNCH-CHECKLIST.md`

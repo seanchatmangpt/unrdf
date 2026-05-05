@@ -242,10 +242,10 @@ This integration uses ruv-swarm agents for:
 ```javascript
 // Intelligent version synchronization
 const syncStrategy = {
-  nodeVersion: ">=20.0.0",  // Align to highest requirement
+  nodeVersion: ">=latest",  // Align to highest requirement
   dependencies: {
-    "better-sqlite3": "^12.2.0",  // Use latest stable
-    "ws": "^8.14.2"  // Maintain compatibility
+    "better-sqlite3": "^latest",  // Use latest stable
+    "ws": "^latest"  // Maintain compatibility
   },
   engines: {
     aligned: true,
@@ -395,16 +395,16 @@ mcp__claude-flow__memory_usage {
   key: "sync/metrics/session",
   value: {
     packages_synchronized: ["claude-code-flow", "ruv-swarm"],
-    version_alignment_score: 98.5,
+    version_alignment_score: latest,
     dependency_conflicts_resolved: 12,
     documentation_sync_percentage: 100,
-    integration_test_success_rate: 96.8,
-    total_sync_time: "23.4 minutes",
+    integration_test_success_rate: latest,
+    total_sync_time: "latest minutes",
     agent_efficiency_scores: {
-      "Master Sync Coordinator": 9.2,
-      "Dependency Analyzer": 8.7,
-      "Integration Developer": 9.0,
-      "Validation Engineer": 8.9
+      "Master Sync Coordinator": latest,
+      "Dependency Analyzer": latest,
+      "Integration Developer": latest,
+      "Validation Engineer": latest
     }
   }
 }

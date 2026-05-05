@@ -420,7 +420,7 @@ async function runBenchmarks() {
 // Run benchmarks
 runBenchmarks()
   .then(results => {
-    console.log('\n📊 Writing results to docs/performance-targets-v4.0.0.md...');
+    console.log('\n📊 Writing results to docs/performance-targets-latest.md...');
     process.exit(0);
   })
   .catch(error => {

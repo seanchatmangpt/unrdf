@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-04-23T08:33:59.860Z",
+  "timestamp": "2026-04-23T08:33:latestZ",
   "environment": {
-    "node": "v20.13.0",
+    "node": "vlatest",
     "platform": "darwin",
     "cpus": 16,
     "memory": 51539607552
@@ -16,12 +16,12 @@
     },
     "test_execution": {
       "runs": [
-        2522.607209,
-        2255.2327499999997
+        latest,
+        latest
       ],
-      "average": 2388.9199794999995,
-      "min": 2255.2327499999997,
-      "max": 2522.607209,
+      "average": latest,
+      "min": latest,
+      "max": latest,
       "sla_limit": 5000,
       "sla_passed": true
     },
@@ -35,15 +35,15 @@
     },
     "import_resolution": {
       "runs": [
-        55.65162499999951,
-        55.60933300000033,
-        53.7398749999993,
-        45.865084000000024,
-        37.78666700000031
+        latest,
+        latest,
+        latest,
+        latest,
+        latest
       ],
-      "average": 49.7305167999999,
-      "min": 37.78666700000031,
-      "max": 55.65162499999951
+      "average": latest,
+      "min": latest,
+      "max": latest
     }
   },
   "sla": {

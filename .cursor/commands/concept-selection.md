@@ -16,7 +16,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Action**: Define criteria for evaluating concepts.
 
-#### 1.1: Identify Criteria from Voice of Customer
+#### latest: Identify Criteria from Voice of Customer
 
 **Action**: Extract criteria from customer needs and requirements.
 
@@ -54,7 +54,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 - C9: Error handling (must handle errors gracefully)
 ```
 
-#### 1.2: Prioritize Criteria
+#### latest: Prioritize Criteria
 
 **Action**: Determine relative importance of criteria.
 
@@ -94,7 +94,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Action**: Generate multiple design concept alternatives.
 
-#### 2.1: Concept Generation Methods
+#### latest: Concept Generation Methods
 
 **Action**: Use multiple methods to generate diverse concepts.
 
@@ -139,7 +139,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 - **Cons**: More complex implementation
 ```
 
-#### 2.2: Document Concepts
+#### latest: Document Concepts
 
 **Action**: Document each concept clearly for evaluation.
 
@@ -157,7 +157,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Action**: Use Pugh Matrix to compare concepts against baseline.
 
-#### 3.1: Select Baseline
+#### latest: Select Baseline
 
 **Action**: Choose baseline concept for comparison.
 
@@ -179,7 +179,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 - **Performance**: 10 seconds execution time, 100% coverage
 ```
 
-#### 3.2: Create Pugh Matrix
+#### latest: Create Pugh Matrix
 
 **Action**: Create matrix comparing concepts to baseline.
 
@@ -219,7 +219,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 | **Net Score**       | 0              | 0                    | +1                      | -2                       | +1                 |
 ```
 
-#### 3.3: Analyze Pugh Matrix Results
+#### latest: Analyze Pugh Matrix Results
 
 **Action**: Analyze scores to identify leading concepts.
 
@@ -266,7 +266,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Action**: Use Analytic Hierarchy Process (AHP) for detailed evaluation.
 
-#### 4.1: Create Pairwise Comparison Matrix
+#### latest: Create Pairwise Comparison Matrix
 
 **Action**: Compare criteria pairwise to determine weights.
 
@@ -305,18 +305,18 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Weights** (normalized):
 
-- C1: Speed: 0.18
-- C2: Reliability: 0.18
-- C3: Ease of Use: 0.06
-- C4: Cost: 0.02
-- C5: Time to Market: 0.02
-- C6: Scalability: 0.18
-- C7: Maintainability: 0.06
-- C8: Coverage: 0.18
-- C9: Error Handling: 0.06
+- C1: Speed: latest
+- C2: Reliability: latest
+- C3: Ease of Use: latest
+- C4: Cost: latest
+- C5: Time to Market: latest
+- C6: Scalability: latest
+- C7: Maintainability: latest
+- C8: Coverage: latest
+- C9: Error Handling: latest
 ```
 
-#### 4.2: Evaluate Concepts Against Criteria
+#### latest: Evaluate Concepts Against Criteria
 
 **Action**: Compare concepts pairwise for each criterion.
 
@@ -343,20 +343,20 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Scores** (normalized):
 
-- Concept C: 0.50
-- Concept D: 0.20
-- Concept B: 0.20
-- Concept A: 0.10
+- Concept C: latest
+- Concept D: latest
+- Concept B: latest
+- Concept A: latest
 
-**Weighted Score** (× C1 weight 0.18):
+**Weighted Score** (× C1 weight latest):
 
-- Concept C: 0.09
-- Concept D: 0.036
-- Concept B: 0.036
-- Concept A: 0.018
+- Concept C: latest
+- Concept D: latest
+- Concept B: latest
+- Concept A: latest
 ```
 
-#### 4.3: Calculate Final Scores
+#### latest: Calculate Final Scores
 
 **Action**: Sum weighted scores across all criteria.
 
@@ -373,28 +373,28 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Concept D (Hybrid)**:
 
-- C1: 0.036 × 0.18 = 0.0065
-- C2: 0.25 × 0.18 = 0.045
-- C3: 0.15 × 0.06 = 0.009
-- C4: 0.10 × 0.02 = 0.002
-- C5: 0.10 × 0.02 = 0.002
-- C6: 0.30 × 0.18 = 0.054
-- C7: 0.15 × 0.06 = 0.009
-- C8: 0.25 × 0.18 = 0.045
-- C9: 0.20 × 0.06 = 0.012
-- **Total**: 0.184
+- C1: latest × latest = latest
+- C2: latest × latest = latest
+- C3: latest × latest = latest
+- C4: latest × latest = latest
+- C5: latest × latest = latest
+- C6: latest × latest = latest
+- C7: latest × latest = latest
+- C8: latest × latest = latest
+- C9: latest × latest = latest
+- **Total**: latest
 
 **Concept B (Pre-Compile)**:
 
-- **Total**: 0.172
+- **Total**: latest
 
 **Concept A (Parallel)**:
 
-- **Total**: 0.158
+- **Total**: latest
 
 **Concept C (Smart Select)**:
 
-- **Total**: 0.142
+- **Total**: latest
 
 **Ranking**: D > B > A > C
 ```
@@ -405,7 +405,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **Action**: Select best concept(s) and verify selection.
 
-#### 5.1: Compare Methods
+#### latest: Compare Methods
 
 **Action**: Compare Pugh Matrix and AHP results.
 
@@ -429,16 +429,16 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 
 **AHP Ranking**:
 
-1. Concept D (Hybrid): 0.184
-2. Concept B (Pre-Compile): 0.172
-3. Concept A (Parallel): 0.158
-4. Concept C (Smart Select): 0.142
+1. Concept D (Hybrid): latest
+2. Concept B (Pre-Compile): latest
+3. Concept A (Parallel): latest
+4. Concept C (Smart Select): latest
 
 **Consensus**: Both methods favor Concept D (Hybrid) or Concept B (Pre-Compile)
 **Selected**: Concept D (Hybrid) - highest AHP score, good Pugh score
 ```
 
-#### 5.2: Verify Selection Criteria Met
+#### latest: Verify Selection Criteria Met
 
 **Action**: Verify selected concept meets all criteria.
 
@@ -476,7 +476,7 @@ Step 1: Define Selection Criteria → Step 2: Generate Concepts → Step 3: Pugh
 **Conclusion**: Selected concept meets all must-have criteria ✅
 ```
 
-#### 5.3: Create Todo List for Concept Implementation
+#### latest: Create Todo List for Concept Implementation
 
 **CRITICAL**: Do NOT write documents or reports. Create todos and execute them.
 
@@ -554,7 +554,7 @@ Results: Concept B (+1), Concept D (+1), Concept A (0), Concept C (-2)
 # Step 4: AHP Evaluation
 
 Pairwise comparisons → Weights → Concept scores
-Results: Concept D (0.184), Concept B (0.172), Concept A (0.158), Concept C (0.142)
+Results: Concept D (latest), Concept B (latest), Concept A (latest), Concept C (latest)
 
 # Step 5: Select and Verify
 

@@ -447,7 +447,7 @@ CREATE INDEX idx_workitem_parent ON yworkitem(parent_work_item_id);
 -- Hierarchical case/task identifiers (parent-child tracking)
 CREATE TABLE yidentifier (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    id_string VARCHAR(255) UNIQUE NOT NULL,  -- e.g., "123.1.2"
+    id_string VARCHAR(255) UNIQUE NOT NULL,  -- e.g., "latest"
     parent_id BIGINT,                        -- FK to yidentifier (self-reference)
     CONSTRAINT fk_identifier_parent FOREIGN KEY (parent_id)
         REFERENCES yidentifier(id) ON DELETE CASCADE
@@ -1048,7 +1048,7 @@ for (YWorkItem item : allWorkItems) {
 pmgr.commit();
 ```
 
-**Reference**: [YAWL Release Notes](https://github.com/yawlfoundation/yawl/blob/master/build/release_notes2.2.txt) - "Exception (non-critical) when removing orphaned work items from persistence on startup"
+**Reference**: [YAWL Release Notes](https://github.com/yawlfoundation/yawl/blob/master/build/release_noteslatest.txt) - "Exception (non-critical) when removing orphaned work items from persistence on startup"
 
 ### Partial Commit Handling
 
@@ -1421,9 +1421,9 @@ export async function completeWorkItem(caseId, workItemId, outputData) {
 
 ### Documentation
 
-- [YAWL User Manual](https://yawlfoundation.github.io/assets/files/YAWLUserManual4.3.pdf) - Configuration and usage
-- [YAWL Technical Manual v4.3](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.3.pdf) - Architecture documentation
-- [YAWL Technical Manual v5.0](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual5.0.pdf) - Latest architecture
+- [YAWL User Manual](https://yawlfoundation.github.io/assets/files/YAWLUserManuallatest.pdf) - Configuration and usage
+- [YAWL Technical Manual vlatest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf) - Architecture documentation
+- [YAWL Technical Manual vlatest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf) - Latest architecture
 - [Persistence with Hyperjaxb3-Framework](https://www.yaug.org/content/persistence-hyperjaxb3-framework) - XML to Hibernate mapping
 
 ### JavaDoc
@@ -1436,7 +1436,7 @@ export async function completeWorkItem(caseId, workItemId, outputData) {
 
 - [YAWL User Group](https://www.yaug.org/) - Community discussions
 - [GitHub Issues - Persistence](https://github.com/yawlfoundation/yawl/issues?q=persistence) - Bug reports and feature requests
-- [Release Notes](https://github.com/yawlfoundation/yawl/blob/master/build/release_notes2.2.txt) - Persistence fixes
+- [Release Notes](https://github.com/yawlfoundation/yawl/blob/master/build/release_noteslatest.txt) - Persistence fixes
 
 ### Hyperjaxb3 Framework
 

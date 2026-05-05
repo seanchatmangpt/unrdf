@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/graph-analytics",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
   "type": "module",
   "main": "src/index.mjs",

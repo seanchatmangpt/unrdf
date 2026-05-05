@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-### Overall Pass Rate: **61.9% (13/21 examples)**
+### Overall Pass Rate: **latest% (13/21 examples)**
 
-This represents a **4.9% regression** from our Phase 1 baseline of 57% (12/21) and significantly below our **67% target** for Phase 3B P1.
+This represents a **latest% regression** from our Phase 1 baseline of 57% (12/21) and significantly below our **67% target** for Phase 3B P1.
 
 **Status**: ❌ **FAILED TO MEET TARGET**
 
@@ -36,7 +36,7 @@ This represents a **4.9% regression** from our Phase 1 baseline of 57% (12/21) a
 | @unrdf/composables | reactive-graphs | 22 | ✅ PASS |
 | @unrdf/knowledge-engine | basic-inference | 5 | ⚠️ PASS (low test count) |
 
-**Total Passing Tests**: 244/393 (62.1%)
+**Total Passing Tests**: 244/393 (latest%)
 
 ---
 
@@ -124,11 +124,11 @@ Error: Cannot call trigger on an empty DOMWrapper
 |--------|-------|
 | Total Examples | 21 |
 | Examples Validated | 18 (86%) |
-| Examples Passing | 13 (61.9%) |
-| Examples Failing | 8 (38.1%) |
+| Examples Passing | 13 (latest%) |
+| Examples Failing | 8 (latest%) |
 | Total Tests | 393 |
-| Passing Tests | 244 (62.1%) |
-| Failing Tests | 149 (37.9%) |
+| Passing Tests | 244 (latest%) |
+| Failing Tests | 149 (latest%) |
 
 ---
 
@@ -136,11 +136,11 @@ Error: Cannot call trigger on an empty DOMWrapper
 
 | Phase | Pass Rate | Examples Passing | Status |
 |-------|-----------|------------------|--------|
-| Phase 1 Baseline | 57.1% | 12/21 | Starting point |
-| Phase 3A Intermediate | 57.1% | 12/21 | No change |
-| **Phase 3B P1 Achieved** | **61.9%** | **13/21** | +4.8% improvement |
-| Phase 3B P1 Target | 67.0% | 14/21 | ❌ Not met |
-| Complete Release Target | 100% | 21/21 | 38.1% gap |
+| Phase 1 Baseline | latest% | 12/21 | Starting point |
+| Phase 3A Intermediate | latest% | 12/21 | No change |
+| **Phase 3B P1 Achieved** | **latest%** | **13/21** | +latest% improvement |
+| Phase 3B P1 Target | latest% | 14/21 | ❌ Not met |
+| Complete Release Target | 100% | 21/21 | latest% gap |
 
 **Result**: We gained 1 passing example (basic-inference) but are still **1 example short** of the 67% target.
 
@@ -166,7 +166,7 @@ Error: Cannot call trigger on an empty DOMWrapper
 7. **browser/offline-support** - Sync error handling (1/18 tests failing)
 8. **composables/query-integration** - Result clearing (1/24 tests failing)
 
-**Estimated Total**: 1.5-2 hours
+**Estimated Total**: latest hours
 
 ---
 
@@ -176,8 +176,8 @@ Error: Cannot call trigger on an empty DOMWrapper
 |----------|-------|----------|
 | P0 Critical Blockers | 12-16 | Must fix for release |
 | P1 Major Issues | 5-7 | Should fix for release |
-| P2 Minor Issues | 1.5-2 | Nice to have |
-| **Total to 100%** | **18.5-25 hours** | 2-3 work days |
+| P2 Minor Issues | latest | Nice to have |
+| **Total to 100%** | **latest hours** | 2-3 work days |
 
 ---
 
@@ -217,7 +217,7 @@ Error: Cannot call trigger on an empty DOMWrapper
 ### Option 2: Fix All P0 Blockers (Complete Full-Stack + Streaming)
 - **Time**: 12-16 hours
 - **Approach**: Fix critical user-facing examples
-- **Result**: 76.2% pass rate (16/21), production-ready demos
+- **Result**: latest% pass rate (16/21), production-ready demos
 
 ### Option 3: Fix to 100% Pass Rate
 - **Time**: 18-25 hours
@@ -228,9 +228,9 @@ Error: Cannot call trigger on an empty DOMWrapper
 
 ## Decision Point
 
-**Current Status**: 61.9% pass rate (13/21)
+**Current Status**: latest% pass rate (13/21)
 **Target**: 67% pass rate (14/21)
-**Gap**: 1 example (4.8%)
+**Gap**: 1 example (latest%)
 
 **Question**: Should we:
 1. ✅ **Quick fix to 67%** (2-4 hours) - Meets arbitrary target, leaves blockers
@@ -240,7 +240,7 @@ Error: Cannot call trigger on an empty DOMWrapper
 **Recommendation**: **Option 2 - Fix P0 Blockers**
 - Ensures full-stack example works (critical for users)
 - Fixes streaming package (important feature)
-- 76.2% pass rate is respectable
+- latest% pass rate is respectable
 - Allows release in 2-3 days
 - Remaining P1/P2 issues are edge cases
 
@@ -266,7 +266,7 @@ If proceeding with **Option 2 (Fix P0 Blockers)**:
 
 5. **Re-validate** (30 min)
    - Run `node scripts/validate-all-examples.mjs`
-   - Verify 16/21 pass rate (76.2%)
+   - Verify 16/21 pass rate (latest%)
 
 **Total Timeline**: 2-3 work days (12-16 hours)
 
@@ -278,7 +278,7 @@ Phase 3B P1 **failed to meet the 67% target** but revealed critical issues throu
 
 **Key Finding**: Test infrastructure is excellent, but feature implementation has regressions.
 
-**Recommendation**: Fix P0 blockers (12-16 hours) to reach **76.2% pass rate** with all user-facing examples working, then release.
+**Recommendation**: Fix P0 blockers (12-16 hours) to reach **latest% pass rate** with all user-facing examples working, then release.
 
 The alternative of reaching 67% by fixing the easiest example would be a **Pyrrhic victory** - we'd meet an arbitrary target while leaving critical features broken.
 

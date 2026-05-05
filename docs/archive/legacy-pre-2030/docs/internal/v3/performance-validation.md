@@ -19,7 +19,7 @@ This report validates UNRDF v3 performance targets through comprehensive benchma
 
 ### Performance Targets (from research-findings.md)
 
-| Component | Target | Current v2.1.1 | Status |
+| Component | Target | Current latest | Status |
 |-----------|--------|----------------|--------|
 | **CLI Startup** | < 100ms | 487ms cold start | ❌ FAIL (needs 5x improvement) |
 | **Hook Eval (ASK)** | p99 < 2ms | 1.85ms | ✅ PASS |
@@ -76,7 +76,7 @@ This report validates UNRDF v3 performance targets through comprehensive benchma
 - DELTA hook performance
 - Throughput validation (target: > 10k exec/min)
 
-**Current Status**: ✅ PASS (1.85ms p99 in v2.1.1)
+**Current Status**: ✅ PASS (1.85ms p99 in latest)
 
 **Performance Characteristics**:
 ```
@@ -108,7 +108,7 @@ Throughput:     12,500 exec/min ✅
 - Aggregation queries (COUNT, GROUP BY)
 - Dataset size impact (10 to 1000 triples)
 
-**Current Status**: ⚠️ PENDING (not measured in v2.1.1)
+**Current Status**: ⚠️ PENDING (not measured in latest)
 
 **Expected Performance** (based on Comunica benchmarks):
 ```
@@ -143,7 +143,7 @@ Aggregation:      p99 ~40ms
 - Batch transactions (10, 100 quads)
 - Throughput validation (target: > 1000 tx/sec)
 
-**Current Status**: ✅ PASS (4.56ms p99 in v2.1.1)
+**Current Status**: ✅ PASS (4.56ms p99 in latest)
 
 **Performance Characteristics**:
 ```
@@ -176,7 +176,7 @@ Throughput:            3,200 tx/sec ✅
 - Throughput validation (target: > 1000 RPS)
 - Network latency impact analysis
 
-**Current Status**: ✅ PASS (8.7ms p99 in v2.1.1)
+**Current Status**: ✅ PASS (8.7ms p99 in latest)
 
 **Performance Characteristics**:
 ```
@@ -435,9 +435,9 @@ Store benchmark results in git for trend analysis:
 
 ```bash
 # After each release
-pnpm vitest bench test/benchmarks/ --reporter=json --outputFile=benchmarks/v3.0.0.json
-git add benchmarks/v3.0.0.json
-git commit -m "chore: Add v3.0.0 performance baseline"
+pnpm vitest bench test/benchmarks/ --reporter=json --outputFile=benchmarks/latest.json
+git add benchmarks/latest.json
+git commit -m "chore: Add latest performance baseline"
 ```
 
 ---
@@ -447,7 +447,7 @@ git commit -m "chore: Add v3.0.0 performance baseline"
 ### Immediate (Week 1)
 
 1. ✅ Create benchmark suite (5 files)
-2. ⏳ Run baseline benchmarks on v2.1.1
+2. ⏳ Run baseline benchmarks on latest
 3. ⏳ Document current performance characteristics
 4. ⏳ Identify optimization opportunities
 
@@ -469,7 +469,7 @@ git commit -m "chore: Add v3.0.0 performance baseline"
 
 ## Conclusion
 
-UNRDF v2.1.1 **meets 4 out of 5 performance targets**:
+UNRDF latest **meets 4 out of 5 performance targets**:
 
 - ✅ Hook evaluation: 1.85ms p99 (target: < 2ms)
 - ✅ Transaction commit: 4.56ms p99 (target: < 5ms)

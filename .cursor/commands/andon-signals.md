@@ -61,7 +61,7 @@ pnpm format:check
 
 **Principle**: "Andon signals are visual management" - Make problems immediately visible, don't hide them.
 
-#### 1.1: Collect Baseline Data (DMAIC Measurement)
+#### latest: Collect Baseline Data (DMAIC Measurement)
 
 **Action**: Measure current signal frequency to establish baseline.
 
@@ -118,7 +118,7 @@ pnpm format:check 2>&1 | grep -c "Code style issues"
 
 **Action**: Immediately stop work when an Andon signal appears.
 
-#### 2.1: Recognize Signal Severity
+#### latest: Recognize Signal Severity
 
 **Action**: Determine signal severity and response.
 
@@ -161,7 +161,7 @@ pnpm format:check 2>&1 | grep -c "Code style issues"
 - [ ] Code quality Warning: Complexity too high
 ```
 
-#### 2.2: Stop the Line
+#### latest: Stop the Line
 
 **Action**: Stop current work when signal appears.
 
@@ -189,7 +189,7 @@ pnpm lint
 
 **Action**: Understand why the signal appeared.
 
-#### 3.1: Read Signal Message
+#### latest: Read Signal Message
 
 **Action**: Carefully read the signal message.
 
@@ -216,7 +216,7 @@ SyntaxError: Unexpected token '{'
 - **Where**: `src/test.mjs:10:5`
 - **Why**: Missing closing brace or syntax issue
 
-#### 3.2: Trace Root Cause
+#### latest: Trace Root Cause
 
 **Action**: Use root cause analysis to find why signal appeared.
 
@@ -240,7 +240,7 @@ SyntaxError: Unexpected token '{'
 
 **Reference**: See [Root Cause Analysis](./root-cause-analysis.md) for detailed 5 Whys process
 
-#### 3.3: Verify Root Cause
+#### latest: Verify Root Cause
 
 **Action**: Confirm root cause hypothesis.
 
@@ -256,7 +256,7 @@ SyntaxError: Unexpected token '{'
 
 **Action**: Address the underlying cause, not just the symptom.
 
-#### 4.1: Fix the Problem
+#### latest: Fix the Problem
 
 **Action**: Implement fix that addresses root cause.
 
@@ -283,7 +283,7 @@ export function testFunction() {
 // After: export function testFunction() {
 ```
 
-#### 4.2: Verify Fix
+#### latest: Verify Fix
 
 **Action**: Ensure fix resolves the signal.
 
@@ -308,7 +308,7 @@ pnpm lint
 
 **Action**: Confirm signal is resolved and won't return.
 
-#### 5.1: Verify Signal Cleared
+#### latest: Verify Signal Cleared
 
 **Action**: Run checks to confirm signal gone.
 
@@ -329,7 +329,7 @@ pnpm test          # All tests pass ✅
 pnpm format:check  # No formatting issues ✅
 ```
 
-#### 5.2: Prevent Signal Return
+#### latest: Prevent Signal Return
 
 **Action**: Add controls to prevent signal from returning.
 
@@ -355,7 +355,7 @@ describe("testFunction", () => {
 });
 ```
 
-#### 5.3: Measure Improvement (DMAIC Measurement)
+#### latest: Measure Improvement (DMAIC Measurement)
 
 **Action**: Measure improvement against baseline data.
 
@@ -404,7 +404,7 @@ pnpm test 2>&1 | grep -c "FAIL\|FAILED"
 - No new signals appeared ✅
 ```
 
-#### 5.4: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to prevent signals from returning.
 
@@ -459,7 +459,7 @@ pnpm test 2>&1 | grep -c "FAIL\|FAILED"
 
 **Principle**: Implement controls to prevent signals, don't just document them. Todos track progress, controls prevent recurrence.
 
-#### 5.5: Monitor for New Signals (DMAIC Control)
+#### latest: Monitor for New Signals (DMAIC Control)
 
 **Action**: Continue monitoring for new signals with systematic tracking.
 

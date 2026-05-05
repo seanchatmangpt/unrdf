@@ -1,10 +1,10 @@
-# Migration Guide: v2.1.1 to v3.0.0
+# Migration Guide: latest to latest
 
-Complete guide for upgrading from UNRDF v2.1.1 to v3.0.0.
+Complete guide for upgrading from UNRDF latest to latest.
 
 ## Overview
 
-UNRDF v3.0.0 introduces significant improvements:
+UNRDF latest introduces significant improvements:
 
 - ✅ **Modern CLI** - kubectl/docker-style noun-verb interface with citty
 - ✅ **Improved APIs** - Enhanced composables and knowledge hooks
@@ -16,7 +16,7 @@ UNRDF v3.0.0 introduces significant improvements:
 
 ### 1. CLI Command Structure
 
-**v2.1.1 (Old):**
+**latest (Old):**
 
 ```bash
 # Old imperative style
@@ -25,7 +25,7 @@ unrdf run-query "SELECT * WHERE { ?s ?p ?o }"
 unrdf validate-shacl data.ttl shapes.ttl
 ```
 
-**v3.0.0 (New):**
+**latest (New):**
 
 ```bash
 # New noun-verb style
@@ -47,7 +47,7 @@ sed -i 's/unrdf validate-shacl/unrdf graph validate/g' *.sh
 
 ### 2. Knowledge Hook Definition
 
-**v2.1.1 (Old):**
+**latest (Old):**
 
 ```javascript
 // Old: Inline SPARQL strings
@@ -60,7 +60,7 @@ export const hook = {
 };
 ```
 
-**v3.0.0 (New):**
+**latest (New):**
 
 ```javascript
 // New: Content-addressed file references
@@ -133,7 +133,7 @@ export default defineHook({
 
 ### 3. Store Context Initialization
 
-**v2.1.1 (Old):**
+**latest (Old):**
 
 ```javascript
 import { createStore } from 'unrdf';
@@ -146,7 +146,7 @@ const store = createStore({
 store.add(quad);
 ```
 
-**v3.0.0 (New):**
+**latest (New):**
 
 ```javascript
 import { initStore, useGraph } from 'unrdf';
@@ -182,7 +182,7 @@ await runApp(() => {
 
 ### 4. Hook Manager API
 
-**v2.1.1 (Old):**
+**latest (Old):**
 
 ```javascript
 import { TransactionManager } from 'unrdf';
@@ -197,7 +197,7 @@ manager.registerHook({
 });
 ```
 
-**v3.0.0 (New):**
+**latest (New):**
 
 ```javascript
 import { KnowledgeHookManager, defineHook } from 'unrdf';
@@ -241,7 +241,7 @@ const hook = defineHook({
 manager.addKnowledgeHook(hook);
 ```
 
-## New Features in v3.0.0
+## New Features in latest
 
 
 New in v3: Deploy knowledge engine as a knowledge-engine service.
@@ -412,7 +412,7 @@ await initTelemetry({
 
 ### Code Migration
 
-- [ ] Update `package.json` to v3.0.0
+- [ ] Update `package.json` to latest
 - [ ] Run `pnpm install`
 - [ ] Update CLI scripts (noun-verb pattern)
 - [ ] Extract inline SPARQL to files
@@ -518,9 +518,9 @@ ConnectionError: Failed to connect to knowledge-engine at localhost:50051
 
 ## Performance Improvements
 
-v3.0.0 includes several performance optimizations:
+latest includes several performance optimizations:
 
-| Operation | v2.1.1 | v3.0.0 | Improvement |
+| Operation | latest | latest | Improvement |
 |-----------|--------|--------|-------------|
 | Hook evaluation (p99) | 3.2ms | 1.8ms | 43% faster |
 | Transaction commit | 6.1ms | 4.5ms | 26% faster |
@@ -530,7 +530,7 @@ v3.0.0 includes several performance optimizations:
 
 ## Rollback Plan
 
-If migration fails, rollback to v2.1.1:
+If migration fails, rollback to latest:
 
 ```bash
 # 1. Revert package.json

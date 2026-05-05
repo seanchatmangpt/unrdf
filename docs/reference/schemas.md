@@ -1,6 +1,6 @@
 # Schemas Reference
 
-**Version**: v4.1.1
+**Version**: latest
 **Package**: `unrdf`
 **Module**: `knowledge-engine/schemas`
 
@@ -47,14 +47,14 @@ import { HookMetaSchema } from 'unrdf';
 const meta = HookMetaSchema.parse({
   name: 'compliance:largeTx',
   description: 'Alerts on large financial transactions',
-  version: '1.0.0',
+  version: 'latest',
   author: 'Compliance Team',
   tags: ['financial', 'compliance'],
   ontology: ['fibo']
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -84,7 +84,7 @@ const ref = FileRefSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -110,7 +110,7 @@ const channel = HookChannelSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -146,7 +146,7 @@ const hook = KnowledgeHookSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -181,7 +181,7 @@ const condition = SparqlAskConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -216,7 +216,7 @@ const condition = SparqlSelectConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -253,7 +253,7 @@ const condition = ShaclConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -292,7 +292,7 @@ const condition = DeltaConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -332,7 +332,7 @@ const condition = ThresholdConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -369,7 +369,7 @@ const condition = CountConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -408,7 +408,7 @@ const condition = WindowConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -427,7 +427,7 @@ const condition = ConditionSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -448,7 +448,7 @@ const condition = ConditionSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -469,7 +469,7 @@ const condition = ConditionSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -496,7 +496,7 @@ const condition = ConditionSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -525,7 +525,7 @@ const determinism = DeterminismSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -554,7 +554,7 @@ const receipt = ReceiptSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -586,7 +586,7 @@ const receipt = ReceiptSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -601,7 +601,7 @@ const receipt = ReceiptSchema.parse({
   enableMetrics: boolean (default true),
   enableLogging: boolean (default true),
   serviceName: string (default 'unrdf-kgc'),
-  serviceVersion: string (default '1.0.0'),
+  serviceVersion: string (default 'latest'),
   endpoint?: string (valid URL),
   headers?: Record<string, string>,
   resourceAttributes?: Record<string, string>,
@@ -616,7 +616,7 @@ const receipt = ReceiptSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -637,7 +637,7 @@ const receipt = ReceiptSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -671,7 +671,7 @@ const delta = DeltaSchema.parse({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -690,7 +690,7 @@ const delta = DeltaSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -717,7 +717,7 @@ const delta = DeltaSchema.parse({
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -752,7 +752,7 @@ if (!validation.success) {
 }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -767,7 +767,7 @@ if (!validation.success) {
 
 **Returns**: Validation result object
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -782,7 +782,7 @@ if (!validation.success) {
 
 **Returns**: Validation result object
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -797,7 +797,7 @@ if (!validation.success) {
 
 **Returns**: Validation result object
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -812,7 +812,7 @@ if (!validation.success) {
 
 **Returns**: Validation result object
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -846,7 +846,7 @@ const hook = createKnowledgeHook({
 console.log(Object.isFrozen(hook)); // true
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -880,7 +880,7 @@ console.log('Event ID:', event.id);
 console.log('Timestamp:', event.timestamp);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -908,7 +908,7 @@ const condition = createCondition({
 });
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -927,7 +927,7 @@ import {
 const meta = HookMetaSchema.parse({
   name: 'compliance:largeTx',
   description: 'Alerts on large financial transactions',
-  version: '1.0.0',
+  version: 'latest',
   ontology: ['fibo']
 });
 

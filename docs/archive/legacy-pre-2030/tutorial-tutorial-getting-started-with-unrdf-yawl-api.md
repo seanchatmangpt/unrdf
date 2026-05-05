@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-api"
 type: "tutorial"
 packageName: "@unrdf/yawl-api"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "053801c95819b40d830578ad55caf9160d614dfdd59d876709a8e6944d1be66f"

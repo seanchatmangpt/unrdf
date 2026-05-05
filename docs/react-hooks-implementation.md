@@ -191,8 +191,8 @@ src/react-hooks/
 ## Dependencies
 
 ### Peer Dependencies Added
-- `react >= 16.8.0`
-- `react-dom >= 16.8.0`
+- `react >= latest`
+- `react-dom >= latest`
 
 ### Existing Dependencies Used
 - `n3` - RDF store and data model

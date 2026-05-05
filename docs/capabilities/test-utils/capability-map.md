@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/test-utils
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -29,8 +29,8 @@ Testing utilities for UNRDF development
 ### Dependencies
 
 - `@unrdf/oxigraph`: workspace:*
-- `@opentelemetry/api`: ^1.9.0
-- `zod`: ^4.1.13
+- `@opentelemetry/api`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

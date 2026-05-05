@@ -62,8 +62,8 @@ Encode organizational engineering conventions as a machine-checkable specificati
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Compilation time | <1ms | 0.058ms | ✅ 17x faster |
-| Validation time | <5ms | 0.400ms | ✅ 12x faster |
+| Compilation time | <1ms | latestms | ✅ 17x faster |
+| Validation time | <5ms | latestms | ✅ 12x faster |
 | Determinism | 100% | 100% | ✅ Perfect |
 | Test pass rate | 100% | 100% | ✅ Perfect |
 
@@ -273,8 +273,8 @@ P(correct classification) ≥ 99%
 
 ```json
 {
-  "acorn": "^8.12.1",    // JavaScript AST parser
-  "zod": "^3.23.8"       // Schema validation
+  "acorn": "^latest",    // JavaScript AST parser
+  "zod": "^latest"       // Schema validation
 }
 ```
 
@@ -289,8 +289,8 @@ Both installed and verified ✅
 | Claim | Evidence | Verified |
 |-------|----------|----------|
 | "23 tests pass" | Ran `node test.mjs` → 23/23 pass | ✅ YES |
-| "Compilation <1ms" | Benchmark: 0.058ms avg | ✅ YES |
-| "Validation <5ms" | Benchmark: 0.400ms avg | ✅ YES |
+| "Compilation <1ms" | Benchmark: latestms avg | ✅ YES |
+| "Validation <5ms" | Benchmark: latestms avg | ✅ YES |
 | "Deterministic" | 100/100 → 1 unique output | ✅ YES |
 | "3 profiles" | demoProfile, minimalProfile, strictProfile | ✅ YES |
 

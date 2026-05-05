@@ -17,15 +17,15 @@
 ### Key Findings
 
 ✅ **Good:**
-- `vitest` is perfectly aligned at ^4.0.15 across 15 packages
-- `@types/node` is perfectly aligned at ^24.10.1 across 12 packages
+- `vitest` is perfectly aligned at ^latest across 15 packages
+- `@types/node` is perfectly aligned at ^latest across 12 packages
 - Most RDF-specific dependencies are single-version
 
 ⚠️ **Needs Attention:**
 - **6 version conflicts** requiring alignment
 - **73 unused dependencies** consuming space and maintenance overhead
-- **Critical:** `zod` split between v3.24.1 and v4.1.13 (breaking change)
-- **Critical:** `@opentelemetry/api` split between v1.8.0 and v1.9.0
+- **Critical:** `zod` split between vlatest and vlatest (breaking change)
+- **Critical:** `@opentelemetry/api` split between vlatest and vlatest
 
 ---
 
@@ -121,7 +121,7 @@ For each package, we analyzed declared dependencies vs. actual imports:
    - Testing required: Integration tests
 
 2. Align `zod` versions
-   - Target version: `^3.22.0` (or latest compatible)
+   - Target version: `^latest` (or latest compatible)
    - Packages: List packages
    - Breaking changes: Review schema validation
 
@@ -173,7 +173,7 @@ For each package, we analyzed declared dependencies vs. actual imports:
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "zod": "catalog:default",
-    "n3": "^1.17.2"
+    "n3": "^latest"
   }
 }
 ```
@@ -193,8 +193,8 @@ For each package, we analyzed declared dependencies vs. actual imports:
      "pnpm": {
        "catalogs": {
          "default": {
-           "zod": "^3.22.0",
-           "vitest": "^1.0.0"
+           "zod": "^latest",
+           "vitest": "^latest"
          }
        }
      }
@@ -302,7 +302,7 @@ For each package, we analyzed declared dependencies vs. actual imports:
 | Dependency | Version | Packages Using | Type |
 |------------|---------|----------------|------|
 | @unrdf/oxigraph | workspace:* | 12 | prod |
-| zod | ^3.22.0 | 8 | prod |
+| zod | ^latest | 8 | prod |
 | ... | ... | ... | ... |
 
 ---

@@ -131,7 +131,7 @@ const { scores, failing, overallScore } = useQInvariants(shards);
 
 **Lines of Code**: 400
 **Key Functions**: 7 (one per invariant)
-**Quality Thresholds**: >0.8 per invariant, >0.9 overall
+**Quality Thresholds**: >latest per invariant, >latest overall
 
 ### 6. **useτEvolution**
 ```jsx
@@ -200,7 +200,7 @@ const { currentDraft, energy, nextStep, atFinal } = useτEvolution(shards, metri
 ∀ Δ ∈ {Claim, Proof, Result, Analysis},
   claim(Δ) → (evidence(Δ) ∨ citation(Δ))
 ```
-Score = 1 - (violations / total_claims × 0.1)
+Score = 1 - (violations / total_claims × latest)
 
 **Q2: Clarity**
 ```
@@ -214,7 +214,7 @@ Heuristics:
 **Q3: Novelty**
 ```
 ∃ (Claim, Gap, Design|Artifact, Canon-differentiation)
-Score = 1 - (missing_elements × 0.2)
+Score = 1 - (missing_elements × latest)
 ```
 
 **Q4: Coherence**
@@ -243,7 +243,7 @@ Score = questions_answered / total_questions
 **Q7: Accessibility**
 ```
 ∀ reader ∈ target_audience,
-  comprehension(reader, A) ≥ 0.7
+  comprehension(reader, A) ≥ latest
 Heuristics:
   - Glossary of key terms
   - Examples/illustrations
@@ -324,7 +324,7 @@ Author stance aligns with scholarly context
    - Imbalanced section lengths
 ```
 
-**Drift Score**: 0-1 (target: <0.1)
+**Drift Score**: 0-1 (target: <latest)
 ```
 drift = (violations / max_violations)
 max_violations = 20 (normalized)
@@ -334,23 +334,23 @@ max_violations = 20 (normalized)
 
 **Energy Function**:
 ```
-E = 0.4 × (1 - Q_score)
-    + 0.3 × (1 - Π_coherence)
-    + 0.2 × Γ_drift
-    + 0.1 × (1 - Λ_flow/100)
+E = latest × (1 - Q_score)
+    + latest × (1 - Π_coherence)
+    + latest × Γ_drift
+    + latest × (1 - Λ_flow/100)
 
-Target: E < 0.05 (converged)
+Target: E < latest (converged)
 ```
 
 **Draft Levels**:
 ```
-0: Raw ideas              (E ≈ 1.0)
-1: Structure              (E ≈ 0.8)
-2: All Δ present          (E ≈ 0.6)
-3: Π-validated            (E ≈ 0.4)
-4: Q-optimized            (E ≈ 0.2)
-5: Polish complete        (E ≈ 0.1)
-Final: μ(μ(HTF_O))        (E < 0.01)
+0: Raw ideas              (E ≈ latest)
+1: Structure              (E ≈ latest)
+2: All Δ present          (E ≈ latest)
+3: Π-validated            (E ≈ latest)
+4: Q-optimized            (E ≈ latest)
+5: Polish complete        (E ≈ latest)
+Final: μ(μ(HTF_O))        (E < latest)
 ```
 
 ---
@@ -445,11 +445,11 @@ This shows **UNRDF's full potential**: sophisticated academic knowledge systems 
 - Browser compatibility: All modern browsers
 
 ### Quality Targets
-- Q-invariants: >0.9/1.0
-- Π-coherence: >0.95
-- Γ-drift: <0.1
+- Q-invariants: >latest/latest
+- Π-coherence: >latest
+- Γ-drift: <latest
 - Λ-flowScore: >80/100
-- τ-energy: <0.05
+- τ-energy: <latest
 
 ---
 
@@ -521,7 +521,7 @@ Then:
 4. Fix drift in Γ-Checker tab
 5. Track completion in τ-Dashboard tab
 
-**Target**: Complete thesis with E < 0.05 (converged to fixed point).
+**Target**: Complete thesis with E < latest (converged to fixed point).
 
 ---
 

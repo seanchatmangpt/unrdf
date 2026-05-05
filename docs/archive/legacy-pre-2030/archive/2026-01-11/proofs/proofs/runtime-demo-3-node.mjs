@@ -66,7 +66,7 @@ async function main() {
     const validationHook = {
       meta: {
         name: 'validate-user-data',
-        version: '1.0.0',
+        version: 'latest',
         description: 'Validates user data format',
       },
       run: async event => {

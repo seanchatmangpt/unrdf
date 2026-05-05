@@ -308,7 +308,7 @@ const response = await promptConfirmation({
   action: 'delete',
   resource: 'graph',
   name: 'production-data',
-  summary: 'This will permanently delete 1.2M triples',
+  summary: 'This will permanently delete latestM triples',
   requiresForce: true
 });
 
@@ -407,7 +407,7 @@ try {
 | 4️⃣ | File existence pre-check | 5 file ops | 🟢 Low | 🔴 Very High |
 | 5️⃣ | Hook type enum validation | hook/create | 🟢 Low | 🟠 High |
 
-**Total Effort**: 1.5 weeks
+**Total Effort**: latest weeks
 **Risk Reduction**: 40% (down from 3847 to ~2308 RPN)
 
 ---
@@ -496,7 +496,7 @@ export const deleteCommand = defineCommand({
         action: 'delete',
         resource: 'graph',
         name,
-        summary: await getGraphSummary(name), // e.g., "1.2M triples in 5 named graphs"
+        summary: await getGraphSummary(name), // e.g., "latestM triples in 5 named graphs"
         requiresForce: true
       });
 
@@ -669,7 +669,7 @@ This gemba walk identified **15 critical command-level FMEA issues** adding **3,
 4. **Input validation** missing in 18/39 commands
 5. **Error handling** is inconsistent and non-actionable
 
-**Recommended Action**: Implement Phase 1 guards (5 high-impact items, 1.5 weeks) to reduce risk by 40% immediately.
+**Recommended Action**: Implement Phase 1 guards (5 high-impact items, latest weeks) to reduce risk by 40% immediately.
 
 ---
 

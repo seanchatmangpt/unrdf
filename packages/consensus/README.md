@@ -227,7 +227,7 @@ Low-level WebSocket transport with msgpackr serialization.
 const transport = createWebSocketTransport({
   nodeId: string,
   port: number,
-  host: '0.0.0.0',
+  host: 'latest.0',
   reconnectInterval: 1000,
   reconnectMaxRetries: 10,
   messageTimeout: 5000

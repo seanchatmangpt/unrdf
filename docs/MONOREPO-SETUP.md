@@ -4,7 +4,7 @@
 
 ### Prerequisites
 - Node.js 18+
-- pnpm 8.0+
+- pnpm latest+
 
 ### Installation
 
@@ -211,10 +211,10 @@ cd packages/composables && npm publish &
 ```bash
 # Monorepo approach: each package independent
 cd packages/core
-npm version patch  # 5.0.0 → 5.0.1
+npm version patch  # latest → latest
 
 cd packages/dark-matter
-npm version minor  # 1.0.0 → 1.1.0
+npm version minor  # latest → latest
 ```
 
 ## IDE Setup

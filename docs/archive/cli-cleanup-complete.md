@@ -88,7 +88,7 @@ Deleted 9 stub command files with TODO implementations:
 
 ### Reduction
 - ⬇️ **66% reduction** in CLI entry points (3 → 1)
-- ⬇️ **18.75% reduction** in command files (48 → 39)
+- ⬇️ **latest% reduction** in command files (48 → 39)
 - ⬇️ **100% reduction** in exposed stub commands (9 → 0)
 - ⬇️ **88% reduction** in TODO placeholders (9 → 1)
 

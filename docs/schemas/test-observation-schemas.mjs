@@ -138,7 +138,7 @@ baseObservationTests.test('Valid observation with all required fields', () => {
     domain: 'runtime',
     method: 'runtime.check',
     output: {
-      nodeVersion: '20.10.0',
+      nodeVersion: 'latest',
       jsEngine: 'v8',
       wasm: true,
       workers: 4,
@@ -261,7 +261,7 @@ domainOutputTests.test('Valid: Runtime domain output', () => {
     domain: 'runtime',
     method: 'runtime.check',
     output: {
-      nodeVersion: '20.10.0',
+      nodeVersion: 'latest',
       jsEngine: 'v8',
       wasm: true,
       workers: 4,
@@ -398,7 +398,7 @@ domainOutputTests.test('Valid: Tooling domain output', () => {
     output: {
       command: 'npm',
       accessible: true,
-      version: '8.19.4'
+      version: 'latest'
     }
   });
 
@@ -475,7 +475,7 @@ domainOutputTests.test('Valid: System domain output', () => {
     method: 'system.check',
     output: {
       platform: 'linux',
-      osVersion: '5.10.0',
+      osVersion: 'latest',
       containerized: true
     }
   });
@@ -543,9 +543,9 @@ const batchTests = new TestRunner('Batch Validation');
 
 batchTests.test('Validate batch of observations', () => {
   const observations = [
-    createObservation({ domain: 'runtime', method: 'runtime.check', output: { nodeVersion: '20.10.0', jsEngine: 'v8', wasm: true, workers: 4, timersResolution: 100000, icu: true } }),
+    createObservation({ domain: 'runtime', method: 'runtime.check', output: { nodeVersion: 'latest', jsEngine: 'v8', wasm: true, workers: 4, timersResolution: 100000, icu: true } }),
     createObservation({ domain: 'fs', method: 'fs.check', output: { root: '/tmp', maxPathLength: 255, fileCount: 1000, symlinkBehavior: 'followed', writeTest: true } }),
-    createObservation({ domain: 'system', method: 'system.check', output: { platform: 'linux', osVersion: '5.10.0', containerized: true } })
+    createObservation({ domain: 'system', method: 'system.check', output: { platform: 'linux', osVersion: 'latest', containerized: true } })
   ];
 
   const result = validateObservationBatch(observations);
@@ -555,9 +555,9 @@ batchTests.test('Validate batch of observations', () => {
 
 batchTests.test('Batch with mixed valid/invalid', () => {
   const observations = [
-    createObservation({ domain: 'runtime', method: 'runtime.check', output: { nodeVersion: '20.10.0', jsEngine: 'v8', wasm: true, workers: 4, timersResolution: 100000, icu: true } }),
+    createObservation({ domain: 'runtime', method: 'runtime.check', output: { nodeVersion: 'latest', jsEngine: 'v8', wasm: true, workers: 4, timersResolution: 100000, icu: true } }),
     createObservation({ domain: 'runtime', method: 'runtime.check', output: { nodeVersion: 'invalid' } }),
-    createObservation({ domain: 'system', method: 'system.check', output: { platform: 'linux', osVersion: '5.10.0', containerized: true } })
+    createObservation({ domain: 'system', method: 'system.check', output: { platform: 'linux', osVersion: 'latest', containerized: true } })
   ];
 
   const result = validateObservationBatch(observations);
@@ -716,7 +716,7 @@ edgeCaseTests.test('Boundary: minimum workers', () => {
     domain: 'runtime',
     method: 'runtime.check',
     output: {
-      nodeVersion: '20.10.0',
+      nodeVersion: 'latest',
       jsEngine: 'v8',
       wasm: false,
       workers: 0,

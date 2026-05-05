@@ -1,6 +1,6 @@
 # @unrdf/event-automation
 
-Event-driven automation for UNRDF v6.1.0 with automatic delta processing, receipt generation, and policy enforcement.
+Event-driven automation for UNRDF [VERSION] with automatic delta processing, receipt generation, and policy enforcement.
 
 ## Features
 

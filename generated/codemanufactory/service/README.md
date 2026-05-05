@@ -34,7 +34,7 @@ GET /health
 {
   "status": "healthy",
   "service": "",
-  "version": "1.0.0"
+  "version": "latest"
 }
 ```
 

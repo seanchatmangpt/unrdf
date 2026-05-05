@@ -122,7 +122,7 @@ After validation, a TOML deployment manifest is generated:
 ```toml
 [deployment]
 name = "chatman-equation-3t"
-version = "1.0.0"
+version = "[VERSION]"
 timestamp = "2026-01-18T00:00:00Z"
 components = ["toml-configs", "tera-templates", "turtle-ontologies"]
 

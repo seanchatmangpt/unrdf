@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-realtime"
 type: "tutorial"
 packageName: "@unrdf/yawl-realtime"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.1
 proof: "dadc336ea1b5a8de2e53b05a665ffe79c959032556c74ecd8cb0569f04425cdb"

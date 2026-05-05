@@ -1,5 +1,5 @@
 ================================================================================
-DOCUMENTATION GAPS CHECKLIST - @unrdf/cli v5.0.0-alpha.0
+DOCUMENTATION GAPS CHECKLIST - @unrdf/cli vlatest.0
 ================================================================================
 
 CRITICAL BLOCKERS (MUST FIX BEFORE RELEASE)
@@ -98,7 +98,7 @@ CRITICAL BLOCKERS (MUST FIX BEFORE RELEASE)
     File: /Users/sac/unrdf/packages/cli/docs/sync-command.md
     Status: INCOMPLETE (existing file needs updates)
     Updates Needed:
-      [ ] Section 3.2: ggen.toml schema reference
+      [ ] Section latest: ggen.toml schema reference
           [ ] Add `template` field in generation.rules
           [ ] Explain output_file templating syntax ({{ name }}, {{ entityName }})
           [ ] Document Hygen directive support in output_file
@@ -119,7 +119,7 @@ CRITICAL BLOCKERS (MUST FIX BEFORE RELEASE)
     Code Changes Needed:
       [ ] Update template query command to include version field
       [ ] Update template extract command to include version field
-      [ ] Format: { "version": "5.0.0-alpha.0", "results": [...] }
+      [ ] Format: { "version": "latest.0", "results": [...] }
     Documentation Needed:
       [ ] Add to README.md: JSON Output Format section
       [ ] Document versioning policy

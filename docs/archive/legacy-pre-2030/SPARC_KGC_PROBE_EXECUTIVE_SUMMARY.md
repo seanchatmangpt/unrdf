@@ -169,8 +169,8 @@ const storage = isDev
 ├── @unrdf/oxigraph (workspace:*)
 ├── @unrdf/hooks (workspace:*)
 ├── @unrdf/yawl (workspace:*)
-├── hash-wasm (^4.12.0) [also used by kgc-4d, yawl]
-└── zod (^4.1.13) [matches workspace]
+├── hash-wasm (^latest) [also used by kgc-4d, yawl]
+└── zod (^latest) [matches workspace]
 ```
 
 **No circular dependencies** ✓

@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-### Overall Quality Score: 7.8/10
+### Overall Quality Score: latest/10
 
 **Files Analyzed**: 4
 **Total Lines**: 2,205
@@ -36,7 +36,7 @@
 
 ### 1. packages/hooks/src/policy-compiler.mjs
 
-**Lines**: 503 | **Quality Score**: 7.5/10
+**Lines**: 503 | **Quality Score**: latest/10
 
 #### Metrics
 - JSDoc Coverage: **100%** ✅ (15/15 exported functions/constants)
@@ -104,7 +104,7 @@ export function compilePolicy(policy) {
 
 ### 2. packages/kgc-4d/src/snapshot-cache.mjs
 
-**Lines**: 644 | **Quality Score**: 8.0/10
+**Lines**: 644 | **Quality Score**: latest/10
 
 #### Metrics
 - JSDoc Coverage: **100%** ✅ (8/8 public exports)
@@ -177,7 +177,7 @@ constructor(options = {}) {
 
 ### 3. packages/oxigraph/src/query-cache.mjs
 
-**Lines**: 549 | **Quality Score**: 7.5/10
+**Lines**: 549 | **Quality Score**: latest/10
 
 #### Metrics
 - JSDoc Coverage: **100%** ✅ (8/8 exports)
@@ -250,7 +250,7 @@ update(query, options) {
 
 ### 4. packages/yawl/src/receipt-batch.mjs
 
-**Lines**: 509 | **Quality Score**: 8.5/10 ⭐ **Best in Class**
+**Lines**: 509 | **Quality Score**: latest/10 ⭐ **Best in Class**
 
 #### Metrics
 - JSDoc Coverage: **100%** ✅ (7/7 exports)
@@ -597,16 +597,16 @@ The 4 new files demonstrate **strong engineering practices** with excellent JSDo
 
 | Dimension | Score | Weight | Weighted |
 |-----------|-------|--------|----------|
-| JSDoc Coverage | 10/10 | 20% | 2.0 |
-| Linting | 10/10 | 15% | 1.5 |
-| Zod Validation | 2.5/10 | 20% | 0.5 |
-| Pure Functions | 4.5/10 | 15% | 0.675 |
-| Pattern Reuse | 7.8/10 | 10% | 0.78 |
-| Dependency Leverage | 7.0/10 | 10% | 0.7 |
-| File Size | 8.5/10 | 5% | 0.425 |
-| Code Smells | 6.5/10 | 5% | 0.325 |
+| JSDoc Coverage | 10/10 | 20% | latest |
+| Linting | 10/10 | 15% | latest |
+| Zod Validation | latest/10 | 20% | latest |
+| Pure Functions | latest/10 | 15% | latest |
+| Pattern Reuse | latest/10 | 10% | latest |
+| Dependency Leverage | latest/10 | 10% | latest |
+| File Size | latest/10 | 5% | latest |
+| Code Smells | latest/10 | 5% | latest |
 
-**Total Weighted Score**: **7.8/10** ✅
+**Total Weighted Score**: **latest/10** ✅
 
 ### Adversarial PM Verdict
 

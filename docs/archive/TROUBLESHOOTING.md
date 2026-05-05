@@ -303,7 +303,7 @@ const iri = terms.iri('person/123'); // Resolves to http://example.org/person/12
 const prefixes = usePrefixes();
 prefixes.register({
   ex: 'http://example.org/',
-  foaf: 'http://xmlns.com/foaf/0.1/'
+  foaf: 'http://xmlns.com/foaf/latest/'
 });
 
 const expanded = prefixes.expand('ex:person'); // http://example.org/person
@@ -444,10 +444,10 @@ When reporting issues, include:
 ```markdown
 ## Bug Report
 
-**Version**: unrdf 1.0.0
-**Node.js**: 18.17.0
-**OS**: macOS 13.0
-**Package Manager**: pnpm 8.0.0
+**Version**: unrdf latest
+**Node.js**: latest
+**OS**: macOS latest
+**Package Manager**: pnpm latest
 
 **Description**: Store.add() throws error when adding single quad
 

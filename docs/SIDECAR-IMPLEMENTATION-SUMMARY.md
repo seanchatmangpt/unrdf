@@ -9,7 +9,7 @@ Successfully implemented a **production-ready HTTP API sidecar** for the UNRDF K
 ### 1. Nuxt 4 Sidecar (`./sidecar/`)
 
 **Technology Stack**:
-- **Framework**: Nuxt 4.1.2 (API-only mode, no SSR)
+- **Framework**: Nuxt latest (API-only mode, no SSR)
 - **Language**: JavaScript (.mjs) with JSDoc type annotations
 - **Runtime Validation**: Zod schemas
 - **Observability**: OpenTelemetry SDK with OTLP HTTP export

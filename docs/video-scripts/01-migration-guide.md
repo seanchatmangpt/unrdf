@@ -201,7 +201,7 @@ async function runAutonomic() {
 
 ```bash
 # 1. Install v5 dependencies
-npm install @unrdf/core@5.0.0-beta.3 @unrdf/oxigraph@5.0.0-beta.3
+npm install @unrdf/core@latest-beta.3 @unrdf/oxigraph@latest-beta.3
 
 # 2. Run your test suite
 npm test
@@ -232,7 +232,7 @@ npm run bench
 
 **Solution:**
 ```bash
-npm install @unrdf/oxigraph@5.0.0-beta.3
+npm install @unrdf/oxigraph@latest-beta.3
 ```
 
 ### Issue 2: "createStore is not a function"

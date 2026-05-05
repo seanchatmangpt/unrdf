@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/graph-analytics
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -28,9 +28,9 @@ Advanced graph analytics for RDF knowledge graphs using graphlib
 
 ### Dependencies
 
-- `@dagrejs/graphlib`: ^2.2.4
-- `graphlib`: ^2.1.8
-- `zod`: ^4.1.13
+- `@dagrejs/graphlib`: ^latest
+- `graphlib`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

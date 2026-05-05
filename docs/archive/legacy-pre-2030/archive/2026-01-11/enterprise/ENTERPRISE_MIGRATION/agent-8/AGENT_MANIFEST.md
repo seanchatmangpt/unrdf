@@ -4,7 +4,7 @@
 
 - **Agent**: Agent 8
 - **Name**: Domain Kit Generator
-- **Version**: 1.0.0
+- **Version**: latest
 - **Status**: ✅ COMPLETE
 - **Objective**: Generate per-domain migration kit scaffolds from contracts
 
@@ -27,8 +27,8 @@
 
 | Domain | Files | Size | Scenarios |
 |--------|-------|------|-----------|
-| oxigraph | 4 | 24.4KB | 15 |
-| hooks | 4 | 34.6KB | 15 |
+| oxigraph | 4 | latestKB | 15 |
+| hooks | 4 | latestKB | 15 |
 | streaming | 0 | - | (pending) |
 | federation | 0 | - | (pending) |
 | validation | 0 | - | (pending) |
@@ -138,7 +138,7 @@ Test 4: Generate scenarios              ✅ PASS
 Test 5: Validate multiple kits          ✅ PASS
 Test 6: Deterministic generation        ✅ PASS
 
-Success rate: 100.0% (6/6)
+Success rate: latest% (6/6)
 ```
 
 ## Performance Metrics
@@ -228,7 +228,7 @@ Success rate: 100.0% (6/6)
     "edge": 6,
     "total": 15
   },
-  "size": "24.4KB"
+  "size": "latestKB"
 }
 ```
 
@@ -244,7 +244,7 @@ Success rate: 100.0% (6/6)
     "edge": 6,
     "total": 15
   },
-  "size": "34.6KB"
+  "size": "latestKB"
 }
 ```
 
@@ -265,13 +265,13 @@ agent-8/
 ├── test-kit-generator.mjs         # Test suite (184 lines)
 └── kits/
     ├── oxigraph/
-    │   ├── facade.mjs             # Oxigraph facade (2.0KB)
-    │   ├── adapters.mjs           # Oxigraph adapters (5.3KB)
+    │   ├── facade.mjs             # Oxigraph facade (latestKB)
+    │   ├── adapters.mjs           # Oxigraph adapters (latestKB)
     │   ├── scenarios.mjs          # Oxigraph scenarios (17KB)
     │   └── metadata.json          # Metadata (143B)
     ├── hooks/
-    │   ├── facade.mjs             # Hooks facade (2.1KB)
-    │   ├── adapters.mjs           # Hooks adapters (5.4KB)
+    │   ├── facade.mjs             # Hooks facade (latestKB)
+    │   ├── adapters.mjs           # Hooks adapters (latestKB)
     │   ├── scenarios.mjs          # Hooks scenarios (27KB)
     │   └── metadata.json          # Metadata (143B)
     ├── streaming/                 # Directory created
@@ -304,7 +304,7 @@ agent-8/
 ```bash
 # Run tests
 timeout 5s node agent-8/test-kit-generator.mjs
-# Expected: ✅ All tests passed! (100.0%)
+# Expected: ✅ All tests passed! (latest%)
 
 # Generate kits
 timeout 5s node agent-8/generate-sample-kits.mjs

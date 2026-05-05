@@ -161,7 +161,7 @@ DECISION TREE:
 
 ```javascript
 {
-  algorithm_version: "1.0",
+  algorithm_version: "latest",
 
   input_shards: {
     "agent-1": {shard_hash, claim_count, timestamp_ns},
@@ -194,15 +194,15 @@ Output:  38,000 unique keys
          150 conflicts detected
 
 Duration: 830ms total
-Throughput: 49.6K claims/sec
-P99 latency: 1.2s (with OTEL)
+Throughput: latestK claims/sec
+P99 latency: latests (with OTEL)
 ```
 
 ### Incremental (1 new shard, 4K claims)
 ```
 Delta size: ~500 operations
 Duration: 50ms
-Throughput: 10.8K claims/sec
+Throughput: latestK claims/sec
 Speedup: ~16x vs. full merge
 ```
 
@@ -284,7 +284,7 @@ Add:      A_11 with 4K claims
           - 100 updates (newer timestamps)
           - 50 conflicts (same key, same timestamp)
 
-Result:   A' with 42.5K keys
+Result:   A' with latestK keys
           - 150 total conflicts (150 + 50 from A)
           - Monoid closure: A' = Π(A, A_11) ✓
 ```

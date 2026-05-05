@@ -8,7 +8,7 @@
 ## Critical Findings (Fix Immediately - 24-48 hours)
 
 ### Issue 1: Security Module Not Integrated
-**Risk**: 🔴 CRITICAL (9.8/10)
+**Risk**: 🔴 CRITICAL (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: The `security-audit.mjs` module (605 lines) exists with comprehensive validation but is NEVER imported or used in production code.
@@ -61,7 +61,7 @@ grep -r "validateInputSafety\|validatePayload" packages/daemon/src/ | wc -l
 ---
 
 ### Issue 2: No Authentication Layer
-**Risk**: 🔴 CRITICAL (9.8/10)
+**Risk**: 🔴 CRITICAL (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: ANY caller can execute ANY operation - no authentication required.
@@ -139,7 +139,7 @@ export class JWTAuthService {
 ---
 
 ### Issue 3: Injection Attacks Unprotected
-**Risk**: 🔴 HIGH (8.5/10)
+**Risk**: 🔴 HIGH (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: Delta operations allow arbitrary values without validation.
@@ -203,7 +203,7 @@ _applyOperations(operations) {
 ## High Priority (Fix within 7 days)
 
 ### Issue 4: Information Leakage via Error Messages
-**Risk**: 🟡 MEDIUM (6.5/10)
+**Risk**: 🟡 MEDIUM (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: Stack traces and file paths leaked to clients.
@@ -254,7 +254,7 @@ catch (error) {
 ---
 
 ### Issue 5: No Rate Limiting on Endpoints
-**Risk**: 🟡 MEDIUM (6.0/10)
+**Risk**: 🟡 MEDIUM (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: DoS attacks possible via request flooding.
@@ -286,7 +286,7 @@ async execute(operationId, context = {}) {
 ## Medium Priority (Fix within 30 days)
 
 ### Issue 6: No TLS/HTTPS Enforcement
-**Risk**: 🟡 MEDIUM (6.8/10)
+**Risk**: 🟡 MEDIUM (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: Unencrypted communication allows MITM attacks.
@@ -300,7 +300,7 @@ import fs from 'fs';
 const tlsOptions = {
   key: fs.readFileSync(process.env.TLS_KEY_PATH),
   cert: fs.readFileSync(process.env.TLS_CERT_PATH),
-  minVersion: 'TLSv1.3',
+  minVersion: 'TLSvlatest',
   ciphers: [
     'TLS_AES_256_GCM_SHA384',
     'TLS_CHACHA20_POLY1305_SHA256'
@@ -327,7 +327,7 @@ http.createServer((req, res) => {
 ---
 
 ### Issue 7: Receipt Timestamp Validation Missing
-**Risk**: 🟢 LOW (3.5/10)
+**Risk**: 🟢 LOW (latest/10)
 **Status**: ❌ OPEN
 
 **Problem**: Receipts don't validate monotonically increasing timestamps.
@@ -484,7 +484,7 @@ timeout 30s pnpm test security-integration.test.mjs
 ### Phase 2: High Priority (Week 2)
 - [ ] JWT authentication for production
 - [ ] RBAC policies defined and enforced
-- [ ] TLS 1.3 minimum enforced
+- [ ] TLS latest minimum enforced
 - [ ] HTTPS redirect configured
 - [ ] Security headers added (HSTS, CSP, etc.)
 - [ ] Audit logging for security events

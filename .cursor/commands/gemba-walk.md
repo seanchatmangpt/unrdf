@@ -51,7 +51,7 @@ cat examples/basic.test.mjs
 
 **Action**: Run code and observe what actually happens, not what should happen.
 
-#### 2.1: Run Code
+#### latest: Run Code
 
 **Action**: Execute code to see actual behavior.
 
@@ -66,7 +66,7 @@ pnpm test-examples
 pnpm lint
 ```
 
-#### 2.2: Trace Execution
+#### latest: Trace Execution
 
 **Action**: Follow code execution path.
 
@@ -79,7 +79,7 @@ pnpm lint
 
 **Purpose**: Understand actual execution path, not assumed path
 
-#### 2.3: Examine Outputs
+#### latest: Examine Outputs
 
 **Action**: Look at actual outputs, not expected outputs.
 
@@ -104,7 +104,7 @@ cat test_output.txt
 cat check_output.txt
 ```
 
-#### 2.4: Collect Baseline Data (DMAIC Measurement)
+#### latest: Collect Baseline Data (DMAIC Measurement)
 
 **Action**: Measure current state to establish baseline for discrepancies.
 
@@ -166,7 +166,7 @@ grep -r "TODO.*discrepancy" . | wc -l
 
 **Action**: Test assertions against actual code behavior.
 
-#### 3.1: Identify Claims
+#### latest: Identify Claims
 
 **Action**: List all claims about code behavior.
 
@@ -184,7 +184,7 @@ grep -r "TODO.*discrepancy" . | wc -l
 - "This test verifies fixture creation"
 - "This code handles errors properly"
 
-#### 3.2: Verify Against Gemba
+#### latest: Verify Against Gemba
 
 **Action**: Check each claim against actual code behavior.
 
@@ -210,7 +210,7 @@ async function parseNumber(input: string): Promise<number | Error> {
 // Actual: Empty string returns Err, which may or may not be expected
 ```
 
-#### 3.3: Test Claims
+#### latest: Test Claims
 
 **Action**: Write tests to verify claims match actual behavior.
 
@@ -288,7 +288,7 @@ pnpm test
 
 **Action**: Update code, documentation, or tests to match actual behavior.
 
-#### 5.1: Determine What's Correct
+#### latest: Determine What's Correct
 
 **Action**: Decide whether code or claim is correct.
 
@@ -307,7 +307,7 @@ pnpm test
 // Action: Update documentation to match code
 ```
 
-#### 5.2: Fix at Source
+#### latest: Fix at Source
 
 **Action**: Make changes at the source of truth.
 
@@ -335,7 +335,7 @@ pnpm lint
 pnpm test
 ```
 
-#### 5.3: Verify Fixes
+#### latest: Verify Fixes
 
 **Action**: Ensure fixes resolved discrepancies.
 
@@ -347,7 +347,7 @@ pnpm test
 - ✅ All tests pass: `pnpm test`
 - ✅ Code compiles: `pnpm lint`
 
-#### 5.4: Measure Improvement (DMAIC Measurement)
+#### latest: Measure Improvement (DMAIC Measurement)
 
 **Action**: Measure improvement against baseline data.
 
@@ -395,7 +395,7 @@ grep -r "TODO.*discrepancy" . | wc -l
 - Tests verify actual behavior
 ```
 
-#### 5.5: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to prevent discrepancies from returning.
 
@@ -451,7 +451,7 @@ grep -r "TODO.*discrepancy" . | wc -l
 
 **Principle**: Implement controls to prevent discrepancies, don't just document them. Todos track progress, controls prevent recurrence.
 
-#### 5.6: Monitor (DMAIC Control)
+#### latest: Monitor (DMAIC Control)
 
 **Action**: Monitor to ensure discrepancies don't return.
 

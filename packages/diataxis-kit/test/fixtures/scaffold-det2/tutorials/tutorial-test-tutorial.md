@@ -2,7 +2,7 @@
 title: "Test Tutorial"
 type: "tutorial"
 packageName: "test-deterministic"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.9
 proof: "fa5ec3edd8fd24ada2fbe509ea3369703fea30ef1c5d0707430893d876099862"

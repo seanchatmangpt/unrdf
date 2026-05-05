@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/blockchain",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
   "type": "module",
   "main": "src/index.mjs",

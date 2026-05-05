@@ -18,7 +18,7 @@ The `sync` command reads an RDF ontology (Turtle, N-Triples, JSON-LD, etc.), exe
 ```toml
 [project]
 name = "my-api"
-version = "1.0.0"
+version = "[VERSION]"
 
 [ontology]
 source = "ontology/schema.ttl"
@@ -81,7 +81,7 @@ Project metadata (optional).
 ```toml
 [project]
 name = "blog-api"
-version = "1.0.0"
+version = "[VERSION]"
 description = "Blog API example"
 ```
 
@@ -202,7 +202,7 @@ to: {{ output_dir }}/schemas/{{ entityName | kebabCase }}.mjs
 description: Generated schema for {{ entityName }}
 mode: overwrite
 variables:
-  generatorVersion: "1.0.0"
+  generatorVersion: "[VERSION]"
 ---
 ```
 
@@ -385,7 +385,7 @@ api:Post_authorId api:name "authorId" ; api:type xsd:string ; api:required true 
 ```toml
 [project]
 name = "blog-api"
-version = "1.0.0"
+version = "[VERSION]"
 
 [ontology]
 source = "ontology/blog-api.ttl"
@@ -499,7 +499,7 @@ ORDER BY ?path ?method
 ---
 to: {{ output_dir }}/openapi/api.yaml
 ---
-openapi: "3.0.3"
+openapi: "[VERSION]"
 info:
   title: {{ project.name }}
   version: {{ project.version }}

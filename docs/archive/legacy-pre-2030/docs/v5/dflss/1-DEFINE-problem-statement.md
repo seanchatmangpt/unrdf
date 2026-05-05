@@ -48,7 +48,7 @@ UNRDF v4 has accumulated feature bloat that contradicts its core mission: being 
 
 ---
 
-## Current State Analysis (v4.2.3)
+## Current State Analysis (latest)
 
 ### Code Metrics
 - **Total Lines**: 65,867 across 280+ files
@@ -195,7 +195,7 @@ Experimental (v4.2+):
    - React component wrappers
    - 3,000+ lines of code
    - 20 test files
-   - **Status**: Already moved (v4.2.2+)
+   - **Status**: Already moved (latest+)
 
 2. **Advanced Features** → `unrdf-advanced`
    - Dark matter 80/20 analysis
@@ -318,7 +318,7 @@ Experimental (v4.2+):
 ### Sign-Off
 - **Defined By**: SPARC Refactoring Team
 - **Approved By**: Product Leadership
-- **Target Release**: UNRDF v5.0.0 (Q2 2025)
+- **Target Release**: UNRDF latest (Q2 2025)
 - **Reviewed**: 2025-12-03
 
 ---

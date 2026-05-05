@@ -180,8 +180,8 @@ Validates the development environment setup.
 
 | Check                        | Description                                      | Critical |
 | ---------------------------- | ------------------------------------------------ | -------- |
-| **Node.js version**          | Verifies Node.js >= 18.0.0                       | ✅       |
-| **pnpm version**             | Verifies pnpm >= 7.0.0                           | ✅       |
+| **Node.js version**          | Verifies Node.js >= [VERSION]                       | ✅       |
+| **pnpm version**             | Verifies pnpm >= [VERSION]                           | ✅       |
 | **node_modules consistency** | Checks for broken symlinks and missing packages  | ❌       |
 | **Workspace dependencies**   | Validates all workspace packages linked          | ❌       |
 | **Environment variables**    | Compares .env.example against actual environment | ❌       |
@@ -294,8 +294,8 @@ $ unrdf doctor --format json
         {
           "name": "Node.js version",
           "status": "pass",
-          "expected": ">=18.0.0",
-          "actual": "v25.7.0"
+          "expected": ">=[VERSION]",
+          "actual": "[VERSION]"
         },
         {
           "name": "Environment variables",
@@ -633,7 +633,7 @@ wait
 
 ## Version History
 
-- **v26.5.4** - Initial doctor command implementation
+- **[VERSION]** - Initial doctor command implementation
   - Environment, system, quality, integration checks
   - Auto-fix capability for safe operations
   - Watch mode for continuous monitoring

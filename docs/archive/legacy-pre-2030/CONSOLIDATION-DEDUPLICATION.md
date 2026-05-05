@@ -316,8 +316,8 @@ The following were examined but determined to be **distinct implementations**:
   "lines_removed": 699,
   "files_modified": 3,
   "files_removed": 2,
-  "test_pass_rate": 1.00,
-  "integration_pass_rate": 0.80,
+  "test_pass_rate": latest,
+  "integration_pass_rate": latest,
   "zero_breaking_changes": true,
   "canonical_decisions": [
     { "feature": "lockchain-writer", "canonical": "core/utils", "lines_saved": 602 },

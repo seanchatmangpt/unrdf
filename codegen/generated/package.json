@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/generated",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Auto-generated package registry and utilities",
   "type": "module",
   "main": "index.js",

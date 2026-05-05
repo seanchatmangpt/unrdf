@@ -197,7 +197,7 @@ const hook = createKnowledgeHook({
   ],
   metadata: {
     author: 'risk-team',
-    version: '1.0.0',
+    version: '[VERSION]',
     tags: ['compliance', 'fibo'],
   },
 });
@@ -1442,7 +1442,7 @@ const completeHook = createKnowledgeHook({
     },
   ],
   metadata: {
-    version: '1.0.0',
+    version: '[VERSION]',
     author: 'compliance-team',
     tags: ['fibo', 'validation', 'required'],
     documentation: 'https://docs.example.com/hooks/trade-validation',
@@ -1456,7 +1456,7 @@ See examples/ directory for more working examples.
 
 ## Breaking Changes & Migration
 
-### v26.5.4 - Documentation Updates
+### [VERSION] - Documentation Updates
 
 **What Changed:**
 

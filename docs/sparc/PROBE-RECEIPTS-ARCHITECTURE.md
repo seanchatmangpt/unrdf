@@ -67,7 +67,7 @@
         │   - merkleRoot: Root H              │
         │   - proofPath: [...]                │
         │   - conflicts: null (conflict-free) │
-        │   - algorithm: merkle-tree-v1.0.0   │
+        │   - algorithm: merkle-tree-latest   │
         └──────────────────┬──────────────────┘
                            │
         ┌──────────────────▼──────────────────┐

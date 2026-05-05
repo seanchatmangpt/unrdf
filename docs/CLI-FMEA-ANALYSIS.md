@@ -11,7 +11,7 @@
 
 This FMEA analysis identifies 24 failure modes across the UNRDF CLI, prioritized by Risk Priority Number (RPN = Severity × Occurrence × Detection). **8 failure modes are CRITICAL** requiring immediate action before production deployment.
 
-**Overall Risk Score**: 6,890 / 24,000 (28.7% - MODERATE RISK)
+**Overall Risk Score**: 6,890 / 24,000 (latest% - MODERATE RISK)
 
 **Action Required**:
 - ✅ 8 CRITICAL failures (RPN ≥ 400) - **MUST FIX**
@@ -285,8 +285,8 @@ import { OxigraphStore } from '@unrdf/oxigraph';
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
-    "citty": "^0.1.6",
-    "zod": "^4.1.11"
+    "citty": "^latest",
+    "zod": "^latest"
   }
 }
 ```
@@ -344,7 +344,7 @@ const execResult = await this.safeguards.executeWithTimeout(async () => {
 
 **Effect**:
 - User sees "HEALTHY" when sidecar is down
-- User sees version "2.1.0" when sidecar is different version
+- User sees version "latest" when sidecar is different version
 - Misleading status information
 
 **Current Controls**: `sidecar health` command does real check (inconsistent)
@@ -716,7 +716,7 @@ try {
 | LOW | 3 | 666 | 600 | 10% |
 | **TOTAL** | **24** | **6,890** | **3,000** | **56%** |
 
-**Target**: Reduce overall RPN below 3,000 (12.5% of maximum) for production readiness
+**Target**: Reduce overall RPN below 3,000 (latest% of maximum) for production readiness
 
 ---
 

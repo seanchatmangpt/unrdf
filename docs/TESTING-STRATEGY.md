@@ -228,7 +228,7 @@ Store reusable test data in `test/fixtures/`:
 ```bash
 # test/fixtures/sample-graph.ttl
 @prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf: <http://xmlns.com/foaf/latest/> .
 
 ex:Alice foaf:name "Alice" ;
          foaf:knows ex:Bob .

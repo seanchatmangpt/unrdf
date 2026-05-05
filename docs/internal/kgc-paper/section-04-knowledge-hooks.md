@@ -2,7 +2,7 @@
 
 ### 4.1 Predicate Type Specifications
 
-#### 4.1.1 ASK Predicates
+#### latest ASK Predicates
 
 **Formal Specification**:
 
@@ -20,7 +20,7 @@
 
 **Complexity**: O(n) where n = |G|, optimized by SPARQL engine
 
-#### 4.1.2 SHACL Predicates
+#### latest SHACL Predicates
 
 **Formal Specification**:
 
@@ -43,7 +43,7 @@
 
 **Complexity**: O(|S| × |G|) for shape validation
 
-#### 4.1.3 DELTA Predicates
+#### latest DELTA Predicates
 
 **Formal Specification**:
 
@@ -84,7 +84,7 @@ digest(row, K) = {
 
 **Complexity**: O(|B| log |B|) for hash table lookup
 
-#### 4.1.4 THRESHOLD Predicates
+#### latest THRESHOLD Predicates
 
 **Formal Specification**:
 
@@ -108,7 +108,7 @@ digest(row, K) = {
 
 **Complexity**: O(|B|) for aggregation
 
-#### 4.1.5 COUNT Predicates
+#### latest COUNT Predicates
 
 **Formal Specification**:
 
@@ -126,7 +126,7 @@ digest(row, K) = {
 
 **Complexity**: O(1) given |B|
 
-#### 4.1.6 WINDOW Predicates
+#### latest WINDOW Predicates
 
 **Formal Specification**:
 

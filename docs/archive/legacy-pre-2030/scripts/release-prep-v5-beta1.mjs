@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 80/20 Big Bang Release Preparation Script
- * Bumps all packages to 5.0.0-beta.1 and generates CHANGELOGs
+ * Bumps all packages to latest-beta.1 and generates CHANGELOGs
  *
  * @usage node scripts/release-prep-v5-beta1.mjs
  */
@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
 
-const TARGET_VERSION = '5.0.0-beta.1';
+const TARGET_VERSION = 'latest-beta.1';
 const PACKAGES_DIR = 'packages';
 
 // Package.json files to update
@@ -34,7 +34,7 @@ const PACKAGE_FILES = [
   'packages/validation/package.json',
 ];
 
-console.log('🚀 UNRDF v5.0.0-beta.1 Release Preparation\n');
+console.log('🚀 UNRDF latest-beta.1 Release Preparation\n');
 
 // Step 1: Update all package versions
 console.log('📦 Step 1: Updating package versions to', TARGET_VERSION);
@@ -121,7 +121,7 @@ ${changes}
 
 ---
 
-For full details, see: \`docs/RELEASE-PLAN-v5.0.0.md\`
+For full details, see: \`docs/RELEASE-PLAN-latest.md\`
 `;
 
 try {
@@ -146,7 +146,7 @@ See root CHANGELOG.md for full release notes.
 
 ## [${TARGET_VERSION}] - ${today}
 
-Part of UNRDF v5.0.0 major release. See \`../../CHANGELOG.md\` for details.
+Part of UNRDF latest major release. See \`../../CHANGELOG.md\` for details.
 `;
 
   const packages = readdirSync(PACKAGES_DIR);
@@ -173,5 +173,5 @@ console.log('\n✅ Release preparation complete!');
 console.log('\n📋 Next Steps:');
 console.log('  1. Run tests: timeout 60s pnpm test');
 console.log('  2. Review changes: git diff');
-console.log('  3. Commit: git add -A && git commit -m "chore: prepare v5.0.0-beta.1 release"');
+console.log('  3. Commit: git add -A && git commit -m "chore: prepare latest-beta.1 release"');
 console.log('  4. Push: git push');

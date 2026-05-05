@@ -208,7 +208,7 @@ INITIAL → ACTIVE ⇄ DEGRADED → UNREACHABLE → REMOVED
 **Required**:
 1. Create `QUICKSTART-OXIGRAPH.md`
    - One-command benchmark demo
-   - SPARQL 1.1 operations
+   - SPARQL latest operations
    - Performance comparison
 
 2. Create `examples/production-benchmark.mjs`

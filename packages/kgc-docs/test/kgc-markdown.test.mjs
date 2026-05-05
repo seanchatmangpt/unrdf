@@ -523,17 +523,17 @@ External: [GitHub](https://github.com/example)
 
 describe('@unrdf/kgc-docs - Version Tracking', () => {
   it('should compare semver versions correctly', () => {
-    expect(compareVersions('1.0.0', '1.0.0')).toBe(0);
-    expect(compareVersions('1.0.1', '1.0.0')).toBe(1);
-    expect(compareVersions('1.0.0', '1.0.1')).toBe(-1);
-    expect(compareVersions('2.0.0', '1.9.9')).toBe(1);
+    expect(compareVersions('[VERSION]', '[VERSION]')).toBe(0);
+    expect(compareVersions('[VERSION]', '[VERSION]')).toBe(1);
+    expect(compareVersions('[VERSION]', '[VERSION]')).toBe(-1);
+    expect(compareVersions('[VERSION]', '[VERSION]')).toBe(1);
   });
 
   it('should determine change type from version diff', () => {
-    expect(getChangeType('1.0.0', '2.0.0')).toBe('major');
-    expect(getChangeType('1.0.0', '1.1.0')).toBe('minor');
-    expect(getChangeType('1.0.0', '1.0.1')).toBe('patch');
-    expect(getChangeType('1.0.0', '1.0.0')).toBe('none');
+    expect(getChangeType('[VERSION]', '[VERSION]')).toBe('major');
+    expect(getChangeType('[VERSION]', '[VERSION]')).toBe('minor');
+    expect(getChangeType('[VERSION]', '[VERSION]')).toBe('patch');
+    expect(getChangeType('[VERSION]', '[VERSION]')).toBe('none');
   });
 });
 

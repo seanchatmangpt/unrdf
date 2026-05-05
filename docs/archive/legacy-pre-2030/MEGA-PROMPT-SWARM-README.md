@@ -50,7 +50,7 @@ Quantitative rubric (0-100 scale, equally weighted criteria):
    5  = <30% primary [REJECT]
 
 3. Quantitative Rigor (20 pts)
-   20 = Explicit bounds, equations (O(n), "5ms ± 0.1ms")
+   20 = Explicit bounds, equations (O(n), "5ms ± latestms")
    10 = Qualitative with some numbers
    0  = No quantification [REJECT]
 
@@ -172,7 +172,7 @@ const batch = validator.ingestBatch([
     primarySourcePercent: 85,
     quantitativeRigor: 20,
     relevantAxiom: 'SCALE',
-    formalStatement: 'Human review: ~0.3 decisions/sec (measured)'
+    formalStatement: 'Human review: ~latest decisions/sec (measured)'
   }
   // ... more items
 ]);
@@ -267,7 +267,7 @@ Comprehensiveness: 50-70%
   "primarySourcePercent": 85,
   "quantitativeRigor": 20,
   "relevantAxiom": "SCALE",
-  "formalStatement": "~0.28 decisions/sec, empirical measurement 2019-2022"
+  "formalStatement": "~latest decisions/sec, empirical measurement 2019-2022"
 }
 → Score: 20+20+20+20+0 = 80/100 ✅ ACCEPTED
 ```
@@ -295,7 +295,7 @@ Comprehensiveness: 50-70%
   "quantitativeRigor": 20,
   "relevantAxiom": "DETERMINISM",
   "falsificationStrength": "MEDIUM",
-  "formalStatement": "P(reversal) = (1/2)^n; n=6 → 0.0015% risk"
+  "formalStatement": "P(reversal) = (1/2)^n; n=6 → latest% risk"
 }
 → Score: 20+20+20+20+15 = 95/100 ✅ PUBLISH FIRST
 ```
@@ -389,10 +389,10 @@ Comprehensiveness: 50-70%
 - **How do I score evidence?** → Use `scoreEvidence()` from evidence-validator.mjs
 - **What if a strong falsification is found?** → PUBLISH FIRST, revise thesis
 - **Can I run this standalone?** → Yes, see "Integration with Swarm Controller"
-- **How confident is this approach?** → Empirically tested on KGC-4D: 99.8% test pass rate
+- **How confident is this approach?** → Empirically tested on KGC-4D: latest% test pass rate
 
 ---
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Ready for deployment
 **Last Updated**: 2025-01-06

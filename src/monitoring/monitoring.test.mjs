@@ -219,7 +219,7 @@ describe('PrometheusExporter', () => {
     collector = new MetricsCollector({ sampleInterval: 100 });
     exporter = new PrometheusExporter(collector, {
       port: 9191, // Use different port for tests
-      host: '127.0.0.1',
+      host: '[VERSION].1',
     });
   });
 

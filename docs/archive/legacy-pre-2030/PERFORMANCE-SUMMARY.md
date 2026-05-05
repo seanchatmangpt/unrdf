@@ -15,11 +15,11 @@
 │ Package             │ Target   │ Actual   │ Status   │ Violation  │
 ├─────────────────────┼──────────┼──────────┼──────────┼────────────┤
 │ Full Workspace      │ <5s      │ >10s     │ ❌ FAIL  │ >2x        │
-│ Consensus           │ <5s      │ >8s      │ ❌ FAIL  │ 1.6x       │
-│ Hooks               │ <5s      │ 5.02s    │ ❌ FAIL  │ 1.004x     │
-│ YAWL                │ <5s      │ 5.03s    │ ❌ FAIL  │ 1.006x     │
-│ Core                │ <5s      │ 3.47s    │ ✅ PASS  │ -          │
-│ Graph Analytics     │ <5s      │ 2.59s    │ ✅ PASS  │ -          │
+│ Consensus           │ <5s      │ >8s      │ ❌ FAIL  │ latestx       │
+│ Hooks               │ <5s      │ latests    │ ❌ FAIL  │ latestx     │
+│ YAWL                │ <5s      │ latests    │ ❌ FAIL  │ latestx     │
+│ Core                │ <5s      │ latests    │ ✅ PASS  │ -          │
+│ Graph Analytics     │ <5s      │ latests    │ ✅ PASS  │ -          │
 └─────────────────────┴──────────┴──────────┴──────────┴────────────┘
 ```
 
@@ -29,9 +29,9 @@
 ┌─────────────────────┬──────────┬──────────┬──────────┬────────────┐
 │ Operation           │ Target   │ Actual   │ Status   │ Violation  │
 ├─────────────────────┼──────────┼──────────┼──────────┼────────────┤
-│ pnpm install        │ <5s      │ 19.5s    │ ❌ FAIL  │ 3.9x       │
+│ pnpm install        │ <5s      │ latests    │ ❌ FAIL  │ latestx       │
 │ Oxigraph build      │ <5s      │ >5s      │ ❌ FAIL  │ >1x        │
-│ node_modules size   │ <500MB   │ 2.8GB    │ ❌ FAIL  │ 5.6x       │
+│ node_modules size   │ <500MB   │ latestGB    │ ❌ FAIL  │ latestx       │
 └─────────────────────┴──────────┴──────────┴──────────┴────────────┘
 ```
 
@@ -41,7 +41,7 @@
 
 ### 1. Synchronous Blocking (setTimeout) - **8x speedup potential**
 
-**Impact**: 3.3 seconds of pure sleeping across test suite
+**Impact**: latest seconds of pure sleeping across test suite
 
 ```javascript
 // Location: packages/consensus/test/consensus.test.mjs:214
@@ -96,14 +96,14 @@ beforeEach(async () => {
 
 ```
 Core Package Import Breakdown:
-├── Transform:   1.48s (24%)
-├── Import:      4.24s (68%) ← BOTTLENECK
-└── Tests:       1.14s (18%)
+├── Transform:   latests (24%)
+├── Import:      latests (68%) ← BOTTLENECK
+└── Tests:       latests (18%)
 
 Hooks Package Import Breakdown:
-├── Transform:   2.24s (28%)
-├── Import:      6.17s (77%) ← BOTTLENECK
-└── Tests:       0.70s (9%)
+├── Transform:   latests (28%)
+├── Import:      latests (77%) ← BOTTLENECK
+└── Tests:       latests (9%)
 ```
 
 **Root Cause**:
@@ -123,7 +123,7 @@ Hooks Package Import Breakdown:
 ```bash
 $ time timeout 5s pnpm -C packages/oxigraph build
 Command timed out after 2m 0s Terminated
-real  0m5.022s
+real  0mlatests
 ```
 
 **Root Cause**:
@@ -138,13 +138,13 @@ real  0m5.022s
 
 ### 5. Dependency Bloat - **2-3x speedup potential**
 
-**Impact**: 2.8GB node_modules, 19.5s install time
+**Impact**: latestGB node_modules, latests install time
 
 ```
 Top Heavy Packages:
 ├── docs:               100MB
 ├── graph-analytics:     42MB
-└── Total workspace:   2.8GB
+└── Total workspace:   latestGB
 
 Potentially Unused:
 ├── @tensorflow/tfjs-node  (heavy native bindings)
@@ -161,18 +161,18 @@ Potentially Unused:
 ### Time Breakdown (Core Package Example)
 
 ```
-Total Duration: 2.08s
+Total Duration: latests
 ├─────────────────────────────────────────┤
 │ Transform │ Import        │ Tests        │
-│  1.48s    │  4.24s        │  1.14s       │
+│  latests    │  latests        │  latests       │
 │  (24%)    │  (68%)        │  (18%)       │
 └───────────┴───────────────┴──────────────┘
            ↑ BOTTLENECK
 
-Import Phase Breakdown (4.24s):
-├── Package resolution:  ~1.5s
-├── Module loading:      ~2.0s
-└── Dependency graph:    ~0.74s
+Import Phase Breakdown (latests):
+├── Package resolution:  ~latests
+├── Module loading:      ~latests
+└── Dependency graph:    ~latests
 ```
 
 ### Import Failures
@@ -200,7 +200,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/oxigraph'
 Expected Result:
   Before: >10s test suite
   After:  <3s test suite
-  Improvement: 3.3x faster ✅ MEETS 5s SLA
+  Improvement: latestx faster ✅ MEETS 5s SLA
 ```
 
 ### Priority 2: Medium Term (1 week)
@@ -225,12 +225,12 @@ Expected Result:
 ┌─────────────────────┬──────────┬──────────┬──────────────┐
 │ Metric              │ Before   │ After    │ Improvement  │
 ├─────────────────────┼──────────┼──────────┼──────────────┤
-│ Full test suite     │ >10s     │ <3s      │ 3.3x faster  │
+│ Full test suite     │ >10s     │ <3s      │ latestx faster  │
 │ Consensus tests     │ >8s      │ <1s      │ 8x faster    │
 │ Module imports      │ 6s       │ 2s       │ 3x faster    │
-│ Build time          │ 5s       │ 2s       │ 2.5x faster  │
-│ pnpm install        │ 19.5s    │ 7s       │ 2.8x faster  │
-│ node_modules        │ 2.8GB    │ <1GB     │ 2.8x smaller │
+│ Build time          │ 5s       │ 2s       │ latestx faster  │
+│ pnpm install        │ latests    │ 7s       │ latestx faster  │
+│ node_modules        │ latestGB    │ <1GB     │ latestx smaller │
 └─────────────────────┴──────────┴──────────┴──────────────┘
 ```
 
@@ -238,19 +238,19 @@ Expected Result:
 
 ```
 Before: Test Cycle Time = 29s
-├── pnpm install:  19.5s
+├── pnpm install:  latests
 └── npm test:      10s
 
 After: Test Cycle Time = 10s
 ├── pnpm install:  7s
 └── npm test:      3s
 
-Improvement: 2.9x faster feedback loop
+Improvement: latestx faster feedback loop
 ```
 
 **Time Saved Per Developer Per Day**:
 
-- 100 test cycles/day × 19s savings = **31.7 minutes saved**
+- 100 test cycles/day × 19s savings = **latest minutes saved**
 - Over 1 year (250 days): **132 hours saved per developer**
 
 ---
@@ -262,20 +262,20 @@ Improvement: 2.9x faster feedback loop
 ```bash
 # Test suite measurements (5 commands)
 ✅ time timeout 10s npm test                    # >10s (FAIL)
-✅ time timeout 5s pnpm -C packages/core test   # 3.47s (PASS)
-✅ time timeout 5s pnpm -C packages/hooks test  # 5.02s (FAIL)
+✅ time timeout 5s pnpm -C packages/core test   # latests (PASS)
+✅ time timeout 5s pnpm -C packages/hooks test  # latests (FAIL)
 ✅ time timeout 8s pnpm -C packages/consensus test  # >8s (FAIL)
-✅ time timeout 5s pnpm -C packages/yawl test   # 5.03s (FAIL)
+✅ time timeout 5s pnpm -C packages/yawl test   # latests (FAIL)
 
 # Build measurements (2 commands)
-✅ time pnpm install --frozen-lockfile          # 19.5s
+✅ time pnpm install --frozen-lockfile          # latests
 ✅ time timeout 5s pnpm -C packages/oxigraph build  # >5s (FAIL)
 
 # Analysis commands (8 commands)
-✅ grep -rn "setTimeout.*[0-9]{3,}" packages/*/test  # 5 results (3.3s total)
+✅ grep -rn "setTimeout.*[0-9]{3,}" packages/*/test  # 5 results (latests total)
 ✅ grep -rn "createWebSocket|WebSocketServer" ...    # 2 results
 ✅ find packages -name "*.mjs" -exec grep -l "oxigraph"  # 119 files
-✅ du -sh node_modules/                              # 2.8GB
+✅ du -sh node_modules/                              # latestGB
 ✅ node -e "import('@unrdf/core')"                   # ERR_MODULE_NOT_FOUND
 ✅ wc -l packages/consensus/test/consensus.test.mjs  # 234 lines
 ✅ ls -la packages/oxigraph/dist/                    # Files exist
@@ -320,7 +320,7 @@ $ time timeout 5s npm test
 
 # Prove setTimeout delays
 $ grep -rn "setTimeout.*[0-9]{3,}" packages/*/test
-# 5 results = 3.3s total sleep
+# 5 results = latests total sleep
 
 # Prove module import issues
 $ node -e "import('@unrdf/core').then(() => console.log('OK'))"

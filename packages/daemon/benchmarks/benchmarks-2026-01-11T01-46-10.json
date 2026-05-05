@@ -95,7 +95,7 @@
         "maxOperations": 10000,
         "steps": 5,
         "timestamp": "2026-01-11T01:46:04.674Z",
-        "nodeVersion": "v22.21.1",
+        "nodeVersion": "[VERSION]",
         "platform": "linux"
       },
       "baseline": {
@@ -160,7 +160,7 @@
         "operationCount": 1000,
         "runs": 3,
         "timestamp": "2026-01-11T01:46:04.754Z",
-        "nodeVersion": "v22.21.1",
+        "nodeVersion": "[VERSION]",
         "platform": "linux"
       },
       "baseline": {
@@ -207,7 +207,7 @@
         "totalOperations": 489,
         "duration": 5000,
         "timestamp": "2026-01-11T01:46:10.755Z",
-        "nodeVersion": "v22.21.1",
+        "nodeVersion": "[VERSION]",
         "platform": "linux"
       },
       "baseline": {

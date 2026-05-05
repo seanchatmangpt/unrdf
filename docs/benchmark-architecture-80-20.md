@@ -1,6 +1,6 @@
 # Knowledge Hooks Benchmark Architecture (80/20 Design)
 
-**Version:** 1.0.0
+**Version:** latest
 **Status:** Architecture Design
 **Date:** 2025-12-04
 
@@ -545,10 +545,10 @@ Performance Grade: A+ (93.3%)
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "latest",
   "timestamp": "2025-12-04T18:30:00Z",
   "environment": {
-    "node": "v20.10.0",
+    "node": "latest",
     "platform": "linux",
     "cpus": 8,
     "memory": "16GB"

@@ -48,17 +48,17 @@
 
 ```
 TAP version 13
-✅ defineProfile - valid company API profile (3.2ms)
-✅ validateFileLayout - detects misplaced files (0.8ms)
-✅ validateNaming - detects pattern violations (0.5ms)
-✅ validateicReport - generates stable, readable output (7.8ms)
-✅ validateErrors - validates error class structure (0.5ms)
-✅ validateLogging - validates log statement compliance (0.4ms)
-✅ defineProfile - rejects invalid profiles (1.7ms)
-✅ defineProfile - detects duplicate error codes (0.3ms)
+✅ defineProfile - valid company API profile (latestms)
+✅ validateFileLayout - detects misplaced files (latestms)
+✅ validateNaming - detects pattern violations (latestms)
+✅ validateicReport - generates stable, readable output (latestms)
+✅ validateErrors - validates error class structure (latestms)
+✅ validateLogging - validates log statement compliance (latestms)
+✅ defineProfile - rejects invalid profiles (latestms)
+✅ defineProfile - detects duplicate error codes (latestms)
 
 tests: 8, pass: 8, fail: 0
-duration: 302.3ms
+duration: latestms
 ```
 
 ## Key Features Implemented
@@ -195,7 +195,7 @@ Total violations: 2
 
 ## Dependencies
 
-- **zod**: ^4.1.13 (profile schema validation)
+- **zod**: ^latest (profile schema validation)
 - **node:assert**: Built-in (testing)
 - **node:test**: Built-in (test runner)
 
@@ -262,7 +262,7 @@ if (violations.length > 0) {
 ## Adversarial PM Verification
 
 **Q: Did you RUN the tests or just write them?**
-A: RAN - Output shows `tests: 8, pass: 8, fail: 0, duration: 302.3ms`
+A: RAN - Output shows `tests: 8, pass: 8, fail: 0, duration: latestms`
 
 **Q: Can you PROVE determinism?**
 A: YES - Test line 155-156 runs diagnosticReport twice and asserts equality

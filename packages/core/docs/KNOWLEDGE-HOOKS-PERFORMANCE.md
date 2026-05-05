@@ -498,5 +498,5 @@ Track these metrics in production:
 ---
 
 **Last Updated**: 2025-12-04
-**Version**: @unrdf/hooks v5.0.0-alpha.0
+**Version**: @unrdf/hooks [VERSION]-alpha.0
 **Benchmark Hardware**: Apple M1/M2 (results may vary on other platforms)

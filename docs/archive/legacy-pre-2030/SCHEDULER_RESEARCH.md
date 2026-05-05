@@ -19,16 +19,16 @@
 
 ## 1. Existing Scheduler Infrastructure
 
-### 1.1 @unrdf/daemon Package (PRIMARY)
+### latest @unrdf/daemon Package (PRIMARY)
 
 **Location**: `/home/user/unrdf/packages/daemon/`
 
 **Dependencies** (from package.json):
 ```json
 {
-  "cron-parser": "^5.4.0",  // ← ALREADY INSTALLED
-  "hash-wasm": "^4.12.0",
-  "zod": "^4.1.13"
+  "cron-parser": "^latest",  // ← ALREADY INSTALLED
+  "hash-wasm": "^latest",
+  "zod": "^latest"
 }
 ```
 
@@ -89,7 +89,7 @@ evaluateTrigger({ type: 'idle', value: 30000 }, lastActivityTime);
 
 ---
 
-### 1.2 @unrdf/hooks HookScheduler (SECONDARY)
+### latest @unrdf/hooks HookScheduler (SECONDARY)
 
 **Location**: `/home/user/unrdf/packages/hooks/src/hooks/hook-scheduler.mjs`
 
@@ -158,7 +158,7 @@ scheduler.start();
 
 ---
 
-### 1.3 @unrdf/kgc-claude InfoScheduler (SPECIALIZED)
+### latest @unrdf/kgc-claude InfoScheduler (SPECIALIZED)
 
 **Location**: `/home/user/unrdf/packages/kgc-claude/src/info-scheduler.mjs`
 
@@ -176,14 +176,14 @@ scheduler.start();
 
 ---
 
-### 1.4 @unrdf/yawl Native Timer Usage
+### latest @unrdf/yawl Native Timer Usage
 
 **Location**: `/home/user/unrdf/packages/yawl/src/`
 
 **Dependencies** (from package.json):
 ```json
 {
-  "cron-parser": "^4.9.0"  // ← ALSO uses cron-parser
+  "cron-parser": "^latest"  // ← ALSO uses cron-parser
 }
 ```
 
@@ -252,11 +252,11 @@ refreshTimer = setInterval(() => {
 
 ## 2. Dependencies Already Installed
 
-### 2.1 cron-parser
+### latest cron-parser
 
 **Installed in**:
-- `@unrdf/daemon` → v5.4.0
-- `@unrdf/yawl` → v4.9.0
+- `@unrdf/daemon` → vlatest
+- `@unrdf/yawl` → vlatest
 
 **Usage**:
 ```javascript
@@ -270,7 +270,7 @@ const nextDate = interval.next().toDate();
 
 ---
 
-### 2.2 Native Node.js Timers
+### latest Native Node.js Timers
 
 **Used extensively**:
 - `setTimeout` - 31 files in YAWL
@@ -297,7 +297,7 @@ grep -r "bree" . --include="*.mjs" --include="package.json"
 
 ## 4. How Timeouts Currently Work (WP19, WP20)
 
-### 4.1 WP19: Cancel Activity Pattern
+### latest WP19: Cancel Activity Pattern
 
 **Implementation**: `packages/yawl/src/cancellation/yawl-cancellation.mjs`
 
@@ -334,7 +334,7 @@ class CancellationManager {
 - Circuit breaker reset
 - Cancellation region timeouts
 
-### 4.2 WP20: Cancel Case Pattern
+### latest WP20: Cancel Case Pattern
 
 **Implementation**: Same cancellation infrastructure
 
@@ -351,7 +351,7 @@ async cancelCase(caseId) {
 }
 ```
 
-### 4.3 Deadline Support
+### latest Deadline Support
 
 **API Schema** (from `workflow-api-validation.mjs`):
 ```javascript
@@ -386,21 +386,21 @@ export const timerExpiry = namedNode(YAWL + 'timerExpiry');
 
 ## 6. Evidence Summary
 
-### 6.1 What EXISTS
+### latest What EXISTS
 - ✅ **@unrdf/daemon** - 314 lines, 13 examples, production-ready
 - ✅ **HookScheduler** - 414 lines, Poka-Yoke guards, circuit breaker
-- ✅ **cron-parser** - Installed in 2 packages (v4.9.0, v5.4.0)
+- ✅ **cron-parser** - Installed in 2 packages (vlatest, vlatest)
 - ✅ **Native timers** - 45+ occurrences in YAWL source
 - ✅ **Timeout patterns** - WP19/WP20 implemented
 - ✅ **Deadline support** - API + ontology defined
 
-### 6.2 What DOESN'T EXIST
+### latest What DOESN'T EXIST
 - ❌ **bree** - 0 occurrences (except docs reference)
 - ❌ **node-schedule** - 1 occurrence (test file only)
 - ❌ **agenda** - 0 occurrences in .mjs files
 - ❌ **Need for new scheduler** - Infrastructure complete
 
-### 6.3 File Counts (EVIDENCE)
+### latest File Counts (EVIDENCE)
 ```bash
 # Daemon package
 ls -1 /home/user/unrdf/packages/daemon/examples/*.mjs | wc -l
@@ -436,7 +436,7 @@ find packages -name "package.json" -exec grep -l "cron-parser" {} \; | wc -l
 
 ## 8. Performance Characteristics
 
-### 8.1 Timeout SLAs (from CLAUDE.md)
+### latest Timeout SLAs (from CLAUDE.md)
 
 **Default**: 5 seconds for all operations
 ```bash
@@ -452,7 +452,7 @@ timeout 60s pnpm install              # Initial install only
 
 **Andon Principle**: When timeout fires → STOP and fix root cause
 
-### 8.2 Scheduler Overhead
+### latest Scheduler Overhead
 
 **HookScheduler**:
 - Default tick: 1000ms (1 second granularity)
@@ -468,7 +468,7 @@ timeout 60s pnpm install              # Initial install only
 
 ## 9. Integration Patterns
 
-### 9.1 YAWL + Daemon Integration
+### latest YAWL + Daemon Integration
 
 **Example**: `packages/daemon/examples/01-basic-scheduled-workflow.mjs`
 
@@ -494,7 +494,7 @@ daemon.schedule({
 await daemon.start();
 ```
 
-### 9.2 Hooks + Scheduler Integration
+### latest Hooks + Scheduler Integration
 
 **Pattern**: Policy-driven scheduling
 ```javascript
@@ -547,7 +547,7 @@ But if forced to compare:
 
 ## 11. Decision Matrix
 
-### 11.1 Criteria
+### latest Criteria
 
 | Criterion | Weight | @unrdf/daemon | bree | Native setTimeout |
 |-----------|--------|---------------|------|-------------------|
@@ -561,7 +561,7 @@ But if forced to compare:
 
 **Winner**: @unrdf/daemon (90% score)
 
-### 11.2 Final Recommendation
+### latest Final Recommendation
 
 **DO THIS**:
 1. Use `@unrdf/daemon` for scheduled workflows
@@ -581,7 +581,7 @@ But if forced to compare:
 All file paths are absolute from `/home/user/unrdf/`:
 
 **Daemon Package**:
-- `packages/daemon/package.json` (cron-parser: ^5.4.0)
+- `packages/daemon/package.json` (cron-parser: ^latest)
 - `packages/daemon/src/daemon.mjs` (314 lines)
 - `packages/daemon/src/trigger-evaluator.mjs` (186 lines)
 - `packages/daemon/examples/01-basic-scheduled-workflow.mjs` (13,062 bytes)
@@ -590,7 +590,7 @@ All file paths are absolute from `/home/user/unrdf/`:
 - `packages/hooks/src/hooks/hook-scheduler.mjs` (414 lines)
 
 **YAWL Timeouts**:
-- `packages/yawl/package.json` (cron-parser: ^4.9.0)
+- `packages/yawl/package.json` (cron-parser: ^latest)
 - `packages/yawl/src/cancellation/yawl-cancellation.mjs` (lines 1334, 1398)
 - `packages/yawl/src/engine-coordination.mjs` (lines 334, 337, 352)
 - `packages/yawl/src/multiple-instance/sync-barrier.mjs` (lines 187, 240)

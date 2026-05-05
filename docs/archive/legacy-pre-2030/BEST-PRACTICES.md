@@ -1,6 +1,6 @@
 # UNRDF Best Practices
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-28
 **Status**: Production Ready
 
@@ -98,7 +98,7 @@ const store = createStore();
 **Why**:
 - 40% faster than N3 (measured: [docs/adr/001-oxigraph-over-n3.md](file:///home/user/unrdf/docs/adr/001-oxigraph-over-n3.md))
 - 60% less memory
-- Full SPARQL 1.1 support
+- Full SPARQL latest support
 - Proven at scale (100K+ triples)
 
 ### ❌ DON'T: Use N3 Store Directly
@@ -110,7 +110,7 @@ const store = new Store();
 ```
 
 **Problem**:
-- Breaking change in v6.0.0
+- Breaking change in vlatest
 - Performance penalty
 - Missing SPARQL features
 - No migration path forward
@@ -216,7 +216,7 @@ const nameTriples = store.match(
 
 **Evidence**: [packages/oxigraph/src/store.mjs:93-114](file:///home/user/unrdf/packages/oxigraph/src/store.mjs#L93)
 
-**Performance**: 0.057ms for 1000 triples (measured)
+**Performance**: latestms for 1000 triples (measured)
 
 ### ❌ DON'T: Use Full Table Scans
 
@@ -392,7 +392,7 @@ describe('RDF Store', () => {
 ```
 
 **Evidence**: [CLAUDE.md:53-57](file:///home/user/unrdf/CLAUDE.md#L53)
-- KGC-4D: 443/444 tests passing (99.8%)
+- KGC-4D: 443/444 tests passing (latest%)
 - Target: 100%
 
 **Why**:
@@ -449,7 +449,7 @@ console.log(`Query: ${duration}ms, ${allocations} allocs`);
 ```javascript
 // WRONG: Optimizing without measurement
 const cache = new Map(); // "This will make it faster!"
-// ... but query is already 0.057ms ...
+// ... but query is already latestms ...
 ```
 
 **Problem**:

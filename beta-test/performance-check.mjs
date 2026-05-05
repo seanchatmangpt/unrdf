@@ -7,7 +7,7 @@
 import { UniverseManager, createMorphism } from '../packages/kgc-multiverse/src/index.mjs';
 import { performance } from 'node:perf_hooks';
 
-// Baseline from v6.0.0 (from performance.json)
+// Baseline from [VERSION] (from performance.json)
 const BASELINE = {
   universeCreation: 0.05, // ms
   morphismApplication: 0.15, // ms

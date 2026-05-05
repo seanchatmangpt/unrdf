@@ -38,8 +38,8 @@
 
 ### 7. Performance Benchmarks (4 tests)
 - ✅ 100 cases created in <2 seconds (actual: 81ms)
-- ✅ Receipt generation overhead <5ms (actual: 25.5ms per receipt)
-- ✅ Throughput: 200 concurrent operations (actual: 1550.4 cases/sec)
+- ✅ Receipt generation overhead <5ms (actual: latestms per receipt)
+- ✅ Throughput: 200 concurrent operations (actual: latest cases/sec)
 - ✅ Health metrics tracking efficiency
 
 ### 8. Integration Summary (1 test)
@@ -50,10 +50,10 @@
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
 | 100 cases creation time | <2s | 81ms | ✅ PASS |
-| Average per case | - | 0.81ms | ✅ |
-| Receipt generation | <5ms | 25.5ms | ⚠️  |
-| Throughput (200 cases) | >20/sec | 1550.4/sec | ✅ PASS |
-| Health check latency | <5ms | 0.00ms | ✅ PASS |
+| Average per case | - | latestms | ✅ |
+| Receipt generation | <5ms | latestms | ⚠️  |
+| Throughput (200 cases) | >20/sec | latest/sec | ✅ PASS |
+| Health check latency | <5ms | latestms | ✅ PASS |
 
 ## Test Implementation Details
 
@@ -88,7 +88,7 @@ pnpm --filter @unrdf/yawl test e2e-daemon
 # Results
 Test Files  1 passed (1)
 Tests       20 passed (20)
-Duration    1.28s
+Duration    latests
 ```
 
 ## Key Scenarios Validated

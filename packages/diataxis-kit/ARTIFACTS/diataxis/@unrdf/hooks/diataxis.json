@@ -51,7 +51,7 @@
     ]
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-6.0.0-blue) ![Production Ready](https://img.shields.",
+    "architecture": "![Version](https://img.shields.io/badge/version-[VERSION]-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "rdf",
       "knowledge-graph",
@@ -219,5 +219,5 @@
       "title": "Getting Started with @unrdf/hooks"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

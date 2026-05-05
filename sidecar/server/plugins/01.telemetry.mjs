@@ -42,7 +42,7 @@ export default defineNitroPlugin(async (nitroApp) => {
     const sdk = new NodeSDK({
       resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]: config.otelServiceName,
-        [SemanticResourceAttributes.SERVICE_VERSION]: process.env.OTEL_SERVICE_VERSION || '1.0.0'
+        [SemanticResourceAttributes.SERVICE_VERSION]: process.env.OTEL_SERVICE_VERSION || '[VERSION]'
       }),
       traceExporter: new OTLPTraceExporter({
         url: `${config.otelEndpoint}/v1/traces`

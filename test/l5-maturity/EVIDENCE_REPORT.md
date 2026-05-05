@@ -14,9 +14,9 @@ This report provides comprehensive evidence for L5 maturity of v6 P0+P1 modules 
 
 ### Target Modules (v6 P0+P1)
 
-1. **@unrdf/v6-core** (6.0.0-alpha.1) - ΔGate control plane, receipts, delta contracts
-2. **@unrdf/oxigraph** (5.0.1) - Store creation, SPARQL engine
-3. **@unrdf/core** (5.0.1) - RDF operations, SPARQL execution
+1. **@unrdf/v6-core** (latest-alpha.1) - ΔGate control plane, receipts, delta contracts
+2. **@unrdf/oxigraph** (latest) - Store creation, SPARQL engine
+3. **@unrdf/core** (latest) - RDF operations, SPARQL execution
 4. **@unrdf/kgc-4d** - Freezing, BLAKE3 hashing, determinism
 
 ---
@@ -31,7 +31,7 @@ This report provides comprehensive evidence for L5 maturity of v6 P0+P1 modules 
 
 #### ✅ L1.1: v6-core builds without errors
 ```bash
-> @unrdf/v6-core@6.0.0-alpha.1 build
+> @unrdf/v6-core@latest-alpha.1 build
 > echo 'No build step for ESM'
 No build step for ESM
 ```
@@ -88,9 +88,9 @@ Cannot find package '@unrdf/v6-core' imported from test
 
 #### ✅ L2.3: Semantic Versioning
 ```
-v6-core v6.0.0-alpha.1 - valid semver ✓
-oxigraph v5.0.1 - valid semver ✓
-core v5.0.1 - valid semver ✓
+v6-core latest-alpha.1 - valid semver ✓
+oxigraph latest - valid semver ✓
+core latest - valid semver ✓
 ```
 **Status**: PASS
 **Evidence**: All versions follow semver format
@@ -100,7 +100,7 @@ core v5.0.1 - valid semver ✓
 CHANGELOG.md contains v6 documentation
 ```
 **Status**: PASS
-**Evidence**: /home/user/unrdf/CHANGELOG.md exists and documents 6.0.0
+**Evidence**: /home/user/unrdf/CHANGELOG.md exists and documents latest
 
 #### ❌ L2.1, L2.2, L2.5: API Contract Tests
 **Status**: FAIL (workspace resolution)
@@ -151,7 +151,7 @@ const config = {
   afterHash: '1'.repeat(64),
   epoch: 1,
   timestamp: 1234567890, // FIXED timestamp
-  toolchainVersion: '1.0.0',
+  toolchainVersion: 'latest',
   violations: [],
   reason: 'Determinism test',
 };
@@ -280,7 +280,7 @@ batcher.batch is not a function
    - Meets L3 maturity criteria for core operation
 
 2. **Semantic Versioning (L2)**
-   - All packages follow semver: v6.0.0-alpha.1, v5.0.1
+   - All packages follow semver: latest-alpha.1, latest
    - CHANGELOG documents breaking changes
 
 3. **Receipt Validation (L4)**

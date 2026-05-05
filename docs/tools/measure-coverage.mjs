@@ -7,7 +7,7 @@
  * to calculate API coverage percentage.
  *
  * @module docs/tools/measure-coverage
- * @version 1.0.0
+ * @version latest
  * @license MIT
  */
 

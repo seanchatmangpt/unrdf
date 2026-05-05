@@ -35,7 +35,7 @@
     ]
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "![Version](https://img.shields.io/badge/version-[VERSION]--beta.1-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "rdf",
       "federation",
@@ -149,5 +149,5 @@
       "title": "Getting Started with @unrdf/federation"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

@@ -1,6 +1,6 @@
 # UNRDF DX/UX Architecture Guide
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Canonical Integration Guide
 **Last Updated**: 2025-12-25
 
@@ -176,7 +176,7 @@ When creating a plugin:
 ```javascript
 export const myPlugin = {
   name: 'my-plugin',
-  version: '1.0.0',
+  version: 'latest',
 
   async init() {
     // Initialize
@@ -659,4 +659,4 @@ ls -1 src/*.mjs | wc -l
 ---
 
 **Version History**:
-- 1.0.0 (2025-12-25): Initial DX/UX architecture integration guide
+- latest (2025-12-25): Initial DX/UX architecture integration guide

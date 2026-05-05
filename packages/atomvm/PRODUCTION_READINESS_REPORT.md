@@ -1,9 +1,9 @@
 # Production Readiness Validation Report
-## @unrdf/atomvm v5.0.1
+## @unrdf/atomvm [VERSION]
 
 **Assessment Date:** 2025-12-21
 **Package:** @unrdf/atomvm
-**Version:** 5.0.1
+**Version:** [VERSION]
 **Evaluator:** Production Validation Agent
 
 ---
@@ -67,15 +67,15 @@ dist/
 ### Evidence
 ```bash
 dependencies:
-  @opentelemetry/api 1.9.0
-  coi-serviceworker 0.1.7
+  @opentelemetry/api [VERSION]
+  coi-serviceworker [VERSION]
 
 devDependencies:
-  @playwright/test 1.57.0
-  @vitest/browser 4.0.15
-  jsdom 24.1.3
-  vite 5.4.21
-  vitest 4.0.15
+  @playwright/test [VERSION]
+  @vitest/browser [VERSION]
+  jsdom [VERSION]
+  vite [VERSION]
+  vitest [VERSION]
 ```
 
 ### Findings
@@ -146,7 +146,7 @@ services:
       mode: replicated
       endpoint_mode: dnsrr
     networks:
-      - atomvm-net (overlay, 10.20.0.0/16)
+      - atomvm-net (overlay, [VERSION].0/16)
 ```
 
 ### Findings
@@ -206,7 +206,7 @@ import { trace } from '@opentelemetry/api';
 ```
 
 ### Findings
-- ✅ OpenTelemetry API integrated (@opentelemetry/api v1.9.0)
+- ✅ OpenTelemetry API integrated (@opentelemetry/api [VERSION])
 - ✅ SLA tracking implemented (`roundtrip-sla.mjs`)
 - ✅ Roundtrip latency monitoring (<10ms SLA)
 - ✅ Error rate tracking (<0.1% SLA)

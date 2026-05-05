@@ -436,11 +436,11 @@ Phase 2 builds on Phase 1's foundation. The 6 Phase 2 packages are **feature ext
 |---------|-----|-------|-----------|
 | Streaming | 1 | 60-76 | Week 3 |
 | Federation | 1 | 60-76 | Week 3 |
-| Knowledge-Engine | 1.2 | 72-88 | Week 4 |
+| Knowledge-Engine | latest | 72-88 | Week 4 |
 | Browser | 1 | 60-76 | Week 4 |
-| CLI | 0.5 | 40-56 | Week 5 |
-| React | 0.8 | 46-60 | Week 5 |
-| **Total** | **~5.5 FTE** | **338-412 hours** | **3 weeks** |
+| CLI | latest | 40-56 | Week 5 |
+| React | latest | 46-60 | Week 5 |
+| **Total** | **~latest FTE** | **338-412 hours** | **3 weeks** |
 
 ### Quality Gates
 Each package must pass before moving on:
@@ -599,8 +599,8 @@ Each can adapt patterns from whichever Phase 2 package is closest:
 ## Budget & Resources
 
 ### Staffing
-- **6 teams** (1 per package, can be 0.5-1.2 FTE each)
-- **Total:** ~5.5 FTE equivalent
+- **6 teams** (1 per package, can be latest.2 FTE each)
+- **Total:** ~latest FTE equivalent
 - **Duration:** 3 weeks
 - **Backfill needed:** Yes (6 people unavailable for 3 weeks)
 
@@ -611,7 +611,7 @@ Each can adapt patterns from whichever Phase 2 package is closest:
 - GitHub project for tracking
 
 ### Budget Impact
-- **Developer cost:** 5.5 FTE × 3 weeks = ~$35K-50K (at avg rates)
+- **Developer cost:** latest FTE × 3 weeks = ~$35K-50K (at avg rates)
 - **Tooling:** Included (already built)
 - **QA/Review:** ~40 hours ($3K-5K)
 

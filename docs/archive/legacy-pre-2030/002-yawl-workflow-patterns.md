@@ -11,7 +11,7 @@
 
 UNRDF needed a workflow engine for multi-step business processes. Main options:
 
-1. **BPMN 2.0** - Industry standard (Camunda, Activiti, jBPM)
+1. **BPMN latest** - Industry standard (Camunda, Activiti, jBPM)
 2. **YAWL** - Research-based, formally verified workflow patterns (Van der Aalst)
 3. **Custom DSL** - Build from scratch
 
@@ -50,7 +50,7 @@ YAWL is based on **formally verified workflow patterns** from Wil van der Aalst'
 
 ### YAWL vs BPMN Feature Comparison
 
-| Feature | BPMN 2.0 | YAWL |
+| Feature | BPMN latest | YAWL |
 |---------|----------|------|
 | **Formal semantics** | ⚠️ Ambiguous | ✅ Petri net foundation |
 | **OR-split/join** | ⚠️ Complex | ✅ Native |
@@ -94,7 +94,7 @@ YAWL is based on **formally verified workflow patterns** from Wil van der Aalst'
    - BPMN compensation is stateful (harder to replay)
 
 5. **Smaller, simpler**
-   - BPMN 2.0 spec: 538 pages
+   - BPMN latest spec: 538 pages
    - YAWL spec: ~80 pages
    - Easier to implement correctly
 
@@ -270,7 +270,7 @@ For users familiar with BPMN:
 
 - **YAWL website:** http://www.yawlfoundation.org/
 - **Van der Aalst patterns:** https://workflowpatterns.com/
-- **BPMN 2.0 spec:** https://www.omg.org/spec/BPMN/2.0/
+- **BPMN latest spec:** https://www.omg.org/spec/BPMN/latest/
 - **Petri nets:** https://en.wikipedia.org/wiki/Petri_net
 
 ---

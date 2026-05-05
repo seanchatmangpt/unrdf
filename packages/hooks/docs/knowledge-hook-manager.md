@@ -33,7 +33,7 @@ manager.registerHook({
   id: 'custom-hook',
   name: 'custom-hook',
   description: 'Custom validation',
-  version: '1.0.0',
+  version: '[VERSION]',
   trigger: 'before-add',
   enabled: true,
   validate: (quad) => ({ valid: true })
@@ -162,7 +162,7 @@ const customHook = {
   id: 'length-validator',
   name: 'length-validator',
   description: 'Validate string length',
-  version: '1.0.0',
+  version: '[VERSION]',
   trigger: 'before-add',
   enabled: true,
   validate: (quad) => {

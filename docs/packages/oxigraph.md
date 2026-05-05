@@ -2,7 +2,7 @@
 
 > UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Essential
 
 ## Overview

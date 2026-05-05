@@ -10,11 +10,11 @@
 
 | Metric | Status | Details |
 |--------|--------|---------|
-| **Startup Time** | ✅ PASS | 16.5% faster (0.450ms vs 0.539ms) |
-| **Memory Usage** | ✅ PASS | 83.3% lower (0.01 MB vs 0.06 MB per case) |
-| **Throughput** | ⚠️ FAIL | 14.0% slower (4,617 vs 5,372 cases/sec) |
-| **Test Suite** | 🚨 CRITICAL | 253.9% slower + 36.5% failure rate |
-| **Linter** | ⚠️ FAIL | 27.9-96.8% slower (23s vs 11.7-18s) |
+| **Startup Time** | ✅ PASS | latest% faster (latestms vs latestms) |
+| **Memory Usage** | ✅ PASS | latest% lower (latest MB vs latest MB per case) |
+| **Throughput** | ⚠️ FAIL | latest% slower (4,617 vs 5,372 cases/sec) |
+| **Test Suite** | 🚨 CRITICAL | latest% slower + latest% failure rate |
+| **Linter** | ⚠️ FAIL | latest.8% slower (23s vs latest) |
 | **Microframeworks** | ✅ PASS | All <1s execution time |
 
 **Overall Verdict:** ⚠️ **NOT READY FOR MERGE**
@@ -52,22 +52,22 @@ import {
 
 ---
 
-### ⚠️ Throughput Regression (14.0% slower)
+### ⚠️ Throughput Regression (latest% slower)
 
 **Measured:**
 - Baseline: 5,372 cases/second
 - Current: 4,617 cases/second
-- Variance: -755 cases/sec (-14.0%)
+- Variance: -755 cases/sec (-latest%)
 
-**Exceeds Tolerance:** Yes (±5% allowed, -14.0% observed)
+**Exceeds Tolerance:** Yes (±5% allowed, -latest% observed)
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
 Case Creation:
   Total: 1000 cases
-  Time: 216.574ms
-  Rate: 4617.36 cases/sec
+  Time: latestms
+  Rate: latest cases/sec
 ```
 
 **Potential Causes:**
@@ -106,21 +106,21 @@ Failed to log case event YAWL_CASE_CREATED: ZodError: [
 
 ---
 
-### ⚠️ Linter Slowdown (27.9-96.8% slower)
+### ⚠️ Linter Slowdown (latest.8% slower)
 
 **Measured:**
-- Baseline: 11.7 - 18.0 seconds
-- Current: 23.028 seconds
-- Variance: +5.0 to +11.3 seconds
+- Baseline: latest - latest seconds
+- Current: latest seconds
+- Variance: +latest to +latest seconds
 
 **Evidence:**
 ```bash
 $ npm run lint
 Scope: 29 of 32 workspace projects
 
-real	0m23.028s
-user	0m16.860s
-sys	0m31.420s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 
 **Potential Causes:**
@@ -134,36 +134,36 @@ sys	0m31.420s
 
 ## Positive Findings
 
-### ✅ Startup Time Improved (16.5% faster)
+### ✅ Startup Time Improved (latest% faster)
 
 **Measured:**
-- Baseline: 0.539ms
-- Current: 0.450ms
-- Improvement: -16.5%
+- Baseline: latestms
+- Current: latestms
+- Improvement: -latest%
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
-Average startup: 0.450ms
-Min: 0.069ms, Max: 3.057ms
+Average startup: latestms
+Min: latestms, Max: latestms
 ✅ PASS: Startup < 100ms target: YES
 ```
 
 ---
 
-### ✅ Memory Usage Improved (83.3% lower)
+### ✅ Memory Usage Improved (latest% lower)
 
 **Measured:**
-- Baseline: 0.06 MB per case
-- Current: 0.01 MB per case
-- Improvement: -83.3%
+- Baseline: latest MB per case
+- Current: latest MB per case
+- Improvement: -latest%
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
-Per-case memory: 0.01 MB
+Per-case memory: latest MB
 Loaded Memory (100 cases):
-  Delta: 0.88 MB (from 20.83 MB baseline)
+  Delta: latest MB (from latest MB baseline)
 ```
 
 ---
@@ -171,16 +171,16 @@ Loaded Memory (100 cases):
 ### ✅ Microframeworks Stable
 
 **Measured:**
-- microfw-9-graph-routing: 0.305s (target: <1s) ✅
-- max-combo-10-mega-framework-standalone: 0.444s (target: <1s) ✅
+- microfw-9-graph-routing: latests (target: <1s) ✅
+- max-combo-10-mega-framework-standalone: latests (target: <1s) ✅
 
 **Evidence:**
 ```bash
 $ time node microfw-9-graph-routing.mjs
-real	0m0.305s
+real	0mlatests
 
 $ time node max-combo-10-mega-framework-standalone.mjs
-real	0m0.444s
+real	0mlatests
 ```
 
 ---

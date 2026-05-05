@@ -1,6 +1,6 @@
 # UNRDF Example Validation Summary
 
-## 📊 Current Status: 42.9% Complete (9/21 Passing)
+## 📊 Current Status: latest% Complete (9/21 Passing)
 
 ### ✅ Fully Validated Packages (4/9)
 - **@unrdf/core** (3/3): basic-store, sparql-queries, rdf-parsing ✅
@@ -23,7 +23,7 @@
 | Metric | Value |
 |--------|-------|
 | Total Examples | 21/26 planned |
-| Passing Validation | 9 (42.9%) |
+| Passing Validation | 9 (latest%) |
 | Total Tests Written | 274 |
 | Tests Passing | 12/12 executable (100% pass rate) |
 | Vitest Configs | 19/21 (90%) |
@@ -169,7 +169,7 @@ Key: `unrdf/vitest/validation`
   "validated": 9,
   "failed": 12,
   "total": 21,
-  "passRate": "42.9%",
+  "passRate": "latest%",
   "testsFound": 274,
   "testsPassing": 12,
   "testsFailing": 0,
@@ -204,5 +204,5 @@ npx claude-flow@alpha memory retrieve "unrdf/vitest/validation"
 
 **Validation Engineer**: Production Validator Agent
 **Date**: 2025-12-04
-**Status**: ⚠️ Partial Complete (9/21 passing, 42.9%)
+**Status**: ⚠️ Partial Complete (9/21 passing, latest%)
 **Next Action**: Implement Phase 1 Quick Wins for +2 examples

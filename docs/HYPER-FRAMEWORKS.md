@@ -1,6 +1,6 @@
 # Hyper-Frameworks for Autonomic Hyperintelligent Systems
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Machine-Executable Specification
 **Format**: Hybrid JSON-LD + Markdown
 
@@ -59,7 +59,7 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
   "@type": "cap:CapabilitySpecification",
   "@id": "cap:knowledge-hook-execution",
 
-  "cap:version": "1.0.0",
+  "cap:version": "latest",
   "cap:name": "Knowledge Hook Execution",
   "cap:description": "Execute SPARQL/SHACL-triggered hooks on RDF graph mutations",
 
@@ -130,7 +130,7 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
       "@type": "cap:SuccessCriterion",
       "cap:metric": "error_rate",
       "cap:operator": "<",
-      "cap:value": 0.001,
+      "cap:value": latest,
       "cap:unit": "ratio"
     },
     {
@@ -159,9 +159,9 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
   ],
 
   "cap:performanceCharacteristics": {
-    "cap:latencyP50": { "@value": 0.5, "@type": "xsd:decimal" },
-    "cap:latencyP95": { "@value": 1.5, "@type": "xsd:decimal" },
-    "cap:latencyP99": { "@value": 2.0, "@type": "xsd:decimal" },
+    "cap:latencyP50": { "@value": latest, "@type": "xsd:decimal" },
+    "cap:latencyP95": { "@value": latest, "@type": "xsd:decimal" },
+    "cap:latencyP99": { "@value": latest, "@type": "xsd:decimal" },
     "cap:throughput": { "@value": 10000, "@type": "xsd:integer" },
     "cap:memoryFootprint": { "@value": 64, "@type": "xsd:integer", "cap:unit": "MB" }
   },
@@ -177,8 +177,8 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
   },
 
   "cap:dependencies": [
-    { "@id": "cap:rdf-parsing", "cap:minVersion": "1.0.0" },
-    { "@id": "cap:shacl-validation", "cap:minVersion": "1.0.0" }
+    { "@id": "cap:rdf-parsing", "cap:minVersion": "latest" },
+    { "@id": "cap:shacl-validation", "cap:minVersion": "latest" }
   ],
 
   "cap:authorizationScopes": [
@@ -205,7 +205,7 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
   "@id": "proto:distributed-hook-consensus",
 
   "proto:name": "Distributed Hook Consensus Protocol",
-  "proto:version": "1.0.0",
+  "proto:version": "latest",
   "proto:namespace": "https://unrdf.org/protocols/consensus#",
 
   "proto:agents": [
@@ -434,7 +434,7 @@ The four pillars of Hyper-Diataxis replace human-oriented documentation with mac
 
   "proto:performanceSLOs": {
     "proto:consensusLatencyP99": { "@value": 100, "proto:unit": "ms" },
-    "proto:messageDeliveryRate": { "@value": 0.999, "proto:unit": "ratio" },
+    "proto:messageDeliveryRate": { "@value": latest, "proto:unit": "ratio" },
     "proto:throughput": { "@value": 1000, "proto:unit": "transactions/second" }
   },
 
@@ -678,7 +678,7 @@ hyper:KnowledgeHookShape a sh:NodeShape ;
     ] ;
     sh:property [
         sh:path hyper:latencyP99 ;
-        sh:maxExclusive 2.0 ;
+        sh:maxExclusive latest ;
         sh:message "Hook latency p99 must be < 2ms"
     ] .
 
@@ -783,8 +783,8 @@ export const KnowledgeHookTypeSchema = z.object({
       'hyper:value': z.number()
     })
   ]),
-  'hyper:latencyP99': z.number().max(2.0),
-  'hyper:errorRate': z.number().max(0.001)
+  'hyper:latencyP99': z.number().max(latest),
+  'hyper:errorRate': z.number().max(latest)
 });
 
 // Core Type: Protocol
@@ -1518,7 +1518,7 @@ Failure Mode and Effects Analysis for Distributed Autonomic Systems.
   ?metrics otel:heapUsed ?heap .
   ?metrics otel:heapTotal ?total .
   (?heap ?total) math:quotient ?ratio .
-  ?ratio math:greaterThan 0.9 .
+  ?ratio math:greaterThan latest .
 } => {
   ?metrics fmea:hasViolation fmea:FM-CAP-004 .
   ?metrics fmea:violationMessage "Memory usage > 90%" .
@@ -1662,7 +1662,7 @@ Technical and Physical Contradiction Resolution for Autonomic Systems.
       "triz:name": "Consistency vs Availability",
       "triz:description": "System should be always available but always consistent",
       "triz:requirement_A": "Strong consistency (linearizability)",
-      "triz:requirement_B": "99.97% availability",
+      "triz:requirement_B": "latest% availability",
       "triz:resolution_strategies": [
         {
           "triz:strategy": "Tunable Consistency",
@@ -1805,10 +1805,10 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
           "dflss:name": "Latency P99",
           "dflss:description": "99th percentile transaction latency",
           "dflss:unit": "milliseconds",
-          "dflss:target": 2.0,
-          "dflss:sixSigmaTarget": 1.5,
-          "dflss:upperSpecLimit": 5.0,
-          "dflss:lowerSpecLimit": 0.1,
+          "dflss:target": latest,
+          "dflss:sixSigmaTarget": latest,
+          "dflss:upperSpecLimit": latest,
+          "dflss:lowerSpecLimit": latest,
           "dflss:rdfPredicate": "otel:transactionLatencyP99"
         },
         {
@@ -1816,9 +1816,9 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
           "dflss:name": "Error Rate",
           "dflss:description": "Ratio of failed transactions to total",
           "dflss:unit": "ratio",
-          "dflss:target": 0.001,
-          "dflss:sixSigmaTarget": 0.00034,
-          "dflss:upperSpecLimit": 0.01,
+          "dflss:target": latest,
+          "dflss:sixSigmaTarget": latest,
+          "dflss:upperSpecLimit": latest,
           "dflss:lowerSpecLimit": 0,
           "dflss:rdfPredicate": "otel:errorRate"
         },
@@ -1827,10 +1827,10 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
           "dflss:name": "Availability",
           "dflss:description": "System uptime percentage",
           "dflss:unit": "percentage",
-          "dflss:target": 99.9,
-          "dflss:sixSigmaTarget": 99.9997,
+          "dflss:target": latest,
+          "dflss:sixSigmaTarget": latest,
           "dflss:upperSpecLimit": 100,
-          "dflss:lowerSpecLimit": 99.5,
+          "dflss:lowerSpecLimit": latest,
           "dflss:rdfPredicate": "otel:availability"
         },
         {
@@ -1862,19 +1862,19 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
           "@id": "dflss:SLO-001",
           "dflss:metric": "dflss:CTA-001",
           "dflss:objective": "Transaction latency p99 < 2ms",
-          "dflss:rdfRule": "{ ?m otel:transactionLatencyP99 ?v . ?v < 2.0 } => { ?m dflss:meetsSlO dflss:SLO-001 }"
+          "dflss:rdfRule": "{ ?m otel:transactionLatencyP99 ?v . ?v < latest } => { ?m dflss:meetsSlO dflss:SLO-001 }"
         },
         {
           "@id": "dflss:SLO-002",
           "dflss:metric": "dflss:CTA-002",
-          "dflss:objective": "Error rate < 0.1%",
-          "dflss:rdfRule": "{ ?m otel:errorRate ?v . ?v < 0.001 } => { ?m dflss:meetsSLO dflss:SLO-002 }"
+          "dflss:objective": "Error rate < latest%",
+          "dflss:rdfRule": "{ ?m otel:errorRate ?v . ?v < latest } => { ?m dflss:meetsSLO dflss:SLO-002 }"
         },
         {
           "@id": "dflss:SLO-003",
           "dflss:metric": "dflss:CTA-003",
-          "dflss:objective": "Availability > 99.9%",
-          "dflss:rdfRule": "{ ?m otel:availability ?v . ?v > 99.9 } => { ?m dflss:meetsSLO dflss:SLO-003 }"
+          "dflss:objective": "Availability > latest%",
+          "dflss:rdfRule": "{ ?m otel:availability ?v . ?v > latest } => { ?m dflss:meetsSLO dflss:SLO-003 }"
         }
       ]
     },
@@ -1886,8 +1886,8 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 
       "dflss:otelConfiguration": {
         "dflss:serviceName": "unrdf-kgc",
-        "dflss:serviceVersion": "1.0.0",
-        "dflss:samplingRatio": 1.0,
+        "dflss:serviceVersion": "latest",
+        "dflss:samplingRatio": latest,
         "dflss:exportInterval": 5000,
 
         "dflss:metrics": [
@@ -1900,7 +1900,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
             "dflss:name": "kgc_transaction_duration_ms",
             "dflss:type": "Histogram",
             "dflss:description": "Transaction duration histogram",
-            "dflss:buckets": [0.1, 0.5, 1, 2, 5, 10, 50, 100, 500]
+            "dflss:buckets": [latest, latest, 1, 2, 5, 10, 50, 100, 500]
           },
           {
             "dflss:name": "kgc_hooks_executed_total",
@@ -1982,7 +1982,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
         },
         {
           "dflss:technique": "Correlation Analysis",
-          "dflss:sparqlQuery": "SELECT ?factor ?metric (CORR(?factorValue, ?metricValue) AS ?correlation) WHERE { ?obs dflss:hasFactor ?factor ; dflss:hasMetric ?metric ; ?factor ?factorValue ; ?metric ?metricValue } GROUP BY ?factor ?metric HAVING (ABS(?correlation) > 0.7)",
+          "dflss:sparqlQuery": "SELECT ?factor ?metric (CORR(?factorValue, ?metricValue) AS ?correlation) WHERE { ?obs dflss:hasFactor ?factor ; dflss:hasMetric ?metric ; ?factor ?factorValue ; ?metric ?metricValue } GROUP BY ?factor ?metric HAVING (ABS(?correlation) > latest)",
           "dflss:interpretation": "Factors strongly correlated with metrics"
         }
       ],
@@ -1990,8 +1990,8 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
       "dflss:processCapabilityAnalysis": {
         "dflss:cpk": {
           "dflss:formula": "min((USL - mean) / (3 * sigma), (mean - LSL) / (3 * sigma))",
-          "dflss:target": 1.33,
-          "dflss:sixSigmaTarget": 2.0
+          "dflss:target": latest,
+          "dflss:sixSigmaTarget": latest
         }
       }
     },
@@ -2050,7 +2050,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
       "dflss:experimentFramework": {
         "dflss:abtesting": true,
         "dflss:canaryDeployment": true,
-        "dflss:rollbackThreshold": "error_rate > 0.01 OR latency_p99 > 5"
+        "dflss:rollbackThreshold": "error_rate > latest OR latency_p99 > 5"
       }
     },
 
@@ -2075,7 +2075,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
         {
           "dflss:mechanism": "Automated Rollback",
           "dflss:description": "Auto-rollback on metric breach",
-          "dflss:implementation": "if (error_rate > 0.01) { rollback(); }",
+          "dflss:implementation": "if (error_rate > latest) { rollback(); }",
           "dflss:recoveryTime": "< 30 seconds"
         },
         {
@@ -2102,8 +2102,8 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
         {
           "dflss:chart": "CUSUM",
           "dflss:metric": "Latency Drift",
-          "dflss:target": 2.0,
-          "dflss:threshold": 5.0
+          "dflss:target": latest,
+          "dflss:threshold": latest
         }
       ]
     }
@@ -2121,7 +2121,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 # Rule: SLO-001 (Latency) compliance check
 {
   ?metrics otel:transactionLatencyP99 ?p99 .
-  ?p99 math:lessThan 2.0 .
+  ?p99 math:lessThan latest .
 } => {
   ?metrics dflss:meetsSLO dflss:SLO-001 .
   ?metrics dflss:sloStatus "compliant" .
@@ -2129,7 +2129,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 
 {
   ?metrics otel:transactionLatencyP99 ?p99 .
-  ?p99 math:notLessThan 2.0 .
+  ?p99 math:notLessThan latest .
 } => {
   ?metrics dflss:violatesSLO dflss:SLO-001 .
   ?metrics dflss:sloStatus "non-compliant" .
@@ -2139,14 +2139,14 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 # Rule: SLO-002 (Error Rate) compliance check
 {
   ?metrics otel:errorRate ?rate .
-  ?rate math:lessThan 0.001 .
+  ?rate math:lessThan latest .
 } => {
   ?metrics dflss:meetsSLO dflss:SLO-002 .
 } .
 
 {
   ?metrics otel:errorRate ?rate .
-  ?rate math:notLessThan 0.001 .
+  ?rate math:notLessThan latest .
 } => {
   ?metrics dflss:violatesSLO dflss:SLO-002 .
   ?metrics dflss:requiredAction "analyze_error_sources" .
@@ -2155,7 +2155,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 # Rule: SLO-003 (Availability) compliance check
 {
   ?metrics otel:availability ?avail .
-  ?avail math:greaterThan 99.9 .
+  ?avail math:greaterThan latest .
 } => {
   ?metrics dflss:meetsSLO dflss:SLO-003 .
 } .
@@ -2206,7 +2206,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
   "@type": "cap:CapabilitySpecification",
   "@id": "cap:shacl-validation-v1",
 
-  "cap:version": "1.0.0",
+  "cap:version": "latest",
   "cap:name": "SHACL Validation",
   "cap:description": "Validate RDF graph against SHACL shapes with OTEL observability",
 
@@ -2257,7 +2257,7 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
     {
       "cap:metric": "error_rate",
       "cap:operator": "<",
-      "cap:value": 0.001
+      "cap:value": latest
     }
   ],
 
@@ -2347,8 +2347,8 @@ Define-Measure-Analyze-Improve-Control for Autonomous Quality Engineering.
 
   "triz:results": {
     "triz:latencyReduction": "75%",
-    "triz:p99Before": 8.5,
-    "triz:p99After": 2.1,
+    "triz:p99Before": latest,
+    "triz:p99After": latest,
     "triz:validationCompleteness": "100%"
   }
 }
@@ -2365,39 +2365,39 @@ dflss:SLO-KGC-001 a dflss:ServiceLevelObjective ;
     dflss:name "Knowledge Hook Latency SLO" ;
     dflss:description "Hook execution p99 latency must be under 2ms" ;
     dflss:metric otel:hookLatencyP99 ;
-    dflss:target "2.0"^^xsd:decimal ;
+    dflss:target "latest"^^xsd:decimal ;
     dflss:unit "milliseconds" ;
     dflss:evaluationWindow "PT5M"^^xsd:duration ;
-    dflss:complianceTarget "99.9"^^xsd:decimal ;
-    dflss:alertThreshold "1.8"^^xsd:decimal ;
-    dflss:criticalThreshold "2.5"^^xsd:decimal ;
+    dflss:complianceTarget "latest"^^xsd:decimal ;
+    dflss:alertThreshold "latest"^^xsd:decimal ;
+    dflss:criticalThreshold "latest"^^xsd:decimal ;
     dflss:measurementMethod dflss:OTELHistogramP99 ;
     dflss:owner "platform-team" ;
     dflss:escalationPath ( "on-call" "platform-lead" "engineering-director" ) .
 
 dflss:SLO-KGC-002 a dflss:ServiceLevelObjective ;
     dflss:name "Transaction Error Rate SLO" ;
-    dflss:description "Transaction error rate must be below 0.1%" ;
+    dflss:description "Transaction error rate must be below latest%" ;
     dflss:metric otel:transactionErrorRate ;
-    dflss:target "0.001"^^xsd:decimal ;
+    dflss:target "latest"^^xsd:decimal ;
     dflss:unit "ratio" ;
     dflss:evaluationWindow "PT1H"^^xsd:duration ;
-    dflss:complianceTarget "99.99"^^xsd:decimal ;
-    dflss:alertThreshold "0.0008"^^xsd:decimal ;
-    dflss:criticalThreshold "0.005"^^xsd:decimal ;
+    dflss:complianceTarget "latest"^^xsd:decimal ;
+    dflss:alertThreshold "latest"^^xsd:decimal ;
+    dflss:criticalThreshold "latest"^^xsd:decimal ;
     dflss:measurementMethod dflss:OTELCounterRatio ;
     dflss:owner "reliability-team" .
 
 dflss:SLO-KGC-003 a dflss:ServiceLevelObjective ;
     dflss:name "System Availability SLO" ;
-    dflss:description "System must be available 99.9% of the time" ;
+    dflss:description "System must be available latest% of the time" ;
     dflss:metric otel:systemAvailability ;
-    dflss:target "99.9"^^xsd:decimal ;
+    dflss:target "latest"^^xsd:decimal ;
     dflss:unit "percentage" ;
     dflss:evaluationWindow "P30D"^^xsd:duration ;
     dflss:complianceTarget "100"^^xsd:decimal ;
-    dflss:alertThreshold "99.95"^^xsd:decimal ;
-    dflss:criticalThreshold "99.5"^^xsd:decimal ;
+    dflss:alertThreshold "latest"^^xsd:decimal ;
+    dflss:criticalThreshold "latest"^^xsd:decimal ;
     dflss:measurementMethod dflss:UptimeCalculation ;
     dflss:owner "sre-team" .
 ```
@@ -2425,7 +2425,7 @@ The complete Hyper-Frameworks ontology for self-documentation.
     dcterms:title "Hyper-Frameworks Ontology" ;
     dcterms:description "Ontology for autonomic hyperintelligent system documentation" ;
     dcterms:creator "UNRDF Project" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 # =============================================
 # HYPER-DIATAXIS CLASSES
@@ -2718,7 +2718,7 @@ Check for:
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Generated**: Machine-parseable with human annotations
 **License**: MIT
 **Maintainer**: UNRDF Platform Team

@@ -122,7 +122,7 @@ export const complianceVerificationJTBD = {
     name: 'Verify Regulatory Compliance',
     description:
       'Check trade complies with SEC regulations, SEC Regulation M, and best execution rules',
-    version: '1.0.0',
+    version: 'latest',
     author: 'FIBO Governance',
     ontology: ['fibo'],
   },
@@ -196,7 +196,7 @@ export const complianceVerificationJTBD = {
           ?trade fibo:hasComplianceStatus fibo:Compliant ;
                  fibo:auditedAt ?now ;
                  fibo:auditedBy ?auditor ;
-                 fibo:complianceVersion "1.0.0"^^xsd:string ;
+                 fibo:complianceVersion "latest"^^xsd:string ;
                  fibo:regulatoryFramework fibo:SECRegulationM .
         }
         WHERE {
@@ -259,7 +259,7 @@ export const counterpartyRiskJTBD = {
     id: 'fibo:assess-counterparty-risk',
     name: 'Assess Counterparty Risk',
     description: 'Determine counterparty risk rating using N3 regulatory rules',
-    version: '1.0.0',
+    version: 'latest',
     author: 'FIBO Risk Management',
   },
 
@@ -363,7 +363,7 @@ export const counterpartyRiskJTBD = {
         CONSTRUCT {
           ?cp fibo:riskAssessedAt ?now ;
               fibo:riskAssessmentMethod fibo:N3InferenceEngine ;
-              fibo:riskAssessmentVersion "2.1.0"^^xsd:string .
+              fibo:riskAssessmentVersion "latest"^^xsd:string .
         }
         WHERE {
           ?cp fibo:riskLevel ?level .
@@ -423,7 +423,7 @@ export const liquidityManagementJTBD = {
     name: 'Manage Liquidity Positions',
     description:
       'Calculate available liquidity using logic programming constraints',
-    version: '1.0.0',
+    version: 'latest',
     author: 'FIBO Treasury Management',
   },
 
@@ -617,7 +617,7 @@ export const auditTrailJTBD = {
     id: 'fibo:maintain-compliance-audit-trail',
     name: 'Maintain Compliance Audit Trail',
     description: 'Create cryptographic audit trail with receipt chaining',
-    version: '1.0.0',
+    version: 'latest',
     author: 'FIBO Compliance Officer',
   },
 
@@ -776,7 +776,7 @@ export const regulatoryRepairJTBD = {
     name: 'Repair Compliance Violations',
     description:
       'Automatically repair regulatory violations with audit trail',
-    version: '1.0.0',
+    version: 'latest',
     author: 'FIBO Auto-Remediation',
   },
 

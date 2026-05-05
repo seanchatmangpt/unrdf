@@ -192,7 +192,7 @@ if (result.success) {
 
 ## Dependencies
 
-- `zod@^3.23.8` - Runtime schema validation
+- `zod@^latest` - Runtime schema validation
 - Node.js `crypto` - SHA-256 hashing (deterministic)
 
 ## Usage Example

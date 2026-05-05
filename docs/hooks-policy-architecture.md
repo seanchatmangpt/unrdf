@@ -1,6 +1,6 @@
 # Hooks & Policy Architecture
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-26
 **Author**: Hooks & Policy Specialist
 
@@ -124,14 +124,14 @@ Policy packs are versioned, portable governance units defined in `manifest.json`
   "id": "uuid",
   "meta": {
     "name": "policy-name",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Policy pack description",
     "author": "Author Name",
     "license": "MIT",
     "tags": ["security", "validation"],
     "ontology": ["http://example.org/ont#"],
     "dependencies": [
-      { "name": "other-policy", "version": "^2.0.0", "required": true }
+      { "name": "other-policy", "version": "^latest", "required": true }
     ]
   },
   "config": {
@@ -142,7 +142,7 @@ Policy packs are versioned, portable governance units defined in `manifest.json`
     "retries": 1,
     "conditions": {
       "environment": ["production", "staging"],
-      "version": ">=1.0.0",
+      "version": ">=latest",
       "features": ["sparql-query", "shacl-validation"]
     }
   },

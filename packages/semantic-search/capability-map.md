@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/semantic-search
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -29,9 +29,9 @@ AI-powered semantic search over RDF knowledge graphs using vector embeddings
 ### Dependencies
 
 - `@unrdf/oxigraph`: workspace:*
-- `@xenova/transformers`: ^2.17.2
-- `vectra`: ^0.11.1
-- `zod`: ^4.1.13
+- `@xenova/transformers`: ^[VERSION]
+- `vectra`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

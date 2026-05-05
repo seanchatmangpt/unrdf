@@ -1,15 +1,15 @@
-# v1.2.0 Release Preparation - Multi-Step Workflow
+# vlatest Release Preparation - Multi-Step Workflow
 
 ## Purpose
 
-This command guides agents through comprehensive release preparation for v1.2.0. It systematically validates all components necessary for production release, identifies gaps based on actual codebase state, and creates actionable release artifacts. Uses 80/20 thinking to focus on critical release blockers.
+This command guides agents through comprehensive release preparation for vlatest. It systematically validates all components necessary for production release, identifies gaps based on actual codebase state, and creates actionable release artifacts. Uses 80/20 thinking to focus on critical release blockers.
 
 ## Current State Summary
 
-**Version**: Currently set to `1.1.2` in `package.json` (line 3); target release is `1.2.0`
+**Version**: Currently set to `latest` in `package.json` (line 3); target release is `latest`
 **Test Status**: 328 passed, 0 timed out, 11 skipped (testcontainers when Docker not running)
 **Code Status**: No TODOs/FIXMEs found in source code
-**Documentation**: Readiness reports exist; CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs v1.2.0 section); release notes need v1.2.0 version
+**Documentation**: Readiness reports exist; CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs vlatest section); release notes need vlatest version
 **Build System**: Uses `pnpm` scripts for all build operations
 
 ## Workflow Overview
@@ -22,44 +22,44 @@ Step 1: Verify Release Scope → Step 2: Measure Current State → Step 3: Analy
 
 ### Step 1: Verify Release Scope
 
-**Action**: Verify what's included in v1.2.0 release.
+**Action**: Verify what's included in vlatest release.
 
-#### 1.1: Confirm Version
+#### latest: Confirm Version
 
-**Action**: Verify version is set to 1.2.0 (currently 1.1.2).
+**Action**: Verify version is set to latest (currently latest).
 
-**Current state**: Version is currently `1.1.2` in `package.json` (line 3); needs to be updated to `1.2.0` for release.
+**Current state**: Version is currently `latest` in `package.json` (line 3); needs to be updated to `latest` for release.
 
 **Action**: Verify version
 
 ```bash
 # Check version in package.json
 grep "^version" package.json
-# Current: "version": "1.1.2"
-# Expected for release: "version": "1.2.0"
+# Current: "version": "latest"
+# Expected for release: "version": "latest"
 ```
 
 **Version status**:
 
-- ⚠️ Version currently set to `1.1.2` in `package.json` (needs update to `1.2.0`)
-- ⚠️ CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs v1.2.0 section)
-- ⚠️ Release notes need v1.2.0 version
+- ⚠️ Version currently set to `latest` in `package.json` (needs update to `latest`)
+- ⚠️ CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs vlatest section)
+- ⚠️ Release notes need vlatest version
 
-#### 1.2: Identify v1.2.0 Features
+#### latest: Identify vlatest Features
 
-**Action**: Document key features for v1.2.0 release.
+**Action**: Document key features for vlatest release.
 
-**Key features** (from `src/lib.mjs`, `README.md`, readiness reports, `docs/coverage/v1.2.0-coverage-strategy.md`):
+**Key features** (from `src/lib.mjs`, `README.md`, readiness reports, `docs/coverage/vlatest-strategy.md`):
 
-**New Features in v1.2.0**:
+**New Features in vlatest**:
 
-- **Coverage Enforcement**: Mandatory 85% line coverage enforcement (up from 70% warning in v1.1.0)
+- **Coverage Enforcement**: Mandatory 85% line coverage enforcement (up from 70% warning in vlatest)
   - Production code target: 90%+ coverage
   - Test utilities target: 80%+ coverage
   - CI/CD enforcement as hard requirement (blocking merges)
-  - Coverage strategy documented in `docs/coverage/v1.2.0-coverage-strategy.md`
+  - Coverage strategy documented in `docs/coverage/vlatest-strategy.md`
 
-**Existing Features (from v1.1.0)**:
+**Existing Features (from vlatest)**:
 
 - **Weaver Integration** (`src/observability/weaver/`): OpenTelemetry live validation with Weaver
   - `WeaverValidator` for lifecycle management
@@ -109,7 +109,7 @@ grep -r "TODO\|FIXME\|unimplemented!" src/ --include="*.mjs"
 
 **Action**: Measure all components that must be ready for release.
 
-#### 2.1: Git State Verification (CRITICAL BLOCKER)
+#### latest: Git State Verification (CRITICAL BLOCKER)
 
 **Action**: Verify git repository state is clean before proceeding.
 
@@ -156,7 +156,7 @@ find . -name "*.new" -o -name "*WIP*" -o -name "*.tmp" | grep -v "target\|node_m
 
 **Action**: If git state is not clean, commit or stash all changes before proceeding with release.
 
-#### 2.2: Code Completeness
+#### latest: Code Completeness
 
 **Action**: Verify all code is complete and production-ready.
 
@@ -181,11 +181,11 @@ grep -A 5 "pub function send_test_span_to_weaver" src/observability/weaver/mod.m
 - **Placeholder code**: 0 (none found)
 - **Status**: ✅ All code complete
 
-#### 2.2: Test Coverage
+#### latest: Test Coverage
 
 **Action**: Verify test coverage is adequate.
 
-**Current state**: 328 passed, 0 timed out, 11 skipped (from v1.1.2 baseline).
+**Current state**: 328 passed, 0 timed out, 11 skipped (from vlatest baseline).
 
 **Action**: Run test suite
 
@@ -213,11 +213,11 @@ timeout 10s pnpm test
 - null - all tests pass successfully
 - Testcontainers tests skipped when Docker not running (expected behavior via `require_docker()`)
 
-#### 2.3: Documentation Completeness
+#### latest: Documentation Completeness
 
 **Action**: Verify all documentation is complete and accurate.
 
-**Current state**: Readiness reports exist; CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs v1.2.0 section); release notes need v1.2.0 version.
+**Current state**: Readiness reports exist; CHANGELOG.md exists at `docs/releases/CHANGELOG.md` (needs vlatest section); release notes need vlatest version.
 
 **Action**: Check documentation files
 
@@ -227,7 +227,7 @@ ls -la README.md
 # ✅ Exists and up to date
 
 ls -la docs/releases/CHANGELOG.md
-# ✅ Exists (needs v1.2.0 section)
+# ✅ Exists (needs vlatest section)
 
 ls -la docs/V1_1_0_READINESS_REPORT.md
 # ✅ Exists
@@ -238,12 +238,12 @@ ls -la docs/V1_1_0_ROOT_CAUSE_ANALYSIS.md
 ls -la OTEL_WEAVER_PRODUCTION_READINESS_REPORT.md
 # ✅ Exists
 
-# Check for v1.2.0 section in CHANGELOG
-grep -A 5 "^## \[1.2.0\]" docs/releases/CHANGELOG.md
+# Check for vlatest section in CHANGELOG
+grep -A 5 "^## \[latest\]" docs/releases/CHANGELOG.md
 # ⚠️ Should exist (needs creation if missing)
 
 # Check for release notes
-ls -la docs/releases/RELEASE_NOTES_v1.2.0.md
+ls -la docs/releases/RELEASE_NOTES_vlatest.md
 # ⚠️ Should exist (needs creation if missing)
 ```
 
@@ -252,36 +252,36 @@ ls -la docs/releases/RELEASE_NOTES_v1.2.0.md
 - **README status**: ✅ Up to date (recently validated via DMAIC)
 - **API docs status**: ✅ Complete (from `src/lib.mjs`)
 - **Examples status**: ✅ Working (9 examples in `examples/`)
-- **CHANGELOG status**: ✅ Exists at `docs/releases/CHANGELOG.md` (needs v1.2.0 section)
-- **Release notes status**: ⚠️ Need v1.2.0 version
+- **CHANGELOG status**: ✅ Exists at `docs/releases/CHANGELOG.md` (needs vlatest section)
+- **Release notes status**: ⚠️ Need vlatest version
 - **Readiness reports**: ✅ Exist (`docs/V1_1_0_READINESS_REPORT.md`, `docs/V1_1_0_ROOT_CAUSE_ANALYSIS.md`)
 
-#### 2.4: Version Consistency
+#### latest: Version Consistency
 
 **Action**: Verify version numbers are consistent.
 
-**Current state**: Version is `1.1.2` in `package.json`; needs to be updated to `1.2.0` for release; no hardcoded versions in code.
+**Current state**: Version is `latest` in `package.json`; needs to be updated to `latest` for release; no hardcoded versions in code.
 
 **Action**: Check version consistency
 
 ```bash
 # Check version in package.json
 grep "^version" package.json
-# Current: "version": "1.1.2"
-# Expected for release: "version": "1.2.0"
+# Current: "version": "latest"
+# Expected for release: "version": "latest"
 
 # Check for hardcoded versions in code
 grep -r "1\.2\.0\|1\.1\.0\|1\.0\.0" src/ --include="*.mjs"
-# Expected: Only OpenTelemetry SDK version reference (0.31.0) in weaver/mod.mjs
+# Expected: Only OpenTelemetry SDK version reference (latest) in weaver/mod.mjs
 ```
 
 **Version metrics**:
 
-- **package.json version**: ⚠️ Currently `1.1.2` (needs update to `1.2.0`)
+- **package.json version**: ⚠️ Currently `latest` (needs update to `latest`)
 - **Documentation versions**: ⚠️ Need to verify references
 - **Code versions**: ✅ No hardcoded crate versions (only dependency versions)
 
-#### 2.5: Build System
+#### latest: Build System
 
 **Action**: Verify build system works correctly.
 
@@ -310,7 +310,7 @@ timeout 5s pnpm format
 - **Formatting**: ✅ Consistent
 - **Features**: ✅ All features compile
 
-#### 2.6: Git State Verification
+#### latest: Git State Verification
 
 **Action**: Verify git repository state is clean (no uncommitted changes, no WIP work).
 
@@ -365,7 +365,7 @@ git status --porcelain | grep "^ D" | wc -l
 
 **Action**: If git state is not clean, commit or stash all changes before proceeding with release.
 
-#### 2.7: Dependencies
+#### latest: Dependencies
 
 **Action**: Verify dependencies are appropriate.
 
@@ -379,9 +379,9 @@ grep -A 30 "^\[dependencies\]" package.json
 # Review dependency versions
 
 # Key dependencies:
-# - OpenTelemetry 0.31 (stable)
-# - testcontainers 0.25 (stable)
-# - tokio 1.0 (stable)
+# - OpenTelemetry latest (stable)
+# - testcontainers latest (stable)
+# - tokio latest (stable)
 ```
 
 **Dependency metrics**:
@@ -396,9 +396,9 @@ grep -A 30 "^\[dependencies\]" package.json
 
 ### Step 3: Analyze Gaps
 
-**Action**: Identify what's missing or incomplete for v1.2.0 release.
+**Action**: Identify what's missing or incomplete for vlatest release.
 
-#### 3.1: Categorize Gaps
+#### latest: Categorize Gaps
 
 **Action**: Categorize identified gaps by severity.
 
@@ -407,9 +407,9 @@ grep -A 30 "^\[dependencies\]" package.json
 **Blockers (Must Fix Before Release)**:
 
 - [ ] Git state is clean (no uncommitted changes, no WIP work)
-- [ ] Update version to `1.2.0` in `package.json` and `package.json`
-- [ ] Add v1.2.0 section to `docs/releases/CHANGELOG.md` (file exists, needs section)
-- [ ] Create v1.2.0 release notes
+- [ ] Update version to `latest` in `package.json` and `package.json`
+- [ ] Add vlatest section to `docs/releases/CHANGELOG.md` (file exists, needs section)
+- [ ] Create vlatest release notes
 
 **High Priority (Should Fix Before Release)**:
 
@@ -419,7 +419,7 @@ grep -A 30 "^\[dependencies\]" package.json
 **Medium Priority (Nice to Have)**:
 
 - [x] Document known test timeout issue (weaver test) ✅ (No longer needed - all tests pass)
-- [ ] Verify all examples work with v1.2.0
+- [ ] Verify all examples work with vlatest
 
 **Low Priority (Can Fix Later)**:
 
@@ -433,7 +433,7 @@ grep -A 30 "^\[dependencies\]" package.json
 - ✅ Build system: All builds succeed
 - ✅ Dependencies: All stable and compatible
 
-#### 3.2: Prioritize by 80/20
+#### latest: Prioritize by 80/20
 
 **Action**: Use 80/20 thinking to prioritize gaps.
 
@@ -443,9 +443,9 @@ grep -A 30 "^\[dependencies\]" package.json
 
 **Quick Wins (High Impact, Low Effort)**:
 
-1. Update version to `1.2.0` in `package.json` and `package.json` (5 min)
-2. Add v1.2.0 section to `docs/releases/CHANGELOG.md` (15 min)
-3. Create v1.2.0 release notes (20 min)
+1. Update version to `latest` in `package.json` and `package.json` (5 min)
+2. Add vlatest section to `docs/releases/CHANGELOG.md` (15 min)
+3. Create vlatest release notes (20 min)
 
 **High-Value (High Impact, Medium Effort)**: 3. Verify documentation consistency (30 min) 4. Verify all examples work (15 min)
 
@@ -457,14 +457,14 @@ grep -A 30 "^\[dependencies\]" package.json
 
 **Action**: Create missing release artifacts.
 
-#### 4.1: Add v1.2.0 Section to CHANGELOG.md
+#### latest: Add vlatest Section to CHANGELOG.md
 
-**Action**: Add v1.2.0 section to existing CHANGELOG.md at `docs/releases/CHANGELOG.md`.
+**Action**: Add vlatest section to existing CHANGELOG.md at `docs/releases/CHANGELOG.md`.
 
 **CHANGELOG format** (Keep a Changelog style):
 
 ```markdown
-## [1.2.0] - YYYY-MM-DD
+## [latest] - YYYY-MM-DD
 
 ### Added
 
@@ -472,7 +472,7 @@ grep -A 30 "^\[dependencies\]" package.json
   - Production code target: 90%+ coverage
   - Test utilities target: 80%+ coverage
   - CI/CD enforcement as hard requirement (blocking merges)
-  - Coverage strategy documented in `docs/coverage/v1.2.0-coverage-strategy.md`
+  - Coverage strategy documented in `docs/coverage/vlatest-strategy.md`
 
 ### Changed
 
@@ -481,10 +481,10 @@ grep -A 30 "^\[dependencies\]" package.json
 
 ### Documentation
 
-- Added coverage strategy documentation (`docs/coverage/v1.2.0-coverage-strategy.md`)
+- Added coverage strategy documentation (`docs/coverage/vlatest-strategy.md`)
 - Updated coverage enforcement guidelines
 
-## [1.1.2] - 2025-11-14
+## [latest] - 2025-11-14
 
 ### Added
 
@@ -532,7 +532,7 @@ grep -A 30 "^\[dependencies\]" package.json
 - Added SPR (Sparse Priming Representation) methodology guide
 - Added dog fooding documentation
 
-## [1.0.0] - YYYY-MM-DD
+## [latest] - YYYY-MM-DD
 
 ### Added
 
@@ -544,23 +544,23 @@ grep -A 30 "^\[dependencies\]" package.json
 - Mutation testing
 ```
 
-**Action**: Add v1.2.0 section to CHANGELOG.md
+**Action**: Add vlatest section to CHANGELOG.md
 
 ```bash
 # CHANGELOG.md exists at docs/releases/CHANGELOG.md
-# Add v1.2.0 section at the top (after the header)
+# Add vlatest section at the top (after the header)
 # Use the format above, filling in actual dates
 ```
 
-#### 4.2: Create Release Notes
+#### latest: Create Release Notes
 
-**Action**: Create v1.2.0 release notes.
+**Action**: Create vlatest release notes.
 
 **Before creating**: Verify release notes match actual codebase features
 
 ```bash
 # Verify release notes features exist in codebase
-grep -i "coverage\|weaver\|otel\|testcontainers" docs/releases/RELEASE_NOTES_v1.2.0.md
+grep -i "coverage\|weaver\|otel\|testcontainers" docs/releases/RELEASE_NOTES_vlatest.md
 # Check each feature mentioned exists in src/ or docs/
 
 # Verify no features claimed that don't exist
@@ -570,11 +570,11 @@ grep -i "coverage\|weaver\|otel\|testcontainers" docs/releases/RELEASE_NOTES_v1.
 **Release notes content**:
 
 ```markdown
-# Release Notes: v1.2.0
+# Release Notes: vlatest
 
 ## Summary
 
-v1.2.0 introduces mandatory 85% line coverage enforcement, up from the 70% warning threshold in v1.1.0. This release focuses on quality assurance through comprehensive test coverage requirements. All existing features from v1.1.0 (Weaver integration, OTEL validation, testcontainers support) remain available and production-ready.
+vlatest introduces mandatory 85% line coverage enforcement, up from the 70% warning threshold in vlatest. This release focuses on quality assurance through comprehensive test coverage requirements. All existing features from vlatest (Weaver integration, OTEL validation, testcontainers support) remain available and production-ready.
 
 ## New Features
 
@@ -588,7 +588,7 @@ Mandatory 85% line coverage enforcement with CI/CD blocking for quality assuranc
 - **Production code target**: 90%+ coverage
 - **Test utilities target**: 80%+ coverage
 - **CI/CD enforcement**: Coverage checks block merges if threshold not met
-- **Coverage strategy**: Documented in `docs/coverage/v1.2.0-coverage-strategy.md`
+- **Coverage strategy**: Documented in `docs/coverage/vlatest-strategy.md`
 
 **Rationale**:
 
@@ -606,7 +606,7 @@ open target/llvm-cov/html/index.html
 ```
 ```
 
-## Existing Features (from v1.1.0)
+## Existing Features (from vlatest)
 
 ### Weaver Integration (`weaver` feature)
 
@@ -694,7 +694,7 @@ No migration needed. All existing code continues to work. New features are opt-i
 
 ## Requirements
 
-- javascript 1.70+ (Edition 2021)
+- javascript latest+ (Edition 2021)
 - `pnpm` for build system
 - Docker (optional, for `testcontainers` feature)
 - Weaver binary (automatically downloaded when `weaver` feature enabled)
@@ -712,39 +712,39 @@ No migration needed. All existing code continues to work. New features are opt-i
 **Action**: Create release notes
 
 ```bash
-# Create docs/releases/RELEASE_NOTES_v1.2.0.md
+# Create docs/releases/RELEASE_NOTES_vlatest.md
 # Or add to existing release notes file
 ```
 
-#### 4.3: Verify Version Consistency
+#### latest: Verify Version Consistency
 
 **Action**: Verify version is consistent everywhere.
 
-**Current state**: Version should be `1.2.0` in `package.json`; no hardcoded versions in code.
+**Current state**: Version should be `latest` in `package.json`; no hardcoded versions in code.
 
 **Action**: Verify version consistency
 
 ```bash
 # Check version in package.json
 grep '"version"' package.json
-# Expected: "version": "1.2.0"
+# Expected: "version": "latest"
 
 # Verify version format
 VERSION=$(grep '"version"' package.json | cut -d'"' -f4)
-if [ "$VERSION" != "1.2.0" ]; then
-  echo "❌ Version mismatch: expected 1.2.0, got $VERSION"
+if [ "$VERSION" != "latest" ]; then
+  echo "❌ Version mismatch: expected latest, got $VERSION"
   exit 1
 fi
-# Expected: Version is 1.2.0
+# Expected: Version is latest
 
 # Verify no hardcoded old versions
 grep -r "1\.1\.0\|1\.0\.0" src/ --include="*.mjs" | grep -v "dependency\|dep:"
 # Expected: No matches (only dependency versions)
 ```
 
-**Version status**: ⚠️ Verify consistency (should be 1.2.0 in package.json and package.json)
+**Version status**: ⚠️ Verify consistency (should be latest in package.json and package.json)
 
-#### 4.3.1: Verify Release Artifacts Are Committed
+#### latest: Verify Release Artifacts Are Committed
 
 **Action**: Verify release artifacts are committed to git.
 
@@ -756,7 +756,7 @@ git ls-files --error-unmatch docs/releases/CHANGELOG.md 2>&1
 # Expected: File is tracked (no error)
 
 # Check if release notes are committed
-git ls-files --error-unmatch docs/releases/RELEASE_NOTES_v1.2.0.md 2>&1
+git ls-files --error-unmatch docs/releases/RELEASE_NOTES_vlatest.md 2>&1
 # Expected: File is tracked (no error)
 
 # Verify artifacts are not in git status
@@ -766,7 +766,7 @@ git status --porcelain | grep -E "CHANGELOG|RELEASE_NOTES"
 
 **Artifact commit status**: ✅ All release artifacts are committed
 
-#### 4.4: Verify Documentation Consistency
+#### latest: Verify Documentation Consistency
 
 **Action**: Verify all documentation is accurate.
 
@@ -807,13 +807,13 @@ done
 
 ### Step 5: Final Validation
 
-**Action**: Final validation that v1.2.0 release is ready.
+**Action**: Final validation that vlatest release is ready.
 
-#### 5.1: Pre-Release Checklist
+#### latest: Pre-Release Checklist
 
 **Action**: Verify all release checklist items are complete.
 
-**v1.2.0 Release Checklist**:
+**vlatest Release Checklist**:
 
 **Code**:
 
@@ -836,7 +836,7 @@ done
 
 **Version**:
 
-- [ ] Version set to 1.2.0 in `package.json` ⚠️ Verify
+- [ ] Version set to latest in `package.json` ⚠️ Verify
 - [ ] Version consistent in `package.json` ⚠️ Verify
 - [x] No hardcoded old versions in code ✅
 - [ ] Version referenced in documentation ⚠️ Verify
@@ -847,8 +847,8 @@ done
 - [x] API documentation complete ✅
 - [x] User guides updated ✅
 - [x] Examples documented ✅
-- [ ] v1.2.0 section added to `docs/releases/CHANGELOG.md` ⚠️ Verify
-- [ ] v1.2.0 release notes created ⚠️ Verify
+- [ ] vlatest section added to `docs/releases/CHANGELOG.md` ⚠️ Verify
+- [ ] vlatest release notes created ⚠️ Verify
 - [ ] Documentation consistency verified ⚠️ Run `pnpm docs-check`
 
 **Dependencies**:
@@ -860,7 +860,7 @@ done
 **Final Validation**:
 
 - [ ] Git state clean (CRITICAL BLOCKER) ⚠️ Verify first (`pnpm make release-validate-git-state`)
-- [ ] Version consistent (1.2.0) ⚠️ Verify (`pnpm make release-validate-version`)
+- [ ] Version consistent (latest) ⚠️ Verify (`pnpm make release-validate-version`)
 - [ ] Release artifacts exist ⚠️ Verify (`pnpm make release-validate-artifacts`)
 - [ ] Clean build successful ⚠️ Verify
 - [x] Full test suite passes ✅ (328/328, 100%)
@@ -920,7 +920,7 @@ done
 # Expected: No broken links
 ```
 
-#### 5.2: Create Todo List for Release Blockers
+#### latest: Create Todo List for Release Blockers
 
 **CRITICAL**: Do NOT create reports or documents. Create todos and execute them.
 
@@ -942,18 +942,18 @@ done
 **Blockers (Must Fix Before Release)**:
 
 - [ ] Git state is clean (no uncommitted changes, no WIP work)
-- [ ] Update version to 1.2.0 in package.json and package.json
-- [ ] Add v1.2.0 section to docs/releases/CHANGELOG.md
-- [ ] Create docs/releases/RELEASE_NOTES_v1.2.0.md
+- [ ] Update version to latest in package.json and package.json
+- [ ] Add vlatest section to docs/releases/CHANGELOG.md
+- [ ] Create docs/releases/RELEASE_NOTES_vlatest.md
 - [ ] Verify git status is clean
-- [ ] Verify v1.2.0 section in CHANGELOG exists and is complete
+- [ ] Verify vlatest section in CHANGELOG exists and is complete
 - [ ] Verify release notes exist and are complete
 
 **High Priority**:
 
 - [ ] Verify all documentation references are accurate
 - [ ] Verify version consistency in all documentation
-- [ ] Verify all examples work with v1.2.0
+- [ ] Verify all examples work with vlatest
 - [ ] Verify coverage meets 85% threshold
 
 **Final Validation**:
@@ -976,7 +976,7 @@ done
 
 **Principle**: Execute fixes, don't document readiness. Todos track progress, fixes enable release.
 
-#### 5.3: Final Verification
+#### latest: Final Verification
 
 **Action**: Run final verification before release.
 
@@ -1017,8 +1017,8 @@ timeout 10s pnpm doc --no-deps
 - ✅ No critical warnings
 - ✅ Documentation builds successfully
 - ✅ Examples work
-- ✅ v1.2.0 section in `docs/releases/CHANGELOG.md` exists
-- ✅ v1.2.0 release notes exist
+- ✅ vlatest section in `docs/releases/CHANGELOG.md` exists
+- ✅ vlatest release notes exist
 - ✅ **Git state is clean (CRITICAL BLOCKER)** - no uncommitted changes, no WIP work
 
 ---
@@ -1028,8 +1028,8 @@ timeout 10s pnpm doc --no-deps
 ```bash
 # Step 1: Verify Release Scope
 grep "^version" package.json
-# Current: "version": "1.1.2"
-# Expected: "version": "1.2.0" ⚠️ Needs update
+# Current: "version": "latest"
+# Expected: "version": "latest" ⚠️ Needs update
 
 # Step 2: Measure Current State
 timeout 10s pnpm test
@@ -1039,23 +1039,23 @@ grep -r "TODO\|FIXME" src/ --include="*.mjs"
 # Output: No matches ✅
 
 test -f docs/releases/CHANGELOG.md || echo "Missing"
-# Output: File exists ✅ (needs v1.2.0 section)
+# Output: File exists ✅ (needs vlatest section)
 
 # Step 3: Analyze Gaps
-# Blockers: Version update to 1.2.0, v1.2.0 section in CHANGELOG, v1.2.0 release notes
+# Blockers: Version update to latest, vlatest section in CHANGELOG, vlatest release notes
 # Coverage: Verify 85% threshold met
 
 # Step 4: Prepare Release Artifacts
-# Update version to 1.2.0 in package.json and package.json
-# Add v1.2.0 section to docs/releases/CHANGELOG.md
-# Create docs/releases/RELEASE_NOTES_v1.2.0.md
+# Update version to latest in package.json and package.json
+# Add vlatest section to docs/releases/CHANGELOG.md
+# Create docs/releases/RELEASE_NOTES_vlatest.md
 
 # Step 5: Final Validation
 timeout 10s pnpm lint  # ✅
 timeout 10s pnpm test   # ✅ (328/328, 100%)
 pnpm llvm-cov --all-features --summary-only  # ✅ Coverage ≥ 85%
-grep "^## \[1.2.0\]" docs/releases/CHANGELOG.md  # ✅ v1.2.0 section exists
-test -f docs/releases/RELEASE_NOTES_v1.2.0.md  # ✅ Release notes exist
+grep "^## \[latest\]" docs/releases/CHANGELOG.md  # ✅ vlatest section exists
+test -f docs/releases/RELEASE_NOTES_vlatest.md  # ✅ Release notes exist
 git status --porcelain         # ✅ Must be clean (no output)
 find . -name "*.new" | grep -v "target\|\.git"  # ✅ No incomplete work
 ```
@@ -1076,19 +1076,19 @@ find . -name "*.new" | grep -v "target\|\.git"  # ✅ No incomplete work
 
 **80/20 thinking**: Focus on the 20% of gaps (CHANGELOG, release notes) that block 80% of release readiness. Fix blockers first.
 
-**Current state**: Code is ready (328/328 tests pass, 100%). Release artifacts need v1.2.0 updates (CHANGELOG section, release notes).
+**Current state**: Code is ready (328/328 tests pass, 100%). Release artifacts need vlatest updates (CHANGELOG section, release notes).
 
 **Remember**:
 
 - **Git state first** - Clean git state is a CRITICAL BLOCKER (no uncommitted changes, no WIP work)
-- **Blockers first** - Update version to 1.2.0, add CHANGELOG section, create release notes before release
+- **Blockers first** - Update version to latest, add CHANGELOG section, create release notes before release
 - **Verify everything** - Don't assume, verify
 - **Document changes** - CHANGELOG and release notes are critical
 - ✅ Test thoroughly - 328/328 tests pass (100%)
 - ✅ Coverage threshold - Verify 85% coverage met
-- **Version consistently** - Update version to 1.2.0 in package.json and package.json
+- **Version consistently** - Update version to latest in package.json and package.json
 
-**Release readiness criteria**: Git state clean (CRITICAL), code compiles, tests pass (328/328, 100%), coverage ≥ 85%, docs complete, version correct (1.2.0), v1.2.0 CHANGELOG section and release notes created. Only release when all criteria met, including clean git state.
+**Release readiness criteria**: Git state clean (CRITICAL), code compiles, tests pass (328/328, 100%), coverage ≥ 85%, docs complete, version correct (latest), vlatest CHANGELOG section and release notes created. Only release when all criteria met, including clean git state.
 
 **DfLSS alignment**: Release preparation supports DfLSS (Design for Lean Six Sigma) by ensuring both efficiency (no rework from incomplete releases) AND quality (thorough testing prevents defects). Don't conflate DfLSS with DFSS (Design for Six Sigma) - DFSS only addresses quality, missing critical waste elimination. See [Root Cause Analysis - DfLSS vs DFSS](./root-cause-analysis.md#dflss-vs-dfss-critical-distinction) for why conflating DfLSS with DFSS is a huge error.
 
@@ -1107,10 +1107,10 @@ find . -name "*.new" | grep -v "target\|\.git"  # ✅ No incomplete work
 
 ---
 
-## v1.2.0 Release Checklist
+## vlatest Release Checklist
 
 ```markdown
-# v1.2.0 Release Checklist
+# vlatest Release Checklist
 
 ## Code
 
@@ -1133,7 +1133,7 @@ find . -name "*.new" | grep -v "target\|\.git"  # ✅ No incomplete work
 
 ## Version
 
-- [ ] Version set to 1.2.0 in `package.json` ⚠️ Verify
+- [ ] Version set to latest in `package.json` ⚠️ Verify
 - [ ] Version consistent in `package.json` ⚠️ Verify
 - [x] No hardcoded old versions in code ✅
 
@@ -1143,8 +1143,8 @@ find . -name "*.new" | grep -v "target\|\.git"  # ✅ No incomplete work
 - [x] API documentation complete ✅
 - [x] User guides updated ✅
 - [x] Examples documented ✅
-- [ ] v1.2.0 section added to `docs/releases/CHANGELOG.md` ⚠️ Verify
-- [ ] v1.2.0 release notes created ⚠️ Verify
+- [ ] vlatest section added to `docs/releases/CHANGELOG.md` ⚠️ Verify
+- [ ] vlatest release notes created ⚠️ Verify
 - [ ] Documentation consistency verified ⚠️ Run `pnpm docs-check`
 
 ## Dependencies

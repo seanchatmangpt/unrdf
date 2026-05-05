@@ -87,7 +87,7 @@ async function validatePolicyPacks() {
       name: 'test-compliance',
       description: 'Test compliance policy pack',
       author: 'test-user',
-      version: '1.0.0',
+      version: 'latest',
     });
 
     console.log(
@@ -96,7 +96,7 @@ async function validatePolicyPacks() {
 
     // Test compatibility check
     const compatibility = {
-      version: '1.0.0',
+      version: 'latest',
       environment: 'development',
       features: ['sparql', 'shacl'],
     };
@@ -373,7 +373,7 @@ async function validateIntegratedFeatures() {
       meta: {
         name: 'integration-test-hook',
         description: 'Test hook for integration validation',
-        version: '1.0.0',
+        version: 'latest',
       },
       when: {
         kind: 'sparql-ask',

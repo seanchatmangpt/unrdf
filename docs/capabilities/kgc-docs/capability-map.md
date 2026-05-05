@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/kgc-docs
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -28,7 +28,7 @@ KGC Markdown parser and dynamic documentation generator with proof anchoring
 
 ### Dependencies
 
-- `zod`: ^4.1.13
+- `zod`: ^latest
 
 ### Exports
 

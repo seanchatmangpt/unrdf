@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-kafka"
 type: "tutorial"
 packageName: "@unrdf/yawl-kafka"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "70655d34a0b174ffba5d06f61730124bc198632c56184d0c1c3dad2e0cddfb22"

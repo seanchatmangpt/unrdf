@@ -708,10 +708,10 @@ export default defineNuxtConfig({
 ```json
 {
   "dependencies": {
-    "@nuxt/ui": "^4.0.0",
-    "@iconify-json/lucide": "^1.2.68",
-    "@vueuse/nuxt": "^13.9.0",
-    "date-fns": "^4.1.0"
+    "@nuxt/ui": "^latest",
+    "@iconify-json/lucide": "^latest",
+    "@vueuse/nuxt": "^latest",
+    "date-fns": "^latest"
   }
 }
 ```
@@ -1101,7 +1101,7 @@ export const useKnowledgeHooks = () => {
 ### 16.1 Dependencies
 
 **Required**:
-- Nuxt 4.1.2+ (for SSR and Nitro tasks)
+- Nuxt latest+ (for SSR and Nitro tasks)
 - @nuxt/ui 4.0+ (dashboard components)
 - Zod 3.22+ (validation)
 - Vue 3.4+ (composition API)

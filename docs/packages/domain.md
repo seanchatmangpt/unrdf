@@ -2,7 +2,7 @@
 
 > Domain models and types for UNRDF
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

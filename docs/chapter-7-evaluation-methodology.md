@@ -44,7 +44,7 @@ We state five evaluation objectives with precise success criteria:
 
 ## 7.3 Experimental Setup
 
-### 7.3.1 Testbed 1: Synthetic Disney-like Enterprise Graph
+### latest Testbed 1: Synthetic Disney-like Enterprise Graph
 
 We construct a synthetic knowledge graph modeled on Disney's enterprise structure, based on public information about business units (Studios, Parks, Licensing, Streaming) and assets (characters, films, merchandise).
 
@@ -79,7 +79,7 @@ We construct a synthetic knowledge graph modeled on Disney's enterprise structur
 
 **Data Availability:** Synthetic generation script at `/testdata/synthetic-disney-gen.mjs`; reproducible with fixed random seed.
 
-### 7.3.2 Testbed 2: Real Disney Data (Anonymized Subset)
+### latest Testbed 2: Real Disney Data (Anonymized Subset)
 
 Under NDA with Disney IT, we obtained a 5M triple subset of production data (2023 snapshot).
 
@@ -100,7 +100,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 
 **Limitations:** Subset may not capture full production complexity; legal constraints limit public disclosure of detailed metrics.
 
-### 7.3.3 Hardware and Software Environment
+### latest Hardware and Software Environment
 
 **Hardware Configuration:**
 - **Primary node:** 6-core Intel Xeon E5-2690 @ 3.0 GHz, 32 GB RAM, 1TB SSD
@@ -109,7 +109,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 - **Storage:** XFS filesystem; SSD for RDF indexes
 
 **Software Stack:**
-- **RDF Store:** Oxigraph 0.3.19 (Rust-based, embedded)
+- **RDF Store:** Oxigraph latest (Rust-based, embedded)
 - **Determinism Layer:** Custom Rust module enforcing DETERMINISTIC=1 mode (canonical triple ordering, stable hashing)
 - **Receipt Generation:** SHA-256 hashing, RFC 3161-style timestamp receipts
 - **Query Engine:** Oxigraph SPARQL 1.1 with custom grammar bounds enforced via AST rewriting
@@ -125,7 +125,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 
 ## 7.4 Experiment E1: Determinism
 
-### 7.4.1 Methodology
+### latest Methodology
 
 **Objective:** Verify that repeated executions of μ(O ⊕ Δ) produce byte-identical artifacts.
 
@@ -149,7 +149,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 - Same hardware (no OS updates, no concurrent workload)
 - Same software versions (pinned dependencies)
 
-### 7.4.2 Expected Results
+### latest Expected Results
 
 **Table 7.1: Determinism Verification Results**
 
@@ -167,7 +167,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 
 **Conclusion:** Hypothesis E1 validated. Deterministic artifact generation is achievable with negligible performance penalty. This enables receipt-based verification where external auditors can recompute μ(O ⊕ Δ) and compare hashes.
 
-### 7.4.3 Threats to Validity
+### latest Threats to Validity
 
 **Internal Validity:**
 - Hardware effects: CPU frequency scaling could introduce timing variance → mitigated by pinning CPU governor to `performance` mode
@@ -179,7 +179,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 
 ## 7.5 Experiment E2: Drift Resistance
 
-### 7.5.1 Methodology
+### latest Methodology
 
 **Objective:** Verify that Q-constraints reject all canonicity-violating deltas.
 
@@ -201,7 +201,7 @@ Under NDA with Disney IT, we obtained a 5M triple subset of production data (202
 
 **Success Criterion:** FN = 0 (zero false negatives); FP ≤ 1% (minimal false positives)
 
-### 7.5.2 Expected Results
+### latest Expected Results
 
 **Table 7.2: Drift Resistance Evaluation**
 
@@ -253,7 +253,7 @@ INSERT { char:CharacterShape sh:property [ sh:path char:primaryName ; sh:minCoun
 
 **Conclusion:** Hypothesis E2 validated. Forbidden operations are effectively non-representable—the system rejects them before they can corrupt the canonical state. Denial receipts provide auditability for rejected changes.
 
-### 7.5.3 Threats to Validity
+### latest Threats to Validity
 
 **Construct Validity:**
 - Our 5 violation categories may not exhaust all possible attacks → mitigation: categories derived from formal Q definition (Chapter 3); additions would require extending Q
@@ -264,7 +264,7 @@ INSERT { char:CharacterShape sh:property [ sh:path char:primaryName ; sh:minCoun
 
 ## 7.6 Experiment E3: Partition Integrity Under Scale
 
-### 7.6.1 Methodology
+### latest Methodology
 
 **Objective:** Verify that gluing n overlays produces consistent merged state O_glued even as n → 10³.
 
@@ -287,7 +287,7 @@ INSERT { char:CharacterShape sh:property [ sh:path char:primaryName ; sh:minCoun
 - Repeat with varying n (number of overlays): 2, 5, 10, 20, 50, 100, 500
 - Measure glueing time as function of n (expect: O(n log n) due to merge-sort-like precedence resolution)
 
-### 7.6.2 Expected Results
+### latest Expected Results
 
 **Table 7.3: Partition Integrity Verification**
 
@@ -331,7 +331,7 @@ char:MickeyMouse char:voiceActor "Chris Diamantopoulos" .
 
 **Conclusion:** Hypothesis E3 validated. Partition model scales to enterprise workloads (500K deltas, 16 overlays) without consistency failures. Precedence lattice Λ provides deterministic conflict resolution.
 
-### 7.6.3 Threats to Validity
+### latest Threats to Validity
 
 **Statistical Conclusion Validity:**
 - Only 30-day test window; annual seasonality not captured → mitigation: synthetic data includes seasonal patterns (holiday spikes)
@@ -342,7 +342,7 @@ char:MickeyMouse char:voiceActor "Chris Diamantopoulos" .
 
 ## 7.7 Experiment E4: Tamper Detection
 
-### 7.7.1 Methodology
+### latest Methodology
 
 **Objective:** Verify that external auditors can detect tampering with deltas, artifacts, or receipts.
 
@@ -369,7 +369,7 @@ char:MickeyMouse char:voiceActor "Chris Diamantopoulos" .
    - False positive rate: % of clean cases flagged as tampered
    - Detection latency: time to verify 1000 receipts
 
-### 7.7.2 Expected Results
+### latest Expected Results
 
 **Table 7.5: Tamper Detection Results**
 
@@ -426,7 +426,7 @@ Mismatch detected → forged receipt
 
 **Conclusion:** Hypothesis E4 validated. Receipt-based verification provides strong tamper-evidence. External auditors (without access to production systems) can detect tampering with cryptographic certainty (collision resistance of SHA-256).
 
-### 7.7.3 Threats to Validity
+### latest Threats to Validity
 
 **Construct Validity:**
 - Our 10 tampering types may not exhaust adversarial strategies → mitigation: types derived from threat model (Chapter 4); additional attacks would require breaking SHA-256 collision resistance
@@ -439,7 +439,7 @@ Mismatch detected → forged receipt
 
 ## 7.8 Experiment E5: Bounded Evaluation
 
-### 7.8.1 Methodology
+### latest Methodology
 
 **Objective:** Verify that grammar-constrained SPARQL prevents pathological query costs while preserving expressiveness.
 
@@ -458,7 +458,7 @@ Mismatch detected → forged receipt
    - Query coverage: % of real queries expressible in grammar G
    - Pathological query rate: % of queries exceeding 10s latency
 
-### 7.8.2 Expected Results
+### latest Expected Results
 
 **Table 7.6: Bounded Evaluation – Latency Distribution**
 
@@ -523,7 +523,7 @@ WHERE {
 
 **Conclusion:** Hypothesis E5 validated. Grammar bounds reduce tail latency by >90% while preserving expressiveness for 97.7% of queries. Pathological queries are rejected at parse time, preventing DOS attacks.
 
-### 7.8.3 Threats to Validity
+### latest Threats to Validity
 
 **Construct Validity:**
 - Grammar G may be overly restrictive for specialized analytics → mitigation: separate batch query tier (relaxed bounds, dedicated resources)
@@ -534,7 +534,7 @@ WHERE {
 
 ## 7.9 Scalability Analysis
 
-### 7.9.1 Methodology
+### latest Methodology
 
 We systematically vary three input dimensions:
 1. **Canonical state size |O|:** 1M, 10M, 50M, 100M triples
@@ -547,7 +547,7 @@ For each configuration, measure:
 - **Receipt generation time:** duration of hash computation + signing
 - **End-to-end latency:** total time from Δ submission to receipt issuance
 
-### 7.9.2 Results
+### latest Results
 
 **Table 7.8: Scalability – Varying |O| (Canonical State Size)**
 
@@ -583,7 +583,7 @@ For each configuration, measure:
 
 **Complexity:** O(n log n) — precedence resolution requires sorting overlays by priority
 
-### 7.9.3 Analysis
+### latest Analysis
 
 **Scaling Laws:**
 - **|O| scaling:** Log-linear growth due to index-based lookup (B-tree indexes in Oxigraph)
@@ -637,7 +637,7 @@ Under controlled deployment on Disney's anonymized subset (Testbed 2), we measur
 
 We classify threats using Wohlin's taxonomy (internal, external, construct, conclusion validity).
 
-### 7.11.1 Internal Validity
+### latest Internal Validity
 
 **Instrumentation:**
 - Custom measurement harness may introduce bias → mitigation: validated against independent profiler (`perf`, OTEL spans)
@@ -650,7 +650,7 @@ We classify threats using Wohlin's taxonomy (internal, external, construct, conc
 **History:**
 - Concurrent system load (OS background tasks) may affect latency → mitigation: dedicated test node with minimal services; CPU affinity pinning
 
-### 7.11.2 External Validity
+### latest External Validity
 
 **Population:**
 - Disney-specific ontology may not generalize to other domains → mitigation: canonical constraints (SHACL, RDFS) are domain-agnostic; only shape definitions are Disney-specific
@@ -660,7 +660,7 @@ We classify threats using Wohlin's taxonomy (internal, external, construct, conc
 - Synthetic data may not match production complexity → mitigation: Testbed 2 uses real data; key metrics (constraint density, query complexity) match production
 - Controlled tampering (Experiment E4) may not reflect real adversaries → mitigation: tampering types derived from threat model; real attackers must break SHA-256
 
-### 7.11.3 Construct Validity
+### latest Construct Validity
 
 **Mono-operation Bias:**
 - Our 5 experiments (E1–E5) may not exhaust system properties → mitigation: experiments derived from core thesis claims (determinism, drift resistance, partition integrity, tamper detection, bounded evaluation); additional properties would require extending thesis
@@ -668,7 +668,7 @@ We classify threats using Wohlin's taxonomy (internal, external, construct, conc
 **Hypothesis Guessing:**
 - Developers may tune system to perform well on known benchmarks → mitigation: real query workload (Testbed 2) not disclosed to developers until evaluation
 
-### 7.11.4 Conclusion Validity
+### latest Conclusion Validity
 
 **Fishing:**
 - Multiple hypothesis tests increase false positive risk → mitigation: Bonferroni correction applied; α = 0.01 threshold for significance

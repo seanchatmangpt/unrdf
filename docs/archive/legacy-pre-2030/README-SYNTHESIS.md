@@ -20,7 +20,7 @@ This synthesis was created by analyzing **64 packages**, **162 test files**, and
 
 **Key Questions Answered**:
 - ✅ Which capabilities are production-ready? → [INTEGRATION-ROADMAP-80-20.md](./INTEGRATION-ROADMAP-80-20.md)
-- ✅ What's the test coverage? → 99.8% (443/444 tests pass)
+- ✅ What's the test coverage? → latest% (443/444 tests pass)
 - ✅ What are the risks? → [Gaps & Blockers](./INTEGRATION-ROADMAP-80-20.md#gaps--blockers-summary)
 
 ---
@@ -91,7 +91,7 @@ This synthesis was created by analyzing **64 packages**, **162 test files**, and
 
 ### What's Proven?
 - ✅ **64 packages** in monorepo
-- ✅ **162 test files** (99.8% pass rate: 443/444)
+- ✅ **162 test files** (latest% pass rate: 443/444)
 - ✅ **47 capability atoms** (96% proven)
 - ✅ **15 compositions** (87% proven)
 - ✅ **8 Pareto-optimal** compositions (C1, C2, C5, C6, C7, C11, C14, C15)
@@ -181,7 +181,7 @@ This synthesis was created by analyzing **64 packages**, **162 test files**, and
 ```bash
 cd /home/user/unrdf/packages/oxigraph
 timeout 5s node test/basic.test.mjs
-# Expected: All tests pass (~1.5s)
+# Expected: All tests pass (~latests)
 ```
 
 **Learn**: Create RDF stores, SPARQL queries, parse/serialize
@@ -229,13 +229,13 @@ timeout 5s node test/hooks.test.mjs
 
 | Capability | Latency | Throughput | Memory |
 |------------|---------|------------|--------|
-| RDF CRUD | 1.2ms | 850K triples/sec | 2MB baseline |
+| RDF CRUD | latestms | 850K triples/sec | 2MB baseline |
 | Time-Travel | 45ms (freeze) | 22 freezes/sec | 10MB |
-| Receipts | 2.8ms | 360 receipts/sec | 1.2KB/receipt |
-| Validation | 0.08ms | 320K validations/sec | 180KB |
-| JIT Hooks | 0.02ms | 480K quads/sec | Zero allocations |
-| Workflows | 52.8ms | 19 transitions/sec | 12MB |
-| Distributed | 225ms | 1.2K events/sec | 25MB |
+| Receipts | latestms | 360 receipts/sec | latestKB/receipt |
+| Validation | latestms | 320K validations/sec | 180KB |
+| JIT Hooks | latestms | 480K quads/sec | Zero allocations |
+| Workflows | latestms | 19 transitions/sec | 12MB |
+| Distributed | 225ms | latestK events/sec | 25MB |
 
 **Source**: [COMPOSITION-LATTICE.md](./COMPOSITION-LATTICE.md) (performance sections)
 

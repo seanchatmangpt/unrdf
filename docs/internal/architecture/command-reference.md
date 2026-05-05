@@ -757,7 +757,7 @@ Sidecar Status
 ──────────────
 Status:    Running
 Uptime:    24h 15m
-Version:   2.0.0
+Version:   latest
 Protocol:  gRPC
 Endpoint:  localhost:50051
 Health:    Healthy

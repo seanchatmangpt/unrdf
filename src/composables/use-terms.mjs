@@ -5,7 +5,7 @@
  * default datatypes, and type conversion. It wraps N3 DataFactory with additional
  * functionality while maintaining compatibility with the core RDF data model.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

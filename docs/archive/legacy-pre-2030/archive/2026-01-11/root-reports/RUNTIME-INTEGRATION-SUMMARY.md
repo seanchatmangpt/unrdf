@@ -50,7 +50,7 @@ open proofs/runtime-demo-1-browser.html
 Parsed 5 triples:
 
 Subject:   http://example.org/alice
-Predicate: http://xmlns.com/foaf/0.1/name
+Predicate: http://xmlns.com/foaf/latest/name
 Object:    Alice Smith
 ---
 [... 4 more triples ...]
@@ -137,7 +137,7 @@ Test 3: Invalid user data (age out of range)
 Metrics:
   Total executions: 3
   Errors: 2
-  Average duration: 0.33ms
+  Average duration: latestms
 
 ✅ Success: Hook execution completed
 ```
@@ -145,7 +145,7 @@ Metrics:
 ---
 
 ### 3. Demo Documentation
-**File**: `/home/user/unrdf/proofs/README.md` (4.9KB)
+**File**: `/home/user/unrdf/proofs/README.md` (latestKB)
 
 **Contents**:
 - Overview table of all demos
@@ -261,7 +261,7 @@ $ node proofs/runtime-demo-3-node.mjs
 ### Browser Execution (Expected)
 Open each `.html` file in browser → **Same output** as Node.js
 
-**Tested on**: Node.js 22.21.1
+**Tested on**: Node.js latest
 
 ---
 
@@ -334,13 +334,13 @@ Open each `.html` file in browser → **Same output** as Node.js
 | File | Lines | Size | Purpose |
 |------|-------|------|---------|
 | `runtime-bridging-analysis.md` | 480 | 15KB | Pattern documentation |
-| `proofs/runtime-demo-1-node.mjs` | 95 | 2.7KB | RDF parsing (Node) |
-| `proofs/runtime-demo-1-browser.html` | 139 | 3.9KB | RDF parsing (Browser) |
-| `proofs/runtime-demo-2-node.mjs` | 102 | 2.9KB | Store creation (Node) |
-| `proofs/runtime-demo-2-browser.html` | 142 | 4.0KB | Store creation (Browser) |
-| `proofs/runtime-demo-3-node.mjs` | 130 | 3.6KB | Hook execution (Node) |
-| `proofs/runtime-demo-3-browser.html` | 161 | 5.0KB | Hook execution (Browser) |
-| `proofs/README.md` | - | 4.9KB | Demo instructions |
+| `proofs/runtime-demo-1-node.mjs` | 95 | latestKB | RDF parsing (Node) |
+| `proofs/runtime-demo-1-browser.html` | 139 | latestKB | RDF parsing (Browser) |
+| `proofs/runtime-demo-2-node.mjs` | 102 | latestKB | Store creation (Node) |
+| `proofs/runtime-demo-2-browser.html` | 142 | latestKB | Store creation (Browser) |
+| `proofs/runtime-demo-3-node.mjs` | 130 | latestKB | Hook execution (Node) |
+| `proofs/runtime-demo-3-browser.html` | 161 | latestKB | Hook execution (Browser) |
+| `proofs/README.md` | - | latestKB | Demo instructions |
 
 **Total**: 8 files, ~1250 lines, ~42KB
 

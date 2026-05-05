@@ -977,9 +977,9 @@ describe('Monaco Knowledge Hook Integration', () => {
 ```json
 {
   "dependencies": {
-    "nuxt-monaco-editor": "^1.2.9",
-    "monaco-editor": "^0.52.2",
-    "@guolao/vue-monaco-editor": "^1.5.4"
+    "nuxt-monaco-editor": "^latest",
+    "monaco-editor": "^latest",
+    "@guolao/vue-monaco-editor": "^latest"
   }
 }
 ```

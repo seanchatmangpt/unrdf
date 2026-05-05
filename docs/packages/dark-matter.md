@@ -2,7 +2,7 @@
 
 > UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

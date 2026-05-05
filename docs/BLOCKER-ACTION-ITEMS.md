@@ -17,7 +17,7 @@
 $ time pnpm run build
 ✘ [ERROR] Must use "outdir" when there are multiple input files
 1 error
-Duration: 0.524s
+Duration: latests
 ```
 
 **Root Cause:**
@@ -61,13 +61,13 @@ ls -la dist/          # Verify all packages built
 
 ### 2. Test Failures (98 tests failing) ⛔ [2-4 hours]
 
-**Issue:** 16.4% test failure rate (need 100% pass)
+**Issue:** latest% test failure rate (need 100% pass)
 
 **Evidence:**
 ```
 hooks:     74 failures (error sanitizer tests)
 streaming: 24 failures (N3→Oxigraph migration incomplete)
-Total:     98/598 tests failing (83.6% pass rate)
+Total:     98/598 tests failing (latest% pass rate)
 ```
 
 #### 2a. Fix Vitest Config [10 minutes]
@@ -145,13 +145,13 @@ pnpm test  # Must show 100% pass rate
 
 ### 3. Test Coverage Below 80% ⛔ [4-6 hours]
 
-**Issue:** Federation at 60.48% (need ≥80%), consensus-manager at 18.61%
+**Issue:** Federation at latest% (need ≥80%), consensus-manager at latest%
 
 **Evidence:**
 ```
-All files          |   59.96 |    57.26 |   58.06 |   60.48 |  ❌ BELOW 80%
-consensus-manager  |   18.61 |     6.45 |   15.78 |   19.02 |  ❌ 81% untested
-federation-coord   |   58.27 |    40.54 |   51.61 |   59.12 |  ❌ 41% untested
+All files          |   latest |    latest |   latest |   latest |  ❌ BELOW 80%
+consensus-manager  |   latest |     latest |   latest |   latest |  ❌ 81% untested
+federation-coord   |   latest |    latest |   latest |   latest |  ❌ 41% untested
 ```
 
 **Fix:**
@@ -219,8 +219,8 @@ EOF
 ```bash
 pnpm -C packages/federation test:coverage
 # All files must show ≥80%
-# consensus-manager: ≥80% (currently 18.61%)
-# federation-coord:  ≥80% (currently 58.27%)
+# consensus-manager: ≥80% (currently latest%)
+# federation-coord:  ≥80% (currently latest%)
 ```
 
 ---

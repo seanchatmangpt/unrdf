@@ -8,10 +8,10 @@
 
 ## Executive Summary
 
-**Model Context Protocol (MCP)** is an open protocol that standardizes how AI applications (like Claude Code) integrate with external data sources and tools. Released by Anthropic and donated to the Linux Foundation's Agentic AI Foundation in December 2025, MCP uses JSON-RPC 2.0 for client-server communication.
+**Model Context Protocol (MCP)** is an open protocol that standardizes how AI applications (like Claude Code) integrate with external data sources and tools. Released by Anthropic and donated to the Linux Foundation's Agentic AI Foundation in December 2025, MCP uses JSON-RPC latest for client-server communication.
 
 **Current Specification**: 2025-11-25 (November 2025 release)
-**Claude Code Version Tested**: 2.0.59
+**Claude Code Version Tested**: latest
 
 ---
 
@@ -33,7 +33,7 @@ MCP establishes communication between three core components:
 │  └──────────────┬─────────────────────────────────────┘    │
 │                 │                                            │
 └─────────────────┼────────────────────────────────────────────┘
-                  │ JSON-RPC 2.0 over stdio/HTTP/SSE
+                  │ JSON-RPC latest over stdio/HTTP/SSE
                   │
         ┌─────────┴──────────┬──────────────┬──────────────┐
         │                    │              │              │
@@ -52,9 +52,9 @@ MCP establishes communication between three core components:
 
 ---
 
-## 2. Protocol Foundation: JSON-RPC 2.0
+## 2. Protocol Foundation: JSON-RPC latest
 
-MCP uses **JSON-RPC 2.0** for all communication with **stateful connections** and **capability negotiation**.
+MCP uses **JSON-RPC latest** for all communication with **stateful connections** and **capability negotiation**.
 
 ### Message Types
 
@@ -67,7 +67,7 @@ MCP uses **JSON-RPC 2.0** for all communication with **stateful connections** an
 ### Request Example
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 1,
   "method": "tools/list",
   "params": {}
@@ -77,7 +77,7 @@ MCP uses **JSON-RPC 2.0** for all communication with **stateful connections** an
 ### Response Example (Success)
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 1,
   "result": {
     "tools": [
@@ -100,7 +100,7 @@ MCP uses **JSON-RPC 2.0** for all communication with **stateful connections** an
 ### Error Response Example
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 2,
   "error": {
     "code": -32602,
@@ -159,21 +159,21 @@ MCP servers can provide up to **6 capabilities**:
 
 ### Primary Capabilities
 
-#### 4.1 Tools (Executable Functions)
+#### latest Tools (Executable Functions)
 - Functions that AI can call to perform actions
 - Defined with JSON Schema for input validation
 - Return structured results or errors
 
 **Example**: `get_weather`, `search_database`, `send_email`
 
-#### 4.2 Resources (Contextual Data)
+#### latest Resources (Contextual Data)
 - Data that AI can read for context
 - Identified by URIs
 - Support subscriptions for updates
 
 **Example**: `file:///config.json`, `db://users`, `api://inventory`
 
-#### 4.3 Prompts (Templated Workflows)
+#### latest Prompts (Templated Workflows)
 - Pre-defined message templates
 - Reusable conversation starters
 - Parameterized for flexibility
@@ -182,17 +182,17 @@ MCP servers can provide up to **6 capabilities**:
 
 ### Secondary Capabilities
 
-#### 4.4 Sampling (Server-Initiated AI Requests)
+#### latest Sampling (Server-Initiated AI Requests)
 - Server can request LLM inference
 - Enables agentic behaviors
 - **Security**: Requires user approval
 
-#### 4.5 Roots (Filesystem/URI Boundaries)
+#### latest Roots (Filesystem/URI Boundaries)
 - Server can query client about accessible paths
 - Used for filesystem-based servers
 - Defines trust boundaries
 
-#### 4.6 Elicitation (Request User Input)
+#### latest Elicitation (Request User Input)
 - Server can request additional user information
 - Interactive workflows
 - **Security**: User consent required
@@ -208,7 +208,7 @@ During initialization, client and server exchange capabilities:
 ```
 1. Client → Server: Initialize Request
    {
-     "jsonrpc": "2.0",
+     "jsonrpc": "latest",
      "id": 1,
      "method": "initialize",
      "params": {
@@ -219,14 +219,14 @@ During initialization, client and server exchange capabilities:
        },
        "clientInfo": {
          "name": "claude-code",
-         "version": "2.0.59"
+         "version": "latest"
        }
      }
    }
 
 2. Server → Client: Initialize Response
    {
-     "jsonrpc": "2.0",
+     "jsonrpc": "latest",
      "id": 1,
      "result": {
        "protocolVersion": "2025-11-25",
@@ -236,14 +236,14 @@ During initialization, client and server exchange capabilities:
        },
        "serverInfo": {
          "name": "my-mcp-server",
-         "version": "1.0.0"
+         "version": "latest"
        }
      }
    }
 
 3. Client → Server: Initialized Notification
    {
-     "jsonrpc": "2.0",
+     "jsonrpc": "latest",
      "method": "notifications/initialized"
    }
 ```
@@ -256,22 +256,22 @@ During initialization, client and server exchange capabilities:
 
 MCP emphasizes **four security principles**:
 
-### 6.1 User Consent
+### latest User Consent
 - **Principle**: Explicit authorization required for data access and operations
 - **Implementation**: Permission prompts in Claude Code
 - **Example**: "Allow 'memory-server' to store persistent data?"
 
-### 6.2 Data Privacy
+### latest Data Privacy
 - **Principle**: Host consent required before exposing user data to servers
 - **Implementation**: Data minimization, explicit grants
 - **Example**: File paths not exposed unless explicitly allowed
 
-### 6.3 Tool Safety
+### latest Tool Safety
 - **Principle**: Cautious treatment of arbitrary code execution
 - **Implementation**: User approval for dangerous operations
 - **Example**: "Allow 'github-server' to create pull requests?"
 
-### 6.4 LLM Sampling Controls
+### latest LLM Sampling Controls
 - **Principle**: User approval required with visibility into prompts
 - **Implementation**: Server sampling requires consent + result filtering
 - **Example**: Server cannot silently request LLM inference
@@ -319,7 +319,7 @@ Claude Code stores MCP configuration at **three scope levels**:
 
 ## 8. Claude Code MCP CLI Commands
 
-**Verified with Claude Code 2.0.59**:
+**Verified with Claude Code latest**:
 
 ```bash
 # List all configured MCP servers
@@ -477,7 +477,7 @@ Response to user
 ## 13. Key Findings
 
 ### ✅ What Works
-- JSON-RPC 2.0 protocol is well-specified and stable
+- JSON-RPC latest protocol is well-specified and stable
 - Multiple transports provide flexibility
 - Capability negotiation enables backward compatibility
 - Security model emphasizes user consent

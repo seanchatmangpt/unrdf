@@ -1,9 +1,9 @@
-# Feature Status - @unrdf/hooks v26.5.4
+# Feature Status - @unrdf/hooks [VERSION]
 
 > Comprehensive status documentation for all condition evaluator kinds, effects, and security features
 
 **Last Updated**: 2026-04-04  
-**Version**: 26.5.4  
+**Version**: [VERSION]  
 **Status**: Research Prototype - Architecturally Complete
 
 ---
@@ -15,7 +15,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Boolean query evaluation via SPARQL ASK
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (comprehensive-hook-types.test.mjs, v6-features.test.mjs)
 - **API**:
   ```javascript
@@ -35,7 +35,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Result-set evaluation via SPARQL SELECT
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (comprehensive-hook-types.test.mjs, v6-features.test.mjs)
 - **API**:
   ```javascript
@@ -57,7 +57,7 @@
 **Sub-feature: SHACL Block** - ✅ Production Ready
 
 - **What**: SHACL shape validation with three enforcement modes
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (comprehensive-hook-types.test.mjs, integration.test.mjs)
 - **API**:
   ```javascript
@@ -75,10 +75,10 @@
 
 #### 3a. SHACL Annotate (Soft-Fail Mode)
 
-**Status**: 🔧 Fixed in v26.5.4
+**Status**: 🔧 Fixed in [VERSION]
 
 - **What**: Allow write with annotation - adds SHACL violation report as RDF triples
-- **Was Broken**: RDF serialization of violation report (v26.5.4 and earlier)
+- **Was Broken**: RDF serialization of violation report ([VERSION] and earlier)
 - **What Was Fixed**:
   - Proper RDF triple generation from SHACL report
   - Correct namespace handling for SHACL vocabulary
@@ -104,7 +104,7 @@
 
 #### 3b. SHACL Repair (Auto-Fix Mode)
 
-**Status**: 🔧 Partial Implementation (v26.5.4)
+**Status**: 🔧 Partial Implementation ([VERSION])
 
 - **What**: Execute SPARQL CONSTRUCT query to repair violations, re-validate
 - **Stability**: Functional but not fully integrated
@@ -134,10 +134,10 @@
 
 ### 4. Delta Condition
 
-**Status**: 🔧 Fixed in v26.5.4
+**Status**: 🔧 Fixed in [VERSION]
 
 - **What**: Evaluate change magnitude (increase/decrease/modify/any)
-- **Was Broken**: Decrease condition never triggered (v26.5.4 and earlier)
+- **Was Broken**: Decrease condition never triggered ([VERSION] and earlier)
 - **What Was Fixed**:
   - Proper calculation of net change (additions - removals)
   - Correct threshold comparison for decrease (< -threshold)
@@ -174,7 +174,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Aggregate comparison (sum/avg/min/max/count) against numeric threshold
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (comprehensive-hook-types.test.mjs, integration.test.mjs)
 - **API**:
   ```javascript
@@ -200,7 +200,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Cardinality checking - count all quads or query results
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (comprehensive-hook-types.test.mjs, v6-features.test.mjs)
 - **API**:
   ```javascript
@@ -224,10 +224,10 @@
 
 ### 7. Window Condition
 
-**Status**: 🔧 Improved in v26.5.4
+**Status**: 🔧 Improved in [VERSION]
 
 - **What**: Sliding window aggregation over time-series or result sets
-- **Previous Status**: Stub implementation (v26.5.4 and earlier)
+- **Previous Status**: Stub implementation ([VERSION] and earlier)
 - **What Was Improved**:
   - Proper aggregate function support (sum/avg/min/max/count)
   - Window result parsing and validation
@@ -261,7 +261,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: N3 rule inference via EYE reasoner (Notation3 rules)
-- **Stability**: Fully stable since v26.5.4
+- **Stability**: Fully stable since [VERSION]
 - **Test Coverage**: 100% (v6-features.test.mjs - N3 condition tests)
 - **Dependencies**: eyereasoner ^10 (in package.json)
 - **API**:
@@ -282,7 +282,7 @@
   3. Parse entailed data into temporary store
   4. Execute ASK query over entailed graph
 - **Known Limitations**: None for production use
-- **Migration Path**: Stable since v26.5.4
+- **Migration Path**: Stable since [VERSION]
 
 ---
 
@@ -320,7 +320,7 @@
   - **Option 1**: Use N3 forward-chaining instead (recommended for v26)
   - **Option 2**: Enable knowledge-engine package if needed
   - **Option 3**: Restore from git history (commit availability varies)
-- **Deprecation Timeline**: Deprecated in v26.5.4, planned removal in v27.0.0
+- **Deprecation Timeline**: Deprecated in [VERSION], planned removal in [VERSION]
 
 ---
 
@@ -331,7 +331,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: RDF-native transformation via SPARQL CONSTRUCT
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (v6-features.test.mjs)
 - **API**:
   ```javascript
@@ -357,7 +357,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: SPARQL CONSTRUCT via file reference with integrity check
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (integration.test.mjs)
 - **API**:
   ```javascript
@@ -376,10 +376,10 @@
 
 ### BLAKE3 Cryptographic Hashing
 
-**Status**: ✅ Fixed in v26.5.4
+**Status**: ✅ Fixed in [VERSION]
 
 - **What**: BLAKE3 deterministic receipt chaining for audit trails
-- **Was Broken**: Content hash not properly computed (v26.5.4)
+- **Was Broken**: Content hash not properly computed ([VERSION])
 - **What Was Fixed**:
   - Correct Blake3 digest generation from receipt content
   - Proper linkage between receipts (previousReceiptHash)
@@ -409,7 +409,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Effect execution in isolated sandbox (no DOM, limited filesystem)
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (security/sandbox-restrictions.test.mjs)
 - **Restrictions Enforced**:
   - No DOM API access
@@ -429,7 +429,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Removes sensitive data from error messages before logging/surfacing
-- **Stability**: Stable since v26.5.4
+- **Stability**: Stable since [VERSION]
 - **Test Coverage**: 100% (security/error-sanitizer.test.mjs — 33 tests)
 - **Sanitization Patterns**:
   - Database connection strings (postgres://, mysql://, mongodb://)
@@ -469,7 +469,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: Zod runtime validation for hook definitions
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (error-handling.test.mjs)
 - **Validates**:
   - Hook structure and required fields
@@ -486,7 +486,7 @@
 **Status**: ✅ Production Ready
 
 - **What**: SHA256 integrity verification for external file references
-- **Stability**: Fully stable since v26.0.0
+- **Stability**: Fully stable since v2[VERSION]
 - **Test Coverage**: 100% (file-resolver.test.mjs)
 - **API**:
   ```javascript
@@ -529,7 +529,7 @@
 
 ## Migration Guide
 
-### For v26.5.4 → v26.5.4 Upgrades
+### For [VERSION] → [VERSION] Upgrades
 
 **Breaking Changes**: None
 
@@ -559,11 +559,11 @@ node -e "import('./packages/hooks/examples/validate-hooks.mjs').then(m => consol
 
 ## Deprecations & Planned Removals
 
-### Datalog (v26.5.4)
+### Datalog ([VERSION])
 
 - **Status**: Functionality moved to knowledge-engine
 - **Current Behavior**: Evaluates but logs deprecation warning
-- **Removal Planned**: v27.0.0
+- **Removal Planned**: [VERSION]
 - **Migration**:
 
   ```javascript
@@ -651,10 +651,10 @@ node -e "import('./packages/hooks/examples/validate-hooks.mjs').then(m => consol
 
 | Version | Date       | Changes                                                                             |
 | ------- | ---------- | ----------------------------------------------------------------------------------- |
-| 26.5.4  | 2026-04-04 | Fixed SHACL annotate, Delta decrease, BLAKE3 hashing. Improved Window condition.    |
-| 26.5.4  | 2026-04-02 | Removed knowledge-engine package (47% codebase, 0% usage).                          |
-| 26.5.4  | 2026-03-15 | Added N3 forward-chaining support via eyereasoner.                                  |
-| 26.0.0  | 2026-01-01 | Initial production release: 9 condition kinds, SHACL enforcement, receipt chaining. |
+| [VERSION]  | 2026-04-04 | Fixed SHACL annotate, Delta decrease, BLAKE3 hashing. Improved Window condition.    |
+| [VERSION]  | 2026-04-02 | Removed knowledge-engine package (47% codebase, 0% usage).                          |
+| [VERSION]  | 2026-03-15 | Added N3 forward-chaining support via eyereasoner.                                  |
+| 2[VERSION]  | 2026-01-01 | Initial production release: 9 condition kinds, SHACL enforcement, receipt chaining. |
 
 ---
 

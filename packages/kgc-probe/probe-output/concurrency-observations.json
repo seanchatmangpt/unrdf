@@ -5,12 +5,12 @@
     "outputs": {
       "available": true,
       "module": "worker_threads",
-      "nodeVersion": "v22.21.1"
+      "nodeVersion": "[VERSION]"
     },
     "timestamp": 1766824576989,
     "guardDecision": "allowed",
     "metadata": {
-      "minVersion": "v10.5.0"
+      "minVersion": "[VERSION]"
     }
   },
   {
@@ -156,8 +156,8 @@
     "timestamp": 1766824576998,
     "guardDecision": "allowed",
     "metadata": {
-      "nodeVersion": "v22.21.1",
-      "note": "AsyncLocalStorage available since Node.js v13.10.0"
+      "nodeVersion": "[VERSION]",
+      "note": "AsyncLocalStorage available since Node.js [VERSION]"
     }
   },
   {

@@ -6,7 +6,7 @@
  * Migrated from legacy CLI with full v2 integration.
  *
  * @module cli/commands/hook/eval
- * @version 2.4.0
+ * @version [VERSION]
  * @license MIT
  */
 

@@ -1,9 +1,9 @@
 # Synchronous SPARQL API Reference
 
-**Version**: 5.0.0+
+**Version**: latest+
 **Package**: `@unrdf/core`
 **Stability**: Stable
-**Since**: v5.0.0
+**Since**: latest
 
 ---
 
@@ -103,7 +103,7 @@ console.log(exists); // true
 - Warm queries: <1ms
 - No Promise overhead
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -140,7 +140,7 @@ bindings.forEach(row => {
 });
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -175,7 +175,7 @@ if (hasData) {
 }
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -211,7 +211,7 @@ const derived = executeConstructSync(store, `
 console.log(`Constructed ${derived.size} quads`);
 ```
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -252,7 +252,7 @@ for (const store of stores) {
 - Cached execution: <1ms
 - **Use for queries executed >10 times**
 
-**Version**: 5.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -420,6 +420,6 @@ console.timeEnd('sync');
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-25
 **Maintainer**: UNRDF Team

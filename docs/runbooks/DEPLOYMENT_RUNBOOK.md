@@ -95,7 +95,7 @@ curl -f https://alertmanager.example.com/-/healthy
 # Post to Slack
 curl -X POST $SLACK_WEBHOOK_URL \
   -H 'Content-Type: application/json' \
-  -d '{"text":"🚀 Production deployment starting for UNRDF v6.0.0-rc.1"}'
+  -d '{"text":"🚀 Production deployment starting for UNRDF latest-rc.1"}'
 ```
 
 ### Step 2: Enable Maintenance Mode (Optional)
@@ -124,7 +124,7 @@ tar -czf /var/backups/unrdf/manual-backup-$timestamp.tar.gz \
 
 ```bash
 # Set required environment variables
-export IMAGE_TAG="ghcr.io/unrdf/unrdf:6.0.0-rc.1"
+export IMAGE_TAG="ghcr.io/unrdf/unrdf:latest-rc.1"
 export DEPLOY_HOST="production.example.com"
 export HEALTH_CHECK_URL="https://production.example.com/health"
 
@@ -216,14 +216,14 @@ rm /var/www/maintenance.html
 # Notify team of success
 curl -X POST $SLACK_WEBHOOK_URL \
   -H 'Content-Type: application/json' \
-  -d '{"text":"✅ Production deployment completed successfully for UNRDF v6.0.0-rc.1"}'
+  -d '{"text":"✅ Production deployment completed successfully for UNRDF latest-rc.1"}'
 
 # Create deployment annotation in Grafana
 curl -X POST https://grafana.example.com/api/annotations \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_API_KEY" \
   -d '{
-    "text": "Production deployment: v6.0.0-rc.1",
+    "text": "Production deployment: latest-rc.1",
     "tags": ["deployment", "production"],
     "time": '$(date +%s000)'
   }'

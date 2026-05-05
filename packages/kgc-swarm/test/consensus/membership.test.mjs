@@ -399,7 +399,7 @@ describe('Membership Management', () => {
     it('should create a new membership manager', () => {
       const manager = createMembershipManager({
         nodeId: 'test-node',
-        host: '127.0.0.1',
+        host: '[VERSION].1',
         port: 8000,
       });
 

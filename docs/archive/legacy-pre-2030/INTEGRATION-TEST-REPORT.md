@@ -2,9 +2,9 @@
 
 **Date**: December 25, 2025
 **Test Package**: `@unrdf/integration-tests`
-**Version**: 5.0.0
-**Test Duration**: 7.48s
-**Test Framework**: Vitest 4.0.15
+**Version**: latest
+**Test Duration**: latests
+**Test Framework**: Vitest latest
 
 ---
 
@@ -107,7 +107,7 @@ Store operations: <1ms per operation
 
 **Clock Jump Warnings** (Non-blocking):
 ```
-[KGC Time] Clock jump detected: 1781.00s
+[KGC Time] Clock jump detected: latests
 ```
 This is expected in test environments with time manipulation.
 
@@ -124,34 +124,34 @@ This is expected in test environments with time manipulation.
 
 **Performance Results** (MEASURED, NOT ASSUMED):
 ```
-RDF Write: 10,000 quads in 405.58ms
-Throughput: 24,656.13 quads/second ✅ (Target: >1000 q/s)
+RDF Write: 10,000 quads in latestms
+Throughput: 24,latest quads/second ✅ (Target: >1000 q/s)
 
-RDF Read: 1,000 reads in 30.62ms
-Throughput: 32,653.16 reads/second ✅ (Target: >500 r/s)
+RDF Read: 1,000 reads in latestms
+Throughput: 32,latest reads/second ✅ (Target: >500 r/s)
 ```
 
 **Success Criteria**:
-- ✅ Write throughput: 24.7x above target (24,656 vs 1,000 q/s)
-- ✅ Read throughput: 65.3x above target (32,653 vs 500 r/s)
+- ✅ Write throughput: latestx above target (24,656 vs 1,000 q/s)
+- ✅ Read throughput: latestx above target (32,653 vs 500 r/s)
 - ✅ Data integrity: 100% (10,000 quads written, 10,000 verified)
-- ✅ Execution time: <15s (actual: 0.46s)
+- ✅ Execution time: <15s (actual: latests)
 
 #### ✅ PASSING TEST 2: Memory Efficiency Under Load (4,204ms)
 
 **Memory Results** (MEASURED, NOT ASSUMED):
 ```
-Baseline Memory: 77.10 MB
-Loaded Memory: 85.41 MB
-Memory Increase: 8.31 MB (for 50,000 quads)
-Bytes per Quad: 174.26 bytes ✅ (Target: <10KB/quad)
+Baseline Memory: latest MB
+Loaded Memory: latest MB
+Memory Increase: latest MB (for 50,000 quads)
+Bytes per Quad: latest bytes ✅ (Target: <10KB/quad)
 ```
 
 **Success Criteria**:
-- ✅ Total memory: 8.31 MB (well under 500 MB limit)
+- ✅ Total memory: latest MB (well under 500 MB limit)
 - ✅ Per-quad overhead: 174 bytes (57x better than 10KB target)
 - ✅ Data verification: 100% (50,000 quads stored correctly)
-- ✅ Execution time: <45s (actual: 4.2s)
+- ✅ Execution time: <45s (actual: latests)
 
 #### ⚠️ FAILING TESTS (API Mismatches)
 - **handles high-volume workflow execution** - Workflow API mismatch
@@ -166,11 +166,11 @@ Bytes per Quad: 174.26 bytes ✅ (Target: <10KB/quad)
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| **RDF Write Throughput** | >1,000/s | **24,656/s** | ✅ **24.7x faster** |
-| **RDF Read Throughput** | >500/s | **32,653/s** | ✅ **65.3x faster** |
+| **RDF Write Throughput** | >1,000/s | **24,656/s** | ✅ **latestx faster** |
+| **RDF Read Throughput** | >500/s | **32,653/s** | ✅ **latestx faster** |
 | **Memory per Quad** | <10 KB | **174 bytes** | ✅ **57x better** |
-| **Total Memory (50K quads)** | <500 MB | **8.31 MB** | ✅ **60x better** |
-| **Test Execution Time** | <30s | **7.48s** | ✅ **4x faster** |
+| **Total Memory (50K quads)** | <500 MB | **latest MB** | ✅ **60x better** |
+| **Test Execution Time** | <30s | **latests** | ✅ **4x faster** |
 
 ### Performance Summary
 
@@ -181,9 +181,9 @@ Bytes per Quad: 174.26 bytes ✅ (Target: <10KB/quad)
 - **Verdict**: Outstanding performance, production-ready
 
 **Test Infrastructure**:
-- Total duration: 7.48s (14 tests)
+- Total duration: latests (14 tests)
 - Average test: 534ms
-- Longest test: 4.2s (memory load test)
+- Longest test: latests (memory load test)
 - **Verdict**: Fast test execution, well within limits
 
 ---
@@ -333,9 +333,9 @@ const hook = defineHook({
 
 | Requirement | Target | Actual | Status |
 |-------------|--------|--------|--------|
-| **Test Completion Time** | <30s | **7.48s** | ✅ **4x faster** |
-| **RDF Write Throughput** | >1000/s | **24,656/s** | ✅ **24.7x faster** |
-| **RDF Read Throughput** | >500/s | **32,653/s** | ✅ **65.3x faster** |
+| **Test Completion Time** | <30s | **latests** | ✅ **4x faster** |
+| **RDF Write Throughput** | >1000/s | **24,656/s** | ✅ **latestx faster** |
+| **RDF Read Throughput** | >500/s | **32,653/s** | ✅ **latestx faster** |
 | **Memory Efficiency** | <10KB/quad | **174 bytes/quad** | ✅ **57x better** |
 | **Tests Execute** | Yes | **Yes** | ✅ **All tests execute** |
 
@@ -359,11 +359,11 @@ const hook = defineHook({
 Test Files: 5 total
 Tests: 14 total (3 passing, 11 failing)
 Start: 07:05:23
-Duration: 7.48s
-  - Transform: 3.18s
+Duration: latests
+  - Transform: latests
   - Setup: 0ms
-  - Import: 7.61s
-  - Tests: 4.61s
+  - Import: latests
+  - Tests: latests
   - Environment: 1ms
 ```
 
@@ -382,7 +382,7 @@ Duration: 7.48s
 - Workflow API: expects object spec
 - Hook API: expects `name` field and enum triggers
 
-**Resolution Time**: ~1.5 hours to update all tests
+**Resolution Time**: ~latest hours to update all tests
 
 ---
 
@@ -461,10 +461,10 @@ Duration: 7.48s
 ### Evidence of Success 📊
 
 **Performance (MEASURED)**:
-- ✅ RDF Write: 24,656 quads/second (24.7x target)
-- ✅ RDF Read: 32,653 reads/second (65.3x target)
+- ✅ RDF Write: 24,656 quads/second (latestx target)
+- ✅ RDF Read: 32,653 reads/second (latestx target)
 - ✅ Memory: 174 bytes/quad (57x better than target)
-- ✅ Test Speed: 7.48s total (4x faster than 30s limit)
+- ✅ Test Speed: latests total (4x faster than 30s limit)
 
 **Infrastructure (PROVEN)**:
 - ✅ All packages import correctly
@@ -474,7 +474,7 @@ Duration: 7.48s
 
 ### What Remains (Minimal)
 
-- ⚠️ API alignment (1.5 hours of updates)
+- ⚠️ API alignment (latest hours of updates)
 - ⚠️ Coverage reporting (enable flag)
 - ⚠️ SPARQL federation (minor API fix)
 
@@ -494,10 +494,10 @@ Duration: 7.48s
 ```bash
 $ ls -lah **/*.test.mjs
 -rw------- 1 root root  11K error-recovery/multi-package-errors.test.mjs
--rw------- 1 root root 8.9K federation/federated-query.test.mjs
+-rw------- 1 root root latestK federation/federated-query.test.mjs
 -rw------- 1 root root  15K performance/load-testing.test.mjs
--rw------- 1 root root 9.9K streaming/stream-validation.test.mjs
--rw------- 1 root root 9.9K workflows/complete-workflow.test.mjs
+-rw------- 1 root root latestK streaming/stream-validation.test.mjs
+-rw------- 1 root root latestK workflows/complete-workflow.test.mjs
 ```
 
 **Total**: 55KB of integration test code
@@ -510,24 +510,24 @@ $ ls -lah **/*.test.mjs
 
 **Write Performance**:
 - Operations: 10,000 quads
-- Duration: 405.58ms
-- Throughput: 24,656.13 quads/second
+- Duration: latestms
+- Throughput: 24,latest quads/second
 - Memory: 174 bytes/quad
 
 **Read Performance**:
 - Operations: 1,000 reads
-- Duration: 30.62ms
-- Throughput: 32,653.16 reads/second
+- Duration: latestms
+- Throughput: 32,latest reads/second
 
 **Memory Performance** (50,000 quads):
-- Baseline: 77.10 MB
-- Loaded: 85.41 MB
-- Increase: 8.31 MB
+- Baseline: latest MB
+- Loaded: latest MB
+- Increase: latest MB
 - Per-quad: 174 bytes
 
 ---
 
 **Report Generated**: December 25, 2025
-**Test Suite**: @unrdf/integration-tests v5.0.0
-**Framework**: Vitest 4.0.15
+**Test Suite**: @unrdf/integration-tests vlatest
+**Framework**: Vitest latest
 **Runtime**: Node.js 18+

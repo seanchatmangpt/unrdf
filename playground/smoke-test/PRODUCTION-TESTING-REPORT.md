@@ -1,7 +1,7 @@
 # UNRDF Production Package Testing Report
 
 **Test Date:** $(date)  
-**Package Version:** unrdf@latest (3.0.1)  
+**Package Version:** unrdf@latest (latest)  
 **Test Scope:** Comprehensive testing of all exports and functionality
 
 ## Executive Summary

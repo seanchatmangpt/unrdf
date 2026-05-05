@@ -9,14 +9,14 @@
 
 ## Executive Summary
 
-The UNRDF codebase is **90% production-ready** for v2.4.0. The critical 20% of code that delivers 80% of value has been identified, analyzed, and documented. Only **4 days of focused work** are needed to reach production readiness.
+The UNRDF codebase is **90% production-ready** for latest. The critical 20% of code that delivers 80% of value has been identified, analyzed, and documented. Only **4 days of focused work** are needed to reach production readiness.
 
 ### Key Findings
 
 1. **Architecture Quality:** 8.0/10 (Production-ready)
 2. **Core 20% Status:** 95% complete
 3. **Critical Path:** 4 days to production
-4. **Estimated Total Effort:** 6-9 days for feature-complete v2.4.0
+4. **Estimated Total Effort:** 6-9 days for feature-complete latest
 
 ---
 
@@ -111,7 +111,7 @@ DefineHook (DEVELOPER API)
 
 ### TIER 3: Peripheral (Nice to Have - 1% Value)
 
-**Effort:** 4.5 days (DEFERRED to v2.5.0)
+**Effort:** 4.5 days (DEFERRED to latest)
 **Impact:** Edge cases and polish
 
 1. ⚠️ Browser compatibility (50% complete)
@@ -211,9 +211,9 @@ DefineHook (DEVELOPER API)
 
 ```json
 {
-  "n3": "^1.17.0",              // RDF store - ESSENTIAL
-  "zod": "^3.22.0",             // Validation - ESSENTIAL
-  "@comunica/query-sparql": "^3.0.0"  // SPARQL - ESSENTIAL
+  "n3": "^latest",              // RDF store - ESSENTIAL
+  "zod": "^latest",             // Validation - ESSENTIAL
+  "@comunica/query-sparql": "^latest"  // SPARQL - ESSENTIAL
 }
 ```
 
@@ -225,10 +225,10 @@ DefineHook (DEVELOPER API)
 
 ```json
 {
-  "rdf-validate-shacl": "^0.6.5",  // SHACL validation
-  "@noble/hashes": "^1.3.0",       // Cryptography
-  "eyereasoner": "^1.0.0",         // Reasoning
-  "@opentelemetry/api": "^1.7.0"   // Observability
+  "rdf-validate-shacl": "^latest",  // SHACL validation
+  "@noble/hashes": "^latest",       // Cryptography
+  "eyereasoner": "^latest",         // Reasoning
+  "@opentelemetry/api": "^latest"   // Observability
 }
 ```
 
@@ -240,13 +240,13 @@ DefineHook (DEVELOPER API)
 
 ```json
 {
-  "vm2": "^3.9.0",              // Can use native vm module
-  "rdf-canonize": "^2.0.0",     // Advanced feature
-  "jsonld": "^8.2.0"            // Nice to have
+  "vm2": "^latest",              // Can use native vm module
+  "rdf-canonize": "^latest",     // Advanced feature
+  "jsonld": "^latest"            // Nice to have
 }
 ```
 
-**Recommendation:** Consider removing or making truly optional in v2.5.0
+**Recommendation:** Consider removing or making truly optional in latest
 
 ---
 
@@ -280,32 +280,32 @@ DefineHook (DEVELOPER API)
 - **Timeline:** 0.5 days
 - **Owner:** Coder Agent
 
-### Low Risk (Acceptable for v2.4.0)
+### Low Risk (Acceptable for latest)
 
 **4. Browser Support**
 - **Current:** 50% complete
 - **Impact:** Edge case usage
-- **Decision:** Defer to v2.5.0
+- **Decision:** Defer to latest
 
 **5. Advanced Optimization**
 - **Current:** Basic optimizations in place
 - **Impact:** 1% performance gain
-- **Decision:** Defer to v2.5.0
+- **Decision:** Defer to latest
 
 ---
 
-## Deferred Items (v2.5.0+)
+## Deferred Items (latest+)
 
 These items represent the 80% of effort that delivers only 20% of value:
 
 | Item | Effort | Value | Decision |
 |------|--------|-------|----------|
-| Browser compatibility | 4 days | 4% | Defer to v2.5.0 |
-| CLI migration polish | 2 days | 3% | Defer to v2.5.0 |
-| Advanced query optimization | 3 days | 5% | Defer to v2.5.0 |
-| Policy pack UI | 5 days | 4% | Defer to v2.6.0 |
-| Multi-language support | 2 days | 2% | Defer to v2.6.0 |
-| Visual graph editor | 3 days | 2% | Defer to v3.0.0 |
+| Browser compatibility | 4 days | 4% | Defer to latest |
+| CLI migration polish | 2 days | 3% | Defer to latest |
+| Advanced query optimization | 3 days | 5% | Defer to latest |
+| Policy pack UI | 5 days | 4% | Defer to latest |
+| Multi-language support | 2 days | 2% | Defer to latest |
+| Visual graph editor | 3 days | 2% | Defer to latest |
 
 **Total Deferred:** 19 days of effort
 **Value Impact:** Only 20% of features
@@ -313,7 +313,7 @@ These items represent the 80% of effort that delivers only 20% of value:
 
 ---
 
-## Success Criteria (v2.4.0 Production Ready)
+## Success Criteria (latest Production Ready)
 
 ### Functional Requirements
 - [x] Knowledge Hook Manager fully integrated ✅
@@ -378,7 +378,7 @@ These items represent the 80% of effort that delivers only 20% of value:
 **Wednesday (Day 3):** Performance optimization
 **Thursday (Day 4):** Production hardening
 
-**Deliverable:** v2.4.0-rc.1 (Release Candidate 1)
+**Deliverable:** latest-rc.1 (Release Candidate 1)
 
 ### Week 2 Plan (Days 5-9)
 
@@ -386,7 +386,7 @@ These items represent the 80% of effort that delivers only 20% of value:
 **Monday (Day 6):** Polish and documentation
 **Tuesday (Day 7):** Community testing
 **Wednesday (Day 8):** Bug fixes
-**Thursday (Day 9):** v2.4.0 RELEASE 🚀
+**Thursday (Day 9):** latest RELEASE 🚀
 
 ---
 
@@ -401,7 +401,7 @@ These items represent the 80% of effort that delivers only 20% of value:
    - Technology stack analysis
    - Risk assessment
 
-2. **`/Users/sac/unrdf/docs/implementation-roadmap-v2.4.0.md`** ✅
+2. **`/Users/sac/unrdf/docs/implementation-roadmap-latest.md`** ✅
    - 5-phase implementation plan
    - Day-by-day task breakdown
    - Quick wins identification
@@ -452,7 +452,7 @@ These items represent the 80% of effort that delivers only 20% of value:
 
 ## Conclusion
 
-The UNRDF v2.4.0 codebase demonstrates exceptional architecture quality with a clear 20% core that delivers 80% of value. The knowledge-engine module is production-ready with only minor testing and validation gaps.
+The UNRDF latest codebase demonstrates exceptional architecture quality with a clear 20% core that delivers 80% of value. The knowledge-engine module is production-ready with only minor testing and validation gaps.
 
 ### Bottom Line
 
@@ -463,9 +463,9 @@ The UNRDF v2.4.0 codebase demonstrates exceptional architecture quality with a c
 
 ### Recommendation
 
-**PROCEED WITH v2.4.0 RELEASE**
+**PROCEED WITH latest RELEASE**
 
-The architecture is sound, the implementation is solid, and the path to production is clear. Focus on the identified 20% (OTEL validation, performance optimization, documentation) and defer the 80% of low-value items to v2.5.0.
+The architecture is sound, the implementation is solid, and the path to production is clear. Focus on the identified 20% (OTEL validation, performance optimization, documentation) and defer the 80% of low-value items to latest.
 
 ---
 

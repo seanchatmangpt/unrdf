@@ -41,7 +41,7 @@ plugin-template/
 
    const manager = new PluginManager();
    await manager.registerPlugin(manifest);
-   await manager.loadPlugin('my-plugin@1.0.0');
+   await manager.loadPlugin('my-plugin@[VERSION]');
    ```
 
 ## Best Practices

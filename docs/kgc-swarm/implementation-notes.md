@@ -1,6 +1,6 @@
 # KGC-Swarm Implementation Notes
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Audience**: System Architects, Contributors, Advanced Users
 
@@ -861,7 +861,7 @@ function myFunction(data) {
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Maintainer**: UNRDF Team
 **License**: See repository LICENSE

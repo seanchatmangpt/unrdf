@@ -2,7 +2,7 @@
 
 > Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

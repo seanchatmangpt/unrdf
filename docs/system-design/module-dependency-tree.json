@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "KGC Probe Module Dependency Tree",
   "description": "Complete dependency graph for all 44 modules in @unrdf/kgc-probe",
-  "version": "1.0.0",
+  "version": "latest",
   "generated": "2025-12-27T00:00:00.000Z",
 
   "metadata": {
@@ -15,27 +15,27 @@
 
   "external_packages": {
     "@unrdf/v6-core": {
-      "version": "6.0.0-alpha.1",
+      "version": "latest-alpha.1",
       "purpose": "Receipt factories, Merkle trees, delta proposals",
       "used_by": ["artifact.mjs", "orchestrator.mjs"]
     },
     "@unrdf/kgc-substrate": {
-      "version": "1.0.0",
+      "version": "latest",
       "purpose": "KnowledgeStore, snapshots, tamper detection",
       "used_by": ["agents/*.mjs", "storage/database.mjs"]
     },
     "@unrdf/oxigraph": {
-      "version": "5.0.1",
+      "version": "latest",
       "purpose": "RDF store, SPARQL queries, data factory",
       "used_by": ["agents/*.mjs", "storage/database.mjs"]
     },
     "@unrdf/hooks": {
-      "version": "5.0.1",
+      "version": "latest",
       "purpose": "Policy execution, quality hooks",
       "used_by": ["guards.mjs"]
     },
     "@unrdf/kgc-cli": {
-      "version": "5.0.1",
+      "version": "latest",
       "purpose": "CLI command registration",
       "used_by": ["cli/*.mjs"]
     },

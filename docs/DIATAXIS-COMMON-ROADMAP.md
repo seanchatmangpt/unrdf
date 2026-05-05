@@ -156,14 +156,14 @@ logger.info('store operation', {
 import { createNamespace } from '@unrdf/common';
 
 const ex = createNamespace('http://example.com/');
-const foaf = createNamespace('http://xmlns.com/foaf/0.1/');
+const foaf = createNamespace('http://xmlns.com/foaf/latest/');
 const rdf = createNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 
 // Use in quads
 const personQuad = {
   subject: ex('person1'),      // http://example.com/person1
   predicate: rdf('type'),       // http://www.w3.org/1999/02/22-rdf-syntax-ns#type
-  object: foaf('Person'),       // http://xmlns.com/foaf/0.1/Person
+  object: foaf('Person'),       // http://xmlns.com/foaf/latest/Person
   graph: ex('graph1')
 };
 ```
@@ -173,7 +173,7 @@ const personQuad = {
 // lib/namespaces.mjs
 export const schemas = {
   ex: createNamespace('http://example.com/'),
-  foaf: createNamespace('http://xmlns.com/foaf/0.1/'),
+  foaf: createNamespace('http://xmlns.com/foaf/latest/'),
   rdf: createNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 };
 

@@ -86,7 +86,7 @@
       "/home/user/unrdf/packages/kgc-claude/src/constants.mjs",
       "/home/user/unrdf/packages/kgc-claude/test/run-capsule.test.mjs"
     ],
-    "package_version": "5.0.0",
+    "package_version": "latest",
     "dependencies_analyzed": [
       "@unrdf/core",
       "@unrdf/oxigraph",

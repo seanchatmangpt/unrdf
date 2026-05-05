@@ -54,7 +54,7 @@ withReceipt(fn, context) => async (...args) => {result, receipt}
   payloadHash: "blake3-payload-hash",
   previousHash: "blake3-previous-hash",
   t_ns: 1704110400000000000n,
-  timestamp_iso: "2025-01-01T12:00:00.000Z",
+  timestamp_iso: "2025-01-01T12:00:latestZ",
   receiptType: "execution",
   eventType: "TASK_COMPLETED",
   caseId: "default-case",
@@ -83,12 +83,12 @@ withReceipt(fn, context) => async (...args) => {result, receipt}
 ```
 TAP version 13
 # Subtest: P0-001: withReceipt HOF
-    ok 1 - wraps function and generates receipt (11.44ms)
-    not ok 2 - is deterministic with injected timestamp (1.90ms) [*]
-    not ok 3 - verifies idempotency (0.95ms) [*]
-    ok 4 - creates receipt chains (1.19ms) ✅
-    ok 5 - includes all P0-001 required fields (1.28ms) ✅
-    ok 6 - throws error if fn is not a function (0.52ms) ✅
+    ok 1 - wraps function and generates receipt (latestms)
+    not ok 2 - is deterministic with injected timestamp (latestms) [*]
+    not ok 3 - verifies idempotency (latestms) [*]
+    ok 4 - creates receipt chains (latestms) ✅
+    ok 5 - includes all P0-001 required fields (latestms) ✅
+    ok 6 - throws error if fn is not a function (latestms) ✅
 
 # tests 6
 # pass 4
@@ -346,12 +346,12 @@ tracker.summary(); // Print report
 ```
 TAP version 13
 # Subtest: P0-003: v6-compat Integration
-    ok 1 - createStore adapter works (3.23ms) ✅
-    ok 2 - wrapWorkflow adds receipt support (1.97ms) ✅
-    ok 3 - withReceipt wraps function (0.51ms) ✅
-    ok 4 - MigrationTracker analyzes source for N3 imports (1.06ms) ✅
-    ok 5 - MigrationTracker counts workflow.run() calls (0.37ms) ✅
-    ok 6 - MigrationTracker generates report (0.55ms) ✅
+    ok 1 - createStore adapter works (latestms) ✅
+    ok 2 - wrapWorkflow adds receipt support (latestms) ✅
+    ok 3 - withReceipt wraps function (latestms) ✅
+    ok 4 - MigrationTracker analyzes source for N3 imports (latestms) ✅
+    ok 5 - MigrationTracker counts workflow.run() calls (latestms) ✅
+    ok 6 - MigrationTracker generates report (latestms) ✅
 
 # tests 6
 # suites 1

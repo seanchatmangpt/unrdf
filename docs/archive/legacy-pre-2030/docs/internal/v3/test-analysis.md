@@ -101,7 +101,7 @@ sidecar/test/
 
 ### 1. Testing Frameworks and Configuration
 
-**Primary Framework**: Vitest v1.6.1
+**Primary Framework**: Vitest latest
 - **Pool**: Threads (maxThreads: unlimited)
 - **Concurrency**: Enabled (maxConcurrency: 10)
 - **Timeout**: 30s per test, 30s per hook

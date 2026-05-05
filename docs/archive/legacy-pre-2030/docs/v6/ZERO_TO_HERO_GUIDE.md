@@ -3,7 +3,7 @@
 > Complete learning path from absolute beginner to advanced UNRDF practitioner
 >
 > **Last Updated:** 2026-04-07  
-> **UNRDF Version:** 26.4.23
+> **UNRDF Version:** latest
 
 ---
 
@@ -22,8 +22,8 @@ This guide takes you from zero knowledge of UNRDF to advanced usage across all f
 
 Before starting, ensure you have:
 
-- **Node.js** >= 18.0.0 (check with `unrdf doctor`)
-- **pnpm** >= 7.0.0 (check with `unrdf doctor`)
+- **Node.js** >= latest (check with `unrdf doctor`)
+- **pnpm** >= latest (check with `unrdf doctor`)
 - **Git** for cloning repositories
 - **Basic familiarity** with RDF/SPARQL concepts
 
@@ -832,9 +832,9 @@ After completing this guide:
 
 | Version | Date             | Changes                                                |
 | ------- | ---------------- | ------------------------------------------------------ |
-| 26.4.23  | 2026-04-07       | Added doctor command, created zero-to-hero guide       |
-| 26.4.23  | 2026-04-07       | Open-Ontologies integration, Groq LLM, OTEL deployment |
-| 26.4.23  | Earlier versions | See [CHANGELOG.md](../../CHANGELOG.md)                 |
+| latest  | 2026-04-07       | Added doctor command, created zero-to-hero guide       |
+| latest  | 2026-04-07       | Open-Ontologies integration, Groq LLM, OTEL deployment |
+| latest  | Earlier versions | See [CHANGELOG.md](../../CHANGELOG.md)                 |
 
 ---
 

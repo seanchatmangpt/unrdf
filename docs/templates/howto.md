@@ -3,7 +3,7 @@ title: "How to [Task]"
 description: "Step-by-step guide to [accomplish specific task] with UNRDF"
 category: "how-to"
 audience: "intermediate"
-version: "6.0.0-alpha.1"
+version: "latest-alpha.1"
 last_updated: "YYYY-MM-DD"
 estimated_time: "X minutes"
 proof:
@@ -39,7 +39,7 @@ related:
 
 ## Prerequisites
 
-- UNRDF 6.0.0-alpha.1 or later
+- UNRDF latest-alpha.1 or later
 - [Other requirement]
 - [Other requirement]
 

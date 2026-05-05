@@ -224,7 +224,7 @@ import { observationsToRdf, generateReport, deriveClaims } from '@unrdf/kgc-prob
 
 // 1. Collect observations (from probes)
 const observations = [
-  { method: 'probeRuntime', outputs: { node: 'v18.19.0' } },
+  { method: 'probeRuntime', outputs: { node: '[VERSION]' } },
   { method: 'probeWasm', outputs: { available: true } },
   // ...
 ];

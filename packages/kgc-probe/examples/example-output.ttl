@@ -61,7 +61,7 @@
     <https://unrdf.org/kgc/probe#domain> "concurrency";
     a <https://unrdf.org/kgc/probe#Observation>.
 <urn:kgc:obs:d7ff22bccbf71dcc> <https://unrdf.org/kgc/probe#guardDecision> "allowed";
-    <https://unrdf.org/kgc/probe#outputs> "{\"available\":true,\"module\":\"worker_threads\",\"nodeVersion\":\"v22.21.1\"}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON>;
+    <https://unrdf.org/kgc/probe#outputs> "{\"available\":true,\"module\":\"worker_threads\",\"nodeVersion\":\"[VERSION]\"}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON>;
     <https://unrdf.org/kgc/probe#hash> "d7ff22bccbf71dcc";
     <https://unrdf.org/kgc/probe#timestamp> "2025-12-27T08:36:16.989Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
     <https://unrdf.org/kgc/probe#method> "concurrency.worker_threads_available";
@@ -90,7 +90,7 @@
     <https://unrdf.org/kgc/probe#domain> "network";
     a <https://unrdf.org/kgc/probe#Observation>.
 <urn:kgc:obs:084cd3a94a4f46f3> <https://unrdf.org/kgc/probe#guardDecision> "allowed";
-    <https://unrdf.org/kgc/probe#outputs> "{\"nodeVersion\":\"v22.21.1\",\"platform\":\"linux\",\"arch\":\"x64\"}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON>;
+    <https://unrdf.org/kgc/probe#outputs> "{\"nodeVersion\":\"[VERSION]\",\"platform\":\"linux\",\"arch\":\"x64\"}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON>;
     <https://unrdf.org/kgc/probe#hash> "084cd3a94a4f46f3";
     <https://unrdf.org/kgc/probe#timestamp> "2025-12-27T08:36:16.988Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
     <https://unrdf.org/kgc/probe#method> "runtime.node_version";

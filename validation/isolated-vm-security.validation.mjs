@@ -6,7 +6,7 @@
  * OTEL span-based validation for isolated-vm sandbox security.
  * Tests sandboxed hook execution and security properties.
  *
- * v3.1.0 Feature: Replace vm2 with isolated-vm for better security
+ * [VERSION] Feature: Replace vm2 with isolated-vm for better security
  */
 
 import {

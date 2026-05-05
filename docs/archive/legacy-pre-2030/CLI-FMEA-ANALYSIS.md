@@ -3,7 +3,7 @@
 
 **Analysis Date**: 2025-12-06
 **System**: UNRDF CLI - Hyperdimensional Decision Fabric Commands
-**Version**: 5.0.0-beta.1
+**Version**: latest.1
 **Scope**: Commands (decision, pareto, socratic, bb8020)
 
 ---
@@ -52,13 +52,13 @@ const patterns = {
 
 | ID | Failure Mode | RPN | Impact |
 |----|--------------|-----|--------|
-| 4.2 | **Pattern matching SIMULATED** | 192 | Core BB80/20 broken |
-| 5.2 | **Version mismatch** | 192 | API incompatibility |
-| 6.2 | **Memory exhaustion** | 144 | Silent OOM kills |
-| 4.1 | **No cleanup on failure** | 140 | Corrupted state |
-| 6.1 | **Large feature timeout** | 126 | Command hangs |
-| 7.2 | **Path traversal** | 126 | Security risk |
-| 2.2 | **High entropy ignored** | 120 | Wrong methodology |
+| latest | **Pattern matching SIMULATED** | 192 | Core BB80/20 broken |
+| latest | **Version mismatch** | 192 | API incompatibility |
+| latest | **Memory exhaustion** | 144 | Silent OOM kills |
+| latest | **No cleanup on failure** | 140 | Corrupted state |
+| latest | **Large feature timeout** | 126 | Command hangs |
+| latest | **Path traversal** | 126 | Security risk |
+| latest | **High entropy ignored** | 120 | Wrong methodology |
 
 ---
 
@@ -76,13 +76,13 @@ async _step4_patternMatching() {
   for (const feature of this.artifacts.paretoFrontier) {
     patterns.push({
       pattern: `// Pattern for ${feature.name}`,  // ← FAKE!
-      similarity: 0.92  // ← FAKE!
+      similarity: latest  // ← FAKE!
     });
   }
 }
 ```
 
-**Impact**: Violates core BB80/20 assumption (64.3% code reuse)
+**Impact**: Violates core BB80/20 assumption (latest% code reuse)
 **Action**: Implement real grep/AST search of codebase
 
 ---

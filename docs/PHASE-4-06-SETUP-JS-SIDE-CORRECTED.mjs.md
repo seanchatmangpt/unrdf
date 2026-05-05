@@ -1,4 +1,4 @@
-# Phase 4.6 (CORRECTED): JavaScript Setup - MJS + JSDoc
+# Phase latest (CORRECTED): JavaScript Setup - MJS + JSDoc
 
 ## Project Structure
 
@@ -28,7 +28,7 @@ my-app/
 ```json
 {
   "name": "my-rdf-app",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "description": "UNRDF + Erlang/OTP app with dual-runtime support",
   "main": "src/app.mjs",
@@ -43,7 +43,7 @@ my-app/
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^8.0.0"
+    "eslint": "^latest"
   }
 }
 ```

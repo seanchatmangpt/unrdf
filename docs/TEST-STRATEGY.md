@@ -236,9 +236,9 @@ To verify fast tests complete in <30 seconds:
 time npm run test:fast
 
 # Should output something like:
-# real    0m25.123s
-# user    0m45.632s
-# sys     0m8.921s
+# real    0mlatests
+# user    0mlatests
+# sys     0mlatests
 ```
 
 ## Migration Path
@@ -286,7 +286,7 @@ SKIP_PRE_PUSH=1 git push
 ```
 
 **Q: Why don't React hooks tests run in fast suite?**
-A: React hooks are being moved to separate unrdf-react package (v4.2.0+), which will have its own test suite.
+A: React hooks are being moved to separate unrdf-react package (vlatest+), which will have its own test suite.
 
 **Q: Can fast tests run in parallel?**
 A: No, configured for single-fork serial execution for deterministic results and consistent timing.
@@ -315,7 +315,7 @@ npm run test -- test/federation/
 
 ## Version History
 
-- **v4.2.0**: Initial 80/20 test consolidation
+- **vlatest**: Initial 80/20 test consolidation
   - Created vitest.config.fast.mjs
   - Added test:fast and test:full scripts
   - Removed tests from pre-push hook

@@ -1,7 +1,7 @@
-# v5.0.0-beta.3 Requirements - Final Plan
+# vlatest.3 Requirements - Final Plan
 
 **Date**: 2025-12-06
-**Previous Version**: 5.0.0-beta.2
+**Previous Version**: latest.2
 **Status**: PLANNING
 **Branch**: TBD (new branch for beta.3 work)
 
@@ -165,15 +165,15 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 4. **Update package versions** (30 min)
    ```bash
    # Update all package.json files
-   # version: "5.0.0-beta.2" → "5.0.0-beta.3"
+   # version: "latest.2" → "latest.3"
    ```
 
 5. **Commit and tag release** (15 min)
    ```bash
    git add -A
-   git commit -m "feat: v5.0.0-beta.3 - production-ready test infrastructure"
+   git commit -m "feat: vlatest.3 - production-ready test infrastructure"
    git push
-   git tag v5.0.0-beta.3
+   git tag vlatest.3
    git push --tags
    ```
 
@@ -293,7 +293,7 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 - Regenerate lockfile: 1 hour (includes testing)
 - Documentation: 3 hours (thorough)
 - Release: 1 hour (includes verification)
-- **Total**: 9 hours (1.5 days)
+- **Total**: 9 hours (latest days)
 
 ### Pessimistic (3 days)
 - Fix pnpm -r test: 6 hours (complex debugging)
@@ -316,8 +316,8 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 - [ ] pnpm-lock.yaml regenerated cleanly
 - [ ] Security audit: 0 critical/high vulnerabilities
 - [ ] All documentation updated (CHANGELOG, TESTING, release notes)
-- [ ] Version bumped to 5.0.0-beta.3
-- [ ] Git tag created: v5.0.0-beta.3
+- [ ] Version bumped to latest.3
+- [ ] Git tag created: vlatest.3
 
 ### Optional
 - [ ] Performance benchmarks run (or claims removed)
@@ -375,11 +375,11 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 
 **Not required for beta.3**:
 
-1. **Performance Benchmarking** → defer to v5.0.0-rc.1
-2. **Root Test Suite** → defer to v5.0.0-rc.1
-3. **Knowledge Hooks OTEL** → defer to v5.1.0 (or remove)
+1. **Performance Benchmarking** → defer to vlatest.1
+2. **Root Test Suite** → defer to vlatest.1
+3. **Knowledge Hooks OTEL** → defer to vlatest (or remove)
 4. **Browser Package** → removed, recoverable from git if needed
-5. **Additional SPARQL tests** → defer to v5.0.0-rc.1
+5. **Additional SPARQL tests** → defer to vlatest.1
 
 **Rationale**: Beta.3 focuses on production readiness (test infrastructure, clean dependencies, documentation). Feature additions and optimizations can wait for RC or stable release.
 
@@ -401,7 +401,7 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 
 ## Post-Beta.3 Path
 
-**If beta.3 succeeds** → Release Candidate (v5.0.0-rc.1)
+**If beta.3 succeeds** → Release Candidate (vlatest.1)
 - Focus on performance verification
 - Run full test suite including root tests
 - Comprehensive benchmarking
@@ -414,7 +414,7 @@ Beta.2 achieved significant quality improvements (276 tests, 83/100 OTEL, 0 crit
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Author**: Claude (Evidence-Based Planning)
 **Status**: 📋 READY TO EXECUTE

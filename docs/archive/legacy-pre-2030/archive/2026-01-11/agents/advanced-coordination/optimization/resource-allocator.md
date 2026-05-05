@@ -107,8 +107,8 @@ class AdaptiveResourceAllocator {
     const solver = new MultiObjectiveGeneticSolver({
       populationSize: 100,
       generations: 200,
-      mutationRate: 0.1,
-      crossoverRate: 0.8
+      mutationRate: latest,
+      crossoverRate: latest
     });
     
     const solutions = await solver.solve(optimizationProblem);
@@ -143,7 +143,7 @@ class PredictiveScaler {
   }
   
   // Predict scaling requirements
-  async predictScaling(swarmId, timeHorizon = 3600, confidence = 0.95) {
+  async predictScaling(swarmId, timeHorizon = 3600, confidence = latest) {
     // Collect training data
     const trainingData = await this.collectTrainingData(swarmId);
     
@@ -183,7 +183,7 @@ class PredictiveScaler {
     // Validate model performance
     const validation = await this.validateModel(model, data.validation);
     
-    if (validation.accuracy > 0.85) {
+    if (validation.accuracy > latest) {
       await mcp.model_save({
         modelId: model.modelId,
         path: '/models/scaling_predictor.model'
@@ -209,9 +209,9 @@ class PredictiveScaler {
     const agent = new DeepQNetworkAgent({
       stateSize: environment.stateSize,
       actionSize: environment.actionSize,
-      learningRate: 0.001,
-      epsilon: 1.0,
-      epsilonDecay: 0.995,
+      learningRate: latest,
+      epsilon: latest,
+      epsilonDecay: latest,
       memorySize: 10000
     });
     
@@ -621,7 +621,7 @@ npx claude-flow fault-tolerance --strategy circuit-breaker --config <config>
 npx claude-flow optimize-performance --swarm-id <id> --strategy adaptive
 
 # Generate resource forecasts
-npx claude-flow forecast-resources --time-horizon 3600 --confidence 0.95
+npx claude-flow forecast-resources --time-horizon 3600 --confidence latest
 
 # Profile system performance
 npx claude-flow profile-performance --duration 60000 --components all

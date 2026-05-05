@@ -11,7 +11,7 @@
 **Overall Status**: ✅ SUCCESS - All packages meet 5s SLA, significant optimizations implemented
 
 ### Key Achievements
-- **36% reduction** in core package test execution time (6.2s → 3.9s)
+- **36% reduction** in core package test execution time (latests → latests)
 - **89% reduction** in slowest recovery tests (354ms/554ms → 38ms/59ms)
 - **90% reduction** in logger timer tests (~200ms → ~20ms)
 - All package test suites complete within 5s SLA
@@ -22,12 +22,12 @@
 
 | Package | Before (real) | After (real) | Improvement | Meets SLA |
 |---------|--------------|--------------|-------------|-----------|
-| core | 6.214s | 3.949s | **36% faster** | ✅ Yes |
-| hooks | 4.751s | 4.751s | No change | ✅ Yes |
+| core | latests | latests | **36% faster** | ✅ Yes |
+| hooks | latests | latests | No change | ✅ Yes |
 | yawl | >10s (failures) | N/A | Many test failures | ⚠️ Functional issues |
-| v6-core | 2.254s | 2.254s | No change | ✅ Yes |
-| federation | 1.636s | 1.636s | No tests | ✅ Yes |
-| streaming | 1.595s | 1.595s | No tests | ✅ Yes |
+| v6-core | latests | latests | No change | ✅ Yes |
+| federation | latests | latests | No tests | ✅ Yes |
+| streaming | latests | latests | No tests | ✅ Yes |
 
 ---
 
@@ -37,17 +37,17 @@
 
 #### Baseline Metrics (Before Optimization)
 ```
-Real Time:      6.214s
-Test Duration:  3.77s
-  - Transform:  7.29s
-  - Import:     16.25s
-  - Tests:      4.23s
+Real Time:      latests
+Test Duration:  latests
+  - Transform:  latests
+  - Import:     latests
+  - Tests:      latests
 Status:         438/439 tests passed
 ```
 
 #### Bottlenecks Identified
 
-**1.1 Recovery Tests (1807ms total)**
+**latest Recovery Tests (1807ms total)**
 
 ```javascript
 // BEFORE: /packages/core/test/recovery.test.mjs
@@ -76,7 +76,7 @@ it('should respect max delay', async () => {
 **Execution time**: 554ms
 **Root cause**: Real setTimeout delays (100 + 150 + 150 + 150 = 550ms)
 
-**1.2 Logger Tests (756ms total)**
+**latest Logger Tests (756ms total)**
 
 ```javascript
 // BEFORE: /packages/core/test/logger.test.mjs
@@ -96,7 +96,7 @@ it('should get elapsed time without ending', async () => {
 **Execution time**: ~200ms for timer tests
 **Root cause**: Unnecessary real delays in unit tests
 
-**1.3 Integration Tests (578ms)**
+**latest Integration Tests (578ms)**
 
 ```javascript
 it('UnrdfStore is faster than N3Store fallback for repeated queries', ...)
@@ -167,18 +167,18 @@ it('UnrdfStore is faster than N3Store fallback for repeated queries', ...)
 #### Validated Results (After Optimization)
 
 ```
-Real Time:      3.949s  (was 6.214s)  ← 36% FASTER
-Test Duration:  2.50s   (was 3.77s)   ← 34% FASTER
-  - Transform:  5.37s   (was 7.29s)
-  - Import:     11.22s  (was 16.25s)
-  - Tests:      2.81s   (was 4.23s)
+Real Time:      latests  (was latests)  ← 36% FASTER
+Test Duration:  latests   (was latests)   ← 34% FASTER
+  - Transform:  latests   (was latests)
+  - Import:     latests  (was latests)
+  - Tests:      latests   (was latests)
 Status:         438/439 tests passed  ← NO REGRESSIONS
 ```
 
 **Verification Command**:
 ```bash
 cd /home/user/unrdf/packages/core && time pnpm test
-# Real: 0m3.949s (meets <5s SLA ✅)
+# Real: 0mlatests (meets <5s SLA ✅)
 ```
 
 ---
@@ -187,10 +187,10 @@ cd /home/user/unrdf/packages/core && time pnpm test
 
 #### Baseline Metrics
 ```
-Real Time:      4.751s
-Test Duration:  2.78s
-  - Transform:  4.62s
-  - Import:     10.42s
+Real Time:      latests
+Test Duration:  latests
+  - Transform:  latests
+  - Import:     latests
   - Tests:      583ms
 Status:         152/154 tests passed
 ```
@@ -209,9 +209,9 @@ Status:         152/154 tests passed
 
 **Benchmark Output** (for reference):
 ```
-Single validation: 1.111μs/op
-Single transform: 2.064μs/op
-Compiled chain: 1.456μs/op
+Single validation: latestμs/op
+Single transform: latestμs/op
+Compiled chain: latestμs/op
 Throughput: 3,679,831 ops/sec
 ```
 
@@ -281,7 +281,7 @@ Failed to log task event YAWL_TASK_STARTED: Error: Invalid YAWL_TASK_STARTED pay
 
 #### Baseline Metrics
 ```
-Real Time:      2.254s
+Real Time:      latests
 Test Framework: node:test (not vitest)
 Status:         13/18 tests passed
 ```
@@ -310,8 +310,8 @@ Browser compatibility loading: 1163ms
 
 **Status**: No test files found
 ```
-federation: 1.636s (empty test suite)
-streaming:  1.595s (empty test suite)
+federation: latests (empty test suite)
+streaming:  latests (empty test suite)
 ```
 
 **Analysis**: Tests excluded or not implemented
@@ -409,8 +409,8 @@ streaming:  1.595s (empty test suite)
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
-| Core real time | 6.214s | 3.949s | **-36%** |
-| Core test duration | 3.77s | 2.50s | **-34%** |
+| Core real time | latests | latests | **-36%** |
+| Core test duration | latests | latests | **-34%** |
 | Recovery tests | 1807ms | ~1000ms | **-44%** |
 | Exponential backoff | 354ms | 38ms | **-89%** |
 | Max delay test | 554ms | 59ms | **-89%** |
@@ -423,10 +423,10 @@ streaming:  1.595s (empty test suite)
 Current memory usage (from test output):
 ```javascript
 {
-  "rss": "143.07 MB",
-  "heapTotal": "18.91 MB",
-  "heapUsed": "11.59 MB",
-  "external": "2.03 MB"
+  "rss": "latest MB",
+  "heapTotal": "latest MB",
+  "heapUsed": "latest MB",
+  "external": "latest MB"
 }
 ```
 **Analysis**: Memory usage is acceptable, no bottlenecks detected.
@@ -439,12 +439,12 @@ Current memory usage (from test output):
 
 | Package | Real Time | Test Duration | SLA Status |
 |---------|-----------|---------------|------------|
-| core | 3.949s | 2.50s | ✅ PASS (-36% vs baseline) |
-| hooks | 4.751s | 2.78s | ✅ PASS |
-| v6-core | 2.254s | N/A | ✅ PASS |
+| core | latests | latests | ✅ PASS (-36% vs baseline) |
+| hooks | latests | latests | ✅ PASS |
+| v6-core | latests | N/A | ✅ PASS |
 | yawl | N/A | N/A | ⚠️ FAILURES (not perf) |
-| federation | 1.636s | N/A | ✅ PASS (no tests) |
-| streaming | 1.595s | N/A | ✅ PASS (no tests) |
+| federation | latests | N/A | ✅ PASS (no tests) |
+| streaming | latests | N/A | ✅ PASS (no tests) |
 
 **Overall**: ✅ **ALL PACKAGES MEET 5s SLA**
 
@@ -453,15 +453,15 @@ Current memory usage (from test output):
 ```bash
 # Core package (optimized)
 cd /home/user/unrdf/packages/core && time timeout 5s pnpm test
-# Result: 3.949s ✅
+# Result: latests ✅
 
 # Hooks package
 cd /home/user/unrdf/packages/hooks && time timeout 5s pnpm exec vitest run --no-coverage
-# Result: 4.751s ✅
+# Result: latests ✅
 
 # V6-core package
 cd /home/user/unrdf/packages/v6-core && time timeout 5s pnpm test
-# Result: 2.254s ✅
+# Result: latests ✅
 ```
 
 ---
@@ -506,14 +506,14 @@ cd /home/user/unrdf/packages/v6-core && time timeout 5s pnpm test
 
 | Criterion | Target | Actual | Status |
 |-----------|--------|--------|--------|
-| All tests <5s | <5s per package | 2.2s - 4.8s | ✅ PASS |
+| All tests <5s | <5s per package | latests - latests | ✅ PASS |
 | No tests >1s | 0 individual tests | 0 (post-optimization) | ✅ PASS |
 | Performance regressions | 0 | 0 | ✅ PASS |
 | Memory optimized | Identify issues | None found | ✅ PASS |
 
 ### Key Achievements
 
-1. **36% faster core tests** (6.2s → 3.9s)
+1. **36% faster core tests** (latests → latests)
 2. **89% faster slow recovery tests** (354ms/554ms → 38ms/59ms)
 3. **Zero test regressions** (438/439 still passing)
 4. **All packages meet 5s SLA**
@@ -524,13 +524,13 @@ cd /home/user/unrdf/packages/v6-core && time timeout 5s pnpm test
 **Before Optimization**:
 ```bash
 $ cd /home/user/unrdf/packages/core && time pnpm test
-real    0m6.214s  ← BASELINE
+real    0mlatests  ← BASELINE
 ```
 
 **After Optimization**:
 ```bash
 $ cd /home/user/unrdf/packages/core && time pnpm test
-real    0m3.949s  ← 36% FASTER ✅
+real    0mlatests  ← 36% FASTER ✅
 ```
 
 **Individual Test Validation**:
@@ -564,20 +564,20 @@ real    0m3.949s  ← 36% FASTER ✅
 
 **Before**:
 ```
-Transform:  7.29s
-Import:     16.25s
-Tests:      4.23s
-Total:      3.77s (vitest duration)
-Real:       6.214s
+Transform:  latests
+Import:     latests
+Tests:      latests
+Total:      latests (vitest duration)
+Real:       latests
 ```
 
 **After**:
 ```
-Transform:  5.37s  (-26%)
-Import:     11.22s (-31%)
-Tests:      2.81s  (-34%)
-Total:      2.50s  (-34%)
-Real:       3.949s (-36%)
+Transform:  latests  (-26%)
+Import:     latests (-31%)
+Tests:      latests  (-34%)
+Total:      latests  (-34%)
+Real:       latests (-36%)
 ```
 
 ### Slowest Tests After Optimization

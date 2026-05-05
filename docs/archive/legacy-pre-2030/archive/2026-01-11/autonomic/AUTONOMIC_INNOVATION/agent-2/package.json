@@ -1,6 +1,6 @@
 {
   "name": "@autonomic/capsule-ir",
-  "version": "1.0.0",
+  "version": "0.0.0-agnostic",
   "description": "Portable, content-addressed change programs with deterministic hashing",
   "type": "module",
   "main": "index.mjs",

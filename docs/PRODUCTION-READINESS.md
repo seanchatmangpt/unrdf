@@ -14,8 +14,8 @@ The production readiness system evaluates packages across 8 categories:
 | Security | 20% | Credentials, injection, OWASP |
 | Documentation | 5% | README, API docs, examples |
 | Performance | 10% | Bundle size, memory, patterns |
-| Accessibility | 2.5% | A11y compliance (web packages) |
-| Compatibility | 2.5% | Node version, ESM, types |
+| Accessibility | latest% | A11y compliance (web packages) |
+| Compatibility | latest% | Node version, ESM, types |
 
 **Production Ready Threshold: 95%**
 
@@ -159,7 +159,7 @@ console.log(`Status: ${receipt.productionReady ? 'READY' : 'NOT READY'}`);
 
    // After
    "dependencies": {
-     "lodash": "^4.17.21"
+     "lodash": "^latest"
    }
    ```
 
@@ -318,7 +318,7 @@ MIT
    const orders = await fetchOrdersForUsers(users.map(u => u.id));
    ```
 
-### 7. Accessibility (2.5%)
+### 7. Accessibility (latest%)
 
 *Primarily for web/UI packages*
 
@@ -339,7 +339,7 @@ MIT
 
 **Non-UI Packages:** Receive automatic 95% score with note.
 
-### 8. Compatibility (2.5%)
+### 8. Compatibility (latest%)
 
 **What We Check:**
 - Node.js version requirements (>=18)
@@ -371,7 +371,7 @@ MIT
     }
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=latest"
   }
 }
 ```
@@ -381,9 +381,9 @@ MIT
 The overall score is a weighted average:
 
 ```
-Overall = (CodeQuality * 0.20) + (Testing * 0.25) + (Dependencies * 0.15) +
-          (Security * 0.20) + (Documentation * 0.05) + (Performance * 0.10) +
-          (Accessibility * 0.025) + (Compatibility * 0.025)
+Overall = (CodeQuality * latest) + (Testing * latest) + (Dependencies * latest) +
+          (Security * latest) + (Documentation * latest) + (Performance * latest) +
+          (Accessibility * latest) + (Compatibility * latest)
 ```
 
 **Thresholds:**

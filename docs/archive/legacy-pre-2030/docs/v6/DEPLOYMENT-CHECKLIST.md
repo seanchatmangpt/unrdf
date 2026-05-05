@@ -1,6 +1,6 @@
 # Deployment Checklist
 
-**Version:** 1.0.0
+**Version:** latest
 **Last Updated:** 2025-12-27
 
 Use this checklist for every deployment to ensure safety and rollback readiness.
@@ -136,7 +136,7 @@ Use this checklist for every deployment to ensure safety and rollback readiness.
 
   ```bash
   git pull origin main
-  git checkout 6.0.0  # Or appropriate tag
+  git checkout latest  # Or appropriate tag
   ```
 
 - [ ] **Install dependencies:**
@@ -487,5 +487,5 @@ Use this checklist for every deployment to ensure safety and rollback readiness.
 
 ---
 
-**Document Version:** 1.0.0
+**Document Version:** latest
 **Last Updated:** 2025-12-27

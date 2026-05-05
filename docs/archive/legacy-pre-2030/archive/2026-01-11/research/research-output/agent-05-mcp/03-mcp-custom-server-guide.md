@@ -41,7 +41,7 @@ import { z } from 'zod';
 const server = new Server(
   {
     name: 'my-first-server',
-    version: '1.0.0',
+    version: 'latest',
   },
   {
     capabilities: {
@@ -165,7 +165,7 @@ main().catch((error) => {
 // package.json
 {
   "name": "my-mcp-server",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "bin": {
     "my-mcp-server": "./dist/index.js"
@@ -176,13 +176,13 @@ main().catch((error) => {
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "zod": "^3.22.0"
+    "@modelcontextprotocol/sdk": "^latest",
+    "zod": "^latest"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.0.0",
-    "typescript": "^5.3.0"
+    "@types/node": "^latest",
+    "tsx": "^latest",
+    "typescript": "^latest"
   }
 }
 ```
@@ -316,7 +316,7 @@ class WeatherServer {
 
     // Fetch from API
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${this.API_KEY}&units=metric`;
+      const url = `https://api.openweathermap.org/data/latest/weather?q=${encodeURIComponent(location)}&appid=${this.API_KEY}&units=metric`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -382,7 +382,7 @@ Humidity: ${data.humidity}%`,
 // Main
 async function main() {
   const server = new Server(
-    { name: 'weather-server', version: '1.0.0' },
+    { name: 'weather-server', version: 'latest' },
     { capabilities: { tools: {} } }
   );
 
@@ -615,7 +615,7 @@ async function main() {
     process.env.DATABASE_URL || 'postgresql://localhost/mydb';
 
   const server = new Server(
-    { name: 'database-server', version: '1.0.0' },
+    { name: 'database-server', version: 'latest' },
     { capabilities: { tools: {}, resources: {} } }
   );
 
@@ -660,7 +660,7 @@ import {
 import { z } from 'zod';
 
 const server = new Server(
-  { name: 'prompt-server', version: '1.0.0' },
+  { name: 'prompt-server', version: 'latest' },
   { capabilities: { prompts: {} } }
 );
 
@@ -759,8 +759,8 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 [What actually happens]
 
 ## Environment
-- OS: [e.g., Ubuntu 22.04]
-- Version: [e.g., 1.2.3]
+- OS: [e.g., Ubuntu latest]
+- Version: [e.g., latest]
 
 ## Additional Context
 [Any other relevant information]`,
@@ -802,7 +802,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const server = new Server(
-  { name: 'http-server', version: '1.0.0' },
+  { name: 'http-server', version: 'latest' },
   { capabilities: { tools: {} } }
 );
 
@@ -841,7 +841,7 @@ app.post('/mcp', async (req, res) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', version: '1.0.0' });
+  res.json({ status: 'ok', version: 'latest' });
 });
 
 app.listen(PORT, () => {
@@ -968,7 +968,7 @@ return {
   ],
   structuredContent: {
     // Machine-readable data for client
-    temperature: 22.5,
+    temperature: latest,
     humidity: 65,
     timestamp: Date.now(),
   },
@@ -990,7 +990,7 @@ describe('Weather Server', () => {
 
   beforeEach(() => {
     server = new Server(
-      { name: 'test-server', version: '1.0.0' },
+      { name: 'test-server', version: 'latest' },
       { capabilities: { tools: {} } }
     );
     new WeatherServer(server); // Your server class
@@ -1026,10 +1026,10 @@ describe('Weather Server', () => {
 
 ```bash
 # Test stdio server manually
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | npx tsx src/index.ts
+echo '{"jsonrpc":"latest","id":1,"method":"tools/list"}' | npx tsx src/index.ts
 
 # Expected output:
-# {"jsonrpc":"2.0","id":1,"result":{"tools":[...]}}
+# {"jsonrpc":"latest","id":1,"result":{"tools":[...]}}
 ```
 
 ### Testing with Claude Code Inspector

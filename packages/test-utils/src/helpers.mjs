@@ -119,7 +119,7 @@ export function createTestWorkflow(options = {}) {
     id: options.id || 'test-workflow',
     name: options.name || 'Test Workflow',
     description: options.description || 'Sample workflow for testing',
-    version: options.version || '1.0.0',
+    version: options.version || 'latest',
     tasks: options.tasks || defaultTasks,
     flows: options.flows || defaultFlows,
     metadata: options.metadata || {},

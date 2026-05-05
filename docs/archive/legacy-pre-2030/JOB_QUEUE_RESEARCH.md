@@ -22,7 +22,7 @@ Both are production-ready with tests, docs, and examples.
 
 ## 1. Nitro Usage (Extensive)
 
-### 1.1 Daemon → Nitro Integration
+### latest Daemon → Nitro Integration
 
 **Package**: `@unrdf/daemon`
 **File**: `/home/user/unrdf/packages/daemon/src/integrations/nitro-tasks.mjs`
@@ -101,9 +101,9 @@ export class NitroTaskExecutor extends EventEmitter {
 {
   "dependencies": {
     "@unrdf/kgc-4d": "workspace:*",
-    "cron-parser": "^5.4.0",
-    "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
+    "cron-parser": "^latest",
+    "hash-wasm": "^latest",
+    "zod": "^latest"
   }
 }
 ```
@@ -112,7 +112,7 @@ export class NitroTaskExecutor extends EventEmitter {
 
 ---
 
-### 1.2 YAWL → Nitro Integration
+### latest YAWL → Nitro Integration
 
 **Package**: `@unrdf/yawl`
 **Files**:
@@ -133,7 +133,7 @@ export class NitroTaskExecutor extends EventEmitter {
 
 ---
 
-### 1.3 Sidecar (Nuxt 4) Nitro Tasks
+### latest Sidecar (Nuxt 4) Nitro Tasks
 
 **Package**: `sidecar/`
 **Location**: `/home/user/unrdf/sidecar/server/tasks/`
@@ -155,7 +155,7 @@ server/tasks/
 
 ---
 
-### 1.4 Test Coverage
+### latest Test Coverage
 
 **Nitro Tests** (9 test files, extensive coverage):
 ```
@@ -177,7 +177,7 @@ packages/daemon/test/e2e-nitro-tasks-integration.test.mjs  # Daemon E2E
 
 ---
 
-### 1.5 Documentation
+### latest Documentation
 
 **Comprehensive Diataxis docs**:
 ```
@@ -203,7 +203,7 @@ docs/diataxis/
 
 ## 2. BullMQ Usage (Production-Ready)
 
-### 2.1 YAWL-Queue Package
+### latest YAWL-Queue Package
 
 **Package**: `@unrdf/yawl-queue`
 **Location**: `/home/user/unrdf/packages/yawl-queue/`
@@ -307,27 +307,27 @@ export class YAWLQueueAdapter {
   "dependencies": {
     "@unrdf/yawl": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
-    "bullmq": "^5.35.2",      // ← Redis-based queue
-    "ioredis": "^5.4.2",      // ← Redis client
-    "zod": "^4.1.13"
+    "bullmq": "^latest",      // ← Redis-based queue
+    "ioredis": "^latest",      // ← Redis client
+    "zod": "^latest"
   }
 }
 ```
 
 **Confirmed in pnpm-lock.yaml**:
 ```yaml
-bullmq@5.66.3:
+bullmq@latest:
   dependencies:
-    ioredis: ^5.4.2
+    ioredis: ^latest
 
-ioredis@5.8.2:
+ioredis@latest:
   dependencies:
-    '@ioredis/commands': ^1.4.0
+    '@ioredis/commands': ^latest
 ```
 
 ---
 
-### 2.2 BullMQ Architecture
+### latest BullMQ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -365,7 +365,7 @@ ioredis@5.8.2:
 
 ---
 
-### 2.3 Example: ETL Pipeline
+### latest Example: ETL Pipeline
 
 **File**: `/home/user/unrdf/packages/yawl-queue/src/examples/data-pipeline.mjs`
 
@@ -444,7 +444,7 @@ pnpm example
 
 ---
 
-### 2.4 Documentation
+### latest Documentation
 
 **README**: `/home/user/unrdf/packages/yawl-queue/README.md`
 - 588 lines of comprehensive docs
@@ -460,7 +460,7 @@ pnpm example
 
 ## 3. Daemon Package (Core Scheduling)
 
-### 3.1 Overview
+### latest Overview
 
 **Package**: `@unrdf/daemon`
 **Purpose**: Background daemon for scheduled tasks and event-driven operations
@@ -476,7 +476,7 @@ Daemon (Core Scheduler)
   └── Event emission (EventEmitter)
 ```
 
-### 3.2 Core Features
+### latest Core Features
 
 ```javascript
 export class Daemon extends EventEmitter {
@@ -535,9 +535,9 @@ export class Daemon extends EventEmitter {
 }
 ```
 
-### 3.3 Integration Points
+### latest Integration Points
 
-**Daemon → Nitro**: Via `NitroTaskExecutor` (Section 1.1)
+**Daemon → Nitro**: Via `NitroTaskExecutor` (Section latest)
 **Daemon → YAWL**: Via operation handlers that call YAWL engine
 
 **Export Points**:
@@ -557,7 +557,7 @@ export class Daemon extends EventEmitter {
 
 ## 4. Comparison: Nitro vs BullMQ
 
-### 4.1 Use Case Matrix
+### latest Use Case Matrix
 
 | Feature | Nitro Integration | BullMQ Integration |
 |---------|------------------|-------------------|
@@ -571,7 +571,7 @@ export class Daemon extends EventEmitter {
 | **Overhead** | Low (lightweight adapter) | Medium (Redis dependency) |
 | **Best For** | API-triggered tasks | Background jobs, ETL pipelines |
 
-### 4.2 Decision Matrix
+### latest Decision Matrix
 
 **Use Nitro when**:
 - ✅ Tasks triggered by API calls or webhooks
@@ -597,7 +597,7 @@ export class Daemon extends EventEmitter {
 
 ## 5. Alternative Queue Libraries (NOT FOUND)
 
-### 5.1 Bull (Legacy)
+### latest Bull (Legacy)
 
 **Status**: ❌ NOT FOUND
 
@@ -611,7 +611,7 @@ grep -r "bull[^m]" packages/*/package.json
 
 ---
 
-### 5.2 Bee-Queue
+### latest Bee-Queue
 
 **Status**: ❌ NOT FOUND
 
@@ -625,7 +625,7 @@ grep -r "bee-queue" . --include="*.mjs" --include="package.json"
 
 ---
 
-### 5.3 Agenda
+### latest Agenda
 
 **Status**: ❌ NOT FOUND
 
@@ -633,7 +633,7 @@ grep -r "bee-queue" . --include="*.mjs" --include="package.json"
 
 ---
 
-### 5.4 Kue
+### latest Kue
 
 **Status**: ❌ NOT FOUND (and unmaintained since 2018)
 
@@ -641,7 +641,7 @@ grep -r "bee-queue" . --include="*.mjs" --include="package.json"
 
 ## 6. Existing Patterns & Recommendations
 
-### 6.1 Established Patterns
+### latest Established Patterns
 
 **Three-Layer Architecture**:
 ```
@@ -665,7 +665,7 @@ grep -r "bee-queue" . --include="*.mjs" --include="package.json"
 └─────────────┘    └──────────────┘
 ```
 
-### 6.2 Pattern Reuse Strategy
+### latest Pattern Reuse Strategy
 
 **For NEW async job requirements**:
 
@@ -728,9 +728,9 @@ grep -r "bee-queue" . --include="*.mjs" --include="package.json"
    await daemon.start();
    ```
 
-### 6.3 Integration Path for Nitro (if not already used)
+### latest Integration Path for Nitro (if not already used)
 
-**Finding**: Nitro IS already extensively used. See sections 1.1-1.5.
+**Finding**: Nitro IS already extensively used. See sections latest.5.
 
 **Recommendation**: **REUSE existing integration** instead of creating new one.
 
@@ -772,7 +772,7 @@ const result = await executor.runTask('daemon:test-op', { input: 'data' });
 
 ## 7. Gaps Identified
 
-### 7.1 Missing Features
+### latest Missing Features
 
 **Compared to external job queues**:
 
@@ -787,7 +787,7 @@ const result = await executor.runTask('daemon:test-op', { input: 'data' });
 | Job progress | ❌ Missing | No built-in progress tracking |
 | Job logs | ⚠️ Partial | Via OTEL spans, not centralized |
 
-### 7.2 Potential Improvements
+### latest Potential Improvements
 
 **If enhancing job queue capabilities**:
 
@@ -832,7 +832,7 @@ const result = await executor.runTask('daemon:test-op', { input: 'data' });
 
 ## 8. Recommendations
 
-### 8.1 For New Job Scheduling Requirements
+### latest For New Job Scheduling Requirements
 
 **Decision Tree**:
 
@@ -852,7 +852,7 @@ Is it triggered by API call or webhook?
                       └─ No  → Use Daemon + NitroTaskExecutor
 ```
 
-### 8.2 Pattern Reuse (CRITICAL)
+### latest Pattern Reuse (CRITICAL)
 
 **DO NOT create new job queue integration if**:
 - ✅ Nitro integration already exists (Section 1)
@@ -865,7 +865,7 @@ Is it triggered by API call or webhook?
 2. Copy patterns from: `/home/user/unrdf/packages/daemon/test/e2e-nitro-tasks-integration.test.mjs`
 3. Reuse exports: `@unrdf/daemon/integrations/nitro-tasks`
 
-### 8.3 Architecture Decision Record (ADR)
+### latest Architecture Decision Record (ADR)
 
 **Recommendation**: Create ADR documenting the choice between Nitro and BullMQ.
 
@@ -898,7 +898,7 @@ Use [Nitro Integration | BullMQ Integration] because:
 
 ## 9. Production Readiness Assessment
 
-### 9.1 Nitro Integration
+### latest Nitro Integration
 
 | Criteria | Status | Evidence |
 |----------|--------|----------|
@@ -913,7 +913,7 @@ Use [Nitro Integration | BullMQ Integration] because:
 
 **Overall**: ✅ **PRODUCTION READY**
 
-### 9.2 BullMQ Integration
+### latest BullMQ Integration
 
 | Criteria | Status | Evidence |
 |----------|--------|----------|
@@ -928,7 +928,7 @@ Use [Nitro Integration | BullMQ Integration] because:
 
 **Overall**: ⚠️ **MOSTLY READY** (needs more test coverage)
 
-### 9.3 Blockers
+### latest Blockers
 
 **None for Nitro integration** - Ready to use.
 
@@ -941,7 +941,7 @@ Use [Nitro Integration | BullMQ Integration] because:
 
 ## 10. Quick Start Examples
 
-### 10.1 Nitro: Simple API Task
+### latest Nitro: Simple API Task
 
 ```javascript
 import { Daemon } from '@unrdf/daemon';
@@ -987,7 +987,7 @@ export default defineEventHandler(async (event) => {
 });
 ```
 
-### 10.2 BullMQ: Distributed ETL
+### latest BullMQ: Distributed ETL
 
 ```javascript
 import { YAWLQueueAdapter } from '@unrdf/yawl-queue';
@@ -1043,7 +1043,7 @@ const status = await adapter.getCaseStatus(caseId);
 console.log(`Status: ${status.status}, Completed: ${status.completedTasks}/3`);
 ```
 
-### 10.3 Daemon: Cron Scheduled Task
+### latest Daemon: Cron Scheduled Task
 
 ```javascript
 import { Daemon } from '@unrdf/daemon';
@@ -1077,7 +1077,7 @@ console.log('Daemon started. Next cleanup:', daemon.operations.get('daily-cleanu
 
 ## 11. Conclusion
 
-### 11.1 Summary of Findings
+### latest Summary of Findings
 
 ✅ **Nitro is extensively used** - Production-ready integration exists
 ✅ **BullMQ is production-ready** - Full distributed queue implementation
@@ -1085,7 +1085,7 @@ console.log('Daemon started. Next cleanup:', daemon.operations.get('daily-cleanu
 ✅ **Comprehensive documentation** - Diataxis-compliant, examples included
 ✅ **Test coverage exists** - E2E tests for Nitro, needs more for BullMQ
 
-### 11.2 Final Recommendations
+### latest Final Recommendations
 
 **For immediate use**:
 1. **Use existing Nitro integration** - Import from `@unrdf/daemon/integrations/nitro-tasks`
@@ -1108,7 +1108,7 @@ console.log('Daemon started. Next cleanup:', daemon.operations.get('daily-cleanu
 
 ## 12. References
 
-### 12.1 Source Files
+### latest Source Files
 
 **Nitro Integration**:
 - `/home/user/unrdf/packages/daemon/src/integrations/nitro-tasks.mjs` (467 lines)
@@ -1129,12 +1129,12 @@ console.log('Daemon started. Next cleanup:', daemon.operations.get('daily-cleanu
 - `/home/user/unrdf/packages/daemon/test/e2e-nitro-tasks-integration.test.mjs`
 - `/home/user/unrdf/packages/yawl-queue/test/queue.test.mjs`
 
-### 12.2 Dependencies
+### latest Dependencies
 
 **pnpm-lock.yaml entries**:
-- `bullmq@5.66.3` - Redis-based queue
-- `ioredis@5.8.2` - Redis client
-- `cron-parser@5.4.0` - Cron expression parsing
+- `bullmq@latest` - Redis-based queue
+- `ioredis@latest` - Redis client
+- `cron-parser@latest` - Cron expression parsing
 
 **Package dependencies**:
 - `@unrdf/daemon`: No external queue dependencies

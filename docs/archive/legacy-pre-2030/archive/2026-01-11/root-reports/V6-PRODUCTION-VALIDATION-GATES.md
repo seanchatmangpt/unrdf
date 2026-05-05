@@ -1,10 +1,10 @@
 # UNRDF V6 Production Validation Gates - COMPLETE SPECIFICATION
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Effective Date**: 2025-12-28
 **Status**: AUTHORITATIVE
 **Author**: Production Validation Agent
-**Scope**: Complete v6.0.0 Production Deployment
+**Scope**: Complete vlatest Production Deployment
 
 ---
 
@@ -42,11 +42,11 @@
 
 | Gate | Target | Actual | Status |
 |------|--------|--------|--------|
-| Test Pass Rate | 100% | 89.3% (25/28) | ❌ FAIL |
+| Test Pass Rate | 100% | latest% (25/28) | ❌ FAIL |
 | OTEL Score | ≥80/100 | 100/100 | ✅ PASS |
 | ESLint Violations | 0 | 7 (6 warn + 1 error) | ❌ FAIL |
 | Coverage | ≥80% | ~70% | ❌ FAIL |
-| Performance SLA | P95 <50ms | 11.1ms avg | ✅ PASS |
+| Performance SLA | P95 <50ms | latestms avg | ✅ PASS |
 | Examples Working | 100% | 67% (2/3 broken) | ❌ FAIL |
 | Build Time | <60s | TIMEOUT (>60s) | ❌ FAIL |
 | Mock Code | 0 | 0 | ✅ PASS |
@@ -61,7 +61,7 @@
 
 ## 1. Deployment Checklist
 
-### 1.1 Pre-Deployment Gates (ALL MUST PASS)
+### latest Pre-Deployment Gates (ALL MUST PASS)
 
 #### Gate 1: Test Suite Validation
 
@@ -131,7 +131,7 @@ grep "FAILED\|Error" otel-validation.log | wc -l  # MUST be 0
 
 **Performance Thresholds** (from OTEL spans):
 - Average Latency: <20ms per operation
-- Error Rate: 0.00% across all features
+- Error Rate: latest% across all features
 - Memory Usage: <50MB baseline
 - Throughput: ≥3 ops/second per feature
 
@@ -230,7 +230,7 @@ timeout 30s pnpm benchmark:core 2>&1 | tee benchmark-results.log
 |-----------|-----|-----|-----|-----|
 | Receipt Creation | <1ms | <2ms | <5ms | <10ms |
 | Delta Validation | <5ms | <10ms | <20ms | <50ms |
-| Receipt Verification | <0.5ms | <1ms | <2ms | <5ms |
+| Receipt Verification | <latestms | <1ms | <2ms | <5ms |
 | Receipt Chain (10) | <20ms | <40ms | <80ms | <150ms |
 | SPARQL Query (simple) | <5ms | <10ms | <20ms | <50ms |
 | SPARQL Query (complex) | <50ms | <100ms | <200ms | <500ms |
@@ -249,7 +249,7 @@ node benchmarks/run-all.mjs regression --compare-baseline
 - Regression report showing <20% variance
 - Memory leak detection (0 leaks)
 
-**Current Status**: ✅ PASS (11.1ms avg, well within SLA)
+**Current Status**: ✅ PASS (latestms avg, well within SLA)
 **Blocker**: NO - Currently passing
 
 ---
@@ -476,7 +476,7 @@ timeout 120s node scripts/validate-readme-examples.mjs 2>&1 | tee doc-validation
 
 ---
 
-### 1.2 Deployment Gates Summary
+### latest Deployment Gates Summary
 
 **MUST PASS (P0 - Deployment Blockers)**:
 - [ ] Gate 1: Test Suite (100% pass)
@@ -499,7 +499,7 @@ timeout 120s node scripts/validate-readme-examples.mjs 2>&1 | tee doc-validation
 
 ## 2. Observability Requirements
 
-### 2.1 Mandatory OTEL Spans
+### latest Mandatory OTEL Spans
 
 **ALL production code MUST emit these spans** (externalized via hooks/middleware):
 
@@ -596,7 +596,7 @@ timeout 120s node scripts/validate-readme-examples.mjs 2>&1 | tee doc-validation
 }
 ```
 
-### 2.2 Error Tracking
+### latest Error Tracking
 
 **ALL errors MUST be captured with these attributes**:
 
@@ -616,7 +616,7 @@ timeout 120s node scripts/validate-readme-examples.mjs 2>&1 | tee doc-validation
 }
 ```
 
-### 2.3 Performance Metrics
+### latest Performance Metrics
 
 **System-level metrics** (exported via OTEL exporter):
 
@@ -643,7 +643,7 @@ timeout 120s node scripts/validate-readme-examples.mjs 2>&1 | tee doc-validation
 }
 ```
 
-### 2.4 OTEL Exporter Configuration
+### latest OTEL Exporter Configuration
 
 **Production deployment MUST configure**:
 
@@ -657,7 +657,7 @@ export function setupOTEL() {
   const provider = new NodeTracerProvider({
     resource: {
       'service.name': 'unrdf-v6',
-      'service.version': '6.0.0',
+      'service.version': 'latest',
       'deployment.environment': process.env.NODE_ENV || 'production',
     },
   });
@@ -683,7 +683,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT=<collector-url>  # e.g., https://api.honeycomb.io/v1
 OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>    # e.g., x-honeycomb-team=<api-key>
 ```
 
-### 2.5 Dashboard Requirements
+### latest Dashboard Requirements
 
 **Production deployment MUST have dashboards for**:
 
@@ -715,7 +715,7 @@ OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>    # e.g., x-honeycomb-team=<api-key>
 
 ## 3. Error Handling Contract
 
-### 3.1 Error Classification
+### latest Error Classification
 
 **ALL errors MUST be classified into one of these categories**:
 
@@ -730,7 +730,7 @@ OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>    # e.g., x-honeycomb-team=<api-key>
 | Network Error | `NET_` | Yes | Check connectivity | 503 |
 | Timeout | `TIMEOUT_` | Yes | Retry with longer timeout | 504 |
 
-### 3.2 Error Response Schema
+### latest Error Response Schema
 
 **ALL errors MUST conform to this Zod schema**:
 
@@ -762,14 +762,14 @@ export const ErrorResponseSchema = z.object({
     },
     recoverable: true,
     userAction: 'Verify the receipt was not tampered with. If issue persists, regenerate receipt.',
-    timestamp: '2025-12-28T19:00:00.000Z',
+    timestamp: '2025-12-28T19:00:latestZ',
     requestId: '550e8400-e29b-41d4-a716-446655440000',
   },
   status: 400,
 }
 ```
 
-### 3.3 Error Sanitization
+### latest Error Sanitization
 
 **MUST remove sensitive data from error messages**:
 
@@ -789,7 +789,7 @@ throw new Error('Authentication failed: invalid credentials');
 - File paths → basename only
 - User IDs → hash or truncate
 
-### 3.4 Actionable Error Messages
+### latest Actionable Error Messages
 
 **Error messages MUST follow this template**:
 
@@ -813,7 +813,7 @@ throw new Error('Authentication failed: invalid credentials');
 'Hook execution error: condition evaluation threw exception. Check hook condition syntax and ensure referenced fields exist.'
 ```
 
-### 3.5 Error Recovery Patterns
+### latest Error Recovery Patterns
 
 **For recoverable errors, implement exponential backoff**:
 
@@ -838,7 +838,7 @@ async function executeWithRetry(operation, maxRetries = 3) {
 
 ## 4. Health Check Specification
 
-### 4.1 Health Endpoint Implementation
+### latest Health Endpoint Implementation
 
 **Location**: `packages/v6-core/src/health/index.mjs`
 
@@ -883,7 +883,7 @@ export async function checkHealth() {
     status,
     timestamp: new Date().toISOString(),
     uptime_seconds: process.uptime(),
-    version: '6.0.0',
+    version: 'latest',
     dependencies,
     metrics,
   };
@@ -947,7 +947,7 @@ function determineStatus(dependencies, metrics) {
 }
 ```
 
-### 4.2 HTTP Health Endpoint
+### latest HTTP Health Endpoint
 
 **For HTTP services** (e.g., API server):
 
@@ -978,7 +978,7 @@ app.get('/readyz', async (req, res) => {
 });
 ```
 
-### 4.3 Health Check Frequency
+### latest Health Check Frequency
 
 **Production monitoring**:
 - Health check: Every 30 seconds
@@ -995,7 +995,7 @@ app.get('/readyz', async (req, res) => {
 
 ## 5. Graceful Degradation Policy
 
-### 5.1 Failure Scenarios and Responses
+### latest Failure Scenarios and Responses
 
 **When X fails, system MUST behave as follows**:
 
@@ -1061,7 +1061,7 @@ try {
 
 **Degradation Strategy**:
 ```javascript
-if (memoryPressure > 0.8) {
+if (memoryPressure > latest) {
   // 1. Clear in-memory caches
   cache.clear();
 
@@ -1147,7 +1147,7 @@ if (receiptChainLength > 1000) {
 
 ---
 
-### 5.2 Circuit Breaker Pattern
+### latest Circuit Breaker Pattern
 
 **For all external dependencies**:
 
@@ -1197,14 +1197,14 @@ class CircuitBreaker {
 
 ## 6. Rollback Strategy
 
-### 6.1 Pre-Deployment Snapshot
+### latest Pre-Deployment Snapshot
 
 **BEFORE deploying v6, create rollback snapshot**:
 
 ```bash
 # 1. Tag current production version
-git tag -a v5.9.0-production -m "Production snapshot before v6 deployment"
-git push origin v5.9.0-production
+git tag -a vlatest -m "Production snapshot before v6 deployment"
+git push origin vlatest
 
 # 2. Create database backup (if using persistent store)
 # (v6-core is in-memory, but document for reference)
@@ -1216,7 +1216,7 @@ cp -r config/ config.backup/
 # 4. Document deployment state
 cat > deployment-snapshot.json <<EOF
 {
-  "version": "5.9.0",
+  "version": "latest",
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "git_commit": "$(git rev-parse HEAD)",
   "node_version": "$(node -v)",
@@ -1226,7 +1226,7 @@ cat > deployment-snapshot.json <<EOF
 EOF
 ```
 
-### 6.2 Rollback Decision Criteria
+### latest Rollback Decision Criteria
 
 **Trigger rollback if ANY of the following occur within first 24 hours**:
 
@@ -1239,7 +1239,7 @@ EOF
 | User Complaints | >10 reports in 1 hour | Investigate → ROLLBACK if confirmed |
 | Throughput Drop | >50% decrease | ROLLBACK within 15 min |
 
-### 6.3 Rollback Execution
+### latest Rollback Execution
 
 **Execute rollback in <15 minutes**:
 
@@ -1256,8 +1256,8 @@ echo "Stopping v6 processes..."
 pm2 stop unrdf-v6 || docker stop unrdf-v6 || pkill -f "node.*unrdf"
 
 # 2. Restore previous version
-echo "Restoring v5.9.0..."
-git checkout v5.9.0-production
+echo "Restoring vlatest..."
+git checkout vlatest
 
 # 3. Restore dependencies
 echo "Restoring dependencies..."
@@ -1287,10 +1287,10 @@ curl -f http://localhost:3000/health || {
   exit 1
 }
 
-echo "✅ Rollback complete. v5.9.0 restored."
+echo "✅ Rollback complete. vlatest restored."
 
 # 8. Alert team
-curl -X POST $SLACK_WEBHOOK -d '{"text":"⚠️ UNRDF v6 rolled back to v5.9.0"}'
+curl -X POST $SLACK_WEBHOOK -d '{"text":"⚠️ UNRDF v6 rolled back to vlatest"}'
 
 # 9. Create incident report
 cat > rollback-incident-$(date +%Y%m%d-%H%M%S).md <<EOF
@@ -1298,7 +1298,7 @@ cat > rollback-incident-$(date +%Y%m%d-%H%M%S).md <<EOF
 
 **Date**: $(date)
 **Rollback Time**: <15 minutes
-**Restored Version**: v5.9.0
+**Restored Version**: vlatest
 **Reason**: <FILL IN REASON>
 
 ## Timeline
@@ -1316,7 +1316,7 @@ cat > rollback-incident-$(date +%Y%m%d-%H%M%S).md <<EOF
 EOF
 ```
 
-### 6.4 Data Migration Rollback
+### latest Data Migration Rollback
 
 **If v6 modified data schema** (not applicable for current v6-core, but document):
 
@@ -1355,7 +1355,7 @@ export async function rollbackDataMigration() {
 }
 ```
 
-### 6.5 Post-Rollback Actions
+### latest Post-Rollback Actions
 
 **Within 4 hours of rollback**:
 
@@ -1382,7 +1382,7 @@ export async function rollbackDataMigration() {
 
 ## 7. Continuous Validation
 
-### 7.1 Post-Deployment Monitoring (First 24 Hours)
+### latest Post-Deployment Monitoring (First 24 Hours)
 
 **Monitor these metrics every 5 minutes**:
 
@@ -1393,7 +1393,7 @@ const MONITORING_CONFIG = {
   check_interval_seconds: 300,  // 5 minutes
 
   metrics: [
-    { name: 'error_rate', threshold: 0.01, unit: '%' },
+    { name: 'error_rate', threshold: latest, unit: '%' },
     { name: 'p95_latency', threshold: 50, unit: 'ms' },
     { name: 'p99_latency', threshold: 100, unit: 'ms' },
     { name: 'memory_usage', threshold: 500, unit: 'MB' },
@@ -1409,7 +1409,7 @@ const MONITORING_CONFIG = {
 };
 ```
 
-### 7.2 Regression Testing (Daily)
+### latest Regression Testing (Daily)
 
 **Run regression suite daily for first week**:
 
@@ -1420,7 +1420,7 @@ timeout 300s pnpm benchmark:regression --compare-baseline
 
 **Alert if ANY regression >10%**:
 ```javascript
-const regressions = results.filter(r => r.change > 0.10);
+const regressions = results.filter(r => r.change > latest);
 if (regressions.length > 0) {
   await alertTeam({
     severity: 'warning',
@@ -1430,7 +1430,7 @@ if (regressions.length > 0) {
 }
 ```
 
-### 7.3 Smoke Tests (Hourly)
+### latest Smoke Tests (Hourly)
 
 **Run critical path smoke tests every hour**:
 
@@ -1446,7 +1446,7 @@ timeout 10s node --test packages/v6-core/test/integration/v6-smoke.test.mjs
 4. Hook registration → execution
 5. Streaming subscription → update delivery
 
-### 7.4 Canary Deployment
+### latest Canary Deployment
 
 **For high-traffic production environments**:
 
@@ -1527,7 +1527,7 @@ PRE-DEPLOYMENT (P0 - MUST COMPLETE)
 
 DEPLOYMENT
 [ ] Create rollback snapshot
-    [ ] git tag v5.9.0-production
+    [ ] git tag vlatest
     [ ] cp .env .env.backup
     [ ] Document deployment state
 
@@ -1538,7 +1538,7 @@ DEPLOYMENT
     [ ] Verify health check → 200 OK
 
 [ ] Initial Validation (First 15 min)
-    [ ] Error rate <0.1%
+    [ ] Error rate <latest%
     [ ] P95 latency <50ms
     [ ] Memory stable (<10MB growth)
     [ ] Smoke tests pass
@@ -1567,7 +1567,7 @@ SIGN-OFF
 | Operation | P50 | P95 | P99 | Max |
 |-----------|-----|-----|-----|-----|
 | Receipt Create | <1ms | <2ms | <5ms | <10ms |
-| Receipt Verify | <0.5ms | <1ms | <2ms | <5ms |
+| Receipt Verify | <latestms | <1ms | <2ms | <5ms |
 | Delta Apply | <5ms | <10ms | <20ms | <50ms |
 | SPARQL Simple | <5ms | <10ms | <20ms | <50ms |
 | SPARQL Complex | <50ms | <100ms | <200ms | <500ms |
@@ -1591,7 +1591,7 @@ SIGN-OFF
 **END OF SPECIFICATION**
 
 **Document Control**:
-- Version: 1.0.0
+- Version: latest
 - Last Updated: 2025-12-28
 - Next Review: 2025-01-28 (monthly)
 - Owner: Production Validation Agent

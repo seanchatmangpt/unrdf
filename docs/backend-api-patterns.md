@@ -125,7 +125,7 @@ All responses include trace correlation:
 ### Metrics Endpoint
 ```bash
 GET /api/metrics
-Content-Type: text/plain; version=0.0.4
+Content-Type: text/plain; version=latest
 
 # HELP unrdf_circuit_breaker_state Circuit breaker state (0=CLOSED, 1=HALF_OPEN, 2=OPEN)
 # TYPE unrdf_circuit_breaker_state gauge

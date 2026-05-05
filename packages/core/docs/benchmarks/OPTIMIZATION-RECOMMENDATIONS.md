@@ -648,4 +648,4 @@ Knowledge Hooks can achieve **6-10x performance improvement** through systematic
 
 **Generated**: 2025-12-04
 **Based on**: Hook overhead benchmarks (`packages/hooks/test/benchmarks/hook-overhead.test.mjs`)
-**Target**: @unrdf/hooks v5.0.0-alpha.1
+**Target**: @unrdf/hooks [VERSION]-alpha.1

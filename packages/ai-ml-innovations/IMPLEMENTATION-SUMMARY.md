@@ -1,7 +1,7 @@
 # Federated Learning Implementation Summary
 
 **Package**: `@unrdf/ai-ml-innovations`
-**Version**: v6.3.0
+**Version**: latest
 **Date**: 2026-01-11
 **Implementation**: Production-ready federated learning with differential privacy
 
@@ -353,7 +353,7 @@ Federated learning integrates with:
 - ✅ Performance targets met
 - ✅ Privacy guarantees proven
 
-**Quality**: Enterprise-grade code with strong privacy guarantees, ready for v6.3.0 release.
+**Quality**: Enterprise-grade code with strong privacy guarantees, ready for latest release.
 
 **Command Verification**:
 ```bash

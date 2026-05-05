@@ -4,7 +4,7 @@
 
 **Design Phase**: Pseudocode phase bridging specification to implementation
 **Status**: Specification only - no implementation code yet
-**Version**: 1.0.0
+**Version**: latest
 **Author**: Agent-8 (CLI Design)
 
 ---
@@ -169,7 +169,7 @@ BEGIN
 
         // Generate merkle tree if requested
         IF options.merkle THEN
-            merkleTree ← BuildMerkleTree(shards)              // See: 2.1.2
+            merkleTree ← BuildMerkleTree(shards)              // See: latest
             merkleProofs ← GenerateMembershipProofs(merkleTree)
             WriteFile(outputDir + "/receipts/merkle.json", JSON.stringify({
                 root: merkleTree.root,
@@ -346,7 +346,7 @@ BEGIN
     END IF
 
     // Phase 3: Detect conflicts
-    conflicts ← DetectConflicts(shards)                       // See: 2.1.1
+    conflicts ← DetectConflicts(shards)                       // See: latest
 
     IF conflicts.length > 0 THEN
         LogWarning("Detected ${conflicts.length} merge conflicts")
@@ -1008,7 +1008,7 @@ END
 
 ### 2.1 Merge Algorithms
 
-#### 2.1.1 Conflict Detection
+#### latest Conflict Detection
 
 ```
 ALGORITHM: DetectConflicts
@@ -1058,7 +1058,7 @@ BEGIN
 END
 ```
 
-#### 2.1.2 Merkle Tree Construction
+#### latest Merkle Tree Construction
 
 ```
 ALGORITHM: BuildMerkleTree
@@ -1122,7 +1122,7 @@ BEGIN
 END
 ```
 
-#### 2.1.3 Deterministic Merge Algorithm
+#### latest Deterministic Merge Algorithm
 
 ```
 ALGORITHM: MergeShardsDeterm
@@ -1137,7 +1137,7 @@ BEGIN
         metadata: {
             mergedAt: GetCurrentTime(),
             shardCount: shards.length,
-            version: "1.0.0"
+            version: "latest"
         },
         agents: [],
         claims: [],
@@ -1221,7 +1221,7 @@ END
 
 ### 2.2 Report Generation
 
-#### 2.2.1 Markdown Report (Diataxis Format)
+#### latest Markdown Report (Diataxis Format)
 
 ```
 ALGORITHM: GenerateMarkdownReport
@@ -1444,7 +1444,7 @@ export default extension;
 // .kgc-probe.json (in project root)
 
 {
-  "version": "1.0.0",
+  "version": "latest",
 
   "allowlist": [
     "orchestrator",

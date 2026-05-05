@@ -126,7 +126,7 @@ review:
       - proper-caching
     architecture:
       - max-coupling: 5
-      - min-cohesion: 0.7
+      - min-cohesion: latest
       - follow-patterns
 ```
 

@@ -154,7 +154,7 @@ function buildV6CittyTree(registry, spine) {
         },
         async run(ctx) {
           const status = {
-            version: '6.0.0-rc.1',
+            version: '[VERSION]-rc.1',
             features: {
               receipts: true,
               delta: true,
@@ -193,7 +193,7 @@ function buildV6CittyTree(registry, spine) {
     meta: {
       name: 'v6-cli',
       description: 'UNRDF v6 Core CLI - Receipts, Deltas, Grammar, and Docs',
-      version: '6.0.0-rc.1'
+      version: '[VERSION]-rc.1'
     },
     subcommands
   });
@@ -308,7 +308,7 @@ export const V6_COMMANDS = {
 export function buildCLISpine() {
   return {
     name: 'v6',
-    version: '6.0.0-alpha.1',
+    version: '[VERSION]-alpha.1',
     description: 'UNRDF v6 Core CLI',
     commands: V6_COMMANDS,
   };

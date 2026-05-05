@@ -263,7 +263,7 @@ service KGCSidecar {
 
 ### 4.1 Package.json Analysis
 
-**Current Version:** 2.1.1
+**Current Version:** latest
 **Entry Points:**
 - `main`: `src/index.mjs` (library export)
 - `bin`: `src/cli.mjs` (CLI v1)

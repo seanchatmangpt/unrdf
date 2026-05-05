@@ -16,16 +16,16 @@ describe('PluginManager', () => {
   it('should register a valid plugin', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       description: 'Test plugin',
       entryPoint: './test.mjs',
       capabilities: ['receipt:generate'],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
 
-    expect(pluginId).toBe('test-plugin@1.0.0');
+    expect(pluginId).toBe('test-plugin@[VERSION]');
     expect(manager.getPluginState(pluginId)).toBe(PLUGIN_STATES.REGISTERED);
   });
 
@@ -33,10 +33,10 @@ describe('PluginManager', () => {
   it('should load a registered plugin', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
@@ -49,10 +49,10 @@ describe('PluginManager', () => {
   it('should activate a loaded plugin', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
@@ -66,10 +66,10 @@ describe('PluginManager', () => {
   it('should deactivate an executing plugin', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
@@ -84,10 +84,10 @@ describe('PluginManager', () => {
   it('should reject invalid state transitions', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
@@ -107,14 +107,14 @@ describe('PluginManager', () => {
     for (const name of plugins) {
       await manager.registerPlugin({
         name,
-        version: '1.0.0',
+        version: '[VERSION]',
         entryPoint: './test.mjs',
         capabilities: [],
-        api_version: '5.0.1',
+        api_version: '[VERSION]',
       });
     }
 
-    const pluginIds = plugins.map(name => `${name}@1.0.0`);
+    const pluginIds = plugins.map(name => `${name}@[VERSION]`);
     const result = await manager.loadPluginsParallel(pluginIds);
 
     expect(result.success).toHaveLength(3);
@@ -125,10 +125,10 @@ describe('PluginManager', () => {
   it('should maintain audit log of all operations', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);
@@ -145,10 +145,10 @@ describe('PluginManager', () => {
   it('should track state transition count', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const initialCount = manager.getTransitionCount();
@@ -166,21 +166,21 @@ describe('PluginManager', () => {
   it('should list plugins by state', async () => {
     await manager.registerPlugin({
       name: 'plugin-1',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     });
 
     await manager.registerPlugin({
       name: 'plugin-2',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     });
 
-    await manager.loadPlugin('plugin-1@1.0.0');
+    await manager.loadPlugin('plugin-1@[VERSION]');
 
     const registered = manager.listPluginsByState(PLUGIN_STATES.REGISTERED);
     const loaded = manager.listPluginsByState(PLUGIN_STATES.LOADED);
@@ -193,10 +193,10 @@ describe('PluginManager', () => {
   it('should uninstall a plugin completely', async () => {
     const manifest = {
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test.mjs',
       capabilities: [],
-      api_version: '5.0.1',
+      api_version: '[VERSION]',
     };
 
     const pluginId = await manager.registerPlugin(manifest);

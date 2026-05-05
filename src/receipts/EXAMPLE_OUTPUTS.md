@@ -24,11 +24,11 @@ This document shows example outputs from the receipt system.
   "unrdf:epoch": "τ_2025_12_26_1430_123",
   "unrdf:outputHash": "d6e8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0",
   "unrdf:toolchainVersion": {
-    "unrdf:node": "v18.19.0",
+    "unrdf:node": "[VERSION]",
     "unrdf:packages": {
-      "@unrdf/core": "^5.0.1",
+      "@unrdf/core": "^[VERSION]",
       "@unrdf/oxigraph": "workspace:*",
-      "hash-wasm": "^4.12.0"
+      "hash-wasm": "^[VERSION]"
     }
   },
   "prov:generatedAtTime": {
@@ -56,7 +56,7 @@ This document shows example outputs from the receipt system.
   unrdf:ontologyRelease "a3f5d8c9e1b2f4a7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1" ;
   unrdf:ontologyRelease "b4c6d9e0f2a3b5c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1" ;
   unrdf:deltaCapsule "c5d7e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9" ;
-  unrdf:nodeVersion "v18.19.0" ;
+  unrdf:nodeVersion "[VERSION]" ;
   unrdf:receiptHash "e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9" .
 ```
 
@@ -165,8 +165,8 @@ Input (same for all 3 receipts):
   "decision": "allow",
   "outputHash": "hash4",
   "toolchainVersion": {
-    "node": "v18.19.0",
-    "packages": { "@unrdf/core": "^5.0.1" }
+    "node": "[VERSION]",
+    "packages": { "@unrdf/core": "^[VERSION]" }
   },
   "timestamp": "2025-12-26T14:30:00.000Z"
 }

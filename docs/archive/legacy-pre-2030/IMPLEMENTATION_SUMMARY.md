@@ -67,7 +67,7 @@ Implemented unified noun-verb CLI spine for UNRDF v6, mapping all package capabi
 
 7. **`package.json`** (Updated)
    - Added exports for CLI modules
-   - Added dependencies: `citty@^0.1.5`, `@unrdf/blockchain`
+   - Added dependencies: `citty@^latest`, `@unrdf/blockchain`
    - CLI exports:
      - `./cli` - Main CLI entry
      - `./cli/nouns` - Noun definitions

@@ -939,7 +939,7 @@ Guide for upgrading to new versions.
 
 ## Version History
 
-### Version 2.0.0
+### Version latest
 
 New features and improvements in v2:
 

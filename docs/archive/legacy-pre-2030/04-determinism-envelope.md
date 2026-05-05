@@ -1,6 +1,6 @@
 # Pattern 4: Determinism Envelope
 
-**Version**: v6.0.0
+**Version**: vlatest
 **Maturity Target**: L5 (Stable contracts, deterministic, adversarial-safe, composable)
 **Copy-Exact Template**: Yes - Use AS-IS for all P0+P1 packages
 
@@ -618,12 +618,12 @@ function hash(obj) {
 ```javascript
 // ❌ WRONG - Floating point operations may differ across platforms
 function operation() {
-  return 0.1 + 0.2; // May not equal 0.3 exactly
+  return latest + latest; // May not equal latest exactly
 }
 
 // ✅ CORRECT - Use integers or fixed precision
 function operation() {
-  return Math.floor((0.1 + 0.2) * 1000) / 1000; // Fixed precision
+  return Math.floor((latest + latest) * 1000) / 1000; // Fixed precision
 }
 ```
 

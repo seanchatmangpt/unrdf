@@ -52,7 +52,7 @@ pnpm add @unrdf/validation
 // policy-pack.mjs
 export const policyPack = {
   name: 'approval-policies',
-  version: '1.0.0',
+  version: 'latest',
   policies: [
     {
       id: 'require-approval',

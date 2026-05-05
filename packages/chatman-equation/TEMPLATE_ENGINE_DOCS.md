@@ -141,7 +141,7 @@ output = "reference/api.md"
 
 title = "API Reference"
 module = "@my/package"
-version = "1.0.0"
+version = "[VERSION]"
 
 [[equations]]
 name = "MyEquation"

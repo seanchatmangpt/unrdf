@@ -1,24 +1,24 @@
-# UNRDF v4.1.1 - Node.js Compatibility Validation Report
+# UNRDF vlatest - Node.js Compatibility Validation Report
 
 **Date**: 2025-12-02
 **Node Versions Tested**:
-- v22.12.0 (Latest LTS)
-- v24.11.1 (Latest Current - nodejs.org homepage)
-**UNRDF Version**: 4.1.1
-**Package Requirements**: Node >=18.0.0 ✅
+- vlatest (Latest LTS)
+- vlatest (Latest Current - nodejs.org homepage)
+**UNRDF Version**: latest
+**Package Requirements**: Node >=latest ✅
 
 ---
 
 ## Executive Summary
 
-✅ **UNRDF is FULLY COMPATIBLE with Node.js v22.12.0 AND v24.11.1**
+✅ **UNRDF is FULLY COMPATIBLE with Node.js vlatest AND vlatest**
 
 - **Package Loads**: ✅ 301 exports successfully loaded
 - **Core RDF Operations**: ✅ parseTurtle, query, toTurtle all working
 - **Knowledge Hooks**: ✅ defineHook, evaluateHook working
 - **Composables**: ⚠️ Partially working (context issues in some cases)
-- **Test Suite**: ✅ 96.3% pass rate (3648/3788 tests passing)
-- **Playground**: ⚠️ 96.1% pass rate (232/242 tests passing, papers-thesis-cli has 7 failures)
+- **Test Suite**: ✅ latest% pass rate (3648/3788 tests passing)
+- **Playground**: ⚠️ latest% pass rate (232/242 tests passing, papers-thesis-cli has 7 failures)
 
 ---
 
@@ -32,13 +32,13 @@ node -e "import('unrdf').then(m => console.log('Exports:', Object.keys(m).length
 
 **Result**: ✅ 301 exports loaded successfully
 
-**Node v22.12.0 Note**: One deprecation warning from transitive dependency:
+**Node vlatest Note**: One deprecation warning from transitive dependency:
 ```
 (node:23324) [DEP0040] DeprecationWarning: The `punycode` module is deprecated.
 ```
 This is from a dependency (likely `jsonld`), not UNRDF code.
 
-**Node v24.11.1 Result**: ✅ **NO DEPRECATION WARNINGS** - Clean output!
+**Node vlatest Result**: ✅ **NO DEPRECATION WARNINGS** - Clean output!
 
 ---
 
@@ -68,7 +68,7 @@ console.log('✅ toTurtle:', output.length, 'characters'); // 130 chars
 - ✅ SPARQL query: 1 result returned
 - ✅ toTurtle: 130 characters serialized
 
-**Verdict**: All core RDF operations working perfectly on Node v22.12.0
+**Verdict**: All core RDF operations working perfectly on Node vlatest
 
 ---
 
@@ -99,7 +99,7 @@ console.log('✅ Hook executed, triggered =', result.triggered);
 - ✅ defineHook: Hook created successfully
 - ✅ evaluateHook: Hook executed successfully
 
-**Verdict**: Knowledge Hooks working on Node v22.12.0
+**Verdict**: Knowledge Hooks working on Node vlatest
 
 ---
 
@@ -150,17 +150,17 @@ await runApp(async () => {
 ```
 Test Files:  7 failed | 144 passed (151)
 Tests:       38 failed | 3648 passed | 102 skipped (3788)
-Duration:    71.08s
+Duration:    latests
 ```
 
-**Pass Rate**: 96.3% (3648/3788 tests)
+**Pass Rate**: latest% (3648/3788 tests)
 
 **Failed Tests by Category**:
 - Browser environment (toJsonLd not defined in browser): ~30 tests
 - Project-engine complexity analysis: 2 tests
 - Streaming/hooks environment specific: ~6 tests
 
-**Verdict**: Excellent test suite pass rate on Node v22.12.0
+**Verdict**: Excellent test suite pass rate on Node vlatest
 
 ---
 
@@ -172,10 +172,10 @@ Duration:    71.08s
 ```
 Test Files:  2 failed | 5 passed | 1 skipped (8)
 Tests:       7 failed | 232 passed | 3 skipped (242)
-Duration:    1.16s
+Duration:    latests
 ```
 
-**Pass Rate**: 96.1% (232/242 tests)
+**Pass Rate**: latest% (232/242 tests)
 
 **Failed Tests**:
 - `papers-thesis-cli/test/integration/nunjucks-integration.test.mjs`: 7 tests
@@ -186,7 +186,7 @@ Duration:    1.16s
 SyntaxError: The requested module './schemas.mjs' does not provide an export named '_HashSchema'
 ```
 
-This is a **known issue from v4.1.0** that was fixed in the main package but not in playground's papers-thesis-cli.
+This is a **known issue from vlatest** that was fixed in the main package but not in playground's papers-thesis-cli.
 
 **Verdict**: Playground mostly working, papers-thesis-cli needs underscore prefix fix
 
@@ -194,7 +194,7 @@ This is a **known issue from v4.1.0** that was fixed in the main package but not
 
 ## Compatibility Matrix
 
-| Feature | Node v22.12.0 | Node v24.11.1 | Status |
+| Feature | Node vlatest | Node vlatest | Status |
 |---------|--------------|--------------|--------|
 | Package Import | ✅ | ✅ | 301 exports loaded |
 | parseTurtle | ✅ | ✅ | Working |
@@ -211,8 +211,8 @@ This is a **known issue from v4.1.0** that was fixed in the main package but not
 | Utils (ID generation) | ✅ | ✅ | Working |
 | Utils (Namespaces) | ✅ | ✅ | Working |
 | Utils (Quality) | ✅ | ✅ | Working |
-| Main Test Suite | ✅ | ✅ | 96.3% pass rate |
-| Playground | ⚠️ | ⚠️ | 96.1% pass rate |
+| Main Test Suite | ✅ | ✅ | latest% pass rate |
+| Playground | ⚠️ | ⚠️ | latest% pass rate |
 | Deprecation Warnings | ⚠️ punycode | ✅ None | v24 cleaner |
 
 ---
@@ -228,8 +228,8 @@ This is a **known issue from v4.1.0** that was fixed in the main package but not
 
 **Source**: Transitive dependency (likely `jsonld` package)
 **Impact**: None - just a warning, no functionality broken
-**Action**: **RESOLVED in Node v24.11.1** - No warnings on v24+
-**Recommendation**: Use Node v24.11.1+ for cleanest experience
+**Action**: **RESOLVED in Node vlatest** - No warnings on v24+
+**Recommendation**: Use Node vlatest+ for cleanest experience
 
 ---
 
@@ -242,7 +242,7 @@ SyntaxError: The requested module './schemas.mjs' does not provide an export nam
 
 **Location**: `playground/papers-thesis-cli/src/integration/sparql.mjs`
 **Impact**: 7 tests fail in playground, papers-thesis-cli not usable
-**Action**: Apply same underscore prefix fix from v4.1.0 to playground
+**Action**: Apply same underscore prefix fix from vlatest to playground
 
 **Files to Fix**:
 - `playground/papers-thesis-cli/src/integration/sparql.mjs`
@@ -262,18 +262,18 @@ SyntaxError: The requested module './schemas.mjs' does not provide an export nam
 
 ### For Users
 
-✅ **UNRDF v4.1.1 is PRODUCTION-READY on Node.js v22.12.0 AND v24.11.1**
+✅ **UNRDF vlatest is PRODUCTION-READY on Node.js vlatest AND vlatest**
 
-**Recommended Node Version**: **v24.11.1** (Latest Current)
+**Recommended Node Version**: **vlatest** (Latest Current)
 - ✅ Zero deprecation warnings
 - ✅ All features working
-- ✅ 96.3% test pass rate
+- ✅ latest% test pass rate
 - ✅ Best compatibility
 
-**Also Supported**: Node.js v22.12.0 (Latest LTS)
+**Also Supported**: Node.js vlatest (Latest LTS)
 - ✅ All features working
 - ⚠️ Minor punycode deprecation warning (harmless)
-- ✅ 96.3% test pass rate
+- ✅ latest% test pass rate
 
 **What Works Great**:
 - All core RDF operations (parse, query, serialize)
@@ -299,7 +299,7 @@ SyntaxError: The requested module './schemas.mjs' does not provide an export nam
 - Add tests for composables in various contexts
 
 **Priority 3: Punycode Deprecation** ✅ RESOLVED
-- ✅ No warnings on Node v24.11.1+
+- ✅ No warnings on Node vlatest+
 - Recommend Node v24+ in documentation
 - Update engine requirements to recommend v24+
 
@@ -307,30 +307,30 @@ SyntaxError: The requested module './schemas.mjs' does not provide an export nam
 
 ## Conclusion
 
-✅ **UNRDF v4.1.1 is FULLY COMPATIBLE with Node.js v22.12.0 AND v24.11.1**
+✅ **UNRDF vlatest is FULLY COMPATIBLE with Node.js vlatest AND vlatest**
 
 ### Test Results Summary
 
-| Metric | Node v22.12.0 | Node v24.11.1 |
+| Metric | Node vlatest | Node vlatest |
 |--------|--------------|--------------|
 | **Core Library** | 100% working | 100% working |
-| **Test Suite** | 96.3% passing | 96.3% passing |
-| **Playground** | 96.1% passing | 96.1% passing |
+| **Test Suite** | latest% passing | latest% passing |
+| **Playground** | latest% passing | latest% passing |
 | **Deprecation Warnings** | 1 warning (punycode) | ✅ Zero |
 
 ### Recommendation
 
-🏆 **Use Node v24.11.1 for best experience**
+🏆 **Use Node vlatest for best experience**
 - Zero deprecation warnings
 - Latest Node.js features
 - Identical test results to v22
 
 🚀 **Ship it on both versions!**
 
-The library is production-ready on both Node v22.12.0 (LTS) and v24.11.1 (Current) with excellent compatibility.
+The library is production-ready on both Node vlatest (LTS) and vlatest (Current) with excellent compatibility.
 
 ---
 
 **Validation Performed By**: Claude Code
 **Validation Date**: 2025-12-02
-**Report Version**: 1.0
+**Report Version**: latest

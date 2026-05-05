@@ -1,6 +1,6 @@
 # @unrdf/federation
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+![Version](https://img.shields.io/badge/version-[VERSION]--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
 
 **Peer Discovery and Distributed Query Execution**
 
@@ -434,7 +434,7 @@ const coordinator = createCoordinator({
   peers: [...],
   observability: {
     serviceName: 'my-federation',
-    version: '1.0.0'
+    version: '[VERSION]'
   }
 })
 
@@ -505,8 +505,8 @@ pnpm format
 
 ## Requirements
 
-- Node.js >= 18.0.0
-- pnpm >= 8.0.0
+- Node.js >= [VERSION]
+- pnpm >= [VERSION]
 - Network access to SPARQL endpoints
 
 ## License

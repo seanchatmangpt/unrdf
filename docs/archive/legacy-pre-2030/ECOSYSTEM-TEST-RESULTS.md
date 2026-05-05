@@ -2,7 +2,7 @@
 
 **Test Suite**: `/home/user/unrdf/packages/kgc-cli/test/ecosystem.test.mjs`
 **Date**: 2025-12-27
-**Status**: ✅ 352/353 tests passed (99.7% pass rate)
+**Status**: ✅ 352/353 tests passed (latest% pass rate)
 
 ---
 
@@ -14,23 +14,23 @@ Comprehensive test suite covering **7 test categories** across the 45-package CL
 
 | Metric                  | Value   | Target | Status   |
 | ----------------------- | ------- | ------ | -------- |
-| **Tests Passed**        | 352/353 | 100%   | ✅ 99.7% |
-| **Extensions Loaded**   | 33/45   | 45     | 🟡 73.3% |
+| **Tests Passed**        | 352/353 | 100%   | ✅ latest% |
+| **Extensions Loaded**   | 33/45   | 45     | 🟡 latest% |
 | **Commands Registered** | 145     | -      | ✅       |
 | **Total Verbs**         | 143     | -      | ✅       |
-| **Verbs with Schema**   | 131     | >80%   | ✅ 91.6% |
+| **Verbs with Schema**   | 131     | >80%   | ✅ latest% |
 | **Contract Errors**     | 0       | 0      | ✅       |
 | **Collisions**          | 7       | <10    | ✅       |
-| **Handler Coverage**    | 100.0%  | >95%   | ✅       |
-| **Smoke Test Pass**     | 132/143 | >90%   | ✅ 92.3% |
+| **Handler Coverage**    | latest%  | >95%   | ✅       |
+| **Smoke Test Pass**     | 132/143 | >90%   | ✅ latest% |
 
 ### Test Execution
 
-- **Duration**: 1.81s
+- **Duration**: latests
 - **Test Files**: 1
 - **Total Tests**: 353
 - **Failed Tests**: 1 (load order strict ascending check)
-- **Environment**: Node.js, Vitest 4.0.15
+- **Environment**: Node.js, Vitest latest
 
 ---
 
@@ -110,7 +110,7 @@ Comprehensive test suite covering **7 test categories** across the 45-package CL
 }
 ```
 
-**Pass Rate**: 92.3% (132/143 handlers executed successfully)
+**Pass Rate**: latest% (132/143 handlers executed successfully)
 
 **Failed Execution**: 11 handlers failed due to missing runtime dependencies (expected in test env)
 
@@ -138,7 +138,7 @@ Comprehensive test suite covering **7 test categories** across the 45-package CL
   "ok": true,
   "data": { "result": 42 },
   "meta": {
-    "timestamp": "2025-12-27T01:53:29.123Z",
+    "timestamp": "2025-12-27T01:53:latestZ",
     "source": "snapshot:create"
   }
 }
@@ -244,14 +244,14 @@ kgc snapshot create --args '{"universe":"test"}' --json
 📊 Extension Ecosystem Stats:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Loaded:    33/45 extensions
-  Coverage:  73.3%
+  Coverage:  latest%
   Commands:  145
   Total Verbs: 143
-  With Schema: 131 (91.6%)
+  With Schema: 131 (latest%)
   With Meta:   0
   Contract Errors: 0
   Collisions:  7
-  Handler Coverage: 100.0%
+  Handler Coverage: latest%
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -302,8 +302,8 @@ AssertionError: expected 72 to be greater than or equal to 93
 
 ### Performance
 
-- **Total Duration**: 1.81s
-- **Average Test Time**: 5.1ms per test
+- **Total Duration**: latests
+- **Average Test Time**: latestms per test
 - **Slowest Test**: 335ms (batch validation)
 - **Fastest Tests**: <1ms (schema checks)
 
@@ -340,7 +340,7 @@ pnpm exec vitest run --config /dev/null test/ecosystem.test.mjs
 
 Test Files  1 failed (1)
 Tests       1 failed | 352 passed (353)
-Duration    1.81s
+Duration    latests
 ```
 
 ### Determinism Verification
@@ -371,7 +371,7 @@ Run 3: [snapshot:create, snapshot:list, universe:create, ...]
 
 ### Future Enhancements
 
-1. **Increase Extension Coverage** (27.7% → 100%)
+1. **Increase Extension Coverage** (latest% → 100%)
    - Implement remaining 12 extensions
    - Target: 45/45 extensions loaded
 
@@ -392,7 +392,7 @@ Run 3: [snapshot:create, snapshot:list, universe:create, ...]
 
 ## Conclusion
 
-The CLI extension ecosystem test suite provides **comprehensive validation** across 7 categories with a **99.7% pass rate** (352/353 tests).
+The CLI extension ecosystem test suite provides **comprehensive validation** across 7 categories with a **latest% pass rate** (352/353 tests).
 
 ### ✅ Strengths
 
@@ -410,7 +410,7 @@ The CLI extension ecosystem test suite provides **comprehensive validation** acr
 
 ### Overall Assessment
 
-**Grade**: A- (99.7% pass rate, comprehensive coverage, minor load order issue)
+**Grade**: A- (latest% pass rate, comprehensive coverage, minor load order issue)
 
 The test suite successfully validates the registry contract, handler execution, determinism, and JSON output format. The ecosystem is production-ready with minor fixes needed for load order and extension coverage.
 

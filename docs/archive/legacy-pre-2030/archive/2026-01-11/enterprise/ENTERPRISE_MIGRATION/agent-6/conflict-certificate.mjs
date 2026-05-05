@@ -107,7 +107,7 @@ export function generateCertificate(deltaA, deltaB, verdict = null) {
 
   // Build certificate (without hash)
   const certificate = {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: new Date().toISOString(),
     deltaAHash,
     deltaBHash,
@@ -330,7 +330,7 @@ export function createCertificateChain(deltas) {
   const chainHash = computeHash(certificates);
 
   return {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: new Date().toISOString(),
     deltaCount: deltas.length,
     certificateCount: certificates.length,

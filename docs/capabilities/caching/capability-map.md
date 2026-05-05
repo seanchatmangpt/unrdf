@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/caching
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -36,10 +36,10 @@ Multi-layer caching system for RDF queries with Redis and LRU
 ### Dependencies
 
 - `@unrdf/oxigraph`: workspace:*
-- `ioredis`: ^5.4.1
-- `lru-cache`: ^11.0.2
-- `msgpackr`: ^1.11.2
-- `zod`: ^4.1.13
+- `ioredis`: ^latest
+- `lru-cache`: ^latest
+- `msgpackr`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

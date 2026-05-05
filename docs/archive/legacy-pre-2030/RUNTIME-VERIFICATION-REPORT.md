@@ -7,14 +7,14 @@
 
 ## Executive Summary
 
-**CRITICAL FINDING**: Commit messages claim 20 frameworks delivered, but only **3 files** were actually committed. Of these 3 files, only **2 files (66.7%)** execute successfully without errors.
+**CRITICAL FINDING**: Commit messages claim 20 frameworks delivered, but only **3 files** were actually committed. Of these 3 files, only **2 files (latest%)** execute successfully without errors.
 
 ### Pass/Fail Summary
 - **Total Files Tested**: 3
-- **Passed Execution**: 2 (66.7%)
-- **Failed Execution**: 1 (33.3%)
-- **Import/Export Working**: 2 (66.7%)
-- **Import/Export Broken**: 1 (33.3%)
+- **Passed Execution**: 2 (latest%)
+- **Failed Execution**: 1 (latest%)
+- **Import/Export Working**: 2 (latest%)
+- **Import/Export Broken**: 1 (latest%)
 
 ---
 
@@ -24,7 +24,7 @@
 Command: `git diff --name-only HEAD~5 HEAD | grep '\.mjs$'`
 
 **Framework Files Identified**:
-1. `/home/user/unrdf/microfw-9-graph-routing.mjs` (291 lines, 8.7K)
+1. `/home/user/unrdf/microfw-9-graph-routing.mjs` (291 lines, latestK)
 2. `/home/user/unrdf/max-combo-10-mega-framework.mjs` (733 lines, 23K)
 3. `/home/user/unrdf/max-combo-10-mega-framework-standalone.mjs` (832 lines, 25K)
 
@@ -346,7 +346,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/oxigraph' imported fro
 |------|---------------|--------------|--------|
 | microfw-9-graph-routing.mjs | <1s | 5s | ✅ Pass |
 | max-combo-10-mega-framework.mjs | N/A (failed at import) | 10s | ❌ Fail |
-| max-combo-10-mega-framework-standalone.mjs | ~1.2s | 10s | ✅ Pass |
+| max-combo-10-mega-framework-standalone.mjs | ~latests | 10s | ✅ Pass |
 
 All successful executions complete well under the timeout threshold.
 
@@ -399,8 +399,8 @@ timeout 10s node /home/user/unrdf/max-combo-10-mega-framework-standalone.mjs
 ## 9. Final Verdict
 
 ### Success Rate
-- **Execution Success**: 2/3 (66.7%)
-- **Import Success**: 2/3 (66.7%)
+- **Execution Success**: 2/3 (latest%)
+- **Import Success**: 2/3 (latest%)
 - **Claims vs Reality**: 3/20 (15% - only 3 files vs 20 claimed frameworks)
 
 ### Files That Work
@@ -459,7 +459,7 @@ git show f486173 --stat
 ## Conclusion
 
 **Claim**: "20 frameworks delivered across 2 commits"
-**Reality**: 3 files delivered, 2 fully functional (66.7% success rate)
+**Reality**: 3 files delivered, 2 fully functional (latest% success rate)
 
 **Key Finding**: The commit messages significantly overstate deliverables. While the frameworks that DO work are high-quality and production-ready, the discrepancy between claimed (20) and actual (3) frameworks, plus the broken dependency file, indicates a gap between claims and reality.
 

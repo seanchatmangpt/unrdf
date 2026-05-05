@@ -1,4 +1,4 @@
-# Load Testing Deliverables - UNRDF v6.0.0
+# Load Testing Deliverables - UNRDF latest
 
 **Generated:** 2026-01-11T07:30:00Z
 **Test Duration:** ~2.5 minutes (quick mode)
@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-Comprehensive load testing infrastructure has been implemented and executed for UNRDF v6.0.0. All 5 load test scenarios have been implemented and successfully executed in quick mode.
+Comprehensive load testing infrastructure has been implemented and executed for UNRDF latest. All 5 load test scenarios have been implemented and successfully executed in quick mode.
 
 ### Key Achievements
 
@@ -266,7 +266,7 @@ node test/load-testing/analyze-results.mjs
 
 ## Conclusion
 
-Comprehensive load testing infrastructure has been successfully implemented and validated for UNRDF v6.0.0. The system demonstrates:
+Comprehensive load testing infrastructure has been successfully implemented and validated for UNRDF latest. The system demonstrates:
 
 1. **Excellent baseline performance** - P95 latency of 26ms, 0% error rate
 2. **Good peak performance** - P95 latency of 107ms under 1000 concurrent users
@@ -281,5 +281,5 @@ All P95 latency targets have been met and exceeded. System meets performance req
 
 **Test Engineer:** Claude Code Agent
 **Test Date:** 2026-01-11
-**UNRDF Version:** 6.0.0-rc.1
-**Load Testing Tool:** autocannon 8.0.0
+**UNRDF Version:** latest-rc.1
+**Load Testing Tool:** autocannon latest

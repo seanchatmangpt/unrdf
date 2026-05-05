@@ -4,7 +4,7 @@
 
 **Audience:** Developers implementing policy systems
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

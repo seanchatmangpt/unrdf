@@ -303,7 +303,7 @@ export function validateConfig(config) {
  */
 export function createDefaultConfig(overrides = {}) {
   const defaults = {
-    project: { name: 'untitled', version: '1.0.0' },
+    project: { name: 'untitled', version: '[VERSION]' },
     generation: {
       output_dir: 'lib',
       incremental: true,

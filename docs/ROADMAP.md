@@ -2,7 +2,7 @@
 
 This document outlines the planned development roadmap for unrdf.
 
-## Current Status (v1.0.0)
+## Current Status (vlatest)
 
 ✅ **Core Framework**
 - All core composables implemented
@@ -42,97 +42,97 @@ This document outlines the planned development roadmap for unrdf.
 - useMetrics - Performance monitoring
 - useCache - Caching strategies
 
-## Short Term (v1.1.0 - v1.3.0)
+## Short Term (vlatest - vlatest)
 
-### v1.1.0 - Enhanced I/O
+### vlatest - Enhanced I/O
 - [ ] **useRdfXML** - RDF/XML parsing and serialization
 - [ ] **useTrig** - TriG format support
 - [ ] **useJsonLD** - Enhanced JSON-LD features
 - [ ] **useTurtleFS** - Batch operations and streaming
 - [ ] **useNQuads** - Streaming support for large datasets
 
-### v1.2.0 - Advanced Querying
+### vlatest - Advanced Querying
 - [ ] **useSparql** - Enhanced SPARQL features
 - [ ] **useQueryBuilder** - Fluent SPARQL query building
 - [ ] **useFederatedQuery** - Multi-source querying
 - [ ] **useQueryCache** - Query result caching
 - [ ] **useQueryOptimizer** - Query optimization
 
-### v1.3.0 - Enhanced Validation
+### vlatest - Enhanced Validation
 - [ ] **useShacl** - Advanced SHACL features
 - [ ] **useShEx** - Shape Expressions support
 - [ ] **useValidationRules** - Custom validation rules
 - [ ] **useValidationReport** - Enhanced validation reporting
 - [ ] **useValidationCache** - Validation result caching
 
-## Medium Term (v1.4.0 - v2.0.0)
+## Medium Term (vlatest - vlatest)
 
-### v1.4.0 - Advanced Reasoning
+### vlatest - Advanced Reasoning
 - [ ] **useOWL** - OWL reasoning support
 - [ ] **useRuleEngine** - Custom rule engines
 - [ ] **useInference** - Advanced inference capabilities
 - [ ] **useReasoningCache** - Reasoning result caching
 - [ ] **useReasoningMetrics** - Reasoning performance metrics
 
-### v1.5.0 - Provenance and Transactions
+### vlatest - Provenance and Transactions
 - [ ] **useProvenance** - Data lineage tracking
 - [ ] **useTx** - Transactional operations
 - [ ] **useSnapshot** - Content-addressed storage
 - [ ] **useVersioning** - Graph versioning
 - [ ] **useAudit** - Audit trail management
 
-### v1.6.0 - Performance and Scalability
+### vlatest - Performance and Scalability
 - [ ] **useStreaming** - Streaming operations
 - [ ] **useParallel** - Parallel processing
 - [ ] **useWorker** - Web Worker support
 - [ ] **useIndexing** - Advanced indexing strategies
 - [ ] **useCompression** - Data compression
 
-### v1.7.0 - Advanced Features
+### vlatest - Advanced Features
 - [ ] **useFederation** - Federated data management
 - [ ] **useReplication** - Data replication
 - [ ] **useSynchronization** - Multi-source synchronization
 - [ ] **useConflictResolution** - Conflict resolution
 - [ ] **useConsistency** - Consistency checking
 
-### v1.8.0 - Developer Experience
+### vlatest - Developer Experience
 - [ ] **useDebugger** - RDF debugging tools
 - [ ] **useProfiler** - Performance profiling
 - [ ] **useTesting** - Testing utilities
 - [ ] **useMocking** - Mock data generation
 - [ ] **useFixtures** - Test fixtures
 
-### v1.9.0 - Integration
+### vlatest - Integration
 - [ ] **useGraphQL** - GraphQL integration
 - [ ] **useREST** - REST API generation
 - [ ] **useWebSocket** - Real-time updates
 - [ ] **useEventStream** - Event streaming
 - [ ] **useMessageQueue** - Message queue integration
 
-## Long Term (v2.0.0+)
+## Long Term (vlatest+)
 
-### v2.0.0 - Major Architecture Update
+### vlatest - Major Architecture Update
 - [ ] **Plugin System** - Extensible plugin architecture
 - [ ] **Microservices** - Microservice deployment
 - [ ] **Cloud Native** - Cloud-native features
 - [ ] **Edge Computing** - Edge computing support
 - [ ] **AI Integration** - AI/ML integration
 
-### v2.1.0 - Advanced Analytics
+### vlatest - Advanced Analytics
 - [ ] **useAnalytics** - Graph analytics
 - [ ] **useVisualization** - Graph visualization
 - [ ] **useMining** - Data mining capabilities
 - [ ] **usePatterns** - Pattern recognition
 - [ ] **useInsights** - Automated insights
 
-### v2.2.0 - Enterprise Features
+### vlatest - Enterprise Features
 - [ ] **useSecurity** - Security and access control
 - [ ] **useCompliance** - Compliance checking
 - [ ] **useGovernance** - Data governance
 - [ ] **useQuality** - Data quality management
 - [ ] **useLineage** - Data lineage tracking
 
-### v2.3.0 - Advanced Reasoning
+### vlatest - Advanced Reasoning
 - [ ] **useSemanticWeb** - Full Semantic Web stack
 - [ ] **useOntology** - Ontology management
 - [ ] **useKnowledgeGraph** - Knowledge graph features

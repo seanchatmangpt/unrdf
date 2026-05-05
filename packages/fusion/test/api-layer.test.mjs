@@ -476,7 +476,7 @@ describe('REST API', () => {
 describe('Introspection API', () => {
   it('should have valid schema structure', () => {
     expect(introspectionSchema).toBeDefined();
-    expect(introspectionSchema.version).toBe('1.0.0');
+    expect(introspectionSchema.version).toBe('latest');
     expect(introspectionSchema.description).toBe('Unified Fusion Engine API');
     expect(introspectionSchema.timestamp).toBeDefined();
   });

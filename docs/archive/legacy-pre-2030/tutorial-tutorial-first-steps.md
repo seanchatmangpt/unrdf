@@ -2,7 +2,7 @@
 title: "First Steps"
 type: "tutorial"
 packageName: "@unrdf/yawl"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.8
 proof: "4444a45cefe902d7af7a4e423bf289457e2a56ed1f40100e574512aa1aecb981"

@@ -23,7 +23,7 @@
 
 ## 1. Token Representation and Storage
 
-### 1.1 Data Structure
+### latest Data Structure
 
 **File**: `packages/yawl/src/case-core.mjs:116-120`
 
@@ -41,7 +41,7 @@ this._marking = new Map();
 - Keys: Condition identifiers (strings)
 - Values: Integer token counts
 
-### 1.2 Condition ID Naming Convention
+### latest Condition ID Naming Convention
 
 **File**: `packages/yawl/src/case-state.mjs:22-30`
 
@@ -65,7 +65,7 @@ _initializeMarking() {
 | `started:${taskId}` | Task execution state | Created when work item starts |
 | `output:${taskId}` | Task output place | Created when task completes |
 
-### 1.3 Token Operations
+### latest Token Operations
 
 **File**: `packages/yawl/src/case-state.mjs:54-77`
 
@@ -110,7 +110,7 @@ _removeTokens(conditionId, count = 1) {
 
 ## 2. Task Enabling Algorithm
 
-### 2.1 Join Semantics Evaluation
+### latest Join Semantics Evaluation
 
 **File**: `packages/yawl/src/workflow-patterns.mjs:130-165`
 
@@ -169,7 +169,7 @@ export function canEnable(taskId, completedTasks, activatedTasks = new Set()) {
 | **XOR** | Any one predecessor complete | Exclusive choice merge |
 | **OR** | All ACTIVATED predecessors complete | Structured synchronizing merge |
 
-### 2.2 OR-Join Dead Path Elimination
+### latest OR-Join Dead Path Elimination
 
 **Current Implementation**: **SIMPLIFIED** (no dead path elimination)
 
@@ -196,7 +196,7 @@ case JOIN_TYPE.OR:
 - Java YAWL: Computes cancellation sets using reachability analysis
 - @unrdf/yawl: Simpler approach via activation tracking
 
-### 2.3 Token Availability Check
+### latest Token Availability Check
 
 **File**: `packages/yawl/src/case-state.mjs:163-171`
 
@@ -227,7 +227,7 @@ canEnableTask(taskDefId) {
 
 ## 3. Task Firing Sequence
 
-### 3.1 Enable Phase
+### latest Enable Phase
 
 **File**: `packages/yawl/src/case-state.mjs:84-109`
 
@@ -273,7 +273,7 @@ enable(workItem) {
 [enabled:taskId] (1 token)
 ```
 
-### 3.2 Start Phase
+### latest Start Phase
 
 **File**: `packages/yawl/src/case-lifecycle.mjs:121-165`
 
@@ -340,7 +340,7 @@ async startTask(workItemId, resourceId, actor) {
 [started:taskId] (1 token)
 ```
 
-### 3.3 Fire Transition (Complete Phase)
+### latest Fire Transition (Complete Phase)
 
 **File**: `packages/yawl/src/case-state.mjs:138-156`
 
@@ -379,7 +379,7 @@ _fireTransition(workItem) {
 [output:taskId] (1 token)
 ```
 
-### 3.4 Downstream Propagation
+### latest Downstream Propagation
 
 **File**: `packages/yawl/src/case-lifecycle.mjs:192-214`
 
@@ -427,7 +427,7 @@ for (const nextTaskId of toEnable) {
 [enabled:nextTask1] (1 token) ← if join satisfied
 ```
 
-### 3.5 Split Semantics Evaluation
+### latest Split Semantics Evaluation
 
 **File**: `packages/yawl/src/workflow-patterns.mjs:24-114`
 
@@ -541,7 +541,7 @@ export function evaluateDownstream(completedTaskId, context = {}) {
 
 ## 4. Cancellation Regions
 
-### 4.1 Circuit Breaker Mechanism
+### latest Circuit Breaker Mechanism
 
 **File**: `packages/yawl/src/cancellation/yawl-cancellation-core.mjs:126-186`
 
@@ -611,7 +611,7 @@ CLOSED ──failures≥threshold──> OPEN
   └────────success─────── HALF_OPEN
 ```
 
-### 4.2 Region-Based Cancellation
+### latest Region-Based Cancellation
 
 **File**: `packages/yawl/src/case-lifecycle.mjs:314-339`
 
@@ -661,7 +661,7 @@ async cancelRegion(regionId, reason, actor) {
 4. Skip terminal work items (completed, cancelled, failed)
 5. Generate cancellation receipts for audit trail
 
-### 4.3 Token Cleanup on Cancellation
+### latest Token Cleanup on Cancellation
 
 **File**: `packages/yawl/src/case-state.mjs:111-131`
 
@@ -701,7 +701,7 @@ disable(workItem) {
 
 ## 5. Completion Detection
 
-### 5.1 Case Completion Check
+### latest Case Completion Check
 
 **File**: `packages/yawl/src/case-core.mjs:162-175`
 
@@ -731,7 +731,7 @@ isComplete() {
 1. **Terminal status**: `completed`, `cancelled`, or `failed`
 2. **End tasks complete**: All tasks marked as workflow end points are in `completedTasks` Set
 
-### 5.2 Auto-Completion on Task Complete
+### latest Auto-Completion on Task Complete
 
 **File**: `packages/yawl/src/case-lifecycle.mjs:217-226`
 
@@ -750,7 +750,7 @@ if (allEndTasksComplete) {
 
 **Trigger**: Automatically checked after every task completion.
 
-### 5.3 Cleanup Operations
+### latest Cleanup Operations
 
 **Current Implementation**: **NONE**
 
@@ -765,7 +765,7 @@ The Case class does NOT perform automatic cleanup on completion:
 
 ## 6. Execution Pseudocode
 
-### 6.1 Complete Workflow Execution
+### latest Complete Workflow Execution
 
 ```
 ALGORITHM: ExecuteWorkflow(workflow, initialData)
@@ -780,40 +780,40 @@ ALGORITHM: ExecuteWorkflow(workflow, initialData)
 
 3. LOOP until case.isComplete():
 
-   3.1 GET enabled work items:
+   latest GET enabled work items:
        enabledWorkItems = case.getEnabledWorkItems()
 
-   3.2 FOR EACH workItem in enabledWorkItems:
+   latest FOR EACH workItem in enabledWorkItems:
 
-       3.2.1 START work item:
+       latest START work item:
              case.startTask(workItem.id, resourceId)
              // Token flow: enabled:taskId → started:taskId
 
-       3.2.2 EXECUTE external work (user code):
+       latest EXECUTE external work (user code):
              output = await executeWork(workItem.inputData)
 
-       3.2.3 COMPLETE work item:
+       latest COMPLETE work item:
              result = await case.completeTask(workItem.id, output)
              // Token flow: started:taskId → output:taskId
 
-       3.2.4 EVALUATE downstream:
+       latest EVALUATE downstream:
              toEnable = workflow.evaluateDownstream(taskId, { data: case.data })
              // Produces tokens in input conditions of successors
 
-       3.2.5 ENABLE successors:
+       latest ENABLE successors:
              FOR EACH nextTaskId in toEnable:
                  IF workflow.canEnable(nextTaskId, case.completedTasks):
                      case.enableTask(nextTaskId)
                      // Token flow: input:nextTaskId → enabled:nextTaskId
 
-       3.2.6 CHECK completion:
+       latest CHECK completion:
              IF all end tasks complete:
                  case._status = COMPLETED
 
 4. RETURN case
 ```
 
-### 6.2 AND-Join Synchronization
+### latest AND-Join Synchronization
 
 ```
 ALGORITHM: CheckAndJoin(taskId, completedTasks)
@@ -841,7 +841,7 @@ Example:
   canEnable('TaskD', {'TaskA', 'TaskB'}) → false
 ```
 
-### 6.3 XOR-Split Evaluation
+### latest XOR-Split Evaluation
 
 ```
 ALGORITHM: EvaluateXorSplit(taskId, context)
@@ -854,14 +854,14 @@ ALGORITHM: EvaluateXorSplit(taskId, context)
 
 3. FOR EACH flow in sortedFlows:
 
-   3.1 IF flow.condition exists:
+   latest IF flow.condition exists:
        IF flow.condition(context) evaluates to true:
            RETURN [flow.to]  // Enable this path only
 
-   3.2 ELSE IF flow.isDefault:
+   latest ELSE IF flow.isDefault:
        CONTINUE  // Save default for later
 
-   3.3 ELSE:
+   latest ELSE:
        RETURN [flow.to]  // Unconditional flow
 
 4. IF no match found:
@@ -885,7 +885,7 @@ Example:
 
 ## 7. Real Java Code Comparison
 
-### 7.1 Java YNetRunner Token Model
+### latest Java YNetRunner Token Model
 
 **Java YAWL** (from JAVA_YAWL_TO_DAEMON_MAPPING.md):
 
@@ -923,7 +923,7 @@ public class YNetRunner {
 }
 ```
 
-### 7.2 JavaScript Equivalent
+### latest JavaScript Equivalent
 
 **@unrdf/yawl** (`packages/yawl/src/case-state.mjs`):
 
@@ -953,7 +953,7 @@ canEnableTask(taskDefId) {
 }
 ```
 
-### 7.3 Key Differences
+### latest Key Differences
 
 | Aspect | Java YAWL | @unrdf/yawl |
 |--------|-----------|-------------|
@@ -968,7 +968,7 @@ canEnableTask(taskDefId) {
 
 ## 8. Performance Characteristics
 
-### 8.1 Time Complexity
+### latest Time Complexity
 
 | Operation | Complexity | Justification |
 |-----------|------------|---------------|
@@ -979,7 +979,7 @@ canEnableTask(taskDefId) {
 | `isComplete()` | O(e) | e = number of end tasks |
 | `cancelRegion()` | O(w * r) | w = work items, r = tasks in region |
 
-### 8.2 Space Complexity
+### latest Space Complexity
 
 | Data Structure | Space | Growth Rate |
 |----------------|-------|-------------|
@@ -991,7 +991,7 @@ canEnableTask(taskDefId) {
 
 **Memory Optimization**: Zero-token conditions are deleted from `_marking` Map, preventing unbounded growth.
 
-### 8.3 Concurrency Model
+### latest Concurrency Model
 
 **JavaScript Single-Threaded**:
 - All operations execute on main event loop
@@ -1008,7 +1008,7 @@ canEnableTask(taskDefId) {
 
 ## 9. Verification Checklist
 
-### 9.1 Petri Net Semantics Compliance
+### latest Petri Net Semantics Compliance
 
 | Requirement | Implementation | Status |
 |-------------|----------------|--------|
@@ -1022,7 +1022,7 @@ canEnableTask(taskDefId) {
 | Completion detection | All end tasks complete | ✅ PASS |
 | Cancellation regions | `cancelRegion()` | ✅ PASS |
 
-### 9.2 Known Limitations
+### latest Known Limitations
 
 1. **OR-Join Dead Path Elimination**: Uses activation tracking instead of dynamic cancellation sets
 2. **Token History**: No time-travel for token states (only work items and events)
@@ -1033,7 +1033,7 @@ canEnableTask(taskDefId) {
 
 ## 10. Code References Summary
 
-### 10.1 Key Files
+### latest Key Files
 
 | File | Purpose | Lines |
 |------|---------|-------|
@@ -1043,7 +1043,7 @@ canEnableTask(taskDefId) {
 | `workflow-patterns.mjs` | Split/join evaluation | 166 |
 | `cancellation/yawl-cancellation-core.mjs` | Circuit breakers, cancellation | 300+ |
 
-### 10.2 Critical Methods
+### latest Critical Methods
 
 | Method | Location | Purpose |
 |--------|----------|---------|

@@ -9,7 +9,7 @@
 reg:Registry
   a reg:UniverseRegistry ;
   rdfs:label "UNRDF Main Registry" ;
-  reg:version "1.0.0" .
+  reg:version "latest" .
 
 # Entity Classes
 reg:Project

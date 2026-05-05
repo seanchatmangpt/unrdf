@@ -1,7 +1,7 @@
 /**
  * @file Event Automation - Main Entry Point
  * @module @unrdf/event-automation
- * @description Event-driven automation for v6.1.0 with delta processing, receipts, and policy enforcement
+ * @description Event-driven automation for [VERSION] with delta processing, receipts, and policy enforcement
  */
 
 // Engine
@@ -44,7 +44,7 @@ export {
 /**
  * Version constant
  */
-export const VERSION = '1.0.0';
+export const VERSION = '[VERSION]';
 
 /**
  * Feature flags

@@ -350,7 +350,7 @@ Total: 7.6ms
 
 ```
 Runtime:
-  - Node.js >=18.0.0
+  - Node.js >=latest
   - pnpm (required)
 
 RDF & SPARQL:

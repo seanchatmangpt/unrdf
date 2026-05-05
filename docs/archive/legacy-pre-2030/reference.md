@@ -2,7 +2,7 @@
 title: "@unrdf/yawl-langchain Reference"
 type: "reference"
 packageName: "@unrdf/yawl-langchain"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "158012da5906009903baa43ce1b547b9563900cb2a11773bd1836d6b7290d3ef"

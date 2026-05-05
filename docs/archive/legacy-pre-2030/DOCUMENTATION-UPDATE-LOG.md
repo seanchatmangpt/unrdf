@@ -19,9 +19,9 @@ This log documents all corrections made to align documentation with verified met
 | KGC-4D source LOC | 700 | 5,465 | `wc -l packages/kgc-4d/src/*.mjs` |
 | YAWL total LOC | 26,449 | 26,449 (unchanged) | Verified |
 | YAWL source LOC | N/A | 19,618 | `wc -l packages/yawl/src/*.mjs` |
-| Test pass rate (KGC-4D) | "0 defects" | 90.4% (85/94) | `pnpm test` output |
+| Test pass rate (KGC-4D) | "0 defects" | latest% (85/94) | `pnpm test` output |
 | Test coverage (YAWL) | Implied complete | 0 tests | `find packages/yawl -name "*.test.*"` |
-| Pattern reuse | 64.1% (verified) | ~64% (claimed) | Unverified claim |
+| Pattern reuse | latest% (verified) | ~64% (claimed) | Unverified claim |
 | Production status | "Production ready" | "Research prototype" | No production deployment |
 
 ---
@@ -99,7 +99,7 @@ Files already contain accurate measurements:
 
 **Before:** Claims of "0 defects" implying complete test coverage
 **After:**
-- KGC-4D: 90.4% pass rate (85/94 tests, 9 failures)
+- KGC-4D: latest% pass rate (85/94 tests, 9 failures)
 - YAWL: 0 tests
 - Microframeworks: 0 tests
 
@@ -119,7 +119,7 @@ Files already contain accurate measurements:
 
 ### 5. Pattern Reuse Claim Corrections
 
-**Before:** "64.1% pattern reuse (verified)"
+**Before:** "latest% pattern reuse (verified)"
 **After:** "~64% pattern reuse (claimed, unverified)"
 
 **Reason:** Pattern reuse was estimated, not measured. No tooling exists to verify this claim.

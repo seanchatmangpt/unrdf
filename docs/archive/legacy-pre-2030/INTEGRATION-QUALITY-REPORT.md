@@ -1,6 +1,6 @@
 # Integration Quality Verification Report
 
-**Generated**: 2026-01-11T02:33:45.186Z
+**Generated**: 2026-01-11T02:33:latestZ
 **Quality Score**: 78/100
 
 ## Executive Summary
@@ -56,7 +56,7 @@
 | Integrations | 200+ | 92% | PASS |
 | Edge Cases | 30+ | 100% | PASS |
 | Performance | 50+ | 85% | PASS |
-| **Overall** | **424** | **92.7%** | **PASS** |
+| **Overall** | **424** | **latest%** | **PASS** |
 
 ## Known Issues & Gaps
 
@@ -152,7 +152,7 @@ The following test files have failing tests that require remediation:
 ## Conclusion
 
 The daemon integration quality verification shows:
-- **Overall Pass Rate**: 92.7% (393/424 tests)
+- **Overall Pass Rate**: latest% (393/424 tests)
 - **Critical Issues**: 0
 - **Blocking Issues**: 0
 - **Quality Score**: 78/100
@@ -160,4 +160,4 @@ The daemon integration quality verification shows:
 The daemon is production-ready with the exception of consensus integration tests, which require fixes before deploying to distributed environments.
 
 ---
-**Report Generated**: 2026-01-11T02:33:45.186Z
+**Report Generated**: 2026-01-11T02:33:latestZ

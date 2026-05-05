@@ -29,10 +29,10 @@
 #### 1. **zod** - Schema Validation Library
 - **Impact**: HIGH - Core validation across 6 packages
 - **Current State**:
-  - `^4.1.13`: @unrdf/core, @unrdf/oxigraph, @unrdf/nextra-docs, @unrdf/hooks, @unrdf/federation
-  - `^3.24.1`: @unrdf/streaming ⚠️ OUTLIER
+  - `^latest`: @unrdf/core, @unrdf/oxigraph, @unrdf/nextra-docs, @unrdf/hooks, @unrdf/federation
+  - `^latest`: @unrdf/streaming ⚠️ OUTLIER
 - **Breaking Changes**: YES - Zod v4 has API changes from v3
-- **Action Required**: Upgrade @unrdf/streaming to Zod v4.1.13
+- **Action Required**: Upgrade @unrdf/streaming to Zod vlatest
 - **Effort**: 1 hour (update schemas, test validation)
 - **Testing Required**:
   ```bash
@@ -43,10 +43,10 @@
 #### 2. **@opentelemetry/api** - Observability Core
 - **Impact**: HIGH - OTEL spans/traces affected
 - **Current State**:
-  - `^1.8.0`: @unrdf/atomvm
-  - `^1.9.0`: @unrdf/streaming ⚠️ NEWER
+  - `^latest`: @unrdf/atomvm
+  - `^latest`: @unrdf/streaming ⚠️ NEWER
 - **Breaking Changes**: NO - Patch release, backward compatible
-- **Action Required**: Upgrade @unrdf/atomvm to ^1.9.0
+- **Action Required**: Upgrade @unrdf/atomvm to ^latest
 - **Effort**: 15 minutes (version bump + smoke test)
 - **Testing Required**:
   ```bash
@@ -57,27 +57,27 @@
 ### ⚠️ Priority 2: Medium Conflicts (4)
 
 #### 3. **@rdfjs/data-model** - RDF Triple Handling
-- **Packages**: @unrdf/core (^2.1.1) vs @unrdf/streaming (^2.0.2)
+- **Packages**: @unrdf/core (^latest) vs @unrdf/streaming (^latest)
 - **Impact**: MEDIUM - Data model compatibility
-- **Action**: Upgrade streaming to ^2.1.1
+- **Action**: Upgrade streaming to ^latest
 - **Effort**: 30 minutes
 
 #### 4. **yaml** - YAML Parsing
-- **Packages**: @unrdf/kgn (^2.8.1) vs @unrdf/cli (^2.8.2)
+- **Packages**: @unrdf/kgn (^latest) vs @unrdf/cli (^latest)
 - **Impact**: LOW - Minor patch difference
-- **Action**: Align to ^2.8.2 (latest)
+- **Action**: Align to ^latest (latest)
 - **Effort**: 15 minutes
 
 #### 5. **eslint** - Linting (DevDep)
-- **Packages**: @unrdf/kgn (v8.56.0) vs docs (v9.39.1)
+- **Packages**: @unrdf/kgn (vlatest) vs docs (vlatest)
 - **Impact**: LOW - Dev tooling only
-- **Action**: Upgrade kgn to v9.39.1 (major version jump - review breaking changes)
+- **Action**: Upgrade kgn to vlatest (major version jump - review breaking changes)
 - **Effort**: 30 minutes (config migration needed)
 
 #### 6. **@playwright/test** - E2E Testing (DevDep)
-- **Packages**: @unrdf/atomvm (^1.57.0) vs docs (^1.49.1)
+- **Packages**: @unrdf/atomvm (^latest) vs docs (^latest)
 - **Impact**: LOW - Test tooling only
-- **Action**: Upgrade docs to ^1.57.0
+- **Action**: Upgrade docs to ^latest
 - **Effort**: 15 minutes
 
 ---
@@ -90,19 +90,19 @@
 ```bash
 # 1. Upgrade zod in streaming package
 cd packages/streaming
-pnpm add zod@^4.1.13
+pnpm add zod@^latest
 # Review schema changes: https://github.com/colinhacks/zod/releases
 # Update validation schemas for v4 API
 timeout 10s pnpm test
 
 # 2. Upgrade @opentelemetry/api in atomvm
 cd packages/atomvm
-pnpm add @opentelemetry/api@^1.9.0
+pnpm add @opentelemetry/api@^latest
 timeout 10s pnpm test
 
 # 3. Upgrade @rdfjs/data-model in streaming
 cd packages/streaming
-pnpm add @rdfjs/data-model@^2.1.1
+pnpm add @rdfjs/data-model@^latest
 timeout 10s pnpm test
 
 # 4. Verify all packages
@@ -123,17 +123,17 @@ grep "Score:" validation-output.log  # Expect ≥80/100
 ```bash
 # 1. Update yaml
 cd packages/kgn
-pnpm add yaml@^2.8.2
+pnpm add yaml@^latest
 
 # 2. Update eslint (CAREFUL - major version jump)
 cd packages/kgn
-pnpm add -D eslint@^9.39.1
-# Migrate config: https://eslint.org/docs/latest/use/migrate-to-9.0.0
+pnpm add -D eslint@^latest
+# Migrate config: https://eslint.org/docs/latest/use/migrate-to-latest
 # Update .eslintrc.js to flat config
 
 # 3. Update Playwright
 cd packages/nextra
-pnpm add -D @playwright/test@^1.57.0
+pnpm add -D @playwright/test@^latest
 ```
 
 ### Phase 3: Prevent Future Drift (Ongoing)
@@ -145,12 +145,12 @@ pnpm add -D @playwright/test@^1.57.0
      "pnpm": {
        "catalogs": {
          "default": {
-           "zod": "^4.1.13",
-           "@opentelemetry/api": "^1.9.0",
-           "@rdfjs/data-model": "^2.1.1",
-           "yaml": "^2.8.2",
-           "eslint": "^9.39.1",
-           "@playwright/test": "^1.57.0"
+           "zod": "^latest",
+           "@opentelemetry/api": "^latest",
+           "@rdfjs/data-model": "^latest",
+           "yaml": "^latest",
+           "eslint": "^latest",
+           "@playwright/test": "^latest"
          }
        }
      }
@@ -196,26 +196,26 @@ pnpm add -D @playwright/test@^1.57.0
 
 | # | Dependency | Pkgs | Versions | Status |
 |---|------------|------|----------|--------|
-| 1 | vitest | 15 | ^4.0.15 | ✅ Aligned |
+| 1 | vitest | 15 | ^latest | ✅ Aligned |
 | 2 | @unrdf/core | 12 | workspace:* | ✅ Aligned |
-| 3 | @types/node | 12 | ^24.10.1 | ✅ Aligned |
+| 3 | @types/node | 12 | ^latest | ✅ Aligned |
 | 4 | @unrdf/oxigraph | 6 | workspace:* | ✅ Aligned |
-| 5 | **zod** | 6 | ^4.1.13, ^3.24.1 | ⚠️ CONFLICT |
+| 5 | **zod** | 6 | ^latest, ^latest | ⚠️ CONFLICT |
 | 6 | @unrdf/streaming | 3 | workspace:* | ✅ Aligned |
 | 7 | @unrdf/hooks | 3 | workspace:* | ✅ Aligned |
-| 8 | citty | 3 | ^0.1.6 | ✅ Aligned |
-| 9 | **yaml** | 2 | ^2.8.1, ^2.8.2 | ⚠️ CONFLICT |
-| 10 | comment-parser | 2 | ^1.4.1 | ✅ Aligned |
-| 11 | **eslint** | 2 | ^8.56.0, ^9.39.1 | ⚠️ CONFLICT |
-| 12 | **@rdfjs/data-model** | 2 | ^2.1.1, ^2.0.2 | ⚠️ CONFLICT |
-| 13 | **@opentelemetry/api** | 2 | ^1.8.0, ^1.9.0 | ⚠️ CONFLICT |
-| 14 | **@playwright/test** | 2 | ^1.57.0, ^1.49.1 | ⚠️ CONFLICT |
-| 15 | typescript | 2 | ^5.9.3 | ✅ Aligned |
+| 8 | citty | 3 | ^latest | ✅ Aligned |
+| 9 | **yaml** | 2 | ^latest, ^latest | ⚠️ CONFLICT |
+| 10 | comment-parser | 2 | ^latest | ✅ Aligned |
+| 11 | **eslint** | 2 | ^latest, ^latest | ⚠️ CONFLICT |
+| 12 | **@rdfjs/data-model** | 2 | ^latest, ^latest | ⚠️ CONFLICT |
+| 13 | **@opentelemetry/api** | 2 | ^latest, ^latest | ⚠️ CONFLICT |
+| 14 | **@playwright/test** | 2 | ^latest, ^latest | ⚠️ CONFLICT |
+| 15 | typescript | 2 | ^latest | ✅ Aligned |
 | 16 | @unrdf/test-utils | 1 | workspace:* | ✅ Aligned |
-| 17 | fs-extra | 1 | ^11.3.1 | ✅ Aligned |
-| 18 | gray-matter | 1 | ^4.0.3 | ✅ Aligned |
-| 19 | nunjucks | 1 | ^3.2.4 | ✅ Aligned |
-| 20 | @amiceli/vitest-cucumber | 1 | ^4.1.1 | ✅ Aligned |
+| 17 | fs-extra | 1 | ^latest | ✅ Aligned |
+| 18 | gray-matter | 1 | ^latest | ✅ Aligned |
+| 19 | nunjucks | 1 | ^latest | ✅ Aligned |
+| 20 | @amiceli/vitest-cucumber | 1 | ^latest | ✅ Aligned |
 
 ---
 
@@ -250,12 +250,12 @@ pnpm -r exec depcheck --json > /tmp/depcheck-results.json
 
 | Dependency | Old → New | Breaking? | Migration Guide |
 |------------|-----------|-----------|-----------------|
-| zod | 3.24.1 → 4.1.13 | ✅ YES | [Zod v4 Migration](https://github.com/colinhacks/zod/releases) |
-| @opentelemetry/api | 1.8.0 → 1.9.0 | ❌ NO | Patch release |
-| @rdfjs/data-model | 2.0.2 → 2.1.1 | ❌ NO | Minor release |
-| yaml | 2.8.1 → 2.8.2 | ❌ NO | Patch release |
-| eslint | 8.56.0 → 9.39.1 | ✅ YES | [ESLint v9 Migration](https://eslint.org/docs/latest/use/migrate-to-9.0.0) |
-| @playwright/test | 1.49.1 → 1.57.0 | ❌ NO | Minor release |
+| zod | latest → latest | ✅ YES | [Zod v4 Migration](https://github.com/colinhacks/zod/releases) |
+| @opentelemetry/api | latest → latest | ❌ NO | Patch release |
+| @rdfjs/data-model | latest → latest | ❌ NO | Minor release |
+| yaml | latest → latest | ❌ NO | Patch release |
+| eslint | latest → latest | ✅ YES | [ESLint v9 Migration](https://eslint.org/docs/latest/use/migrate-to-latest) |
+| @playwright/test | latest → latest | ❌ NO | Minor release |
 
 ### Rollback Strategy
 
@@ -267,8 +267,8 @@ pnpm -r exec depcheck --json > /tmp/depcheck-results.json
 
 2. **Atomic Commits**:
    ```bash
-   git commit -m "fix(streaming): upgrade zod to v4.1.13"
-   git commit -m "fix(atomvm): upgrade @opentelemetry/api to v1.9.0"
+   git commit -m "fix(streaming): upgrade zod to vlatest"
+   git commit -m "fix(atomvm): upgrade @opentelemetry/api to vlatest"
    # One dependency per commit for easy rollback
    ```
 

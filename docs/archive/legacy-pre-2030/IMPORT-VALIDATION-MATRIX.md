@@ -204,7 +204,7 @@ AtomVM package imports:
    - Change `distributed-query-engine.mjs:21` to use `@unrdf/core/utils/sparql-utils`
 
 3. **Add missing dependency**:
-   - Add `@opentelemetry/api: ^1.9.0` to `packages/federation/package.json`
+   - Add `@opentelemetry/api: ^latest` to `packages/federation/package.json`
 
 ### ⚠️ P1 (Should Fix)
 
@@ -214,7 +214,7 @@ AtomVM package imports:
 
 ### ℹ️ P2 (Nice to Have)
 
-1. **Standardize OpenTelemetry versions** - Currently using 1.8.0 and 1.9.0
+1. **Standardize OpenTelemetry versions** - Currently using latest and latest
 2. **Document internal imports** - Add JSDoc for complex import chains
 3. **Consider workspace references** - Ensure pnpm workspace: protocol is used consistently
 

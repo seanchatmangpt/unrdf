@@ -69,7 +69,7 @@ export async function createTestDataFactory() {
     apiDefinitions: {
       userAPI: {
         name: 'UserAPI',
-        version: '2.1.0',
+        version: 'latest',
         description: 'User management API',
         endpoints: [
           { path: '/users', method: 'GET', description: 'List all users' },
@@ -82,7 +82,7 @@ export async function createTestDataFactory() {
 
       productAPI: {
         name: 'ProductAPI',
-        version: '1.5.2',
+        version: 'latest',
         description: 'Product catalog API',
         endpoints: [
           { path: '/products', method: 'GET', description: 'List products' },
@@ -226,7 +226,7 @@ export async function createTestDataFactory() {
     templateConfigs: {
       deterministic: {
         projectName: 'KGen Project',
-        version: '1.0.0',
+        version: 'latest',
         author: 'DfLLSS Team',
         domain: 'example.com',
         timestamp: '2024-01-01T00:00:00Z', // Fixed for determinism

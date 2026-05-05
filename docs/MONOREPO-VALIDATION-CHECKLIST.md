@@ -45,7 +45,7 @@ packages/
 
 ### ✅ Package.json Files
 - [x] Each package has proper `package.json`
-- [x] Correct version numbers (5.0.0-alpha.0 for core)
+- [x] Correct version numbers (latest.0 for core)
 - [x] Proper exports defined
 - [x] Workspace dependencies marked with `workspace:*`
 - [x] Dev dependencies include `vitest` and `@types/node`
@@ -164,7 +164,7 @@ Each package has identical script structure:
 - [x] `@unrdf/dark-matter` - ~100KB
 - [x] `@unrdf/composables` - ~30KB
 - [x] `@unrdf/project-engine` - ~200KB
-- [x] **Total reduction**: 68-69% vs v4.x (2.5MB → ~340KB minimal, ~880KB full)
+- [x] **Total reduction**: 68-69% vs v4.x (latestMB → ~340KB minimal, ~880KB full)
 
 ## VOC Alignment
 
@@ -242,7 +242,7 @@ Each package has identical script structure:
 
 ✅ **Structure**: 10 focused packages with clear boundaries
 ✅ **Dependencies**: Acyclic, workspace-linked, no forced installs
-✅ **Size**: 68-69% reduction (2.5MB → 150KB-880KB)
+✅ **Size**: 68-69% reduction (latestMB → 150KB-880KB)
 ✅ **VOCs**: All 7 user personas served by substrate
 ✅ **Documentation**: Comprehensive guides and examples
 ✅ **Installation**: Works with `pnpm install`

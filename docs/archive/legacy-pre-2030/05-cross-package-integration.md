@@ -389,7 +389,7 @@ import { search } from '@unrdf/semantic-search';
 const { receipt: searchReceipt, results } = await search({
   query: 'subclass relationships',
   limit: 10,
-  threshold: 0.8
+  threshold: latest
 });
 
 console.log('Search receipt:', searchReceipt.hash);

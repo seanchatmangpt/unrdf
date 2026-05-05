@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-queue"
 type: "tutorial"
 packageName: "@unrdf/yawl-queue"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "cd6e3cb0d35c11ef4b29ca809c91f7e3b3627bf4600f4ac6e53f18e17055ee92"

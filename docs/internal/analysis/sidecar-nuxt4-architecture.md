@@ -40,7 +40,7 @@ The architecture is **well-suited for Monaco Editor integration** with existing 
 ```
 /Users/sac/unrdf/sidecar/
 ├── nuxt.config.ts              # Nuxt 4 configuration (SSR disabled, pages enabled)
-├── package.json                # Dependencies (Nuxt 4.1.2, Vue, OpenTelemetry, N3)
+├── package.json                # Dependencies (Nuxt latest, Vue, OpenTelemetry, N3)
 ├── app/                        # Frontend application
 │   ├── components/
 │   │   └── observability/
@@ -1134,8 +1134,8 @@ To fully support Monaco Editor integration, add these endpoints:
 ### 5.1 Missing Components
 
 1. **Monaco Editor Package**: Not in package.json
-   - Add: `"monaco-editor": "^0.50.0"`
-   - Add: `"@monaco-editor/loader": "^1.4.0"` (optional)
+   - Add: `"monaco-editor": "^latest"`
+   - Add: `"@monaco-editor/loader": "^latest"` (optional)
 
 2. **SPARQL/SHACL Language Support**: Custom tokenizers needed
    - Implement monarch tokenizers for SPARQL and SHACL (Turtle)

@@ -9,7 +9,7 @@
     "cap": "urn:playground:capabilities:",
     "proto": "urn:playground:protocols:"
   },
-  "@id": "urn:playground:agent-integration:v1.0.0",
+  "@id": "urn:playground:agent-integration:latest",
   "@type": "agent:IntegrationGuide"
 }
 ```
@@ -63,7 +63,7 @@ WHERE {
 ```sparql
 ASK {
   cap:papers-generate a cap:Capability ;
-                      cap:version "1.0.0" .
+                      cap:version "latest" .
 }
 ```
 

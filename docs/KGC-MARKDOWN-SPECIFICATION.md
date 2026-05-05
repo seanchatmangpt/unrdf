@@ -1,6 +1,6 @@
 # KGC Markdown (.kgcmd) Format Specification
 
-> **Version**: 1.0.0
+> **Version**: latest
 > **Date**: 2025-12-26
 > **Status**: Implementation-Ready
 > **Type**: Formal Specification
@@ -24,7 +24,7 @@
 
 ## 1. Overview
 
-### 1.1 Purpose
+### latest Purpose
 
 KGC Markdown (.kgcmd) is a **verifiable documentation format** that combines:
 
@@ -35,7 +35,7 @@ KGC Markdown (.kgcmd) is a **verifiable documentation format** that combines:
 
 **Core Invariant**: Every dynamic section must be backed by a receipt proving it was generated deterministically within declared bounds.
 
-### 1.2 Design Goals
+### latest Design Goals
 
 1. **Deterministic Reproduction**: Same inputs → same outputs → same hashes
 2. **Cryptographic Verification**: Every claim backed by receipt chain
@@ -43,7 +43,7 @@ KGC Markdown (.kgcmd) is a **verifiable documentation format** that combines:
 4. **Multi-View Support**: Same content, multiple presentations (Diátaxis framework)
 5. **Source Traceability**: All content linked to source code/data ranges
 
-### 1.3 File Structure
+### latest File Structure
 
 ```
 filename.kgcmd
@@ -59,7 +59,7 @@ filename.kgcmd
 
 ## 2. Frontmatter Schema
 
-### 2.1 Complete Schema Definition
+### latest Complete Schema Definition
 
 The frontmatter is a YAML block delimited by `---` at the start of the file. All fields use camelCase naming.
 
@@ -99,7 +99,7 @@ sources:
     hash: 'e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8'
 
 # Document version (semver)
-version: '1.2.0'
+version: 'latest'
 
 # Timestamps (ISO 8601 with timezone)
 createdAt: '2025-12-26T10:30:00Z'
@@ -117,9 +117,9 @@ authors:
 ---
 ```
 
-### 2.2 Field Definitions
+### latest Field Definitions
 
-#### 2.2.1 `o_hash` (required)
+#### latest `o_hash` (required)
 
 - **Type**: `string`
 - **Format**: SHA-256 hex digest (exactly 64 hexadecimal characters)
@@ -127,7 +127,7 @@ authors:
 - **Example**: `"a3f5b8c2d1e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"`
 - **Validation**: Must match `^[a-f0-9]{64}$`
 
-#### 2.2.2 `policy_id` (required)
+#### latest `policy_id` (required)
 
 - **Type**: `string`
 - **Format**: UUID v4 (RFC 4122)
@@ -135,7 +135,7 @@ authors:
 - **Example**: `"550e8400-e29b-41d4-a716-446655440000"`
 - **Validation**: Must match UUID regex `^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`
 
-#### 2.2.3 `receipts` (required)
+#### latest `receipts` (required)
 
 - **Type**: `array<string>`
 - **Format**: Array of SHA-256 hex digests (64 chars each)
@@ -152,7 +152,7 @@ authors:
     - 'c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6'
   ```
 
-#### 2.2.4 `bounds` (required)
+#### latest `bounds` (required)
 
 - **Type**: `object`
 - **Purpose**: Resource limits for executable blocks
@@ -169,7 +169,7 @@ authors:
   ```
 - **Validation**: All fields required, must be positive integers within ranges
 
-#### 2.2.5 `views` (required)
+#### latest `views` (required)
 
 - **Type**: `array<string>`
 - **Format**: Array of Diátaxis view types
@@ -183,7 +183,7 @@ authors:
     - 'explanation'
   ```
 
-#### 2.2.6 `sources` (required)
+#### latest `sources` (required)
 
 - **Type**: `array<object>`
 - **Purpose**: Source code/data ranges this doc was extracted from
@@ -206,15 +206,15 @@ authors:
       hash: 'd6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7'
   ```
 
-#### 2.2.7 `version` (required)
+#### latest `version` (required)
 
 - **Type**: `string`
-- **Format**: Semantic versioning (semver 2.0.0)
+- **Format**: Semantic versioning (semver latest)
 - **Purpose**: Document version for change tracking
-- **Example**: `"1.2.0"`
+- **Example**: `"latest"`
 - **Validation**: Must match `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`
 
-#### 2.2.8 `createdAt` (required)
+#### latest `createdAt` (required)
 
 - **Type**: `string`
 - **Format**: ISO 8601 datetime with timezone
@@ -222,7 +222,7 @@ authors:
 - **Example**: `"2025-12-26T10:30:00Z"`
 - **Validation**: Must be valid ISO 8601 datetime
 
-#### 2.2.9 `lastProved` (required)
+#### latest `lastProved` (required)
 
 - **Type**: `string`
 - **Format**: ISO 8601 datetime with timezone
@@ -230,7 +230,7 @@ authors:
 - **Example**: `"2025-12-26T14:22:15Z"`
 - **Validation**: Must be valid ISO 8601, must be ≥ `createdAt`
 
-#### 2.2.10 `tags` (optional)
+#### latest `tags` (optional)
 
 - **Type**: `array<string>`
 - **Purpose**: Categorization and search
@@ -242,7 +242,7 @@ authors:
     - 'authentication'
   ```
 
-#### 2.2.11 `authors` (optional)
+#### latest `authors` (optional)
 
 - **Type**: `array<object>`
 - **Object Schema**:
@@ -259,7 +259,7 @@ authors:
 
 ## 3. Executable Block Grammar
 
-### 3.1 Block Structure
+### latest Block Structure
 
 Executable blocks are fenced code blocks with special type identifiers. General structure:
 
@@ -280,7 +280,7 @@ BLOCK BODY (query, code, or JSON)
 **Metadata**: Always valid JSON object
 **Body**: Format depends on block type
 
-### 3.2 Block Type: `kgc:query`
+### latest Block Type: `kgc:query`
 
 **Purpose**: Execute SPARQL/N3/SHACL queries with cardinality bounds
 
@@ -303,7 +303,7 @@ BLOCK BODY (query, code, or JSON)
   }
 }
 ---
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX ex: <http://example.org/>
 
 SELECT ?user ?name WHERE {
@@ -337,7 +337,7 @@ ORDER BY ?name
 - Execution must complete within `timeout`
 - Receipt must exist and match `receiptId`
 
-### 3.3 Block Type: `kgc:proof`
+### latest Block Type: `kgc:proof`
 
 **Purpose**: Verify receipt chain and validate cryptographic proofs
 
@@ -392,7 +392,7 @@ ORDER BY ?name
   }
   ```
 
-### 3.4 Block Type: `kgc:extract`
+### latest Block Type: `kgc:extract`
 
 **Purpose**: Extract code exports, API surfaces, type signatures from source files
 
@@ -467,7 +467,7 @@ ORDER BY ?name
 - Output sorted by file path, then line number
 - Excludes timestamps, absolute paths
 
-### 3.5 Block Type: `kgc:render`
+### latest Block Type: `kgc:render`
 
 **Purpose**: Transform JSON input into formatted markdown sections
 
@@ -559,11 +559,11 @@ ORDER BY ?name
 
 ## 4. Content Sections
 
-### 4.1 Section Types
+### latest Section Types
 
 KGC Markdown documents contain three types of sections:
 
-#### 4.1.1 Static Sections
+#### latest Static Sections
 
 **Definition**: Manually authored prose with no dynamic generation
 
@@ -585,7 +585,7 @@ The API provides CRUD operations with role-based access control.
 
 **Hashing**: SHA-256 of normalized markdown (trailing whitespace removed, consistent line endings)
 
-#### 4.1.2 Dynamic Sections
+#### latest Dynamic Sections
 
 **Definition**: Content generated entirely from executable blocks
 
@@ -625,7 +625,7 @@ Creates a new user with validation.
 - Receipt output hash must match section content hash
 - Regeneration must produce identical output
 
-#### 4.1.3 Hybrid Sections
+#### latest Hybrid Sections
 
 **Definition**: Mix of static prose and dynamic content
 
@@ -664,7 +664,7 @@ Admins can perform the following operations:
 - Dynamic portions: Hash from receipt
 - Section hash: Merkle tree of sub-hashes
 
-### 4.2 Section Ordering Rules
+### latest Section Ordering Rules
 
 1. **Frontmatter**: Always first
 2. **Title** (H1): Required, immediately after frontmatter
@@ -673,7 +673,7 @@ Admins can perform the following operations:
 5. **Executable Blocks**: Can appear anywhere in body
 6. **Receipt Appendix**: Always last (if present)
 
-### 4.3 Heading Level Constraints
+### latest Heading Level Constraints
 
 - **H1 (`#`)**: Document title only (exactly 1)
 - **H2 (`##`)**: Major sections (e.g., "API Reference", "Tutorial")
@@ -683,7 +683,7 @@ Admins can perform the following operations:
 
 **Rule**: No heading level skips (e.g., H2 → H4 without H3)
 
-### 4.4 Cross-References
+### latest Cross-References
 
 **Internal Links**:
 
@@ -694,7 +694,7 @@ See [Authentication](#authentication) for details.
 **External Links**:
 
 ```markdown
-Refer to [SPARQL 1.1 Spec](https://www.w3.org/TR/sparql11-query/).
+Refer to [SPARQL latest Spec](https://www.w3.org/TR/sparql11-query/).
 ```
 
 **Source Links** (to frontmatter sources):
@@ -717,9 +717,9 @@ Defined in `src/api/user.mjs:45`
 
 ## 5. Determinism Guarantees
 
-### 5.1 Determinism Levels
+### latest Determinism Levels
 
-#### 5.1.1 `strict`
+#### latest `strict`
 
 **Definition**: Bit-for-bit reproducible output
 
@@ -754,7 +754,7 @@ SELECT ?user ?name WHERE { ... }
 ORDER BY ?name ?user
 ```
 
-#### 5.1.2 `lenient`
+#### latest `lenient`
 
 **Definition**: Semantically equivalent output, minor variations allowed
 
@@ -785,7 +785,7 @@ ORDER BY ?name ?user
 }
 ```
 
-#### 5.1.3 `best-effort`
+#### latest `best-effort`
 
 **Definition**: Non-deterministic, documented variations
 
@@ -813,7 +813,7 @@ ORDER BY ?name ?user
 }
 ```
 
-### 5.2 JSON Canonicalization
+### latest JSON Canonicalization
 
 **Standard**: RFC 8785 (JSON Canonicalization Scheme)
 
@@ -847,7 +847,7 @@ const canonical = canonicalize(obj);
 const hash = sha256(canonical);
 ```
 
-### 5.3 Handling Non-Deterministic Elements
+### latest Handling Non-Deterministic Elements
 
 **Strategy 1: Exclusion**
 
@@ -869,10 +869,10 @@ Convert to deterministic form:
 
 ```javascript
 // Timestamp → ISO 8601 string, truncated to day
-"2025-12-26T10:30:45.123Z" → "2025-12-26T00:00:00Z"
+"2025-12-26T10:30:latestZ" → "2025-12-26T00:00:00Z"
 
 // Floating point → fixed precision
-3.141592653589793 → "3.14159265"
+latest → "latest"
 ```
 
 **Strategy 3: Documentation**
@@ -892,7 +892,7 @@ Receipt metadata notes non-determinism:
 
 ## 6. Receipt Integration
 
-### 6.1 Receipt Structure
+### latest Receipt Structure
 
 **Receipt**: Cryptographic proof of execution
 
@@ -924,7 +924,7 @@ Receipt metadata notes non-determinism:
 }
 ```
 
-### 6.2 Receipt Fields
+### latest Receipt Fields
 
 - **id** (string, required): Receipt hash (SHA-256)
 - **timestamp** (string, required): ISO 8601 execution time
@@ -937,7 +937,7 @@ Receipt metadata notes non-determinism:
 - **dependencies** (array<string>, optional): Dependent receipt IDs
 - **merkle_proof** (object, optional): Merkle tree proof
 
-### 6.3 Receipt Chain Validation
+### latest Receipt Chain Validation
 
 **Chain**: Directed acyclic graph (DAG) of receipts
 
@@ -991,7 +991,7 @@ function validateChain(receiptIds, store) {
 }
 ```
 
-### 6.4 Merkle Proof Structure
+### latest Merkle Proof Structure
 
 **Purpose**: Prove receipt is part of batch without revealing all receipts
 
@@ -1032,7 +1032,7 @@ function verifyMerkleProof(receipt) {
 
 ## 7. Validation Rules
 
-### 7.1 Document-Level Validation
+### latest Document-Level Validation
 
 **Rule V1**: Frontmatter must parse as valid YAML
 **Rule V2**: All required frontmatter fields present
@@ -1043,7 +1043,7 @@ function verifyMerkleProof(receipt) {
 **Rule V7**: Executable blocks have valid JSON metadata
 **Rule V8**: Dynamic sections have opening/closing comments
 
-### 7.2 Frontmatter Validation
+### latest Frontmatter Validation
 
 **Rule F1**: `o_hash` matches regex `^[a-f0-9]{64}$`
 **Rule F2**: `policy_id` is valid UUID v4
@@ -1056,7 +1056,7 @@ function verifyMerkleProof(receipt) {
 **Rule F9**: `version` matches semver regex
 **Rule F10**: `lastProved ≥ createdAt`
 
-### 7.3 Executable Block Validation
+### latest Executable Block Validation
 
 **Rule B1**: Block metadata is valid JSON object
 **Rule B2**: `receiptId` field present and 64-char hex
@@ -1066,7 +1066,7 @@ function verifyMerkleProof(receipt) {
 **Rule B6**: Body format matches block type requirements
 **Rule B7**: Query blocks with `determinismLevel: "strict"` have `ORDER BY`
 
-### 7.4 Receipt Validation
+### latest Receipt Validation
 
 **Rule R1**: Receipt `id` matches SHA-256 of canonical receipt JSON
 **Rule R2**: Receipt `o_hash` matches document frontmatter `o_hash`
@@ -1078,7 +1078,7 @@ function verifyMerkleProof(receipt) {
 **Rule R8**: `output_hash` matches hash of generated content
 **Rule R9**: Merkle proof verifies if present
 
-### 7.5 Content Validation
+### latest Content Validation
 
 **Rule C1**: Dynamic section content matches `output_hash` from receipt
 **Rule C2**: Static section content hashes are stable (no spurious changes)
@@ -1089,9 +1089,9 @@ function verifyMerkleProof(receipt) {
 
 ## 8. Error Model
 
-### 8.1 Error Types
+### latest Error Types
 
-#### 8.1.1 `InvalidFrontmatter`
+#### latest `InvalidFrontmatter`
 
 **Severity**: Error (blocks document loading)
 
@@ -1119,7 +1119,7 @@ Examples:
 3. Validate field formats against spec
 4. Ensure numeric ranges correct
 
-#### 8.1.2 `MissingReceipt`
+#### latest `MissingReceipt`
 
 **Severity**: Error (blocks verification)
 
@@ -1145,7 +1145,7 @@ Examples:
 2. Ensure receipt exists in store (regenerate if needed)
 3. Resolve dependency chain issues
 
-#### 8.1.3 `MismatchedHash`
+#### latest `MismatchedHash`
 
 **Severity**: Error (blocks verification)
 
@@ -1180,7 +1180,7 @@ Examples:
 3. Check for non-deterministic content
 4. Ensure canonical JSON serialization
 
-#### 8.1.4 `BoundsExceeded`
+#### latest `BoundsExceeded`
 
 **Severity**: Error (blocks execution)
 
@@ -1214,7 +1214,7 @@ Examples:
 3. Reduce file scan scope (tighter globs)
 4. Split into multiple blocks
 
-#### 8.1.5 `NonDeterministic`
+#### latest `NonDeterministic`
 
 **Severity**: Warning (for `lenient`), Error (for `strict`)
 
@@ -1249,7 +1249,7 @@ Examples:
 3. Exclude non-deterministic fields from hash
 4. Change `determinismLevel` to `lenient` if acceptable
 
-#### 8.1.6 `InvalidBlockStructure`
+#### latest `InvalidBlockStructure`
 
 **Severity**: Error (blocks execution)
 
@@ -1281,7 +1281,7 @@ Examples:
 3. Ensure all required metadata fields present
 4. Check body format matches block type
 
-#### 8.1.7 `CyclicDependency`
+#### latest `CyclicDependency`
 
 **Severity**: Error (blocks verification)
 
@@ -1307,7 +1307,7 @@ Example:
 2. Remove circular references
 3. Regenerate receipts in correct order
 
-### 8.2 Error Handling Strategy
+### latest Error Handling Strategy
 
 **Fail-Fast**: Stop processing on first error (severity: Error)
 **Collect-Warnings**: Continue processing, report warnings at end
@@ -1342,7 +1342,7 @@ Status: FAILED (fix errors to proceed)
 
 ## 9. Complete Examples
 
-### 9.1 Example 1: API Reference Document
+### latest Example 1: API Reference Document
 
 **File**: `examples/api-reference.kgcmd`
 
@@ -1364,7 +1364,7 @@ sources:
     lineStart: 1
     lineEnd: 250
     hash: 'd6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7'
-version: '1.0.0'
+version: 'latest'
 createdAt: '2025-12-26T10:00:00Z'
 lastProved: '2025-12-26T14:00:00Z'
 tags:
@@ -1584,7 +1584,7 @@ interface User extends UserData {
 ```
 ````
 
-### 9.2 Example 2: Tutorial with Queries
+### latest Example 2: Tutorial with Queries
 
 **File**: `examples/tutorial-query.kgcmd`
 
@@ -1607,7 +1607,7 @@ sources:
     lineStart: 1
     lineEnd: 500
     hash: 'c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2'
-version: '1.0.0'
+version: 'latest'
 createdAt: '2025-12-26T11:00:00Z'
 lastProved: '2025-12-26T15:30:00Z'
 tags:
@@ -1651,7 +1651,7 @@ Let's find all of Alice's friends:
   }
 }
 ---
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX ex: <http://example.org/people/>
 
 SELECT ?friendName WHERE {
@@ -1698,7 +1698,7 @@ Now let's find people who are friends with both Alice and Bob:
   }
 }
 ---
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX ex: <http://example.org/people/>
 
 SELECT ?mutualFriendName WHERE {
@@ -1809,7 +1809,7 @@ All queries in this tutorial have been verified:
 
 ## 10. Implementation Notes
 
-### 10.1 Parser Architecture
+### latest Parser Architecture
 
 **Recommended Approach**: Multi-stage pipeline
 
@@ -1822,7 +1822,7 @@ All queries in this tutorial have been verified:
 7. **Hash Verification**: Verify all receipt hashes
 8. **Dynamic Section Matching**: Match sections to receipt outputs
 
-### 10.2 Execution Engine
+### latest Execution Engine
 
 **Components**:
 
@@ -1841,7 +1841,7 @@ All queries in this tutorial have been verified:
 6. Create receipt
 7. Store receipt
 
-### 10.3 Receipt Storage
+### latest Receipt Storage
 
 **Options**:
 
@@ -1855,7 +1855,7 @@ All queries in this tutorial have been verified:
 - List receipts by `o_hash`
 - Find dependent receipts (reverse dependency lookup)
 
-### 10.4 Hashing Strategy
+### latest Hashing Strategy
 
 **Library**: `hash-wasm` (fast, WASM-based)
 
@@ -1879,7 +1879,7 @@ async function hashMarkdown(text) {
 }
 ```
 
-### 10.5 Testing Strategy
+### latest Testing Strategy
 
 **Unit Tests**:
 
@@ -1901,7 +1901,7 @@ async function hashMarkdown(text) {
 - Idempotence: validate(validate(doc)) = validate(doc)
 - Commutativity: receipt order doesn't affect validation
 
-### 10.6 Performance Targets
+### latest Performance Targets
 
 - **Parse frontmatter**: <10ms
 - **Parse full document**: <100ms (5000 line doc)
@@ -1910,7 +1910,7 @@ async function hashMarkdown(text) {
 - **Verify receipt chain**: <50ms (10 receipts)
 - **Merkle proof verification**: <5ms
 
-### 10.7 Security Considerations
+### latest Security Considerations
 
 1. **SPARQL Injection**: Sanitize query inputs, use parameterized queries
 2. **Path Traversal**: Validate file paths, prevent `../` in sources
@@ -1918,7 +1918,7 @@ async function hashMarkdown(text) {
 4. **Receipt Tampering**: Verify cryptographic hashes
 5. **Dependency Confusion**: Validate receipt dependency chains
 
-### 10.8 Extensibility
+### latest Extensibility
 
 **Future Block Types**:
 
@@ -1965,5 +1965,5 @@ This specification defines a complete, implementation-ready format for **verifia
 ---
 
 **Document Hash**: `<to be computed after finalization>`
-**License**: CC-BY-SA 4.0
+**License**: CC-BY-SA latest
 **Maintainer**: UNRDF Project

@@ -93,7 +93,7 @@ packages/kgc-probe/src/
 
 ## 2. Integration Points (Dependency Matrix)
 
-### 2.1 Package Dependencies
+### latest Package Dependencies
 
 ```
 @unrdf/kgc-probe
@@ -125,7 +125,7 @@ packages/kgc-probe/src/
     └── WorkflowEngine                      (async probe coordination)
 ```
 
-### 2.2 Module Dependency Coupling
+### latest Module Dependency Coupling
 
 ```
     CLI Layer
@@ -331,7 +331,7 @@ packages/kgc-probe/src/
 │   "receipt_id": "rcpt-2025-12-27-001",                            │
 │   "domain": "security",                                            │
 │   "state_hash": "blake3:9f86d08...",                              │
-│   "score": 0.92,                                                   │
+│   "score": latest,                                                   │
 │   "assertions": [                                                  │
 │     { "id": "sec-001", "status": "pass", "evidence": "..." }     │
 │   ],                                                               │
@@ -346,7 +346,7 @@ packages/kgc-probe/src/
 
 ## 4. Module Entry Point Design
 
-### 4.1 Index.mjs (Main Export)
+### latest Index.mjs (Main Export)
 
 ```javascript
 /**
@@ -435,7 +435,7 @@ export default {
 };
 ```
 
-### 4.2 Execution Flow via Index.mjs
+### latest Execution Flow via Index.mjs
 
 ```javascript
 // Example: Typical user flow
@@ -477,7 +477,7 @@ console.log(receipt);
 
 ## 5. File Specifications
 
-### 5.1 Schemas Directory
+### latest Schemas Directory
 
 #### observation.schema.mjs
 ```
@@ -490,7 +490,7 @@ Zod Validators:
 - metadata:
   - timestamp: ISO 8601 timestamp
   - source: string (agent name)
-  - confidence: number (0.0-1.0)
+  - confidence: number (latest.0)
   - context: object (optional metadata)
 
 Pattern: Use z.object() with z.instanceof() for RDF terms from oxigraph
@@ -503,7 +503,7 @@ Zod Validators:
 - probe_id: string (UUID)
 - domain: enum('security', 'performance', 'correctness', ...)
 - status: enum('pass', 'fail', 'warning', 'skip')
-- score: number (0.0-1.0)
+- score: number (latest.0)
 - assertions: array of { id, status, evidence, weight }
 - duration_ms: number
 - timestamp_ns: bigint
@@ -553,7 +553,7 @@ Pattern: Extends v6-core BaseReceipt structure; validated before signing
 
 ---
 
-### 5.2 Agents Directory
+### latest Agents Directory
 
 #### agents/index.mjs
 ```
@@ -580,7 +580,7 @@ Methods:
 - execute(observation): Promise<ProbeResult>
   - Checks: auth, encryption, secrets, injection attacks
   - Evidence: findings, remediation_steps
-  - Returns: ProbeResult with score [0.0-1.0]
+  - Returns: ProbeResult with score [latest.0]
 
 Integration:
 - Calls: observation-guard to validate input
@@ -591,7 +591,7 @@ Integration:
 
 ---
 
-### 5.3 Guards Directory
+### latest Guards Directory
 
 #### observation-guard.mjs
 ```
@@ -617,7 +617,7 @@ Methods:
 - verifyAssertions(assertions): Checks invariants
 
 Invariants:
-- score is 0.0 <= score <= 1.0
+- score is latest <= score <= latest
 - All assertions have unique IDs
 - Duration is non-negative
 - Status matches assertion summary
@@ -674,7 +674,7 @@ Pattern: Final validation gate; prevents corrupted receipts from exiting system
 
 ---
 
-### 5.4 Storage Directory
+### latest Storage Directory
 
 #### probe-store.mjs
 ```
@@ -755,7 +755,7 @@ Pattern:
 
 ---
 
-### 5.5 Orchestrator Directory
+### latest Orchestrator Directory
 
 #### probe-orchestrator.mjs
 ```
@@ -842,7 +842,7 @@ Methods:
 - aggregateResults(results): AggregatedSummary
   Summary structure:
   {
-    overall_score: number (0.0-1.0),
+    overall_score: number (latest.0),
     by_domain: { [domain]: score },
     assertions_passed: number,
     assertions_failed: number,
@@ -863,7 +863,7 @@ Pattern:
 
 ---
 
-### 5.6 CLI Directory
+### latest CLI Directory
 
 #### cli/index.mjs
 ```
@@ -974,7 +974,7 @@ Pattern:
 
 ---
 
-### 5.7 Receipts Directory
+### latest Receipts Directory
 
 #### receipt-builder.mjs
 ```
@@ -1050,7 +1050,7 @@ Pattern:
 
 ---
 
-### 5.8 Utils Directory
+### latest Utils Directory
 
 #### logger.mjs
 ```
@@ -1114,7 +1114,7 @@ Pattern:
 
 ## 6. Integration with Existing Packages
 
-### 6.1 @unrdf/v6-core Integration
+### latest @unrdf/v6-core Integration
 
 ```javascript
 // receipt-builder.mjs integrates:
@@ -1141,7 +1141,7 @@ export class ReceiptBuilder {
 }
 ```
 
-### 6.2 @unrdf/kgc-substrate Integration
+### latest @unrdf/kgc-substrate Integration
 
 ```javascript
 // probe-store.mjs wraps:
@@ -1160,7 +1160,7 @@ export class ProbeStore extends KnowledgeStore {
 }
 ```
 
-### 6.3 @unrdf/oxigraph Integration
+### latest @unrdf/oxigraph Integration
 
 ```javascript
 // triple-generator.mjs uses:
@@ -1180,7 +1180,7 @@ export class TripleGenerator {
 }
 ```
 
-### 6.4 @unrdf/kgc-cli Integration
+### latest @unrdf/kgc-cli Integration
 
 ```javascript
 // cli/index.mjs registers:
@@ -1196,7 +1196,7 @@ export function registerProbeCommands(cliRegistry) {
 }
 ```
 
-### 6.5 @unrdf/hooks Integration (Proposed)
+### latest @unrdf/hooks Integration (Proposed)
 
 ```javascript
 // guards/* implement GuardPolicy interface
@@ -1226,7 +1226,7 @@ export class GuardComposer {
 }
 ```
 
-### 6.6 @unrdf/yawl Integration (Optional)
+### latest @unrdf/yawl Integration (Optional)
 
 ```javascript
 // orchestrator/probe-orchestrator.mjs can extend WorkflowBuilder
@@ -1276,7 +1276,7 @@ export class ProbeOrchestrator extends WorkflowBuilder {
 
 ## 8. Deployment Architecture
 
-### 8.1 Monorepo Integration
+### latest Monorepo Integration
 
 ```
 unrdf/
@@ -1302,12 +1302,12 @@ unrdf/
 │       └── README.md      (user documentation)
 ```
 
-### 8.2 Build and Export Configuration
+### latest Build and Export Configuration
 
 ```json
 {
   "name": "@unrdf/kgc-probe",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "exports": {
     ".": "./src/index.mjs",
@@ -1326,8 +1326,8 @@ unrdf/
     "@unrdf/v6-core": "*",
     "@unrdf/kgc-substrate": "*",
     "@unrdf/kgc-cli": "*",
-    "zod": "^3.22.0",
-    "pino": "^8.0.0"
+    "zod": "^latest",
+    "pino": "^latest"
   }
 }
 ```
@@ -1426,7 +1426,7 @@ unrdf/
 │ {                                                             │
 │   "receipt_id": "rcpt-2025-12-27-001",                       │
 │   "domain": "security",                                       │
-│   "score": 0.92,                                              │
+│   "score": latest,                                              │
 │   "merkle_root": "h(...)",                                    │
 │   "signature": "sig(...)"                                     │
 │ }                                                             │
@@ -1514,13 +1514,13 @@ export class [Domain]Probe {
 
       // 3. Calculate score
       const passed = assertions.filter(a => a.status === 'pass').length;
-      const score = assertions.length > 0 ? passed / assertions.length : 1.0;
+      const score = assertions.length > 0 ? passed / assertions.length : latest;
 
       // 4. Create result
       return {
         probe_id: crypto.randomUUID(),
         domain: [Domain]Probe.domain,
-        status: score >= 0.8 ? 'pass' : score >= 0.5 ? 'warning' : 'fail',
+        status: score >= latest ? 'pass' : score >= latest ? 'warning' : 'fail',
         score,
         assertions,
         duration_ms: Date.now() - startTime,
@@ -1531,7 +1531,7 @@ export class [Domain]Probe {
       return {
         domain: [Domain]Probe.domain,
         status: 'fail',
-        score: 0.0,
+        score: latest,
         assertions: [],
         error: error.message,
       };
@@ -1550,7 +1550,7 @@ export class [Domain]Probe {
       id: '[domain]-001',
       status: 'pass',
       evidence: 'Details...',
-      weight: 1.0,
+      weight: latest,
     });
 
     return assertions;

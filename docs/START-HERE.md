@@ -98,7 +98,7 @@ const core = await createKnowledgeSubstrateCore();
 // Define some people
 const data = `
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
   ex:Alice foaf:name "Alice" ; foaf:knows ex:Bob, ex:Charlie .
   ex:Bob foaf:name "Bob" ; foaf:knows ex:Alice .
@@ -120,7 +120,7 @@ import { core, store } from './knowledge-base.mjs';
 
 // Find everyone and who they know
 const results = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT ?name ?friend
   WHERE {
@@ -184,7 +184,7 @@ import { namedNode, literal } from '@rdfjs/data-model';
 
 store.addQuad(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/latest/name'),
   literal('Alice Smith')
 );
 ```

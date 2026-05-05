@@ -12,13 +12,13 @@ Adversarial validation identified **11 REFUTED claims** across thesis documentat
 
 | Claim | Reality | Impact | Occurrences |
 |-------|---------|--------|-------------|
-| "Zero defects" | 90.4% test pass rate | SHOW-STOPPER | 71 |
-| "99.997% correctness" | Theoretical, not measured | SHOW-STOPPER | 47 |
+| "Zero defects" | latest% test pass rate | SHOW-STOPPER | 71 |
+| "latest% correctness" | Theoretical, not measured | SHOW-STOPPER | 47 |
 | "Nov 18, 2024" | Work done Dec 2025 | SHOW-STOPPER | 15 |
 | "13,027 LOC microfw" | 1,856 actual (7x inflation) | CRITICAL | 10 |
 | "Production-ready YAWL" | 0 tests / 64% pass rate | CRITICAL | 12 |
-| ">100K receipts/sec" | 2.4K-60K measured | CRITICAL | 25 |
-| "700 LOC KGC-4D" | 5,465 actual (7.8x error) | MAJOR | 8 |
+| ">100K receipts/sec" | latestK-60K measured | CRITICAL | 25 |
+| "700 LOC KGC-4D" | 5,465 actual (latestx error) | MAJOR | 8 |
 | "20 workflow patterns" | 14 implemented | MAJOR | 14 |
 | "32 packages" | 20 actual | MAJOR | 9 |
 | "192,332 LOC total" | 269,806 actual | MODERATE | 8 |
@@ -37,14 +37,14 @@ Adversarial validation identified **11 REFUTED claims** across thesis documentat
 ### Priority Levels
 
 **P0 - SHOW-STOPPERS** (Must fix for publication):
-- Zero defects → 90.4% test pass rate
-- 99.997% → Qualify as "theoretical bound"
+- Zero defects → latest% test pass rate
+- latest% → Qualify as "theoretical bound"
 - Nov 2024 → Dec 2025
 
 **P1 - CRITICAL** (Highly recommended):
 - 13,027 LOC → 1,856 LOC
 - Production-ready YAWL → Research prototype
-- >100K throughput → 2.4K-60K measured
+- >100K throughput → latestK-60K measured
 
 **P2-P3 - MAJOR/MODERATE** (Important for completeness):
 - All remaining LOC metrics
@@ -59,23 +59,23 @@ Adversarial validation identified **11 REFUTED claims** across thesis documentat
 
 | Phase | Priority | Hours | Outcome |
 |-------|----------|-------|---------|
-| Phase 1 | P0 (3 claims) | 5.5h | Publication-viable (60% fixed) |
-| Phase 2 | P1 (3 claims) | 3.5h | Strong submission (90% fixed) |
+| Phase 1 | P0 (3 claims) | latesth | Publication-viable (60% fixed) |
+| Phase 2 | P1 (3 claims) | latesth | Strong submission (90% fixed) |
 | Phase 3 | P2-P3 (5 claims) | 2h | Complete correction (100%) |
 | Validation | All | 1h | Quality assurance |
 | **TOTAL** | **11 claims** | **12h** | **Academic integrity restored** |
 
 ### Work Breakdown
 
-**Week 1, Days 1-2** (P0 - 5.5 hours):
-1. Zero defects corrections (71 occurrences) - 2.5h
-2. 99.997% qualifications (47 occurrences) - 2h
+**Week 1, Days 1-2** (P0 - latest hours):
+1. Zero defects corrections (71 occurrences) - latesth
+2. latest% qualifications (47 occurrences) - 2h
 3. Timeline updates (15 occurrences) - 1h
 
-**Week 1, Days 3-4** (P1 - 3.5 hours):
+**Week 1, Days 3-4** (P1 - latest hours):
 4. Microframework LOC (10 occurrences) - 1h
 5. YAWL production status (12 occurrences) - 1h
-6. Receipt throughput (25 occurrences) - 1.5h
+6. Receipt throughput (25 occurrences) - latesth
 
 **Week 1, Day 5** (P2-P3 - 2 hours):
 7-11. Remaining metrics (patterns, packages, layers, LOC)
@@ -125,7 +125,7 @@ Adversarial validation identified **11 REFUTED claims** across thesis documentat
 **Results**:
 ```
 ❌ FAIL: 19 unjustified 'zero defects' claims remain
-❌ FAIL: 13 claims missing 'theoretical' qualifier (99.997%)
+❌ FAIL: 13 claims missing 'theoretical' qualifier (latest%)
 ❌ FAIL: 4 total Nov 2024 dates remain
 
 Status: Corrections incomplete - 3/3 P0 checks failed
@@ -147,7 +147,7 @@ Run validation suite:
 **Expected Output**:
 ```
 ✅ PASS: No unjustified 'zero defects' claims
-✅ PASS: All 99.997% claims include 'theoretical' qualifier
+✅ PASS: All latest% claims include 'theoretical' qualifier
 ✅ PASS: No Nov 2024 dates in active claims
 ✅ PASS: No 13,027 LOC claims remain
 ✅ PASS: No unjustified 'production-ready YAWL' claims
@@ -183,7 +183,7 @@ Status: Ready for publication review
    - **Mitigation**: Update CLAUDE.md, bb80-20-methodology.md
    - **Time**: 30 minutes
 
-3. **99.997% claim unsupported by evidence**
+3. **latest% claim unsupported by evidence**
    - **Mitigation**: Add "theoretical bound" qualifier everywhere
    - **Time**: 1 hour
 
@@ -248,8 +248,8 @@ Status: Ready for publication review
 
 Complete P0 corrections:
 - [ ] Timeline fixed (15 occurrences)
-- [ ] Zero defects → 90.4% (19+ occurrences in active docs)
-- [ ] 99.997% qualified (13+ occurrences)
+- [ ] Zero defects → latest% (19+ occurrences in active docs)
+- [ ] latest% qualified (13+ occurrences)
 - [ ] Validation script shows P0 pass
 
 ### This Week's Goal (12 hours)
@@ -272,7 +272,7 @@ Complete all corrections:
 **Refuted Claims**: 23% (11/47)
 **Publication Probability**: 0% (will be rejected immediately)
 
-### After P0 Corrections (5.5 hours)
+### After P0 Corrections (latest hours)
 
 **Academic Honesty Score**: 6/10 (borderline acceptable)
 **Proven Claims**: ~40% (show-stoppers fixed)
@@ -323,8 +323,8 @@ From ADVERSARIAL-VALIDATION-FINAL.md:
 ### Q: Why are these claims refuted?
 
 **A**: They lack evidence or contradict measurements:
-- "Zero defects" vs 9 test failures (90.4% pass rate)
-- "99.997%" vs no supporting measurement
+- "Zero defects" vs 9 test failures (latest% pass rate)
+- "latest%" vs no supporting measurement
 - "Nov 2024" vs Git showing Dec 2025
 - "13,027 LOC" vs 1,856 measured
 
@@ -332,7 +332,7 @@ From ADVERSARIAL-VALIDATION-FINAL.md:
 
 **A**: No. Corrections must be precise:
 - ❌ "Zero defects (mostly)"
-- ✅ "90.4% test pass rate (85/94)"
+- ✅ "latest% test pass rate (85/94)"
 
 ### Q: What if I disagree with a finding?
 
@@ -355,7 +355,7 @@ From ADVERSARIAL-VALIDATION-FINAL.md:
 - P1 (critical): **Highly recommended**
 - P2-P3 (major/moderate): Nice to have
 
-Minimum viable: P0 only (5.5 hours)
+Minimum viable: P0 only (latest hours)
 
 ---
 
@@ -365,7 +365,7 @@ Minimum viable: P0 only (5.5 hours)
 
 1. `/home/user/unrdf/CLAUDE.md`
    - Most visible
-   - Lines 56, 241 (zero defects, 99.997%)
+   - Lines 56, 241 (zero defects, latest%)
 
 2. `/home/user/unrdf/docs/PHD-THESIS-UNRDF-2028-REVOLUTION.md`
    - Main thesis

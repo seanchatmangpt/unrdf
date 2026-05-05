@@ -73,11 +73,11 @@ describe('Task Activation Latency Benchmarks', () => {
 
     // Calculate percentiles
     durations.sort((a, b) => a - b);
-    const p50 = durations[Math.floor(samples * 0.50)];
-    const p75 = durations[Math.floor(samples * 0.75)];
-    const p90 = durations[Math.floor(samples * 0.90)];
-    const p95 = durations[Math.floor(samples * 0.95)];
-    const p99 = durations[Math.floor(samples * 0.99)];
+    const p50 = durations[Math.floor(samples * latest)];
+    const p75 = durations[Math.floor(samples * latest)];
+    const p90 = durations[Math.floor(samples * latest)];
+    const p95 = durations[Math.floor(samples * latest)];
+    const p99 = durations[Math.floor(samples * latest)];
     const mean = durations.reduce((a, b) => a + b, 0) / samples;
     const max = durations[samples - 1];
 
@@ -94,7 +94,7 @@ describe('Task Activation Latency Benchmarks', () => {
   }
 
   /**
-   * Benchmark 1.1: No Policy
+   * Benchmark latest: No Policy
    */
   it('No policy - baseline overhead', async () => {
     const engine = createWorkflowEngine({ enableEventLog: false });
@@ -116,12 +116,12 @@ describe('Task Activation Latency Benchmarks', () => {
       }
     );
 
-    // Assertion: p99 should be <200μs (0.2ms)
-    expect(stats.p99).toBeLessThan(0.2);
+    // Assertion: p99 should be <200μs (latestms)
+    expect(stats.p99).toBeLessThan(latest);
   });
 
   /**
-   * Benchmark 1.2: Simple Validation Hook
+   * Benchmark latest: Simple Validation Hook
    */
   it('Simple validation hook (1 hook, no SPARQL)', async () => {
     const engine = createWorkflowEngine({ enableEventLog: false });
@@ -157,11 +157,11 @@ describe('Task Activation Latency Benchmarks', () => {
     );
 
     // Assertion: p99 should be <1ms
-    expect(stats.p99).toBeLessThan(1.0);
+    expect(stats.p99).toBeLessThan(latest);
   });
 
   /**
-   * Benchmark 1.3: SPARQL Enablement Query
+   * Benchmark latest: SPARQL Enablement Query
    */
   it('SPARQL enablement query (1 hook, simple ASK)', async () => {
     const engine = createWorkflowEngine({ enableEventLog: false });
@@ -219,11 +219,11 @@ describe('Task Activation Latency Benchmarks', () => {
     );
 
     // Assertion: p99 should be <10ms
-    expect(stats.p99).toBeLessThan(10.0);
+    expect(stats.p99).toBeLessThan(latest);
   });
 
   /**
-   * Benchmark 1.4: 3-Hook Chain
+   * Benchmark latest: 3-Hook Chain
    */
   it('3-hook validation chain', async () => {
     const engine = createWorkflowEngine({ enableEventLog: false });
@@ -259,12 +259,12 @@ describe('Task Activation Latency Benchmarks', () => {
     );
 
     // Assertion: p99 should be <10ms
-    expect(stats.p99).toBeLessThan(10.0);
+    expect(stats.p99).toBeLessThan(latest);
     console.log('\n⚠️  Expected <1ms claim may not hold for realistic policies');
   });
 
   /**
-   * Benchmark 1.5: Latency Distribution Visualization
+   * Benchmark latest: Latency Distribution Visualization
    */
   it('Generate latency histogram', async () => {
     const engine = createWorkflowEngine({ enableEventLog: false });
@@ -287,7 +287,7 @@ describe('Task Activation Latency Benchmarks', () => {
     }
 
     // Build histogram
-    const buckets = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50];
+    const buckets = [latest, latest, latest, latest, 1, 2, 5, 10, 20, 50];
     const histogram = buckets.reduce((acc, bucket) => {
       acc[bucket] = 0;
       return acc;
@@ -319,31 +319,31 @@ describe('Task Activation Latency Benchmarks', () => {
 
 ```
 📊 Task activation - No policy (n=10000)
-  Mean: 45.23μs
-  p50:  42.10μs
-  p75:  48.30μs
-  p90:  55.20μs
-  p95:  62.40μs
-  p99:  85.30μs    ← Should be <200μs ✅
-  max:  120.50μs
+  Mean: latestμs
+  p50:  latestμs
+  p75:  latestμs
+  p90:  latestμs
+  p95:  latestμs
+  p99:  latestμs    ← Should be <200μs ✅
+  max:  latestμs
 
 📊 Task activation - Simple validation (n=10000)
-  Mean: 185.45μs
-  p50:  175.30μs
-  p75:  192.10μs
-  p90:  210.50μs
-  p95:  230.20μs
-  p99:  280.60μs   ← Should be <1ms ✅
-  max:  350.10μs
+  Mean: latestμs
+  p50:  latestμs
+  p75:  latestμs
+  p90:  latestμs
+  p95:  latestμs
+  p99:  latestμs   ← Should be <1ms ✅
+  max:  latestμs
 
 📊 Task activation - SPARQL enablement (n=10000)
-  Mean: 1,523.20μs (1.52ms)
-  p50:  1,420.10μs (1.42ms)
-  p75:  1,680.30μs (1.68ms)
-  p90:  2,120.50μs (2.12ms)
-  p95:  2,450.20μs (2.45ms)
-  p99:  3,280.60μs (3.28ms) ← Should be <10ms ✅
-  max:  4,150.10μs (4.15ms)
+  Mean: 1,latestμs (latestms)
+  p50:  1,latestμs (latestms)
+  p75:  1,latestμs (latestms)
+  p90:  2,latestμs (latestms)
+  p95:  2,latestμs (latestms)
+  p99:  3,latestμs (latestms) ← Should be <10ms ✅
+  max:  4,latestμs (latestms)
 
 ⚠️  <1ms claim does NOT hold for policies with SPARQL queries
 ```
@@ -375,7 +375,7 @@ describe('Receipt Generation Throughput Benchmarks', () => {
   const RECEIPT_COUNT = 100000;
 
   /**
-   * Benchmark 2.1: Sequential Chained Receipts
+   * Benchmark latest: Sequential Chained Receipts
    */
   it('Sequential chained receipt generation', async () => {
     const receipts = [];
@@ -419,7 +419,7 @@ describe('Receipt Generation Throughput Benchmarks', () => {
   });
 
   /**
-   * Benchmark 2.2: Parallel Independent Receipts (Multi-Core)
+   * Benchmark latest: Parallel Independent Receipts (Multi-Core)
    */
   it('Parallel independent receipt generation (4 workers)', async () => {
     const event = {
@@ -461,7 +461,7 @@ describe('Receipt Generation Throughput Benchmarks', () => {
   });
 
   /**
-   * Benchmark 2.3: Verify Chain Integrity
+   * Benchmark latest: Verify Chain Integrity
    */
   it('Verify receipt chain integrity', async () => {
     const receipts = [];
@@ -512,17 +512,17 @@ describe('Receipt Generation Throughput Benchmarks', () => {
   ...
   100000: 44,932 receipts/sec
 
-✅ Completed 100,000 receipts in 2,226.30ms
+✅ Completed 100,000 receipts in 2,latestms
    Throughput: 44,932 receipts/sec
-   Per-receipt: 22.26μs
+   Per-receipt: latestμs
 
 ⚠️  Claim of >100K receipts/sec NOT met (actual: 44,932)
 
 📊 Generating 100,000 receipts across 4 workers...
 
-✅ Completed 100,000 receipts in 556.58ms
+✅ Completed 100,000 receipts in latestms
    Throughput: 179,727 receipts/sec
-   Speedup: 4.0x vs sequential
+   Speedup: latestx vs sequential
 
 ✅ Claim of >100K receipts/sec MET with parallelization
 ```
@@ -548,7 +548,7 @@ import {
 
 describe('SPARQL Query Performance Benchmarks', () => {
   /**
-   * Benchmark 3.1: Simple Predicate Query
+   * Benchmark latest: Simple Predicate Query
    */
   it('Simple predicate query (indexed)', async () => {
     const store = new KGCStore();
@@ -587,19 +587,19 @@ describe('SPARQL Query Performance Benchmarks', () => {
     }
 
     durations.sort((a, b) => a - b);
-    const p50 = durations[Math.floor(durations.length * 0.50)];
-    const p99 = durations[Math.floor(durations.length * 0.99)];
+    const p50 = durations[Math.floor(durations.length * latest)];
+    const p99 = durations[Math.floor(durations.length * latest)];
 
     console.log(`\n📊 Simple predicate query (10K quads)`);
     console.log(`   p50: ${(p50 * 1000).toFixed(2)}μs`);
     console.log(`   p99: ${(p99 * 1000).toFixed(2)}μs`);
 
     // Assertion: p99 should be <5ms
-    expect(p99).toBeLessThan(5.0);
+    expect(p99).toBeLessThan(latest);
   });
 
   /**
-   * Benchmark 3.2: Scalability Test (varying store size)
+   * Benchmark latest: Scalability Test (varying store size)
    */
   it('Query scalability test', async () => {
     const storeSizes = [1000, 10000, 100000];
@@ -633,8 +633,8 @@ describe('SPARQL Query Performance Benchmarks', () => {
       }
 
       durations.sort((a, b) => a - b);
-      const p50 = durations[Math.floor(durations.length * 0.50)];
-      const p99 = durations[Math.floor(durations.length * 0.99)];
+      const p50 = durations[Math.floor(durations.length * latest)];
+      const p99 = durations[Math.floor(durations.length * latest)];
       const throughput = (1000 / (durations.reduce((a, b) => a + b) / 1000)).toFixed(0);
 
       console.log(
@@ -663,7 +663,7 @@ import { YawlWorkflow } from '@unrdf/yawl/workflow';
 
 describe('Time-Travel Performance Benchmarks', () => {
   /**
-   * Benchmark 4.1: Replay with varying checkpoint counts
+   * Benchmark latest: Replay with varying checkpoint counts
    */
   it('Time-travel scaling test', async () => {
     const checkpointCounts = [10, 100, 1000, 10000];

@@ -19,7 +19,7 @@
 
 **Critical Findings:**
 1. **231 passing tests** across all packages - sounds good, but...
-2. **376 source files** with only **77 test files** = **20.5% test file ratio**
+2. **376 source files** with only **77 test files** = **latest% test file ratio**
 3. **24 failing tests** in hooks, error-handling, and integration suites
 4. **Zero coverage** for 5 packages (domain, validation, react, nextra, docs)
 5. **Massive gaps** in CLI (32 src → 1 test), knowledge-engine (57 src → 1 test), project-engine (37 src → 1 test)
@@ -213,7 +213,7 @@ UNCOVERED:
 
 **The Problem:**
 - ❌ **57 source files with only 1 test file**
-- ❌ **1.75% test file ratio** (worst in monorepo)
+- ❌ **latest% test file ratio** (worst in monorepo)
 - ❌ Core reasoning engine has NO tests
 - ❌ Inference engine has NO tests
 - ❌ SHACL validation has NO tests
@@ -338,7 +338,7 @@ UNCOVERED:
 **Test Count:** 30 tests
 
 **The Problem:**
-- ❌ **37 source files, only 1 test file** (2.7% test file ratio)
+- ❌ **37 source files, only 1 test file** (latest% test file ratio)
 - ❌ Modules contain TODO/FIXME markers (incomplete)
 
 **Uncovered Critical Modules:**
@@ -596,7 +596,7 @@ expect(throughput).toBeGreaterThan(1000); // ops/sec
    - **Risk:** May be flaky, disabled to avoid CI failures
 
 3. **Memory profiling tests**
-   - **Warning:** Negative memory values reported (`-0.68 MB`, `-7.24 MB`, `-0.05 MB`)
+   - **Warning:** Negative memory values reported (`-latest MB`, `-latest MB`, `-latest MB`)
    - **Root Cause:** GC timing issues or measurement errors
    - **Fix:** Run multiple iterations, use median values
 

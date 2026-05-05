@@ -24,7 +24,7 @@ describe('ObservabilityManager', () => {
     // Create fresh observability manager for each test
     observability = createObservabilityManager({
       serviceName: 'test-service',
-      serviceVersion: '1.0.0',
+      serviceVersion: 'latest',
       enableTracing: false, // Disable actual OTEL for unit tests
       enableMetrics: false,
     });
@@ -62,7 +62,7 @@ describe('ObservabilityManager', () => {
       expect(observability).toBeDefined();
       expect(observability.config).toBeDefined();
       expect(observability.config.serviceName).toBe('test-service');
-      expect(observability.config.serviceVersion).toBe('1.0.0');
+      expect(observability.config.serviceVersion).toBe('latest');
     });
 
     it('should initialize metrics structure', () => {
@@ -862,14 +862,14 @@ describe('ObservabilityManager', () => {
     it('should create new instance with custom config', () => {
       const manager = createObservabilityManager({
         serviceName: 'custom-service',
-        serviceVersion: '2.0.0',
+        serviceVersion: 'latest',
         enableTracing: true,
         enableMetrics: true,
       });
 
       expect(manager).toBeInstanceOf(ObservabilityManager);
       expect(manager.config.serviceName).toBe('custom-service');
-      expect(manager.config.serviceVersion).toBe('2.0.0');
+      expect(manager.config.serviceVersion).toBe('latest');
     });
 
     it('should create instance with default config', () => {

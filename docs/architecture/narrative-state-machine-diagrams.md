@@ -718,7 +718,7 @@ Agent     Guard     Reconcile   Invariant   Receipt    Storage    SideEffect
 │  OPERATION                    LATENCY       THROUGHPUT           │
 │  ─────────────────────────────────────────────────────────────   │
 │                                                                  │
-│  Guard Evaluation             0.1-1ms       10K checks/sec      │
+│  Guard Evaluation             latest       10K checks/sec      │
 │  (per guard)                                                     │
 │                                                                  │
 │  Reconciliation (μ)           10-50ms       100-1000 scenes/sec │

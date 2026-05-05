@@ -49,7 +49,7 @@ The 10-agent KGC-SWARM has **successfully planned, designed, and implemented the
 ### 🔴 BLOCKER 1: Dependency Installation Failure
 **Impact**: Tests cannot execute, OTEL validation blocked, builds fail
 **Evidence**: Multiple "ERR_MODULE_NOT_FOUND" errors across all test runs
-**Root Cause**: pnpm install times out after 60 seconds (large lockfile, 1.6MB)
+**Root Cause**: pnpm install times out after 60 seconds (large lockfile, latestMB)
 
 **Remediation**:
 ```bash
@@ -298,7 +298,7 @@ node validation/run-all.mjs comprehensive  # Score ≥80/100
 
 ### IF You Want to Stop Here
 - **Keep**: All architecture, patterns, and documentation (highly reusable)
-- **Use**: For v5→v6 migration guidance in v6.1+
+- **Use**: For v5→v6 migration guidance in vlatest+
 - **Archive**: Code is ready for future deployment when dependencies fixed
 
 ### IF You Want to Pivot

@@ -69,7 +69,7 @@ describe('DaemonRuleEngine', () => {
         id: generateUUID(),
         name: 'High Load Trigger',
         description: 'Triggers when load is high',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'sparql',
           query: 'SELECT ?load WHERE { ?op rdf:value ?load . FILTER (?load > 80) }',
@@ -96,14 +96,14 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: ruleId,
         name: 'Rule 1',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: { type: 'sparql', query: 'SELECT ?x WHERE { ?x rdf:type ?t }' },
         action: { type: 'action1', payload: {} },
       };
       const rule2 = {
         id: ruleId,
         name: 'Rule 2',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: { type: 'sparql', query: 'SELECT ?x WHERE { ?x rdf:type ?t }' },
         action: { type: 'action2', payload: {} },
       };
@@ -121,14 +121,14 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: generateUUID(),
         name: ruleName,
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: { type: 'sparql', query: 'SELECT ?x WHERE { ?x rdf:type ?t }' },
         action: { type: 'action1', payload: {} },
       };
       const rule2 = {
         id: generateUUID(),
         name: ruleName,
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: { type: 'sparql', query: 'SELECT ?x WHERE { ?x rdf:type ?t }' },
         action: { type: 'action2', payload: {} },
       };
@@ -145,7 +145,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Test Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: { type: 'sparql', query: 'SELECT ?x WHERE { ?x rdf:type ?t }' },
         action: { type: 'test', payload: {} },
       };
@@ -171,7 +171,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Load Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'sparql',
           query: 'SELECT ?load WHERE { ?op rdf:value ?load . FILTER (?load > 50) }',
@@ -197,7 +197,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Business Logic Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (metadata) => metadata.value > 100,
@@ -223,7 +223,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'AND Composite Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'composite',
           operator: 'and',
@@ -261,7 +261,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'OR Composite Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'composite',
           operator: 'or',
@@ -299,7 +299,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'NOT Composite Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'composite',
           operator: 'not',
@@ -338,7 +338,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Confidence Test',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.load > 70,
@@ -363,7 +363,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'High Threshold Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -388,7 +388,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Dependency Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -423,7 +423,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Explained Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.threshold > 50,
@@ -450,7 +450,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'High Confidence Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => false,
@@ -484,7 +484,7 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: rule1Id,
         name: 'Base Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.level > 50,
@@ -498,7 +498,7 @@ describe('DaemonRuleEngine', () => {
       const rule2 = {
         id: rule2Id,
         name: 'Dependent Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.level > 70,
@@ -530,7 +530,7 @@ describe('DaemonRuleEngine', () => {
         const rule = {
           id: ruleId,
           name: `Chain Rule ${i}`,
-          version: '1.0.0',
+          version: '[VERSION]',
           condition: {
             type: 'business-logic',
             evaluator: () => true,
@@ -566,7 +566,7 @@ describe('DaemonRuleEngine', () => {
       const controlRule = {
         id: generateUUID(),
         name: ruleName,
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.value > 50,
@@ -597,7 +597,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'AB Test Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -634,7 +634,7 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: generateUUID(),
         name: 'Scale Up Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.load > 80,
@@ -651,7 +651,7 @@ describe('DaemonRuleEngine', () => {
       const rule2 = {
         id: generateUUID(),
         name: 'Scale Down Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.load < 30,
@@ -681,7 +681,7 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: generateUUID(),
         name: 'Alert Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -698,7 +698,7 @@ describe('DaemonRuleEngine', () => {
       const rule2 = {
         id: generateUUID(),
         name: 'Log Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -733,7 +733,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Metrics Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -761,7 +761,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Success Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -789,7 +789,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'History Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -823,7 +823,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Error Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => {
@@ -875,7 +875,7 @@ describe('DaemonRuleEngine', () => {
         const rule = {
           id: generateUUID(),
           name: `Perf Rule ${i}`,
-          version: '1.0.0',
+          version: '[VERSION]',
           condition: {
             type: 'business-logic',
             evaluator: (m) => m.id === i,
@@ -917,7 +917,7 @@ describe('DaemonRuleEngine', () => {
         const rule = {
           id: ruleId,
           name: `Chain ${i}`,
-          version: '1.0.0',
+          version: '[VERSION]',
           condition: {
             type: 'business-logic',
             evaluator: () => true,
@@ -955,7 +955,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Concurrent Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: (m) => m.value > 50,
@@ -991,7 +991,7 @@ describe('DaemonRuleEngine', () => {
       const rule1 = {
         id: generateUUID(),
         name: 'Low Confidence',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1004,7 +1004,7 @@ describe('DaemonRuleEngine', () => {
       const rule2 = {
         id: generateUUID(),
         name: 'High Confidence',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1044,7 +1044,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Event Test Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1076,7 +1076,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Event Registration Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1105,7 +1105,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Reset Test Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1138,7 +1138,7 @@ describe('DaemonRuleEngine', () => {
       const rule = {
         id: generateUUID(),
         name: 'Dependent Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1164,7 +1164,7 @@ describe('DaemonRuleEngine', () => {
       const depRule = {
         id: depRuleId,
         name: 'Dependency',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,
@@ -1177,7 +1177,7 @@ describe('DaemonRuleEngine', () => {
       const mainRule = {
         id: generateUUID(),
         name: 'Main Rule',
-        version: '1.0.0',
+        version: '[VERSION]',
         condition: {
           type: 'business-logic',
           evaluator: () => true,

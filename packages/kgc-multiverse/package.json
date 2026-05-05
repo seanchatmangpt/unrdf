@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-multiverse",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
   "type": "module",
   "exports": {

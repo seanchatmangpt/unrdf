@@ -14,7 +14,7 @@ All 10 specialized agents completed their missions. The narrative-state-chain sy
 |-------|---------|--------|-------------|
 | 🔍 Scout | Reconnaissance | ✅ COMPLETE | Codebase verified (412 .mjs files) |
 | 🏗️ Architect | Specification | ✅ DELIVERED | DESIGN.md created (1,983 lines) |
-| 📊 Analyzer | Code Audit | ✅ COMPLETE | 9.8/10 quality score |
+| 📊 Analyzer | Code Audit | ✅ COMPLETE | latest/10 quality score |
 | 🗺️ Cartographer | Capability Map | ✅ COMPLETE | 33 atoms, 10 compositions |
 | 📚 Diataxis | Documentation | ✅ COMPLETE | 2 complete docs, 19 planned |
 | 💻 Backend | Implementation | ✅ DELIVERED | 6 modules, 2,041 LoC |
@@ -44,7 +44,7 @@ All 10 specialized agents completed their missions. The narrative-state-chain sy
 | 7. **Observability** | 4/4 (100%) | ✅ **PASS** (correct: no OTEL in impl) |
 | 8. **Performance SLAs** | 6/6 (100%) | ✅ **PASS** (all targets met) |
 
-**Pass Rate**: 3/8 (37.5%) — Below production threshold
+**Pass Rate**: 3/8 (latest%) — Below production threshold
 
 ---
 
@@ -52,7 +52,7 @@ All 10 specialized agents completed their missions. The narrative-state-chain sy
 
 ### Implementation (World-Class Quality)
 - **6 core modules** (2,041 LoC)
-- **9.8/10 quality score** (perfect syntax, 100% JSDoc, zero N3 leakage)
+- **latest/10 quality score** (perfect syntax, 100% JSDoc, zero N3 leakage)
 - **Zero code smells** detected
 - **100% type-safe** (Zod validation at all boundaries)
 
@@ -65,11 +65,11 @@ All 10 specialized agents completed their missions. The narrative-state-chain sy
 
 ### Performance (Exceeds Targets)
 - **6/6 SLAs PASS** (not 5/6 as initially reported)
-- Reconciliation: **1.29ms p99** (target: <100ms → 77x faster)
-- Guard eval: **1.29ms p99** (target: <30ms → 23x faster)  
-- Receipt verify: **9.40ms p99** (target: <10ms → 6% under, tight margin)
-- Bridge proofs: **1.42ms p99** (target: <500ms → 352x faster)
-- **Throughput**: **863.86 scenes/sec** (target: >10/sec → 86x faster)
+- Reconciliation: **latestms p99** (target: <100ms → 77x faster)
+- Guard eval: **latestms p99** (target: <30ms → 23x faster)  
+- Receipt verify: **latestms p99** (target: <10ms → 6% under, tight margin)
+- Bridge proofs: **latestms p99** (target: <500ms → 352x faster)
+- **Throughput**: **latest scenes/sec** (target: >10/sec → 86x faster)
 
 ### Security (Hardened)
 - **31 guards deployed** (state machine, permission, composition patterns)
@@ -133,7 +133,7 @@ function reconcile(universe, observations) {
    - Security: algorithm choice + threat model
    - API: method contracts + versioning
 
-2. **Re-run Production Validator** (0.5 days)
+2. **Re-run Production Validator** (latest days)
    - Expected: GO decision if specs are complete
 
 3. **Deploy with confidence** ✅
@@ -161,7 +161,7 @@ function reconcile(universe, observations) {
 
 | Claim | Would Survive? | Evidence |
 |-------|---|---|
-| "Code works" | ✅ YES | 9.8/10 quality, syntax valid, zero defects |
+| "Code works" | ✅ YES | latest/10 quality, syntax valid, zero defects |
 | "Tests cover it" | ✅ YES | 121 tests written, 28 proofs passing |
 | "Performance meets SLA" | ✅ YES | 6/6 targets passed, benchmarks real |
 | "Security is hardened" | ⚠️ PARTIAL | 31 guards active, but threat model undefined |
@@ -177,9 +177,9 @@ function reconcile(universe, observations) {
 
 All required dependencies are installed:
 
-- ✅ **zod** (runtime validation, 4.2.1)
+- ✅ **zod** (runtime validation, latest)
 - ✅ **@unrdf/oxigraph** (RDF store)
-- ✅ **vitest** (test framework, 1.6.1)
+- ✅ **vitest** (test framework, latest)
 - ✅ **@vitest/coverage-v8** (coverage reporting)
 - ✅ **fast-check** (property testing)
 - ✅ **eslint** + **prettier** (code quality)
@@ -234,7 +234,7 @@ All required dependencies are installed:
 
 ### If Path B (Override)
 1. Run tests: `npm test -- test/narrative-state-chain`
-2. Deploy with monitoring: watch receipt verification p99 < 9.5ms
+2. Deploy with monitoring: watch receipt verification p99 < latestms
 3. Document single-process requirement
 4. Require manual backups
 5. Accept 5-10% risk in concurrent scenarios
@@ -245,7 +245,7 @@ All required dependencies are installed:
 
 | Dimension | Status | Evidence |
 |-----------|--------|----------|
-| **Implementation** | ✅ Excellent | 9.8/10 quality, 2,041 LoC |
+| **Implementation** | ✅ Excellent | latest/10 quality, 2,041 LoC |
 | **Testing** | ✅ Comprehensive | 121 tests, zero flaky |
 | **Performance** | ✅ Outstanding | 6/6 SLAs, 86x throughput |
 | **Security** | ✅ Hardened | 31 guards, proofs passing |

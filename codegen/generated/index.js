@@ -7,7 +7,7 @@
 const PACKAGES = {
   "@unrdf/atomvm": {
     "name": "@unrdf/atomvm",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -33,7 +33,7 @@ const PACKAGES = {
   },
   "@unrdf/blockchain": {
     "name": "@unrdf/blockchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -58,7 +58,7 @@ const PACKAGES = {
   },
   "@unrdf/caching": {
     "name": "@unrdf/caching",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Multi-layer caching system for RDF queries with Redis and LRU",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -82,7 +82,7 @@ const PACKAGES = {
   },
   "@unrdf/cli": {
     "name": "@unrdf/cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -109,7 +109,7 @@ const PACKAGES = {
   },
   "@unrdf/collab": {
     "name": "@unrdf/collab",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -137,7 +137,7 @@ const PACKAGES = {
   },
   "@unrdf/composables": {
     "name": "@unrdf/composables",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -159,7 +159,7 @@ const PACKAGES = {
   },
   "@unrdf/consensus": {
     "name": "@unrdf/consensus",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Production-grade Raft consensus for distributed workflow coordination",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -188,7 +188,7 @@ const PACKAGES = {
   },
   "@unrdf/core": {
     "name": "@unrdf/core",
-    "version": "6.0.0-alpha.1",
+    "version": "latest-alpha.1",
     "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -230,7 +230,7 @@ const PACKAGES = {
   },
   "@unrdf/dark-matter": {
     "name": "@unrdf/dark-matter",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -252,7 +252,7 @@ const PACKAGES = {
   },
   "@unrdf/decision-fabric": {
     "name": "@unrdf/decision-fabric",
-    "version": "0.1.0",
+    "version": "latest",
     "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -281,7 +281,7 @@ const PACKAGES = {
   },
   "@unrdf/diataxis-kit": {
     "name": "@unrdf/diataxis-kit",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -300,7 +300,7 @@ const PACKAGES = {
   },
   "docs": {
     "name": "docs",
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {},
@@ -346,7 +346,7 @@ const PACKAGES = {
   },
   "@unrdf/domain": {
     "name": "@unrdf/domain",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Domain models and types for UNRDF",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -359,7 +359,7 @@ const PACKAGES = {
   },
   "@unrdf/engine-gateway": {
     "name": "@unrdf/engine-gateway",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -380,7 +380,7 @@ const PACKAGES = {
   },
   "@unrdf/federation": {
     "name": "@unrdf/federation",
-    "version": "6.0.0",
+    "version": "latest",
     "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -405,7 +405,7 @@ const PACKAGES = {
   },
   "@unrdf/fusion": {
     "name": "@unrdf/fusion",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -429,7 +429,7 @@ const PACKAGES = {
   },
   "@unrdf/graph-analytics": {
     "name": "@unrdf/graph-analytics",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -453,7 +453,7 @@ const PACKAGES = {
   },
   "@unrdf/hooks": {
     "name": "@unrdf/hooks",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -476,7 +476,7 @@ const PACKAGES = {
   },
   "@unrdf/integration-tests": {
     "name": "@unrdf/integration-tests",
-    "version": "5.1.0",
+    "version": "latest",
     "description": "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -502,7 +502,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-4d": {
     "name": "@unrdf/kgc-4d",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -527,7 +527,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-claude": {
     "name": "@unrdf/kgc-claude",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -570,7 +570,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-cli": {
     "name": "@unrdf/kgc-cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -593,7 +593,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-docs": {
     "name": "@unrdf/kgc-docs",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -616,7 +616,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-multiverse": {
     "name": "@unrdf/kgc-multiverse",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -650,7 +650,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-probe": {
     "name": "@unrdf/kgc-probe",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -686,7 +686,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-runtime": {
     "name": "@unrdf/kgc-runtime",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -710,7 +710,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-substrate": {
     "name": "@unrdf/kgc-substrate",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -735,7 +735,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-swarm": {
     "name": "@unrdf/kgc-swarm",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -768,7 +768,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-tools": {
     "name": "@unrdf/kgc-tools",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Tools - Verification, freeze, and replay utilities for KGC capsules",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -794,7 +794,7 @@ const PACKAGES = {
   },
   "@unrdf/kgn": {
     "name": "@unrdf/kgn",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
     "tier": "optional",
     "main": "src/index.js",
@@ -837,7 +837,7 @@ const PACKAGES = {
   },
   "@unrdf/knowledge-engine": {
     "name": "@unrdf/knowledge-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -864,7 +864,7 @@ const PACKAGES = {
   },
   "@unrdf/ml-inference": {
     "name": "@unrdf/ml-inference",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -890,7 +890,7 @@ const PACKAGES = {
   },
   "@unrdf/ml-versioning": {
     "name": "@unrdf/ml-versioning",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -915,7 +915,7 @@ const PACKAGES = {
   },
   "@unrdf/nextra-docs": {
     "name": "@unrdf/nextra-docs",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -939,7 +939,7 @@ const PACKAGES = {
   },
   "@unrdf/observability": {
     "name": "@unrdf/observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -964,7 +964,7 @@ const PACKAGES = {
   },
   "@unrdf/oxigraph": {
     "name": "@unrdf/oxigraph",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -985,7 +985,7 @@ const PACKAGES = {
   },
   "@unrdf/project-engine": {
     "name": "@unrdf/project-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1004,7 +1004,7 @@ const PACKAGES = {
   },
   "@unrdf/rdf-graphql": {
     "name": "@unrdf/rdf-graphql",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -1025,7 +1025,7 @@ const PACKAGES = {
   },
   "@unrdf/react": {
     "name": "@unrdf/react",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1052,7 +1052,7 @@ const PACKAGES = {
   },
   "@unrdf/receipts": {
     "name": "@unrdf/receipts",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1079,7 +1079,7 @@ const PACKAGES = {
   },
   "@unrdf/semantic-search": {
     "name": "@unrdf/semantic-search",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1103,7 +1103,7 @@ const PACKAGES = {
   },
   "@unrdf/serverless": {
     "name": "@unrdf/serverless",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1133,7 +1133,7 @@ const PACKAGES = {
   },
   "@unrdf/streaming": {
     "name": "@unrdf/streaming",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1160,7 +1160,7 @@ const PACKAGES = {
   },
   "@unrdf/test-utils": {
     "name": "@unrdf/test-utils",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Testing utilities for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -1179,7 +1179,7 @@ const PACKAGES = {
   },
   "@unrdf/v6-compat": {
     "name": "@unrdf/v6-compat",
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1205,7 +1205,7 @@ const PACKAGES = {
   },
   "@unrdf/v6-core": {
     "name": "@unrdf/v6-core",
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1251,7 +1251,7 @@ const PACKAGES = {
   },
   "@unrdf/validation": {
     "name": "@unrdf/validation",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "OTEL validation framework for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -1266,7 +1266,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl": {
     "name": "@unrdf/yawl",
-    "version": "6.0.0",
+    "version": "latest",
     "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1305,7 +1305,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-ai": {
     "name": "@unrdf/yawl-ai",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1329,7 +1329,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-api": {
     "name": "@unrdf/yawl-api",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
     "tier": "optional",
     "main": "src/server.mjs",
@@ -1355,7 +1355,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-durable": {
     "name": "@unrdf/yawl-durable",
-    "version": "0.1.0",
+    "version": "latest",
     "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
     "tier": "optional",
     "main": "src/engine.mjs",
@@ -1380,7 +1380,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-kafka": {
     "name": "@unrdf/yawl-kafka",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1404,7 +1404,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-langchain": {
     "name": "@unrdf/yawl-langchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1430,7 +1430,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-observability": {
     "name": "@unrdf/yawl-observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1456,7 +1456,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-queue": {
     "name": "@unrdf/yawl-queue",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Distributed YAWL workflow execution using BullMQ and Redis",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -1480,7 +1480,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-realtime": {
     "name": "@unrdf/yawl-realtime",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1503,7 +1503,7 @@ const PACKAGES = {
   },
   "@unrdf/yawl-viz": {
     "name": "@unrdf/yawl-viz",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
     "tier": "optional",
     "main": "src/visualizer.mjs",
@@ -1535,7 +1535,7 @@ const REGISTRY = {
   essential: [
   {
     "name": "@unrdf/core",
-    "version": "6.0.0-alpha.1",
+    "version": "latest-alpha.1",
     "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1577,7 +1577,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/hooks",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1600,7 +1600,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-4d",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1625,7 +1625,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/oxigraph",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1646,7 +1646,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/streaming",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1673,7 +1673,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/v6-core",
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1719,7 +1719,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl",
-    "version": "6.0.0",
+    "version": "latest",
     "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1760,7 +1760,7 @@ const REGISTRY = {
   extended: [
   {
     "name": "@unrdf/cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1787,7 +1787,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/consensus",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Production-grade Raft consensus for distributed workflow coordination",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1816,7 +1816,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/federation",
-    "version": "6.0.0",
+    "version": "latest",
     "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1841,7 +1841,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-runtime",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1865,7 +1865,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-substrate",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1890,7 +1890,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/knowledge-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1917,7 +1917,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/receipts",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1944,7 +1944,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/v6-compat",
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1972,7 +1972,7 @@ const REGISTRY = {
   optional: [
   {
     "name": "@unrdf/atomvm",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1998,7 +1998,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/blockchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2023,7 +2023,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/caching",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Multi-layer caching system for RDF queries with Redis and LRU",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2047,7 +2047,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/collab",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2075,7 +2075,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/composables",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2097,7 +2097,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/dark-matter",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2119,7 +2119,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/decision-fabric",
-    "version": "0.1.0",
+    "version": "latest",
     "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2148,7 +2148,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/diataxis-kit",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2167,7 +2167,7 @@ const REGISTRY = {
   },
   {
     "name": "docs",
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {},
@@ -2213,7 +2213,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/domain",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Domain models and types for UNRDF",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2226,7 +2226,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/engine-gateway",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2247,7 +2247,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/fusion",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2271,7 +2271,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/graph-analytics",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2295,7 +2295,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/integration-tests",
-    "version": "5.1.0",
+    "version": "latest",
     "description": "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2321,7 +2321,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-claude",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2364,7 +2364,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2387,7 +2387,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-docs",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2410,7 +2410,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-multiverse",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2444,7 +2444,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-probe",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2480,7 +2480,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-swarm",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2513,7 +2513,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-tools",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Tools - Verification, freeze, and replay utilities for KGC capsules",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2539,7 +2539,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgn",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
     "tier": "optional",
     "main": "src/index.js",
@@ -2582,7 +2582,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/ml-inference",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2608,7 +2608,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/ml-versioning",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2633,7 +2633,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/nextra-docs",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2657,7 +2657,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2682,7 +2682,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/project-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2701,7 +2701,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/rdf-graphql",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -2722,7 +2722,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/react",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2749,7 +2749,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/semantic-search",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2773,7 +2773,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/serverless",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2803,7 +2803,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/test-utils",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Testing utilities for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2822,7 +2822,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/validation",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "OTEL validation framework for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2837,7 +2837,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-ai",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2861,7 +2861,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-api",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
     "tier": "optional",
     "main": "src/server.mjs",
@@ -2887,7 +2887,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-durable",
-    "version": "0.1.0",
+    "version": "latest",
     "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
     "tier": "optional",
     "main": "src/engine.mjs",
@@ -2912,7 +2912,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-kafka",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2936,7 +2936,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-langchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2962,7 +2962,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2988,7 +2988,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-queue",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Distributed YAWL workflow execution using BullMQ and Redis",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -3012,7 +3012,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-realtime",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -3035,7 +3035,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/yawl-viz",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
     "tier": "optional",
     "main": "src/visualizer.mjs",

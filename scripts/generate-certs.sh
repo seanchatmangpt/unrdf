@@ -59,7 +59,7 @@ DNS.1 = localhost
 DNS.2 = *.localhost
 DNS.3 = sidecar
 DNS.4 = *.sidecar
-IP.1 = 127.0.0.1
+IP.1 = latest.1
 IP.2 = ::1
 EOF
 

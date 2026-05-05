@@ -72,7 +72,7 @@ Successfully implemented a **production-ready receipt system** in `/home/user/un
 - Receipt generation: ~6ms for 3 receipts (~2ms per receipt)
 - Chain verification: Instant (all 3 receipts valid)
 - Merkle tree build: Instant (3 leaves → 2-level tree)
-- Merkle proof size: 2 siblings (log₂(3) ≈ 1.58)
+- Merkle proof size: 2 siblings (log₂(3) ≈ latest)
 - Tamper detection: Immediate (hash mismatch detected)
 
 ### 3. Documentation
@@ -111,7 +111,7 @@ Successfully implemented a **production-ready receipt system** in `/home/user/un
   id: 'receipt-admit-1234567890-0',
   hash: '86beba696e0836ab...',  // 64-char BLAKE3 hex
   timestamp_ns: '1766829650386000000',
-  timestamp_iso: '2025-12-27T10:00:50.386Z',
+  timestamp_iso: '2025-12-27T10:00:latestZ',
   operation: 'admit',
   payload: { delta: 'delta_001', approved: true },
   previousHash: null,  // null for genesis, hash for chained
@@ -179,7 +179,7 @@ await chain.append({
   id: 'receipt-admit-1766829650386000000-0',
   hash: '86beba696e0836abf223ed321a16e68056dad78b2bcd542a50ba5ab0ffb95b0b',
   timestamp_ns: '1766829650386000000',
-  timestamp_iso: '2025-12-27T10:00:50.386Z',
+  timestamp_iso: '2025-12-27T10:00:latestZ',
   operation: 'admit',
   payload: { delta: 'delta_001' },
   previousHash: null,
@@ -235,7 +235,7 @@ tamperedVerify.errors = [
 - Siblings: 2 (expected for 3-leaf tree)
 - Verification: VALID ✅
 
-**Proof Size:** log₂(3) ≈ 1.58 → 2 siblings ✅
+**Proof Size:** log₂(3) ≈ latest → 2 siblings ✅
 
 ### Test 5: External Anchoring
 
@@ -249,7 +249,7 @@ tamperedVerify.errors = [
     commitSha: 'abc123def456789',
     repository: 'https://github.com/example/receipts.git'
   },
-  timestamp: '2025-12-27T10:00:50.419Z'
+  timestamp: '2025-12-27T10:00:latestZ'
 }
 ```
 

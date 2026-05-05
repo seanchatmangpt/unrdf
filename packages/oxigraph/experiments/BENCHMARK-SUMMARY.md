@@ -302,7 +302,7 @@ pnpm -C packages/oxigraph test -- test/comparison.test.mjs
 - [ ] Performance validation in staging
 - [ ] OTEL integration testing
 - [ ] Browser testing (WASM)
-- [ ] Release v5.1.0-oxigraph
+- [ ] Release [VERSION]-oxigraph
 
 ### Long term:
 - [ ] Optional federation module (separate)
@@ -405,5 +405,5 @@ NODE.JS: 5/5 use cases PASS ✅
 ---
 
 **Generated:** December 2024
-**Package:** @unrdf/oxigraph v5.0.0-alpha.0
+**Package:** @unrdf/oxigraph [VERSION]-alpha.0
 **Status:** Ready for production evaluation

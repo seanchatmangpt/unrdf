@@ -28,7 +28,7 @@
 **Priority**: MUST FIX - Production blockers
 **Total Effort**: 240-320 hours
 
-### 1.1 Fix OR-Join Semantics (CRITICAL BUG)
+### latest Fix OR-Join Semantics (CRITICAL BUG)
 
 **Issue**: OR-join tracks activatedTasks globally, not per work item instance. Causes deadlock in cyclic workflows.
 
@@ -67,7 +67,7 @@ this.workItemActivations.set(workItemId, new Set([taskId]));
 
 ---
 
-### 1.2 Implement Deadlock Detection (MISSING)
+### latest Implement Deadlock Detection (MISSING)
 
 **Issue**: No runtime detection when workflow enters state where no tasks can fire.
 
@@ -106,7 +106,7 @@ async detectDeadlock(caseId) {
 
 **Effort**: 26 hours
 **Expertise**: Petri net analysis, workflow theory
-**Dependencies**: 1.1 (OR-join fix needed first)
+**Dependencies**: latest (OR-join fix needed first)
 **Success Criteria**:
 - [ ] Detects OR-join deadlock in cyclic workflow
 - [ ] Emits event with full diagnostic context
@@ -121,7 +121,7 @@ async detectDeadlock(caseId) {
 
 ---
 
-### 1.3 Add Concurrency Protection (RACE CONDITIONS)
+### latest Add Concurrency Protection (RACE CONDITIONS)
 
 **Issue**: Concurrent `completeTask()` calls modify shared state without mutex, causing race conditions in multi-process daemon.
 
@@ -173,7 +173,7 @@ class YawlEngine {
 
 ---
 
-### 1.4 Implement Worklet Framework (EXCEPTION RECOVERY)
+### latest Implement Worklet Framework (EXCEPTION RECOVERY)
 
 **Issue**: All exceptions result in cancellation. No dynamic recovery or escalation workflows.
 
@@ -238,7 +238,7 @@ async handleException(exceptionType, workItemId, context) {
 
 ---
 
-### 1.5 Fix Daemon JSON Parse Error (BLOCKING TESTS)
+### latest Fix Daemon JSON Parse Error (BLOCKING TESTS)
 
 **Issue**: Cannot run tests due to syntax error in `packages/daemon/package.json` line 586.
 
@@ -269,7 +269,7 @@ async handleException(exceptionType, workItemId, context) {
 **Priority**: SHOULD FIX - User experience blockers
 **Total Effort**: 160-240 hours
 
-### 2.1 Implement Compensation Framework (SAGA PATTERN)
+### latest Implement Compensation Framework (SAGA PATTERN)
 
 **Issue**: No automatic rollback of completed work when downstream tasks fail.
 
@@ -303,7 +303,7 @@ await saga.run([bookHotel, bookFlight, bookCar]);
 
 **Effort**: 108 hours (~3 weeks)
 **Expertise**: Distributed transactions, saga patterns
-**Dependencies**: 1.4 (worklets - compensation can be worklet)
+**Dependencies**: latest (worklets - compensation can be worklet)
 **Success Criteria**:
 - [ ] Travel booking saga compensates hotel when flight fails
 - [ ] Compensation executes in reverse order (LIFO)
@@ -320,7 +320,7 @@ await saga.run([bookHotel, bookFlight, bookCar]);
 
 ---
 
-### 2.2 Implement Worklist Service Layer (HUMAN TASKS)
+### latest Implement Worklist Service Layer (HUMAN TASKS)
 
 **Issue**: No user-facing worklist. Humans cannot see, claim, or manage their tasks.
 
@@ -373,7 +373,7 @@ class WorklistService {
 
 ---
 
-### 2.3 Implement Suspend/Resume APIs (PAUSE EXECUTION)
+### latest Implement Suspend/Resume APIs (PAUSE EXECUTION)
 
 **Issue**: SUSPENDED state exists but no API to suspend or resume tasks.
 
@@ -406,7 +406,7 @@ class WorklistService {
 
 ---
 
-### 2.4 Implement Livelock Prevention (INFINITE LOOPS)
+### latest Implement Livelock Prevention (INFINITE LOOPS)
 
 **Issue**: Workflows can loop infinitely with no termination detection.
 
@@ -476,7 +476,7 @@ async detectLivelock(caseId) {
 **Priority**: NICE TO HAVE - Improves YAWL compliance
 **Total Effort**: 160-200 hours
 
-### 3.1 Implement Multiple Instance Patterns (WP12-15)
+### latest Implement Multiple Instance Patterns (WP12-15)
 
 **Issue**: Cannot spawn variable number of parallel task instances dynamically.
 
@@ -528,7 +528,7 @@ workflow.addTask({
 
 ---
 
-### 3.2 Implement Constraint Violation Detection (BUSINESS RULES)
+### latest Implement Constraint Violation Detection (BUSINESS RULES)
 
 **Issue**: No runtime business constraint checking beyond schema validation.
 
@@ -571,7 +571,7 @@ async checkConstraints(taskId, context, phase) {
 
 **Effort**: 104 hours (~3 weeks)
 **Expertise**: Rule engines, constraint logic
-**Dependencies**: 1.4 (worklets for exception handling)
+**Dependencies**: latest (worklets for exception handling)
 **Success Criteria**:
 - [ ] Pre-condition blocks task start if violated
 - [ ] Post-condition validates output correctness
@@ -589,7 +589,7 @@ async checkConstraints(taskId, context, phase) {
 
 ---
 
-### 3.3 Fix WP16 Deferred Choice Semantics (RUNTIME ROUTING)
+### latest Fix WP16 Deferred Choice Semantics (RUNTIME ROUTING)
 
 **Issue**: Deferred choice uses compile-time conditions instead of runtime branch selection.
 
@@ -644,7 +644,7 @@ async enableDeferredChoice(taskId) {
 
 ---
 
-### 3.4 Implement WP18 Milestone Pattern (STATE-BASED ENABLEMENT)
+### latest Implement WP18 Milestone Pattern (STATE-BASED ENABLEMENT)
 
 **Issue**: No support for tasks enabled by state conditions (not control flow).
 
@@ -675,7 +675,7 @@ workflow.addTask({
 
 **Effort**: 79 hours
 **Expertise**: State-based routing, event loops
-**Dependencies**: 3.2 (constraint evaluator reuse)
+**Dependencies**: latest (constraint evaluator reuse)
 **Success Criteria**:
 - [ ] Task enabled when state condition becomes true
 - [ ] Condition polled at configured interval
@@ -697,7 +697,7 @@ workflow.addTask({
 **Priority**: OPTIONAL - Full YAWL compliance
 **Total Effort**: 240-320 hours
 
-### 4.1 Implement Advanced Synchronization Patterns (WP21+)
+### latest Implement Advanced Synchronization Patterns (WP21+)
 
 **Issue**: Missing N-out-of-M join, blocking discriminator, cancelling discriminator.
 
@@ -713,12 +713,12 @@ workflow.addTask({
 
 **Effort**: 120 hours
 **Expertise**: Advanced workflow patterns
-**Dependencies**: 3.1 (MI patterns)
+**Dependencies**: latest (MI patterns)
 **Success Criteria**: All advanced patterns pass test suite
 
 ---
 
-### 4.2 Implement Allocation Strategies (SHORTEST QUEUE, ROUND ROBIN)
+### latest Implement Allocation Strategies (SHORTEST QUEUE, ROUND ROBIN)
 
 **Issue**: Only 2 of 7 YAWL allocation strategies supported.
 
@@ -735,12 +735,12 @@ workflow.addTask({
 
 **Effort**: 78 hours
 **Expertise**: Resource allocation algorithms
-**Dependencies**: 2.2 (worklist service)
+**Dependencies**: latest (worklist service)
 **Success Criteria**: All 7 strategies implemented and tested
 
 ---
 
-### 4.3 Implement Work Item Piling (BATCH PROCESSING)
+### latest Implement Work Item Piling (BATCH PROCESSING)
 
 **Issue**: No support for batching similar work items for efficiency.
 
@@ -757,12 +757,12 @@ workflow.addTask({
 
 **Effort**: 68 hours
 **Expertise**: Batch processing patterns
-**Dependencies**: 2.2 (worklist service)
+**Dependencies**: latest (worklist service)
 **Success Criteria**: Batch approval example works with piling
 
 ---
 
-### 4.4 Implement Circuit Breaker Auto-Recovery
+### latest Implement Circuit Breaker Auto-Recovery
 
 **Issue**: Circuit breaker requires manual reset, no timeout-based recovery.
 
@@ -782,7 +782,7 @@ workflow.addTask({
 
 ---
 
-### 4.5 Implement Workflow Soundness Validation (STATIC ANALYSIS)
+### latest Implement Workflow Soundness Validation (STATIC ANALYSIS)
 
 **Issue**: No compile-time checking for workflow structural correctness.
 
@@ -892,10 +892,10 @@ workflow.addTask({
 **Fastest Path to 80% Compliance**: 10-12 weeks
 
 1. **Week 1**: Quick Wins (40h) - Unblock testing
-2. **Weeks 2-4**: Phase 1.1-1.3 (61h) - Fix critical bugs
-3. **Weeks 5-7**: Phase 1.4 (100h) - Worklets (enables exception recovery)
-4. **Weeks 8-10**: Phase 2.1 (108h) - Compensation (saga patterns)
-5. **Weeks 11-12**: Phase 2.2 (116h) - Worklist (human task support)
+2. **Weeks 2-4**: Phase latest.3 (61h) - Fix critical bugs
+3. **Weeks 5-7**: Phase latest (100h) - Worklets (enables exception recovery)
+4. **Weeks 8-10**: Phase latest (108h) - Compensation (saga patterns)
+5. **Weeks 11-12**: Phase latest (116h) - Worklist (human task support)
 
 **Result**: 80% compliance, production-ready for most use cases
 
@@ -963,7 +963,7 @@ workflow.addTask({
 
 ### Dependencies
 
-- **Blocking**: Phase 1.5 (JSON parse error) must be fixed FIRST
+- **Blocking**: Phase latest (JSON parse error) must be fixed FIRST
 - **Sequential**: Phase 1 → Phase 2 (worklets needed for compensation)
 - **Parallel**: Phase 3 can run concurrently with Phase 2
 

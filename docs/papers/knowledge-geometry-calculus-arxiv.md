@@ -374,7 +374,7 @@ where *G'* includes hooks from *P* and all transitive dependencies *D**.
 
 ### 4.1 Predicate Type Specifications
 
-#### 4.1.1 ASK Predicates
+#### latest ASK Predicates
 
 **Formal Specification**:
 
@@ -392,7 +392,7 @@ where *G'* includes hooks from *P* and all transitive dependencies *D**.
 
 **Complexity**: O(n) where n = |G|, optimized by SPARQL engine
 
-#### 4.1.2 SHACL Predicates
+#### latest SHACL Predicates
 
 **Formal Specification**:
 
@@ -415,7 +415,7 @@ where *G'* includes hooks from *P* and all transitive dependencies *D**.
 
 **Complexity**: O(|S| × |G|) for shape validation
 
-#### 4.1.3 DELTA Predicates
+#### latest DELTA Predicates
 
 **Formal Specification**:
 
@@ -456,7 +456,7 @@ digest(row, K) = {
 
 **Complexity**: O(|B| log |B|) for hash table lookup
 
-#### 4.1.4 THRESHOLD Predicates
+#### latest THRESHOLD Predicates
 
 **Formal Specification**:
 
@@ -480,7 +480,7 @@ digest(row, K) = {
 
 **Complexity**: O(|B|) for aggregation
 
-#### 4.1.5 COUNT Predicates
+#### latest COUNT Predicates
 
 **Formal Specification**:
 
@@ -498,7 +498,7 @@ digest(row, K) = {
 
 **Complexity**: O(1) given |B|
 
-#### 4.1.6 WINDOW Predicates
+#### latest WINDOW Predicates
 
 **Formal Specification**:
 
@@ -594,7 +594,7 @@ R = {
 
 The KGC reference implementation consists of 7 core components following the Dark Matter 80/20 principle:
 
-#### 5.1.1 Component Breakdown
+#### latest Component Breakdown
 
 | Component | Value % | Lines | Description |
 |-----------|---------|-------|-------------|
@@ -969,7 +969,7 @@ class LockchainWriter {
 
 ### 6.1 Performance Benchmarks
 
-#### 6.1.1 Transaction Latency
+#### latest Transaction Latency
 
 **Experimental Setup**:
 - **Hardware**: 2.3 GHz 8-Core Intel Core i9, 16 GB RAM
@@ -1000,7 +1000,7 @@ Canonical Path (URDNA2015):
   p99: 201 ms
 ```
 
-#### 6.1.2 Hook Throughput
+#### latest Hook Throughput
 
 **Experimental Setup**:
 - **Hooks**: 100 concurrent hooks
@@ -1027,7 +1027,7 @@ SHACL:      Mean 120 ms, p99 280 ms
 WINDOW:     Mean 25 ms,  p99 55 ms
 ```
 
-#### 6.1.3 Error Isolation
+#### latest Error Isolation
 
 **Experimental Setup**:
 - **Scenarios**: 1,000 transactions with intentional failures
@@ -1077,7 +1077,7 @@ Core Component Tests:
 
 ### 6.3 Cryptographic Verification
 
-#### 6.3.1 Canonicalization Correctness
+#### latest Canonicalization Correctness
 
 **Test**: URDNA2015 determinism validation
 
@@ -1088,7 +1088,7 @@ Core Component Tests:
 
 **Results**: 10,000/10,000 canonicalizations deterministic (100%)
 
-#### 6.3.2 Lockchain Integrity
+#### latest Lockchain Integrity
 
 **Test**: Git-anchored audit trail verification
 
@@ -1109,7 +1109,7 @@ Tampering detected: 25/25 attempts (100%)
 
 ### 6.4 Scalability Analysis
 
-#### 6.4.1 Store Size Impact
+#### latest Store Size Impact
 
 **Experimental Setup**: Vary store size from 1k to 1M triples
 
@@ -1124,7 +1124,7 @@ Tampering detected: 25/25 attempts (100%)
 
 **Analysis**: Fast path scales linearly (O(n)), canonical path has O(n log n) complexity due to sorting in URDNA2015.
 
-#### 6.4.2 Hook Scaling
+#### latest Hook Scaling
 
 **Experimental Setup**: Vary number of concurrent hooks
 
@@ -1535,7 +1535,7 @@ const resolution = await resolutionLayer.resolve({
 
 ### 8.1 Current Limitations
 
-#### 8.1.1 Canonicalization Performance
+#### latest Canonicalization Performance
 
 URDNA2015 has O(n log n) complexity for n-triple stores, limiting scalability to ~1M triples with acceptable latency.
 
@@ -1546,7 +1546,7 @@ URDNA2015 has O(n log n) complexity for n-triple stores, limiting scalability to
 - Hardware acceleration using SIMD instructions
 - Distributed canonicalization for multi-million triple stores
 
-#### 8.1.2 Predicate Expressiveness
+#### latest Predicate Expressiveness
 
 Current predicate types cover common use cases but lack:
 - Recursive graph patterns
@@ -1558,7 +1558,7 @@ Current predicate types cover common use cases but lack:
 - Integration with reasoning engines (EYE, Jena)
 - Probabilistic knowledge graphs with uncertainty quantification
 
-#### 8.1.3 Multi-Agent Coordination
+#### latest Multi-Agent Coordination
 
 Current resolution strategies are synchronous and require all agents to respond.
 
@@ -1569,13 +1569,13 @@ Current resolution strategies are synchronous and require all agents to respond.
 
 ### 8.2 Ongoing Research
 
-#### 8.2.1 Quantum-Resistant Cryptography
+#### latest Quantum-Resistant Cryptography
 
 Post-quantum cryptographic algorithms for long-term audit trail security.
 
 **Candidates**: CRYSTALS-Dilithium (signatures), SPHINCS+ (stateless hash-based signatures)
 
-#### 8.2.2 Federated Knowledge Hooks
+#### latest Federated Knowledge Hooks
 
 Hooks that span multiple federated knowledge graphs.
 
@@ -1584,7 +1584,7 @@ Hooks that span multiple federated knowledge graphs.
 - Distributed provenance tracking
 - Privacy-preserving hook evaluation
 
-#### 8.2.3 Machine Learning Integration
+#### latest Machine Learning Integration
 
 - **Anomaly Detection**: ML-based predicates for outlier detection
 - **Adaptive Thresholds**: Learn optimal thresholds from historical data
@@ -1592,13 +1592,13 @@ Hooks that span multiple federated knowledge graphs.
 
 ### 8.3 Standardization Efforts
 
-#### 8.3.1 W3C Community Group
+#### latest W3C Community Group
 
 Proposing Knowledge Hooks as a W3C standard for RDF reactivity.
 
 **Draft Specification**: https://w3c.github.io/knowledge-hooks/
 
-#### 8.3.2 Interoperability
+#### latest Interoperability
 
 **Target**: Compatibility with:
 - Apache Jena

@@ -7,8 +7,8 @@
 ## Executive Summary
 
 ### Overall Status
-- ✅ **Validated**: 9/21 examples (42.9%)
-- ❌ **Failed**: 12/21 examples (57.1%)
+- ✅ **Validated**: 9/21 examples (latest%)
+- ❌ **Failed**: 12/21 examples (latest%)
 - 📊 **Total Tests**: 274 test cases found
 - ✅ **Tests Passing**: 12/12 executable tests (100% pass rate)
 - ⚠️ **Tests Not Executable**: 7 examples have implementation issues
@@ -324,7 +324,7 @@ Content: {
   validated: 9,
   failed: 12,
   total: 21,
-  passRate: "42.9%",
+  passRate: "latest%",
   testsFound: 274,
   testsPassing: 12,
   testsFailing: 0,
@@ -336,7 +336,7 @@ Content: {
 
 ## Conclusion
 
-**Current State**: 9/21 examples fully validated (42.9%)
+**Current State**: 9/21 examples fully validated (latest%)
 
 **Strengths**:
 - ✅ All core (@unrdf/core) examples passing

@@ -4,7 +4,7 @@
 
 ### 1. Dependencies Updated
 - ✅ **vm2 removed** (was not present in package.json)
-- ✅ **isolated-vm@6.0.1 installed** (with native compilation)
+- ✅ **isolated-vm@latest installed** (with native compilation)
 - ✅ **@wasmer/wasi installed** (WASM support)
 
 ### 2. Core Components Implemented
@@ -129,7 +129,7 @@
 | Criterion | Status | Details |
 |-----------|--------|---------|
 | vm2 removed | ✅ | Was not present; isolated-vm added |
-| isolated-vm integrated | ✅ | v6.0.1 with native compilation |
+| isolated-vm integrated | ✅ | vlatest with native compilation |
 | Full isolation | ✅ | FS, network, process, modules blocked |
 | Threat detection | ✅ | 13 patterns, ML scoring, auto-block |
 | WASM support | ✅ | @wasmer/wasi integrated |

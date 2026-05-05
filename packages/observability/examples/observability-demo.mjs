@@ -177,7 +177,7 @@ async function main() {
   const metrics = createWorkflowMetrics({
     enableDefaultMetrics: true,
     prefix: 'unrdf_workflow_',
-    labels: { environment: 'demo', version: '1.0.0' },
+    labels: { environment: 'demo', version: '[VERSION]' },
   });
 
   const grafana = createGrafanaExporter({
@@ -233,7 +233,7 @@ async function main() {
   app.get('/metrics', async (req, res) => {
     try {
       const metricsText = await metrics.getMetrics();
-      res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+      res.set('Content-Type', 'text/plain; version=[VERSION]; charset=utf-8');
       res.send(metricsText);
     } catch (error) {
       res.status(500).send(`Error generating metrics: ${error.message}`);

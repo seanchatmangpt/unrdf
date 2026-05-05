@@ -29,12 +29,12 @@ The narrative-state-chain distributed consensus protocol has **PASSED all produc
 
 | Metric | Target | Measured | p99 Status | Margin | Verdict |
 |--------|--------|----------|------------|--------|---------|
-| **Reconciliation (1 quad)** | ≤5ms | 1.29ms | PASS ✅ | 74% faster | EXCELLENT |
-| **Reconciliation (1000 quads)** | ≤100ms | 2.62ms | PASS ✅ | 97.4% faster | EXCELLENT |
-| **Guard Evaluation (10 guards)** | ≤30ms | 1.29ms | PASS ✅ | 95.7% faster | EXCELLENT |
-| **Receipt Verification (Complex)** | ≤10ms | 9.40ms | PASS ✅ | 6% margin | ACCEPTABLE |
-| **Bridge Proofs (depth 10)** | ≤500ms | 1.34ms | PASS ✅ | 99.7% faster | EXCELLENT |
-| **Throughput (individual)** | ≥10/sec | 863.86/sec | PASS ✅ | 86.3x above | EXCELLENT |
+| **Reconciliation (1 quad)** | ≤5ms | latestms | PASS ✅ | 74% faster | EXCELLENT |
+| **Reconciliation (1000 quads)** | ≤100ms | latestms | PASS ✅ | latest% faster | EXCELLENT |
+| **Guard Evaluation (10 guards)** | ≤30ms | latestms | PASS ✅ | latest% faster | EXCELLENT |
+| **Receipt Verification (Complex)** | ≤10ms | latestms | PASS ✅ | 6% margin | ACCEPTABLE |
+| **Bridge Proofs (depth 10)** | ≤500ms | latestms | PASS ✅ | latest% faster | EXCELLENT |
+| **Throughput (individual)** | ≥10/sec | latest/sec | PASS ✅ | latestx above | EXCELLENT |
 
 **Overall**: 6/6 SLAs met (100%)
 
@@ -52,16 +52,16 @@ The narrative-state-chain distributed consensus protocol has **PASSED all produc
 
 | Quads | p50 | p95 | p99 | Mean | StdDev | SLA | Status |
 |-------|-----|-----|-----|------|--------|-----|--------|
-| 1 | 1.14ms | 1.25ms | **1.29ms** | 1.14ms | 162.75µs | 5ms | ✅ |
-| 10 | 1.14ms | 1.24ms | **1.31ms** | 1.14ms | 115.25µs | 10ms | ✅ |
-| 100 | 1.14ms | 1.31ms | **1.37ms** | 1.11ms | 239.44µs | 50ms | ✅ |
-| 1000 | 1.15ms | 1.33ms | **2.62ms** | 1.19ms | 423.21µs | 100ms | ✅ |
+| 1 | latestms | latestms | **latestms** | latestms | latestµs | 5ms | ✅ |
+| 10 | latestms | latestms | **latestms** | latestms | latestµs | 10ms | ✅ |
+| 100 | latestms | latestms | **latestms** | latestms | latestµs | 50ms | ✅ |
+| 1000 | latestms | latestms | **latestms** | latestms | latestµs | 100ms | ✅ |
 
 #### Performance Analysis
 - **Linear scaling verified**: No performance degradation with 1000x data increase
 - **Sub-2ms median latency** across all sizes
-- **p99 for 1000 quads (2.62ms)** is 37x below SLA target
-- **Consistent variance**: StdDev stays under 0.5ms even at 1000 quads
+- **p99 for 1000 quads (latestms)** is 37x below SLA target
+- **Consistent variance**: StdDev stays under latestms even at 1000 quads
 - **Bottleneck status**: None identified; margins exceed 74% efficiency
 
 #### Key Insight
@@ -82,14 +82,14 @@ The reconciliation engine maintains near-identical latency profile regardless of
 
 | Guards | p50 | p95 | p99 | Per-Guard Overhead | SLA | Status |
 |--------|-----|-----|-----|-------------------|-----|--------|
-| 1 | 1.15ms | 1.24ms | **1.30ms** | 1.30ms | 30ms | ✅ |
-| 5 | 1.13ms | 1.27ms | **1.37ms** | 0.27ms | 30ms | ✅ |
-| 10 | 1.14ms | 1.25ms | **1.29ms** | 0.13ms | 30ms | ✅ |
+| 1 | latestms | latestms | **latestms** | latestms | 30ms | ✅ |
+| 5 | latestms | latestms | **latestms** | latestms | 30ms | ✅ |
+| 10 | latestms | latestms | **latestms** | latestms | 30ms | ✅ |
 
 #### Performance Analysis
-- **Constant overhead**: 1st guard = 1.30ms, additional guards = 0.13-0.27ms each
-- **p99 = 1.29ms** for 10 guards (96% below SLA)
-- **Minimal variance**: All configurations show <0.3ms standard deviation
+- **Constant overhead**: 1st guard = latestms, additional guards = latest.27ms each
+- **p99 = latestms** for 10 guards (96% below SLA)
+- **Minimal variance**: All configurations show <latestms standard deviation
 - **Parallelization ready**: Sequential overhead allows future multi-threaded optimization
 
 #### Key Insight
@@ -110,14 +110,14 @@ Guard evaluation shows exceptional performance characteristics:
 
 | Receipt Type | p50 | p95 | p99 | Mean | SLA | Status | Margin |
 |--------------|-----|-----|-----|------|-----|--------|--------|
-| Simple | 1.40ms | 1.64ms | 2.84ms | 1.44ms | 10ms | ✅ | 71% |
-| Medium | 1.29ms | 1.46ms | 1.91ms | 1.31ms | 10ms | ✅ | 81% |
-| Complex | 2.46ms | 7.67ms | **9.40ms** | 3.08ms | 10ms | ✅ | 6% |
+| Simple | latestms | latestms | latestms | latestms | 10ms | ✅ | 71% |
+| Medium | latestms | latestms | latestms | latestms | 10ms | ✅ | 81% |
+| Complex | latestms | latestms | **latestms** | latestms | 10ms | ✅ | 6% |
 
 #### Performance Analysis
-- **Complex receipts at 9.40ms p99**: Closest to SLA boundary (6% margin)
-- **Variance increases with complexity**: StdDev 407µs (simple) → 1.71ms (complex)
-- **Cryptographic overhead**: Mean 3.08ms for complex receipts shows expected crypto costs
+- **Complex receipts at latestms p99**: Closest to SLA boundary (6% margin)
+- **Variance increases with complexity**: StdDev 407µs (simple) → latestms (complex)
+- **Cryptographic overhead**: Mean latestms for complex receipts shows expected crypto costs
 - **Hash chain depth**: No documented depth in benchmark, likely O(n) verification
 
 #### Optimization Opportunity (Future)
@@ -140,16 +140,16 @@ Complex receipts could be optimized via:
 
 | Proof Type | Depth | p50 | p95 | p99 | SLA | Status | Margin |
 |------------|-------|-----|-----|-----|-----|--------|--------|
-| Type Coercion | 5 | 1.17ms | 1.30ms | 1.36ms | 500ms | ✅ | 99.7% |
-| Type Coercion | 10 | 1.17ms | 1.31ms | **1.34ms** | 500ms | ✅ | 99.7% |
-| Invariant Preservation | 5 | 1.17ms | 1.30ms | 1.40ms | 500ms | ✅ | 99.7% |
-| Invariant Preservation | 10 | 1.18ms | 1.30ms | **1.42ms** | 500ms | ✅ | 99.7% |
+| Type Coercion | 5 | latestms | latestms | latestms | 500ms | ✅ | latest% |
+| Type Coercion | 10 | latestms | latestms | **latestms** | 500ms | ✅ | latest% |
+| Invariant Preservation | 5 | latestms | latestms | latestms | 500ms | ✅ | latest% |
+| Invariant Preservation | 10 | latestms | latestms | **latestms** | 500ms | ✅ | latest% |
 
 #### Performance Analysis
-- **Depth 10 (worst case) = 1.42ms p99**: 371x below SLA target
-- **Consistent sub-1.5ms latency** across all proof types
-- **No depth degradation**: Depth 5 vs 10 show negligible difference (<0.1ms)
-- **Variance minimal**: All StdDev < 0.19ms
+- **Depth 10 (worst case) = latestms p99**: 371x below SLA target
+- **Consistent sub-latestms latency** across all proof types
+- **No depth degradation**: Depth 5 vs 10 show negligible difference (<latestms)
+- **Variance minimal**: All StdDev < latestms
 
 #### Key Insight
 Bridge proofs demonstrate exceptional performance:
@@ -171,38 +171,38 @@ Bridge proofs demonstrate exceptional performance:
 
 | Metric | Value | SLA | Status |
 |--------|-------|-----|--------|
-| Throughput | 863.86 scenes/sec | ≥10/sec | ✅ |
-| Per-scene latency | 1.16ms | - | - |
-| Elapsed time (100 scenes) | 115.76ms | - | - |
+| Throughput | latest scenes/sec | ≥10/sec | ✅ |
+| Per-scene latency | latestms | - | - |
+| Elapsed time (100 scenes) | latestms | - | - |
 
 #### Batch Scene Admission
 
 | Batch Size | Per-Scene Latency (p50) | Throughput | Improvement |
 |------------|------------------------|-----------|------------|
-| 10 | 1.14ms | 8,991 scenes/sec | 10.4x |
-| 50 | 1.12ms | 44,361 scenes/sec | 51.4x |
-| 100 | 1.12ms | 89,281 scenes/sec | 103.4x |
+| 10 | latestms | 8,991 scenes/sec | latestx |
+| 50 | latestms | 44,361 scenes/sec | latestx |
+| 100 | latestms | 89,281 scenes/sec | latestx |
 
 #### Performance Analysis
 
-**Individual Throughput**: 863.86 scenes/sec
-- 86.4x above minimum requirement (10/sec)
+**Individual Throughput**: latest scenes/sec
+- latestx above minimum requirement (10/sec)
 - Demonstrates stable pipeline across 100 consecutive scenes
-- Per-scene latency (1.16ms) aligns with other benchmarks
+- Per-scene latency (latestms) aligns with other benchmarks
 
 **Batch Throughput**:
-- **Batch-10**: 8,991 scenes/sec (10.4x improvement)
-- **Batch-50**: 44,361 scenes/sec (51.4x improvement)
-- **Batch-100**: 89,281 scenes/sec (103.4x improvement)
+- **Batch-10**: 8,991 scenes/sec (latestx improvement)
+- **Batch-50**: 44,361 scenes/sec (latestx improvement)
+- **Batch-100**: 89,281 scenes/sec (latestx improvement)
 
 #### Scaling Analysis
 - **Batch efficiency**: Nearly linear scaling with batch size (ideal case: N-fold improvement)
-- **Sub-batch variance**: p50/p95 ratios <1.04 indicate stable performance
+- **Sub-batch variance**: p50/p95 ratios <latest indicate stable performance
 - **No throughput cliff**: No degradation observed at higher batch sizes
 
 #### Deployment Impact
 - Individual mode: Supports ~150K scenes/day (86x available headroom)
-- Batch-100 mode: Supports ~7.7B scenes/day with batching optimization
+- Batch-100 mode: Supports ~latestB scenes/day with batching optimization
 - **Conclusion**: Throughput is NOT a bottleneck for production deployment
 
 ---
@@ -212,21 +212,21 @@ Bridge proofs demonstrate exceptional performance:
 ### Performance Margins vs SLA Targets
 
 ```
-Reconciliation (1000 quads):    2.62ms / 100ms = 2.6% of SLA ████░░░░░░░░░░░░░░░░░░░░░░░░░░░ (97.4% margin)
-Guard Evaluation (10):           1.29ms / 30ms = 4.3% of SLA █████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (95.7% margin)
-Receipt Verification:            9.40ms / 10ms = 94% of SLA ███████████████████████████████████░░ (6% margin)
-Bridge Proofs (depth 10):        1.34ms / 500ms = 0.3% of SLA ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (99.7% margin)
-Throughput:                      863.86 / 10 = 8638% of SLA ████████████████████████████████████ (86x over)
+Reconciliation (1000 quads):    latestms / 100ms = latest% of SLA ████░░░░░░░░░░░░░░░░░░░░░░░░░░░ (latest% margin)
+Guard Evaluation (10):           latestms / 30ms = latest% of SLA █████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (latest% margin)
+Receipt Verification:            latestms / 10ms = 94% of SLA ███████████████████████████████████░░ (6% margin)
+Bridge Proofs (depth 10):        latestms / 500ms = latest% of SLA ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (latest% margin)
+Throughput:                      latest / 10 = 8638% of SLA ████████████████████████████████████ (86x over)
 ```
 
 ### Bottleneck Identification
 
 | Component | p99 Latency | Headroom | Risk Level |
 |-----------|------------|----------|-----------|
-| Reconciliation | 2.62ms | 97% | MINIMAL |
-| Guards | 1.29ms | 96% | MINIMAL |
-| Receipts | 9.40ms | 6% | LOW |
-| Bridge Proofs | 1.34ms | 99% | MINIMAL |
+| Reconciliation | latestms | 97% | MINIMAL |
+| Guards | latestms | 96% | MINIMAL |
+| Receipts | latestms | 6% | LOW |
+| Bridge Proofs | latestms | 99% | MINIMAL |
 | Throughput | 863/sec | 8538% | MINIMAL |
 
 **Finding**: Receipt verification is closest to SLA boundary but maintains acceptable 6% margin. All other components have >95% headroom.
@@ -241,7 +241,7 @@ Throughput:                      863.86 / 10 = 8638% of SLA ██████�
 |-----------|--------|----------|
 | All SLAs met | ✅ | 6/6 benchmarks pass |
 | No regressions | ✅ | Baseline not exceeded anywhere |
-| Execution time stable | ✅ | p50/mean ratios <1.1 across all |
+| Execution time stable | ✅ | p50/mean ratios <latest across all |
 | Tail latency acceptable | ✅ | p99 all within SLA |
 | Throughput sufficient | ✅ | 863x requirement met |
 | No optimization blockers | ✅ | 0 critical recommendations |
@@ -261,7 +261,7 @@ Throughput:                      863.86 / 10 = 8638% of SLA ██████�
 ### Post-Deployment Monitoring
 
 **Recommended SLA Monitoring** (Production):
-- Receipt verification p99 target: Keep <9.5ms (currently 9.40ms)
+- Receipt verification p99 target: Keep <latestms (currently latestms)
 - Reconciliation latency: Monitor 1000+ quad operations for regression
 - Throughput: Alert on sustained drop below 100 scenes/sec
 - Guard overhead: Track as feature count increases
@@ -276,7 +276,7 @@ Throughput:                      863.86 / 10 = 8638% of SLA ██████�
 ## Benchmark Execution Details
 
 ### Environment
-- **Timestamp**: 2025-12-27T19:49:25.281Z
+- **Timestamp**: 2025-12-27T19:49:latestZ
 - **Execution Duration**: 48 seconds (sub-timeout margin)
 - **Total Samples**: 500 transactions across all benchmarks
 - **Memory Pressure**: GC exposed for accurate heap measurement
@@ -310,7 +310,7 @@ Each benchmark followed strict protocols:
 - Sub-2ms median preserves real-time responsiveness
 
 ### 2. Guard Evaluation Scalability
-- Per-guard overhead: 0.13-0.27ms
+- Per-guard overhead: latest.27ms
 - Supports arbitrary guard composition
 - Enables complex invariant systems without penalty
 
@@ -320,20 +320,20 @@ Each benchmark followed strict protocols:
 - Not a concern: margin sufficient for production variation
 
 ### 4. Bridge Proofs Over-Specification
-- p99 1.34ms vs 500ms SLA (371x margin)
+- p99 latestms vs 500ms SLA (371x margin)
 - Enables future enhancements:
   - Extended proof depths (>20)
   - More complex type coercions
   - Additional invariant preservation rules
 
 ### 5. Throughput Ceiling Analysis
-- Individual: 863/sec (requires 1 scene per 1.16ms)
-- Batch-100: 89,281/sec (requires 100 scenes per 1.12ms)
+- Individual: 863/sec (requires 1 scene per latestms)
+- Batch-100: 89,281/sec (requires 100 scenes per latestms)
 - Throughput NOT bottleneck; admission validation is constraint
 
 ### 6. Latency Variance Control
-- Standard deviations <0.5ms on most metrics
-- Complex receipts: Higher variance (1.71ms StdDev) expected
+- Standard deviations <latestms on most metrics
+- Complex receipts: Higher variance (latestms StdDev) expected
 - No evidence of GC pauses or system contention
 
 ---
@@ -344,7 +344,7 @@ The narrative-state-chain distributed consensus protocol is **PRODUCTION READY**
 
 ### Performance Summary
 - **6/6 SLAs met** (100% compliance)
-- **Average margin: 75%** (range 6% - 99.7%)
+- **Average margin: 75%** (range 6% - latest%)
 - **Throughput headroom: 8538%**
 - **No identified regressions**
 

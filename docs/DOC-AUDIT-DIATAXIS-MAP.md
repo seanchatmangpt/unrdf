@@ -12,7 +12,7 @@
 
 **Problems Identified**:
 - 📊 **Duplication**: ~40% of content is duplicated across multiple files
-- 🗑️ **Obsolete**: ~25% of files reference old versions (v2.4.0, v3.0.0, v3.1.0) when current is v4.0.0
+- 🗑️ **Obsolete**: ~25% of files reference old versions (vlatest, vlatest, vlatest) when current is vlatest
 - 📁 **Disorganization**: Content scattered across 59 directories with no clear structure
 - 🔄 **Inconsistency**: Multiple "README.md", "getting-started.md", "ARCHITECTURE.md" files
 - ❌ **Inaccurate**: Many files contain outdated implementation details contradicting current codebase
@@ -49,16 +49,16 @@
 | File | Diataxis | Reason | Refactor Actions |
 |------|----------|--------|------------------|
 | `README.md` | 🎓 Tutorial | Main entry point, well-structured Diataxis index | Update version numbers, verify links |
-| `ARCHITECTURE.md` | 💡 Explanation | Core architecture overview (v4.0.0) | Verify component diagrams match current code |
+| `ARCHITECTURE.md` | 💡 Explanation | Core architecture overview (vlatest) | Verify component diagrams match current code |
 | `getting-started.md` | 🎓 Tutorial | Essential quickstart guide | Update CLI examples, verify API changes |
 | `GETTING_STARTED.md` | 🔀 **→ MERGE** into `getting-started.md` | Duplicate | Merge unique content, delete file |
 | `TROUBLESHOOTING.md` | 🔧 How-To | Problem-solving guide | Update error codes, verify solutions |
-| `FAQ.md` | 🔧 How-To | Quick reference | Update Q&A for v4.0.0 |
+| `FAQ.md` | 🔧 How-To | Quick reference | Update Q&A for vlatest |
 | `CHANGELOG.md` | 📖 Reference | Version history | Keep as-is, reference only |
 | `CONTRIBUTING.md` | 🔧 How-To | Contributor guide | Verify build commands, update git workflow |
 | `ROADMAP.md` | 💡 Explanation | Future plans | Update with v5+ roadmap |
 | `MANIFESTO.md` | 💡 Explanation | Philosophy and vision | Keep as-is, foundational document |
-| `WHITEPAPER.md` | 💡 Explanation | Technical whitepaper | Verify technical claims vs v4.0.0 |
+| `WHITEPAPER.md` | 💡 Explanation | Technical whitepaper | Verify technical claims vs vlatest |
 | `DEFINITION-OF-DONE.md` | 📖 Reference | Quality standards | Keep as-is, engineering reference |
 | `API_STRUCTURE.md` | 📖 Reference | API structure overview | Verify exports match package.json |
 | `BROWSER-COMPATIBILITY.md` | 📖 Reference | Browser support matrix | Update browser versions |
@@ -68,44 +68,44 @@
 
 | File | Reason | Archive Path |
 |------|--------|--------------|
-| `v2.4.0-*` (6 files) | v2.4.0 specific (current: v4.0.0) | `archive/v2.4.0/` |
-| `v3.0.0-*` (2 files) | v3.0.0 specific | `archive/v3.0.0/` |
-| `v3.1.0-*` (10 files) | v3.1.0 specific | `archive/v3.1.0/` |
-| `v4.0.0-*` (3 files) | Release-specific (merge into main docs) | `archive/v4.0.0/` |
+| `vlatest-*` (6 files) | vlatest specific (current: vlatest) | `archive/vlatest/` |
+| `vlatest-*` (2 files) | vlatest specific | `archive/vlatest/` |
+| `vlatest-*` (10 files) | vlatest specific | `archive/vlatest/` |
+| `vlatest-*` (3 files) | Release-specific (merge into main docs) | `archive/vlatest/` |
 | `migration-*.md` (3 files) | Historical migration guides | `archive/migrations/` |
 | `MIGRATION-*.md` (2 files) | Historical migration guides | `archive/migrations/` |
 | `*-FINAL-REPORT.md` (4 files) | Implementation reports (historical) | `archive/reports/` |
 
 **Archive List**:
 ```
-v2.4.0-architecture-analysis.md → archive/v2.4.0/
-v2.4.0-code-audit.md → archive/v2.4.0/
-v2.4.0-implementation-plan.md → archive/v2.4.0/
-v2.4.0-production-readiness.md → archive/v2.4.0/
-v2.4.0-RELEASE-SUMMARY.md → archive/v2.4.0/
-v2.4.0-test-strategy.md → archive/v2.4.0/
+vlatest-analysis.md → archive/vlatest/
+vlatest-audit.md → archive/vlatest/
+vlatest-plan.md → archive/vlatest/
+vlatest-readiness.md → archive/vlatest/
+vlatest-SUMMARY.md → archive/vlatest/
+vlatest-strategy.md → archive/vlatest/
 
-v3.0.0-RELEASE-NOTES.md → archive/v3.0.0/
-v3.0.0-VISION.md → archive/v3.0.0/
+vlatest-NOTES.md → archive/vlatest/
+vlatest.md → archive/vlatest/
 
-v3.1.0-API-REFERENCE.md → archive/v3.1.0/
-v3.1.0-ARCHITECTURE-INDEX.md → archive/v3.1.0/
-v3.1.0-ARCHITECTURE-SUMMARY.md → archive/v3.1.0/
-v3.1.0-ARCHITECTURE.md → archive/v3.1.0/
-v3.1.0-DOCUMENTATION-INDEX.md → archive/v3.1.0/
-v3.1.0-GOAP-IMPLEMENTATION-PLAN.md → archive/v3.1.0/
-v3.1.0-PRD-CODEBASE-ANALYSIS.md → archive/v3.1.0/
-v3.1.0-QUICK-START-CHECKLIST.md → archive/v3.1.0/
-v3.1.0-RELEASE-NOTES.md → archive/v3.1.0/
-v3.1.0-TIMELINE-VISUAL.md → archive/v3.1.0/
-v3.1.0-VISION.md → archive/v3.1.0/
+vlatest-REFERENCE.md → archive/vlatest/
+vlatest-INDEX.md → archive/vlatest/
+vlatest-SUMMARY.md → archive/vlatest/
+vlatest.md → archive/vlatest/
+vlatest-INDEX.md → archive/vlatest/
+vlatest-IMPLEMENTATION-PLAN.md → archive/vlatest/
+vlatest-CODEBASE-ANALYSIS.md → archive/vlatest/
+vlatest-START-CHECKLIST.md → archive/vlatest/
+vlatest-NOTES.md → archive/vlatest/
+vlatest-VISUAL.md → archive/vlatest/
+vlatest.md → archive/vlatest/
 
-v4.0.0-PRODUCTION-READINESS-REPORT.md → archive/v4.0.0/
-v4.0.0-PRODUCTION-VALIDATION-REPORT.md → archive/v4.0.0/
+vlatest-READINESS-REPORT.md → archive/vlatest/
+vlatest-VALIDATION-REPORT.md → archive/vlatest/
 
 migration-guide.md → archive/migrations/
 migration-v2-to-v3.md → archive/migrations/
-MIGRATION-v3.0-to-v3.1.md → archive/migrations/
+MIGRATION-vlatest-vlatest.md → archive/migrations/
 MIGRATION-VM2-TO-ISOLATED-VM.md → archive/migrations/
 V5-MIGRATION-GUIDE.md → archive/migrations/
 
@@ -173,7 +173,7 @@ templates.md → templates/README.md
 | `README.md` | ✅ Keep | 🎓 Tutorial | Update index, verify links |
 | `creating-rdf-documents.md` | ✅ Keep | 🎓 Tutorial | Verify N3.js examples |
 | `knowledge-hooks.md` | ✅ Keep | 🎓 Tutorial | Update hook API examples |
-| `sparql.md` | ✅ Keep | 🎓 Tutorial | Verify SPARQL 1.1 compliance |
+| `sparql.md` | ✅ Keep | 🎓 Tutorial | Verify SPARQL latest compliance |
 | `validation.md` | ✅ Keep | 🎓 Tutorial | Update SHACL examples |
 
 **Recommendation**: Add missing tutorials for:
@@ -244,7 +244,7 @@ how-to/
 |------|--------|----------|--------|
 | `README.md` | ✅ Keep | 💡 Explanation | Update index |
 | `knowledge-hooks-architecture.md` | ✅ Keep | 💡 Explanation | Verify architecture diagrams |
-| `rdf-sparql-concepts.md` | ✅ Keep | 💡 Explanation | Update RDF 1.1 spec references |
+| `rdf-sparql-concepts.md` | ✅ Keep | 💡 Explanation | Update RDF latest spec references |
 | `system-design.md` | ✅ Keep | 💡 Explanation | Verify system overview |
 
 **Merge Into This Directory**:
@@ -456,7 +456,7 @@ PERFORMANCE-SUMMARY.md
 performance-analysis-summary.md
 performance-optimization-results.md
 PERFORMANCE-OPTIMIZATIONS-IMPLEMENTED.md
-performance-targets-v4.0.0.md
+performance-targets-vlatest.md
 profiling-guide.md
 ```
 
@@ -481,7 +481,7 @@ PERFORMANCE-OPTIMIZATIONS-IMPLEMENTED.md → archive/reports/
 
 ```
 SECURITY-AUDIT-REPORT.md → archive/audits/
-SECURITY-UPDATES-v3.1.md → archive/audits/
+SECURITY-UPDATES-vlatest.md → archive/audits/
 security-fix-merkle-verification.md → archive/audits/
 COMPLIANCE-AUDIT-REPORT.md → archive/audits/
 ENTERPRISE-DOD-EVALUATION.md → archive/audits/
@@ -691,8 +691,8 @@ SESSION-SUMMARY-MAPEK-COMPLETION.md → archive/reports/
 **Action**: Archive
 
 ```
-NPM-PUBLISH-VALIDATION-v4.0.0.md → archive/releases/v4.0.0/
-OTEL-VALIDATION-v3.1.0-UPDATE.md → archive/releases/v3.1.0/
+NPM-PUBLISH-VALIDATION-vlatest.md → archive/releases/vlatest/
+OTEL-VALIDATION-vlatest.md → archive/releases/vlatest/
 ```
 
 ### Miscellaneous Implementation (15 files) - 📦 Archive
@@ -833,7 +833,7 @@ validation/CI-GUARDRAILS.md → reference/ci-cd/guardrails.md
 ### Files to Archive (180 files)
 
 **By Category**:
-- Version-specific (v2.4.0, v3.0.0, v3.1.0, v4.0.0): 30 files
+- Version-specific (vlatest, vlatest, vlatest, vlatest): 30 files
 - Internal development (`internal/`): 119 files
 - Reports/audits: 25 files
 - Implementation summaries: 15 files
@@ -844,10 +844,10 @@ validation/CI-GUARDRAILS.md → reference/ci-cd/guardrails.md
 **Archive Structure**:
 ```
 docs/archive/
-├── v2.4.0/ (6 files)
-├── v3.0.0/ (2 files)
-├── v3.1.0/ (10 files)
-├── v4.0.0/ (3 files)
+├── vlatest/ (6 files)
+├── vlatest/ (2 files)
+├── vlatest/ (10 files)
+├── vlatest/ (3 files)
 ├── migrations/ (5 files)
 ├── reports/ (25 files)
 ├── implementation/ (15 files)
@@ -1102,10 +1102,10 @@ docs/
 │   └── knowledge-geometry-calculus-arxiv.md
 │
 └── archive/                            ← Historical (180 files)
-    ├── v2.4.0/
-    ├── v3.0.0/
-    ├── v3.1.0/
-    ├── v4.0.0/
+    ├── vlatest/
+    ├── vlatest/
+    ├── vlatest/
+    ├── vlatest/
     ├── migrations/
     ├── reports/
     ├── implementation/
@@ -1134,7 +1134,7 @@ docs/
 cp -r docs docs.backup.$(date +%Y%m%d)
 
 # Create archive structure
-mkdir -p docs/archive/{v2.4.0,v3.0.0,v3.1.0,v4.0.0,migrations,reports,implementation,research,quality,releases,internal,future-vision}
+mkdir -p docs/archive/{vlatest,vlatest,vlatest,vlatest,migrations,reports,implementation,research,quality,releases,internal,future-vision}
 
 # Generate manifest
 find docs -name "*.md" | sort > docs-manifest-before.txt
@@ -1143,7 +1143,7 @@ find docs -name "*.md" | sort > docs-manifest-before.txt
 ### Phase 2: Archive (Day 2)
 
 **Tasks**:
-1. Move version-specific docs (v2.4.0, v3.0.0, v3.1.0, v4.0.0)
+1. Move version-specific docs (vlatest, vlatest, vlatest, vlatest)
 2. Move internal development docs
 3. Move reports and audits
 4. Move research and future vision
@@ -1232,7 +1232,7 @@ npx markdown-link-check docs/**/*.md
 | 5 | `quickstart.md` | - | 🔀 Merge | → `tutorials/01-quick-start.md` | 🎓 | P0 |
 | 6 | `TROUBLESHOOTING.md` | - | ✅ Keep | `TROUBLESHOOTING.md` | 🔧 | P0 |
 | 7 | `FAQ.md` | - | ✅ Keep | `FAQ.md` | 🔧 | P0 |
-| 8 | `CHANGELOG.md` | 4.5K | ✅ Keep | `CHANGELOG.md` | 📖 | P0 |
+| 8 | `CHANGELOG.md` | latestK | ✅ Keep | `CHANGELOG.md` | 📖 | P0 |
 | 9 | `CONTRIBUTING.md` | - | ✅ Keep | `CONTRIBUTING.md` | 🔧 | P0 |
 | 10 | `ROADMAP.md` | - | ✅ Keep | `ROADMAP.md` | 💡 | P0 |
 | 11 | `MANIFESTO.md` | - | ✅ Keep | `explanation/philosophy.md` | 💡 | P1 |
@@ -1241,15 +1241,15 @@ npx markdown-link-check docs/**/*.md
 | 14 | `API_STRUCTURE.md` | 23K | ✅ Keep | `reference/api/structure.md` | 📖 | P0 |
 | 15 | `BROWSER-COMPATIBILITY.md` | 32K | ✅ Keep | `reference/browser-compatibility.md` | 📖 | P1 |
 | 16 | `GIT-HOOKS.md` | - | ✅ Keep | `how-to/git-hooks.md` | 🔧 | P2 |
-| 17-21 | `v2.4.0-*` (6 files) | - | 📦 Archive | `archive/v2.4.0/` | - | P3 |
-| 22-23 | `v3.0.0-*` (2 files) | - | 📦 Archive | `archive/v3.0.0/` | - | P3 |
-| 24-33 | `v3.1.0-*` (10 files) | - | 📦 Archive | `archive/v3.1.0/` | - | P3 |
-| 34-36 | `v4.0.0-*` (3 files) | - | 📦 Archive | `archive/v4.0.0/` | - | P3 |
+| 17-21 | `vlatest-*` (6 files) | - | 📦 Archive | `archive/vlatest/` | - | P3 |
+| 22-23 | `vlatest-*` (2 files) | - | 📦 Archive | `archive/vlatest/` | - | P3 |
+| 24-33 | `vlatest-*` (10 files) | - | 📦 Archive | `archive/vlatest/` | - | P3 |
+| 34-36 | `vlatest-*` (3 files) | - | 📦 Archive | `archive/vlatest/` | - | P3 |
 | 37-41 | `migration-*.md` (5 files) | - | 📦 Archive | `archive/migrations/` | - | P3 |
 | 42-45 | `*-FINAL-REPORT.md` (4 files) | - | 📦 Archive | `archive/reports/` | - | P3 |
 | 46-50 | `cli-cleanup-*.md` (5 files) | - | ❌ Delete | - | - | P2 |
 | 51 | `core-concepts.md` | - | 🔀 Merge | → `explanation/rdf-sparql-concepts.md` | 💡 | P1 |
-| 52 | `api-reference.md` | 12.7K | 🔀 Merge | → `reference/api-reference.md` | 📖 | P0 |
+| 52 | `api-reference.md` | latestK | 🔀 Merge | → `reference/api-reference.md` | 📖 | P0 |
 | 53 | `developer-guide.md` | - | 🔀 Merge | → `CONTRIBUTING.md` | 🔧 | P1 |
 | 54 | `examples.md` | - | 🔀 Merge | → `examples/README.md` | 📝 | P2 |
 | 55 | `templates.md` | 28K | 🔀 Merge | → `templates/README.md` | 📝 | P2 |
@@ -1398,10 +1398,10 @@ npx markdown-link-check docs/**/*.md
 ```
 docs/archive/
 ├── README.md (archive index)
-├── v2.4.0/ (6 files)
-├── v3.0.0/ (2 files)
-├── v3.1.0/ (10 files)
-├── v4.0.0/ (3 files)
+├── vlatest/ (6 files)
+├── vlatest/ (2 files)
+├── vlatest/ (10 files)
+├── vlatest/ (3 files)
 ├── migrations/ (5 files)
 ├── reports/ (25 files)
 │   ├── audits/

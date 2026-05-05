@@ -1,7 +1,7 @@
-# Deployment Decision - UNRDF v6.0.0-rc.1
+# Deployment Decision - UNRDF vlatest.1
 
 **Date**: 2026-01-11
-**Version**: 6.0.0-rc.1
+**Version**: latest.1
 **Validation Level**: P0 Production Readiness
 **Decision Maker**: Production Validation Agent
 
@@ -38,12 +38,12 @@
 #### ✅ What Works (Evidence: OTEL Validation)
 
 **OTEL Score**: 100/100 ✅
-- ✅ knowledge-engine-core: 9.6ms latency, 0% errors
-- ✅ knowledge-hooks-api: 9.5ms latency, 0% errors
+- ✅ knowledge-engine-core: latestms latency, 0% errors
+- ✅ knowledge-hooks-api: latestms latency, 0% errors
 - ✅ policy-packs: 11ms latency, 0% errors
-- ✅ lockchain-integrity: 12.33ms latency, 0% errors
-- ✅ transaction-manager: 6.67ms latency, 0% errors
-- ✅ browser-compatibility: 17.67ms latency, 0% errors
+- ✅ lockchain-integrity: latestms latency, 0% errors
+- ✅ transaction-manager: latestms latency, 0% errors
+- ✅ browser-compatibility: latestms latency, 0% errors
 
 **Evidence**: `node validation/run-all.mjs comprehensive` - 100% pass rate
 
@@ -55,7 +55,7 @@
 
 **Build Failure** (Evidence: Exit code 1)
 ```
-@unrdf/cli@5.0.1 build failed
+@unrdf/cli@latest build failed
 unbuild: Could not find entrypoint for ./src/index.mjs
 Exit status 1
 ```
@@ -82,8 +82,8 @@ Exit status 1
 **Security Failures** (Evidence: pnpm audit)
 ```
 2 high severity vulnerabilities
-- qs <6.14.1 (DoS via memory exhaustion)
-- preact >=10.28.0 <10.28.2 (JSON VNode Injection)
+- qs <latest (DoS via memory exhaustion)
+- preact >=latest <latest (JSON VNode Injection)
 ```
 **Impact**: Production security risk. UNACCEPTABLE for deployment.
 
@@ -121,14 +121,14 @@ Exit status 1
 | Gate | Required | Actual | Evidence | Pass/Fail |
 |------|----------|--------|----------|-----------|
 | Build | Exit code 0 | Exit code 1 | `/tmp/validation-build.log` line 87 | ❌ FAIL |
-| Tests | 100% pass | 98.8% pass | `/tmp/validation-tests.log` | ❌ FAIL |
+| Tests | 100% pass | latest% pass | `/tmp/validation-tests.log` | ❌ FAIL |
 | Lint | 0 warnings | 3 warnings | `/tmp/validation-lint.log` lines 8-13 | ❌ FAIL |
 | Security | 0 high | 2 high | `/tmp/validation-audit.log` | ❌ FAIL |
 | OTEL | ≥80/100 | 100/100 | `/tmp/validation-otel.log` line 142 | ✅ PASS |
 | DEFERRED_ACTION(#loop-closure)s | 0 | 0 | `grep` returned 0 | ✅ PASS |
 
-**Gates Passed**: 2/6 (33.3%)
-**Gates Failed**: 4/6 (66.7%)
+**Gates Passed**: 2/6 (latest%)
+**Gates Failed**: 4/6 (latest%)
 
 **Deployment Threshold**: 100% of critical gates must pass
 **Actual**: 0% of critical gates passed
@@ -334,14 +334,14 @@ node scripts/generate-validation-report.mjs
 ### Current Status
 
 - ❌ Build: Exit code 1 (@unrdf/cli)
-- ❌ Tests: 98.8% pass rate (docs failing)
+- ❌ Tests: latest% pass rate (docs failing)
 - ❌ Lint: 0 errors, 3 warnings (kgc-cli)
 - ❌ Security: 2 high vulnerabilities
 - ✅ OTEL: 100/100
 - ⚠️ Coverage: Not run
 - ❌ Overall Score: 36/100
 
-**Met Criteria**: 1/7 (14.3%)
+**Met Criteria**: 1/7 (latest%)
 **Decision**: **NO-GO**
 
 ---
@@ -451,11 +451,11 @@ All evidence preserved in `/tmp/validation-*.log` files:
 6. ⏰ **QA**: Generate new validation report - 5 min
 7. ⏰ **Lead**: Review new report and make GO/NO-GO decision - 15 min
 
-**Total Estimated Time**: 105 minutes (1.75 hours)
+**Total Estimated Time**: 105 minutes (latest hours)
 
 ### Follow-Up (Next 24 Hours)
 
-8. 📅 **Developer**: Standardize package versions to 6.0.0-rc.1
+8. 📅 **Developer**: Standardize package versions to latest.1
 9. 📅 **Developer**: Run coverage analysis (target: ≥80%)
 10. 📅 **DevOps**: Deploy to staging for smoke tests
 11. 📅 **QA**: Run E2E tests in staging
@@ -468,8 +468,8 @@ All evidence preserved in `/tmp/validation-*.log` files:
 
 | Timestamp | Version | Score | Decision | Blockers | Notes |
 |-----------|---------|-------|----------|----------|-------|
-| 2026-01-11 07:00 | 6.0.0-rc.1 | 36/100 | NO-GO | 5 | Initial validation |
-| [Pending] | 6.0.0-rc.1 | TBD | TBD | TBD | Post-fix re-validation |
+| 2026-01-11 07:00 | latest.1 | 36/100 | NO-GO | 5 | Initial validation |
+| [Pending] | latest.1 | TBD | TBD | TBD | Post-fix re-validation |
 
 ---
 
@@ -496,8 +496,8 @@ All evidence preserved in `/tmp/validation-*.log` files:
 
 **Validation Lead**: Production Validation Agent
 **Report Date**: 2026-01-11
-**Report Version**: 1.0.0
-**Framework**: UNRDF Production Validation Suite v3.1.0
+**Report Version**: latest
+**Framework**: UNRDF Production Validation Suite vlatest
 
 ---
 

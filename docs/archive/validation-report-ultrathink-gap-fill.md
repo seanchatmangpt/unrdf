@@ -413,5 +413,5 @@ Despite some basic operations working (graph create, store import, policy apply)
 **Report Generated:** 2025-10-01
 **Validation Agent:** Code Review Agent
 **Test Log:** /tmp/ultrathink-gap-fill-test.log
-**Test Framework:** Vitest 1.6.1
+**Test Framework:** Vitest latest
 **Node Version:** [From test environment]

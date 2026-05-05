@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/pictl-semantics",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "PICTL Semantics Integration with @unrdf Federation - Ontology-driven process mining with cryptographic quorum consensus",
   "type": "module",
   "main": "src/index.mjs",

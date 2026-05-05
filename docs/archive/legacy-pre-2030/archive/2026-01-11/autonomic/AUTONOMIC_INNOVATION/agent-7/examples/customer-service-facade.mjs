@@ -1,7 +1,7 @@
 /**
  * Customer Service Façade
  * Auto-generated from Customer Service spec
- * Conventions: target-org profile v1.0.0
+ * Conventions: target-org profile latest
  */
 
 import { createStore, dataFactory } from '@unrdf/oxigraph';

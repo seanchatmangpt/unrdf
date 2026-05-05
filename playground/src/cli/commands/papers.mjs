@@ -7,7 +7,7 @@
  * Supports multiple paper families: IMRAD, DSR, Argument, Contribution.
  *
  * @module cli/commands/papers
- * @version 2.0.0
+ * @version latest
  * @license MIT
  */
 

@@ -49,7 +49,7 @@ async function test() {
     console.log('Step 1: Creating package.json...');
     const packageJson = {
       name: 'walkthrough-1-test',
-      version: '1.0.0',
+      version: '[VERSION]',
       type: 'module',
       private: true
     };

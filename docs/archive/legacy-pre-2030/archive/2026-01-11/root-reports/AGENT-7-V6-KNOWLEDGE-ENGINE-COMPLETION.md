@@ -28,7 +28,7 @@ The UNRDF v6 Knowledge Engine has been comprehensively analyzed for v6 readiness
 
 ## 1. Current Knowledge Engine Architecture
 
-### 1.1 Core Modules (32 files, ~29,295 LoC)
+### latest Core Modules (32 files, ~29,295 LoC)
 
 #### **Reasoning & Inference** (3 modules)
 - ✅ `reason.mjs` - N3 rules + EYE reasoner integration
@@ -84,7 +84,7 @@ The UNRDF v6 Knowledge Engine has been comprehensively analyzed for v6 readiness
 - ✅ `performance-optimizer.mjs` - Performance monitoring
 - ✅ `schemas.mjs` - Central Zod schema registry (130+ schemas)
 
-### 1.2 Package Distribution
+### latest Package Distribution
 
 The knowledge engine exists in **two locations**:
 
@@ -95,7 +95,7 @@ The knowledge engine exists in **two locations**:
 
 2. **`/home/user/unrdf/packages/knowledge-engine/`** (10 modules, ~1,800 LoC)
    - Simplified package-focused implementation
-   - Published to npm as `@unrdf/knowledge-engine@5.0.1`
+   - Published to npm as `@unrdf/knowledge-engine@latest`
    - Subset of src/ functionality
 
 **Recommendation**: Consolidate to packages/ for v6, deprecate src/ location.
@@ -104,7 +104,7 @@ The knowledge engine exists in **two locations**:
 
 ## 2. Reasoning & Inference Capabilities
 
-### 2.1 Implemented Features ✅
+### latest Implemented Features ✅
 
 #### **N3 Reasoning** (via eyereasoner)
 ```javascript
@@ -151,7 +151,7 @@ The EYE reasoner supports RDFS and OWL-RL rules:
   => { ?x rdf:type ?c } .
 ```
 
-### 2.2 Reasoning API
+### latest Reasoning API
 
 #### **Core Functions**
 ```javascript
@@ -192,7 +192,7 @@ const stats = session.getStats();
 // { originalCount, inferredCount, totalCount, inferenceRatio, hasInferences }
 ```
 
-### 2.3 Missing Features (for full OWL 2 support)
+### latest Missing Features (for full OWL 2 support)
 
 ❌ **OWL 2 DL Reasoning** - Would require HermiT or Pellet integration
 ❌ **Description Logic Reasoning** - Complex class expressions
@@ -205,7 +205,7 @@ const stats = session.getStats();
 
 ## 3. Query Optimization
 
-### 3.1 Query Optimizer Features ✅
+### latest Query Optimizer Features ✅
 
 #### **Query Plan Caching**
 ```javascript
@@ -231,14 +231,14 @@ const results = await optimizer.optimizeQuery(sparqlQuery);
 optimizer.createIndex('predicate-index', {
   type: 'predicate',
   fields: ['predicate'],
-  selectivity: 0.8,
+  selectivity: latest,
 });
 
 // Composite indexes
 optimizer.createIndex('spo-index', {
   type: 'composite',
   fields: ['subject', 'predicate', 'object'],
-  selectivity: 0.95,
+  selectivity: latest,
 });
 ```
 
@@ -270,7 +270,7 @@ const results = await optimizer.evaluateWithDelta(query, context);
 - ✅ Incremental materialization
 - ✅ 70-90% speedup for small deltas
 
-### 3.2 Performance Metrics
+### latest Performance Metrics
 
 From production use (KGC-4D benchmarks):
 - **Cache Hit Rate**: 60-80% for repeated queries
@@ -282,7 +282,7 @@ From production use (KGC-4D benchmarks):
 
 ## 4. AI-Enhanced Search
 
-### 4.1 Semantic Search via Transformers ✅
+### latest Semantic Search via Transformers ✅
 
 #### **Embeddings Manager**
 ```javascript
@@ -291,7 +291,7 @@ import { createAISearchEngine } from '@unrdf/knowledge-engine/ai-search';
 const searchEngine = await createAISearchEngine(store, {
   model: 'Xenova/all-MiniLM-L6-v2', // WASM-based transformers
   topK: 10,
-  threshold: 0.7,
+  threshold: latest,
   cache: true,
   batchSize: 32,
 });
@@ -328,7 +328,7 @@ const anomalies = await anomalyDetector.detect(store, {
 // Returns: [{ type, subject, predicate, expected, actual }, ...]
 ```
 
-### 4.2 Supported Models
+### latest Supported Models
 
 - ✅ `Xenova/all-MiniLM-L6-v2` (default, 384-dim embeddings)
 - ✅ `Xenova/all-mpnet-base-v2` (768-dim, higher accuracy)
@@ -343,7 +343,7 @@ const anomalies = await anomalyDetector.detect(store, {
 
 ## 5. V6 Compliance Analysis
 
-### 5.1 Zod Schema Coverage ✅
+### latest Zod Schema Coverage ✅
 
 **Current State**: 373 schema occurrences across 41 files
 
@@ -365,7 +365,7 @@ export const AISearchConfigSchema = z.object({ ... });
 
 **V6 Requirement**: ✅ **COMPLETE** - 100% Zod coverage
 
-### 5.2 Receipt-Driven Operations ⚠️
+### latest Receipt-Driven Operations ⚠️
 
 **Current State**: 132 receipt occurrences across 9 files (28% module coverage)
 
@@ -392,7 +392,7 @@ export const AISearchConfigSchema = z.object({ ... });
 
 **Recommendation**: Wrap all operations with `wrapWithReceipt()` helper from `@unrdf/v6-compat`.
 
-### 5.3 Pure ESM ✅
+### latest Pure ESM ✅
 
 **Current State**: All modules use `.mjs` extension, ESM imports
 
@@ -407,7 +407,7 @@ export async function reasonMultiple(...) { ... }
 
 **V6 Requirement**: ✅ **COMPLETE** - 100% ESM
 
-### 5.4 OTEL Observability ✅
+### latest OTEL Observability ✅
 
 **Current State**: Comprehensive OTEL instrumentation
 
@@ -417,7 +417,7 @@ import { createObservabilityManager } from '@unrdf/knowledge-engine';
 
 const obs = createObservabilityManager({
   serviceName: 'knowledge-engine',
-  serviceVersion: '6.0.0',
+  serviceVersion: 'latest',
   enableTracing: true,
   enableMetrics: true,
   endpoint: 'http://localhost:4318',
@@ -452,7 +452,7 @@ const span = obs.startSpan('reasoning', {
 
 ## 6. Test Coverage
 
-### 6.1 Current Test Suite
+### latest Current Test Suite
 
 **Test Files**: 10 files in `/home/user/unrdf/test/knowledge-engine/`
 
@@ -473,7 +473,7 @@ test/knowledge-engine/
     └── ring-buffer.test.mjs - Ring buffer implementation
 ```
 
-### 6.2 Test Execution Status ⚠️
+### latest Test Execution Status ⚠️
 
 **Issue**: Vitest version mismatch
 
@@ -482,7 +482,7 @@ $ pnpm test --filter @unrdf/knowledge-engine
 SyntaxError: The requested module 'vitest/node' does not provide an export named 'parseAstAsync'
 ```
 
-**Root Cause**: `@vitest/coverage-v8@4.0.16` incompatible with `vitest@4.0.16`
+**Root Cause**: `@vitest/coverage-v8@latest` incompatible with `vitest@latest`
 
 **Fix Required**:
 ```bash
@@ -490,7 +490,7 @@ SyntaxError: The requested module 'vitest/node' does not provide an export named
 pnpm update vitest @vitest/coverage-v8 -r
 ```
 
-### 6.3 Missing Test Coverage
+### latest Missing Test Coverage
 
 ❌ **Reasoning Tests** - No tests for `reason.mjs`, `reasonMultiple`, inference accuracy
 ❌ **AI Search Tests** - No tests for semantic search, embeddings, NLP query builder
@@ -509,7 +509,7 @@ pnpm update vitest @vitest/coverage-v8 -r
 
 ## 7. Knowledge Engine Capability Matrix
 
-### 7.1 Core Capabilities
+### latest Core Capabilities
 
 | Capability | Status | Implementation | Tests | V6 Ready |
 |------------|--------|----------------|-------|----------|
@@ -532,7 +532,7 @@ pnpm update vitest @vitest/coverage-v8 -r
 | **Observability** | ✅ COMPLETE | OTEL traces + metrics | ✅ Tested | ✅ |
 | **Security** | ✅ COMPLETE | Sandboxing + validation | ✅ Tested | ✅ |
 
-### 7.2 V6 Requirements Checklist
+### latest V6 Requirements Checklist
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
@@ -551,7 +551,7 @@ pnpm update vitest @vitest/coverage-v8 -r
 
 ## 8. Recommendations for Full V6 Compliance
 
-### 8.1 High Priority (Blocking v6 Release)
+### latest High Priority (Blocking v6 Release)
 
 #### 1. Fix Test Infrastructure ⚠️
 ```bash
@@ -587,7 +587,7 @@ grep "Score:" validation-output.log
 # Target: ≥80/100 for @unrdf/knowledge-engine
 ```
 
-### 8.2 Medium Priority (Quality Improvements)
+### latest Medium Priority (Quality Improvements)
 
 #### 4. Create Comprehensive Test Suite
 ```javascript
@@ -631,7 +631,7 @@ for (const testCase of testCases) {
 
 **Target**: 100% inference correctness
 
-### 8.3 Low Priority (Nice to Have)
+### latest Low Priority (Nice to Have)
 
 #### 6. Consolidate Package Structure
 ```bash
@@ -667,14 +667,14 @@ for (const testCase of testCases) {
 
 | Category | Score | Weight | Weighted Score |
 |----------|-------|--------|----------------|
-| Code Implementation | 100% | 30% | 30.0 |
-| Zod Schemas | 100% | 15% | 15.0 |
-| Pure ESM | 100% | 10% | 10.0 |
-| OTEL Instrumentation | 100% | 15% | 15.0 |
-| Receipt Coverage | 28% | 20% | 5.6 |
-| Test Coverage | 30% | 10% | 3.0 |
+| Code Implementation | 100% | 30% | latest |
+| Zod Schemas | 100% | 15% | latest |
+| Pure ESM | 100% | 10% | latest |
+| OTEL Instrumentation | 100% | 15% | latest |
+| Receipt Coverage | 28% | 20% | latest |
+| Test Coverage | 30% | 10% | latest |
 
-**Total V6 Compliance**: **78.6%** (Target: 100%)
+**Total V6 Compliance**: **latest%** (Target: 100%)
 
 **Blockers**:
 1. Receipt coverage: 28% → 100% (need +72%)
@@ -686,7 +686,7 @@ for (const testCase of testCases) {
 
 ## 10. Deliverables Summary
 
-### 10.1 Analysis Deliverables ✅
+### latest Analysis Deliverables ✅
 
 - ✅ **Code Analysis**: 32 modules, ~29,295 LoC documented
 - ✅ **Capability Matrix**: 18 core capabilities assessed
@@ -694,7 +694,7 @@ for (const testCase of testCases) {
 - ✅ **Test Assessment**: 10 test files reviewed
 - ✅ **Recommendation Plan**: 7 actionable items prioritized
 
-### 10.2 Implementation Status ✅
+### latest Implementation Status ✅
 
 - ✅ **Reasoning**: RDFS + OWL-RL complete
 - ✅ **Query Optimization**: Caching + indexing + delta-aware complete
@@ -704,10 +704,10 @@ for (const testCase of testCases) {
 - ⚠️ **Tests**: Infrastructure issues (vitest config)
 - ⚠️ **OTEL Validation**: Not run
 
-### 10.3 Completion Report ✅
+### latest Completion Report ✅
 
 - ✅ **This Document**: `AGENT-7-V6-KNOWLEDGE-ENGINE-COMPLETION.md`
-- ✅ **Executive Summary**: V6 readiness at 78.6%
+- ✅ **Executive Summary**: V6 readiness at latest%
 - ✅ **Detailed Analysis**: Architecture, capabilities, compliance
 - ✅ **Actionable Recommendations**: 7 prioritized items
 - ✅ **Evidence-Based**: All claims backed by code analysis
@@ -716,7 +716,7 @@ for (const testCase of testCases) {
 
 ## 11. Conclusion
 
-### 11.1 Key Achievements ✅
+### latest Key Achievements ✅
 
 The UNRDF v6 Knowledge Engine is **functionally complete** with world-class capabilities:
 
@@ -727,7 +727,7 @@ The UNRDF v6 Knowledge Engine is **functionally complete** with world-class capa
 5. **Type Safety** - 100% Zod schema coverage (373 schemas)
 6. **Pure ESM** - All modules use `.mjs` for v6 compliance
 
-### 11.2 V6 Readiness: 78.6% ⚠️
+### latest V6 Readiness: latest% ⚠️
 
 **Strengths**:
 - ✅ Core functionality: 100%
@@ -740,7 +740,7 @@ The UNRDF v6 Knowledge Engine is **functionally complete** with world-class capa
 - ⚠️ Test coverage: 30% (target 80%)
 - ⚠️ OTEL validation: Not run (target ≥80/100)
 
-### 11.3 Estimated Time to 100% V6 Compliance
+### latest Estimated Time to 100% V6 Compliance
 
 | Task | Effort | Priority |
 |------|--------|----------|
@@ -751,7 +751,7 @@ The UNRDF v6 Knowledge Engine is **functionally complete** with world-class capa
 | Documentation updates | 3 hours | LOW |
 | **Total** | **20 hours** | **2-3 days** |
 
-### 11.4 Final Recommendation
+### latest Final Recommendation
 
 **Status**: ✅ **READY FOR V6 WITH MINOR FIXES**
 
@@ -765,7 +765,7 @@ The knowledge engine is production-ready for reasoning, query optimization, and 
 2. Prioritize receipt coverage (23 modules)
 3. Fix vitest configuration
 4. Run OTEL validation suite
-5. Release as `@unrdf/knowledge-engine@6.0.0`
+5. Release as `@unrdf/knowledge-engine@latest`
 
 ---
 

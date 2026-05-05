@@ -254,7 +254,7 @@
     "commands_count": 12,
     "functions_count": 18,
     "language": "JavaScript (ES Modules)",
-    "node_version": ">=18.0.0"
+    "node_version": ">=latest"
   },
   "test_coverage": {
     "command_tests": {

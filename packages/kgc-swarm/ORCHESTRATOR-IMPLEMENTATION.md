@@ -47,7 +47,7 @@ Successfully implemented the core KGC-SWARM orchestrator and token generator G w
 6. **`/home/user/unrdf/packages/kgc-swarm/package.json`**
    - Added exports for orchestrator and token-generator
    - Updated dependencies: @unrdf/core, @unrdf/oxigraph
-   - Updated zod to v4.1.13
+   - Updated zod to [VERSION]
 
 7. **`/home/user/unrdf/packages/kgc-swarm/src/index.mjs`**
    - Exported KGCSwarmOrchestrator, TokenGenerator, and all schemas
@@ -135,7 +135,7 @@ import { TokenGenerator } from './token-generator.mjs';
 const { namedNode, literal, quad } = await import('@unrdf/core');  // ✅ NOT 'n3'
 
 // token-generator.mjs
-import { z } from 'zod';  // ✅ v4.1.13
+import { z } from 'zod';  // ✅ [VERSION]
 ```
 
 **Verification**:
@@ -286,7 +286,7 @@ this.store.add(quad(
 ));
 ```
 
-### 2. Validation (Zod v4.1.13)
+### 2. Validation (Zod [VERSION])
 
 ```javascript
 import { z } from 'zod';

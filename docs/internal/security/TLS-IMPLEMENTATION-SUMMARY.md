@@ -87,7 +87,7 @@
      - `client-cert.pem` / `client-key.pem` (Client)
      - `client-chain.pem` (Client + CA chain)
      - `dhparam.pem` (2048-bit DH parameters)
-   - Subject Alternative Names (localhost, *.localhost, 127.0.0.1, ::1)
+   - Subject Alternative Names (localhost, *.localhost, latest.1, ::1)
    - 4096-bit RSA keys
    - 365-day validity
    - Proper file permissions (600 for keys, 644 for certs)
@@ -124,9 +124,9 @@
 
 ```json
 {
-  "@noble/curves": "^2.0.1",
-  "@noble/hashes": "^2.0.1",
-  "helmet": "^8.1.0"
+  "@noble/curves": "^latest",
+  "@noble/hashes": "^latest",
+  "helmet": "^latest"
 }
 ```
 

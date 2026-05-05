@@ -108,7 +108,7 @@ Most common reasons include:
 **Root Cause**:
 
 - Test files are `.ts` (TypeScript) but likely being interpreted incorrectly
-- Playwright version: `@playwright/test@^1.49.1` in packages/docs
+- Playwright version: `@playwright/test@^latest` in packages/docs
 - Possible multiple Playwright versions in monorepo
 
 **Fix Required**:
@@ -131,14 +131,14 @@ Most common reasons include:
 
 #### CRITICAL
 
-- **Package**: `happy-dom` (< 20.0.0)
+- **Package**: `happy-dom` (< latest)
 - **Issue**: VM Context Escape → Remote Code Execution
 - **Path**: `packages__docs>happy-dom`
 - **Advisory**: GHSA-37j7-fg3j-429f
 
 #### HIGH
 
-- **Package**: `next` (>=16.0.0-beta.0 <16.0.9)
+- **Package**: `next` (>=latest.0 <latest)
 - **Issue**: Denial of Service with Server Components
 - **Path**: `packages__kgc-4d__playground>next`
 - **Advisory**: GHSA-mwv6-3258-q52c
@@ -150,8 +150,8 @@ Most common reasons include:
 
 **Fix Required**:
 
-1. Update `happy-dom` to >=20.0.0 in packages/docs
-2. Update `next` to >=16.0.9 in packages/kgc-4d/playground
+1. Update `happy-dom` to >=latest in packages/docs
+2. Update `next` to >=latest in packages/kgc-4d/playground
 3. Resolve esbuild vulnerability
 4. Run `pnpm update` and verify
 
@@ -279,8 +279,8 @@ Total lines: 14,634
    - [ ] Verify no source TypeScript files remain
 
 2. **Security Vulnerabilities** (1 hour)
-   - [ ] Update `happy-dom` to >=20.0.0
-   - [ ] Update `next` to >=16.0.9
+   - [ ] Update `happy-dom` to >=latest
+   - [ ] Update `next` to >=latest
    - [ ] Update `esbuild` to latest
    - [ ] Run `pnpm audit --audit-level moderate` (verify 0 issues)
 

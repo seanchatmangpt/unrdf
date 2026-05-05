@@ -1,5 +1,5 @@
 # 3T Methodology Deployment Summary
-## @unrdf/chatman-equation v1.0.0
+## @unrdf/chatman-equation [VERSION]
 
 **Completed**: 2026-01-18  
 **Status**: ✅ PRODUCTION READY (Conditional Pass)
@@ -129,7 +129,7 @@ Stored in: `receipts/validation-receipts.json`
 ```toml
 [deployment]
 name = "chatman-equation-3t"
-version = "1.0.0"
+version = "[VERSION]"
 status = "conditional-pass"
 
 [validation]
@@ -285,7 +285,7 @@ The **3T Methodology validation suite** is **complete and production-ready**.
 
 ---
 
-**Deployment Package**: @unrdf/chatman-equation v1.0.0  
+**Deployment Package**: @unrdf/chatman-equation [VERSION]  
 **Validation Date**: 2026-01-18  
 **Total Investment**: 1,573 lines of code + documentation  
 **Value Delivered**: 100% (critical Tera + Turtle components)

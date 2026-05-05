@@ -266,7 +266,7 @@ Potential additions:
 
 Fully compliant with:
 
-- UNRDF v6.0.0 architecture
+- UNRDF vlatest architecture
 - YAWL workflow patterns specification
 - Van der Aalst's 20 core workflow patterns
 - KGC-4D temporal semantics

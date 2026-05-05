@@ -66,6 +66,6 @@ export const AGENT_STATUS = Object.freeze({
  * @type {Readonly<{version: string, buildDate: string}>}
  */
 export const VERSION_INFO = Object.freeze({
-  version: '0.1.0',
+  version: 'latest',
   buildDate: new Date().toISOString().split('T')[0],
 });

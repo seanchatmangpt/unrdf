@@ -116,8 +116,8 @@ const PATTERNS = {
   packageJson: {
     type: 'module',
     engines: {
-      node: '>=18.0.0',
-      pnpm: '>=7.0.0'
+      node: '>=latest',
+      pnpm: '>=latest'
     }
   }
 };
@@ -305,7 +305,7 @@ async function migratePackageJson(filePath) {
     }
 
     // Update engines
-    if (!pkg.engines || pkg.engines.node !== '>=18.0.0') {
+    if (!pkg.engines || pkg.engines.node !== '>=latest') {
       pkg.engines = { ...pkg.engines, ...PATTERNS.packageJson.engines };
       changes.push({ field: 'engines', updated: true });
     }

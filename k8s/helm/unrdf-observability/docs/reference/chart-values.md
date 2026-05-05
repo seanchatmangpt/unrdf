@@ -16,7 +16,7 @@ Complete reference for all configurable values in `values.yaml`.
 |-----|------|---------|-------------|
 | `unrdf.enabled` | bool | `false` | Deploy the UNRDF application |
 | `unrdf.imageRepo` | string | `unrdf` | Container image repository |
-| `unrdf.imageTag` | string | `6.0.0-rc.1` | Container image tag |
+| `unrdf.imageTag` | string | `latest-rc.1` | Container image tag |
 | `unrdf.replicas` | int | `1` | Number of replicas |
 | `unrdf.resources.requests.cpu` | string | `1` | CPU request |
 | `unrdf.resources.requests.memory` | string | `2Gi` | Memory request |
@@ -29,7 +29,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `prometheus.imageRepo` | string | `prom/prometheus` | Container image |
-| `prometheus.imageTag` | string | `v2.48.0` | Image tag |
+| `prometheus.imageTag` | string | `latest` | Image tag |
 | `prometheus.replicas` | int | `1` | Replicas |
 | `prometheus.retention` | string | `30d` | TSDB retention period |
 | `prometheus.resources.requests.cpu` | string | `250m` | CPU request |
@@ -42,7 +42,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `grafana.imageRepo` | string | `grafana/grafana` | Container image |
-| `grafana.imageTag` | string | `10.2.2` | Image tag |
+| `grafana.imageTag` | string | `latest` | Image tag |
 | `grafana.replicas` | int | `1` | Replicas |
 | `grafana.adminPassword` | string | `admin` | Admin password |
 | `grafana.resources.requests.cpu` | string | `100m` | CPU request |
@@ -55,7 +55,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `otelCollector.imageRepo` | string | `otel/opentelemetry-collector-contrib` | Container image |
-| `otelCollector.imageTag` | string | `0.91.0` | Image tag |
+| `otelCollector.imageTag` | string | `latest` | Image tag |
 | `otelCollector.replicas` | int | `1` | Replicas |
 | `otelCollector.resources.requests.cpu` | string | `100m` | CPU request |
 | `otelCollector.resources.requests.memory` | string | `256Mi` | Memory request |
@@ -67,7 +67,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `alertmanager.imageRepo` | string | `prom/alertmanager` | Container image |
-| `alertmanager.imageTag` | string | `v0.26.0` | Image tag |
+| `alertmanager.imageTag` | string | `latest` | Image tag |
 | `alertmanager.replicas` | int | `1` | Replicas |
 | `alertmanager.resources.requests.cpu` | string | `50m` | CPU request |
 | `alertmanager.resources.requests.memory` | string | `128Mi` | Memory request |
@@ -79,7 +79,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `nodeExporter.imageRepo` | string | `prom/node-exporter` | Container image |
-| `nodeExporter.imageTag` | string | `v1.7.0` | Image tag |
+| `nodeExporter.imageTag` | string | `latest` | Image tag |
 | `nodeExporter.resources.requests.cpu` | string | `50m` | CPU request |
 | `nodeExporter.resources.requests.memory` | string | `64Mi` | Memory request |
 | `nodeExporter.resources.limits.cpu` | string | `200m` | CPU limit |
@@ -90,7 +90,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `tempo.imageRepo` | string | `grafana/tempo` | Container image |
-| `tempo.imageTag` | string | `2.7.1` | Image tag |
+| `tempo.imageTag` | string | `latest` | Image tag |
 | `tempo.replicas` | int | `1` | Replicas |
 | `tempo.resources.requests.cpu` | string | `100m` | CPU request |
 | `tempo.resources.requests.memory` | string | `256Mi` | Memory request |
@@ -116,7 +116,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `exampleApp.imageRepo` | string | `jaegertracing/example-hotrod` | Container image |
-| `exampleApp.imageTag` | string | `1.62.0` | Image tag |
+| `exampleApp.imageTag` | string | `latest` | Image tag |
 | `exampleApp.replicas` | int | `1` | Replicas |
 | `exampleApp.resources.requests.cpu` | string | `50m` | CPU request |
 | `exampleApp.resources.requests.memory` | string | `64Mi` | Memory request |
@@ -128,7 +128,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `pyroscope.imageRepo` | string | `grafana/pyroscope` | Container image |
-| `pyroscope.imageTag` | string | `1.10.1` | Image tag |
+| `pyroscope.imageTag` | string | `latest` | Image tag |
 | `pyroscope.replicas` | int | `1` | Replicas |
 | `pyroscope.resources.requests.cpu` | string | `100m` | CPU request |
 | `pyroscope.resources.requests.memory` | string | `256Mi` | Memory request |
@@ -140,7 +140,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `loki.imageRepo` | string | `grafana/loki` | Container image |
-| `loki.imageTag` | string | `2.9.3` | Image tag |
+| `loki.imageTag` | string | `latest` | Image tag |
 | `loki.replicas` | int | `1` | Replicas |
 | `loki.resources.requests.cpu` | string | `100m` | CPU request |
 | `loki.resources.requests.memory` | string | `256Mi` | Memory request |
@@ -152,7 +152,7 @@ Complete reference for all configurable values in `values.yaml`.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | `promtail.imageRepo` | string | `grafana/promtail` | Container image |
-| `promtail.imageTag` | string | `2.9.3` | Image tag |
+| `promtail.imageTag` | string | `latest` | Image tag |
 | `promtail.replicas` | int | `1` | Replicas |
 | `promtail.resources.requests.cpu` | string | `50m` | CPU request |
 | `promtail.resources.requests.memory` | string | `64Mi` | Memory request |

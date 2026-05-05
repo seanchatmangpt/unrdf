@@ -7,7 +7,7 @@
 
 **Status**: ✅ **ALL CRITICAL BLOCKERS RESOLVED**
 
-- **Overall Test Pass Rate**: 98.4% (317 passed / 322 total)
+- **Overall Test Pass Rate**: latest% (317 passed / 322 total)
 - **Critical Blocker Tests**: 100% passing
 - **Core Functionality**: 100% passing (230/230 functional tests)
 - **Deployment Readiness**: READY (with minor non-critical issues documented)
@@ -39,7 +39,7 @@ Created two new files with complete implementations:
 ```bash
 # Core package tests
 Tests: 230 passed, 1 failed (231 total)
-Pass Rate: 99.6% ✅
+Pass Rate: latest% ✅
 
 # Fixed:
 # - Created schemas.mjs with all required exports
@@ -131,11 +131,11 @@ Pass Rate (core functionality): 100%
 
 | Package | Tests Passed | Tests Failed | Pass Rate | Status |
 |---------|--------------|--------------|-----------|--------|
-| **@unrdf/core** | 230 | 1* | 99.6% | ✅ |
+| **@unrdf/core** | 230 | 1* | latest% | ✅ |
 | **@unrdf/streaming** | 28 | 0 | 100% | ✅ |
-| **@unrdf/federation** | 14 | 4 | 77.8% | ⚠️ |
+| **@unrdf/federation** | 14 | 4 | latest% | ⚠️ |
 | **@unrdf/atomvm** | 45 | 0 | 100% | ✅ |
-| **TOTAL** | **317** | **5*** | **98.4%** | ✅ |
+| **TOTAL** | **317** | **5*** | **latest%** | ✅ |
 
 \* 1 performance timing test (not a blocker - timing-dependent)
 ** 4 event listener cleanup tests (lifecycle, not core functionality)
@@ -177,9 +177,9 @@ Pass Rate (core functionality): 100%
 - ✅ All runtime import errors resolved
 - ✅ All API breaking changes fixed with backward compatibility
 - ✅ All Zod v4 schemas validated
-- ✅ 98.4% overall test pass rate
+- ✅ latest% overall test pass rate
 - ✅ 100% of critical functionality tests passing
-- ✅ Core package: 99.6% tests passing (230/231, 1 timing test)
+- ✅ Core package: latest% tests passing (230/231, 1 timing test)
 
 **Remaining Non-Blockers** (can be addressed post-deployment):
 - 1 performance timing test (core - "bulkAdd is faster than individual adds" - machine load dependent)
@@ -227,7 +227,7 @@ Pass Rate (core functionality): 100%
 - ✅ Backward compatibility maintained
 - ✅ Comprehensive test coverage
 - ✅ Production-ready code quality
-- ✅ 98.4% overall test pass rate
+- ✅ latest% overall test pass rate
 - ✅ 100% core functionality tests passing (timing tests excluded)
 
 **Deployment Status**: APPROVED FOR PRODUCTION

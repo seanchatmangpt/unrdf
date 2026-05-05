@@ -36,7 +36,7 @@ This document summarizes the comprehensive Diataxis documentation strategy for U
 **Contains:**
 
 **Week 1: Scaffolding & Automation**
-- Day-by-day tasks (1.1 through 1.7)
+- Day-by-day tasks (latest through latest)
 - Create root-level Diataxis directories
 - Create writing templates (4 types)
 - Create package documentation template
@@ -46,7 +46,7 @@ This document summarizes the comprehensive Diataxis documentation strategy for U
 - Time estimates: 2-3 hours per task
 
 **Week 2: Bootstrap @unrdf/core**
-- Tasks 2.1 through 2.15
+- Tasks latest through latest
 - Write all 16 documentation files
 - 3 tutorials (15-30 minutes each)
 - 4 how-to guides (5-10 minutes each)

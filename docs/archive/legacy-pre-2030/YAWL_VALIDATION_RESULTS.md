@@ -1,8 +1,8 @@
 # YAWL Validation Results
 
 **Executed**: 2026-01-11
-**Duration**: 9.31 seconds
-**Environment**: Node.js v22.21.1, Vitest 4.0.16
+**Duration**: latest seconds
+**Environment**: Node.js vlatest, Vitest latest
 
 ---
 
@@ -10,8 +10,8 @@
 
 | Metric | Result | Status |
 |--------|--------|--------|
-| **Test Pass Rate** | 561/580 (96.7%) | ⚠️ BELOW TARGET |
-| **Test Files** | 6/38 passed (15.8%) | ❌ CRITICAL |
+| **Test Pass Rate** | 561/580 (latest%) | ⚠️ BELOW TARGET |
+| **Test Files** | 6/38 passed (latest%) | ❌ CRITICAL |
 | **Lint Violations** | 197 problems | ❌ FAILED |
 | **Skipped Tests** | 0 | ✅ PASS |
 | **Daemon Executable** | Module Error | ❌ FAILED |
@@ -28,13 +28,13 @@
 - **Failed**: 19 tests ❌
 - **Skipped**: 0 tests ✅
 - **Errors**: 2 parsing/import errors ❌
-- **Pass Rate**: **96.7%** (Target: 100%)
-- **Execution Time**: 9.31s (transform 14.44s, setup 0ms, import 13.71s, tests 18.53s)
+- **Pass Rate**: **latest%** (Target: 100%)
+- **Execution Time**: latests (transform latests, setup 0ms, import latests, tests latests)
 
 ### Test File Results
 - **Total Test Files**: 38
-- **Passed**: 6 files (15.8%)
-- **Failed**: 32 files (84.2%)
+- **Passed**: 6 files (latest%)
+- **Failed**: 32 files (latest%)
 
 ### Critical Test Failures
 
@@ -187,18 +187,18 @@ No skipped tests found
 ## 5. Performance Metrics
 
 ### Test Execution Performance
-- **Total Duration**: 9.31s
-  - Transform: 14.44s
+- **Total Duration**: latests
+  - Transform: latests
   - Setup: 0ms
-  - Import: 13.71s (47.3% of total)
-  - Test Execution: 18.53s
-- **Per-Test Average**: 16.0ms (580 tests / 9.31s)
+  - Import: latests (latest% of total)
+  - Test Execution: latests
+- **Per-Test Average**: latestms (580 tests / latests)
 
 ### Performance Assessment
-- ✅ **Transform**: 14.44s (acceptable for 38 test files)
-- ⚠️ **Import**: 13.71s (47% of time, potential optimization target)
-- ✅ **Execution**: 18.53s (tests run fast)
-- ✅ **Timeout Compliance**: 9.31s total < 60s timeout
+- ✅ **Transform**: latests (acceptable for 38 test files)
+- ⚠️ **Import**: latests (47% of time, potential optimization target)
+- ✅ **Execution**: latests (tests run fast)
+- ✅ **Timeout Compliance**: latests total < 60s timeout
 
 ---
 
@@ -206,8 +206,8 @@ No skipped tests found
 
 | Gate | Target | Actual | Status |
 |------|--------|--------|--------|
-| Test Pass Rate | 100% | 96.7% | ❌ FAIL (-3.3%) |
-| Test Files Pass | 100% | 15.8% | ❌ FAIL (-84.2%) |
+| Test Pass Rate | 100% | latest% | ❌ FAIL (-latest%) |
+| Test Files Pass | 100% | latest% | ❌ FAIL (-latest%) |
 | Lint Errors | 0 | 8 | ❌ FAIL (+8) |
 | Lint Warnings | 0 | 189 | ❌ FAIL (+189) |
 | Skipped Tests | 0 | 0 | ✅ PASS |
@@ -224,7 +224,7 @@ No skipped tests found
 
 | Claim | Evidence | Verdict |
 |-------|----------|---------|
-| "Tests pass" | 561/580 (96.7%) | ❌ FALSE - 19 failures |
+| "Tests pass" | 561/580 (latest%) | ❌ FALSE - 19 failures |
 | "Lint clean" | 197 violations | ❌ FALSE - 8 errors, 189 warnings |
 | "Daemon works" | Module import error | ❌ FALSE - Cannot start |
 | "No skipped tests" | 0 skipped | ✅ TRUE - Verified |
@@ -239,7 +239,7 @@ No skipped tests found
    - 19 test scenarios broken
    - 8 syntax/import errors causing runtime failures
 4. **What's the EVIDENCE?**
-   - Test output: 9.31s execution, exact counts
+   - Test output: latests execution, exact counts
    - Lint output: 197 problems with line numbers
    - Daemon error: Stack trace captured
 
@@ -288,7 +288,7 @@ No skipped tests found
    - Verify ≥80% coverage per CLAUDE.md
 
 8. **Optimize Import Performance**
-   - 13.71s import time (47% of total)
+   - latests import time (47% of total)
    - Consider lazy loading or module splitting
 
 ---
@@ -307,13 +307,13 @@ No skipped tests found
 
 ### Blockers
 1. Daemon cannot start (import error)
-2. 19 test failures (96.7% pass rate, need 100%)
+2. 19 test failures (latest% pass rate, need 100%)
 3. 8 lint errors (syntax, imports, duplicates)
 4. 189 lint warnings (treated as errors per config)
 
 ### Pass Criteria
 - ✅ No skipped tests
-- ⚠️ Fast execution (9.31s)
+- ⚠️ Fast execution (latests)
 - ❌ All other quality gates failed
 
 ### Estimated Fix Effort

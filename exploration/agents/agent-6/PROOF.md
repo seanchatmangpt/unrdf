@@ -16,7 +16,7 @@ All hypothesis components verified with working code.
 
 **Location**: `/home/user/unrdf/packages/hooks/src/`
 
-**Package**: `@unrdf/hooks` v5.0.1
+**Package**: `@unrdf/hooks` latest
 
 **API Methods**:
 

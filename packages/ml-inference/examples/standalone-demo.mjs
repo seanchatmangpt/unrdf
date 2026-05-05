@@ -567,7 +567,7 @@ async function main() {
     logSection('Demo Complete - Summary');
 
     log('Package: @unrdf/ml-inference', 'bright');
-    log('Version: 5.0.1\n', 'bright');
+    log('Version: [VERSION]\n', 'bright');
 
     log('Key Features Demonstrated:', 'yellow');
     log('  ✓ Neural network inference (forward pass)', 'green');

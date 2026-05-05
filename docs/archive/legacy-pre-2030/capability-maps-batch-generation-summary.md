@@ -172,7 +172,7 @@ Each capability map includes:
 - [x] All files include "Capability Atoms" section
 - [x] All files include "Evidence Trail" section
 - [x] All files include package metadata (45/45)
-- [x] File sizes reasonable (1.4K - 2.0K each)
+- [x] File sizes reasonable (latestK - latestK each)
 
 ### Manual Verification (Sample)
 
@@ -213,7 +213,7 @@ All capability atoms mapped to source files from `/home/user/unrdf/docs/capabili
 - **95%**: Packages with defined capability atoms (42/45)
 - **80%**: Utility packages without specific atoms (3/45)
 
-Average confidence: **94.1%** (evidence-based)
+Average confidence: **latest%** (evidence-based)
 
 ---
 
@@ -243,8 +243,8 @@ These 45 capability maps complement:
 | Metric | Value |
 |--------|-------|
 | Total Generation Time | <10 seconds |
-| Maps per Second | ~4.5 |
-| Average Map Size | 1.7KB |
+| Maps per Second | ~latest |
+| Average Map Size | latestKB |
 | Total Documentation | ~77KB |
 | Capability Atoms | 47 |
 | Evidence Citations | 47 |

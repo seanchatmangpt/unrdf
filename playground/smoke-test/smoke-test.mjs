@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * UNRDF v3.0.1 Smoke Test
+ * UNRDF latest Smoke Test
  *
  * Simple smoke test to verify core functionality
  */
@@ -35,7 +35,7 @@ function section(message) {
 async function runSmokeTest() {
   console.log(`${colors.bold}${colors.blue}
 ╔════════════════════════════════════════════════╗
-║   UNRDF v3.0.1 Knowledge Engine Smoke Test    ║
+║   UNRDF latest Knowledge Engine Smoke Test    ║
 ╚════════════════════════════════════════════════╝
 ${colors.reset}`);
 
@@ -121,7 +121,7 @@ ${colors.reset}`);
 ║                                                ║
 ║  ${testsPassed}/${total} tests passed (${passRate}%)                  ║
 ║                                                ║
-║  UNRDF v3.0.1 smoke test successful! 🚀       ║
+║  UNRDF latest smoke test successful! 🚀       ║
 ╚════════════════════════════════════════════════╝
 ${colors.reset}`);
     process.exit(0);

@@ -1,4 +1,4 @@
-# Andon Signals Design - UNRDF v4.0
+# Andon Signals Design - UNRDF vlatest
 
 ## Executive Summary
 
@@ -12,13 +12,13 @@ Andon (Visual Management/Alert System) is a Lean manufacturing concept for real-
 
 ## 1. Current Monitoring Coverage Analysis
 
-### 1.1 Existing Observability Infrastructure
+### latest Existing Observability Infrastructure
 
 **OTEL-Based Validation (Implemented)**
 - Location: `/validation/run-all.mjs`, `/src/validation/otel-validator.mjs`
 - Coverage: 6 core features with span-based validation
 - Metrics: Validation scores (0-100), latency, error rates, memory usage
-- Status: Active - v3.1.0 validation framework in place
+- Status: Active - vlatest validation framework in place
 
 **Feature Validation Scoring**
 ```
@@ -52,7 +52,7 @@ Browser Compatibility (10%)     - Expected spans: browser.parse, browser.query, 
 - Container scanning (Trivy, Docker Scout)
 - Supply chain analysis
 
-### 1.2 Monitoring Gaps
+### latest Monitoring Gaps
 
 **What's Missing**:
 1. No unified Andon dashboard/visualization
@@ -70,7 +70,7 @@ Browser Compatibility (10%)     - Expected spans: browser.parse, browser.query, 
 
 ## 2. Andon Signal Design
 
-### 2.1 Signal State Model
+### latest Signal State Model
 
 Each Andon signal uses a **3-state traffic light model**:
 
@@ -82,7 +82,7 @@ RED (✗)     = Critical threshold exceeded, immediate action required
 
 ---
 
-### 2.2 Core Andon Signal Groups
+### latest Core Andon Signal Groups
 
 #### A. VALIDATION SIGNALS (OTEL Score-Based)
 
@@ -430,7 +430,7 @@ export class CoverageSignal {
     this.previousCoverage = this.currentCoverage;
     this.currentCoverage = currentPercent;
 
-    if (currentPercent < this.minThreshold * 0.9) {
+    if (currentPercent < this.minThreshold * latest) {
       this.state = 'RED';       // <72% (below 90% of min)
     } else if (currentPercent < this.minThreshold) {
       this.state = 'YELLOW';    // 72-80% (below min)
@@ -538,11 +538,11 @@ export class DeploymentReadinessSignal {
 
 ## 4. Andon Dashboard Design
 
-### 4.1 Real-Time Dashboard Layout
+### latest Real-Time Dashboard Layout
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  UNRDF v4.0 - ANDON DASHBOARD (Live Status)                    │
+│  UNRDF vlatest - ANDON DASHBOARD (Live Status)                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  🟢 SYSTEM HEALTH: GREEN  │  Last Update: 2024-11-21 15:30:45  │
@@ -595,7 +595,7 @@ export class DeploymentReadinessSignal {
 │  └────────────────────────────────────────────────────────────┘ │
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  DEPLOYMENT READINESS (Release v4.0.1)                          │
+│  DEPLOYMENT READINESS (Release vlatest)                          │
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │ ✓ Build Complete          │ Build artifacts present     │    │
 │  │ ✓ Tests Pass (87/100)      │ All suites passing          │    │
@@ -610,7 +610,7 @@ export class DeploymentReadinessSignal {
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.2 Dashboard Implementation Path
+### latest Dashboard Implementation Path
 
 **Phase 1: Command-Line Andon (Immediate)**
 ```bash
@@ -637,7 +637,7 @@ Returns JSON with all signal states for custom dashboards
 
 ## 5. Alerting Rules
 
-### 5.1 Alert Channels by Severity
+### latest Alert Channels by Severity
 
 **RED Alert (Critical - Immediate Escalation)**
 ```
@@ -667,7 +667,7 @@ Signals:   All systems normal
 Update:    Real-time refresh
 ```
 
-### 5.2 Alert Escalation Rules
+### latest Alert Escalation Rules
 
 ```javascript
 // Proposed: andon/alerting-rules.mjs
@@ -790,7 +790,7 @@ export const alertingRules = {
 
 ## 8. Metrics Export Format
 
-### 8.1 Signal JSON Schema
+### latest Signal JSON Schema
 
 ```json
 {
@@ -798,7 +798,7 @@ export const alertingRules = {
   "state": "GREEN",
   "timestamp": "2024-11-21T15:30:45Z",
   "value": 87,
-  "weight": 0.30,
+  "weight": latest,
   "metadata": {
     "spans": [
       {
@@ -814,7 +814,7 @@ export const alertingRules = {
     "violations": [],
     "metrics": {
       "latency": 23,
-      "errorRate": 0.0,
+      "errorRate": latest,
       "throughput": 1,
       "memoryUsage": 15728640
     }
@@ -832,7 +832,7 @@ export const alertingRules = {
 }
 ```
 
-### 8.2 Health Check Endpoint
+### latest Health Check Endpoint
 
 ```javascript
 // GET /api/andon/health
@@ -857,7 +857,7 @@ export const healthCheckSchema = z.object({
 
 ## 9. Integration Points
 
-### 9.1 With Existing OTEL Validator
+### latest With Existing OTEL Validator
 
 ```javascript
 // Existing: /src/validation/otel-validator.mjs
@@ -880,7 +880,7 @@ export class OTELValidator {
 }
 ```
 
-### 9.2 With CI/CD Pipelines
+### latest With CI/CD Pipelines
 
 ```yaml
 # .github/workflows/andon-status.yml (NEW)
@@ -922,7 +922,7 @@ jobs:
 | Signal Coverage | 95%+ of critical systems | Signal list vs system inventory |
 | Alert Response Time | <5min for RED alerts | Alert log analysis |
 | False Positive Rate | <5% | Alert audit over 30 days |
-| Dashboard Availability | 99.9% uptime | Endpoint monitoring |
+| Dashboard Availability | latest% uptime | Endpoint monitoring |
 | MTTR Improvement | 50% reduction | Incident timeline analysis |
 | Team Adoption | 100% daily usage | Dashboard access logs |
 

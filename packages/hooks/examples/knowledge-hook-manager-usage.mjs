@@ -17,7 +17,7 @@ const customHook = defineHook({
   id: 'custom-validation',
   name: 'custom-validation',
   description: 'Custom validation hook',
-  version: '1.0.0',
+  version: '[VERSION]',
   trigger: 'before-add',
   enabled: true,
   validate: (quad) => {

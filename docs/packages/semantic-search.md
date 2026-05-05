@@ -2,7 +2,7 @@
 
 > AI-powered semantic search over RDF knowledge graphs using vector embeddings
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

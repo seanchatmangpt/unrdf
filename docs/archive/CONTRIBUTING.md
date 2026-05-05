@@ -30,8 +30,8 @@ We pledge to make participation in our project a harassment-free experience for 
 
 ### Prerequisites
 
-- Node.js 18.0.0 or higher
-- pnpm 10.15.0 or higher
+- Node.js latest or higher
+- pnpm latest or higher
 - Git
 
 ### Development Setup

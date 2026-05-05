@@ -11,7 +11,7 @@
  * Configuration:
  *   FARO_ENDPOINT — OTEL Collector OTLP HTTP endpoint (default: localhost:4318)
  *   APP_NAME      — Application identifier (default: unrdf-web)
- *   APP_VERSION   — Application version (default: 1.0.0)
+ *   APP_VERSION   — Application version (default: latest)
  *
  * Usage:
  *   <script src="path/to/faro-init.js"></script>
@@ -29,14 +29,14 @@
   const config = {
     endpoint: window.__FARO_CONFIG?.endpoint || 'http://localhost:4318/v1/logs',
     appName: window.__FARO_CONFIG?.appName || 'unrdf-web',
-    appVersion: window.__FARO_CONFIG?.appVersion || '1.0.0',
+    appVersion: window.__FARO_CONFIG?.appVersion || 'latest',
     environment: window.__FARO_CONFIG?.environment || 'development',
   };
 
   // Faro Web SDK CDN URL (loads the full bundle)
   // For production, vendor this or use npm: @grafana/faro-web-sdk
-  const FARO_SDK_URL = 'https://unpkg.com/@grafana/faro-web-sdk@1.9.0/dist/faro-web-sdk.iife.js';
-  const FARO_WEB_VITALS_URL = 'https://unpkg.com/@grafana/faro-web-vitals@1.9.0/dist/faro-web-vitals.iife.js';
+  const FARO_SDK_URL = 'https://unpkg.com/@grafana/faro-web-sdk@latest/dist/faro-web-sdk.iife.js';
+  const FARO_WEB_VITALS_URL = 'https://unpkg.com/@grafana/faro-web-vitals@latest/dist/faro-web-vitals.iife.js';
 
   function initFaro() {
     if (!window.GrafanaFaroWebSdk || !window.GrafanaFaroWebVitals) {

@@ -755,7 +755,7 @@ export default {
       {
         package: '@unrdf/test-a',
         path: '/test/a',
-        version: '1.0.0',
+        version: 'latest',
         exports: [
           { name: 'funcA', type: 'function', jsdoc: '/** Doc A */' },
         ],
@@ -764,7 +764,7 @@ export default {
       {
         package: '@unrdf/test-b',
         path: '/test/b',
-        version: '1.0.0',
+        version: 'latest',
         exports: [
           { name: 'funcB', type: 'function', jsdoc: '/** Doc B */' },
         ],
@@ -787,7 +787,7 @@ export default {
       {
         package: '@unrdf/test',
         path: '/test',
-        version: '1.0.0',
+        version: 'latest',
         exports: [
           { name: 'funcA', type: 'function', description: 'Test function' },
           { name: 'funcB', type: 'function' }, // No description (undocumented)
@@ -1115,7 +1115,7 @@ describe('KGC Documentation - Full Integration', () => {
       {
         package: '@unrdf/test',
         path: '/test',
-        version: '1.0.0',
+        version: 'latest',
         exports: [
           { name: 'testFunc', type: 'function', description: 'Test' },
         ],

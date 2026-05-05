@@ -12,19 +12,19 @@
 |-------|---------|------|------|----------|--------------|----------|
 | **0** | 1 | Backend Dev | Fix vitest version in package.json | 15 min | None | ❌ Sequential |
 | **1** | 1 | Backend Dev | Execute pnpm install (timeout 300s) | 2-4h | PHASE 0 | ❌ Sequential |
-| **2.1** | 2 | Backend Dev | Fix CLI determinism (18 violations) | 5-8h | PHASE 1 | ✅ Parallel |
-| **2.2** | 3 | Backend Dev | Fix delta determinism (23 violations) | 7-10h | PHASE 1 | ✅ Parallel |
-| **2.3** | 4 | Backend Dev | Fix compat determinism (22 violations) | 6-9h | PHASE 1 | ✅ Parallel |
-| **2.4** | 5 | Tester | Verify 100/100 determinism proof | 2-3h | PHASE 2.1-2.3 | ❌ Sequential |
-| **3.1** | 6 | Coder | Generate v6-core schemas (30 files) | 16-20h | PHASE 1 | ✅ Parallel |
-| **3.2** | 7 | Coder | Generate v6-compat schemas (15 files) | 8-12h | PHASE 1 | ✅ Parallel |
-| **3.3** | 8 | Backend Dev | Add .parse() calls at boundaries | 6-8h | PHASE 3.1-3.2 | ✅ Parallel |
-| **3.4** | 9 | Reviewer | Verify 100% Zod coverage | 2-4h | PHASE 3.3 | ❌ Sequential |
-| **4.1** | 10 | Prod Validator | Run npm run build | 1h | PHASE 2.4 + 3.4 | ❌ Sequential |
-| **4.2** | 10 | Prod Validator | Run npm test | 1-2h | PHASE 4.1 | ❌ Sequential |
-| **4.3** | 10 | Prod Validator | Run npm run lint | 0.5h | PHASE 4.2 | ❌ Sequential |
-| **4.4** | 10 | Prod Validator | Run OTEL validation | 1-2h | PHASE 4.3 | ❌ Sequential |
-| **4.5** | 10 | Prod Validator | Generate evidence report | 0.5-1h | PHASE 4.4 | ❌ Sequential |
+| **latest** | 2 | Backend Dev | Fix CLI determinism (18 violations) | 5-8h | PHASE 1 | ✅ Parallel |
+| **latest** | 3 | Backend Dev | Fix delta determinism (23 violations) | 7-10h | PHASE 1 | ✅ Parallel |
+| **latest** | 4 | Backend Dev | Fix compat determinism (22 violations) | 6-9h | PHASE 1 | ✅ Parallel |
+| **latest** | 5 | Tester | Verify 100/100 determinism proof | 2-3h | PHASE latest.3 | ❌ Sequential |
+| **latest** | 6 | Coder | Generate v6-core schemas (30 files) | 16-20h | PHASE 1 | ✅ Parallel |
+| **latest** | 7 | Coder | Generate v6-compat schemas (15 files) | 8-12h | PHASE 1 | ✅ Parallel |
+| **latest** | 8 | Backend Dev | Add .parse() calls at boundaries | 6-8h | PHASE latest.2 | ✅ Parallel |
+| **latest** | 9 | Reviewer | Verify 100% Zod coverage | 2-4h | PHASE latest | ❌ Sequential |
+| **latest** | 10 | Prod Validator | Run npm run build | 1h | PHASE latest + latest | ❌ Sequential |
+| **latest** | 10 | Prod Validator | Run npm test | 1-2h | PHASE latest | ❌ Sequential |
+| **latest** | 10 | Prod Validator | Run npm run lint | latesth | PHASE latest | ❌ Sequential |
+| **latest** | 10 | Prod Validator | Run OTEL validation | 1-2h | PHASE latest | ❌ Sequential |
+| **latest** | 10 | Prod Validator | Generate evidence report | latest | PHASE latest | ❌ Sequential |
 
 ---
 
@@ -33,7 +33,7 @@
 ### Critical Path (Sequential Only)
 ```
 PHASE 0 (15m) → PHASE 1 (2-4h) → PHASE 4 (4-6h)
-= 6.25-10.25 hours MINIMUM
+= latest.25 hours MINIMUM
 ```
 
 **Why this is the critical path:**
@@ -65,7 +65,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Sequential Agents (Critical Path)
 **Agent 1** (Backend Dev):
-- Hours: 2.5-4.5h
+- Hours: latest.5h
 - Tasks: PHASE 0 (vitest) + PHASE 1 (pnpm install)
 - **Why sequential**: Blocks all downstream work
 
@@ -74,7 +74,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 - Tasks: PHASE 4 (build/test/lint/OTEL/report)
 - **Why sequential**: Requires all previous phases complete
 
-**Total sequential hours**: 6.5-10.5h (critical path)
+**Total sequential hours**: latest.5h (critical path)
 
 ---
 
@@ -118,7 +118,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 ### Gate 1: PHASE 0 → PHASE 1
 **Responsible**: Agent 1 (Backend Dev)
 **Check**: Vitest version updated in package.json
-**Command**: `grep '"vitest": "\^4.0.15"' package.json`
+**Command**: `grep '"vitest": "\^latest"' package.json`
 **On Failure**: Manual edit, re-verify
 
 ---
@@ -158,12 +158,12 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 ## Work Breakdown by Agent
 
 ### Agent 1 (Backend Dev) - CRITICAL PATH
-**Total Hours**: 2.5-4.5h
+**Total Hours**: latest.5h
 **Phases**: PHASE 0 + PHASE 1
 
 **PHASE 0 Tasks** (15 min):
 1. Read `/home/user/unrdf/package.json` line 107
-2. Edit vitest version: "^1.0.0" → "^4.0.15"
+2. Edit vitest version: "^latest" → "^latest"
 3. Verify with grep: `grep '"vitest"' package.json`
 4. Pass Gate 1
 
@@ -183,7 +183,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 2 (Backend Dev) - PARALLEL
 **Total Hours**: 5-8h
-**Phases**: PHASE 2.1 (CLI determinism)
+**Phases**: PHASE latest (CLI determinism)
 
 **Tasks**:
 1. Read all CLI module files (~8 files)
@@ -203,7 +203,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 3 (Backend Dev) - PARALLEL
 **Total Hours**: 7-10h
-**Phases**: PHASE 2.2 (Delta determinism)
+**Phases**: PHASE latest (Delta determinism)
 
 **Tasks**:
 1. Read all delta adapter files (~5 files)
@@ -223,7 +223,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 4 (Backend Dev) - PARALLEL
 **Total Hours**: 6-9h
-**Phases**: PHASE 2.3 (Compat determinism)
+**Phases**: PHASE latest (Compat determinism)
 
 **Tasks**:
 1. Read `/packages/v6-compat/src/adapters.mjs`
@@ -242,7 +242,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 5 (Tester) - SEQUENTIAL AFTER 2-4
 **Total Hours**: 2-3h
-**Phases**: PHASE 2.4 (Determinism proof)
+**Phases**: PHASE latest (Determinism proof)
 
 **Tasks**:
 1. Wait for agents 2-4 to complete
@@ -261,7 +261,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 6 (Coder) - PARALLEL
 **Total Hours**: 16-20h
-**Phases**: PHASE 3.1 (v6-core schemas)
+**Phases**: PHASE latest (v6-core schemas)
 
 **Tasks**:
 1. Run schema generator on v6-core:
@@ -284,7 +284,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 7 (Coder) - PARALLEL
 **Total Hours**: 8-12h
-**Phases**: PHASE 3.2 (v6-compat schemas)
+**Phases**: PHASE latest (v6-compat schemas)
 
 **Tasks**:
 1. Run schema generator on v6-compat:
@@ -306,7 +306,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 8 (Backend Dev) - SEQUENTIAL AFTER 6-7
 **Total Hours**: 6-8h
-**Phases**: PHASE 3.3 (.parse() calls)
+**Phases**: PHASE latest (.parse() calls)
 
 **Tasks**:
 1. Wait for agents 6-7 to complete
@@ -325,7 +325,7 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 9 (Reviewer) - SEQUENTIAL AFTER 8
 **Total Hours**: 2-4h
-**Phases**: PHASE 3.4 (Coverage audit)
+**Phases**: PHASE latest (Coverage audit)
 
 **Tasks**:
 1. Wait for agent 8 to complete
@@ -345,33 +345,33 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Agent 10 (Production Validator) - SEQUENTIAL AFTER ALL
 **Total Hours**: 4-6h
-**Phases**: PHASE 4.1-4.5 (Full validation)
+**Phases**: PHASE latest.5 (Full validation)
 
-**PHASE 4.1 Tasks** (1h):
+**PHASE latest Tasks** (1h):
 1. Run build: `timeout 60s npm run build 2>&1 | tee build-output.log`
 2. Verify 0 errors: `grep -i "error" build-output.log | wc -l` = 0
 3. Pass build gate
 
-**PHASE 4.2 Tasks** (1-2h):
+**PHASE latest Tasks** (1-2h):
 1. Run tests: `timeout 120s npm test 2>&1 | tee test-output.log`
 2. Count passes: `grep "✅.*pass" test-output.log | wc -l`
 3. Count fails: `grep "❌.*fail" test-output.log | wc -l` = 0
 4. Verify 100% pass rate
 5. Pass test gate
 
-**PHASE 4.3 Tasks** (0.5h):
+**PHASE latest Tasks** (latesth):
 1. Run lint: `timeout 60s npm run lint 2>&1 | tee lint-output.log`
 2. Verify 0 violations: `grep -i "error\|warning" lint-output.log | wc -l` = 0
 3. Pass lint gate
 
-**PHASE 4.4 Tasks** (1-2h):
+**PHASE latest Tasks** (1-2h):
 1. Run OTEL: `timeout 300s node validation/run-all.mjs comprehensive 2>&1 | tee validation-output.log`
 2. Extract score: `grep "Score:" validation-output.log`
 3. Verify ≥80/100
 4. Count failures: `grep "FAILED\|Error" validation-output.log | wc -l` = 0
 5. Pass Gate 5
 
-**PHASE 4.5 Tasks** (0.5-1h):
+**PHASE latest Tasks** (latest):
 1. Generate report: `/home/user/unrdf/V6-PRODUCTION-READINESS-REPORT.md`
 2. Include all output logs (build/test/lint/OTEL)
 3. Document before/after metrics
@@ -391,18 +391,18 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 
 ### Peak Parallelization (After PHASE 1)
 **Simultaneous Agents**: 7 agents (Agents 2-8)
-- Agents 2-4: PHASE 2.1-2.3 (determinism fixes)
-- Agents 6-7: PHASE 3.1-3.2 (schema generation)
-- Agent 8: PHASE 3.3 (.parse() calls, after 6-7 complete)
+- Agents 2-4: PHASE latest.3 (determinism fixes)
+- Agents 6-7: PHASE latest.2 (schema generation)
+- Agent 8: PHASE latest (.parse() calls, after 6-7 complete)
 
-**Peak Hours**: Hours 4.5-28.5 (24 hours of parallel work)
+**Peak Hours**: Hours latest.5 (24 hours of parallel work)
 
 ---
 
 ### Total Agent Hours
 | Agent | Hours | Utilization |
 |-------|-------|-------------|
-| Agent 1 | 2.5-4.5h | 3-6% |
+| Agent 1 | latest.5h | 3-6% |
 | Agent 2 | 5-8h | 7-11% |
 | Agent 3 | 7-10h | 9-14% |
 | Agent 4 | 6-9h | 8-12% |
@@ -427,8 +427,8 @@ PHASE 3 (Zod Schemas): Agents 6-9 work simultaneously
 ```bash
 # Agent 1 executes PHASE 0
 Edit /home/user/unrdf/package.json line 107:
-BEFORE: "vitest": "^1.0.0"
-AFTER:  "vitest": "^4.0.15"
+BEFORE: "vitest": "^latest"
+AFTER:  "vitest": "^latest"
 
 Verify: grep '"vitest"' package.json
 Pass Gate 1, proceed to PHASE 1

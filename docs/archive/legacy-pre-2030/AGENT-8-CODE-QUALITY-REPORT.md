@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-### Overall Quality Score: 7.5/10
+### Overall Quality Score: latest/10
 
 - **Files Analyzed:** 1,018 MJS files
 - **Issues Found:** 53 total (4 errors, 49 warnings)
@@ -261,7 +261,7 @@ packages/core/src/rdf/n3-justified-only.mjs ✅ (justified module - OK)
 ### Verification Evidence
 ```bash
 $ pnpm lint --filter=@unrdf/cli
-> @unrdf/cli@5.0.1 lint
+> @unrdf/cli@latest lint
 > eslint src/ test/ --max-warnings=0
 
 ✅ No errors, no warnings
@@ -311,7 +311,7 @@ $ pnpm lint --filter=@unrdf/cli
 - **Files >1000 lines:** 10+
 
 ### Type Safety & Validation
-- **JSDoc Coverage:** ~9.3% of files in CLI (95 annotations across ~10 files)
+- **JSDoc Coverage:** ~latest% of files in CLI (95 annotations across ~10 files)
 - **Zod Schema Usage:** 298 imports (strong validation culture)
 - **TypeScript:** 0 (compliant with MJS-only policy)
 
@@ -383,7 +383,7 @@ The UNRDF codebase demonstrates **strong architectural patterns** and adherence 
 ### CLI Package (✅ PASS)
 ```bash
 $ pnpm lint --filter=@unrdf/cli
-> @unrdf/cli@5.0.1 lint
+> @unrdf/cli@latest lint
 > eslint src/ test/ --max-warnings=0
 
 ✅ No errors, no warnings

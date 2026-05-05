@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | **Benchmark Date** | 2025-12-27T09:57:18.516Z |
-| **Environment** | Node v22.21.1, linux x64 |
+| **Environment** | Node latest, linux x64 |
 | **Benchmarker** | Agent-10 (performance-benchmarker) |
 | **Overall Status** | ALL TARGETS MET |
 | **Pass Rate** | 6/6 (100%) |
@@ -264,7 +264,7 @@ const TARGETS = {
 ## Appendix: Test Environment
 
 ```
-Node Version: v22.21.1
+Node Version: latest
 Platform: linux x64
 Architecture: x64
 Heap Total: 6MB (initial)

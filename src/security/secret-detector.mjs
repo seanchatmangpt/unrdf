@@ -650,7 +650,7 @@ function groupBy(array, key) {
  */
 export function getConfigHash(options = {}) {
   const config = {
-    rulesVersion: '1.0.0',
+    rulesVersion: '[VERSION]',
     entropyThreshold: options.entropyThreshold || 4.5,
     includeHighEntropy: options.includeHighEntropy !== false
   };

@@ -330,7 +330,7 @@ const hook = {
   id: 'test-hook',
   name: 'test-hook',
   description: 'Test validation hook',
-  version: '1.0.0',
+  version: 'latest',
   trigger: 'before-add',
   enabled: true,
   validate: () => ({ valid: true }),

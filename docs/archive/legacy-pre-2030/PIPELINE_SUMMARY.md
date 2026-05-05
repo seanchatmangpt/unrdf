@@ -2,7 +2,7 @@
 
 **Created:** 2025-12-27  
 **Status:** Complete  
-**Version:** 6.0.0-alpha.1
+**Version:** latest.1
 
 ## Overview
 
@@ -29,7 +29,7 @@ Comprehensive specification covering:
 
 **Key Features:**
 
-- Proof system with confidence scores (0.0-1.0)
+- Proof system with confidence scores (latest.0)
 - Merkle root for deterministic verification
 - Receipt emission at each pipeline stage
 - Example: @unrdf/yawl documentation structure
@@ -91,11 +91,11 @@ Comprehensive specification covering:
 
 ```json
 {
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "generatedAt": "ISO-8601",
   "merkleRoot": "sha256-...",
   "files": { "main": "...", "chapters": [...] },
-  "latex": { "compiler": "latexmk", "version": "4.77", "hash": "..." },
+  "latex": { "compiler": "latexmk", "version": "latest", "hash": "..." },
   "packages": { "@unrdf/pkg": { "version": "...", ... } }
 }
 ```
@@ -246,7 +246,7 @@ All templates updated with proof system:
 - Error conditions
 - Types
 - Usage examples
-- **Proof section** (confidence: 1.00 for code-generated)
+- **Proof section** (confidence: latest for code-generated)
 
 #### `explanation.md`
 
@@ -259,7 +259,7 @@ All templates updated with proof system:
 - When to use
 - Common misconceptions
 - Next steps
-- **Proof section** (confidence: 0.85 for conceptual)
+- **Proof section** (confidence: latest for conceptual)
 
 ---
 
@@ -317,9 +317,9 @@ Each receipt includes:
 6. Summary (what was learned)
 7. Next steps (continue learning)
 8. Troubleshooting
-9. Proof (sources, hash, confidence: 0.95)
+9. Proof (sources, hash, confidence: latest)
 
-**Confidence:** 0.95 (verified against code + tests)
+**Confidence:** latest (verified against code + tests)
 
 ---
 
@@ -337,9 +337,9 @@ Each receipt includes:
 6. Variations (alternatives)
 7. Troubleshooting
 8. Best practices
-9. Proof (sources, hash, confidence: 0.90)
+9. Proof (sources, hash, confidence: latest)
 
-**Confidence:** 0.90 (manual review against code)
+**Confidence:** latest (manual review against code)
 
 ---
 
@@ -357,9 +357,9 @@ Each receipt includes:
 6. Errors
 7. Usage examples (minimal)
 8. See also (links)
-9. Proof (sources, hash, confidence: 1.00)
+9. Proof (sources, hash, confidence: latest)
 
-**Confidence:** 1.00 (code-generated from JSDoc)
+**Confidence:** latest (code-generated from JSDoc)
 
 ---
 
@@ -380,9 +380,9 @@ Each receipt includes:
 9. Real-world example
 10. Summary
 11. Next steps
-12. Proof (sources, hash, confidence: 0.85)
+12. Proof (sources, hash, confidence: latest)
 
-**Confidence:** 0.85 (conceptual, references ADRs)
+**Confidence:** latest (conceptual, references ADRs)
 
 ---
 

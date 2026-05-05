@@ -605,7 +605,7 @@ Use git to track template changes:
 git log templates/person.njk
 # See history of changes
 
-git diff v1.0.0 templates/person.njk
+git diff latest templates/person.njk
 # Compare versions
 ```
 

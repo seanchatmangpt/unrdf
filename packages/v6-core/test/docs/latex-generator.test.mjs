@@ -20,7 +20,7 @@ describe('LaTeX Generation', () => {
       packages: [
         {
           packageName: '@unrdf/test',
-          version: '1.0.0',
+          version: '[VERSION]',
           tutorials: [
             {
               name: 'getting-started.md',
@@ -168,7 +168,7 @@ describe('LaTeX Generation', () => {
   it('should handle multiple packages', async () => {
     diataxisOutput.packages.push({
       packageName: '@unrdf/other',
-      version: '2.0.0',
+      version: '[VERSION]',
       tutorials: [],
       howtos: [],
       reference: [{

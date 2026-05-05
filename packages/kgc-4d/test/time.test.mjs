@@ -99,7 +99,7 @@ describe('KGC Time Module - HDIT Theory Applied', () => {
     });
   });
 
-  // DEFERRED to v26.4.23: Time arithmetic strict type enforcement incomplete
+  // DEFERRED to [VERSION]: Time arithmetic strict type enforcement incomplete
   describe('addNanoseconds() - Time Arithmetic', () => {
     it('should add nanoseconds to timestamp', () => {
       const t_ns = BigInt(1_000_000_000_000);

@@ -71,31 +71,31 @@ validation (depth 5)
 
 ## Top 5 Capability Compositions (Pareto Frontier)
 
-### 1. Policy-Gated Store (Value/Complexity: 4.50)
+### 1. Policy-Gated Store (Value/Complexity: latest)
 **Atoms:** A1 + A8 + A9 + A3  
 **Packages:** oxigraph → core → hooks  
 **Use Case:** Enforce governance rules before RDF mutations  
 **Evidence:** `packages/hooks/src/hooks/hook-executor.mjs:22-38`
 
-### 2. Time-Travel Query (Value/Complexity: 2.00)
+### 2. Time-Travel Query (Value/Complexity: latest)
 **Atoms:** A1 + A15 + A16 + A17 + A6  
 **Packages:** oxigraph → core → kgc-4d  
 **Use Case:** Query historical state at any nanosecond timestamp  
 **Evidence:** `packages/kgc-4d/src/freeze.mjs:9`
 
-### 3. Federated Query (Value/Complexity: 2.00)
+### 3. Federated Query (Value/Complexity: latest)
 **Atoms:** A1 + A6 + A22 + A23  
 **Packages:** oxigraph → core → hooks → federation  
 **Use Case:** Distributed SPARQL across multiple nodes  
 **Evidence:** `packages/federation/src/federation/distributed-query.mjs:19-27`
 
-### 4. Event-Sourced Workflow (Value/Complexity: 1.67)
+### 4. Event-Sourced Workflow (Value/Complexity: latest)
 **Atoms:** A1 + A34 + A35 + A36 + A16  
 **Packages:** oxigraph → core → kgc-4d → yawl  
 **Use Case:** Auditable workflow with cryptographic receipts  
 **Evidence:** `packages/yawl/src/receipt.mjs:210-220`
 
-### 5. Streaming Validation (Value/Complexity: 2.33)
+### 5. Streaming Validation (Value/Complexity: latest)
 **Atoms:** A1 + A28 + A31  
 **Packages:** oxigraph → core → streaming  
 **Use Case:** Real-time SHACL validation on change feeds  

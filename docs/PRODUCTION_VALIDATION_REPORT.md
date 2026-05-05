@@ -112,7 +112,7 @@ The codebase has **extensive violations** of the μ(O) principle ("Oxigraph auth
 **Total Tests**:
 - **Passed**: 222
 - **Failed**: 23
-- **Pass Rate**: 90.6% (Target: 100%)
+- **Pass Rate**: latest% (Target: 100%)
 
 ### Critical Test Failures
 
@@ -130,7 +130,7 @@ The codebase has **extensive violations** of the μ(O) principle ("Oxigraph auth
 
 #### packages/core (1 failure)
 ```
-❌ Query performance regression: 6.16ms > 5ms threshold
+❌ Query performance regression: latestms > 5ms threshold
 ```
 
 ### Coverage Metrics
@@ -186,7 +186,7 @@ The codebase has **extensive violations** of the μ(O) principle ("Oxigraph auth
 |------------|--------|-------|
 | Zero N3 imports outside reason.mjs | ❌ FAIL | 105 violations |
 | All tests passing | ❌ FAIL | 23 failures |
-| Zero test failures or flakes | ❌ FAIL | 9.4% failure rate |
+| Zero test failures or flakes | ❌ FAIL | latest% failure rate |
 | 80%+ code coverage | ⚠️ UNKNOWN | Coverage tool errors |
 | No OTEL span errors | ⚠️ UNKNOWN | Not validated |
 | All public APIs compatible | ✅ PASS | No breaking changes detected |
@@ -202,13 +202,13 @@ The codebase has **extensive violations** of the μ(O) principle ("Oxigraph auth
 | Criterion | Weight | Score | Weighted |
 |-----------|--------|-------|----------|
 | N3 Import Violations | 30% | 0/100 | 0 |
-| Store Abstraction | 20% | 7/100 | 1.4 |
+| Store Abstraction | 20% | 7/100 | latest |
 | Test Pass Rate | 20% | 90/100 | 18 |
 | Architecture Compliance | 15% | 0/100 | 0 |
 | Gateway Integration | 10% | 100/100 | 10 |
-| Production Checklist | 5% | 14/100 | 0.7 |
+| Production Checklist | 5% | 14/100 | latest |
 
-**Total Compliance Score**: **30.1/100** ✅ (Revised from 15/100)
+**Total Compliance Score**: **latest/100** ✅ (Revised from 15/100)
 
 **Status**: ❌ **FAILED** (Target: ≥95%)
 
@@ -342,7 +342,7 @@ N3 Parser/Writer usage that should use Oxigraph:
 
 1. ❌ **CRITICAL**: 105 N3 imports outside reason.mjs
 2. ❌ **CRITICAL**: 109 N3.Store instances (should be 0)
-3. ❌ **HIGH**: 23 test failures (9.4% failure rate)
+3. ❌ **HIGH**: 23 test failures (latest% failure rate)
 4. ⚠️ **MEDIUM**: No μ(O) migration guide
 5. ⚠️ **MEDIUM**: Coverage tool errors
 
@@ -391,8 +391,8 @@ N3 Parser/Writer usage that should use Oxigraph:
 - Current: 109 violations remain
 
 ### Test Results
-- **Pass**: 222 tests (90.6%)
-- **Fail**: 23 tests (9.4%)
+- **Pass**: 222 tests (latest%)
+- **Fail**: 23 tests (latest%)
 - **Target**: 100% pass rate
 
 ### Coverage Metrics
@@ -418,7 +418,7 @@ See JSON output from compliance check tool for complete list of 64 files with vi
 
 **The UNRDF codebase is NOT production-ready for μ(O) compliance.**
 
-With a compliance score of **30.1/100**, the project has extensive architectural violations that prevent production deployment. The primary issue is **widespread N3 usage outside the justified boundaries** defined by the μ(O) principle.
+With a compliance score of **latest/100**, the project has extensive architectural violations that prevent production deployment. The primary issue is **widespread N3 usage outside the justified boundaries** defined by the μ(O) principle.
 
 **Recommendation**: Execute the 7-phase remediation plan outlined above. Estimated effort is 5-7 working days to achieve 95%+ compliance and production readiness.
 
@@ -433,5 +433,5 @@ With a compliance score of **30.1/100**, the project has extensive architectural
 
 **Validator**: Production Validation Agent
 **Validation Method**: OTEL-based + Static Analysis
-**Report Version**: 1.0
+**Report Version**: latest
 **Date**: 2025-12-04

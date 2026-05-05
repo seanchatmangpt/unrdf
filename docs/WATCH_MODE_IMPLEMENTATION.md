@@ -17,9 +17,9 @@ All components have been implemented and configured. Dependencies are added to p
 ```json
 {
   "devDependencies": {
-    "chokidar": "^5.0.0",
-    "concurrently": "^9.2.1",
-    "node-notifier": "^10.0.1"
+    "chokidar": "^latest",
+    "concurrently": "^latest",
+    "node-notifier": "^latest"
   }
 }
 ```

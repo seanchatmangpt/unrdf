@@ -18,7 +18,7 @@ const ledger = [];
 const metadata = {
   createdAt: Date.now(),
   lastUpdated: Date.now(),
-  version: '1.0.0',
+  version: 'latest',
 };
 
 /**

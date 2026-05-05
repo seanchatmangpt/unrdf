@@ -200,9 +200,9 @@ None yet. This is the V6 goal.
 | L2    | 12    | 26%        | Core + YAWL + Hooks + Federation + Streaming + CLI      |
 | L3    | 5     | 11%        | KGC-4D, Oxigraph, YAWL, Core (partial), Hooks (partial) |
 | L4    | 3     | 6%         | KGC-4D, Federation (partial), Streaming (partial)       |
-| L5    | 0     | 0%         | (Target for 6.0.0 stable)                               |
+| L5    | 0     | 0%         | (Target for latest stable)                               |
 
-**Average Maturity**: L1.4 (weighted)
+**Average Maturity**: Llatest (weighted)
 
 ---
 
@@ -374,7 +374,7 @@ None yet. This is the V6 goal.
 
 **Timeline**: 12 weeks (3 months) to L5 for these 10.
 
-**Release**: `6.0.0-core` (subset release, full release follows later).
+**Release**: `latest` (subset release, full release follows later).
 
 ---
 

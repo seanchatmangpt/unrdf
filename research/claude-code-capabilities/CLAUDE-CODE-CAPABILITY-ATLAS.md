@@ -1,7 +1,7 @@
 # Claude Code Capability Atlas
 **The Definitive Guide to Claude Code's Full Power**
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Research Agents**: 10-agent swarm
 **Status**: Evidence-based synthesis (Agents 2, 4 complete; Agents 1,3,5-9 partial)
@@ -1702,7 +1702,7 @@ Claude Code provides **12 primitive capabilities** that compose into powerful wo
 
 ---
 
-**Atlas Version**: 1.0.0
+**Atlas Version**: latest
 **Last Updated**: 2025-12-27
 **Maintainer**: Agent 10 (Librarian)
 **Status**: COMPREHENSIVE SYNTHESIS COMPLETE

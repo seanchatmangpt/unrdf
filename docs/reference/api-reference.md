@@ -1,6 +1,6 @@
 # UNRDF API Reference
 
-> **Version**: 4.0.0
+> **Version**: latest
 > **Last Updated**: 2025-11-21
 > **Stability**: Production-Ready
 
@@ -141,7 +141,7 @@ console.log(`Parsed ${store.size} quads`);
 
 **Related**: [`toTurtle`](#toturtle), [`parseJsonLd`](#parsejsonld)
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -194,7 +194,7 @@ console.log(turtle);
 
 **Performance**: ~2-10ms for typical stores
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -224,7 +224,7 @@ const nquads = await toNQuads(store);
 // <http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" .
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -267,7 +267,7 @@ const store = await parseJsonLd(jsonld);
 - Missing `@id` on items skips those items
 - Nested objects require proper `@id` references
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -305,7 +305,7 @@ const jsonld = await toJsonLd(store, {
 console.log(JSON.stringify(jsonld, null, 2));
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -396,7 +396,7 @@ const subgraph = await query(store, `
 - `query.store_size`: Number of quads in store
 - `query.result_count`: Number of results
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -430,7 +430,7 @@ const bindings = await select(store, `
 bindings.forEach(b => console.log(`${b.name}: ${b.age}`));
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -465,7 +465,7 @@ if (hasData) {
 }
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -500,7 +500,7 @@ const derived = await construct(store, `
 `);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -529,7 +529,7 @@ const resourceData = await describe(store, `
 `);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -568,7 +568,7 @@ await update(store, `
 `);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -605,7 +605,7 @@ const stats = await getQueryStats(store, `SELECT * WHERE { ?s ?p ?o }`);
 console.log(`Query took ${stats.duration}ms, returned ${stats.resultCount} results`);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -694,7 +694,7 @@ if (!report.conforms) {
 - `validate.conforms`: Boolean result
 - `validate.error_count`, `validate.warning_count`
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -728,7 +728,7 @@ console.log(`Overall: ${report.conforms}`);
 console.log(`Total results: ${report.totalResults}`);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -748,7 +748,7 @@ Format a validation report for display or analysis.
 function formatValidationReport(validationResult, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -765,7 +765,7 @@ Check if validation result contains errors (sh:Violation).
 function hasValidationErrors(validationResult)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -782,7 +782,7 @@ Extract only error-level results.
 function getValidationErrors(validationResult)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -799,7 +799,7 @@ Extract warning-level results.
 function getValidationWarnings(validationResult)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -835,7 +835,7 @@ const reasoned = await reason(store, rules);
 console.log(`Inferred ${reasoned.size - store.size} new triples`);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -854,7 +854,7 @@ Apply multiple rule sets sequentially.
 async function reasonMultiple(store, rulesList, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -872,7 +872,7 @@ Extract only the inferred triples.
 function extractInferred(originalStore, reasonedStore)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -890,7 +890,7 @@ Get statistics about reasoning results.
 function getReasoningStats(originalStore, reasonedStore)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -907,7 +907,7 @@ Validate N3 rules syntax.
 function validateRules(rules)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -926,7 +926,7 @@ Create a persistent reasoning session.
 async function createReasoningSession(initialStore, rules, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -952,7 +952,7 @@ const canonical = await canonicalize(store);
 // Produces deterministic, sorted N-Quads output
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -981,7 +981,7 @@ if (identical) {
 }
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -999,7 +999,7 @@ Get cryptographic hash of canonical form.
 async function getCanonicalHash(store, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1017,7 +1017,7 @@ Group stores by isomorphism class.
 async function groupByIsomorphism(stores, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1035,7 +1035,7 @@ Find duplicate stores based on isomorphism.
 async function findDuplicates(stores, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1053,7 +1053,7 @@ Get canonicalization statistics.
 async function getCanonicalizationStats(store, options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1070,7 +1070,7 @@ Create a canonicalization session for batch operations.
 async function createCanonicalizationSession(options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1125,7 +1125,7 @@ const complianceHook = defineHook({
   meta: {
     name: 'compliance:gdpr-check',
     description: 'Validate GDPR compliance',
-    version: '1.0.0'
+    version: 'latest'
   },
   when: {
     kind: 'sparql-ask',
@@ -1149,7 +1149,7 @@ const result = await manager.apply(store, {
 console.log('Hook results:', result.receipt.knowledgeHookResults);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1197,7 +1197,7 @@ const auditHook = defineHook({
   meta: {
     name: 'audit:transaction-log',
     description: 'Log all transactions to audit trail',
-    version: '1.0.0',
+    version: 'latest',
     tags: ['audit', 'compliance']
   },
   when: {
@@ -1223,7 +1223,7 @@ const auditHook = defineHook({
 });
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1489,7 +1489,7 @@ TransactionManager uses mutex-based serialization:
 | Hash calculation | 5-20ms | SHA3-256 + BLAKE3 |
 | Lockchain write | 10-50ms | If enabled |
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1525,7 +1525,7 @@ const results = await engine.query(store, 'SELECT * WHERE { ?s ?p ?o }');
 const report = engine.validateShacl(store, shapes);
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1542,7 +1542,7 @@ Create a simple engine with defaults.
 function createSimpleEngine(baseIRI)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1559,7 +1559,7 @@ Create a strict engine with validation enabled.
 function createStrictEngine(baseIRI)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1632,7 +1632,7 @@ runApp(async () => {
 });
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1689,7 +1689,7 @@ runApp(() => {
 });
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1744,7 +1744,7 @@ runApp(async () => {
 });
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1760,7 +1760,7 @@ N3 reasoning composable.
 function useReasoner()
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1776,7 +1776,7 @@ RDF term utilities composable.
 function useTerms()
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1792,7 +1792,7 @@ Change tracking and provenance composable.
 function useDelta()
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1808,7 +1808,7 @@ Canonicalization composable.
 function useCanon()
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1878,7 +1878,7 @@ function KnowledgeGraph() {
 }
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1886,7 +1886,7 @@ function KnowledgeGraph() {
 
 Access knowledge engine from context.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1894,7 +1894,7 @@ Access knowledge engine from context.
 
 Transaction management hook.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1902,7 +1902,7 @@ Transaction management hook.
 
 Register and manage knowledge hooks.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1930,7 +1930,7 @@ function useChangeFeed(options)
 }
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1947,7 +1947,7 @@ function useChangeFeed(options)
 function useDarkMatterCore(options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1955,7 +1955,7 @@ function useDarkMatterCore(options)
 
 Query analysis and optimization.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1963,7 +1963,7 @@ Query analysis and optimization.
 
 Error boundary hook for graceful error handling.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1973,7 +1973,7 @@ Error boundary hook for graceful error handling.
 
 Graph difference and comparison.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1981,7 +1981,7 @@ Graph difference and comparison.
 
 SPARQL query editor with syntax highlighting.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1991,7 +1991,7 @@ SPARQL query editor with syntax highlighting.
 
 Multi-source federation management.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -1999,7 +1999,7 @@ Multi-source federation management.
 
 Stream processing for large datasets.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2007,7 +2007,7 @@ Stream processing for large datasets.
 
 Query optimizer interface.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2015,7 +2015,7 @@ Query optimizer interface.
 
 Semantic analysis and NLP integration.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2023,7 +2023,7 @@ Semantic analysis and NLP integration.
 
 Graph merge operations.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2031,7 +2031,7 @@ Graph merge operations.
 
 Policy pack management.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2039,7 +2039,7 @@ Policy pack management.
 
 Error recovery and rollback.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2047,7 +2047,7 @@ Error recovery and rollback.
 
 Graph visualization utilities.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2055,7 +2055,7 @@ Graph visualization utilities.
 
 Results pagination.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2073,7 +2073,7 @@ Pre-configured bundle for common patterns.
 function useKnowledgeStack()
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2081,7 +2081,7 @@ function useKnowledgeStack()
 
 CRUD operations bundle.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2089,7 +2089,7 @@ CRUD operations bundle.
 
 Dashboard analytics bundle.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2097,7 +2097,7 @@ Dashboard analytics bundle.
 
 Production-ready bundle with error handling and monitoring.
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2114,7 +2114,7 @@ Offline-first storage with IndexedDB and sync queue.
 function useOfflineStore(options)
 ```
 
-**Version**: 1.0.0 | **Stability**: Stable
+**Version**: latest | **Stability**: Stable
 
 ---
 
@@ -2547,6 +2547,6 @@ try {
 
 ---
 
-> **Document Version**: 1.0.0
+> **Document Version**: latest
 > **Generated**: 2025-11-21
 > **Maintainer**: UNRDF Team

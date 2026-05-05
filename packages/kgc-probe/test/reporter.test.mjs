@@ -19,8 +19,8 @@ describe('KGC Probe Reporter', () => {
       domain: 'runtime',
       timestamp: 1703721600000, // 2023-12-28T00:00:00.000Z
       outputs: {
-        node: 'v18.19.0',
-        v8: '11.3.244',
+        node: '[VERSION]',
+        v8: '[VERSION]',
         worker_threads: true,
       },
     },
@@ -74,8 +74,8 @@ describe('KGC Probe Reporter', () => {
       expect(result.method).toBe('probeRuntime');
       expect(result.domain).toBe('runtime');
       expect(result.outputs).toEqual({
-        node: 'v18.19.0',
-        v8: '11.3.244',
+        node: '[VERSION]',
+        v8: '[VERSION]',
         worker_threads: true,
       });
     });
@@ -150,7 +150,7 @@ describe('KGC Probe Reporter', () => {
       );
       expect(runtimeCap).toBeDefined();
       expect(runtimeCap.type).toBe('capability');
-      expect(runtimeCap.description).toContain('v18.19.0');
+      expect(runtimeCap.description).toContain('[VERSION]');
       expect(runtimeCap.evidence).toContain('probeRuntime');
     });
 
@@ -295,7 +295,7 @@ describe('KGC Probe Reporter', () => {
       expect(report).toContain('probeWasm');
 
       // Check outputs
-      expect(report).toContain('v18.19.0');
+      expect(report).toContain('[VERSION]');
       expect(report).toContain('worker_threads');
 
       // Check guard decisions

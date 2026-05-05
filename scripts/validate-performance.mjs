@@ -9,7 +9,7 @@
  *
  * Usage:
  *   node scripts/validate-performance.mjs bench-results.json
- *   node scripts/validate-performance.mjs bench-results.json --baseline=benchmarks/v2.1.1.json
+ *   node scripts/validate-performance.mjs bench-results.json --baseline=benchmarks/latest.json
  */
 
 import { readFile } from 'node:fs/promises';

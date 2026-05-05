@@ -1,6 +1,6 @@
 # UNRDF Sidecar Dashboard Architecture Design
 
-**Version:** 1.0.0
+**Version:** [VERSION]
 **Date:** 2025-10-02
 **Author:** Analyst Agent (Hive Mind)
 **Status:** Architecture Complete - Ready for Implementation
@@ -38,7 +38,7 @@ This document provides a comprehensive architecture design for the UNRDF Sidecar
 ### 1. Technology Stack
 
 #### Core Framework
-- **Nuxt 4.1.2** - Modern full-stack framework (API-only mode)
+- **Nuxt [VERSION]** - Modern full-stack framework (API-only mode)
 - **Vue 3** (Composition API) - Reactive UI components
 - **H3** - Nitro server engine
 - **Zod 3.22** - Runtime validation schemas

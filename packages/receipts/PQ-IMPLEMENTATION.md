@@ -1,4 +1,4 @@
-# Post-Quantum Receipts Implementation (v6.2.0)
+# Post-Quantum Receipts Implementation (latest)
 
 ## Overview
 
@@ -206,13 +206,13 @@ const receipt = await createPQReceipt({
 ## Dependencies
 
 ### Added Dependencies
-- `@noble/curves` ^2.0.1 - Ed25519 implementation
-- `@noble/hashes` ^2.0.1 - SHA3 and SHA256 hashing
-- `dilithium-crystals` ^1.0.6 - Dilithium reference (not used in simplified impl)
+- `@noble/curves` ^latest - Ed25519 implementation
+- `@noble/hashes` ^latest - SHA3 and SHA256 hashing
+- `dilithium-crystals` ^latest - Dilithium reference (not used in simplified impl)
 
 ### Existing Dependencies
-- `hash-wasm` ^4.12.0 - BLAKE3 hashing
-- `zod` ^3.25.76 - Runtime validation
+- `hash-wasm` ^latest - BLAKE3 hashing
+- `zod` ^latest - Runtime validation
 
 ## Compliance
 
@@ -224,7 +224,7 @@ const receipt = await createPQReceipt({
 - **File sizes**: All <500 lines
 
 ### Testing Standards
-- **Framework**: Vitest 4.0.16
+- **Framework**: Vitest latest
 - **Coverage**: 100% test pass rate
 - **AAA pattern**: Arrange-Act-Assert
 - **Performance**: All tests <5s
@@ -272,6 +272,6 @@ This implementation provides **quantum-resistant cryptography** in preparation f
 ---
 
 **Status**: ✅ Production-ready
-**Version**: 6.2.0
+**Version**: latest
 **Test Coverage**: 100% (71/71 tests passing)
 **Security Level**: NIST Level 3 (Dilithium3) + 128-bit (Ed25519)

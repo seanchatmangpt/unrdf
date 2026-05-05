@@ -29,7 +29,7 @@ Comprehensive audit of CLI command structure and package imports revealed **CRIT
 
 **Evidence of Sidecar Presence**:
 
-#### 1.1 Main CLI File (cli/index.mjs)
+#### latest Main CLI File (cli/index.mjs)
 ```javascript
 // Line 67: Sidecar lazy import defined
 const importSidecar = () => import("./commands/sidecar/index.mjs");
@@ -64,7 +64,7 @@ ls -1 cli/commands/sidecar/ | wc -l
 # Output: 6
 ```
 
-#### 1.2 Sidecar Import References
+#### latest Sidecar Import References
 
 **cli/commands/sidecar/health.mjs:12**
 ```javascript
@@ -94,7 +94,7 @@ grep -r "createSidecarClient\|createSidecarConfig" cli/commands/sidecar/
 
 ### 🚨 CRITICAL #2: Incorrect Package Imports (Relative Paths)
 
-#### 2.1 Knowledge Hook Manager Import
+#### latest Knowledge Hook Manager Import
 
 **File**: `cli/commands/hook/list.mjs:8`
 
@@ -139,7 +139,7 @@ grep -A 5 "exports" packages/hooks/package.json
 
 **Fix Required**: Verify `KnowledgeHookManager` is exported from `@unrdf/hooks/src/index.mjs`
 
-#### 2.2 Store Instance Imports
+#### latest Store Instance Imports
 
 **File**: `cli/utils/store-instance.mjs:9-10`
 

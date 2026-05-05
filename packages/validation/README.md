@@ -1,6 +1,6 @@
 # @unrdf/validation
 
-![Version](https://img.shields.io/badge/version-26.4.3-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+![Version](https://img.shields.io/badge/version-[VERSION]-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
 
 **OTEL Validation Framework for UNRDF**
 
@@ -142,7 +142,7 @@ const validator = createOTELValidator({
   maxSpansPerValidation: 1000,
   spanAttributes: {
     environment: 'production',
-    version: '26.4.3'
+    version: '[VERSION]'
   }
 });
 ```

@@ -167,7 +167,7 @@ This synthesis consolidates outputs from **9 specialized agents** into **4 compr
 
 **Key takeaways**:
 - BEAM pattern matching ≡ SPARQL WHERE (80% code reduction)
-- AtomVM v0.6.6 operational, RDF integration 0% (greenfield opportunity)
+- AtomVM latest operational, RDF integration 0% (greenfield opportunity)
 - HDIT + ML workflow optimization (experimental)
 
 **Evidence**:

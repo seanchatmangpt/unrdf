@@ -456,7 +456,7 @@ export class KGenFilterTemplates {
     
     const exported = {
       format: 'kgen-filter-templates',
-      version: '1.0.0',
+      version: 'latest',
       generated: this.options.staticBuildTime,
       namespace: this.options.namespace,
       templates: {}

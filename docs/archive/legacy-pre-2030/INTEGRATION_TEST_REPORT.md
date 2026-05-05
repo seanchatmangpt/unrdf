@@ -14,7 +14,7 @@
 - **Integration Tests:** 6/6 integration test files found and executed
 - **Cross-Package Imports:** 90+ verified @unrdf/* imports across packages
 - **Core Packages:** ✅ Fully functional (Core, Graph Analytics, KGC-4D)
-- **YAWL Package:** ⚠️ 97.3% test pass rate (284/292 tests)
+- **YAWL Package:** ⚠️ latest% test pass rate (284/292 tests)
 - **Build Status:** ⚠️ Timed out at 30s (doc packages heavy, core packages built)
 
 ---
@@ -25,7 +25,7 @@
 **Status:** PASSED
 **Test Files:** 6/6 passed
 **Tests:** 231/231 passed (100%)
-**Duration:** 2.00s
+**Duration:** latests
 
 **Key Validations:**
 - UnrdfStore integration tests: PASSED
@@ -44,8 +44,8 @@
 ### ⚠️ YAWL (@unrdf/yawl)
 **Status:** PARTIAL PASS
 **Test Files:** 6/8 passed (2 failed)
-**Tests:** 284/292 passed (97.3%)
-**Duration:** 4.20s
+**Tests:** 284/292 passed (latest%)
+**Duration:** latests
 
 **Failed Tests (8 failures):**
 1. `yawl-hooks.test.mjs`: Integration workflow approval path (1 failure)
@@ -106,8 +106,8 @@
 **Status:** PASSED
 **Test Files:** 4/4 passed
 **Tests:** 17/17 passed (100%)
-**Coverage:** 63.63% statements, 50.51% branches
-**Duration:** 2.41s
+**Coverage:** latest% statements, latest% branches
+**Duration:** latests
 
 **Test Suites:**
 - ✅ RDF to Graph conversion (4 tests)
@@ -126,7 +126,7 @@
 **Status:** PARTIAL PASS
 **Test Files:** 6/7 passed (1 failed)
 **Tests:** 45/45 passed (100% test success)
-**Duration:** 25.99s
+**Duration:** latests
 **Failed Suite:** Playwright test configuration issue (not test failure)
 
 **Passed Tests:**
@@ -179,34 +179,34 @@
 
 **Overall Score:** 83/100
 **Status:** ⚠️ FAILED (threshold: ≥80/100 met, but 1 feature failed)
-**Duration:** 4.33s
+**Duration:** latests
 **Features:** 5/6 passed
 
 ### Passed Features (5/5 scored 100/100):
 1. ✅ **knowledge-engine-core**: 100/100
-   - Latency: 9.6ms
+   - Latency: latestms
    - Throughput: 5 ops
-   - Memory: 12.13MB
+   - Memory: latestMB
 
 2. ✅ **policy-packs**: 100/100
    - Latency: 11ms
    - Throughput: 3 ops
-   - Memory: 13.09MB
+   - Memory: latestMB
 
 3. ✅ **lockchain-integrity**: 100/100
-   - Latency: 12.33ms
+   - Latency: latestms
    - Throughput: 3 ops
-   - Memory: 13.23MB
+   - Memory: latestMB
 
 4. ✅ **transaction-manager**: 100/100
-   - Latency: 6.67ms
+   - Latency: latestms
    - Throughput: 3 ops
-   - Memory: 9.99MB
+   - Memory: latestMB
 
 5. ✅ **browser-compatibility**: 100/100
-   - Latency: 17.67ms
+   - Latency: latestms
    - Throughput: 3 ops
-   - Memory: 10.16MB
+   - Memory: latestMB
 
 ### Failed Features:
 1. ❌ **knowledge-hooks-api**: 0/100
@@ -289,22 +289,22 @@
 ## 5. Performance Metrics
 
 ### Test Execution Times:
-- **Core:** 2.00s (231 tests)
-- **Graph Analytics:** 2.41s (17 tests)
-- **YAWL:** 4.20s (292 tests)
-- **AtomVM:** 25.99s (45 tests, includes WASM loading)
+- **Core:** latests (231 tests)
+- **Graph Analytics:** latests (17 tests)
+- **YAWL:** latests (292 tests)
+- **AtomVM:** latests (45 tests, includes WASM loading)
 - **KGC-4D:** ~5-10s per suite
-- **OTEL Validation:** 4.33s (6 features)
+- **OTEL Validation:** latests (6 features)
 
 ### Latency Analysis (from OTEL):
-- **Best:** transaction-manager (6.67ms avg)
-- **Worst:** browser-compatibility (17.67ms avg)
-- **Average:** ~11.7ms across all features
+- **Best:** transaction-manager (latestms avg)
+- **Worst:** browser-compatibility (latestms avg)
+- **Average:** ~latestms across all features
 
 ### Memory Usage (from OTEL):
-- **Best:** transaction-manager (9.99MB)
-- **Worst:** lockchain-integrity (13.23MB)
-- **Average:** ~11.8MB per feature
+- **Best:** transaction-manager (latestMB)
+- **Worst:** lockchain-integrity (latestMB)
+- **Average:** ~latestMB per feature
 
 ---
 
@@ -424,7 +424,7 @@ None - all core functionality working
 - ⚠️ All @unrdf/* dependencies resolve (semantic search model issue)
 
 ### ❌ Unmet Criteria:
-- ❌ 100% test pass rate (97.3% for YAWL, issues in KGC-4D)
+- ❌ 100% test pass rate (latest% for YAWL, issues in KGC-4D)
 
 ---
 
@@ -447,7 +447,7 @@ None - all core functionality working
 
 **Risk Assessment:**
 - **Production Readiness:** HIGH for Core, Graph Analytics, AtomVM
-- **Production Readiness:** MEDIUM-HIGH for YAWL (97.3% pass, edge cases need fixes)
+- **Production Readiness:** MEDIUM-HIGH for YAWL (latest% pass, edge cases need fixes)
 - **Production Readiness:** MEDIUM for KGC-4D (store stress tests need fixes)
 - **Production Readiness:** LOW for Semantic Search (cannot validate)
 

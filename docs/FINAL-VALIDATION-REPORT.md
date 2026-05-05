@@ -16,7 +16,7 @@
 | Success Criteria | Target | Actual | Status | Blocker |
 |------------------|--------|--------|--------|---------|
 | **1. Structure** | 21/21 packages | 19/21 complete | ⚠️ PARTIAL | 2 packages missing tests |
-| **2. Build** | <30s, all dist/ | 0.5s (FAILED) | ❌ FAIL | esbuild config broken |
+| **2. Build** | <30s, all dist/ | latests (FAILED) | ❌ FAIL | esbuild config broken |
 | **3. Linting** | 0 violations | N/A (ruff) | ⚠️ SKIP | Python linter for JS project |
 | **4. Tests** | 100% pass | 60-80% pass | ❌ FAIL | 98 test failures across 13 files |
 | **5. Coverage** | ≥80% all pkgs | 60% (Federation) | ❌ FAIL | Below threshold |
@@ -84,7 +84,7 @@ $ find packages -name "*.test.mjs" -type f | wc -l
 ### ❌ SUCCESS CRITERIA 2: Build Performance (CRITICAL FAILURE)
 
 **Target:** Build completes in <30s, all `dist/` directories created
-**Actual:** Build fails in 0.5s with configuration error
+**Actual:** Build fails in latests with configuration error
 **Status:** ❌ **CRITICAL BLOCKER**
 
 #### Evidence (Ran `time pnpm run build`)
@@ -97,7 +97,7 @@ $ time timeout 45s pnpm run build
 
 1 error
  ELIFECYCLE  Command failed with exit code 1.
-timeout 45s pnpm run build 2>&1 < /dev/null  0.22s user 0.05s system 52% cpu 0.524 total
+timeout 45s pnpm run build 2>&1 < /dev/null  latests user latests system 52% cpu latest total
 ```
 
 **Root Cause:** The `package.json` build script is incorrect:
@@ -134,7 +134,7 @@ $ pnpm run lint
 
 No preset version installed for command ruff
 Please install a version by running one of the following:
-asdf install python 3.13.0
+asdf install python latest
 ```
 
 **Root Cause:** The project uses JavaScript/TypeScript but has Python linting configured:
@@ -181,7 +181,7 @@ Duration    463ms
 
 **❌ FAILING PACKAGES:**
 
-1. **hooks** (82.7% pass - 354 passing, 74 failing)
+1. **hooks** (latest% pass - 354 passing, 74 failing)
 ```
 Test Files  9 failed | 11 passed (20)
 Tests       74 failed | 354 passed (428)
@@ -194,11 +194,11 @@ FAILURES:
 - Actual: "at connect" still present in output
 ```
 
-2. **streaming** (73.5% pass - 66 passing, 24 failing)
+2. **streaming** (latest% pass - 66 passing, 24 failing)
 ```
 Test Files  4 failed | 2 passed (6)
 Tests       24 failed | 66 passed | 8 skipped (98)
-Duration    1.75s
+Duration    latests
 
 FAILURES:
 - store.removeQuad is not a function
@@ -220,7 +220,7 @@ at file:///vitest.config.unified.mjs.timestamp-xxx.mjs:4:1
 - **Total test files:** ~30 files across 21 packages
 - **Passing:** ~500 tests
 - **Failing:** ~98 tests
-- **Pass rate:** ~83.6% (below 100% requirement)
+- **Pass rate:** ~latest% (below 100% requirement)
 
 **Action Items:**
 - [ ] **BLOCKER:** Fix vitest.config.unified.mjs syntax error
@@ -244,22 +244,22 @@ Coverage report from v8
 -------------------|---------|----------|---------|---------|
 File               | % Stmts | % Branch | % Funcs | % Lines |
 -------------------|---------|----------|---------|---------|
-All files          |   59.96 |    57.26 |   58.06 |   60.48 |  ❌ BELOW 80%
+All files          |   latest |    latest |   latest |   latest |  ❌ BELOW 80%
  src               |       0 |        0 |       0 |       0 |  ❌ index.mjs not tested
- src/federation    |   59.96 |    57.26 |   58.06 |   60.48 |  ❌ BELOW THRESHOLD
-  consensus...mjs  |   18.61 |     6.45 |   15.78 |   19.02 |  ❌ CRITICAL: 81% uncovered
-  coordinator.mjs  |   84.37 |    94.82 |      95 |      84 |  ✓ PASS
-  distributed...   |   77.77 |    67.56 |   81.81 |   80.59 |  ⚠️ Borderline
-  federation...    |   58.27 |    40.54 |   51.61 |   59.12 |  ❌ 41% uncovered
+ src/federation    |   latest |    latest |   latest |   latest |  ❌ BELOW THRESHOLD
+  consensus...mjs  |   latest |     latest |   latest |   latest |  ❌ CRITICAL: 81% uncovered
+  coordinator.mjs  |   latest |    latest |      95 |      84 |  ✓ PASS
+  distributed...   |   latest |    latest |   latest |   latest |  ⚠️ Borderline
+  federation...    |   latest |    latest |   latest |   latest |  ❌ 41% uncovered
   health.mjs       |     100 |      100 |     100 |     100 |  ✓ EXCELLENT
-  metrics.mjs      |   95.65 |      100 |   88.88 |   95.45 |  ✓ EXCELLENT
-  peer-manager.mjs |   88.31 |    88.23 |    90.9 |   89.33 |  ✓ PASS
+  metrics.mjs      |   latest |      100 |   latest |   latest |  ✓ EXCELLENT
+  peer-manager.mjs |   latest |    latest |    latest |   latest |  ✓ PASS
 ```
 
 **Coverage Analysis:**
-- **Best:** health.mjs (100%), metrics.mjs (95.65%)
-- **Acceptable:** coordinator.mjs (84.37%), peer-manager.mjs (88.31%)
-- **Below threshold:** federation-coordinator.mjs (58.27%), consensus-manager.mjs (18.61%)
+- **Best:** health.mjs (100%), metrics.mjs (latest%)
+- **Acceptable:** coordinator.mjs (latest%), peer-manager.mjs (latest%)
+- **Below threshold:** federation-coordinator.mjs (latest%), consensus-manager.mjs (latest%)
 - **Not tested:** src/index.mjs (0%)
 
 **Action Items:**
@@ -364,7 +364,7 @@ Recommendations:
 
 3. **Coverage Below Threshold** (Criteria #5)
    - Federation at 60% (need 80%)
-   - consensus-manager.mjs at 18.61% (need 80%)
+   - consensus-manager.mjs at latest% (need 80%)
    - Estimated fix time: 4-6 hours
 
 4. **Circular Dependencies** (Criteria #6)
@@ -391,26 +391,26 @@ Recommendations:
 ### Package Statistics
 ```
 Total packages:           21
-With src/index.mjs:      19 (90.5%)
-With test files:         14 (66.7%)
-Private packages:         5 (23.8%)
-Public packages:         14 (66.7%)
+With src/index.mjs:      19 (latest%)
+With test files:         14 (latest%)
+Private packages:         5 (latest%)
+Public packages:         14 (latest%)
 ```
 
 ### Test Statistics
 ```
 Total test files:       ~112 files
 Total tests:            ~598 tests
-Passing tests:          ~500 tests (83.6%)
-Failing tests:          ~98 tests (16.4%)
+Passing tests:          ~500 tests (latest%)
+Failing tests:          ~98 tests (latest%)
 Skipped tests:           8 tests
 ```
 
 ### Coverage Statistics (Federation only)
 ```
-Overall coverage:        60.48%
+Overall coverage:        latest%
 Best coverage:          100% (health.mjs)
-Worst coverage:         18.61% (consensus-manager.mjs)
+Worst coverage:         latest% (consensus-manager.mjs)
 Files above 80%:         4/8 (50%)
 Files below 80%:         4/8 (50%)
 ```
@@ -418,7 +418,7 @@ Files below 80%:         4/8 (50%)
 ### Dependency Statistics
 ```
 Circular dependencies:   2 cycles
-Unique versions:         1 (5.0.1)  ✓
+Unique versions:         1 (latest)  ✓
 Aligned dependencies:    Yes  ✓
 Unused dependencies:     Unknown (blocked by build)
 ```
@@ -429,18 +429,18 @@ Unused dependencies:     Unknown (blocked by build)
 
 | Category | Weight | Score | Max | Status |
 |----------|--------|-------|-----|--------|
-| **Structure** | 15% | 13.5/15 | 90% | ⚠️ PARTIAL |
+| **Structure** | 15% | latest/15 | 90% | ⚠️ PARTIAL |
 | **Build** | 20% | 0/20 | 0% | ❌ FAIL |
 | **Linting** | 10% | 0/10 | 0% | ❌ FAIL |
 | **Tests** | 25% | 21/25 | 84% | ⚠️ BELOW |
 | **Coverage** | 15% | 9/15 | 60% | ❌ FAIL |
 | **Dependencies** | 10% | 0/10 | 0% | ❌ FAIL |
 | **Exports** | 5% | 0/5 | 0% | ⚠️ BLOCKED |
-| **TOTAL** | 100% | **43.5/100** | **43.5%** | ❌ **FAIL** |
+| **TOTAL** | 100% | **latest/100** | **latest%** | ❌ **FAIL** |
 
 **Passing Grade:** 80/100
-**Actual Score:** 43.5/100
-**Deficit:** -36.5 points
+**Actual Score:** latest/100
+**Deficit:** -latest points
 
 ---
 
@@ -450,10 +450,10 @@ Unused dependencies:     Unknown (blocked by build)
 
 **Rationale:**
 1. **Build system is non-functional** - Cannot generate distributable artifacts
-2. **16.4% test failure rate** - Unacceptable for production deployment
-3. **Coverage below constitutional 80% threshold** - Federation at 60%, consensus at 18.61%
+2. **latest% test failure rate** - Unacceptable for production deployment
+3. **Coverage below constitutional 80% threshold** - Federation at 60%, consensus at latest%
 4. **Circular dependencies** - Will cause runtime and bundling issues
-5. **Overall score 43.5%** - Far below 80% passing threshold
+5. **Overall score latest%** - Far below 80% passing threshold
 
 ### Remediation Roadmap (Prioritized)
 
@@ -506,7 +506,7 @@ Summary: 13/19 passed
 ```bash
 $ time timeout 45s pnpm run build
 ✘ [ERROR] Must use "outdir" when there are multiple input files
-Duration: 0.524 total
+Duration: latest total
 ```
 
 ✅ **Lint Check:**
@@ -540,7 +540,7 @@ Tests       24 failed | 66 passed | 8 skipped (98)
 ✅ **Coverage Check:**
 ```bash
 $ pnpm -C packages/federation test:coverage | grep -A 15 "Coverage summary"
-All files          |   59.96 |    57.26 |   58.06 |   60.48 |
+All files          |   latest |    latest |   latest |   latest |
 ```
 
 ✅ **Dependency Check:**

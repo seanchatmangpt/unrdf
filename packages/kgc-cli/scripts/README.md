@@ -18,7 +18,7 @@ Future scripts:
 import { promises as fs } from 'node:fs';
 import { createHash } from 'node:crypto';
 
-const SWIFTLATEX_VERSION = '1.0.0';
+const SWIFTLATEX_VERSION = '[VERSION]';
 const VENDOR_DIR = '../vendor/swiftlatex';
 
 async function downloadEngine(engine, url, expectedHash) {

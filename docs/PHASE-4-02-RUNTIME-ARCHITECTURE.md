@@ -1,4 +1,4 @@
-# Phase 4.2: Runtime Architecture - Core/Environment Split
+# Phase latest: Runtime Architecture - Core/Environment Split
 
 ## Overview
 

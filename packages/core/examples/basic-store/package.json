@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/example-basic-store",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Basic RDF store operations with UNRDF",
   "type": "module",
   "private": true,

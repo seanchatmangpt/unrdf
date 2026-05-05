@@ -20,7 +20,7 @@ import { z } from 'zod';
 export const ChatmanConfigSchema = z.object({
   chatman: z
     .object({
-      version: z.string().default('1.0.0'),
+      version: z.string().default('[VERSION]'),
       observable_ratio: z.number().min(0).max(1).default(0.05),
       closure_threshold: z.number().min(0).max(1).default(0.95),
     })
@@ -150,7 +150,7 @@ export class ChatmanConfigLoader {
       }
 
       span?.addEvent?.('config_loaded', {
-        'config.version': normalized.chatman?.version || '1.0.0',
+        'config.version': normalized.chatman?.version || '[VERSION]',
         'config.market_rules': normalized.marketDynamics?.length || 0,
         'config.org_rules': normalized.organizationalDynamics?.length || 0,
         'config.strategic_rules': normalized.strategicDynamics?.length || 0,

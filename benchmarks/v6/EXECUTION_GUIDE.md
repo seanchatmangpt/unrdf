@@ -56,11 +56,11 @@ node benchmarks/v6/5-composition-latency.mjs
 ================================================================================
 V6 PERFORMANCE BENCHMARK SUMMARY
 ================================================================================
-Timestamp: 2025-12-27T08:30:00.000Z
+Timestamp: 2025-12-27T08:30:latestZ
 Total Benchmarks: 5
 Successful: 5
 Failed: 0
-Total Time: 28.45s
+Total Time: latests
 Overall Status: ✅ PASS
 
 --------------------------------------------------------------------------------
@@ -68,11 +68,11 @@ BENCHMARK RESULTS
 --------------------------------------------------------------------------------
 Benchmark                 Status     Target          Actual               Time
 --------------------------------------------------------------------------------
-Receipt Overhead          ✅ PASS    <1%             0.89%                5.12s
-Delta Compression         ✅ PASS    <10%            0.23%                3.45s
-Query Performance         ✅ PASS    <5%             avg:3.24% max:4.78%  10.23s
-Memory Usage              ✅ PASS    <2%             1.85%                4.67s
-Composition Latency       ✅ PASS    <10%            3-hop:8.91%          4.98s
+Receipt Overhead          ✅ PASS    <1%             latest%                latests
+Delta Compression         ✅ PASS    <10%            latest%                latests
+Query Performance         ✅ PASS    <5%             avg:latest% max:latest%  latests
+Memory Usage              ✅ PASS    <2%             latest%                latests
+Composition Latency       ✅ PASS    <10%            3-hop:latest%          latests
 --------------------------------------------------------------------------------
 
 Summary: [Receipt: PASS] [Delta: PASS] [Query: PASS] [Memory: PASS] [Composition: PASS]
@@ -88,7 +88,7 @@ If any benchmark fails, you'll see:
 ```
 Overall Status: ❌ FAIL
 ...
-Query Performance         ❌ FAIL    <5%             avg:6.24% max:7.89%  10.23s
+Query Performance         ❌ FAIL    <5%             avg:latest% max:latest%  latests
 ```
 
 ## Adversarial PM Verification
@@ -194,7 +194,7 @@ node --expose-gc benchmarks/v6/4-memory-usage.mjs
 ```bash
 # Close other applications
 # Run with consistent load
-# Check Node.js version (>=18.0.0 required)
+# Check Node.js version (>=latest required)
 node --version
 ```
 

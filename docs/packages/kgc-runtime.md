@@ -2,7 +2,7 @@
 
 > KGC governance runtime with comprehensive Zod schemas and work item system
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

@@ -30,7 +30,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 ### Test Scenarios
 
-#### 1.1 Vault Unsealing Under Network Partition
+#### latest Vault Unsealing Under Network Partition
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -50,7 +50,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 }
 ```
 
-#### 1.2 Secret Retrieval with Network Failures
+#### latest Secret Retrieval with Network Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -60,7 +60,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 **Cache TTL Configuration**: Default 5 minutes (300,000ms)
 
-#### 1.3 Token Renewal Failures
+#### latest Token Renewal Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -69,7 +69,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 **Recommendation**: Implement token expiry monitoring and proactive renewal.
 
-#### 1.4 Quorum Coordination Failures
+#### latest Quorum Coordination Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -79,7 +79,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 **Critical**: Split-brain protection prevents dual unsealing in network partitions.
 
-#### 1.5 Vault Recovery Scenarios
+#### latest Vault Recovery Scenarios
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -96,7 +96,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 ### Test Scenarios
 
-#### 2.1 Task Execution Failures
+#### latest Task Execution Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -115,7 +115,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 **SAFLA Neural Learning**: Tracks error patterns for adaptive thresholds.
 
-#### 2.2 Task Timeout Scenarios
+#### latest Task Timeout Scenarios
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -129,7 +129,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 - `policies:refresh-packs`: 1 hour interval
 - `lockchain:archive`: Daily
 
-#### 2.3 Concurrent Task Failures
+#### latest Concurrent Task Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -139,7 +139,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 **Finding**: Excellent task isolation prevents cascading failures.
 
-#### 2.4 Task Recovery Mechanisms
+#### latest Task Recovery Mechanisms
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -156,7 +156,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 }
 ```
 
-#### 2.5 Self-Healing Health Check
+#### latest Self-Healing Health Check
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -176,7 +176,7 @@ This report documents comprehensive chaos engineering tests performed on the KGC
 
 ### Test Scenarios
 
-#### 3.1 Manager Initialization Failures
+#### latest Manager Initialization Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -195,7 +195,7 @@ observability (no deps)
 │   └── resolutionLayer
 ```
 
-#### 3.2 Partial Manager Availability
+#### latest Partial Manager Availability
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -212,7 +212,7 @@ observability (no deps)
 | Audit Logging | lockchainWriter | **Yes** |
 | Monitoring | observability | No |
 
-#### 3.3 Manager State Recovery
+#### latest Manager State Recovery
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -222,7 +222,7 @@ observability (no deps)
 
 **Recovery Time**: ~10-50ms for index rebuilding (tested with 3 hooks).
 
-#### 3.4 Dependency Chain Failures
+#### latest Dependency Chain Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -231,7 +231,7 @@ observability (no deps)
 
 **Critical**: Proper dependency tracking prevents unnecessary cascades.
 
-#### 3.5 Graceful Degradation
+#### latest Graceful Degradation
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -248,7 +248,7 @@ observability (no deps)
 
 ### Test Scenarios
 
-#### 4.1 Memory Exhaustion
+#### latest Memory Exhaustion
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -263,7 +263,7 @@ observability (no deps)
 
 **Recommendation**: Implement proactive memory monitoring with alerting.
 
-#### 4.2 CPU Saturation
+#### latest CPU Saturation
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -274,12 +274,12 @@ observability (no deps)
 **Adaptive Concurrency**:
 - Max: 20 concurrent requests
 - Min: 1 concurrent request
-- Reduction factor: 0.7 when CPU > 80%
-- Increase factor: 1.3 when CPU < 50%
+- Reduction factor: latest when CPU > 80%
+- Increase factor: latest when CPU < 50%
 
 **Issue**: Request shedding is random; should prioritize by request type.
 
-#### 4.3 Connection Pool Exhaustion
+#### latest Connection Pool Exhaustion
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -292,7 +292,7 @@ observability (no deps)
 - Queue size: 20
 - Timeout: 1000ms
 
-#### 4.4 File Descriptor Limits
+#### latest File Descriptor Limits
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -301,7 +301,7 @@ observability (no deps)
 
 **Recommendation**: Implement automatic FD cleanup for leaked handles.
 
-#### 4.5 Queue Overflow
+#### latest Queue Overflow
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -314,7 +314,7 @@ observability (no deps)
 - Enqueue → Dequeue latency: Tracked per task
 - Priority levels: High, Medium, Low
 
-#### 4.6 Cascading Resource Failures
+#### latest Cascading Resource Failures
 
 | Scenario | Expected Behavior | Status |
 |----------|-------------------|--------|
@@ -352,7 +352,7 @@ HALF_OPEN → (failure) → OPEN
 **Exponential Backoff**:
 ```
 Delay = InitialDelay × 2^attempt
-Jitter = Random(0, Delay × 0.5)
+Jitter = Random(0, Delay × latest)
 ```
 
 **Adaptive Retry**:
@@ -472,7 +472,7 @@ patternPenalty = min(errorPatterns × 5, 30)
 
 2. **Add Memory Pressure Alerting**
    ```javascript
-   if (memoryUsage > 0.8 * memoryLimit) {
+   if (memoryUsage > latest * memoryLimit) {
      await sendAlert('memory_pressure', { usage: memoryUsage })
      triggerCacheEviction()
    }
@@ -528,7 +528,7 @@ patternPenalty = min(errorPatterns × 5, 30)
 | Task Failures | 18 | 18 | 0 | 100% |
 | Manager Crashes | 16 | 16 | 0 | 100% |
 | Resource Exhaustion | 20 | 19 | 1 | 95% |
-| **Total** | **68** | **67** | **1** | **98.5%** |
+| **Total** | **68** | **67** | **1** | **latest%** |
 
 **Failed Test**: Request shedding (random vs priority-based) - Fixed in recommendations
 
@@ -538,13 +538,13 @@ patternPenalty = min(errorPatterns × 5, 30)
 
 | Category | Score | Weight | Weighted Score |
 |----------|-------|--------|----------------|
-| Circuit Breakers | 95% | 25% | 23.75 |
-| Retry Strategies | 90% | 15% | 13.50 |
-| Graceful Degradation | 88% | 20% | 17.60 |
-| Quorum Management | 92% | 20% | 18.40 |
-| Self-Healing | 87% | 15% | 13.05 |
-| Resource Management | 75% | 5% | 3.75 |
-| **Overall** | **85%** | **100%** | **85.05** |
+| Circuit Breakers | 95% | 25% | latest |
+| Retry Strategies | 90% | 15% | latest |
+| Graceful Degradation | 88% | 20% | latest |
+| Quorum Management | 92% | 20% | latest |
+| Self-Healing | 87% | 15% | latest |
+| Resource Management | 75% | 5% | latest |
+| **Overall** | **85%** | **100%** | **latest** |
 
 ---
 

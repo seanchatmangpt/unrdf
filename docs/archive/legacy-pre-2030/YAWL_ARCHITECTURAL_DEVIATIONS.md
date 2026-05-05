@@ -2,7 +2,7 @@
 
 **Analysis Date**: 2026-01-11
 **Analyzer**: Research Agent (Adversarial Architecture Review)
-**UNRDF Package**: @unrdf/yawl v5.0.0
+**UNRDF Package**: @unrdf/yawl vlatest
 **Reference**: Van der Aalst YAWL 4.x (Java Implementation)
 **Methodology**: Source code analysis, architecture comparison, semantic evaluation
 
@@ -762,7 +762,7 @@ ASK {
 
 **Benefits**:
 - ✅ Graph-based data model (more flexible than XML tree)
-- ✅ SPARQL 1.1 features (aggregation, federation, property paths)
+- ✅ SPARQL latest features (aggregation, federation, property paths)
 - ✅ Native integration with RDF ecosystem
 - ✅ Cryptographic receipts of data state changes
 
@@ -1022,7 +1022,7 @@ export function cancelRegion(store, regionId, reason) {
    - Enable third-party worklist tools
    - Estimated effort: 20-30 hours
 
-**Priority 2 (MEDIUM RISK - Consider for v6.0)**:
+**Priority 2 (MEDIUM RISK - Consider for vlatest)**:
 4. **Implement dead path elimination** for OR-join correctness
    - Use heuristics for common cases (avoid full NP-hard solver)
    - Document limitations and recommend XOR/AND alternatives

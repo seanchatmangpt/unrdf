@@ -17,7 +17,7 @@ const extension = {
           description: 'Start YAWL API server with Fastify',
           argsSchema: z.object({
             port: z.number().default(3000).describe('Server port'),
-            host: z.string().default('0.0.0.0').describe('Server host'),
+            host: z.string().default('[VERSION].0').describe('Server host'),
             enableSwagger: z.boolean().default(true).describe('Enable Swagger UI'),
             enableCors: z.boolean().default(true).describe('Enable CORS'),
           }),

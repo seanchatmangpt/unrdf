@@ -2,7 +2,7 @@
 
 > Advanced graph analytics for RDF knowledge graphs using graphlib
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Optional
 
 ## Overview

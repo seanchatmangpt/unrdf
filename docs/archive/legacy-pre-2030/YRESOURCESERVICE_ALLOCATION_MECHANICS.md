@@ -20,7 +20,7 @@ The UNRDF YAWL implementation provides a **modern, RDF-native resource allocatio
 
 ## 1. Resource Data Model
 
-### 1.1 Core Resource Types
+### latest Core Resource Types
 
 ```javascript
 // ResourceType enum (yawl-resources-types.mjs:68-72)
@@ -31,7 +31,7 @@ export const ResourceType = {
 };
 ```
 
-### 1.2 Resource Schema
+### latest Resource Schema
 
 ```javascript
 // Zod validation schema (yawl-resources-types.mjs:81-88)
@@ -51,7 +51,7 @@ export const ResourceSchema = z.object({
 - `1`: Single concurrent allocation (typical for Participants)
 - `N > 1`: N concurrent allocations
 
-### 1.3 Policy Pack Structure
+### latest Policy Pack Structure
 
 ```javascript
 // Policy pack groups resources with priority (yawl-resources-types.mjs:105-112)
@@ -67,7 +67,7 @@ export const PolicyPackSchema = z.object({
 
 **Priority-Based Selection**: Multiple policy packs can be registered. Resources from higher-priority packs are selected first when multiple resources are eligible.
 
-### 1.4 RDF Representation
+### latest RDF Representation
 
 Resources are stored as RDF triples in an Oxigraph triple store:
 
@@ -93,7 +93,7 @@ yawl:allocation/alloc-001 a yawl:Allocation ;
   yawl:status "active" .
 ```
 
-### 1.5 Class Diagram
+### latest Class Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -152,7 +152,7 @@ yawl:allocation/alloc-001 a yawl:Allocation ;
 
 ## 2. Allocation Algorithm
 
-### 2.1 Allocation Flow (Pseudocode)
+### latest Allocation Flow (Pseudocode)
 
 ```python
 def performResourceAllocation(store, workItem, resource, options, policyPacks, state):
@@ -219,7 +219,7 @@ def performResourceAllocation(store, workItem, resource, options, policyPacks, s
     return receipt
 ```
 
-### 2.2 Capacity Check Algorithm
+### latest Capacity Check Algorithm
 
 ```python
 def checkResourceCapacity(store, resource):
@@ -277,7 +277,7 @@ def countActiveAllocations(store, resourceNode):
     return 0
 ```
 
-### 2.3 Eligibility Check Algorithm
+### latest Eligibility Check Algorithm
 
 ```python
 async def checkResourceEligibility(store, resource, workItem):
@@ -326,7 +326,7 @@ async def checkResourceEligibility(store, resource, workItem):
         }
 ```
 
-### 2.4 Decision Logic: WHO Gets the Work Item?
+### latest Decision Logic: WHO Gets the Work Item?
 
 ```python
 def selectResourceForWorkItem(manager, taskId, caseId, options={}):
@@ -404,7 +404,7 @@ def selectResourceForWorkItem(manager, taskId, caseId, options={}):
 
 ## 3. Worklist Management (Limitations)
 
-### 3.1 Current Architecture (Engine-Centric)
+### latest Current Architecture (Engine-Centric)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -431,7 +431,7 @@ def selectResourceForWorkItem(manager, taskId, caseId, options={}):
 
 **NO Worklist Service Layer**: Work items are not "offered" to resources. There is no per-user worklist view where a human can see pending tasks and choose one to work on.
 
-### 3.2 YAWL Specification Architecture (Worklist-Centric)
+### latest YAWL Specification Architecture (Worklist-Centric)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -455,7 +455,7 @@ def selectResourceForWorkItem(manager, taskId, caseId, options={}):
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 3.3 Missing Operations (Compared to Java YAWL Interface B)
+### latest Missing Operations (Compared to Java YAWL Interface B)
 
 | Operation | Status | UNRDF Equivalent | Gap |
 |-----------|--------|------------------|-----|
@@ -472,9 +472,9 @@ def selectResourceForWorkItem(manager, taskId, caseId, options={}):
 | `skipItem(workItemId)` | ❌ Missing | - | Must complete/cancel |
 | `deallocateItem(workItemId)` | ⚠️ Partial | `deallocateResource()` | Internal only |
 
-**Coverage Score**: 2.5/13 operations = **19.2%** Interface B compliance
+**Coverage Score**: latest/13 operations = **latest%** Interface B compliance
 
-### 3.4 Worklist Data Structure (Conceptual)
+### latest Worklist Data Structure (Conceptual)
 
 The UNRDF implementation does NOT maintain explicit worklist data structures. However, worklists COULD be queried from the RDF store:
 
@@ -496,7 +496,7 @@ SELECT ?workItem ?taskId ?caseId ?allocatedAt WHERE {
 }
 ```
 
-### 3.5 State Transitions (Simplified)
+### latest State Transitions (Simplified)
 
 ```
 Work Item States (UNRDF):
@@ -532,7 +532,7 @@ Allocation States:
 
 ## 4. Resource Pools and Allocation Strategies
 
-### 4.1 Resource Pool Class
+### latest Resource Pool Class
 
 ```javascript
 class ResourcePool {
@@ -561,7 +561,7 @@ class ResourcePool {
 }
 ```
 
-### 4.2 Allocation Strategies
+### latest Allocation Strategies
 
 #### Round-Robin
 ```javascript
@@ -623,7 +623,7 @@ export function selectShortestQueue(resources, manager) {
 }
 ```
 
-### 4.3 Strategy Comparison
+### latest Strategy Comparison
 
 | Strategy | Use Case | Pros | Cons |
 |----------|----------|------|------|
@@ -637,7 +637,7 @@ export function selectShortestQueue(resources, manager) {
 
 ## 5. Constraint Evaluation
 
-### 5.1 Capacity Constraints
+### latest Capacity Constraints
 
 ```javascript
 // Hard constraint: Allocation fails if capacity exceeded
@@ -652,14 +652,14 @@ if (!capacityCheck.allowed) {
 
 **Evaluation**: Query RDF store via SPARQL to count active allocations.
 
-### 5.2 Eligibility Constraints (SPARQL-Based)
+### latest Eligibility Constraints (SPARQL-Based)
 
 #### Example: Role Membership
 ```javascript
 const seniorApprover = createRole({
   id: 'senior-approvers',
   sparql: `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
     PREFIX yawl: <http://yawlfoundation.org/yawlschema#>
     ASK {
       ?person foaf:hasRole <http://example.org/roles/senior-approver> ;
@@ -701,7 +701,7 @@ const auditor = createParticipant({
 });
 ```
 
-### 5.3 Availability Constraints (Calendar-Based)
+### latest Availability Constraints (Calendar-Based)
 
 ```javascript
 // Time window structure
@@ -727,7 +727,7 @@ if (!availability.available) {
 - `calculateAvailableSlots()`: Find free time slots
 - `findNextAvailableSlot()`: Schedule to next opening
 
-### 5.4 Constraint Evaluation Order
+### latest Constraint Evaluation Order
 
 ```
 1. Input Validation (Zod schemas)
@@ -749,7 +749,7 @@ if (!availability.available) {
 
 ## 6. Work Item Lifecycle (UNRDF Implementation)
 
-### 6.1 State Transitions
+### latest State Transitions
 
 ```javascript
 // yawl-types.mjs:412-419
@@ -763,7 +763,7 @@ export const WORK_ITEM_STATUS_TRANSITIONS = Object.freeze({
 });
 ```
 
-### 6.2 Allocation Lifecycle
+### latest Allocation Lifecycle
 
 ```
 [Work Item Created]
@@ -779,7 +779,7 @@ export const WORK_ITEM_STATUS_TRANSITIONS = Object.freeze({
 [deallocateResource()] → Allocation marked "deallocated"
 ```
 
-### 6.3 Allocation Receipt
+### latest Allocation Receipt
 
 ```javascript
 // Receipt structure (AllocationReceiptSchema)
@@ -804,7 +804,7 @@ export const WORK_ITEM_STATUS_TRANSITIONS = Object.freeze({
 - Compliance auditing (who did what when)
 - Capacity forensics (why did allocation succeed/fail)
 
-### 6.4 Deallocation
+### latest Deallocation
 
 ```javascript
 export function performResourceDeallocation(store, allocationId) {
@@ -835,7 +835,7 @@ export function performResourceDeallocation(store, allocationId) {
 
 ## 7. Code Examples: Allocation Decision Logic
 
-### 7.1 Complete Allocation Scenario
+### latest Complete Allocation Scenario
 
 ```javascript
 // Source: examples/resource-allocation.mjs:326-426
@@ -909,7 +909,7 @@ async function completeWorkflowScenario() {
 }
 ```
 
-### 7.2 Resource Pool with Round-Robin
+### latest Resource Pool with Round-Robin
 
 ```javascript
 // Source: examples/resource-allocation.mjs:165-211
@@ -947,7 +947,7 @@ async function resourcePools() {
 }
 ```
 
-### 7.3 SPARQL Eligibility Check
+### latest SPARQL Eligibility Check
 
 ```javascript
 // Source: examples/resource-allocation.mjs:117-156
@@ -959,7 +959,7 @@ async function sparqlEligibility() {
     id: 'senior-approvers',
     name: 'Senior Approval Team',
     sparql: `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX foaf: <http://xmlns.com/foaf/latest/>
       PREFIX yawl: <http://yawlfoundation.org/yawlschema#>
       ASK {
         ?person foaf:hasRole <http://example.org/roles/senior-approver> ;
@@ -989,7 +989,7 @@ async function sparqlEligibility() {
 
 ## 8. Comparison with Java YAWL YResourceService
 
-### 8.1 Architecture Differences
+### latest Architecture Differences
 
 | Aspect | Java YAWL 4.x | UNRDF YAWL |
 |--------|---------------|------------|
@@ -1003,7 +1003,7 @@ async function sparqlEligibility() {
 | **Piling** | Batch processing support | ❌ Not implemented |
 | **Calendar** | Full scheduling | ⚠️ Partial (time windows only) |
 
-### 8.2 Feature Parity Matrix
+### latest Feature Parity Matrix
 
 | Feature | Java YAWL | UNRDF YAWL | Gap |
 |---------|-----------|------------|-----|
@@ -1025,7 +1025,7 @@ async function sparqlEligibility() {
 
 **Parity Score**: 8/17 features = **47% feature parity**
 
-### 8.3 Java YAWL Code Equivalent
+### latest Java YAWL Code Equivalent
 
 ```java
 // Java YAWL 4.x: Offer work item to role
@@ -1064,7 +1064,7 @@ public void allocateWorkItem(String workItemId, String participantId) {
 
 ## 9. Key Insights and Architectural Decisions
 
-### 9.1 Engine-Centric vs. Worklist-Centric
+### latest Engine-Centric vs. Worklist-Centric
 
 **Design Choice**: UNRDF YAWL prioritizes **automated workflow execution** over human task management.
 
@@ -1078,7 +1078,7 @@ public void allocateWorkItem(String workItemId, String participantId) {
 - ✅ Excellent for: Microservice orchestration, automated approvals, system integration
 - ❌ Poor for: Human task management, collaborative workflows, user choice
 
-### 9.2 RDF Triple Store as Resource Allocator
+### latest RDF Triple Store as Resource Allocator
 
 **Innovation**: Using RDF triple store (Oxigraph) instead of SQL database.
 
@@ -1094,7 +1094,7 @@ public void allocateWorkItem(String workItemId, String participantId) {
 2. Query performance for large-scale allocation (untested)
 3. Tooling ecosystem less mature than SQL
 
-### 9.3 Receipt-Based Allocation Proofs
+### latest Receipt-Based Allocation Proofs
 
 **Pattern**: Every allocation generates a cryptographically verifiable receipt.
 
@@ -1122,7 +1122,7 @@ public void allocateWorkItem(String workItemId, String participantId) {
 
 This receipt is **cryptographic evidence** that allocation was valid.
 
-### 9.4 Policy Pack Priority System
+### latest Policy Pack Priority System
 
 **Concept**: Resources are grouped into policy packs with numeric priorities.
 
@@ -1497,7 +1497,7 @@ packages/yawl/test/
 
 ```turtle
 @prefix yawl: <http://yawlfoundation.org/yawlschema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf: <http://xmlns.com/foaf/latest/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -1547,7 +1547,7 @@ SELECT ?workItem ?allocatedAt WHERE {
 ### Find Resources by Type
 ```sparql
 PREFIX yawl: <http://yawlfoundation.org/yawlschema#>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?resource ?name ?capacity WHERE {
@@ -1560,7 +1560,7 @@ SELECT ?resource ?name ?capacity WHERE {
 ### Capacity Utilization Report
 ```sparql
 PREFIX yawl: <http://yawlfoundation.org/yawlschema#>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?resource ?name ?capacity (COUNT(?allocation) as ?active) WHERE {

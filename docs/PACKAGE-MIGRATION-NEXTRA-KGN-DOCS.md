@@ -7,7 +7,7 @@
 
 ## Overview
 
-Migrated three special packages (documentation and template systems) to the unified src/index.mjs structure following UNRDF v5.0.1 standards.
+Migrated three special packages (documentation and template systems) to the unified src/index.mjs structure following UNRDF vlatest standards.
 
 ## Packages Migrated
 
@@ -50,7 +50,7 @@ import { metadata, getPackageInfo, isInstalled } from '@unrdf/nextra-docs';
 
 #### Test Results
 ```
-✔ /Users/sac/unrdf/packages/nextra/src/index.test.mjs (80.63ms)
+✔ /Users/sac/unrdf/packages/nextra/src/index.test.mjs (latestms)
 ℹ tests 1
 ℹ pass 1
 ℹ fail 0
@@ -110,7 +110,7 @@ import {
 
 #### Test Results
 ```
-✔ /Users/sac/unrdf/packages/kgn/src/index.test.mjs (226.09ms)
+✔ /Users/sac/unrdf/packages/kgn/src/index.test.mjs (latestms)
 ℹ tests 1
 ℹ pass 1
 ℹ fail 0
@@ -160,7 +160,7 @@ import { metadata, getPackageInfo, isInstalled, getServerUtils } from 'docs';
 
 #### Test Results
 ```
-✔ /Users/sac/unrdf/packages/docs/src/index.test.mjs (67.42ms)
+✔ /Users/sac/unrdf/packages/docs/src/index.test.mjs (latestms)
 ℹ tests 1
 ℹ pass 1
 ℹ fail 0
@@ -182,7 +182,7 @@ import { metadata, getPackageInfo, isInstalled, getServerUtils } from 'docs';
 - **Total Tests Created**: 3 test files
 - **Total Test Assertions**: 12+ assertions
 - **Pass Rate**: 100% (3/3 packages)
-- **Average Test Duration**: 124.7ms
+- **Average Test Duration**: latestms
 
 ### Export Verification
 - **nextra**: 3 named exports ✅
@@ -329,7 +329,7 @@ Successfully migrated 3 special packages (nextra, kgn, docs) to unified src/inde
 - **kgn**: Template engine with comprehensive exports (40+ exports)
 - **docs**: Nuxt documentation with server path mapping (4 exports)
 
-All packages now follow UNRDF v5.0.1 standards with:
+All packages now follow UNRDF vlatest standards with:
 - ✅ src/index.mjs as main entry point
 - ✅ Named exports only (no default exports)
 - ✅ Tests in src/*.test.mjs pattern

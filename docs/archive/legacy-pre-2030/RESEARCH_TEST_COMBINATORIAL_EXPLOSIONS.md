@@ -1,7 +1,7 @@
 # Test Scenario Combinatorial Explosions - Research Report
 
 **Research Date**: 2026-01-11
-**Codebase**: UNRDF v6.0.0-rc.1
+**Codebase**: UNRDF vlatest.1
 **Researcher**: Research Agent
 **Mission**: Investigate combinatorial complexity in testing infrastructure
 
@@ -12,14 +12,14 @@
 The UNRDF test suite exhibits significant combinatorial complexity across multiple dimensions:
 
 - **599 test files** containing **10,947 test cases** across **204,165 lines of test code**
-- **Theoretical combination space: 3.97×10⁴** distinct test scenarios
-- **Actual test coverage: 27.59%** of theoretical space
-- **Package integration coverage: 10.28%** (170 tests for 1,653 possible package pairs)
-- **Path coverage explosion: 1.22×10⁵** theoretical execution paths
+- **Theoretical combination space: latest×10⁴** distinct test scenarios
+- **Actual test coverage: latest%** of theoretical space
+- **Package integration coverage: latest%** (170 tests for 1,653 possible package pairs)
+- **Path coverage explosion: latest×10⁵** theoretical execution paths
 
 ### Key Findings
 
-1. **High test density** (18.28 tests/file, 341 lines/file) indicates comprehensive unit testing
+1. **High test density** (latest tests/file, 341 lines/file) indicates comprehensive unit testing
 2. **Low integration coverage** suggests untested cross-package interaction scenarios
 3. **Minimal property-based testing** (34 instances) limits input domain exploration
 4. **Async complexity** creates 19,704 timing-related test combinations
@@ -29,14 +29,14 @@ The UNRDF test suite exhibits significant combinatorial complexity across multip
 
 ## 1. Test Infrastructure Metrics
 
-### 1.1 Overall Statistics
+### latest Overall Statistics
 
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **Total Test Files** | 599 | .test.mjs, .spec.mjs |
 | **Total Test Lines** | 204,165 | Excluding comments |
 | **Total Source Files** | 1,196 | .mjs files in packages/ |
-| **Test:Source Ratio** | 1:2.0 | 599 test files : 1,196 source files |
+| **Test:Source Ratio** | 1:latest | 599 test files : 1,196 source files |
 | **Packages** | 58 | Monorepo packages |
 | **Test Cases (it/test)** | 10,947 | 10,149 it() + 798 test() |
 | **Test Suites (describe)** | 3,800 | Grouping/organization |
@@ -50,10 +50,10 @@ The UNRDF test suite exhibits significant combinatorial complexity across multip
 | **Skipped/TODO Tests** | 33 | Coverage gaps |
 | **Integration Tests** | 170 | e2e/integration files |
 
-### 1.2 Test Density Distribution
+### latest Test Density Distribution
 
 ```
-Average tests per file:     18.28
+Average tests per file:     latest
 Average lines per file:     341
 Median file size:          ~300 lines (estimated)
 
@@ -65,9 +65,9 @@ Largest test files (lines):
   5. types.test.mjs (kgc-probe)      1,186 lines
 ```
 
-### 1.3 Test Framework Configuration
+### latest Test Framework Configuration
 
-- **Framework**: Vitest 4.0.16
+- **Framework**: Vitest latest
 - **Timeout SLA**: 5 seconds (Andon principle)
 - **Parallel Execution**: 10 max forks
 - **Coverage Target**: 80% (lines, functions, branches, statements)
@@ -77,12 +77,12 @@ Largest test files (lines):
 
 ## 2. Test Case Combinations
 
-### 2.1 Combinatorial Explosion Analysis
+### latest Combinatorial Explosion Analysis
 
 ```
 Test Density:
   - Total test cases: 10,947
-  - Tests per file: 18.28 (average)
+  - Tests per file: latest (average)
   - Test suites: 3,800
 
 Input Value Combinations:
@@ -91,7 +91,7 @@ Input Value Combinations:
   - Property-based test inputs: 34 generators
 ```
 
-### 2.2 Test Case Distribution
+### latest Test Case Distribution
 
 **By Package** (sample):
 ```
@@ -104,12 +104,12 @@ atomvm:         ~90+ tests (distributed systems)
 
 **By Category**:
 ```
-Unit Tests:         ~8,500 (77.6%)
-Integration Tests:  ~2,000 (18.3%)
-E2E Tests:          ~450 (4.1%)
+Unit Tests:         ~8,500 (latest%)
+Integration Tests:  ~2,000 (latest%)
+E2E Tests:          ~450 (latest%)
 ```
 
-### 2.3 Assertion Complexity
+### latest Assertion Complexity
 
 Most common assertion patterns:
 ```
@@ -121,7 +121,7 @@ expect.arrayContaining:   4 occurrences
 expect.stringMatching:    2 occurrences
 ```
 
-### 2.4 Untested Input Combinations
+### latest Untested Input Combinations
 
 **Estimated Gaps**:
 1. **Boundary value pairs**: For n parameters with k boundary values each, k^n combinations exist. Most tests use 1-2 boundary values per parameter.
@@ -132,16 +132,16 @@ expect.stringMatching:    2 occurrences
 
 ## 3. Mock Configuration Permutations
 
-### 3.1 Mock Complexity Metrics
+### latest Mock Complexity Metrics
 
 ```
 Mock Declarations:     596 files use mocking
 Mock Assertions:       305 explicit mock verifications
 Mock Objects Created:  297 custom mock implementations
-Average mocks/file:    0.99 (~1 mock per test file)
+Average mocks/file:    latest (~1 mock per test file)
 ```
 
-### 3.2 Mock State Explosion
+### latest Mock State Explosion
 
 **Each mock can be in one of 6 states**:
 1. Success (resolved value)
@@ -161,7 +161,7 @@ For files with 3 mocks:   6^3 = 216 possible combinations
 For files with 5 mocks:   6^5 = 7,776 possible combinations
 ```
 
-### 3.3 Common Mock Patterns
+### latest Common Mock Patterns
 
 ```javascript
 // Pattern 1: Simple success mock (most common)
@@ -183,7 +183,7 @@ vi.fn().mockResolvedValue(null)
 createMockStore([...quads])
 ```
 
-### 3.4 Timing and Race Conditions
+### latest Timing and Race Conditions
 
 ```
 Async test cases:    ~4,926 (45% of all tests)
@@ -197,17 +197,17 @@ Total combinations:  19,704 async × timing scenarios
 
 ## 4. Integration Test Matrices
 
-### 4.1 Package Interaction Space
+### latest Package Interaction Space
 
 ```
 Total packages:              58
 Possible package pairs:      C(58,2) = 1,653
 Integration test files:      170
-Integration coverage:        10.28%
-Untested package pairs:      ~1,483 (89.72%)
+Integration coverage:        latest%
+Untested package pairs:      ~1,483 (latest%)
 ```
 
-### 4.2 Integration Test Categories
+### latest Integration Test Categories
 
 **Files containing "integration", "e2e", or "cross-package"**: 170
 
@@ -218,7 +218,7 @@ Untested package pairs:      ~1,483 (89.72%)
 - `v6-core`: 3 integration tests
 - `atomvm`: 7 integration tests
 
-### 4.3 Multi-Layer Integration Patterns
+### latest Multi-Layer Integration Patterns
 
 **Tested Multi-Package Scenarios** (from e2e-cross-package-integration.test.mjs):
 1. Daemon + Core (RDF graph updates)
@@ -237,7 +237,7 @@ Untested package pairs:      ~1,483 (89.72%)
 - V6-Core + KGC-Runtime + Receipts (v6 governance stack)
 ```
 
-### 4.4 Integration Test Matrix (Partial)
+### latest Integration Test Matrix (Partial)
 
 | Package A | Package B | Tests | Status |
 |-----------|-----------|-------|--------|
@@ -258,15 +258,15 @@ Untested package pairs:      ~1,483 (89.72%)
 
 ## 5. Property-Based Testing Space
 
-### 5.1 Current Usage
+### latest Current Usage
 
 ```
 Property-based test instances: 34
 Frameworks detected:           fast-check (inferred)
-Percentage of tests using PBT: 0.31%
+Percentage of tests using PBT: latest%
 ```
 
-### 5.2 Input Domain Partitioning
+### latest Input Domain Partitioning
 
 **Current Approach**: Primarily example-based testing with hand-selected inputs.
 
@@ -277,7 +277,7 @@ Percentage of tests using PBT: 0.31%
 4. **Workflow State Machines**: Random transition sequences
 5. **Delta Operations**: Random insert/delete/update combinations
 
-### 5.3 Generator Complexity
+### latest Generator Complexity
 
 **Estimated Generator Space** (if implemented):
 ```
@@ -295,7 +295,7 @@ SPARQL Queries:
   - Total combinations: effectively infinite
 ```
 
-### 5.4 Shrinking Strategy Complexity
+### latest Shrinking Strategy Complexity
 
 Property-based testing shrinking strategies not currently implemented. When test fails with generated input, minimal reproduction case must be manually identified.
 
@@ -303,18 +303,18 @@ Property-based testing shrinking strategies not currently implemented. When test
 
 ## 6. Coverage Dimension Explosion
 
-### 6.1 Multi-Dimensional Coverage Space
+### latest Multi-Dimensional Coverage Space
 
 ```
 Coverage Dimensions:
   Lines:       204,165 test lines
   Functions:   10,947 test cases
   Branches:    19,000 (estimated: 3,800 suites × 5 branches avg)
-  Statements:  142,916 (estimated: lines × 0.7)
-  Paths:       1.22×10^5 (suites × 2^branches)
+  Statements:  142,916 (estimated: lines × latest)
+  Paths:       latest×10^5 (suites × 2^branches)
 ```
 
-### 6.2 Path Coverage Explosion
+### latest Path Coverage Explosion
 
 **Branch Explosion**:
 ```
@@ -330,7 +330,7 @@ Total theoretical paths: 3,800 × 32 = 121,600 paths
 - Each variant: 4-8 execution paths
 - Total paths: 20 × 4 × 6 = 480 paths (single file)
 
-### 6.3 Coverage Target vs Actual
+### latest Coverage Target vs Actual
 
 **Configuration Target**: 80% coverage (lines, functions, branches, statements)
 
@@ -340,7 +340,7 @@ Total theoretical paths: 3,800 × 32 = 121,600 paths
 - Branches: Unknown (likely 60-75%)
 - Statements: Unknown (likely 70-85%)
 
-### 6.4 Coverage Gaps by Package Tier
+### latest Coverage Gaps by Package Tier
 
 **Essential Tier** (7 packages):
 - Likely coverage: 80-90% (core packages)
@@ -358,7 +358,7 @@ Total theoretical paths: 3,800 × 32 = 121,600 paths
 
 ## 7. Total Combinatorial Space Analysis
 
-### 7.1 Dimension Summary
+### latest Dimension Summary
 
 ```
 Dimension                    | Values      | Combinations
@@ -371,17 +371,17 @@ Execution paths              | 121,600     | 2^branches × suites
 RDF triple space             | 10^18+      | Minimal sampling
 ```
 
-### 7.2 Theoretical vs Actual Coverage
+### latest Theoretical vs Actual Coverage
 
 ```
 COMBINATORIAL EXPLOSION ANALYSIS:
 
 1. TEST DENSITY:
-   Avg tests/file:     18.28
+   Avg tests/file:     latest
    Avg lines/file:     341
 
 2. MOCK STATE PERMUTATIONS:
-   Avg mocks/file:     0.99
+   Avg mocks/file:     latest
    States per mock:    6 (success/fail/partial/null/undefined/throw)
    Permutations/file:  6
 
@@ -389,13 +389,13 @@ COMBINATORIAL EXPLOSION ANALYSIS:
    Total packages:     58
    Possible pairs:     1,653
    Integration tests:  170
-   Coverage:           10.28%
+   Coverage:           latest%
 
 4. PATH COVERAGE EXPLOSION:
    Test suites:        3,800
    Avg branches/suite: 5
    Paths/suite:        32
-   Total paths:        1.22×10^5
+   Total paths:        latest×10^5
 
 5. ASYNC TIMING COMBINATIONS:
    Async tests:        ~4,926
@@ -403,16 +403,16 @@ COMBINATORIAL EXPLOSION ANALYSIS:
    Combinations:       19,704
 
 6. TOTAL COMBINATION SPACE:
-   Theoretical:        3.97×10^4
+   Theoretical:        latest×10^4
    Actual tests:       10,947
-   Coverage ratio:     27.59%
+   Coverage ratio:     latest%
 ```
 
-### 7.3 Untested Combination Identification
+### latest Untested Combination Identification
 
 **High-Priority Gaps**:
 
-1. **Cross-Package Error Propagation** (89.72% untested)
+1. **Cross-Package Error Propagation** (latest% untested)
    - Package A fails → Package B response
    - Error recovery across boundaries
    - Partial failure scenarios
@@ -427,7 +427,7 @@ COMBINATORIAL EXPLOSION ANALYSIS:
    - Concurrent state updates
    - State rollback scenarios
 
-4. **Property-Based Input Domains** (99.69% untested)
+4. **Property-Based Input Domains** (latest% untested)
    - Random RDF graph structures
    - Fuzzing SPARQL queries
    - Arbitrary workflow definitions
@@ -441,7 +441,7 @@ COMBINATORIAL EXPLOSION ANALYSIS:
 
 ## 8. Most Complex Test Scenarios
 
-### 8.1 Top 15 Most Complex Test Files (by lines)
+### latest Top 15 Most Complex Test Files (by lines)
 
 ```
 File                                           Lines  Est. Tests  Est. Paths
@@ -463,7 +463,7 @@ measurement.test.mjs                           960     ~25        ~200
 e2e-edge-cases.test.mjs                        930     ~35        ~280
 ```
 
-### 8.2 Complexity by Test Type
+### latest Complexity by Test Type
 
 **Van der Aalst Workflow Patterns** (yawl-patterns.test.mjs):
 - 20 core workflow patterns
@@ -488,7 +488,7 @@ e2e-edge-cases.test.mjs                        930     ~35        ~280
 - Validation helper tests
 - Edge case coverage: ~60%
 
-### 8.3 High Complexity Patterns
+### latest High Complexity Patterns
 
 **Pattern 1: Multi-Mock Async Workflows**
 ```javascript
@@ -539,9 +539,9 @@ describe('Feature', () => {
 
 ## 9. Recommendations
 
-### 9.1 High-Priority Actions
+### latest High-Priority Actions
 
-1. **Increase Integration Test Coverage** (Current: 10.28% → Target: 30%)
+1. **Increase Integration Test Coverage** (Current: latest% → Target: 30%)
    - Focus on critical package pairs (federation + streaming, kgc-4d + receipts)
    - Add multi-package failure scenario tests
    - Test cross-package error propagation
@@ -570,7 +570,7 @@ describe('Feature', () => {
    - Track coverage trends over time
    - Block PRs below 80% threshold
 
-### 9.2 Medium-Priority Actions
+### latest Medium-Priority Actions
 
 6. **Reduce Test File Complexity** (Current: Max 1,761 lines → Target: <800)
    - Split large test files into focused suites
@@ -593,7 +593,7 @@ describe('Feature', () => {
    - Measure test suite effectiveness
    - Identify weak assertions
 
-### 9.3 Long-Term Strategic Goals
+### latest Long-Term Strategic Goals
 
 10. **Combinatorial Test Generation** (Future)
     - Auto-generate test cases from schemas
@@ -614,14 +614,14 @@ describe('Feature', () => {
 
 ## 10. Conclusion
 
-The UNRDF test suite demonstrates **high unit test density** (18.28 tests/file) but exhibits significant **combinatorial coverage gaps**:
+The UNRDF test suite demonstrates **high unit test density** (latest tests/file) but exhibits significant **combinatorial coverage gaps**:
 
-- **Package integration**: 89.72% untested
+- **Package integration**: latest% untested
 - **Mock state combinations**: >80% untested
 - **Async timing scenarios**: >95% untested
-- **Property-based input domains**: 99.69% untested
+- **Property-based input domains**: latest% untested
 
-The **theoretical combination space** (3.97×10⁴) is **3.6× larger** than the actual test count (10,947), suggesting that strategic expansion in integration, property-based, and timing tests would yield the highest ROI for quality assurance.
+The **theoretical combination space** (latest×10⁴) is **latest× larger** than the actual test count (10,947), suggesting that strategic expansion in integration, property-based, and timing tests would yield the highest ROI for quality assurance.
 
 **Critical Path**: Focus on the 170 integration tests and expand to 500+ tests covering critical package pairs, then introduce property-based testing for core RDF/SPARQL operations.
 
@@ -646,7 +646,7 @@ The **theoretical combination space** (3.97×10⁴) is **3.6× larger** than the
 
 ### Integration Test Files
 
-See Section 4.2 for full list of 170 integration test files.
+See Section latest for full list of 170 integration test files.
 
 ### Root Test Directory
 

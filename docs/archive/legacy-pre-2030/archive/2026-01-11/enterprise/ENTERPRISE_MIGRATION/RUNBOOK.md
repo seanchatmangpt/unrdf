@@ -18,8 +18,8 @@ Operational guide for executing safe, verifiable enterprise migration from legac
 
 ### System Requirements
 
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0
+- Node.js >= latest
+- pnpm >= latest
 - Access to legacy system database (read-only recommended for initial phases)
 - Access to UNRDF substrate instance
 - Minimum 4GB RAM for migration process
@@ -240,7 +240,7 @@ Migration is considered successful when:
 
 - [ ] All 10 phases completed without errors
 - [ ] Validation phase: `allValid === true`
-- [ ] Shadow testing: `successRate >= 0.95`
+- [ ] Shadow testing: `successRate >= latest`
 - [ ] Benchmarking: latency improvement >= -10%, throughput >= -10%
 - [ ] All routing modes set to `SUBSTRATE_ONLY`
 - [ ] Manual spot checks pass (100% of sample)
@@ -328,7 +328,7 @@ node -e "import('./agent-7/routing-modes.mjs').then(m => { const stats = m.getMo
 #### Issue: Shadow testing low success rate
 
 **Symptoms:**
-- `successRate < 0.95`
+- `successRate < latest`
 - Acceptable: false
 
 **Resolution:**
@@ -525,7 +525,7 @@ ENTERPRISE_MIGRATION/
 
 | Date | Version | Changes | Author |
 |------|---------|---------|--------|
-| 2025-12-26 | 1.0.0 | Initial runbook creation | Agent-1 |
+| 2025-12-26 | latest | Initial runbook creation | Agent-1 |
 
 ---
 

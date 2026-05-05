@@ -1,4 +1,4 @@
-# v5.0.0-beta2 Requirements - Evidence-Based Assessment
+# vlatest Requirements - Evidence-Based Assessment
 
 **Date**: 2025-12-06
 **Branch**: `claude/v5-beta2-requirements-01NKQfQKwKizGRkgaAsnhRuC`
@@ -10,7 +10,7 @@
 
 **Status**: ❌ **NOT READY FOR BETA2**
 
-Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quality claims:
+Current vlatest.1 has **3 critical blockers** preventing validation of quality claims:
 1. Test suite hangs/timeouts (cannot verify "330/330 passing")
 2. Build system broken (missing build configs)
 3. OTEL validation fails (module resolution error)
@@ -129,29 +129,29 @@ Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quali
 
 ### 1. Version Alignment ✅
 
-**Status**: Complete - all packages at 5.0.0-beta.1
+**Status**: Complete - all packages at latest.1
 
 **Evidence**:
 ```bash
 # Command: cat packages/*/package.json | jq -r '"\(.name): \(.version)"' | sort
-# Result: All 16 packages show "5.0.0-beta.1"
+# Result: All 16 packages show "latest.1"
 
-@unrdf/browser: 5.0.0-beta.1
-@unrdf/cli: 5.0.0-beta.1
-@unrdf/composables: 5.0.0-beta.1
-@unrdf/core: 5.0.0-beta.1
-@unrdf/dark-matter: 5.0.0-beta.1
-@unrdf/domain: 5.0.0-beta.1
-@unrdf/engine-gateway: 5.0.0-beta.1
-@unrdf/federation: 5.0.0-beta.1
-@unrdf/hooks: 5.0.0-beta.1
-@unrdf/kgc-4d: 5.0.0-beta.1
-@unrdf/knowledge-engine: 5.0.0-beta.1
-@unrdf/oxigraph: 5.0.0-beta.1
-@unrdf/project-engine: 5.0.0-beta.1
-@unrdf/streaming: 5.0.0-beta.1
-@unrdf/test-utils: 5.0.0-beta.1
-@unrdf/validation: 5.0.0-beta.1
+@unrdf/browser: latest.1
+@unrdf/cli: latest.1
+@unrdf/composables: latest.1
+@unrdf/core: latest.1
+@unrdf/dark-matter: latest.1
+@unrdf/domain: latest.1
+@unrdf/engine-gateway: latest.1
+@unrdf/federation: latest.1
+@unrdf/hooks: latest.1
+@unrdf/kgc-4d: latest.1
+@unrdf/knowledge-engine: latest.1
+@unrdf/oxigraph: latest.1
+@unrdf/project-engine: latest.1
+@unrdf/streaming: latest.1
+@unrdf/test-utils: latest.1
+@unrdf/validation: latest.1
 ```
 
 **Confidence**: 100% (VERIFIED)
@@ -165,10 +165,10 @@ Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quali
 **Evidence**:
 ```bash
 # Command: pnpm install --no-frozen-lockfile
-# Result: Done in 39.4s using pnpm v10.23.0
+# Result: Done in latests using pnpm vlatest
 # Warnings: Peer dependency mismatches (non-critical)
-#   - @vitest/browser version mismatches (4.0.15 vs 1.6.1/2.1.9)
-#   - @vitest/ui version mismatch (4.0.15 available, 1.6.1 installed)
+#   - @vitest/browser version mismatches (latest vs latest/latest)
+#   - @vitest/ui version mismatch (latest available, latest installed)
 ```
 
 **Confidence**: 100% (VERIFIED)
@@ -248,14 +248,14 @@ Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quali
 | 40% faster queries | CHANGELOG.md:54 | ❌ NO | Cannot run benchmarks |
 | 60% lower memory | CHANGELOG.md:55 | ❌ NO | Cannot verify |
 | 100% N3 compliance | CHANGELOG.md:56 | ⚠️ PARTIAL | Not tested |
-| All packages 5.0.0-beta.1 | - | ✅ YES | Verified 16/16 packages |
+| All packages latest.1 | - | ✅ YES | Verified 16/16 packages |
 | packages/react removed | CHANGELOG.md:9 | ✅ YES | Confirmed missing |
 
 **Verification Rate**: 2/7 (29%) claims verified
 
 ---
 
-## 📋 v5.0.0-beta2 Checklist
+## 📋 vlatest Checklist
 
 ### Phase 1: Fix Critical Blockers (2-3 days)
 
@@ -315,13 +315,13 @@ Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quali
 
 **Documentation Updates**:
 - [ ] Update CHANGELOG.md with VERIFIED numbers only
-- [ ] Update RELEASE-PLAN-v5.0.0.md status (not "alpha.0")
+- [ ] Update RELEASE-PLAN-vlatest.md status (not "alpha.0")
 - [ ] Remove unverified performance claims
 
 ### Phase 4: Beta2 Release (1 day)
 
 **Version & Release**:
-- [ ] Bump all packages to 5.0.0-beta.2
+- [ ] Bump all packages to latest.2
 - [ ] Regenerate pnpm-lock.yaml (frozen lockfile)
 - [ ] Update CHANGELOG.md for beta.2 release
 - [ ] Create release notes with VERIFIED metrics ONLY
@@ -337,7 +337,7 @@ Current v5.0.0-beta.1 has **3 critical blockers** preventing validation of quali
 ## 🚨 Adversarial PM Assessment
 
 ### The Core Question
-**"Are we ready for v5.0.0-beta2?"**
+**"Are we ready for vlatest?"**
 
 **Answer**: **NO**
 
@@ -402,11 +402,11 @@ For each claim in CHANGELOG/RELEASE-PLAN:
 ```bash
 # Version verification
 timeout 5s cat packages/*/package.json | jq -r '"\(.name): \(.version)"' | sort
-# Result: ✅ All 16 packages at 5.0.0-beta.1
+# Result: ✅ All 16 packages at latest.1
 
 # Dependency installation
 timeout 30s pnpm install --no-frozen-lockfile
-# Result: ✅ Succeeded in 39.4s
+# Result: ✅ Succeeded in latests
 
 # Test suite execution
 timeout 60s pnpm test
@@ -489,7 +489,7 @@ find packages -name "build.config.mjs"
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Author**: Claude (Adversarial PM mode)
 **Status**: ⚠️ CRITICAL BLOCKERS IDENTIFIED

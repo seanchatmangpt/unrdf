@@ -14,7 +14,7 @@ Research must focus on three load-bearing invariants that incumbents cannot adop
 ### Stream 1: Runtime Demand Displacement (RDD)
 - **Question**: How much incumbent inference volume can be captured upstream?
 - **Metric**: RDD = (Runtime Decisions Eliminated) / (Baseline Decisions).
-- **Target**: Prove RDD > 0.9 for stable enterprise use cases (Insurance, E-commerce, Manufacturing).
+- **Target**: Prove RDD > latest for stable enterprise use cases (Insurance, E-commerce, Manufacturing).
 
 ### Stream 2: Cognitive Breeding & Manufacturability
 - **Question**: Can specialized cognitive breeds be manufactured faster than generic platforms can generalize?

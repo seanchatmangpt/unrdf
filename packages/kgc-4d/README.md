@@ -1,6 +1,6 @@
 # KGC 4D Engine
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green) ![Tests](https://img.shields.io/badge/tests-176%2F176-brightgreen) ![Coverage](https://img.shields.io/badge/test%20coverage-99.8%25-brightgreen)
+![Version](https://img.shields.io/badge/version-[VERSION]--beta.1-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green) ![Tests](https://img.shields.io/badge/tests-176%2F176-brightgreen) ![Coverage](https://img.shields.io/badge/test%20coverage-99.8%25-brightgreen)
 
 **A 4-dimensional knowledge graph engine** combining Observable State, nanosecond-precision Time, Vector causality, and Git References into a unified, auditable data structure.
 
@@ -127,7 +127,7 @@ See [all explanations →](docs/explanations/README.md)
 
 ## Production Status
 
-**Version**: 5.0.0-beta.1
+**Version**: [VERSION]-beta.1
 **Tests**: ✅ 176/176 passing (100%)
 **OTEL Validation**: ✅ 100/100 (production ready)
 **Poka-Yoke Guards**: ✅ 24/24 from FMEA analysis

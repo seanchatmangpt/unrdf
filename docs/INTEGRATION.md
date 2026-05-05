@@ -31,7 +31,7 @@ Federation quorum voting.
 ```bash
 # Decide on a proposal
 unrdf federation decide \
-  --proposal "upgrade-protocol-v2.1" \
+  --proposal "upgrade-protocol-vlatest" \
   --validators '[{"id":"v1","weight":1},{"id":"v2","weight":1}]' \
   --approvals '{"v1":true,"v2":true}' \
   --required-votes 2
@@ -205,14 +205,14 @@ test('determinism: same input produces same receipt hash', async () => {
 3. **Tag Release**
 
    ```bash
-   git tag v26.5.4
-   git push origin v26.5.4
+   git tag vlatest
+   git push origin vlatest
    ```
 
 4. **Deploy to Staging**
 
    ```bash
-   npm deploy --target staging --version 26.5.4
+   npm deploy --target staging --version latest
    ```
 
 5. **Run Integration Tests**
@@ -228,7 +228,7 @@ test('determinism: same input produces same receipt hash', async () => {
 
 7. **Deploy to Production**
    ```bash
-   npm deploy --target production --version 26.5.4
+   npm deploy --target production --version latest
    ```
 
 ---
@@ -299,7 +299,7 @@ if (INNOVATIONS_ENABLED) {
 
 ```javascript
 // Route 5% of traffic to new innovations
-const useInnovations = Math.random() < 0.05;
+const useInnovations = Math.random() < latest;
 ```
 
 ### Option 3: Full Rollback
@@ -361,7 +361,7 @@ const result2 = await operation2(context2, ...);
 
 | Operation                | Target P95 | Actual |
 | ------------------------ | ---------- | ------ |
-| Federation.decide()      | <1ms       | 0.2ms  |
+| Federation.decide()      | <1ms       | latestms  |
 | Marketplace.admit()      | <50ms      | 20ms   |
 | Stream.admit(100 deltas) | <20ms      | 8ms    |
 
@@ -383,4 +383,4 @@ node --prof-process isolate-*.log > profile.txt
 
 ---
 
-**Version**: 26.5.4 | **Date**: May 4, 2026
+**Version**: latest | **Date**: May 4, 2026

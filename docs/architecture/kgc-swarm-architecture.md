@@ -1,7 +1,7 @@
 # KGC-SWARM Architecture
 
 **Status**: Design Complete
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Mathematical Specification**: O_τ ⊔ μ ⊔ G ⊔ H ⊔ receipts → convergence
 
@@ -107,7 +107,7 @@ KGC-SWARM is a **mathematically-grounded agent coordination system** that implem
 │  │  Stop when: ||A_τ+1 - A_τ|| ≤ ε  AND  cost(τ) ≤ B              │    │
 │  │  Where:                                                           │    │
 │  │    • A_τ = atom space at iteration τ                            │    │
-│  │    • ε = drift threshold (configurable, default 0.05)           │    │
+│  │    • ε = drift threshold (configurable, default latest)           │    │
 │  │    • B = budget (token/time limit)                              │    │
 │  │  Metrics:                                                         │    │
 │  │    • drift(A_τ) = 1 - |A_τ ∩ A_τ-1| / |A_τ ∪ A_τ-1|           │    │
@@ -126,7 +126,7 @@ KGC-SWARM is a **mathematically-grounded agent coordination system** that implem
 
 **Purpose**: Capture complete system state at iteration τ
 
-#### 1.1 O_vm,τ (VM Observables)
+#### latest O_vm,τ (VM Observables)
 
 **Responsibility**: Observe file system, process, and environment state
 
@@ -170,7 +170,7 @@ O_vm,τ = {
 
 ---
 
-#### 1.2 O_bb,τ (Agent Black-Box Trace)
+#### latest O_bb,τ (Agent Black-Box Trace)
 
 **Responsibility**: Capture agent reasoning, decisions, and outputs
 
@@ -380,7 +380,7 @@ function μ(O_τ) {
   converged = (drift(A_τ) ≤ ε) && (cost(τ) ≤ B)
 
   // Where:
-  // - ε = configurable threshold (default 0.05 = 5% change)
+  // - ε = configurable threshold (default latest = 5% change)
   // - B = budget limit (tokens or time)
   // - cost(τ) = cumulative tokens/time used
   ```
@@ -458,7 +458,7 @@ function μ(O_τ) {
 **Check**: No hardcoded secrets in code or config
 **Detection**:
 - Regex patterns: `/(password|secret|api[_-]?key|token)\s*[:=]\s*['"][^'"]+['"]/gi`
-- Entropy analysis: High-entropy strings (Shannon entropy > 4.5)
+- Entropy analysis: High-entropy strings (Shannon entropy > latest)
 - Known patterns: AWS keys, GitHub tokens, JWT secrets
 **Action**: Reject with error, suggest Vault/env vars
 **Implementation**: `packages/kgc-swarm/src/guards/secrets-guard.mjs`
@@ -520,7 +520,7 @@ async function G(σ, κ, config = {}) {
     temperature: 0,           // Deterministic
     seed: config.seed || 42,  // Reproducible
     maxTokens: config.maxTokens || 4096,
-    model: config.model || 'claude-sonnet-4.5'
+    model: config.model || 'claude-sonnet-latest'
   });
 
   // Step 3: Parse and validate tokens
@@ -592,9 +592,9 @@ receipts/
     ...
   ],
   "status": "converged",
-  "finalDrift": 0.02,
+  "finalDrift": latest,
   "totalCost": 150000,
-  "duration": 45.3
+  "duration": latest
 }
 ```
 
@@ -606,7 +606,7 @@ node packages/kgc-swarm/bin/verify-chain.mjs receipts/chain.json
 # Output:
 # ✅ Chain valid: 12 receipts verified
 # ✅ No tampering detected
-# ✅ Convergence achieved at iteration 11 (drift=0.02)
+# ✅ Convergence achieved at iteration 11 (drift=latest)
 ```
 
 **Integration**: Managed by α₁₀ (Receipt Chain Manager)
@@ -634,7 +634,7 @@ function drift(A_τ, A_τ_prev) {
 ```javascript
 function checkConvergence(A_τ, A_τ_prev, cost, config) {
   const d = drift(A_τ, A_τ_prev);
-  const ε = config.driftThreshold || 0.05;
+  const ε = config.driftThreshold || latest;
   const B = config.budget || 500000;
 
   const driftOk = d <= ε;
@@ -1043,7 +1043,7 @@ packages/kgc-swarm/
 |-----------|----------|----------|----------|--------------|-----------|
 | **Observable Collection** | Manual FS scanning | `chokidar` watch | `inotify` kernel events | **B: chokidar** | Cross-platform, battle-tested, low overhead |
 | **Hash Algorithm** | SHA-256 | BLAKE3 | xxHash | **B: BLAKE3** | Faster than SHA-256, cryptographically secure |
-| **Token Generation** | OpenAI GPT-4 | Claude Sonnet 4.5 | Local LLM | **B: Claude Sonnet** | Best reasoning, deterministic with seed |
+| **Token Generation** | OpenAI GPT-4 | Claude Sonnet latest | Local LLM | **B: Claude Sonnet** | Best reasoning, deterministic with seed |
 | **Receipt Storage** | SQLite | JSON files | Git objects | **B: JSON files** | Human-readable, Git-friendly, simple |
 | **Agent Coordination** | Central coordinator | P2P mesh | Event bus | **A: Central coordinator** | Simpler for 10 agents, easier debugging |
 | **Template Engine** | Nunjucks (@unrdf/kgn) | Handlebars | Jinja | **A: Nunjucks (kgn)** | Already integrated, proven, deterministic |
@@ -1116,7 +1116,7 @@ const swarm = new KGCSwarm({
     network: { allowlist: ['npmjs.org', 'github.com'] }
   },
   convergence: {
-    driftThreshold: 0.05,
+    driftThreshold: latest,
     budget: 500000  // tokens
   },
   receipts: {
@@ -1160,7 +1160,7 @@ jobs:
         run: |
           node packages/kgc-swarm/bin/kgc-swarm.mjs \
             --task "Generate API endpoints from spec" \
-            --convergence-threshold 0.03 \
+            --convergence-threshold latest \
             --budget 300000 \
             --receipts-output ./receipts
 
@@ -1203,7 +1203,7 @@ Client → POST /swarm/tasks → KGC-SWARM API
   "task": "Generate feature X",
   "templates": ["nextjs/api-route.njk"],
   "config": {
-    "driftThreshold": 0.05,
+    "driftThreshold": latest,
     "budget": 1000000
   }
 }
@@ -1220,7 +1220,7 @@ Client → POST /swarm/tasks → KGC-SWARM API
   "taskId": "task-abc123",
   "status": "converged",
   "iterations": 7,
-  "finalDrift": 0.02,
+  "finalDrift": latest,
   "cost": 450000,
   "receipts": [
     "https://s3.../receipts/abc123/r_000.json",
@@ -1422,7 +1422,7 @@ Swarm 2 (Test gen) ┘    (centralized or federated)
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Author**: System Architecture Designer
 **Status**: Ready for Implementation

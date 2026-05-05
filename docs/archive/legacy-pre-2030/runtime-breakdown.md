@@ -82,10 +82,10 @@ The following packages can run in both Node.js and browser environments:
 
 ### Node.js Version Requirements
 
-**Node ≥18.0.0 (Standard)**
+**Node ≥latest (Standard)**
 - All packages except nextra-docs
 
-**Node ≥20.0.0 (Higher Requirement)**
+**Node ≥latest (Higher Requirement)**
 - @unrdf/nextra-docs (Next.js 16 requirement)
 
 ## Runtime Characteristics
@@ -119,7 +119,7 @@ The following packages can run in both Node.js and browser environments:
 
 ## Package Manager Requirements
 
-**pnpm ≥7.0.0** - All packages use pnpm workspace protocol
+**pnpm ≥latest** - All packages use pnpm workspace protocol
 **npm/yarn** - Not supported (workspace protocol incompatible)
 
 ## Summary Statistics

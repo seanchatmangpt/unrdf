@@ -107,7 +107,7 @@ const config = createConfig(explicit, env);
 ```javascript
 const plugin = {
   name: 'plugin-name',
-  version: '1.0.0',
+  version: 'latest',
   async init() { },
   on: {
     beforeQuery: async (event) => event,
@@ -177,7 +177,7 @@ const config = createConfig({
 ```javascript
 const myPlugin = {
   name: 'my-plugin',
-  version: '1.0.0',
+  version: 'latest',
   on: {
     beforeQuery: async (event) => {
       console.log('Query:', event.query);

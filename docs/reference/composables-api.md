@@ -1,6 +1,6 @@
 # Composables API Reference
 
-**Version**: v4.1.1
+**Version**: latest
 **Package**: `unrdf/composables`
 **Module**: `composables`
 
@@ -51,7 +51,7 @@ runApp(async () => {
 
 **See Also**: [setStoreContext](#setstorecontext), [useStoreContext](#usestorecontext)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -80,7 +80,7 @@ const graph = useGraph();
 
 **See Also**: [initStore](#initstore), [useStoreContext](#usestorecontext)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -123,7 +123,7 @@ runApp(() => {
 
 **See Also**: [initStore](#initstore), [setStoreContext](#setstorecontext)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -398,7 +398,7 @@ runApp(async () => {
 
 **See Also**: [initStore](#initstore), [useTurtle](#useturtle)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -477,7 +477,7 @@ console.log(ttl);
 
 **See Also**: [useGraph](#usegraph), [parseTurtle](./core-rdf-api.md#parseturtle)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -599,7 +599,7 @@ graph.add(triple);
 
 **See Also**: [useGraph](#usegraph), [DataFactory](./core-rdf-api.md#datafactory)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -631,7 +631,7 @@ console.log(prefixed); // 'ex:alice'
 
 **See Also**: [useTerms](#useterms)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -687,7 +687,7 @@ console.log('Conforms:', report.conforms);
 
 **See Also**: [validateShacl](./core-rdf-api.md#validateshacl)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -734,7 +734,7 @@ console.log('Reasoned store has', reasoned.size, 'quads');
 
 **See Also**: [reason](./core-rdf-api.md#reason)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -797,7 +797,7 @@ console.log('Stores are isomorphic:', iso);
 
 **See Also**: [canonicalize](./core-rdf-api.md#canonicalize), [isIsomorphic](./core-rdf-api.md#isisomorphic)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -824,7 +824,7 @@ if (!validation.success) {
 
 **See Also**: [Schemas Reference](./schemas.md)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -897,7 +897,7 @@ console.log('Store updated');
 
 **See Also**: [TransactionManager](./knowledge-hooks-api.md#transactionmanager)
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 

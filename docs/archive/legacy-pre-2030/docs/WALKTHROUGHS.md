@@ -44,7 +44,7 @@ import { createStore } from '@unrdf/oxigraph';
 // Define people and relationships in Turtle format
 const data = `
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   @prefix schema: <https://schema.org/> .
 
   # People
@@ -95,7 +95,7 @@ import { executeSelectSync } from '@unrdf/core';
  */
 export function findAllPeople() {
   const sparql = `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
     SELECT ?name ?age ?job
     WHERE {
@@ -124,7 +124,7 @@ export function findAllPeople() {
  */
 export function findRelationships() {
   const sparql = `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
     SELECT ?person1Name ?person2Name
     WHERE {
@@ -151,7 +151,7 @@ export function findRelationships() {
  */
 export function findByJob(jobTitle) {
   const sparql = `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
     PREFIX schema: <https://schema.org/>
 
     SELECT ?name ?age
@@ -180,7 +180,7 @@ export function findByJob(jobTitle) {
  */
 export function findMutualConnections() {
   const sparql = `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
     SELECT ?person1Name ?person2Name
     WHERE {
@@ -303,7 +303,7 @@ import { executeSelectSync } from '@unrdf/core';
 // Load sample data
 const data = `
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
   ex:Alice foaf:name "Alice" ; foaf:age 30 .
   ex:Bob foaf:name "Bob" ; foaf:age 28 .
@@ -323,7 +323,7 @@ const queries = {
   '1': {
     name: 'List all people',
     sparql: `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX foaf: <http://xmlns.com/foaf/latest/>
       SELECT ?name ?age WHERE {
         ?person foaf:name ?name ;
                 foaf:age ?age .
@@ -426,7 +426,7 @@ const logNewPersonHook = {
     description: 'Logs when a new person is added'
   },
   trigger: 'INSERT',
-  pattern: '?person <http://xmlns.com/foaf/0.1/name> ?name .',
+  pattern: '?person <http://xmlns.com/foaf/latest/name> ?name .',
 
   run(event) {
     const personURI = event.quad.subject.value;
@@ -442,7 +442,7 @@ const validateAgeHook = {
     description: 'Ensures age is valid'
   },
   trigger: 'INSERT',
-  pattern: '?person <http://xmlns.com/foaf/0.1/age> ?age .',
+  pattern: '?person <http://xmlns.com/foaf/latest/age> ?age .',
 
   run(event) {
     const age = parseInt(event.quad.object.value);
@@ -464,14 +464,14 @@ const store = createStore();
 console.log('Adding Alice...');
 store.add(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/latest/name'),
   literal('Alice')
 );
 
 console.log('\nAdding Alice\'s age...');
 store.add(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/age'),
+  namedNode('http://xmlns.com/foaf/latest/age'),
   literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
 );
 

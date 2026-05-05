@@ -184,7 +184,7 @@
 
 **Key Attributes**:
 - `package_name` (string): npm package name (e.g., oxigraph, zod)
-- `version` (string): Exact version (e.g., 1.2.0)
+- `version` (string): Exact version (e.g., latest)
 - `used_by` (array<Package>): Which packages declare this dependency
 - `type` (enum): "production" | "development"
 - `is_unused` (boolean): True if declared but not actually used
@@ -259,10 +259,10 @@ src/utils.mjs (private)
 
 ```
 Shared dependency: oxigraph
-  ├── @unrdf/core: 1.2.0
-  ├── @unrdf/streaming: 1.2.0 ✓
-  ├── @unrdf/federation: 1.2.0 ✓
-  └── All other packages: 1.2.0 ✓
+  ├── @unrdf/core: latest
+  ├── @unrdf/streaming: latest ✓
+  ├── @unrdf/federation: latest ✓
+  └── All other packages: latest ✓
 ```
 
 **Constraint**: All packages using same shared dep must have identical version

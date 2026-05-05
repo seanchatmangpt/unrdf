@@ -423,7 +423,7 @@ export function createGovernanceEngine(options = {}) {
   const defaultPolicy = {
     id: crypto.randomUUID(),
     name: options.name || 'default-governance',
-    version: '1.0.0',
+    version: 'latest',
     defaultPermission: options.defaultPermission || 'deny',
     roles: options.roles || [],
     globalRules: options.globalRules || [],

@@ -177,12 +177,12 @@ export function executeHook(hook, quad) {
 ### Fix 2: Fast-path for Validation-Only Hooks (1-2 hours, 5.8x improvement)
 Pre-validated schemas can skip full Zod parsing.
 
-See: `BENCHMARKS.md` section 4.1.2
+See: `BENCHMARKS.md` section [VERSION]
 
 ### Fix 3: Schema Compilation (30 min, 5-10% additional)
 Pre-compile Zod schemas at initialization instead of per-operation.
 
-See: `BENCHMARKS.md` section 4.1.3
+See: `BENCHMARKS.md` section [VERSION]
 
 **Decision tree for latency**:
 ```

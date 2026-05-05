@@ -36,7 +36,7 @@ Step 1: Define the Problem (with Measurement) → Step 2: Ask Why #1 → Step 3:
 
 **Principle**: Start with the observable symptom, not assumptions about cause.
 
-#### 1.1: Collect Baseline Data (DMAIC Measurement)
+#### latest: Collect Baseline Data (DMAIC Measurement)
 
 **Action**: Measure current state to establish baseline before root cause analysis.
 
@@ -162,7 +162,7 @@ pnpm test test_concurrent_increment 2>&1 | tee error_log.txt
 
 **Action**: Confirm root cause hypothesis.
 
-#### 4.1: Test Root Cause Hypothesis
+#### latest: Test Root Cause Hypothesis
 
 **Action**: Verify that fixing root cause prevents the problem.
 
@@ -192,7 +192,7 @@ value += 1; // Entire operation protected by lock
 // Verification: Run test 100 times, should have 0 failures
 ```
 
-#### 4.2: Check for Contributing Factors
+#### latest: Check for Contributing Factors
 
 **Action**: Identify other factors that contribute to the problem.
 
@@ -224,7 +224,7 @@ value += 1; // Entire operation protected by lock
 
 **Action**: Implement fix that addresses root cause.
 
-#### 5.1: Design Fix
+#### latest: Design Fix
 
 **Action**: Design solution that addresses root cause.
 
@@ -253,7 +253,7 @@ value += 1; // Entire operation protected by lock
 **Prevention**: Add test that would catch this pattern
 ```
 
-#### 5.2: Implement Fix
+#### latest: Implement Fix
 
 **Action**: Implement the fix.
 
@@ -273,7 +273,7 @@ let value = counter.lock().;
 // Lock released here, after operation complete
 ```
 
-#### 5.3: Verify Fix
+#### latest: Verify Fix
 
 **Action**: Ensure fix prevents the problem.
 
@@ -297,7 +297,7 @@ pnpm test
 # Expected: All tests pass
 ```
 
-#### 5.4: Measure Improvement (DMAIC Measurement)
+#### latest: Measure Improvement (DMAIC Measurement)
 
 **Action**: Measure improvement against baseline data.
 
@@ -344,7 +344,7 @@ done | sort | uniq -c
 - Root cause addressed: Lock scope correct
 ```
 
-#### 5.5: Create Todo List for Prevention
+#### latest: Create Todo List for Prevention
 
 **CRITICAL**: Do NOT just document prevention. Create todos and implement prevention measures.
 
@@ -425,7 +425,7 @@ function incrementCounter(counter) {
 
 **Principle**: Implement prevention measures, don't document them separately. Todos track progress, prevention measures prevent recurrence.
 
-#### 5.6: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to prevent root cause from returning.
 
@@ -480,7 +480,7 @@ function incrementCounter(counter) {
 
 **Principle**: Implement controls to prevent root cause recurrence, don't just document them. Todos track progress, controls prevent recurrence.
 
-#### 5.7: Monitor (DMAIC Control)
+#### latest: Monitor (DMAIC Control)
 
 **Action**: Monitor to ensure root cause doesn't return.
 
@@ -583,7 +583,7 @@ Prevent: Add test to catch pattern
 
 - Focus: Quality and defect prevention
 - Methodology: Primarily DMADV (Define, Measure, Analyze, Design, Verify)
-- Goal: Achieve Six Sigma quality levels (3.4 defects per million opportunities)
+- Goal: Achieve Six Sigma quality levels (latest defects per million opportunities)
 - Approach: Design quality into products/processes from the start
 - Scope: Reduces defects and variability, but may not explicitly address waste elimination
 

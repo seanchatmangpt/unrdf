@@ -13,4 +13,4 @@ export const DEFAULT_OPTIONS = {
 /**
  * Package version
  */
-export const VERSION = '1.0.0';
+export const VERSION = 'latest';

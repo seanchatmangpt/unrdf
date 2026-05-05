@@ -1,4 +1,4 @@
-# UNRDF v26.5.4 Documentation Index
+# UNRDF vlatest Documentation Index
 
 **Welcome to UNRDF documentation.** Choose your path below:
 
@@ -298,7 +298,7 @@ Verification that everything is ready:
 - **Total Pages**: ~150 pages of documentation
 - **Packages**: 10 focused modules
 - **VOCs Analyzed**: 7 synthetic customer personas
-- **Size Reduction**: 68-69% (2.5MB → 150KB-880KB)
+- **Size Reduction**: 68-69% (latestMB → 150KB-880KB)
 - **Dependencies**: Acyclic, workspace-linked
 
 ## Next Steps
@@ -313,6 +313,6 @@ Verification that everything is ready:
 
 **Status**: ✅ Complete and validated
 **Last Updated**: December 3, 2025
-**Version**: v5.0-alpha.0
+**Version**: vlatest.0
 
 See [../MONOREPO-IMPLEMENTATION-SUMMARY.md](../MONOREPO-IMPLEMENTATION-SUMMARY.md) for what was accomplished.

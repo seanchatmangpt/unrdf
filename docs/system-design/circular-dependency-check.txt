@@ -4,7 +4,7 @@
 
 Generated: 2025-12-27
 Package: @unrdf/kgc-probe
-Version: 1.0.0
+Version: latest
 Verification Method: Topological Sort + Static Analysis
 
 ================================================================================
@@ -170,7 +170,7 @@ Analysis performed by: Agent-3 (System Architect)
 Date: 2025-12-27
 Confidence: HIGH (formal proof + static analysis alignment)
 
-This document certifies that @unrdf/kgc-probe v1.0.0 has been analyzed
+This document certifies that @unrdf/kgc-probe latest has been analyzed
 for circular dependencies and NONE were found.
 
 ================================================================================

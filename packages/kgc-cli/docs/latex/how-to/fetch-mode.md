@@ -140,7 +140,7 @@ Before fetching:
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {},
   "createdAt": "2025-12-27T10:00:00.000Z",
@@ -152,7 +152,7 @@ After fetching `lipsum.sty`:
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {
     "lipsum.sty": {

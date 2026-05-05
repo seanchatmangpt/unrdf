@@ -6,7 +6,7 @@
  * optimization suggestions for maintaining healthy package dependencies.
  *
  * @module dependency-analyzer
- * @version 1.0.0
+ * @version [VERSION]
  *
  * @example
  * ```javascript

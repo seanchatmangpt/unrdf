@@ -1,8 +1,8 @@
 # Architecture Validation Report
 **Date:** 2025-12-25
 **Previous Grade:** C+ (65/100)
-**Current Grade:** A- (85.35/100)
-**Improvement:** +20.35 points (+31.3%)
+**Current Grade:** A- (latest/100)
+**Improvement:** +latest points (+latest%)
 
 ---
 
@@ -13,11 +13,11 @@
 **Key Achievements:**
 - ✅ OTEL separation: 100% compliance (0 violations in core business logic)
 - ✅ OTEL validation: 100/100 score (all features passing)
-- ✅ Module coupling: 2.15 avg imports/file (excellent low coupling)
-- ✅ Pure functions: 90.7% maintained
-- ✅ Test coverage: Core 100%, YAWL 97.3%
+- ✅ Module coupling: latest avg imports/file (excellent low coupling)
+- ✅ Pure functions: latest% maintained
+- ✅ Test coverage: Core 100%, YAWL latest%
 - ⚠️ File sizes: 70 violations (improved from 83, but still far from target ≤10)
-- ⚠️ Type safety: 79.6% JSDoc coverage (target: 100%)
+- ⚠️ Type safety: latest% JSDoc coverage (target: 100%)
 
 ---
 
@@ -27,16 +27,16 @@
 **Score: 17/20 (85%)**
 
 **Status:** Unable to measure directly (madge timeout), but proxy metrics excellent:
-- Average imports per file: **2.15** (very low coupling)
+- Average imports per file: **latest** (very low coupling)
 - YAWL engine-core: only 4 imports
-- Low inheritance: only 24 class extensions across 461 files (5.2%)
+- Low inheritance: only 24 class extensions across 461 files (latest%)
 
 **Evidence:**
 ```bash
 $ find packages/yawl/src -name "*.mjs" -type f -print0 | \
   xargs -0 -I {} sh -c 'imports=$(grep -c "^import" {} 2>/dev/null || echo 0); echo "{}: $imports"' | \
   awk -F: '{sum+=$2; count++} END {print "Average imports per file:", sum/count}'
-Average imports per file: 2.15385
+Average imports per file: latest
 
 $ grep -r "class.*extends|implements" packages/*/src --include="*.mjs" | wc -l
 24
@@ -47,10 +47,10 @@ $ grep -r "class.*extends|implements" packages/*/src --include="*.mjs" | wc -l
 ---
 
 ### 2. Module Coupling (15% weight)
-**Score: 14.25/15 (95%)**
+**Score: latest/15 (95%)**
 
 **Metrics:**
-- Average imports per file: 2.15 (excellent)
+- Average imports per file: latest (excellent)
 - Most modules have 1-4 imports
 - Clear module boundaries
 - Minimal cross-cutting concerns
@@ -71,16 +71,16 @@ $ find packages/yawl/src -name "*.mjs" | xargs grep -h "^import.*from '\." | \
 ---
 
 ### 3. File Size Compliance (15% weight)
-**Score: 7.5/15 (50%)**
+**Score: latest/15 (50%)**
 
 **Status:** ⚠️ Still significant violations
 
 **Metrics:**
 - Total source files: 461
-- Files >500 lines: **70** (15.18%)
-- Files >1000 lines: **6** (1.3%)
+- Files >500 lines: **70** (latest%)
+- Files >1000 lines: **6** (latest%)
 - Target: ≤10 files >500 lines
-- **Improvement:** 83 → 70 violations (-13 files, -15.7%)
+- **Improvement:** 83 → 70 violations (-13 files, -latest%)
 
 **Evidence:**
 ```bash
@@ -133,13 +133,13 @@ packages/validation/src/otel-validator-core.mjs:import { trace, metrics, SpanSta
 ---
 
 ### 5. Pure Functions (15% weight)
-**Score: 13.6/15 (90.7%)**
+**Score: latest/15 (latest%)**
 
 **Status:** Maintained from previous refactor
 
 **Metrics:**
-- Pure function ratio: 90.7%
-- Error handling: 176/461 files (38.2%) with try/catch
+- Pure function ratio: latest%
+- Error handling: 176/461 files (latest%) with try/catch
 - Minimal side effects
 
 **Evidence:**
@@ -158,7 +158,7 @@ $ find packages -name "*.mjs" -path "*/src/*" -exec grep -l "try.*catch|throw ne
 **Status:** Good but needs improvement for 100% coverage
 
 **Metrics:**
-- Files with JSDoc: 367/461 (79.6%)
+- Files with JSDoc: 367/461 (latest%)
 - YAWL files missing JSDoc: 11
 - Total exported functions (YAWL): 231
 
@@ -172,7 +172,7 @@ $ find packages/yawl/src -name "*.mjs" -type f | xargs grep -l "^export" | \
 11
 ```
 
-**Assessment:** Strong type hints but not 100%. Need to document remaining 94 files (20.4%).
+**Assessment:** Strong type hints but not 100%. Need to document remaining 94 files (latest%).
 
 ---
 
@@ -204,25 +204,25 @@ $ grep -r "createStore" packages/*/src --include="*.mjs" | grep -v "@unrdf/oxigr
 
 **Score: 100/100** ✅
 
-**Validation Suite:** comprehensive-v3.1.0
+**Validation Suite:** comprehensive-vlatest
 **Duration:** 1232ms
 **Features:** 6/6 passed
 
 **Feature Details:**
 | Feature | Score | Latency | Error Rate | Throughput | Memory |
 |---------|-------|---------|------------|------------|--------|
-| knowledge-engine-core | 100/100 | 9.6ms | 0.00% | 5 ops | 12.17MB |
-| knowledge-hooks-api | 100/100 | 9.5ms | 0.00% | 4 ops | 12.63MB |
-| policy-packs | 100/100 | 11ms | 0.00% | 3 ops | 12.86MB |
-| lockchain-integrity | 100/100 | 12.3ms | 0.00% | 3 ops | 13.06MB |
-| transaction-manager | 100/100 | 6.7ms | 0.00% | 3 ops | 9.95MB |
-| browser-compatibility | 100/100 | 17.7ms | 0.00% | 3 ops | 10.16MB |
+| knowledge-engine-core | 100/100 | latestms | latest% | 5 ops | latestMB |
+| knowledge-hooks-api | 100/100 | latestms | latest% | 4 ops | latestMB |
+| policy-packs | 100/100 | 11ms | latest% | 3 ops | latestMB |
+| lockchain-integrity | 100/100 | latestms | latest% | 3 ops | latestMB |
+| transaction-manager | 100/100 | latestms | latest% | 3 ops | latestMB |
+| browser-compatibility | 100/100 | latestms | latest% | 3 ops | latestMB |
 
 **Evidence:**
 ```bash
 $ timeout 30s node validation/run-all.mjs comprehensive
 📊 Validation Results:
-   Suite: comprehensive-v3.1.0
+   Suite: comprehensive-vlatest
    Duration: 1232ms
    Score: 100/100
    Features: 6/6 passed
@@ -242,17 +242,17 @@ $ timeout 30s node validation/run-all.mjs comprehensive
 $ timeout 10s pnpm --filter @unrdf/core test
  Test Files  6 passed (6)
       Tests  231 passed (231)
-   Duration  1.89s
+   Duration  latests
 ```
 
 ### YAWL Package
-**Status:** ⚠️ 97.3% passing (2 failures)
+**Status:** ⚠️ latest% passing (2 failures)
 
 ```bash
 $ timeout 10s pnpm --filter @unrdf/yawl test
  Test Files  2 failed | 6 passed (8)
       Tests  8 failed | 284 passed (292)
-   Duration  3.88s
+   Duration  latests
 ```
 
 **Failing Tests:**
@@ -267,14 +267,14 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 
 | Component | Weight | Status | Score | Points | Evidence |
 |-----------|--------|--------|-------|--------|----------|
-| **Circular Dependencies** | 20% | Low coupling (2.15 avg imports) | 85% | **17.0/20** | Manual analysis + coupling metrics |
-| **Module Coupling** | 15% | 2.15 avg imports/file | 95% | **14.25/15** | Import pattern analysis |
-| **File Sizes** | 15% | 70 violations (15.2%), improved from 83 | 50% | **7.5/15** | 70/461 files >500 lines |
-| **OTEL Separation** | 20% | 0 violations in core/domain | 100% | **20.0/20** | 0 OTEL imports in business logic |
-| **Pure Functions** | 15% | 90.7% pure functions | 91% | **13.6/15** | 176/461 files with error handling |
-| **Type Safety (JSDoc)** | 10% | 79.6% coverage (367/461 files) | 80% | **8.0/10** | JSDoc annotation coverage |
-| **Architecture Layering** | 5% | 0 N3 violations, clean separation | 100% | **5.0/5** | 0 forbidden imports |
-| | | | **TOTAL** | **85.35/100** | **A- (85%)** |
+| **Circular Dependencies** | 20% | Low coupling (latest avg imports) | 85% | **latest/20** | Manual analysis + coupling metrics |
+| **Module Coupling** | 15% | latest avg imports/file | 95% | **latest/15** | Import pattern analysis |
+| **File Sizes** | 15% | 70 violations (latest%), improved from 83 | 50% | **latest/15** | 70/461 files >500 lines |
+| **OTEL Separation** | 20% | 0 violations in core/domain | 100% | **latest/20** | 0 OTEL imports in business logic |
+| **Pure Functions** | 15% | latest% pure functions | 91% | **latest/15** | 176/461 files with error handling |
+| **Type Safety (JSDoc)** | 10% | latest% coverage (367/461 files) | 80% | **latest/10** | JSDoc annotation coverage |
+| **Architecture Layering** | 5% | 0 N3 violations, clean separation | 100% | **latest/5** | 0 forbidden imports |
+| | | | **TOTAL** | **latest/100** | **A- (85%)** |
 
 ---
 
@@ -282,21 +282,21 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 
 | Metric | Previous (C+) | Current (A-) | Change |
 |--------|---------------|--------------|--------|
-| **Overall Grade** | 65/100 | 85.35/100 | **+20.35** (+31.3%) |
-| Circular Dependencies | 10/20 (50%) | 17/20 (85%) | **+7.0** |
-| Module Coupling | 9/15 (60%) | 14.25/15 (95%) | **+5.25** |
-| File Sizes | 3/15 (20%) | 7.5/15 (50%) | **+4.5** |
-| OTEL Separation | 16/20 (80%) | 20/20 (100%) | **+4.0** |
-| Pure Functions | 13.6/15 (91%) | 13.6/15 (91%) | **0.0** (maintained) |
-| Type Safety | 6/10 (60%) | 8/10 (80%) | **+2.0** |
-| Layering | 4/5 (80%) | 5/5 (100%) | **+1.0** |
+| **Overall Grade** | 65/100 | latest/100 | **+latest** (+latest%) |
+| Circular Dependencies | 10/20 (50%) | 17/20 (85%) | **+latest** |
+| Module Coupling | 9/15 (60%) | latest/15 (95%) | **+latest** |
+| File Sizes | 3/15 (20%) | latest/15 (50%) | **+latest** |
+| OTEL Separation | 16/20 (80%) | 20/20 (100%) | **+latest** |
+| Pure Functions | latest/15 (91%) | latest/15 (91%) | **latest** (maintained) |
+| Type Safety | 6/10 (60%) | 8/10 (80%) | **+latest** |
+| Layering | 4/5 (80%) | 5/5 (100%) | **+latest** |
 
 **Key Improvements:**
 1. **OTEL Separation:** 80% → 100% (+20%) - Perfect compliance achieved
 2. **Module Coupling:** 60% → 95% (+35%) - Excellent decoupling
 3. **Circular Dependencies:** 50% → 85% (+35%) - Low coupling verified
 4. **Type Safety:** 60% → 80% (+20%) - Improved JSDoc coverage
-5. **File Sizes:** 20% → 50% (+30%) - Reduced violations by 15.7%
+5. **File Sizes:** 20% → 50% (+30%) - Reduced violations by latest%
 
 ---
 
@@ -325,7 +325,7 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 - Break query optimizer into strategy pattern
 
 **2. Type Safety Coverage (94 files missing JSDoc)**
-- **Current:** 367/461 files (79.6%)
+- **Current:** 367/461 files (latest%)
 - **Target:** 461/461 files (100%)
 - **Gap:** 94 files need type annotations
 - **Impact:** IDE support, type checking, documentation
@@ -343,7 +343,7 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 - **Impact:** Edge case handling, production stability
 
 **4. Error Handling Coverage (285 files without try/catch)**
-- **Current:** 176/461 files (38.2%)
+- **Current:** 176/461 files (latest%)
 - **Target:** 100% on public APIs
 - **Impact:** Resilience, debugging
 
@@ -351,9 +351,9 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 
 ## Path to A+ (95/100)
 
-**Current Grade:** A- (85.35/100)
+**Current Grade:** A- (latest/100)
 **Target Grade:** A+ (95/100)
-**Gap:** 9.65 points
+**Gap:** latest points
 
 **Roadmap:**
 
@@ -361,7 +361,7 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 **Target:** Reduce >500 line files from 70 to ≤20 (85% improvement)
 - Refactor top 6 files >1000 lines → 3 points
 - Refactor 50 files 500-1000 lines → 2 points
-- **New File Sizes Score:** 12.5/15 (83%) vs current 7.5/15 (50%)
+- **New File Sizes Score:** latest/15 (83%) vs current latest/15 (50%)
 
 ### Phase 2: Type Safety to 100% (+2 points)
 **Target:** 461/461 files with JSDoc (100%)
@@ -369,11 +369,11 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 - Add ESLint enforcement
 - **New Type Safety Score:** 10/10 (100%) vs current 8/10 (80%)
 
-### Phase 3: Error Handling (+1.5 points)
+### Phase 3: Error Handling (+latest points)
 **Target:** 95% of public APIs with proper error handling
 - Add try/catch to 100 critical paths
 - Document error conditions
-- **New Pure Functions Score:** 15/15 (100%) vs current 13.6/15 (91%)
+- **New Pure Functions Score:** 15/15 (100%) vs current latest/15 (91%)
 
 ### Phase 4: Circular Dependency Verification (+1 point)
 **Target:** Install and run madge successfully
@@ -381,7 +381,7 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 - Verify 0 circular dependencies
 - **New Circular Deps Score:** 20/20 (100%) vs current 17/20 (85%)
 
-### Phase 5: YAWL Test Fixes (+0.15 points)
+### Phase 5: YAWL Test Fixes (+latest points)
 **Target:** 100% test pass rate
 - Fix WP18 resource allocation
 - Fix WP20 cancellation logic
@@ -390,14 +390,14 @@ $ timeout 10s pnpm --filter @unrdf/yawl test
 **Projected A+ Score:**
 ```
 Circular Deps:  20/20   (current 17/20, +3)
-Module Coupling: 14.25/15 (no change)
-File Sizes:      12.5/15  (current 7.5/15, +5)
+Module Coupling: latest/15 (no change)
+File Sizes:      latest/15  (current latest/15, +5)
 OTEL Separation: 20/20   (no change)
-Pure Functions:  15/15    (current 13.6/15, +1.4)
+Pure Functions:  15/15    (current latest/15, +latest)
 Type Safety:     10/10    (current 8/10, +2)
 Layering:        5/5      (no change)
 
-TOTAL: 96.75/100 = A+ (97%)
+TOTAL: latest/100 = A+ (97%)
 ```
 
 ---
@@ -413,9 +413,9 @@ TOTAL: 96.75/100 = A+ (97%)
 - Proper OTEL separation
 
 ### ⚠️ Needs Monitoring
-- YAWL tests: 284/292 (97.3%, 2 edge case failures)
+- YAWL tests: 284/292 (latest%, 2 edge case failures)
 - File sizes: 70 violations (being tracked)
-- Error handling: 38.2% coverage (adequate for now)
+- Error handling: latest% coverage (adequate for now)
 
 ### 🔧 Recommended Before A+ Certification
 1. Fix 2 YAWL test failures (WP18, WP20)
@@ -427,15 +427,15 @@ TOTAL: 96.75/100 = A+ (97%)
 
 ## Conclusion
 
-**Grade Improvement: C+ (65%) → A- (85%) = +31.3% improvement ✅**
+**Grade Improvement: C+ (65%) → A- (85%) = +latest% improvement ✅**
 
 The architecture has significantly improved and is **production-ready** with the current A- grade. All critical architectural principles are maintained:
 
 1. ✅ Zero OTEL in business logic (100% separation)
-2. ✅ Low module coupling (2.15 avg imports/file)
+2. ✅ Low module coupling (latest avg imports/file)
 3. ✅ Clean layering (0 forbidden imports)
-4. ✅ High purity (90.7% pure functions)
-5. ✅ Excellent test coverage (Core 100%, YAWL 97.3%)
+4. ✅ High purity (latest% pure functions)
+5. ✅ Excellent test coverage (Core 100%, YAWL latest%)
 6. ✅ OTEL validation perfect (100/100)
 
 **No architectural regressions detected.** All improvements from previous sessions maintained.

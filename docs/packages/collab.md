@@ -2,7 +2,7 @@
 
 > Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

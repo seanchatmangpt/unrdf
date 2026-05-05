@@ -517,7 +517,7 @@ This document defines the comprehensive testing requirements and acceptance crit
 This Definition of Done testing document ensures comprehensive validation of the KGC JS sidecar project across all dimensions: functionality, performance, security, reliability, and maintainability. All criteria must be met before any feature or release can be considered complete.
 
 **Last Updated**: 2024-01-XX
-**Version**: 1.0.0
+**Version**: latest
 **Next Review**: 2024-02-XX
 
 

@@ -1,7 +1,7 @@
 {
   "id": "receipt-61ed57e743574d49",
   "timestamp_ns": "1766798019862000000",
-  "timestamp_iso": "2025-12-27T01:13:39.862Z",
+  "timestamp_iso": "2025-12-27T01:13:latestZ",
   "phase": "reconciliation",
   "status": "SUCCESS",
   "tranches_reconciled": 10,

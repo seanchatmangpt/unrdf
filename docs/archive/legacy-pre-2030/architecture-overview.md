@@ -88,7 +88,7 @@ UNRDF uses *two* RDF stores, not one. This might seem redundant, but it's a deli
 │  │                         │      │                         │  │
 │  │  Pros:                  │      │  Pros:                  │  │
 │  │  - 100% JavaScript      │      │  - Native performance   │  │
-│  │  - Easy debugging       │      │  - Full SPARQL 1.1      │  │
+│  │  - Easy debugging       │      │  - Full SPARQL latest      │  │
 │  │  - Streaming support    │      │  - Persistent storage   │  │
 │  │                         │      │                         │  │
 │  │  Cons:                  │      │  Cons:                  │  │

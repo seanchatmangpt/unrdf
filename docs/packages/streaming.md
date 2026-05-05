@@ -2,7 +2,7 @@
 
 > UNRDF Streaming - Change Feeds and Real-time Synchronization
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Essential
 
 ## Overview

@@ -26,7 +26,7 @@ describe('scaffold.mjs', () => {
       }
 
       // Create a minimal DiataxisEntry
-      const entry = createDiataxisEntry('test-package', '1.0.0', {
+      const entry = createDiataxisEntry('test-package', '[VERSION]', {
         readmeHeadings: ['Installation', 'Usage'],
         docsFiles: ['api.md'],
         examplesFiles: ['example.js'],
@@ -153,7 +153,7 @@ describe('scaffold.mjs', () => {
         await rm(emptyOutputDir, { recursive: true, force: true });
       }
 
-      const entry = createDiataxisEntry('empty-package', '0.0.1', {});
+      const entry = createDiataxisEntry('empty-package', '[VERSION]', {});
 
       const result = await generateScaffold(entry, emptyOutputDir);
 
@@ -180,7 +180,7 @@ describe('scaffold.mjs', () => {
       // Set deterministic mode
       process.env.DETERMINISTIC = '1';
 
-      const entry = createDiataxisEntry('test-deterministic', '1.0.0', {
+      const entry = createDiataxisEntry('test-deterministic', '[VERSION]', {
         tutorials: [
           {
             title: 'Test Tutorial',
@@ -214,7 +214,7 @@ describe('scaffold.mjs', () => {
         await rm(escapeTestDir, { recursive: true, force: true });
       }
 
-      const entry = createDiataxisEntry('escape-test', '1.0.0', {
+      const entry = createDiataxisEntry('escape-test', '[VERSION]', {
         reference: {
           title: 'Reference',
           items: [

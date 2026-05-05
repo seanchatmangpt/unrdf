@@ -2,8 +2,8 @@
 
 **Date:** 2025-12-27
 **Benchmark Version:** Mock Mode (45 synthetic extensions)
-**Node Version:** v22.21.1
-**Environment:** Linux 4.4.0
+**Node Version:** [VERSION]
+**Environment:** Linux [VERSION]
 
 ## Executive Summary
 
@@ -244,9 +244,9 @@ Routing performance is independent of registry size. Expected to maintain sub-mi
 
 **Environment:**
 
-- Node.js: v22.21.1
+- Node.js: [VERSION]
 - V8 GC: Exposed for accurate memory profiling
-- OS: Linux 4.4.0
+- OS: Linux [VERSION]
 - CPU: (Not specified - user environment)
 
 ### Reproducibility

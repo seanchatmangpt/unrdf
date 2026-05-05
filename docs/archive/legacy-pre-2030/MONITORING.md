@@ -1,6 +1,6 @@
 # UNRDF Production Monitoring Guide
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-25
 **Methodology**: Big Bang 80/20 - Production-Grade Observability
 
@@ -30,7 +30,7 @@ import { createUnrdfHealthChecks } from '@unrdf/core/health';
 // Create health check system
 const health = createUnrdfHealthChecks({
   serviceName: 'unrdf-api',
-  version: '5.0.1',
+  version: 'latest',
   dependencies: {
     database: async () => await db.ping(),
     cache: async () => await redis.ping(),
@@ -75,7 +75,7 @@ logger.error('Database error', { query: 'SELECT *' }, error);
 const timer = performanceTimer();
 await doWork();
 logger.performance('Query execution', timer.end());
-// Output: { duration: 42.5, timestamp: '2025-12-25T...' }
+// Output: { duration: latest, timestamp: '2025-12-25T...' }
 
 // Slow query detection (auto-warns if >100ms)
 logger.slowQuery('complex-query', 150, 100);
@@ -104,7 +104,7 @@ await handleRequest();
 metrics.recordDuration('request_duration', timer, { endpoint: '/api/query' });
 
 // Summary: Custom percentiles (P50, P95, P99)
-metrics.recordSummary('query_duration', 0.042);
+metrics.recordSummary('query_duration', latest);
 
 // Export to Prometheus
 const prometheusFormat = metrics.toPrometheus();
@@ -175,33 +175,33 @@ unrdf_dependency_status{status="connected"} == 1
 
 ```promql
 # P95 latency (target: <100ms)
-histogram_quantile(0.95, rate(unrdf_request_duration_seconds_bucket[5m])) < 0.1
+histogram_quantile(latest, rate(unrdf_request_duration_seconds_bucket[5m])) < latest
 
 # P99 latency (target: <500ms)
-histogram_quantile(0.99, rate(unrdf_request_duration_seconds_bucket[5m])) < 0.5
+histogram_quantile(latest, rate(unrdf_request_duration_seconds_bucket[5m])) < latest
 
-# Slow queries (target: <0.1/sec)
-rate(unrdf_slow_queries_total[5m]) < 0.1
+# Slow queries (target: <latest/sec)
+rate(unrdf_slow_queries_total[5m]) < latest
 ```
 
 ### 3. Error Metrics
 
 ```promql
 # Error rate (target: <1%)
-rate(unrdf_errors_total[5m]) / rate(unrdf_requests_total[5m]) < 0.01
+rate(unrdf_errors_total[5m]) / rate(unrdf_requests_total[5m]) < latest
 
 # Test failure rate (target: <5%)
-unrdf_test_failures_total / unrdf_test_total < 0.05
+unrdf_test_failures_total / unrdf_test_total < latest
 ```
 
 ### 4. Resource Metrics
 
 ```promql
 # Memory usage (target: <85%)
-unrdf_memory_heap_used_bytes / unrdf_memory_heap_total_bytes < 0.85
+unrdf_memory_heap_used_bytes / unrdf_memory_heap_total_bytes < latest
 
 # CPU usage (target: <80%)
-rate(process_cpu_seconds_total[5m]) < 0.8
+rate(process_cpu_seconds_total[5m]) < latest
 
 # Memory leak detection (increase >1MB/s for 1h)
 rate(unrdf_memory_heap_used_bytes[1h]) < 1048576
@@ -223,7 +223,7 @@ rate(unrdf_memory_heap_used_bytes[1h]) < 1048576
 
 1. **HighTestFailureRate** - Test failure >5% for 5 minutes
 2. **HighP95Latency** - P95 latency >100ms for 5 minutes
-3. **SlowQueryDetected** - Slow queries >0.1/sec for 5 minutes
+3. **SlowQueryDetected** - Slow queries >latest/sec for 5 minutes
 4. **HighMemoryUsage** - Memory >85% for 10 minutes
 5. **IncreasedErrorRate** - Error rate 2x hourly average
 
@@ -278,7 +278,7 @@ app.use(requestLogger({ logBody: false }));
 // Health check endpoints
 const health = createHealthMiddleware({
   serviceName: 'unrdf-api',
-  version: '5.0.1',
+  version: 'latest',
   dependencies: {
     database: async () => await db.ping()
   }
@@ -320,7 +320,7 @@ spec:
     spec:
       containers:
       - name: unrdf-api
-        image: unrdf/api:5.0.1
+        image: unrdf/api:latest
         ports:
         - containerPort: 3000
 

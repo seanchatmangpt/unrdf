@@ -141,7 +141,7 @@ import { usePrefixes } from 'unrdf';
 const prefixes = usePrefixes();
 prefixes.register({
   ex: 'http://example.org/',
-  foaf: 'http://xmlns.com/foaf/0.1/'
+  foaf: 'http://xmlns.com/foaf/latest/'
 });
 
 const expanded = prefixes.expand('ex:person'); // http://example.org/person

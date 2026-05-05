@@ -35,7 +35,7 @@ import dashboard from './dashboard.mjs';
  */
 const CLI_CONFIG = {
   name: 'security',
-  version: '1.0.0',
+  version: '[VERSION]',
   description: 'UNRDF Monorepo Security Scanner'
 };
 

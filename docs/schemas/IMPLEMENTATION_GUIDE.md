@@ -70,7 +70,7 @@ function createRuntimeObservation(agentId, output) {
     input: {
       // Capture minimal input for reproducibility
       checkTime: new Date().toISOString(),
-      agentVersion: '1.0.0'
+      agentVersion: 'latest'
     },
     output: {
       nodeVersion: process.version.slice(1), // Remove 'v' prefix

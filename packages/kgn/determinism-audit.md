@@ -342,7 +342,7 @@ Given('a KGEN template system', function() {
 Given('a fixed set of input data', function() {
   this.inputData = {
     project: 'test-project',
-    version: '1.0.0',
+    version: 'latest',
     metadata: {
       buildTime: '2025-01-01T00:00:00.000Z',
       targetPlatform: 'universal'

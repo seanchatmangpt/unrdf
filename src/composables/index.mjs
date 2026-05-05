@@ -4,7 +4,7 @@
  * This module exports all the composable functions that make up the unrdf API.
  * Each composable enforces a single, opinionated path through the RDF universe.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

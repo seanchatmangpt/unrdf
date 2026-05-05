@@ -554,13 +554,13 @@ echo "Secret rotation complete"
 
 ```bash
 # Using Trivy (recommended)
-trivy image unrdf-daemon:1.0.0
+trivy image unrdf-daemon:[VERSION]
 
 # Using Grype
-grype unrdf-daemon:1.0.0
+grype unrdf-daemon:[VERSION]
 
 # Using Snyk
-snyk container test unrdf-daemon:1.0.0
+snyk container test unrdf-daemon:[VERSION]
 
 # Expected output format:
 # ✓ 0 critical vulnerabilities

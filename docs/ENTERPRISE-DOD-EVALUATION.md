@@ -2,7 +2,7 @@
 ## UNRDF Knowledge Graph Control JS Sidecar
 
 **Evaluation Date**: 2025-09-30
-**Version**: 1.0.1
+**Version**: latest
 **Evaluator**: Hive Mind Collective Intelligence System
 
 ---
@@ -169,10 +169,10 @@ backpressure: z.object({
 - ✅ Monitoring tests: `/test/knowledge-engine/hooks/monitoring-observability.test.mjs`
 - ⚠️ package.json has OTel dependencies:
   ```json
-  "@opentelemetry/api": "^1.7.0",
-  "@opentelemetry/auto-instrumentations-node": "^0.40.0",
-  "@opentelemetry/exporter-jaeger": "^1.17.0",
-  "@opentelemetry/exporter-prometheus": "^0.45.0"
+  "@opentelemetry/api": "^latest",
+  "@opentelemetry/auto-instrumentations-node": "^latest",
+  "@opentelemetry/exporter-jaeger": "^latest",
+  "@opentelemetry/exporter-prometheus": "^latest"
   ```
 - ❌ No OTel instrumentation code in src/
 - ❌ No Grafana/Prometheus dashboards
@@ -208,7 +208,7 @@ backpressure: z.object({
   - Edge cases: ✅ (multiple edge case test files)
   - Compliance: ✅ (`hooks/compliance-audit.test.mjs`)
 
-- ⚠️ Test pass rate: 301/459 passing (65.6%)
+- ⚠️ Test pass rate: 301/459 passing (latest%)
   - **158 failures** (mostly query engine errors, see completion report)
 
 - ❌ Missing:
@@ -285,19 +285,19 @@ const ConditionSchema = z.discriminatedUnion("kind", [
 | Node version pinned | ✅ Yes | engines in package.json |
 | Deterministic builds | ⚠️ Partial | No lockfile verification |
 | Artifact signing | ❌ Missing | No provenance |
-| SemVer | ✅ Yes | Version 1.0.1 |
+| SemVer | ✅ Yes | Version latest |
 | Changelog | ⚠️ Partial | No CHANGELOG.md |
 | Rollback plan | ❌ Missing | No rollback procedures |
 
 **Findings**:
 - ✅ Pure ESM (all `.mjs`)
-- ✅ Node >=18.0.0 requirement
+- ✅ Node >=latest requirement
 - ✅ pnpm lockfile (pnpm-lock.yaml)
 - ✅ Volta version pinning:
   ```json
   "volta": {
-    "node": "18.19.0",
-    "pnpm": "8.15.0"
+    "node": "latest",
+    "pnpm": "latest"
   }
   ```
 - ⚠️ No CHANGELOG.md (use `changelogen`)
@@ -401,10 +401,10 @@ const ManagerConfigSchema = z.object({
   - Condition evaluators (SPARQL/SHACL)
   - Effect sandbox
 - ✅ Dependency versions in package.json:
-  - N3: ^1.17.0
-  - Comunica: ^3.0.0
-  - rdf-canonize: ^2.0.0
-  - Zod: ^3.22.0
+  - N3: ^latest
+  - Comunica: ^latest
+  - rdf-canonize: ^latest
+  - Zod: ^latest
 - ⚠️ No compatibility matrix (Node versions, RDF libs)
 - ❌ No deprecation timeline
 
@@ -525,7 +525,7 @@ docs/
 | Clean environment demo | ❌ Missing | No demo recording |
 
 **Findings**:
-- ⚠️ Test failures: 158/459 (34.4% failure rate)
+- ⚠️ Test failures: 158/459 (latest% failure rate)
   - Mostly query engine source identification errors
   - Not blocking for release but should be triaged
 - ❌ No formal sign-off process
@@ -604,7 +604,7 @@ docs/
    - [ ] Document observability architecture
 
 3. **SLO Definition** (1 day)
-   - [ ] Define availability SLO (99.9%?)
+   - [ ] Define availability SLO (latest%?)
    - [ ] Define latency SLO (p99 <100ms?)
    - [ ] Create error budget policy
    - [ ] Document SLI collection
@@ -774,5 +774,5 @@ The UNRDF Knowledge Graph Control JS Sidecar demonstrates **exceptional engineer
 
 **Evaluated By**: Hive Mind Collective Intelligence System
 **Confidence**: HIGH (98%)
-**Report Version**: 1.0
+**Report Version**: latest
 **Last Updated**: 2025-09-30

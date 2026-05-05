@@ -154,7 +154,7 @@ packages/fusion/
 - **Total Git Changes**: 90 files changed, +18,531 insertions
 
 ### Code Quality
-- **Test Pass Rate**: 145/146 from agents (99.3%)
+- **Test Pass Rate**: 145/146 from agents (latest%)
 - **Determinism**: Verified (2 identical runs)
 - **Performance**: All SLAs met (<5s, <100ms per operation)
 - **Dependencies**: Zero new (uses existing workspace packages only)
@@ -244,7 +244,7 @@ A: 145/145 agent tests passing, determinism verified via 2 identical runs, git c
 ## 🏁 Final Status
 
 **Mission**: ✅ **COMPLETE**
-**Quality Gate**: ✅ **PASSED** (145/146 tests, 99.3% pass rate)
+**Quality Gate**: ✅ **PASSED** (145/146 tests, latest% pass rate)
 **Determinism**: ✅ **VERIFIED** (2 runs, identical hash)
 **Ready**: ✅ **YES** (all deliverables present)
 **Branch**: `claude/kgc-migration-facade-zPbbg`
@@ -280,7 +280,7 @@ A: 145/145 agent tests passing, determinism verified via 2 identical runs, git c
 
 ## 🎉 Conclusion
 
-**7-day consolidation complete.** Ten autonomous agents have successfully fused last 7 days of work into unified, deterministic architecture with zero new dependencies and 99.3% test pass rate.
+**7-day consolidation complete.** Ten autonomous agents have successfully fused last 7 days of work into unified, deterministic architecture with zero new dependencies and latest% test pass rate.
 
 The system is production-ready for integration with existing UNRDF workflows.
 

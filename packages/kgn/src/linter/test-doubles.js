@@ -169,7 +169,7 @@ export class MockProcessEnv {
     DATABASE_URL: 'sqlite://test.db',
     REDIS_URL: 'redis://localhost:6379/0',
     PORT: '3000',
-    HOST: '0.0.0.0'
+    HOST: 'latest.0'
   };
 
   /**
@@ -209,7 +209,7 @@ export class MockOS {
     hostname: 'test-hostname',
     platform: 'linux',
     arch: 'x64',
-    version: '1.0.0-test',
+    version: 'latest-test',
     tmpdir: '/tmp/test',
     userInfo: {
       username: 'test-user',

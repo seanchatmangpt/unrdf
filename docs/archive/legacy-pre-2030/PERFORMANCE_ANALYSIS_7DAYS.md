@@ -29,11 +29,11 @@
 
 | Operation | Target (P95) | Actual (P95) | Improvement | Status |
 |-----------|--------------|--------------|-------------|--------|
-| Receipt Creation | <1ms | 0.017ms | **-98.3%** | ✅ PASS |
-| Delta Validation | <5ms | 0.005ms | **-99.9%** | ✅ PASS |
-| Receipt Verification | <0.5ms | 0.000ms | **-99.9%** | ✅ PASS |
-| Receipt Chain (10) | <50ms | 0.347ms | **-99.3%** | ✅ PASS |
-| Chain Verification (10) | <20ms | 0.002ms | **-100.0%** | ✅ PASS |
+| Receipt Creation | <1ms | latestms | **-latest%** | ✅ PASS |
+| Delta Validation | <5ms | latestms | **-latest%** | ✅ PASS |
+| Receipt Verification | <latestms | latestms | **-latest%** | ✅ PASS |
+| Receipt Chain (10) | <50ms | latestms | **-latest%** | ✅ PASS |
+| Chain Verification (10) | <20ms | latestms | **-latest%** | ✅ PASS |
 
 **Source**: `/home/user/unrdf/benchmarks/v6-performance-report.md` (2025-12-27)
 
@@ -41,16 +41,16 @@
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Receipt Creation | 10,000 ops/sec | **83,895 ops/sec** | ✅ 8.4x target |
-| Receipt Verification | 100,000 ops/sec | **4,573,038 ops/sec** | ✅ 45.7x target |
+| Receipt Creation | 10,000 ops/sec | **83,895 ops/sec** | ✅ latestx target |
+| Receipt Verification | 100,000 ops/sec | **4,573,038 ops/sec** | ✅ latestx target |
 | Chain Verification (10) | - | **594,421 ops/sec** | ✅ Excellent |
 
 ### Memory Efficiency
 
-- **1,000 receipts**: +819.41 KB heap (+839.07 B per receipt)
-- **10,000 receipts stress test**: +11.39 MB (71,655 receipts/sec)
-- **Memory leak**: ✅ NO (0.31% growth)
-- **Memory per receipt**: 839.07 B (target: <1 KB) ✅ PASS
+- **1,000 receipts**: +latest KB heap (+latest B per receipt)
+- **10,000 receipts stress test**: +latest MB (71,655 receipts/sec)
+- **Memory leak**: ✅ NO (latest% growth)
+- **Memory per receipt**: latest B (target: <1 KB) ✅ PASS
 
 ### Commit Impact: `1c4e223a` - Receipts Merkle Tree Refinement
 
@@ -71,37 +71,37 @@
 ### Benchmark Suite Added
 
 **New Benchmark Files** (5 files, ~37 KB total):
-1. `01-operation-scheduling.bench.mjs` (5.2 KB)
-2. `02-concurrent-throughput.bench.mjs` (6.5 KB)
-3. `03-memory-load.bench.mjs` (7.5 KB)
-4. `04-raft-replication.bench.mjs` (8.2 KB)
-5. `05-yawl-execution.bench.mjs` (9.9 KB)
+1. `01-operation-scheduling.bench.mjs` (latest KB)
+2. `02-concurrent-throughput.bench.mjs` (latest KB)
+3. `03-memory-load.bench.mjs` (latest KB)
+4. `04-raft-replication.bench.mjs` (latest KB)
+5. `05-yawl-execution.bench.mjs` (latest KB)
 
 ### Daemon Performance Baselines Established
 
 | Metric | Target | Unit | Baseline | Status |
 |--------|--------|------|----------|--------|
-| Operation Scheduling Latency | <0.5ms (p99) | ms | 0.15ms | ✅ 3.3x better |
+| Operation Scheduling Latency | <latestms (p99) | ms | latestms | ✅ latestx better |
 | Operation Scheduling Throughput | >8000 | ops/sec | 8,500 | ✅ 106% target |
 | Concurrent Execution Throughput | >5000 | ops/sec | 5,200 | ✅ 104% target |
-| Execution Latency (P95) | <5ms | ms | 3.5ms | ✅ 30% better |
-| Execution Latency (P99) | <10ms | ms | 5.2ms | ✅ 48% better |
+| Execution Latency (P95) | <5ms | ms | latestms | ✅ 30% better |
+| Execution Latency (P99) | <10ms | ms | latestms | ✅ 48% better |
 
 ### YAWL Workflow Performance
 
 | Workflow Type | Target | Actual | Status |
 |---------------|--------|--------|--------|
-| Sequential Workflow | <150ms | 125.5ms | ✅ 16% faster |
-| Parallel Workflow | <120ms | 85.3ms | ✅ 29% faster |
-| Conditional Workflow | <130ms | 95.8ms | ✅ 26% faster |
-| Mixed Workflow Throughput | >8 workflows/sec | 8.5 workflows/sec | ✅ 106% target |
+| Sequential Workflow | <150ms | latestms | ✅ 16% faster |
+| Parallel Workflow | <120ms | latestms | ✅ 29% faster |
+| Conditional Workflow | <130ms | latestms | ✅ 26% faster |
+| Mixed Workflow Throughput | >8 workflows/sec | latest workflows/sec | ✅ 106% target |
 
 ### Raft Consensus Performance
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Leader Replication Latency (P95) | <15ms | 8.5ms | ✅ 43% faster |
-| Consensus Commit Latency (P95) | <20ms | 12.3ms | ✅ 38% faster |
+| Leader Replication Latency (P95) | <15ms | latestms | ✅ 43% faster |
+| Consensus Commit Latency (P95) | <20ms | latestms | ✅ 38% faster |
 | Replication Throughput | >1000 ops/sec | 1,200 ops/sec | ✅ 120% target |
 
 ### Integration Test Results
@@ -118,7 +118,7 @@
 ### Overall System Throughput (Post-Merge Results)
 
 **Baseline**: 83 ops/sec (10k universes in 120s SLA)
-**Actual**: **474.7 ops/sec** (10k universes in 21.1s)
+**Actual**: **latest ops/sec** (10k universes in latests)
 
 **Improvement**: **+472%** (82% faster than SLA)
 
@@ -126,12 +126,12 @@
 
 | Operation | Count | Duration | Throughput | Baseline | Improvement |
 |-----------|-------|----------|------------|----------|-------------|
-| Universe Creation | 10,000 | 6.1s | 1,632 ops/sec | 10.5s | **+42%** |
-| Morphism Application | 10,000 | 5.0s | 2,017 ops/sec | 4.2ms (p95) | **+88%** |
-| Receipt Generation | 10,000 | 4.8s | 2,100 ops/sec | 425 ops/sec | **+394%** |
-| Universe Freezing | 10,000 | 4.8s | 2,073 ops/sec | - | ✅ Excellent |
-| Merkle Tree Building | 1,000 | 0.3s | 2,968 ops/sec | - | ✅ Excellent |
-| Chain Verification | 10,000 | 0.001s | 8,154,472 ops/sec | - | ✅ Outstanding |
+| Universe Creation | 10,000 | latests | 1,632 ops/sec | latests | **+42%** |
+| Morphism Application | 10,000 | latests | 2,017 ops/sec | latestms (p95) | **+88%** |
+| Receipt Generation | 10,000 | latests | 2,100 ops/sec | 425 ops/sec | **+394%** |
+| Universe Freezing | 10,000 | latests | 2,073 ops/sec | - | ✅ Excellent |
+| Merkle Tree Building | 1,000 | latests | 2,968 ops/sec | - | ✅ Excellent |
+| Chain Verification | 10,000 | latests | 8,154,472 ops/sec | - | ✅ Outstanding |
 
 ### Memory Efficiency
 
@@ -140,9 +140,9 @@
 **Improvement**: **-92%** (exceptional efficiency)
 
 **Memory per 1k quads**:
-- **Target**: 7.8 MB
-- **Actual**: 4.1 MB
-- **Improvement**: -47.4%
+- **Target**: latest MB
+- **Actual**: latest MB
+- **Improvement**: -latest%
 
 ---
 
@@ -158,18 +158,18 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 
 #### Regression 1: Execution Memory Consumption
 - **Severity**: CRITICAL
-- **Baseline**: 4.85 MB (for 1000 operations)
-- **Current**: 21.26 MB
-- **Increase**: +338.25% (4.38x baseline)
-- **Threshold**: 1.25x (25% tolerance)
+- **Baseline**: latest MB (for 1000 operations)
+- **Current**: latest MB
+- **Increase**: +latest% (latestx baseline)
+- **Threshold**: latestx (25% tolerance)
 - **Status**: ⚠️ EXCEEDS THRESHOLD
 
 #### Regression 2: Memory Stability Under Load
 - **Severity**: CRITICAL
-- **Baseline**: 3.2 MB
-- **Current**: 16.29 MB
-- **Increase**: +409.20% (5.09x baseline)
-- **Threshold**: 1.25x (25% tolerance)
+- **Baseline**: latest MB
+- **Current**: latest MB
+- **Increase**: +latest% (latestx baseline)
+- **Threshold**: latestx (25% tolerance)
 - **Status**: ⚠️ EXCEEDS THRESHOLD
 
 #### Analysis
@@ -177,7 +177,7 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 **Root Cause Investigation Required**:
 1. Daemon integration added significant infrastructure (ΔGate, YAWL bridge, Raft consensus)
 2. Baseline may have been established pre-integration (needs verification)
-3. Memory per operation (378.97 B/op) is **91% better** than baseline (4,200 B/op)
+3. Memory per operation (latest B/op) is **91% better** than baseline (4,200 B/op)
 4. Peak memory absolute values (21-25 MB) are still **well within production limits**
 
 **Recommendation**:
@@ -196,7 +196,7 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 - ✅ Delta validation: <5ms (well under)
 - ✅ YAWL workflows: <150ms (well under)
 - ✅ Raft consensus: <20ms (well under)
-- ✅ 10K system benchmark: 21.1s (justified for comprehensive test)
+- ✅ 10K system benchmark: latests (justified for comprehensive test)
 
 **No timeout violations detected** in production code paths.
 
@@ -208,8 +208,8 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 
 | Contract | Target | Current | Status |
 |----------|--------|---------|--------|
-| Store Creation (P95) | 2ms | 0.4ms | ✅ 80% faster |
-| Triple Insert Single (P95) | 0.5ms | 0.15ms | ✅ 70% faster |
+| Store Creation (P95) | 2ms | latestms | ✅ 80% faster |
+| Triple Insert Single (P95) | latestms | latestms | ✅ 70% faster |
 | Triple Insert Batch 100 (P95) | 15ms | 10ms | ✅ 33% faster |
 | Triple Insert Batch 10k | 3000ms | 1200ms | ✅ 60% faster |
 
@@ -218,7 +218,7 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 | Complexity | Target (P95) | Current (P95) | Status |
 |------------|--------------|---------------|--------|
 | Simple | 5ms | 2ms | ✅ 60% faster |
-| Medium | 25ms | 12.5ms | ✅ 50% faster |
+| Medium | 25ms | latestms | ✅ 50% faster |
 | Complex | 250ms | 150ms | ✅ 40% faster |
 | Large Graph | 500ms | 350ms | ✅ 30% faster |
 
@@ -226,16 +226,16 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 
 | Operation | Target (P95) | Current (P95) | Status |
 |-----------|--------------|---------------|--------|
-| Zod Simple | 2ms | 0.2ms | ✅ 90% faster |
+| Zod Simple | 2ms | latestms | ✅ 90% faster |
 | Zod Complex | 5ms | 1ms | ✅ 80% faster |
-| Delta Capsule | 10ms | 0.005ms | ✅ 99.95% faster |
+| Delta Capsule | 10ms | latestms | ✅ latest% faster |
 
 ### Cryptographic - ✅ 100% COMPLIANCE
 
 | Operation | Target Throughput | Current Throughput | Status |
 |-----------|-------------------|-------------------|--------|
-| Receipt Creation | 10,000 ops/sec | 83,895 ops/sec | ✅ 8.4x target |
-| Receipt Verification | 100,000 ops/sec | 4,573,038 ops/sec | ✅ 45.7x target |
+| Receipt Creation | 10,000 ops/sec | 83,895 ops/sec | ✅ latestx target |
+| Receipt Verification | 100,000 ops/sec | 4,573,038 ops/sec | ✅ latestx target |
 
 ---
 
@@ -261,9 +261,9 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 
 | Metric | Improvement |
 |--------|-------------|
-| Receipt Creation (P95) | -98.3% |
-| Delta Validation (P95) | -99.9% |
-| Receipt Verification (P95) | -99.9% |
+| Receipt Creation (P95) | -latest% |
+| Delta Validation (P95) | -latest% |
+| Receipt Verification (P95) | -latest% |
 | Universe Creation | -42% |
 | Morphism Application | -88% |
 
@@ -273,8 +273,8 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 |--------|-------------|
 | Receipt Generation | +394% |
 | Overall System Throughput | +472% |
-| Receipt Creation | +739% (8.4x target) |
-| Receipt Verification | +4,473% (45.7x target) |
+| Receipt Creation | +739% (latestx target) |
+| Receipt Verification | +4,473% (latestx target) |
 
 ### Memory Improvements (vs Baseline)
 
@@ -301,7 +301,7 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 ### Areas of Excellence
 
 1. **Cryptographic Operations**: Receipt creation/verification 8-45x faster than targets
-2. **Delta Validation**: 99.9% faster than target (0.005ms vs 5ms)
+2. **Delta Validation**: latest% faster than target (latestms vs 5ms)
 3. **Memory Efficiency**: 92% reduction vs baseline for 10k operations
 4. **Throughput**: 472% improvement in end-to-end system throughput
 
@@ -313,10 +313,10 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 
 | Operation | P95 Target | Actual | Status |
 |-----------|------------|--------|--------|
-| Receipt Creation | <1ms | 0.017ms | ✅ PASS |
-| Delta Validation | <5ms | 0.005ms | ✅ PASS |
-| Receipt Verification | <0.5ms | 0.000ms | ✅ PASS |
-| Receipt Chain (10) | <50ms | 0.347ms | ✅ PASS |
+| Receipt Creation | <1ms | latestms | ✅ PASS |
+| Delta Validation | <5ms | latestms | ✅ PASS |
+| Receipt Verification | <latestms | latestms | ✅ PASS |
+| Receipt Chain (10) | <50ms | latestms | ✅ PASS |
 | SPARQL Query (simple) | <10ms | 2ms (P95) | ✅ PASS |
 
 **100% compliance** with all v6 performance targets documented in CLAUDE.md.
@@ -350,7 +350,7 @@ All v6 core operations (receipts, deltas, validation) are **significantly better
 ### Did I RUN benchmarks?
 ✅ **YES** - Reviewed actual benchmark outputs from:
 - `/home/user/unrdf/benchmarks/v6-performance-report.md` (2025-12-27)
-- `/home/user/unrdf/benchmarks/results/v6.0.0-post-merge-performance.json` (2025-12-28)
+- `/home/user/unrdf/benchmarks/results/vlatest-merge-performance.json` (2025-12-28)
 - `/home/user/unrdf/packages/daemon/benchmarks/benchmarks-2026-01-11T01-46-10.json` (2026-01-11)
 
 ### Can I PROVE performance improvements?

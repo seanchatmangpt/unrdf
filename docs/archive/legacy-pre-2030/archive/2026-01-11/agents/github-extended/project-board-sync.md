@@ -349,7 +349,7 @@ npx ruv-swarm github sprint-manage \
 ```bash
 # Track milestone progress
 npx ruv-swarm github milestone-track \
-  --milestone "v2.0 Release" \
+  --milestone "vlatest Release" \
   --update-board \
   --show-dependencies \
   --predict-completion

@@ -93,7 +93,7 @@ alertmanager:
 
 nodeExporter:
   imageRepo: prom/node-exporter
-  imageTag: v1.7.0
+  imageTag: latest
   securityContext:
     runAsNonRoot: false   # must access /proc, /sys
     runAsUser: 0
@@ -201,7 +201,7 @@ storage:
 alloy:
   enabled: false
   imageRepo: grafana/alloy
-  imageTag: v1.3.0
+  imageTag: latest
   replicas: 1
   resources:
     requests:

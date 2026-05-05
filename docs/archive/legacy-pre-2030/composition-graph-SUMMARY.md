@@ -78,8 +78,8 @@ This analysis consists of three documents:
 ### ⚠️ UNVERIFIED: Performance & Synergy Metrics
 
 **CLAIMED** (in original analysis):
-- p99 latencies (2.5ms - 18ms)
-- Test pass rates (99.8%, 330/330)
+- p99 latencies (latestms - 18ms)
+- Test pass rates (latest%, 330/330)
 - OTEL validation score (87/100)
 - Git receipts (443 committed)
 
@@ -160,7 +160,7 @@ From CLAUDE.md requirements (determinism, proof, poka-yoke, SLA <10ms):
 | yawl + kgc-4d + blockchain | ✅ | ✅ | ✅ | ? | 3/4 |
 | yawl + kgc-4d | ✅ | ✅ | ✅ | ? | 3/4 |
 | hooks + yawl + kgc-4d | ✅ | ✅ | ✅ | ? | 3/4 |
-| consensus + kgc-4d + fed | ⚠️ | ✅ | ✅ | ? | 2.5/4 |
+| consensus + kgc-4d + fed | ⚠️ | ✅ | ✅ | ? | latest/4 |
 | streaming + composables | ⚠️ | ❌ | ⚠️ | ? | 1/4 |
 
 **Note**: SLA column marked "?" because benchmarks not executed.

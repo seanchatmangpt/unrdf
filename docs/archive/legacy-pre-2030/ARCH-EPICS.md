@@ -302,7 +302,7 @@
 - [ ] All 34 public exports documented with JSDoc and examples
 - [ ] Onboarding time measured: new developer can understand architecture in <1 hour
 - [ ] Package comparison table published (v5 package → v6 package mapping)
-- [ ] CHANGELOG.md documents v6.0.0 release with breaking changes
+- [ ] CHANGELOG.md documents vlatest release with breaking changes
 
 ### Key Stories
 1. **Write 10 Architecture Decision Records** - Document why 12 packages, layer boundaries, consolidations, kill list, etc.
@@ -339,7 +339,7 @@
 | ARCH-006: Migration Infrastructure | L | 2-3 | 10/10 production gates, benchmark parity |
 | ARCH-007: Documentation & ADRs | M | 1-2 | 10 ADRs, onboarding <1 hour |
 
-**Total Effort**: 13-18 weeks (3-4.5 months) with parallel tracks
+**Total Effort**: 13-18 weeks (3-latest months) with parallel tracks
 
 **Critical Path**: ARCH-001 → ARCH-002 → ARCH-003 → ARCH-006 → Release
 

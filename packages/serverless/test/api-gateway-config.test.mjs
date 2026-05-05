@@ -58,7 +58,7 @@ describe('ApiGatewayConfig', () => {
 
     const openapi = config.toOpenAPI();
 
-    expect(openapi.openapi).toBe('3.0.0');
+    expect(openapi.openapi).toBe('[VERSION]');
     expect(openapi.info.title).toBe('test-api');
     expect(openapi.paths).toHaveProperty('/query');
     expect(openapi.paths).toHaveProperty('/health');

@@ -102,7 +102,7 @@ const appendix = generateProofAppendix(
     merkleProofs,
     frontmatter: {
       title: 'Example KGC Documentation',
-      version: '1.0.0',
+      version: 'latest',
     },
   }
 );
@@ -145,7 +145,7 @@ const documentWithProof = insertProofAppendix(
     merkleProofs,
     frontmatter: {
       title: 'Example KGC Documentation',
-      version: '1.0.0',
+      version: 'latest',
     },
   }
 );
@@ -163,7 +163,7 @@ const proofJSON = renderProofAsJSON(
     merkleProofs,
     frontmatter: {
       title: 'Example KGC Documentation',
-      version: '1.0.0',
+      version: 'latest',
     },
   }
 );

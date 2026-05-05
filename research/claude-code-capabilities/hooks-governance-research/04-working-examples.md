@@ -21,7 +21,7 @@ This document contains **5 complete, tested hook implementations** ready for pro
 ```bash
 #!/bin/bash
 # Safety Hook: Prevent Destructive Bash Commands
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail
@@ -131,7 +131,7 @@ exit 0
 ```bash
 #!/bin/bash
 # Authorization Hook: Protected Files
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail
@@ -243,7 +243,7 @@ docs/README.md          → ✅ ALLOWED
 ```bash
 #!/bin/bash
 # Audit Hook: Operation Logging
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail
@@ -261,7 +261,7 @@ INPUT=$(cat)
 # Add audit metadata
 AUDIT_ENTRY=$(echo "$INPUT" | jq -c '. + {
   audit_timestamp: now | todate,
-  audit_version: "1.0.0"
+  audit_version: "latest"
 }')
 
 # Append to audit log
@@ -299,9 +299,9 @@ exit 0
 
 ```bash
 # Audit log format (~/.claude/audit.jsonl):
-{"tool_name":"Bash","tool_input":{"command":"npm test"},"audit_timestamp":"2025-12-27T10:00:00Z","audit_version":"1.0.0"}
-{"tool_name":"Write","tool_input":{"file_path":"app.js","content":"..."},"audit_timestamp":"2025-12-27T10:00:05Z","audit_version":"1.0.0"}
-{"tool_name":"Edit","tool_input":{"file_path":"app.js","old_string":"..."},"audit_timestamp":"2025-12-27T10:00:10Z","audit_version":"1.0.0"}
+{"tool_name":"Bash","tool_input":{"command":"npm test"},"audit_timestamp":"2025-12-27T10:00:00Z","audit_version":"latest"}
+{"tool_name":"Write","tool_input":{"file_path":"app.js","content":"..."},"audit_timestamp":"2025-12-27T10:00:05Z","audit_version":"latest"}
+{"tool_name":"Edit","tool_input":{"file_path":"app.js","old_string":"..."},"audit_timestamp":"2025-12-27T10:00:10Z","audit_version":"latest"}
 
 # Analysis queries:
 # Count operations by tool type:
@@ -334,7 +334,7 @@ jq -r 'select(.tool_name == "Write" or .tool_name == "Edit") | .tool_input.file_
 ```bash
 #!/bin/bash
 # Compliance Hook: GDPR Data Access Logging
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail
@@ -466,7 +466,7 @@ Write → docs/README.md              → ❌ NOT LOGGED
 ```bash
 #!/bin/bash
 # Resource Hook: Rate Limiting
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail
@@ -569,7 +569,7 @@ CLAUDE_MAX_OPS=120 claude -p "Run operation"
 ```bash
 #!/bin/bash
 # PreCompact Hook: Context Preservation
-# Version: 1.0.0
+# Version: latest
 # Tested: 2025-12-27
 
 set -euo pipefail

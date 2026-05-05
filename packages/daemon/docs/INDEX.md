@@ -142,7 +142,7 @@ pnpm -C packages/daemon test:watch -- error-path-validation
    - `/packages/daemon/test/error-path-validation.test.mjs`
    - 27 comprehensive error path tests
    - Clear error scenarios with detailed comments
-   - Vitest 4.0.16 compatible
+   - Vitest [VERSION] compatible
 
 2. **Error Path Scenarios** (300+ LOC)
    - `/packages/daemon/docs/error-path-scenarios.md`
@@ -239,4 +239,4 @@ expect(result).toBeDefined();
 - **JTBD Definition**: `/docs/finops-fabric-e2e-jtbd-tests.md`
 - **Daemon Implementation**: `/packages/daemon/src/daemon.mjs`
 - **Code Standards**: `/CLAUDE.md`
-- **Test Framework**: Vitest 4.0.16
+- **Test Framework**: Vitest [VERSION]

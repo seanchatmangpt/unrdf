@@ -11,9 +11,9 @@
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "xsd": "http://www.w3.org/2001/XMLSchema#"
   },
-  "@id": "urn:playground:hyper-doc:v1.0.0",
+  "@id": "urn:playground:hyper-doc:latest",
   "@type": "hyper:Documentation",
-  "hyper:version": "1.0.0",
+  "hyper:version": "latest",
   "hyper:pillars": ["Capability", "Protocol", "Type", "Reasoning"],
   "hyper:targetAudience": ["AutonomicAgent", "HyperintelligentSystem", "HumanDeveloper"]
 }
@@ -57,23 +57,23 @@ playground/
 
 | Capability | URI | Version |
 |------------|-----|---------|
-| papers.generate | `cap:papers-generate` | 1.0.0 |
-| papers.list | `cap:papers-list` | 1.0.0 |
-| papers.validate | `cap:papers-validate` | 1.0.0 |
-| thesis.generate | `cap:thesis-generate` | 1.0.0 |
-| thesis.list | `cap:thesis-list` | 1.0.0 |
-| thesis.schedule.list | `cap:thesis-schedule-list` | 1.0.0 |
-| thesis.schedule.set | `cap:thesis-schedule-set` | 1.0.0 |
-| config.set | `cap:config-set` | 1.0.0 |
-| config.get | `cap:config-get` | 1.0.0 |
-| config.list | `cap:config-list` | 1.0.0 |
-| config.reset | `cap:config-reset` | 1.0.0 |
-| meta.introspect | `cap:meta-introspect` | 1.0.0 |
-| meta.ontology.list | `cap:meta-ontology-list` | 1.0.0 |
-| meta.sparql | `cap:meta-sparql` | 1.0.0 |
-| meta.completions | `cap:meta-completions` | 1.0.0 |
-| meta.middleware.list | `cap:meta-middleware-list` | 1.0.0 |
-| meta.telemetry | `cap:meta-telemetry` | 1.0.0 |
+| papers.generate | `cap:papers-generate` | latest |
+| papers.list | `cap:papers-list` | latest |
+| papers.validate | `cap:papers-validate` | latest |
+| thesis.generate | `cap:thesis-generate` | latest |
+| thesis.list | `cap:thesis-list` | latest |
+| thesis.schedule.list | `cap:thesis-schedule-list` | latest |
+| thesis.schedule.set | `cap:thesis-schedule-set` | latest |
+| config.set | `cap:config-set` | latest |
+| config.get | `cap:config-get` | latest |
+| config.list | `cap:config-list` | latest |
+| config.reset | `cap:config-reset` | latest |
+| meta.introspect | `cap:meta-introspect` | latest |
+| meta.ontology.list | `cap:meta-ontology-list` | latest |
+| meta.sparql | `cap:meta-sparql` | latest |
+| meta.completions | `cap:meta-completions` | latest |
+| meta.middleware.list | `cap:meta-middleware-list` | latest |
+| meta.telemetry | `cap:meta-telemetry` | latest |
 
 ### Machine Discovery
 
@@ -284,7 +284,7 @@ See `playground/ontologies/papers-thesis.ttl` for embedded SHACL shapes:
 ```sparql
 ASK {
   cap:papers-generate a cap:Capability ;
-                      cap:version "1.0.0" .
+                      cap:version "latest" .
 }
 ```
 

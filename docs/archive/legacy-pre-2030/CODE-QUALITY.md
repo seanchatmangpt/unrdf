@@ -400,7 +400,7 @@ chmod +x .husky/*
 ## Quality Standards Evolution
 
 **This document is versioned**:
-- v1.0 (Dec 2025): Initial automated quality gates
+- vlatest (Dec 2025): Initial automated quality gates
 - Future: Stricter thresholds as codebase matures
 
 **Feedback**: Open issues for quality standard improvements.

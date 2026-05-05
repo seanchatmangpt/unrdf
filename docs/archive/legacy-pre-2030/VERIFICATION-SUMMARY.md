@@ -17,7 +17,7 @@
 | Daemon Instantiation   | ✅ Daemon starts successfully    |
 | MCP Tools Instrumented | ✅ 36/36 tools wrapped           |
 | Semantic Conventions   | ✅ 3 convention groups defined   |
-| Tests                  | ✅ 1036/1042 passed (99.4%)      |
+| Tests                  | ✅ 1036/1042 passed (latest%)      |
 | Documentation          | ✅ Complete (26 KB)              |
 
 ---
@@ -135,10 +135,10 @@ const daemon = new Daemon({
 ```
 Test Files  6 failed | 29 passed (35)
 Tests       6 failed | 1036 passed (1042)
-Duration    10.44s
+Duration    latests
 ```
 
-**Pass Rate**: 99.4%
+**Pass Rate**: latest%
 
 **Failures**: Pre-existing (unrelated to OTEL)
 
@@ -187,12 +187,12 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 
 # Service Identity
 export OTEL_SERVICE_NAME=unrdf-daemon
-export OTEL_SERVICE_VERSION=26.4.23
+export OTEL_SERVICE_VERSION=latest
 export OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production
 
 # Sampling (1-10%)
 export OTEL_TRACES_SAMPLER=parentbased_traceidratio
-export OTEL_TRACES_SAMPLER_ARG=0.1
+export OTEL_TRACES_SAMPLER_ARG=latest
 
 # Performance
 export OTEL_BATCH_MAX_QUEUE_SIZE=10000
@@ -224,7 +224,7 @@ node src/daemon.mjs
 - [x] All imports work
 - [x] Daemon starts successfully
 - [x] No breaking changes
-- [x] Tests pass (99.4%)
+- [x] Tests pass (latest%)
 - [x] Error handling implemented
 - [x] Graceful degradation
 
@@ -256,7 +256,7 @@ node src/daemon.mjs
 
 **Implementation**: ✅ COMPLETE
 **Verification**: ✅ PASSED
-**Tests**: ✅ 99.4% pass rate
+**Tests**: ✅ latest% pass rate
 **Documentation**: ✅ Complete
 **Production Ready**: ✅ YES
 
@@ -268,7 +268,7 @@ node src/daemon.mjs
 **Modified**: 4 files
 **Lines of Code**: ~900+
 
-**Implementation Time**: ~2.5 hours
+**Implementation Time**: ~latest hours
 **Verification Time**: ~30 minutes
 
 ---

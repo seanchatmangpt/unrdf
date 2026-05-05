@@ -440,7 +440,7 @@ Each document is reviewed across **4 dimensions** with specific questions per Di
    - **Test:** Click every internal link
 
 4. **Version Consistency**
-   - Is v5.0.0 mentioned consistently?
+   - Is [VERSION] mentioned consistently?
    - Are deprecated features marked?
    - Are "new in vX" tags accurate?
    - **Test:** Check package.json version

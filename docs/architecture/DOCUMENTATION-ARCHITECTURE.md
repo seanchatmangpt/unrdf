@@ -1,6 +1,6 @@
 # UNRDF Documentation Architecture Blueprint
 
-**Version:** 1.0.0
+**Version:** latest
 **Last Updated:** 2025-11-21
 **Framework Integration:** DIATAXIS + FMEA + TRIZ + DFLSS
 
@@ -36,7 +36,7 @@ The architecture supports 10 module categories, 40+ React hooks, 60+ knowledge e
 
 ## 1. DIATAXIS Framework Implementation
 
-### 1.1 Four Pillars Overview
+### latest Four Pillars Overview
 
 ```
                           PRACTICAL
@@ -55,7 +55,7 @@ The architecture supports 10 module categories, 40+ React hooks, 60+ knowledge e
                           THEORETICAL
 ```
 
-### 1.2 Pillar 1: TUTORIALS (Learning-Oriented)
+### latest Pillar 1: TUTORIALS (Learning-Oriented)
 
 **Purpose:** Help newcomers learn UNRDF through practical exercises
 
@@ -110,7 +110,7 @@ By the end of this tutorial, you will:
 [Common issues and solutions]
 ```
 
-### 1.3 Pillar 2: HOW-TO GUIDES (Task-Oriented)
+### latest Pillar 2: HOW-TO GUIDES (Task-Oriented)
 
 **Purpose:** Provide recipes for specific tasks and problems
 
@@ -247,7 +247,7 @@ how-to/
 - [Link 2]
 ```
 
-### 1.4 Pillar 3: REFERENCE (Information-Oriented)
+### latest Pillar 3: REFERENCE (Information-Oriented)
 
 **Purpose:** Provide complete technical specifications
 
@@ -401,7 +401,7 @@ function name(param) {}
 - [Link 2]
 ```
 
-### 1.5 Pillar 4: EXPLANATION (Understanding-Oriented)
+### latest Pillar 4: EXPLANATION (Understanding-Oriented)
 
 **Purpose:** Provide conceptual understanding and design rationale
 
@@ -490,7 +490,7 @@ explanation/
 
 ## 2. FMEA Analysis
 
-### 2.1 Failure Mode Identification
+### latest Failure Mode Identification
 
 | ID | Failure Mode | Description |
 |----|--------------|-------------|
@@ -505,7 +505,7 @@ explanation/
 | FM-09 | Ambiguous Instructions | Steps unclear or ambiguous |
 | FM-10 | Missing Error Context | Error messages not explained |
 
-### 2.2 FMEA Risk Matrix
+### latest FMEA Risk Matrix
 
 | ID | Failure Mode | Severity (1-10) | Occurrence (1-10) | Detection (1-10) | RPN | Priority |
 |----|--------------|-----------------|-------------------|------------------|-----|----------|
@@ -523,7 +523,7 @@ explanation/
 **RPN = Severity x Occurrence x Detection**
 **Priority: CRITICAL (>300), HIGH (150-300), MEDIUM (50-150), LOW (<50)**
 
-### 2.3 Mitigation Strategies
+### latest Mitigation Strategies
 
 #### FM-03: API Drift (CRITICAL - RPN 360)
 ```
@@ -640,7 +640,7 @@ Mitigations:
    - Validate: Syntax + execution
 
 3. Example version locking
-   - Comment: // unrdf@4.0.0
+   - Comment: // unrdf@latest
    - CI: Verify version compatibility
 
 Detection Improvement:
@@ -653,7 +653,7 @@ Detection Improvement:
 
 ## 3. TRIZ Principles Application
 
-### 3.1 Core Contradictions
+### latest Core Contradictions
 
 #### Contradiction 1: Detailed vs. Accessible
 ```
@@ -771,7 +771,7 @@ Solution Architecture:
 └─────────────────────────────────────────────────┘
 ```
 
-### 3.2 TRIZ Innovation Solutions
+### latest TRIZ Innovation Solutions
 
 #### Solution 1: Living Documentation
 ```
@@ -828,7 +828,7 @@ Quarterly priorities based on:
 
 ## 4. DFLSS Quality Framework
 
-### 4.1 Define Phase
+### latest Define Phase
 
 **Documentation Quality Definition:**
 ```
@@ -852,7 +852,7 @@ Where:
 | Findability | Search Success | >85% | Analytics |
 | Accuracy | Example Pass Rate | 100% | CI testing |
 
-### 4.2 Measure Phase
+### latest Measure Phase
 
 **Baseline Measurements:**
 
@@ -861,7 +861,7 @@ Where:
 | API Coverage | ~70% | 60% | 100% |
 | Example Test Rate | 40% | 30% | 100% |
 | Avg Time to Find | Unknown | 45 sec | <30 sec |
-| User Satisfaction | Unknown | 3.5/5 | 4.5/5 |
+| User Satisfaction | Unknown | latest/5 | latest/5 |
 | Doc-Code Sync | Unknown | 70% | 100% |
 
 **Measurement Tools:**
@@ -881,7 +881,7 @@ export async function measureAPICoverage() {
 }
 ```
 
-### 4.3 Analyze Phase
+### latest Analyze Phase
 
 **Gap Analysis:**
 
@@ -911,7 +911,7 @@ export async function measureAPICoverage() {
    - Effort: Medium
    - Impact: Developer experience
 
-### 4.4 Improve Phase
+### latest Improve Phase
 
 **Improvement Initiatives:**
 
@@ -957,7 +957,7 @@ Timeline: 1 week
 Owner: Core team
 ```
 
-### 4.5 Control Phase
+### latest Control Phase
 
 **Control Mechanisms:**
 
@@ -975,7 +975,7 @@ Owner: Core team
 ```
 Upper Control Limit (UCL): 100% coverage
 Lower Control Limit (LCL): 95% coverage
-Center Line (CL): 97.5% coverage
+Center Line (CL): latest% coverage
 
 Out of control signals:
 - Coverage drops below 95%
@@ -1012,7 +1012,7 @@ Out of control signals:
 
 ## 5. File Structure Blueprint
 
-### 5.1 Complete Directory Structure
+### latest Complete Directory Structure
 
 ```
 docs/
@@ -1111,7 +1111,7 @@ docs/
 └── CONTRIBUTING.md                        # How to contribute to docs
 ```
 
-### 5.2 File Naming Conventions
+### latest File Naming Conventions
 
 | Type | Convention | Example |
 |------|------------|---------|
@@ -1121,7 +1121,7 @@ docs/
 | Explanation | `topic-name.md` | `architecture-overview.md` |
 | ADR | `NNNN-title.md` | `0001-use-zod.md` |
 
-### 5.3 Metadata Standards
+### latest Metadata Standards
 
 Every document should include YAML frontmatter:
 
@@ -1131,7 +1131,7 @@ title: "Document Title"
 description: "Brief description for search/SEO"
 category: "tutorials|how-to|reference|explanation"
 audience: "beginner|intermediate|advanced|all"
-version: "4.0.0"
+version: "latest"
 last_updated: "2025-11-21"
 related:
   - path: "/docs/related-doc.md"
@@ -1147,7 +1147,7 @@ estimated_time: "30 minutes"
 
 ## 6. Content Hierarchy and Cross-References
 
-### 6.1 Primary Navigation Hierarchy
+### latest Primary Navigation Hierarchy
 
 ```
 Level 0: DIATAXIS Quadrant
@@ -1156,7 +1156,7 @@ Level 0: DIATAXIS Quadrant
 │   │   └── Level 3: Document (insert-triples.md)
 ```
 
-### 6.2 Cross-Reference Matrix
+### latest Cross-Reference Matrix
 
 | From | To | Link Type |
 |------|-----|-----------|
@@ -1170,7 +1170,7 @@ Level 0: DIATAXIS Quadrant
 | Explanation | Reference | "Implementation" |
 | Explanation | Tutorial | "Try it" |
 
-### 6.3 Cross-Reference Implementation
+### latest Cross-Reference Implementation
 
 ```markdown
 <!-- In Tutorial -->
@@ -1187,7 +1187,7 @@ Level 0: DIATAXIS Quadrant
 - [How to: Debug Hook Execution](../how-to/knowledge-hooks/debug-hook-execution.md)
 ```
 
-### 6.4 Index Pages
+### latest Index Pages
 
 Each section needs an index page with:
 
@@ -1200,7 +1200,7 @@ Each section needs an index page with:
 
 ## 7. Success Metrics
 
-### 7.1 Metrics by DIATAXIS Pillar
+### latest Metrics by DIATAXIS Pillar
 
 #### Tutorials
 | Metric | Target | Measurement |
@@ -1208,7 +1208,7 @@ Each section needs an index page with:
 | Completion Rate | >80% | Analytics: reached last section |
 | Time on Page | Within 20% of estimate | Analytics |
 | Bounce Rate | <30% | Analytics |
-| User Rating | >4.2/5 | Feedback widget |
+| User Rating | >latest/5 | Feedback widget |
 | Example Success | 100% | CI testing |
 
 #### How-to Guides
@@ -1218,7 +1218,7 @@ Each section needs an index page with:
 | Time to Solution | <5 minutes | Analytics |
 | Return Visits | <2 per task | Analytics |
 | Copy-Paste Rate | >60% | Analytics |
-| User Rating | >4.0/5 | Feedback widget |
+| User Rating | >latest/5 | Feedback widget |
 
 #### Reference
 | Metric | Target | Measurement |
@@ -1236,24 +1236,24 @@ Each section needs an index page with:
 | Time on Page | >3 minutes | Analytics |
 | Share Rate | >5% | Social tracking |
 | Return Visits | >20% | Analytics |
-| User Rating | >4.0/5 | Feedback widget |
+| User Rating | >latest/5 | Feedback widget |
 
-### 7.2 Overall Documentation Health
+### latest Overall Documentation Health
 
 ```
 Documentation Health Score =
-  (API Coverage × 0.25) +
-  (Example Pass Rate × 0.25) +
-  (Link Validity × 0.15) +
-  (User Satisfaction × 0.20) +
-  (Search Success × 0.15)
+  (API Coverage × latest) +
+  (Example Pass Rate × latest) +
+  (Link Validity × latest) +
+  (User Satisfaction × latest) +
+  (Search Success × latest)
 
 Target: >95 (Six Sigma equivalent)
 Warning: <90
 Critical: <80
 ```
 
-### 7.3 Quality Gates
+### latest Quality Gates
 
 | Gate | Criteria | Enforcement |
 |------|----------|-------------|
@@ -1268,7 +1268,7 @@ Critical: <80
 
 ## 8. Source Code Integration
 
-### 8.1 JSDoc Standards
+### latest JSDoc Standards
 
 All public APIs must include:
 
@@ -1294,12 +1294,12 @@ All public APIs must include:
  * });
  *
  * @see {@link https://unrdf.dev/docs/reference/api/knowledge-hooks/define-hook|API Reference}
- * @since 4.0.0
+ * @since latest
  */
 export function defineHook(options) {}
 ```
 
-### 8.2 Auto-Generation Pipeline
+### latest Auto-Generation Pipeline
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -1327,7 +1327,7 @@ export function defineHook(options) {}
 └─────────────────────────────────────────────┘
 ```
 
-### 8.3 Example Extraction
+### latest Example Extraction
 
 ```javascript
 // docs/tools/extract-examples.mjs
@@ -1356,7 +1356,7 @@ export async function extractExamples(sourceDir) {
 }
 ```
 
-### 8.4 Bi-directional Linking
+### latest Bi-directional Linking
 
 **Code → Docs:**
 ```javascript
@@ -1377,7 +1377,7 @@ export function defineHook() {}
 
 ## 9. Maintenance Procedures
 
-### 9.1 Documentation Workflow
+### latest Documentation Workflow
 
 ```
 Feature Development:
@@ -1398,7 +1398,7 @@ Doc-Only Changes:
 6. Merge
 ```
 
-### 9.2 Review Checklist
+### latest Review Checklist
 
 **For Every PR:**
 - [ ] All code examples compile
@@ -1415,7 +1415,7 @@ Doc-Only Changes:
 - [ ] Changelog entry added
 - [ ] Migration notes (if breaking)
 
-### 9.3 Scheduled Maintenance
+### latest Scheduled Maintenance
 
 | Task | Frequency | Owner | Tool |
 |------|-----------|-------|------|
@@ -1426,7 +1426,7 @@ Doc-Only Changes:
 | User feedback review | Monthly | PM | Analytics dashboard |
 | Major audit | Quarterly | Team | Comprehensive review |
 
-### 9.4 Version Management
+### latest Version Management
 
 **Documentation Versioning:**
 ```
@@ -1441,7 +1441,7 @@ docs/
 <!-- Version selector in header -->
 | Version | Status |
 |---------|--------|
-| v4.0 (Current) | Active |
+| vlatest (Current) | Active |
 | v3.x | Maintenance |
 | v2.x | EOL |
 ```
@@ -1568,13 +1568,13 @@ export const config = {
 │                 UNRDF Documentation Health                   │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Overall Score: 94.2/100  [████████████████████░░] GOOD     │
+│  Overall Score: latest/100  [████████████████████░░] GOOD     │
 │                                                              │
 ├─────────────────────────────────────────────────────────────┤
 │  API Coverage        │  98%  [████████████████████░]        │
 │  Example Pass Rate   │ 100%  [█████████████████████]        │
 │  Link Validity       │  97%  [███████████████████░░]        │
-│  User Satisfaction   │  4.3  [████████████████░░░░░]        │
+│  User Satisfaction   │  latest  [████████████████░░░░░]        │
 │  Search Success      │  86%  [█████████████████░░░░]        │
 ├─────────────────────────────────────────────────────────────┤
 │  Recent Changes                                              │
@@ -1595,7 +1595,7 @@ export const config = {
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-11-21 | System Architect | Initial blueprint |
+| latest | 2025-11-21 | System Architect | Initial blueprint |
 
 ---
 

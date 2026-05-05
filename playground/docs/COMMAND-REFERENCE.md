@@ -8,7 +8,7 @@
     "cmd": "urn:playground:commands:",
     "xsd": "http://www.w3.org/2001/XMLSchema#"
   },
-  "@id": "urn:playground:command-reference:v1.0.0",
+  "@id": "urn:playground:command-reference:latest",
   "@type": "cmd:CommandReference"
 }
 ```
@@ -32,7 +32,7 @@ Available on all commands:
 ## papers generate
 
 **URI:** `cmd:papers-generate`
-**Version:** 1.0.0
+**Version:** latest
 
 Generate research paper from template using specified family structure.
 
@@ -123,7 +123,7 @@ playground papers generate contribution --title "Novel Approach" --author "Dave"
 ## papers list
 
 **URI:** `cmd:papers-list`
-**Version:** 1.0.0
+**Version:** latest
 
 List all available paper families.
 
@@ -171,7 +171,7 @@ playground papers list [--verbose] [--format]
 ## papers validate
 
 **URI:** `cmd:papers-validate`
-**Version:** 1.0.0
+**Version:** latest
 
 Validate paper structure against family schema.
 
@@ -224,7 +224,7 @@ playground papers validate <path> [--strict] [--format]
 ## thesis generate
 
 **URI:** `cmd:thesis-generate`
-**Version:** 1.0.0
+**Version:** latest
 
 Generate thesis document structure.
 
@@ -275,7 +275,7 @@ playground thesis generate contribution --title "Publications Collection" \
 ## thesis list
 
 **URI:** `cmd:thesis-list`
-**Version:** 1.0.0
+**Version:** latest
 
 List all available thesis types.
 
@@ -297,7 +297,7 @@ playground thesis list [--verbose] [--format]
 ## thesis schedule list
 
 **URI:** `cmd:thesis-schedule-list`
-**Version:** 1.0.0
+**Version:** latest
 
 Display current thesis schedule and milestones.
 
@@ -327,7 +327,7 @@ playground thesis schedule list [--format]
 ## thesis schedule set
 
 **URI:** `cmd:thesis-schedule-set`
-**Version:** 1.0.0
+**Version:** latest
 
 Configure thesis schedule with defense date or milestones.
 
@@ -359,7 +359,7 @@ playground thesis schedule set --milestone '{"name": "Draft Complete", "date": "
 ## config set
 
 **URI:** `cmd:config-set`
-**Version:** 1.0.0
+**Version:** latest
 
 Set a configuration value.
 
@@ -402,7 +402,7 @@ playground config set output.format json
 ## config get
 
 **URI:** `cmd:config-get`
-**Version:** 1.0.0
+**Version:** latest
 
 Get a configuration value.
 
@@ -424,7 +424,7 @@ playground config get output.format --format json
 ## config list
 
 **URI:** `cmd:config-list`
-**Version:** 1.0.0
+**Version:** latest
 
 List all configuration values.
 
@@ -439,7 +439,7 @@ playground config list [--format] [--defaults]
 ## config reset
 
 **URI:** `cmd:config-reset`
-**Version:** 1.0.0
+**Version:** latest
 
 Reset configuration to defaults.
 
@@ -464,7 +464,7 @@ playground config reset --confirm
 ## meta introspect
 
 **URI:** `cmd:meta-introspect`
-**Version:** 1.0.0
+**Version:** latest
 
 Machine-grade introspection of CLI capabilities.
 
@@ -494,7 +494,7 @@ playground meta introspect [--format] [--section]
 ## meta sparql
 
 **URI:** `cmd:meta-sparql`
-**Version:** 1.0.0
+**Version:** latest
 
 Execute SPARQL query against loaded ontologies.
 
@@ -540,7 +540,7 @@ playground meta sparql "SELECT * WHERE { ?s a paper:Paper }" --format json
 ## meta completions
 
 **URI:** `cmd:meta-completions`
-**Version:** 1.0.0
+**Version:** latest
 
 Generate shell completions.
 
@@ -574,7 +574,7 @@ playground meta completions fish > ~/.config/fish/completions/playground.fish
 ## meta middleware list
 
 **URI:** `cmd:meta-middleware-list`
-**Version:** 1.0.0
+**Version:** latest
 
 List active middleware components.
 
@@ -589,7 +589,7 @@ playground meta middleware list [--format]
 ## meta telemetry
 
 **URI:** `cmd:meta-telemetry`
-**Version:** 1.0.0
+**Version:** latest
 
 Export execution metrics.
 

@@ -6,18 +6,18 @@
 
 ## Executive Summary
 
-**CRITICAL FINDING:** Major regressions detected in throughput, test suite performance, and test reliability. The refactoring introduced breaking changes affecting 36.5% of tests.
+**CRITICAL FINDING:** Major regressions detected in throughput, test suite performance, and test reliability. The refactoring introduced breaking changes affecting latest% of tests.
 
 ### Overall Status: ⚠️ REGRESSIONS DETECTED
 
 | Category | Status | Variance | Pass/Fail |
 |----------|--------|----------|-----------|
-| Startup Time | ✅ IMPROVED | -16.5% | PASS |
-| Memory Usage | ✅ IMPROVED | -83.3% | PASS |
-| Throughput | ⚠️ REGRESSION | -14.0% | FAIL (>5%) |
-| Test Suite | ⚠️ REGRESSION | +253.9% | FAIL (>5%) |
-| Linter | ⚠️ REGRESSION | +27.9% to +96.8% | FAIL (>5%) |
-| Test Reliability | 🚨 CRITICAL | 36.5% failure rate | FAIL |
+| Startup Time | ✅ IMPROVED | -latest% | PASS |
+| Memory Usage | ✅ IMPROVED | -latest% | PASS |
+| Throughput | ⚠️ REGRESSION | -latest% | FAIL (>5%) |
+| Test Suite | ⚠️ REGRESSION | +latest% | FAIL (>5%) |
+| Linter | ⚠️ REGRESSION | +latest% to +latest% | FAIL (>5%) |
+| Test Reliability | 🚨 CRITICAL | latest% failure rate | FAIL |
 | Microframeworks | ✅ STABLE | Within tolerance | PASS |
 
 ---
@@ -26,21 +26,21 @@
 
 ### 1. YAWL Startup Time ✅
 
-**Baseline:** 0.539ms
-**Current:** 0.450ms
-**Variance:** -16.5% (IMPROVEMENT)
+**Baseline:** latestms
+**Current:** latestms
+**Variance:** -latest% (IMPROVEMENT)
 **Status:** ✅ PASS
 
 ```
-Average startup: 0.450ms
-Min: 0.069ms, Max: 3.057ms
+Average startup: latestms
+Min: latestms, Max: latestms
 Target: <100ms - ACHIEVED
 ```
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
-Average startup: 0.450ms
+Average startup: latestms
 ✅ PASS: Startup < 100ms target: YES
 ```
 
@@ -49,22 +49,22 @@ Average startup: 0.450ms
 ### 2. YAWL Throughput (Cases/Second) ⚠️
 
 **Baseline:** 5,372 cases/second
-**Current:** 4,617.36 cases/second
-**Variance:** -14.0% (REGRESSION)
+**Current:** 4,latest cases/second
+**Variance:** -latest% (REGRESSION)
 **Status:** ⚠️ FAIL (exceeds ±5% tolerance)
 
 ```
 Case Creation:
   Total: 1000 cases
-  Time: 216.574ms
-  Rate: 4617.36 cases/sec
+  Time: latestms
+  Rate: latest cases/sec
 ```
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
 Throughput:
-  Case Creation: 4617.36 cases/sec
+  Case Creation: latest cases/sec
 ```
 
 **Root Cause Analysis Required:** Throughput degradation of 755 cases/second (14%) suggests:
@@ -76,36 +76,36 @@ Throughput:
 
 ### 3. Memory Usage ✅
 
-**Baseline:** 0.06 MB per case
-**Current:** 0.01 MB per case
-**Variance:** -83.3% (IMPROVEMENT)
+**Baseline:** latest MB per case
+**Current:** latest MB per case
+**Variance:** -latest% (IMPROVEMENT)
 **Status:** ✅ PASS
 
 ```
-Per-case memory: 0.01 MB
+Per-case memory: latest MB
 Loaded Memory (100 cases):
-  RSS: 173.34 MB (delta: 3.96 MB)
-  Heap Used: 21.71 MB (delta: 0.88 MB)
+  RSS: latest MB (delta: latest MB)
+  Heap Used: latest MB (delta: latest MB)
 ```
 
 **Evidence:**
 ```bash
 $ node packages/yawl/benchmarks/performance-benchmark.mjs
-Per-case memory: 0.01 MB
+Per-case memory: latest MB
 ```
 
 ---
 
 ### 4. Test Suite Performance 🚨
 
-**Baseline:** 2.04 seconds
-**Current:** 7.221 seconds
-**Variance:** +253.9% (CRITICAL REGRESSION)
-**Status:** 🚨 FAIL (exceeds ±5% tolerance by 248.9%)
+**Baseline:** latest seconds
+**Current:** latest seconds
+**Variance:** +latest% (CRITICAL REGRESSION)
+**Status:** 🚨 FAIL (exceeds ±5% tolerance by latest%)
 
 **Test Results:**
-- **122 failed tests** (36.5% failure rate)
-- **212 passed tests** (63.5% success rate)
+- **122 failed tests** (latest% failure rate)
+- **212 passed tests** (latest% success rate)
 - **Total:** 334 tests
 
 **Evidence:**
@@ -113,11 +113,11 @@ Per-case memory: 0.01 MB
 $ cd packages/yawl && pnpm test
 Test Files  14 failed | 3 passed (17)
 Tests       122 failed | 212 passed (334)
-Duration    4.78s (transform 13.70s, setup 0ms, import 36.70s, tests 1.69s)
+Duration    latests (transform latests, setup 0ms, import latests, tests latests)
 
-real	0m7.221s
-user	0m12.320s
-sys	0m17.920s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 
 **Critical Test Failures:**
@@ -151,9 +151,9 @@ sys	0m17.920s
 
 ### 5. Linter Performance ⚠️
 
-**Baseline:** 11.7 - 18.0 seconds
-**Current:** 23.028 seconds
-**Variance:** +27.9% to +96.8% (REGRESSION)
+**Baseline:** latest - latest seconds
+**Current:** latest seconds
+**Variance:** +latest% to +latest% (REGRESSION)
 **Status:** ⚠️ FAIL (exceeds ±5% tolerance)
 
 **Evidence:**
@@ -161,9 +161,9 @@ sys	0m17.920s
 $ npm run lint
 Scope: 29 of 32 workspace projects
 
-real	0m23.028s
-user	0m16.860s
-sys	0m31.420s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 
 **Analysis:**
@@ -184,18 +184,18 @@ sys	0m31.420s
 #### microfw-9-graph-routing.mjs
 ```bash
 $ time node microfw-9-graph-routing.mjs
-real	0m0.305s
-user	0m0.150s
-sys	0m0.160s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 **Result:** ✅ PASS (well under 1s)
 
 #### max-combo-10-mega-framework-standalone.mjs
 ```bash
 $ time node max-combo-10-mega-framework-standalone.mjs
-real	0m0.444s
-user	0m0.130s
-sys	0m0.210s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 **Result:** ✅ PASS (well under 1s)
 
@@ -232,20 +232,20 @@ at createWorkflowReceipt (file:///home/user/unrdf/packages/yawl/src/events/yawl-
 
 | Metric | Baseline | Current | Variance | Tolerance | Pass/Fail |
 |--------|----------|---------|----------|-----------|-----------|
-| **Startup Time** | 0.539ms | 0.450ms | -16.5% | ±5% | ✅ PASS |
-| **Throughput** | 5,372 c/s | 4,617 c/s | **-14.0%** | ±5% | ⚠️ FAIL |
-| **Memory/Case** | 0.06 MB | 0.01 MB | -83.3% | ±5% | ✅ PASS |
-| **Test Suite** | 2.04s | 7.22s | **+253.9%** | ±5% | 🚨 FAIL |
-| **Test Failures** | ~0% | **36.5%** | N/A | 0% | 🚨 FAIL |
-| **Linter** | 11.7-18s | 23.0s | **+27.9% to +96.8%** | ±5% | ⚠️ FAIL |
-| **Microfw-9** | <1s | 0.305s | N/A | <1s | ✅ PASS |
-| **Max-Combo-10** | <1s | 0.444s | N/A | <1s | ✅ PASS |
+| **Startup Time** | latestms | latestms | -latest% | ±5% | ✅ PASS |
+| **Throughput** | 5,372 c/s | 4,617 c/s | **-latest%** | ±5% | ⚠️ FAIL |
+| **Memory/Case** | latest MB | latest MB | -latest% | ±5% | ✅ PASS |
+| **Test Suite** | latests | latests | **+latest%** | ±5% | 🚨 FAIL |
+| **Test Failures** | ~0% | **latest%** | N/A | 0% | 🚨 FAIL |
+| **Linter** | latest | latests | **+latest% to +latest%** | ±5% | ⚠️ FAIL |
+| **Microfw-9** | <1s | latests | N/A | <1s | ✅ PASS |
+| **Max-Combo-10** | <1s | latests | N/A | <1s | ✅ PASS |
 
 ---
 
 ## Root Cause Analysis
 
-### 1. Throughput Regression (-14.0%)
+### 1. Throughput Regression (-latest%)
 
 **Hypothesis:**
 - Event logging overhead (ZodError validation failures add latency)
@@ -257,7 +257,7 @@ at createWorkflowReceipt (file:///home/user/unrdf/packages/yawl/src/events/yawl-
 2. Compare execution traces before/after refactoring
 3. Check if event logging is blocking (should be fire-and-forget)
 
-### 2. Test Suite Regression (+253.9%) + 36.5% Failures
+### 2. Test Suite Regression (+latest%) + latest% Failures
 
 **Confirmed Root Cause:** Test files not importing required constants/functions
 
@@ -301,7 +301,7 @@ workflow.addFlow(sequence('init', 'process'));
 3. Fix missing `mkdtempSync` import in pattern-timetravel.test.mjs
 4. Re-run tests to verify 100% pass rate
 
-### 3. Linter Regression (+27.9% to +96.8%)
+### 3. Linter Regression (+latest% to +latest%)
 
 **Hypothesis:**
 - More files created during refactoring (larger codebase to lint)
@@ -351,8 +351,8 @@ workflow.addFlow(sequence('init', 'process'));
 ### LOW (Nice to Have)
 
 5. **Document Performance Improvements**
-   - Startup time improved 16.5%
-   - Memory usage improved 83.3%
+   - Startup time improved latest%
+   - Memory usage improved latest%
    - Identify what refactoring changes caused these wins
    - Apply same patterns to other bottlenecks
 
@@ -362,12 +362,12 @@ workflow.addFlow(sequence('init', 'process'));
 
 **Overall Verdict:** ⚠️ **NOT READY FOR MERGE**
 
-While the refactoring delivered significant improvements in startup time (-16.5%) and memory usage (-83.3%), it introduced critical regressions:
+While the refactoring delivered significant improvements in startup time (-latest%) and memory usage (-latest%), it introduced critical regressions:
 
-- **36.5% test failure rate** (122 of 334 tests broken)
-- **14.0% throughput regression** (exceeds ±5% tolerance)
-- **253.9% test suite slowdown** (7.22s vs 2.04s)
-- **27.9-96.8% linter slowdown** (23s vs 11.7-18s)
+- **latest% test failure rate** (122 of 334 tests broken)
+- **latest% throughput regression** (exceeds ±5% tolerance)
+- **latest% test suite slowdown** (latests vs latests)
+- **latest.8% linter slowdown** (23s vs latest)
 
 **Required Actions Before Merge:**
 1. Fix all 122 broken tests (restore missing exports/methods)

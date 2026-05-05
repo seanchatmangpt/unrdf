@@ -1,6 +1,6 @@
 # Pattern Library - Quick Reference Index
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Last Updated**: 2025-12-27
 
 ## Documentation Map
@@ -335,6 +335,6 @@ console.log(compatible); // true if A.output matches B.input
 
 ---
 
-**Quick Index Version**: 1.0.0
+**Quick Index Version**: latest
 **Last Updated**: 2025-12-27
 **Maintained By**: Researcher Agent

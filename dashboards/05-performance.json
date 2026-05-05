@@ -16,23 +16,23 @@
         "title": "Transaction Latency Percentiles",
         "targets": [
           {
-            "expr": "histogram_quantile(0.50, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P50"
           },
           {
-            "expr": "histogram_quantile(0.75, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P75"
           },
           {
-            "expr": "histogram_quantile(0.90, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P90"
           },
           {
-            "expr": "histogram_quantile(0.95, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P95"
           },
           {
-            "expr": "histogram_quantile(0.99, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_transaction_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P99"
           }
         ],
@@ -72,15 +72,15 @@
         "title": "Hook Latency Percentiles",
         "targets": [
           {
-            "expr": "histogram_quantile(0.50, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P50"
           },
           {
-            "expr": "histogram_quantile(0.95, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P95"
           },
           {
-            "expr": "histogram_quantile(0.99, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P99"
           }
         ],
@@ -96,7 +96,7 @@
         "title": "Query Performance",
         "targets": [
           {
-            "expr": "histogram_quantile(0.95, rate(sparql_query_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(sparql_query_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P95 SPARQL Query Latency"
           },
           {

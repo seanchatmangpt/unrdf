@@ -1,7 +1,7 @@
 /**
  * @file use-consensus-manager.mjs
  * @description React hook for managing consensus protocols (RAFT, Gossip, Byzantine)
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
 /**
  * Hook for managing distributed consensus in federated systems
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Consensus configuration
  * @param {string} [config.protocol='raft'] - Consensus protocol
  * @param {string} config.nodeId - This node's identifier

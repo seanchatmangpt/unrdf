@@ -313,7 +313,7 @@ async function analyzePackages() {
     // Generate analysis report
     const analysis = {
       timestamp: new Date().toISOString(),
-      analyzerVersion: '1.0.0',
+      analyzerVersion: 'latest',
       summary: {
         total: packages.length,
         nodeOnly: summary.nodeOnly.length,

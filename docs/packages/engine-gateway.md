@@ -2,7 +2,7 @@
 
 > μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

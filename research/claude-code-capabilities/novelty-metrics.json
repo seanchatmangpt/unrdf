@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Claude Code Novelty Metrics",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "Measurable criteria for determining capability novelty",
 
   "axisMeasurements": {

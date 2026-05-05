@@ -262,7 +262,7 @@ For questions about this documentation:
 
 ---
 
-**Documentation Version**: v3.0.0
+**Documentation Version**: latest
 **Generated**: 2025-10-01
 **Swarm**: swarm-1759365736616-dfkdrxu1i
 **Total Analysis Time**: ~30 minutes

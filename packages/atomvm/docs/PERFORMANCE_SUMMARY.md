@@ -2,7 +2,7 @@
 
 **Date:** 2025-12-21
 **Packages Analyzed:** validation, graph, transform-utils, streaming
-**Test Platform:** Node.js v24.11.1, darwin arm64
+**Test Platform:** Node.js [VERSION], darwin arm64
 
 ---
 

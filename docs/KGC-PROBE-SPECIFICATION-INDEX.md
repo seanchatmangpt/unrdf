@@ -2,7 +2,7 @@
 
 **Status**: SPARC Pseudocode Phase Complete
 
-**Version**: 1.0.0
+**Version**: latest
 
 **Author**: Agent-8 (CLI Design)
 
@@ -219,7 +219,7 @@ Visual diagrams, decision trees, and design rationale.
 1. **Configuration**: Schemas Section 4 (.kgc-probe.json)
 2. **Output Structure**: Schemas Section 6
 3. **Performance**: Architecture Section 6
-4. **Guards**: Architecture Section 7.2
+4. **Guards**: Architecture Section latest
 
 ---
 
@@ -372,9 +372,9 @@ Upon implementation completion:
 
 ### Data Files Reference
 - `shards/agent-*.json` - Per-agent output (1-2MB each)
-- `merged/index.json` - Consolidated artifact (8.5MB)
+- `merged/index.json` - Consolidated artifact (latestMB)
 - `merged/world.ttl` - RDF graph (12MB)
-- `merged/report.md` - Human report (2.3MB)
+- `merged/report.md` - Human report (latestMB)
 - `receipts/chain.json` - Hash chain (45KB)
 - `receipts/merkle.json` - Merkle proofs (120KB)
 - `meta/config.json` - Run configuration
@@ -426,7 +426,7 @@ For implementation questions:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-12-27 | Agent-8 | Initial SPARC pseudocode specification |
+| latest | 2025-12-27 | Agent-8 | Initial SPARC pseudocode specification |
 
 ---
 

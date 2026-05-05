@@ -12,7 +12,7 @@
     "readmeHeadings": [
       "Overview",
       "Features",
-      "Performance Benchmarks (v26.4.4 — 2026-04-04)",
+      "Performance Benchmarks ([VERSION] — 2026-04-04)",
       "Installation",
       "Quick Start",
       "Documentation",
@@ -114,5 +114,5 @@
       "title": "Getting Started with wasm4pm"
     }
   ],
-  "version": "26.4.17"
+  "version": "[VERSION]"
 }

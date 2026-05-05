@@ -1,6 +1,6 @@
 # Knowledge Hooks Benchmark Specification
 
-**Version:** 1.0.0
+**Version:** latest
 **Principle:** 80/20 - Focus on 5 core benchmarks that measure 80% of performance characteristics
 
 ## Overview
@@ -15,7 +15,7 @@ This specification defines comprehensive performance benchmarking for knowledge 
 
 **Scenarios:**
 - **Small Batch**: 100 hooks
-  - Target: < 0.5ms per hook, > 2000 hooks/sec
+  - Target: < latestms per hook, > 2000 hooks/sec
   - Memory: < 5MB overhead
 
 - **Medium Batch**: 1,000 hooks
@@ -85,13 +85,13 @@ benchmark.hook-execution
 **Scenarios:**
 - **Schema Validation**: 10,000 Zod schema validations
   - Target: > 10,000 ops/sec
-  - Latency: < 0.1ms (avg), < 1ms (p99)
-  - Accuracy: > 99.9%
+  - Latency: < latestms (avg), < 1ms (p99)
+  - Accuracy: > latest%
 
 - **Runtime Validation**: 5,000 payload validations
   - Target: > 5,000 ops/sec
-  - Latency: < 0.2ms (avg), < 2ms (p99)
-  - Accuracy: > 99.5%
+  - Latency: < latestms (avg), < 2ms (p99)
+  - Accuracy: > latest%
 
 **OTEL Spans:**
 ```
@@ -186,7 +186,7 @@ benchmark.concurrent-execution
 | **Hook Execution** | < 10ms p99 | P1 | Tail latency impacts user experience most |
 | **Memory Efficiency** | < 50MB per 1000 hooks | P1 | Memory overhead must scale linearly |
 | **Validation Throughput** | > 10,000 ops/sec | P2 | Schema validation is on critical path |
-| **Error Rate** | < 0.1% | P1 | Reliability is non-negotiable for production |
+| **Error Rate** | < latest% | P1 | Reliability is non-negotiable for production |
 
 ### Regression Thresholds
 
@@ -207,7 +207,7 @@ benchmark.concurrent-execution
 ```javascript
 {
   "benchmark.suite.name": "Knowledge Hooks Performance Benchmark Suite",
-  "benchmark.suite.version": "1.0.0",
+  "benchmark.suite.version": "latest",
   "benchmark.id": "hook-registration",
   "benchmark.name": "Hook Registration Benchmark",
   "benchmark.category": "registration",
@@ -218,7 +218,7 @@ benchmark.concurrent-execution
   "system.platform": "linux",
   "system.arch": "x64",
   "process.pid": 12345,
-  "process.nodeVersion": "v20.10.0"
+  "process.nodeVersion": "vlatest"
 }
 ```
 
@@ -287,9 +287,9 @@ const measureSpan = tracer.startActiveSpan('benchmark.measure', (span) => {
   await bench.run();
 
   // Calculate percentiles
-  const p50 = calculatePercentile(results, 0.50);
-  const p95 = calculatePercentile(results, 0.95);
-  const p99 = calculatePercentile(results, 0.99);
+  const p50 = calculatePercentile(results, latest);
+  const p95 = calculatePercentile(results, latest);
+  const p99 = calculatePercentile(results, latest);
 
   // Record metrics
   span.setAttribute('benchmark.latency.p50.ms', p50);
@@ -342,7 +342,7 @@ A benchmark passes if:
 - ✅ All required OTEL spans exist with OK status
 - ✅ No critical regressions vs baseline (< 20%)
 - ✅ Minimum 100 measurements per scenario
-- ✅ Statistical significance (p-value < 0.05)
+- ✅ Statistical significance (p-value < latest)
 
 ### Report Requirements
 
@@ -368,19 +368,19 @@ Every benchmark run must generate:
   "duration": 1250,
   "results": {
     "hookCount": 1000,
-    "avgLatency": 0.85,
-    "p95Latency": 1.8,
-    "p99Latency": 3.2,
+    "avgLatency": latest,
+    "p95Latency": latest,
+    "p99Latency": latest,
     "throughput": 1176,
-    "memoryPeak": 22.5,
-    "errorRate": 0.05
+    "memoryPeak": latest,
+    "errorRate": latest
   },
   "targets": {
     "avgLatency": "< 1ms",
     "p95Latency": "< 2ms",
     "throughput": "> 1000 hooks/sec",
     "memoryOverhead": "< 25MB",
-    "errorRate": "< 0.1%"
+    "errorRate": "< latest%"
   },
   "validation": {
     "status": "PASS",
@@ -388,9 +388,9 @@ Every benchmark run must generate:
     "targetsTotal": 5,
     "regressionDetected": false,
     "baselineComparison": {
-      "latency": "+2.4%",
-      "throughput": "+5.1%",
-      "memory": "-3.2%"
+      "latency": "+latest%",
+      "throughput": "+latest%",
+      "memory": "-latest%"
     }
   },
   "otel": {

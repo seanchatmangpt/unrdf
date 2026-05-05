@@ -1,5 +1,5 @@
 {
-  "version": "6.0.0-alpha.1",
+  "version": "latest-alpha.1",
   "generated": "2025-12-27T06:49:16.837Z",
   "metadata": {
     "totalPackages": 49,
@@ -13,7 +13,7 @@
   },
   "packages": {
     "@unrdf/atomvm": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./service-worker-manager"],
       "schemas": [],
       "cliNouns": [],
@@ -22,7 +22,7 @@
       "receiptIntegration": false
     },
     "@unrdf/blockchain": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./anchoring", "./contracts", "./merkle"],
       "schemas": ["ReceiptAnchorSchema", "MerkleProofSchema"],
       "cliNouns": [],
@@ -31,7 +31,7 @@
       "receiptIntegration": true
     },
     "@unrdf/caching": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./layers", "./invalidation", "./query"],
       "schemas": ["CacheConfigSchema", "InvalidationRuleSchema"],
       "cliNouns": [],
@@ -40,7 +40,7 @@
       "receiptIntegration": false
     },
     "@unrdf/cli": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./commands"],
       "schemas": [],
       "cliNouns": ["graph", "query", "context", "convert", "hook", "store"],
@@ -49,7 +49,7 @@
       "receiptIntegration": false
     },
     "@unrdf/collab": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./crdt", "./sync", "./composables"],
       "schemas": ["CRDTStateSchema", "SyncMessageSchema"],
       "cliNouns": [],
@@ -58,7 +58,7 @@
       "receiptIntegration": false
     },
     "@unrdf/composables": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./graph", "./delta"],
       "schemas": ["DeltaStateSchema", "StreamingStateSchema"],
       "cliNouns": [],
@@ -67,7 +67,7 @@
       "receiptIntegration": false
     },
     "@unrdf/consensus": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./raft", "./cluster", "./state", "./transport"],
       "schemas": ["NodeMetadataSchema", "ClusterConfigSchema", "StateChangeSchema", "StateMachineConfigSchema", "RaftConfigSchema", "WorkflowCommandSchema", "MessageSchema", "TransportConfigSchema"],
       "cliNouns": [],
@@ -76,7 +76,7 @@
       "receiptIntegration": false
     },
     "@unrdf/core": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./rdf", "./rdf/minimal-n3-integration", "./rdf/n3-justified-only", "./sparql", "./types", "./constants", "./validation", "./health", "./logger", "./metrics", "./security", "./security-schemas", "./utils/sparql-utils"],
       "schemas": ["QuadSchema", "StoreSchema", "QueryOptionsSchema", "DiffTripleSchema", "GraphDiffSchema", "OntologyChangeSchema", "OntologyDiffSchema", "DeltaLikeSchema", "SafeStringSchema", "EmailSchema", "URLSchema", "SPARQLQuerySchema", "NamespaceSchema", "SafeFilePathSchema", "PaginationSchema", "APIKeySchema", "JWTSchema", "UsernameSchema", "PasswordSchema", "IPAddressSchema", "PortSchema", "UUIDSchema"],
       "cliNouns": [],
@@ -85,7 +85,7 @@
       "receiptIntegration": false
     },
     "@unrdf/dark-matter": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./optimizer", "./analyzer"],
       "schemas": [],
       "cliNouns": [],
@@ -94,7 +94,7 @@
       "receiptIntegration": false
     },
     "@unrdf/diataxis-kit": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./inventory", "./evidence", "./classify", "./scaffold", "./stable-json", "./hash"],
       "schemas": ["DiataxisSchema", "EvidenceSchema"],
       "cliNouns": ["run", "verify", "report"],
@@ -103,7 +103,7 @@
       "receiptIntegration": true
     },
     "@unrdf/domain": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": ["."],
       "schemas": ["DomainTypeSchema"],
       "cliNouns": [],
@@ -112,7 +112,7 @@
       "receiptIntegration": false
     },
     "@unrdf/engine-gateway": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./gateway", "./operation-detector", "./validators"],
       "schemas": [],
       "cliNouns": [],
@@ -121,7 +121,7 @@
       "receiptIntegration": false
     },
     "@unrdf/federation": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./coordinator", "./advanced-sparql"],
       "schemas": ["FederationConfigSchema", "PeerNodeSchema"],
       "cliNouns": [],
@@ -130,7 +130,7 @@
       "receiptIntegration": false
     },
     "@unrdf/fusion": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": ["."],
       "schemas": ["PolicyRuleSchema", "ResourceAllocationSchema"],
       "cliNouns": [],
@@ -139,7 +139,7 @@
       "receiptIntegration": true
     },
     "@unrdf/graph-analytics": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./converter", "./centrality", "./paths", "./clustering"],
       "schemas": ["GraphConversionSchema", "PageRankConfigSchema"],
       "cliNouns": [],
@@ -148,7 +148,7 @@
       "receiptIntegration": false
     },
     "@unrdf/hooks": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./define", "./executor"],
       "schemas": ["HookDefinitionSchema", "PolicySchema"],
       "cliNouns": [],
@@ -157,7 +157,7 @@
       "receiptIntegration": false
     },
     "@unrdf/integration-tests": {
-      "version": "5.0.0",
+      "version": "latest",
       "exports": [],
       "schemas": ["TestFixtureSchema"],
       "cliNouns": [],
@@ -166,7 +166,7 @@
       "receiptIntegration": false
     },
     "@unrdf/kgc-4d": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./client", "./hdit"],
       "schemas": [],
       "cliNouns": [],
@@ -175,7 +175,7 @@
       "receiptIntegration": true
     },
     "@unrdf/kgc-claude": {
-      "version": "5.0.0",
+      "version": "latest",
       "exports": [".", "./run-capsule", "./checkpoint", "./autonomy-guard", "./shard-merge", "./async-workflow", "./projection"],
       "schemas": ["ProjectionConfigSchema", "ProjectionResultSchema", "CheckpointReceiptSchema", "ToolCallSchema", "ArtifactSchema", "DeltaSchema", "RunCapsuleSchema", "WorkItemConstraintSchema", "WorkItemBudgetSchema", "ExecutionReceiptSchema", "WorkItemSchema", "ShardScopeSchema", "AgentShardSchema", "AttributedDeltaSchema", "MergeResultSchema", "BudgetSchema", "UsageSchema", "DenialReceiptSchema"],
       "cliNouns": [],
@@ -184,7 +184,7 @@
       "receiptIntegration": true
     },
     "@unrdf/kgc-cli": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./registry", "./manifest"],
       "schemas": ["ExtensionSchema", "RegistrySchema"],
       "cliNouns": ["extension", "registry"],
@@ -193,7 +193,7 @@
       "receiptIntegration": false
     },
     "@unrdf/kgc-substrate": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./types", "./KnowledgeStore"],
       "schemas": ["StorageSnapshotSchema", "QueryPatternSchema", "TripleEntrySchema", "StateCommitmentSchema", "ArtifactSchema", "BlockSchema", "AgentCapacitySchema", "AllocatableWorkItemSchema", "AllocationResultSchema"],
       "cliNouns": [],
@@ -202,7 +202,7 @@
       "receiptIntegration": true
     },
     "@unrdf/kgn": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./engine", "./filters", "./renderer", "./linter", "./templates/*"],
       "schemas": [],
       "cliNouns": [],
@@ -211,7 +211,7 @@
       "receiptIntegration": false
     },
     "@unrdf/knowledge-engine": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./query", "./canonicalize", "./parse", "./ai-search"],
       "schemas": ["RuleSchema", "InferenceResultSchema"],
       "cliNouns": [],
@@ -220,7 +220,7 @@
       "receiptIntegration": false
     },
     "@unrdf/ml-inference": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./runtime", "./pipeline", "./registry"],
       "schemas": ["ModelMetadataSchema", "InferencePipelineSchema"],
       "cliNouns": [],
@@ -229,7 +229,7 @@
       "receiptIntegration": false
     },
     "@unrdf/ml-versioning": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./version-store", "./examples/image-classifier"],
       "schemas": ["ModelVersionSchema", "ExperimentSchema"],
       "cliNouns": [],
@@ -238,7 +238,7 @@
       "receiptIntegration": true
     },
     "@unrdf/nextra-docs": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [],
       "schemas": ["APISchemaMetadata"],
       "cliNouns": [],
@@ -247,7 +247,7 @@
       "receiptIntegration": false
     },
     "@unrdf/observability": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./metrics", "./exporters", "./alerts"],
       "schemas": ["MetricConfigSchema", "AlertRuleSchema"],
       "cliNouns": [],
@@ -256,7 +256,7 @@
       "receiptIntegration": false
     },
     "@unrdf/oxigraph": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./store", "./types"],
       "schemas": ["QueryCacheConfigSchema"],
       "cliNouns": [],
@@ -265,7 +265,7 @@
       "receiptIntegration": false
     },
     "@unrdf/project-engine": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": ["."],
       "schemas": ["ProjectConfigSchema", "DriftSnapshotSchema"],
       "cliNouns": [],
@@ -274,7 +274,7 @@
       "receiptIntegration": false
     },
     "@unrdf/rdf-graphql": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./schema", "./query", "./resolver"],
       "schemas": ["GraphQLMappingSchema"],
       "cliNouns": [],
@@ -283,7 +283,7 @@
       "receiptIntegration": false
     },
     "@unrdf/semantic-search": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./embeddings", "./search", "./discovery"],
       "schemas": ["EmbeddingConfigSchema", "SearchQuerySchema"],
       "cliNouns": [],
@@ -292,7 +292,7 @@
       "receiptIntegration": false
     },
     "@unrdf/serverless": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./cdk", "./deploy", "./api", "./storage"],
       "schemas": ["LambdaConfigSchema", "APIGatewayConfigSchema"],
       "cliNouns": [],
@@ -301,7 +301,7 @@
       "receiptIntegration": false
     },
     "@unrdf/streaming": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": [".", "./processor"],
       "schemas": ["SyncMessageSchema", "ChangeEventSchema", "ValidationOptionsSchema", "ShaclValidationResultSchema", "ObservabilityConfigSchema"],
       "cliNouns": [],
@@ -310,7 +310,7 @@
       "receiptIntegration": false
     },
     "@unrdf/test-utils": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": ["."],
       "schemas": ["TestFixtureSchema"],
       "cliNouns": [],
@@ -319,7 +319,7 @@
       "receiptIntegration": false
     },
     "@unrdf/v6-core": {
-      "version": "6.0.0-alpha.1",
+      "version": "latest-alpha.1",
       "exports": [".", "./receipts", "./delta", "./cli", "./grammar", "./docs"],
       "schemas": ["V6ReceiptSchema", "DeltaOperationSchema"],
       "cliNouns": [],
@@ -328,7 +328,7 @@
       "receiptIntegration": true
     },
     "@unrdf/validation": {
-      "version": "5.0.1",
+      "version": "latest",
       "exports": ["."],
       "schemas": [],
       "cliNouns": [],
@@ -337,7 +337,7 @@
       "receiptIntegration": false
     },
     "@unrdf/yawl": {
-      "version": "5.0.0",
+      "version": "latest",
       "exports": [".", "./api", "./graphql-api", "./ontology", "./store", "./types", "./schemas", "./hooks", "./resources", "./cancellation", "./receipt", "./blockchain-receipts", "./visualization"],
       "schemas": ["CaseStatusSchema", "WorkItemStatusSchema", "TaskKindSchema", "SplitTypeSchema", "JoinTypeSchema", "ResourceTypeSchema", "ReceiptDecisionSchema", "TaskDefSchema", "FlowDefSchema", "PatternContextSchema", "PatternResultSchema", "WorkflowSpecSchema", "TaskDefinitionSchema", "TaskInstanceSchema", "TransitionReceiptSchema", "EngineConfigSchema", "CaseDataSchema", "JustificationSchema", "PayloadSchema", "VectorClockSchema", "EventTypeSchema", "ReceiptSchema", "VerificationResultSchema", "TaskDataSchema"],
       "cliNouns": [],
@@ -346,7 +346,7 @@
       "receiptIntegration": true
     },
     "@unrdf/yawl-ai": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./predictor", "./optimizer", "./anomaly", "./adapter"],
       "schemas": ["WorkflowExecutionSchema", "AnomalySchema", "WorkflowSequenceSchema", "PredictionResultSchema", "TaskMetricsSchema", "BottleneckSchema", "OptimizationReportSchema", "YAWLEventLogSchema"],
       "cliNouns": [],
@@ -355,7 +355,7 @@
       "receiptIntegration": false
     },
     "@unrdf/yawl-api": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./server"],
       "schemas": ["APIRequestSchema", "APIResponseSchema"],
       "cliNouns": [],
@@ -364,7 +364,7 @@
       "receiptIntegration": true
     },
     "@unrdf/yawl-durable": {
-      "version": "0.1.0",
+      "version": "latest",
       "exports": [".", "./saga", "./activity", "./replay"],
       "schemas": ["SagaDefinitionSchema", "ActivitySchema"],
       "cliNouns": [],
@@ -373,7 +373,7 @@
       "receiptIntegration": true
     },
     "@unrdf/yawl-kafka": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./producer", "./consumer", "./schemas"],
       "schemas": ["KafkaMessageSchema", "TopicConfigSchema"],
       "cliNouns": [],
@@ -382,7 +382,7 @@
       "receiptIntegration": false
     },
     "@unrdf/yawl-langchain": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./adapter", "./examples"],
       "schemas": ["ChainConfigSchema"],
       "cliNouns": [],
@@ -391,7 +391,7 @@
       "receiptIntegration": true
     },
     "@unrdf/yawl-observability": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./metrics", "./tracing", "./sli"],
       "schemas": ["WorkflowMetricSchema", "SLIConfigSchema"],
       "cliNouns": [],
@@ -400,7 +400,7 @@
       "receiptIntegration": false
     },
     "@unrdf/yawl-queue": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./adapter", "./examples/data-pipeline"],
       "schemas": ["QueueConfigSchema"],
       "cliNouns": [],
@@ -409,7 +409,7 @@
       "receiptIntegration": true
     },
     "@unrdf/yawl-realtime": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": [".", "./server", "./client"],
       "schemas": ["RealtimeEventSchema"],
       "cliNouns": [],
@@ -418,7 +418,7 @@
       "receiptIntegration": false
     },
     "@unrdf/yawl-viz": {
-      "version": "1.0.0",
+      "version": "latest",
       "exports": ["."],
       "schemas": [],
       "cliNouns": [],

@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/v6-compat
-**Version:** 6.0.0-rc.1
+**Version:** [VERSION]-rc.1
 
 ---
 
@@ -31,7 +31,7 @@ UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint 
 - `@unrdf/core`: workspace:*
 - `@unrdf/kgc-4d`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
-- `zod`: ^4.1.13
+- `zod`: ^[VERSION]
 
 ### Exports
 

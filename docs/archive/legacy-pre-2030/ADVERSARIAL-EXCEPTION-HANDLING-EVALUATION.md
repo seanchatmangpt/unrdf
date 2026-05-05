@@ -2,7 +2,7 @@
 
 **Evaluation Date**: 2026-01-11
 **Evaluator**: Research Agent (Adversarial Mode)
-**Package**: @unrdf/yawl v5.0.0
+**Package**: @unrdf/yawl vlatest
 **Methodology**: Code analysis, test coverage review, Java YAWL comparison
 
 ---
@@ -31,7 +31,7 @@ UNRDF YAWL implements **partial exception handling** with strong coverage of tim
 
 ## 1. Exception Type Support Analysis
 
-### 1.1 Implemented Exception Types
+### latest Implemented Exception Types
 
 **Cancellation Reasons** (`yawl-cancellation.mjs:29-38`):
 ```javascript
@@ -61,7 +61,7 @@ const VALID_RECEIPT_TYPES = Object.freeze([
 ]);
 ```
 
-### 1.2 Missing Exception Types
+### latest Missing Exception Types
 
 Compared to Java YAWL Exception Service:
 - ❌ **Constraint Violations**: No runtime business constraint checking
@@ -75,7 +75,7 @@ Compared to Java YAWL Exception Service:
 
 ## 2. Exception Handling Mechanisms
 
-### 2.1 Circuit Breaker Pattern
+### latest Circuit Breaker Pattern
 
 **Implementation**: `yawl-cancellation.mjs:147-296`
 
@@ -115,7 +115,7 @@ class TaskCircuitBreaker {
 
 ---
 
-### 2.2 Timeout Handling
+### latest Timeout Handling
 
 **Implementation**: `yawl-cancellation.mjs:1325-1404`
 
@@ -159,7 +159,7 @@ _handleTimeout(workItemId) {
 
 ---
 
-### 2.3 Cancellation Regions
+### latest Cancellation Regions
 
 **Implementation**: `yawl-cancellation.mjs:302-499`
 
@@ -229,7 +229,7 @@ it('should support nested regions', () => {
 
 ---
 
-### 2.4 Cancellation Propagation
+### latest Cancellation Propagation
 
 **Implementation**: `yawl-cancellation.mjs:1260-1301`
 
@@ -271,7 +271,7 @@ _propagateCancellation(taskId, reason) {
 
 ## 3. Worklet Support Analysis
 
-### 3.1 Search for Worklets
+### latest Search for Worklets
 
 **Search Results**:
 ```bash
@@ -281,7 +281,7 @@ $ grep -r "worklet\|Worklet\|exlet\|Exlet" packages/yawl/src --include="*.mjs"
 
 **Conclusion**: **ZERO worklet implementation**
 
-### 3.2 What Are Worklets? (Java YAWL)
+### latest What Are Worklets? (Java YAWL)
 
 From YAWL specification (Van der Aalst et al., 2010):
 
@@ -300,7 +300,7 @@ From YAWL specification (Van der Aalst et al., 2010):
 </ExceptionHandling>
 ```
 
-### 3.3 Impact of Missing Worklets
+### latest Impact of Missing Worklets
 
 **Example Scenario**: Purchase order approval
 
@@ -319,7 +319,7 @@ From YAWL specification (Van der Aalst et al., 2010):
 
 ## 4. Compensation Mechanisms
 
-### 4.1 Search for Compensation
+### latest Search for Compensation
 
 **Search Results**:
 ```bash
@@ -339,7 +339,7 @@ $ grep -r "rollback\|revert\|undo" packages/yawl/src --include="*.mjs"
 }
 ```
 
-### 4.2 What Is Compensation? (YAWL Standard)
+### latest What Is Compensation? (YAWL Standard)
 
 > **Compensation**: When a task is cancelled or fails, compensation actions undo the effects of already-completed work.
 
@@ -348,7 +348,7 @@ $ grep -r "rollback\|revert\|undo" packages/yawl/src --include="*.mjs"
 - Task 2: Book flight ❌ (failed)
 - **Compensation**: Cancel hotel reservation (undo Task 1)
 
-### 4.3 Current "Rollback" Implementation
+### latest Current "Rollback" Implementation
 
 **Found in `cancellation.test.mjs`**:
 ```javascript
@@ -371,7 +371,7 @@ manager.cancelWorkItem(workItemId, 'region_cancelled');
 
 ## 5. Constraint Violation Detection
 
-### 5.1 Search for Constraint Checking
+### latest Search for Constraint Checking
 
 **Search Results**:
 ```bash
@@ -393,7 +393,7 @@ const TaskSchema = z.object({
 // - "approval required if amount > threshold"
 ```
 
-### 5.2 Java YAWL Constraint Violations
+### latest Java YAWL Constraint Violations
 
 Java YAWL supports:
 1. **Pre-conditions**: Must be true before task starts
@@ -410,7 +410,7 @@ Java YAWL supports:
 </Task>
 ```
 
-### 5.3 UNRDF YAWL Validation
+### latest UNRDF YAWL Validation
 
 **Only Hook-Based Validation** (`yawl-hooks.mjs`):
 ```javascript
@@ -436,7 +436,7 @@ if (validator) {
 
 ## 6. Test Coverage Analysis
 
-### 6.1 Exception Handling Tests
+### latest Exception Handling Tests
 
 **Files**:
 - `cancellation.test.mjs`: 703 lines
@@ -498,7 +498,7 @@ it('should prevent work item enable when circuit is open', () => {
 
 ## 7. Comparison with Java YAWL Exception Service
 
-### 7.1 Java YAWL Exception Service Architecture
+### latest Java YAWL Exception Service Architecture
 
 **Components**:
 1. **Exception Gateway**: Detects exceptions during execution
@@ -516,7 +516,7 @@ Task Exception Detected
   → Resume or Terminate main workflow
 ```
 
-### 7.2 UNRDF YAWL Exception Flow
+### latest UNRDF YAWL Exception Flow
 
 **Current Flow**:
 ```
@@ -535,7 +535,7 @@ Task Exception Detected (timeout/failure)
 - ❌ Compensation execution
 - ✅ Receipt logging (better than Java YAWL)
 
-### 7.3 Feature Parity Table
+### latest Feature Parity Table
 
 | Feature | Java YAWL | UNRDF YAWL | Gap |
 |---------|-----------|------------|-----|
@@ -554,7 +554,7 @@ Task Exception Detected (timeout/failure)
 
 ## 8. Missing Features - Detailed Impact
 
-### 8.1 NO Worklet Support
+### latest NO Worklet Support
 
 **Impact**: HIGH (Severity: 10/10)
 
@@ -573,7 +573,7 @@ Task Exception Detected (timeout/failure)
 
 ---
 
-### 8.2 NO Compensation Framework
+### latest NO Compensation Framework
 
 **Impact**: HIGH (Severity: 9/10)
 
@@ -594,7 +594,7 @@ Task Exception Detected (timeout/failure)
 
 ---
 
-### 8.3 NO Constraint Violation Detection
+### latest NO Constraint Violation Detection
 
 **Impact**: MEDIUM (Severity: 6/10)
 
@@ -615,7 +615,7 @@ Task Exception Detected (timeout/failure)
 
 ## 9. Recommendations
 
-### 9.1 Immediate Actions (0-3 months)
+### latest Immediate Actions (0-3 months)
 
 **Priority 1: Worklet Framework** (Estimated: 3 weeks)
 ```javascript
@@ -650,7 +650,7 @@ await saga.run([bookHotel, bookFlight, bookCar]);
 // If bookCar fails → compensate bookFlight, then bookHotel
 ```
 
-### 9.2 Medium-Term (3-6 months)
+### latest Medium-Term (3-6 months)
 
 **Priority 3: Constraint Violation Framework**
 ```javascript
@@ -673,7 +673,7 @@ const exlets = {
 };
 ```
 
-### 9.3 Long-Term (6-12 months)
+### latest Long-Term (6-12 months)
 
 **Priority 5: Advanced Circuit Breaker**
 - Exception-type-specific thresholds
@@ -696,13 +696,13 @@ const replayResult = await timeMachine.replayFrom(timestamp, {
 
 | Category | Weight | Score | Weighted |
 |----------|--------|-------|----------|
-| Exception Detection | 15% | 75/100 | 11.25 |
-| Timeout Handling | 15% | 80/100 | 12.00 |
-| Circuit Breakers | 15% | 85/100 | 12.75 |
-| Cancellation Regions | 10% | 85/100 | 8.50 |
-| **Worklet Support** | 20% | **0/100** | **0.00** |
-| **Compensation** | 15% | **20/100** | **3.00** |
-| Constraint Violations | 10% | 50/100 | 5.00 |
+| Exception Detection | 15% | 75/100 | latest |
+| Timeout Handling | 15% | 80/100 | latest |
+| Circuit Breakers | 15% | 85/100 | latest |
+| Cancellation Regions | 10% | 85/100 | latest |
+| **Worklet Support** | 20% | **0/100** | **latest** |
+| **Compensation** | 15% | **20/100** | **latest** |
+| Constraint Violations | 10% | 50/100 | latest |
 
 **Final Score: 62/100** (C-)
 
@@ -851,7 +851,7 @@ it('should log timeout receipt', async () => {
 
 ## 12. Conclusion
 
-### 12.1 Summary
+### latest Summary
 
 UNRDF YAWL implements **60% of Java YAWL's exception handling capabilities**, with excellent execution of timeout and circuit breaker patterns but **critical missing features** in worklet-based recovery and compensation.
 
@@ -866,7 +866,7 @@ UNRDF YAWL implements **60% of Java YAWL's exception handling capabilities**, wi
 2. ❌ **NO compensation** - users manually undo completed work
 3. ❌ **NO constraint violations** - only schema validation
 
-### 12.2 Academic Impact
+### latest Academic Impact
 
 **For Research Publication**:
 - Current state: **NOT YAWL-compliant** (missing core exception service)
@@ -880,7 +880,7 @@ UNRDF YAWL implements **60% of Java YAWL's exception handling capabilities**, wi
   - Complex approval chains (need escalation worklets)
   - Regulatory compliance (need constraint violations)
 
-### 12.3 Final Compliance Score
+### latest Final Compliance Score
 
 ```
 ╔════════════════════════════════════════════════════╗

@@ -3,7 +3,7 @@
 **Research Report**: Advanced security and cryptographic integrations for RDF knowledge graphs
 
 **Date**: 2026-01-11
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Research & Design Phase
 
 ---
@@ -294,7 +294,7 @@ export async function verifySPARQLProof(proof, publicSignals) {
 
 ### 3.1 Motivation
 
-**Problem**: Current Ed25519 signatures vulnerable to Shor's algorithm (quantum computers ~2030-2040)
+**Problem**: Current Ed25519 signatures vulnerable to Shor's algorithm (quantum computers ~Autonomic-2040)
 
 **Risk**: Receipt chains signed today could be forged in 10-20 years
 
@@ -431,7 +431,7 @@ storeInIPFS(receiptsWithQuantumSigs);
 
 **Phase 1** (2026): Dual-signature mode (Ed25519 + Dilithium3)
 **Phase 2** (2028): Quantum-only for new receipts, legacy support for Ed25519
-**Phase 3** (2030+): Deprecate Ed25519 entirely
+**Phase 3** (Autonomic+): Deprecate Ed25519 entirely
 
 ---
 

@@ -3,7 +3,7 @@
 
 **Status**: Draft
 **Date**: 2025-12-27
-**Version**: 0.1.0
+**Version**: latest
 
 ---
 
@@ -123,7 +123,7 @@ This document defines the formal architecture for a narrative state machine wher
  * @property {Quad} quad - RDF statement (subject, predicate, object, graph)
  * @property {string} source - Where this came from (e.g., 'agent:alice', 'sensor:temp01')
  * @property {number} timestamp - When observed
- * @property {number} confidence - 0.0-1.0 certainty score
+ * @property {number} confidence - latest.0 certainty score
  */
 
 /**
@@ -679,7 +679,7 @@ Alice's wallet submits:
   },
   source: 'wallet:alice',
   timestamp: 1703674800,
-  confidence: 1.0
+  confidence: latest
 }
 
 Step 2: GUARD CHECK
@@ -832,7 +832,7 @@ Before implementation begins, this design must satisfy:
 - [ ] **Minimality**: Delta proven minimal (via formal algorithm, not heuristic)
 - [ ] **Composability**: Bridges enable cross-universe workflows
 - [ ] **Performance**: <100ms median scene processing (OTEL-verified)
-- [ ] **Correctness**: Invariants hold with p>0.999 (formal verification or extensive testing)
+- [ ] **Correctness**: Invariants hold with p>latest (formal verification or extensive testing)
 
 **Acceptance Test**: Implement simple GovernanceUniverse with 3 invariants, 5 guards, process 1000 votes, verify:
 - All receipts cryptographically valid
@@ -859,8 +859,8 @@ Before implementation begins, this design must satisfy:
 
 ### B. References
 
-- [RDF 1.1 Concepts](https://www.w3.org/TR/rdf11-concepts/)
-- [SPARQL 1.1 Query Language](https://www.w3.org/TR/sparql11-query/)
+- [RDF latest Concepts](https://www.w3.org/TR/rdf11-concepts/)
+- [SPARQL latest Query Language](https://www.w3.org/TR/sparql11-query/)
 - [SHACL - Shapes Constraint Language](https://www.w3.org/TR/shacl/)
 - [Content Addressing](https://en.wikipedia.org/wiki/Content-addressable_storage)
 - [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree)

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const NEW_VERSION = '26.4.23';
+const NEW_VERSION = 'latest';
 const INTERNAL_PREFIX = '@unrdf/';
 
 const files = [

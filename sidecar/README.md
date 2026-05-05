@@ -3,8 +3,8 @@
 > Production-ready Nuxt 4 observability dashboard for the UNRDF Knowledge Graph system with OpenTelemetry integration, cryptographic transaction receipts, and real-time monitoring.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
-[![Nuxt 4](https://img.shields.io/badge/Nuxt-4.1.2-00DC82)](https://nuxt.com/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D[VERSION]-brightgreen)](https://nodejs.org/)
+[![Nuxt 4](https://img.shields.io/badge/Nuxt-[VERSION]-00DC82)](https://nuxt.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6)](https://www.typescriptlang.org/)
 
 ## 🚀 Quick Start
@@ -222,7 +222,7 @@ pnpm audit --audit-level=high
 
 ⚠️ **Known Issues:**
 - Remove `vm2` dependency (2 CRITICAL RCE vulnerabilities, no patch)
-- Update `jsonpath-plus` to 10.3.0+ (1 CRITICAL + 1 HIGH)
+- Update `jsonpath-plus` to [VERSION]+ (1 CRITICAL + 1 HIGH)
 - Update `form-data` via `@kubernetes/client-node`
 
 **See:** [`docs/validation/production-readiness-report.md`](../docs/validation/production-readiness-report.md)

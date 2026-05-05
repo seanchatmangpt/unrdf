@@ -1,6 +1,6 @@
-# UNRDF v6.0.0 Release Orchestration Plan
+# UNRDF vlatest Release Orchestration Plan
 **Task Orchestrator Agent**
-**Version**: 1.0
+**Version**: latest
 **Target Date**: 2025-01-18 to 2025-01-25 (21-28 days)
 **Current Status**: Phase 1-2 Complete (Core + Receipts)
 
@@ -8,11 +8,11 @@
 
 ## Executive Summary
 
-**Mission**: Coordinate 9-agent swarm to deliver production-ready UNRDF v6.0.0 GA release with ZERO critical bugs and 100% OTEL validation (≥80/100).
+**Mission**: Coordinate 9-agent swarm to deliver production-ready UNRDF vlatest GA release with ZERO critical bugs and 100% OTEL validation (≥80/100).
 
 **Current State** (Evidence-Based):
 - ✅ Phase 1-2: Implemented (git: 2279ba21)
-- ✅ Version: 6.0.0-alpha.1 (verified package.json)
+- ✅ Version: latest.1 (verified package.json)
 - ⏳ Phase 3-5: Pending (Q* validation, 10k system, hardening)
 - ⏳ Beta/RC/GA: Not started
 
@@ -44,7 +44,7 @@ Week 1 (Days 1-7): Phase 3-5 Implementation
    └─ Gate: 0 critical/high CVEs, guards pass
 
 Week 2 (Days 8-14): Beta Testing (7-Day Soak)
-├─ Day 8: Beta Release (6.0.0-beta.1)
+├─ Day 8: Beta Release (latest.1)
 │  ├─ Agent 9 (Release Mgr): Tag + publish beta
 │  ├─ Agent 4 (Docs): Publish beta docs
 │  └─ Gate: Build succeeds, CI green
@@ -55,7 +55,7 @@ Week 2 (Days 8-14): Beta Testing (7-Day Soak)
 │  └─ Gate: 0 critical bugs, OTEL ≥75/100
 
 Week 3 (Days 15-19): RC Testing (3-5 Days)
-├─ Day 15: RC Release (6.0.0-rc.1)
+├─ Day 15: RC Release (latest.1)
 │  ├─ Agent 9 (Release Mgr): Tag RC
 │  ├─ Agent 4 (Docs): Finalize changelog
 │  └─ Gate: Beta bugs fixed (100%)
@@ -70,7 +70,7 @@ Week 4 (Days 20-28): GA Release + Monitoring
 │  ├─ Agent 6 (Validator): Sign-off checklist
 │  ├─ Agent 8 (Security): CVE scan
 │  └─ Gate: All agents approve
-├─ Day 21: GA Release (6.0.0)
+├─ Day 21: GA Release (latest)
 │  ├─ Agent 9 (Release Mgr): Publish to npm
 │  ├─ Agent 4 (Docs): Publish docs site
 │  └─ Gate: Docker image built + tested
@@ -267,7 +267,7 @@ Security Audit (Agent 8)
 ✅ Completed
 - TASK-003: Q* validation core algorithm
   - Proof: git commit 8a7c9f2, tests 25/25 pass
-  - Metric: `timeout 5s npm test` - 2.3s (under SLA)
+  - Metric: `timeout 5s npm test` - latests (under SLA)
 
 🚧 In Progress
 - TASK-004: Q* integration with multiverse state machine
@@ -397,7 +397,7 @@ timeout 5s docker --version # Verify Docker
 # Agent 9 - Build in parallel
 [Single Message]:
   Bash("timeout 30s pnpm -r run build && echo '✅ Packages built'")
-  Bash("timeout 60s docker build -t unrdf:6.0.0 . && echo '✅ Docker built'", { run_in_background: true })
+  Bash("timeout 60s docker build -t unrdf:latest . && echo '✅ Docker built'", { run_in_background: true })
   Bash("timeout 20s pnpm -r exec pnpm pack && echo '✅ Tarballs created'")
 ```
 
@@ -405,8 +405,8 @@ timeout 5s docker --version # Verify Docker
 ```bash
 # Agent 9 - Sequential publish (MUST succeed in order)
 timeout 30s pnpm publish -r --access public --tag latest && \
-timeout 10s docker push unrdf:6.0.0 && \
-timeout 5s gh release create v6.0.0 --title "UNRDF v6.0.0" --notes-file RELEASE_NOTES.md
+timeout 10s docker push unrdf:latest && \
+timeout 5s gh release create vlatest --title "UNRDF vlatest" --notes-file RELEASE_NOTES.md
 ```
 
 **11:30 UTC - Post-Release**
@@ -416,15 +416,15 @@ timeout 10s npm run docs:deploy
 
 # Agent 9 - Create announcement
 timeout 5s gh issue create \
-  --title "🎉 UNRDF v6.0.0 Released" \
-  --body "See release notes: https://github.com/seanchatmangpt/unrdf/releases/tag/v6.0.0" \
+  --title "🎉 UNRDF vlatest Released" \
+  --body "See release notes: https://github.com/seanchatmangpt/unrdf/releases/tag/vlatest" \
   --label "announcement,release"
 ```
 
 **12:00 UTC - Monitoring (Agent 5)**
 ```bash
 # Start 7-day post-release monitoring
-timeout 600s node scripts/monitor-release.mjs --version 6.0.0 --duration 7d
+timeout 600s node scripts/monitor-release.mjs --version latest --duration 7d
 ```
 
 ---
@@ -443,7 +443,7 @@ timeout 600s node scripts/monitor-release.mjs --version 6.0.0 --duration 7d
 **Daily Health Check** (Automated):
 ```bash
 # Runs every day at 09:00 UTC
-timeout 10s node validation/health-check.mjs --version 6.0.0 && \
+timeout 10s node validation/health-check.mjs --version latest && \
 echo "✅ Day $(date +%d): Healthy" || \
 (echo "🚨 ALERT: Health check failed" && exit 1)
 ```
@@ -451,7 +451,7 @@ echo "✅ Day $(date +%d): Healthy" || \
 **Hotfix Trigger Conditions**:
 1. **Critical bug** (data loss, security breach) → Hotfix within 4 hours
 2. **High bug** (feature broken) → Hotfix within 24 hours
-3. **Medium bug** (degraded UX) → Patch in next minor (6.0.1)
+3. **Medium bug** (degraded UX) → Patch in next minor (latest)
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/nextra
-**Version:** 5.0.1
+**Version:** [VERSION]
 
 ---
 
@@ -28,13 +28,13 @@ UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation
 
 ### Dependencies
 
-- `katex`: ^0.16.25
-- `next`: ^16.1.1
-- `nextra`: ^4.6.1
-- `nextra-theme-docs`: ^4.6.1
-- `react`: ^19.2.1
-- `react-dom`: ^19.2.1
-- `zod`: ^4.1.13
+- `katex`: ^[VERSION]
+- `next`: ^[VERSION]
+- `nextra`: ^[VERSION]
+- `nextra-theme-docs`: ^[VERSION]
+- `react`: ^[VERSION]
+- `react-dom`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

@@ -1,8 +1,8 @@
 ---
 title: "@unrdf/yawl-langchain Documentation"
 packageName: "@unrdf/yawl-langchain"
-version: "26.4.3"
-generatedAt: "2000-01-01T00:00:00.000Z"
+version: "latest"
+generatedAt: "2000-01-01T00:00:latestZ"
 ---
 
 # @unrdf/yawl-langchain Documentation
@@ -39,4 +39,4 @@ Generated documentation using the Diátaxis framework.
 
 ---
 
-*Generated at 2000-01-01T00:00:00.000Z*
+*Generated at 2000-01-01T00:00:latestZ*

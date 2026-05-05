@@ -1,6 +1,6 @@
 # ML Inference Pipeline - Architecture Documentation
 
-## Package: @unrdf/ml-inference v5.0.1
+## Package: @unrdf/ml-inference [VERSION]
 
 **Innovation**: High-performance ONNX model inference pipeline for real-time RDF processing
 
@@ -337,15 +337,15 @@ registry.deploy
 ## Dependencies
 
 ### Production
-- `onnxruntime-node`: ^1.20.1 - Native ONNX execution
-- `@opentelemetry/api`: ^1.9.0 - Instrumentation
+- `onnxruntime-node`: ^[VERSION] - Native ONNX execution
+- `@opentelemetry/api`: ^[VERSION] - Instrumentation
 - `@unrdf/core`: workspace:* - RDF core utilities
 - `@unrdf/streaming`: workspace:* - Change feed integration
-- `zod`: ^4.1.13 - Schema validation
+- `zod`: ^[VERSION] - Schema validation
 
 ### Development
-- `vitest`: ^4.0.15 - Testing framework
-- `@types/node`: ^24.10.1 - Type definitions
+- `vitest`: ^[VERSION] - Testing framework
+- `@types/node`: ^[VERSION] - Type definitions
 
 ---
 
@@ -471,6 +471,6 @@ registry.deploy
 ---
 
 **Created**: 2025-12-25
-**Version**: 5.0.1
+**Version**: [VERSION]
 **Author**: Claude (Anthropic)
 **License**: MIT

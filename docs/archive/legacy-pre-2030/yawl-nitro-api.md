@@ -1,6 +1,6 @@
 # YAWL-Nitro API Reference
 
-**Version**: 1.0.0
+**Version**: latest
 **Package**: `@unrdf/daemon/integrations/nitro-tasks`
 **Last Updated**: 2026-01-11
 
@@ -1272,5 +1272,5 @@ try {
 - **[@unrdf/daemon API](/docs/diataxis/reference/yawl-daemon-api.md)**
 - **[@unrdf/yawl API](/packages/yawl/README.md)**
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-11

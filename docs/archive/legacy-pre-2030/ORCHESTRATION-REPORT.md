@@ -194,7 +194,7 @@ Violations: 0
 
 ```bash
 $ timeout 15s npm --prefix /home/user/unrdf/packages/kgc-cli test
-> @unrdf/kgc-cli@5.0.1 test
+> @unrdf/kgc-cli@latest test
 > vitest run --coverage
 
 No test files found, exiting with code 0
@@ -273,7 +273,7 @@ Add to pipeline:
 ### Why Keep Aliases?
 
 - **Backward Compatibility**: Existing scripts may reference old names
-- **Migration Path**: Deprecate aliases in v6.0, remove in v7.0
+- **Migration Path**: Deprecate aliases in vlatest, remove in vlatest
 - **Clear Semantics**: `@unrdf/analytics` → `@unrdf/graph-analytics` (more specific)
 
 ---

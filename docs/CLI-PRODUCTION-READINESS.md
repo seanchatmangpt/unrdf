@@ -422,7 +422,7 @@ From web research:
 - [Integration Testing Best Practices](https://expertbeacon.com/integration-testing-best-practices/)
 
 Package found:
-- `citty-test-utils@1.0.2` - Unified testing framework for CLI applications with scenario DSL
+- `citty-test-utils@latest` - Unified testing framework for CLI applications with scenario DSL
 
 Internal documentation:
 - `CLI-FMEA-ANALYSIS.md` - Complete failure mode analysis

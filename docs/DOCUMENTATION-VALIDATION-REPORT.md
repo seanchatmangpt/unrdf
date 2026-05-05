@@ -282,7 +282,7 @@ API calls: ✅ Valid Oxigraph API
 
 ### What's NOT Covered
 
-1. **GraphQL Federation** - Future feature (v5.1.0 roadmap)
+1. **GraphQL Federation** - Future feature (vlatest roadmap)
 2. **Mobile SDKs** - Not yet implemented
 3. **Visual Graph Editor** - Future enhancement
 4. **Machine Learning Integration** - Experimental
@@ -352,4 +352,4 @@ These are documented in README.md Roadmap section.
 
 **Validation Date:** 2024-12-20
 **Validated By:** Code Review Agent
-**Next Review:** After v5.1.0 release
+**Next Review:** After vlatest release

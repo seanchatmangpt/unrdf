@@ -8,7 +8,7 @@ This guide shows exactly how to start implementing the v6 architecture.
 
 ## Phase 1: Foundation Setup (Week 1)
 
-### Step 1.1: Create @unrdf/store
+### Step latest: Create @unrdf/store
 
 ```bash
 # Create package structure
@@ -19,7 +19,7 @@ cd packages/store
 cat > package.json << 'EOF'
 {
   "name": "@unrdf/store",
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "description": "Graph storage and SPARQL execution using Oxigraph",
   "type": "module",
   "main": "./src/index.mjs",
@@ -27,10 +27,10 @@ cat > package.json << 'EOF'
     ".": "./src/index.mjs"
   },
   "dependencies": {
-    "oxigraph": "^0.5.2"
+    "oxigraph": "^latest"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=latest"
   }
 }
 EOF
@@ -109,7 +109,7 @@ pnpm test
 
 ---
 
-### Step 1.2: Create @unrdf/rdf
+### Step latest: Create @unrdf/rdf
 
 ```bash
 mkdir -p packages/rdf/{src/{parsers,serializers,validation},test}
@@ -118,7 +118,7 @@ cd packages/rdf
 cat > package.json << 'EOF'
 {
   "name": "@unrdf/rdf",
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "description": "RDF data model, parsing, serialization, validation",
   "type": "module",
   "main": "./src/index.mjs",
@@ -128,10 +128,10 @@ cat > package.json << 'EOF'
     "./validation": "./src/validation/index.mjs"
   },
   "dependencies": {
-    "@rdfjs/data-model": "^2.1.1",
-    "n3": "^1.26.0",
-    "rdf-validate-shacl": "^0.6.5",
-    "zod": "^4.1.13"
+    "@rdfjs/data-model": "^latest",
+    "n3": "^latest",
+    "rdf-validate-shacl": "^latest",
+    "zod": "^latest"
   }
 }
 EOF
@@ -174,7 +174,7 @@ EOF
 
 ---
 
-### Step 1.3: Create @unrdf/governance
+### Step latest: Create @unrdf/governance
 
 ```bash
 mkdir -p packages/governance/{src/{receipts,time-travel,blockchain},test}
@@ -183,7 +183,7 @@ cd packages/governance
 cat > package.json << 'EOF'
 {
   "name": "@unrdf/governance",
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "description": "Provenance, receipts, time-travel, deterministic event sourcing",
   "type": "module",
   "main": "./src/index.mjs",
@@ -196,8 +196,8 @@ cat > package.json << 'EOF'
   "dependencies": {
     "@unrdf/store": "workspace:*",
     "@unrdf/rdf": "workspace:*",
-    "hash-wasm": "^4.12.0",
-    "isomorphic-git": "^1.35.1"
+    "hash-wasm": "^latest",
+    "isomorphic-git": "^latest"
   }
 }
 EOF
@@ -230,7 +230,7 @@ EOF
 
 ## Phase 2: Runtime Layer (Week 2)
 
-### Step 2.1: Create @unrdf/workflows
+### Step latest: Create @unrdf/workflows
 
 ```bash
 mkdir -p packages/workflows/{src/{engine,patterns,durable},test}
@@ -239,7 +239,7 @@ cd packages/workflows
 cat > package.json << 'EOF'
 {
   "name": "@unrdf/workflows",
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "description": "YAWL workflow engine with deterministic execution",
   "type": "module",
   "main": "./src/index.mjs",
@@ -265,7 +265,7 @@ EOF
 
 ---
 
-### Step 2.2: Create @unrdf/runtime
+### Step latest: Create @unrdf/runtime
 
 ```bash
 mkdir -p packages/runtime/{src/{streaming,federation,consensus,collab},test}
@@ -273,7 +273,7 @@ mkdir -p packages/runtime/{src/{streaming,federation,consensus,collab},test}
 cat > package.json << 'EOF'
 {
   "name": "@unrdf/runtime",
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "description": "Streaming, federation, consensus, real-time sync",
   "dependencies": {
     "@unrdf/store": "workspace:*",
@@ -296,7 +296,7 @@ EOF
 
 ## Phase 3: Applications (Week 3)
 
-### Step 3.1: Create @unrdf/integrations
+### Step latest: Create @unrdf/integrations
 
 ```bash
 mkdir -p packages/integrations/src/{rest,graphql,kafka,queue,serverless}
@@ -507,7 +507,7 @@ pnpm test test/integration/
 - ✅ Documentation complete (README, API docs, migration guide)
 - ✅ Quality score ≥70/100
 
-**Decision**: PASS → Release v6.0.0 | FAIL → Address issues before release
+**Decision**: PASS → Release vlatest | FAIL → Address issues before release
 
 ---
 
@@ -571,10 +571,10 @@ Track these metrics weekly:
 
 1. ✅ Read this entire guide (you just did!)
 2. Create v6-rewrite branch
-3. Start Phase 1, Step 1.1 (create @unrdf/store)
+3. Start Phase 1, Step latest (create @unrdf/store)
 4. Write first test, make it pass
 5. Iterate package by package
 6. Pass quality gates
-7. Ship v6.0.0
+7. Ship vlatest
 
 **Remember**: Ruthless simplicity. 12 packages, 3 layers, zero duplication.

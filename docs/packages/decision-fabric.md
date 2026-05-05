@@ -2,7 +2,7 @@
 
 > Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators
 
-**Version**: `0.1.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

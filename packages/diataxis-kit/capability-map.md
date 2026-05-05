@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/diataxis-kit
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 

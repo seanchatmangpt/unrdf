@@ -2,7 +2,7 @@
 
 > Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

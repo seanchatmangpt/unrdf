@@ -78,7 +78,7 @@
     // Network & Proxy
     "HTTP_PROXY": "http://proxy.example.com:8080",
     "HTTPS_PROXY": "https://proxy.example.com:8443",
-    "NO_PROXY": "localhost,127.0.0.1,.example.com",
+    "NO_PROXY": "localhost,latest.1,.example.com",
 
     // Telemetry & Privacy
     "DISABLE_TELEMETRY": "false",
@@ -351,8 +351,8 @@
   // ========================================================================
 
   "security": {
-    "allowedNetworks": ["10.0.0.0/8", "192.168.0.0/16"],
-    "blockedNetworks": ["0.0.0.0/0"],
+    "allowedNetworks": ["latest.0/8", "latest.0/16"],
+    "blockedNetworks": ["latest.0/0"],
     "_network_desc": "CIDR ranges for network access control",
 
     "secretPatterns": [

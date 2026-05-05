@@ -26,7 +26,7 @@
     ]
   },
   "explanation": {
-    "architecture": "Comprehensive validation suite for @seanchatmangpt/pictl v26.4.9.",
+    "architecture": "Comprehensive validation suite for @seanchatmangpt/pictl [VERSION].",
     "concepts": [
       "process-mining",
       "wasm",
@@ -196,5 +196,5 @@
       "title": "Getting Started with @pictl/validators"
     }
   ],
-  "version": "26.4.9"
+  "version": "[VERSION]"
 }

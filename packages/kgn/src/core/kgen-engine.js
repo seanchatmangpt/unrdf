@@ -381,7 +381,7 @@ export class KGenTemplateEngine {
     return {
       ...this.options,
       filterCount: this.filters.getFilterCount(),
-      version: '2.0.0-kgen-native'
+      version: 'latest-kgen-native'
     };
   }
 

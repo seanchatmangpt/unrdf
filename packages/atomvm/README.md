@@ -41,7 +41,7 @@ The page may auto-reload once to enable Cross-Origin-Isolation (required for Sha
 
 ### Browser Runtime
 - **State Machine Design**: Poka-yoke error prevention - invalid operations are impossible
-- **Real AtomVM WASM**: Uses actual AtomVM v0.6.6 compiled to WebAssembly
+- **Real AtomVM WASM**: Uses actual AtomVM [VERSION] compiled to WebAssembly
 - **Dual Runtime**: Works in both browser and Node.js environments
 - **Cross-Origin-Isolation**: Automatic COI setup via service workers
 - **Module-Based**: Explicit module naming (no defaults)
@@ -229,7 +229,7 @@ pnpm preview
 ## Architecture
 
 - **Browser**: Service worker enables COI → SharedArrayBuffer → AtomVM WASM execution
-- **Node.js**: Spawns Node.js process with AtomVM-node-v0.6.6.js
+- **Node.js**: Spawns Node.js process with AtomVM-node-[VERSION].js
 - **State Machine**: Prevents invalid operations (poka-yoke design)
 - **Module-Based**: Explicit module naming required (no defaults)
 

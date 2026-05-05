@@ -94,7 +94,7 @@ Lightweight VS Code extension for UNRDF development:
 ```bash
 cd vscode-extension
 npm run package
-code --install-extension unrdf-vscode-0.1.0.vsix
+code --install-extension unrdf-vscode-latest.vsix
 ```
 
 ---
@@ -238,7 +238,7 @@ cd completions
 cd vscode-extension
 npm install
 npm run package
-code --install-extension unrdf-vscode-0.1.0.vsix
+code --install-extension unrdf-vscode-latest.vsix
 
 # 3. Test REPL
 unrdf repl
@@ -253,7 +253,7 @@ cd completions && ./install.sh
 
 **VS Code Extension Only**:
 ```bash
-cd vscode-extension && npm run package && code --install-extension unrdf-vscode-0.1.0.vsix
+cd vscode-extension && npm run package && code --install-extension unrdf-vscode-latest.vsix
 ```
 
 **REPL Only**:

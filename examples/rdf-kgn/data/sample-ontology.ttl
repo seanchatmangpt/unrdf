@@ -6,7 +6,7 @@
 ex: a owl:Ontology ;
     rdfs:label "Example Domain Ontology" ;
     rdfs:comment "A sample ontology for demonstration purposes" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 # Classes
 ex:Person a owl:Class ;

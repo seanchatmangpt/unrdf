@@ -205,10 +205,10 @@ curl -X POST http://localhost:3000/api/hooks/evaluate \
 ## Performance Impact
 
 ### Latency Overhead
-- Request ID generation: ~0.1ms (UUID v4)
-- Validation middleware setup: ~0.05ms
-- OTEL span creation: ~0.2ms
-- **Total overhead**: &lt;0.5ms per request
+- Request ID generation: ~latestms (UUID v4)
+- Validation middleware setup: ~latestms
+- OTEL span creation: ~latestms
+- **Total overhead**: &lt;latestms per request
 
 ### Benefits
 - Early validation failures (before handler execution)
@@ -226,7 +226,7 @@ curl -X POST http://localhost:3000/api/hooks/evaluate \
 
 ## Compliance
 
-### OpenAPI 3.0
+### OpenAPI latest
 - Standardized error responses
 - Consistent success responses
 - Request/response schemas (via Zod)

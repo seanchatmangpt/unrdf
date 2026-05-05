@@ -273,8 +273,8 @@ at createObservation (filesystem.mjs:140:28)
 4. Document probe receipt format for KGC integration
 
 ### Environmental Status
-- **System**: Node.js v22.21.1
-- **Platform**: Linux 4.4.0
+- **System**: Node.js [VERSION]
+- **Platform**: Linux [VERSION]
 - **Filesystem**: Case-sensitive ✅
 - **Symlinks**: Supported ✅
 - **Atomic operations**: Supported ✅

@@ -1,4 +1,4 @@
-# Testing Guide - v5.0.0-beta.2
+# Testing Guide - vlatest.2
 
 ## Quick Start
 

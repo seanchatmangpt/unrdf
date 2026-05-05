@@ -1,14 +1,14 @@
-# UNRDF v6.0.0 API Documentation
+# UNRDF vlatest API Documentation
 
-**Complete API reference for new v6.0.0 features**
+**Complete API reference for new vlatest features**
 
 ## Overview
 
-UNRDF v6.0.0 introduces the `@unrdf/daemon` package with enterprise-grade authentication, security validation, and 13 production-ready integration modules.
+UNRDF vlatest introduces the `@unrdf/daemon` package with enterprise-grade authentication, security validation, and 13 production-ready integration modules.
 
 **Base Package**: `@unrdf/daemon`
-**Version**: 6.0.0
-**Node.js**: >=18.0.0
+**Version**: latest
+**Node.js**: >=latest
 **Module System**: ESM only (.mjs)
 
 ---
@@ -917,8 +917,8 @@ Get performance metrics.
   "totalOperations": 100,
   "successfulOperations": 95,
   "failedOperations": 5,
-  "successRate": 95.0,
-  "averageDuration": 125.5
+  "successRate": latest,
+  "averageDuration": latest
 }
 ```
 

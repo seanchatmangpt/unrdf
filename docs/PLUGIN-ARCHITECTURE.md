@@ -1,6 +1,6 @@
 # UNRDF Plugin Architecture
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Canonical Standard
 **Last Updated**: 2025-12-25
 
@@ -50,7 +50,7 @@ Every plugin implements:
 const plugin = {
   // Required fields
   name: 'plugin-name',          // Unique identifier
-  version: '1.0.0',             // Semantic version
+  version: 'latest',             // Semantic version
 
   // Lifecycle hooks
   async init() { },             // Initialize plugin
@@ -112,7 +112,7 @@ export function createPluginManager() {
      * @example
      * manager.register({
      *   name: 'logger',
-     *   version: '1.0.0',
+     *   version: 'latest',
      *   async init() { console.log('Logger initialized'); },
      * });
      */
@@ -275,7 +275,7 @@ export function createPluginManager() {
 
 export const queryLoggerPlugin = {
   name: 'query-logger',
-  version: '1.0.0',
+  version: 'latest',
 
   async init() {
     console.log('[QueryLogger] Initialized');
@@ -326,12 +326,12 @@ import { trace } from '@opentelemetry/api';
 
 export const otelTracingPlugin = {
   name: 'otel-tracing',
-  version: '1.0.0',
+  version: 'latest',
 
   tracer: null,
 
   async init() {
-    this.tracer = trace.getTracer('unrdf-core', '5.0.0');
+    this.tracer = trace.getTracer('unrdf-core', 'latest');
   },
 
   on: {
@@ -384,7 +384,7 @@ export function createCachingPlugin(options = {}) {
 
   return {
     name: 'caching',
-    version: '1.0.0',
+    version: 'latest',
 
     async init() {
       // Start cache cleanup interval
@@ -462,7 +462,7 @@ const QueryEventSchema = z.object({
 
 export const validationPlugin = {
   name: 'validation',
-  version: '1.0.0',
+  version: 'latest',
 
   on: {
     beforeQuery: async (event) => {
@@ -580,7 +580,7 @@ Plugins can depend on each other:
 ```javascript
 const metricsPlugin = {
   name: 'metrics',
-  version: '1.0.0',
+  version: 'latest',
 
   queryCount: 0,
 
@@ -764,7 +764,7 @@ describe('myPlugin', () => {
 export const myPlugin = {
   // Required
   name: 'my-plugin',
-  version: '1.0.0',
+  version: 'latest',
 
   // State
   initialized: false,
@@ -809,4 +809,4 @@ export const myPlugin = {
 ---
 
 **Version History**:
-- 1.0.0 (2025-12-25): Initial plugin architecture standard
+- latest (2025-12-25): Initial plugin architecture standard

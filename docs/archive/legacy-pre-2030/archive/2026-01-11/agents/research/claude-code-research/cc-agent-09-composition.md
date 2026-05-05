@@ -89,12 +89,12 @@ test_protocol:
       "baseline": {
         "operator_steps": 15,
         "policy_violations_possible": 5,
-        "parallel_throughput": 1.0
+        "parallel_throughput": latest
       },
       "composition_result": {
         "operator_steps": 3,
         "policy_violations_prevented": 5,
-        "parallel_throughput": 3.2
+        "parallel_throughput": latest
       },
       "emergent_properties": [
         "Single-command multi-agent orchestration",
@@ -161,7 +161,7 @@ test_protocol:
 | operator_steps      | Count reduction         | ≥20%      |
 | policy_strength     | Violations prevented    | ≥1        |
 | recovery_time       | Time reduction          | ≥50%      |
-| parallel_throughput | Throughput multiplier   | ≥1.5x     |
+| parallel_throughput | Throughput multiplier   | ≥latestx     |
 | reproducibility     | Consistency improvement | ≥10%      |
 
 ## Adversarial Validation

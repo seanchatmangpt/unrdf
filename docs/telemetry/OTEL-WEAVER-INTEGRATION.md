@@ -1,7 +1,7 @@
 # OTEL Weaver Integration
 
 **Status**: ✅ **FULLY IMPLEMENTED**
-**Version**: 26.5.4
+**Version**: latest
 **Last Updated**: 2026-04-04
 
 ---
@@ -171,7 +171,7 @@ UNRDF uses a local OTel Weaver registry at `otel/registry/` — 8 YAML files cov
 The registry manifest at `otel/registry/manifest.yaml` pins the schema version:
 
 ```yaml
-schema_url: https://opentelemetry.io/schemas/1.28.0
+schema_url: https://opentelemetry.io/schemas/latest
 ```
 
 ### Generated Package: `@unrdf/otel`
@@ -196,7 +196,7 @@ cd otel && weaver registry generate --registry registry/ js ../packages/otel/src
 ### Weaver Registry Manifest (`otel/registry/manifest.yaml`)
 
 ```yaml
-schema_url: https://opentelemetry.io/schemas/1.28.0
+schema_url: https://opentelemetry.io/schemas/latest
 ```
 
 ### MiniJinja Templates (`otel/templates/registry/js/weaver.yaml`)

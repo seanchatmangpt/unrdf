@@ -1,6 +1,6 @@
 # Documentation Code Alignment Report
 
-**Generated:** 2025-12-25T23:28:59.487Z
+**Generated:** 2025-12-25T23:28:latestZ
 
 ## Executive Summary
 
@@ -179,7 +179,7 @@ const core = await createKnowledgeSubstrateCore();
 // Define people and relationships in Turtle format
 const data = `
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   @prefix schema: <https://schema.org/> .
 ...
 ```
@@ -201,7 +201,7 @@ import { core, store } from './knowledge-base.mjs';
  */
 export async function findAllPeople() {
   const sparql = `
-    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
     SELECT ?name ?age ?job
 ...
@@ -229,7 +229,7 @@ const core = await createKnowledgeSubstrateCore();
 // Load sample data
 const data = `
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
 ...
 ```

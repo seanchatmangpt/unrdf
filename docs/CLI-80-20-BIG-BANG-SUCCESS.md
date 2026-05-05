@@ -201,7 +201,7 @@ const policies = await Promise.all(files.map(async file => {
 const policyStore = {
   'data-governance': {
     name: 'data-governance',
-    version: '1.0.0',
+    version: 'latest',
     // ... hardcoded details
   }
 };
@@ -239,7 +239,7 @@ async run(ctx) {
   const policy = JSON.parse(content);
 
   console.log(`\n📋 Policy Pack: ${policy.name || name}`);
-  console.log(`Version:       ${policy.version || '1.0.0'}`);
+  console.log(`Version:       ${policy.version || 'latest'}`);
   console.log(`Description:   ${policy.description || 'N/A'}`);
   console.log(`Enabled:       ${policy.enabled !== false ? 'Yes' : 'No'}`);
   console.log(`Hooks:         ${policy.hooks?.length || 0}`);
@@ -407,9 +407,9 @@ my-policy    0      ✅
 ## 80/20 ROI Analysis
 
 ### **Time Investment**:
-- **Phase 3**: Documentation (1.5 hours)
+- **Phase 3**: Documentation (latest hours)
 - **Phase 2**: Implementation (1 hour)
-- **Phase 1**: Verification (0.5 hours)
+- **Phase 1**: Verification (latest hours)
 - **Total**: 3 hours
 
 ### **Value Delivered**:
@@ -419,7 +419,7 @@ my-policy    0      ✅
 - **Eliminated all mock data** (3 policy commands fixed)
 - **Honest TODOs** (5 commands marked with workarounds)
 
-**ROI**: **6.3 commands per hour** (19 commands / 3 hours)
+**ROI**: **latest commands per hour** (19 commands / 3 hours)
 
 ---
 

@@ -23,7 +23,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: 1234567890,
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test receipt',
     };
@@ -50,7 +50,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Allowed',
     });
@@ -66,7 +66,7 @@ describe('Receipt Tests', () => {
       afterHash: '0'.repeat(64),
       epoch: 2,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: ['Test violation'],
       reason: 'Denied',
     });
@@ -80,14 +80,14 @@ describe('Receipt Tests', () => {
 
   test('[TEST] Receipt - Toolchain versions are included', () => {
     console.log('[START] Testing toolchain version');
-    const generator = new ReceiptGenerator({ toolchainVersion: '2.3.4' });
+    const generator = new ReceiptGenerator({ toolchainVersion: 'latest' });
 
     const result = { decision: 'ALLOW', violations: [], reason: 'Test' };
     const delta = { additions: [], deletions: [] };
     const receipt = generator.generate(result, delta, '0'.repeat(64));
 
     console.log(`[ASSERT] Toolchain version: ${receipt.toolchainVersion}`);
-    assert.equal(receipt.toolchainVersion, '2.3.4');
+    assert.equal(receipt.toolchainVersion, 'latest');
     console.log('[RESULT] pass');
   });
 
@@ -184,7 +184,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: 1234567890,
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: ['violation1', 'violation2'],
       reason: 'Test receipt',
     });
@@ -245,7 +245,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });
@@ -258,7 +258,7 @@ describe('Receipt Tests', () => {
       afterHash: '2'.repeat(64),
       epoch: 2,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });
@@ -285,7 +285,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 5,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });
@@ -298,7 +298,7 @@ describe('Receipt Tests', () => {
       afterHash: '2'.repeat(64),
       epoch: 3, // Non-monotonic
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });
@@ -334,7 +334,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });
@@ -381,7 +381,7 @@ describe('Receipt Tests', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Test',
     });

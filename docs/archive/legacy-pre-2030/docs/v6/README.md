@@ -1,6 +1,6 @@
 # UNRDF Migration - Complete Documentation
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest-alpha.1
 **Status**: Planning Phase Complete
 **Last Updated**: 2025-12-27
 
@@ -90,7 +90,7 @@ cat docs/v6/MIGRATION_PLAN.md
 ### Phase 1: Alpha (Jan 2025)
 
 - Core 10 packages at L5
-- 6.0.0-alpha.1 released
+- latest-alpha.1 released
 - Compatibility layer functional
 
 ### Phase 2: Beta (Feb 2025)
@@ -107,7 +107,7 @@ cat docs/v6/MIGRATION_PLAN.md
 
 ### Phase 4: Stable (Apr 2025)
 
-- 6.0.0 official release
+- latest official release
 - v5.x security-only support
 
 ### Phase 5: EOL (Oct 2025)
@@ -117,7 +117,7 @@ cat docs/v6/MIGRATION_PLAN.md
 
 ## 🔍 Validation Checklist
 
-Before declaring 6.0.0 stable:
+Before declaring latest stable:
 
 - [ ] All 47 packages at L5
 - [ ] 100% test pass rate
@@ -155,7 +155,7 @@ Before declaring 6.0.0 stable:
 
 ```
 packages/v6-compat/
-├── package.json          # v6.0.0-alpha.1
+├── package.json          # latest-alpha.1
 ├── README.md             # Usage guide
 └── src/
     ├── index.mjs         # Main exports

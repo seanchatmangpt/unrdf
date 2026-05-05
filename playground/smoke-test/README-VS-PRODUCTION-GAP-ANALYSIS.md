@@ -2,7 +2,7 @@
 
 **Test Date:** $(date)  
 **README Accuracy:** 45.9% (17/37 tests passed)  
-**Production Package:** unrdf@latest (3.0.1)  
+**Production Package:** unrdf@latest (latest)  
 
 ## 🚨 CRITICAL FINDINGS
 

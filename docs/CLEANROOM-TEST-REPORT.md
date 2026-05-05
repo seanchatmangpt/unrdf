@@ -90,10 +90,10 @@
 ### Fixes Applied
 
 1. **Package.json Dependencies Corrected**:
-   - `@opentelemetry/sdk-node`: `^0.45.0` → `^0.26.0`
-   - `@opentelemetry/exporter-otlp-http`: `^0.45.0` → `^0.26.0`
-   - `@opentelemetry/instrumentation-http`: `^0.45.0` → `^0.26.0`
-   - Reason: Version 0.45.0 doesn't exist, latest is 0.26.0
+   - `@opentelemetry/sdk-node`: `^latest` → `^latest`
+   - `@opentelemetry/exporter-otlp-http`: `^latest` → `^latest`
+   - `@opentelemetry/instrumentation-http`: `^latest` → `^latest`
+   - Reason: Version latest doesn't exist, latest is latest
 
 2. **Dependencies Installed**: 676 packages via `pnpm install`
 
@@ -103,7 +103,7 @@
 
 **Agent**: Tester Specialist
 **Status**: ✅ ALL PASSING
-**Duration**: 14.5 seconds
+**Duration**: latest seconds
 
 ### Results Summary
 - **Total Tests**: 3 tests (health endpoint)
@@ -127,9 +127,9 @@
 ### Fixes Applied
 
 1. **Missing Dependencies Added**:
-   - `@opentelemetry/sdk-metrics@^2.1.0`
-   - Upgraded `vitest` to `3.2.4` for compatibility
-   - Upgraded `happy-dom` to `15.11.7`
+   - `@opentelemetry/sdk-metrics@^latest`
+   - Upgraded `vitest` to `latest` for compatibility
+   - Upgraded `happy-dom` to `latest`
 
 2. **Import Path Fixed**:
    - `transaction-manager.mjs` → `transaction.mjs` in `00.managers.mjs`
@@ -161,7 +161,7 @@
 | **OTel Collector** | 4317, 4318, 8888, 8889, 13133 | ✅ Running | Healthy |
 | **Jaeger** | 16686, 14250, 14268 | ✅ Running | Healthy |
 | **Prometheus** | 9090 | ✅ Running | Healthy |
-| **Grafana** | 3001 | ✅ Running | Healthy (v10.2.3) |
+| **Grafana** | 3001 | ✅ Running | Healthy (vlatest) |
 | **Gitea** | 3002, 2222 | ✅ Running | Healthy |
 
 **Network**: `testcontainers-kgc` (bridge)
@@ -191,7 +191,7 @@
 
 **Agent**: Tester Specialist
 **Status**: ⚠️ PARTIALLY PASSING
-**Duration**: 8.39 seconds
+**Duration**: latest seconds
 
 ### Results Summary
 - **Total Tests**: 26 tests across 5 scenarios
@@ -290,7 +290,7 @@
 | OTel Collector | ✅ Running | Uptime: 4+ minutes, stable metrics |
 | Jaeger | ✅ Running | UI accessible, API responding |
 | Prometheus | ✅ Running | 4 scrape targets UP |
-| Grafana | ✅ Running | v10.2.3, dashboards accessible |
+| Grafana | ✅ Running | vlatest, dashboards accessible |
 
 ### Trace Validation Results
 
@@ -318,8 +318,8 @@
         "validation.violations": 0,
         "validation.duration_ms": 5,
         "service.name": "unrdf-cli",
-        "service.version": "2.1.0",
-        "process.runtime.version": "24.9.0"
+        "service.version": "latest",
+        "process.runtime.version": "latest"
       },
       "logs": [
         {
@@ -382,7 +382,7 @@
 
 **Status**: ✅ Accessible at `http://localhost:3001`
 **Credentials**: `admin:admin`
-**Version**: 10.2.3
+**Version**: latest
 
 **Datasources Configured**:
 - ✅ Prometheus: `http://prometheus:9090`

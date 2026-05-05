@@ -52,7 +52,7 @@ Create a `.njk` file with frontmatter:
 ```yaml
 ---
 ontologyIRI: http://example.org/ontology/library
-version: 1.0.0
+version: latest
 title: Library Ontology
 description: An ontology for library systems
 creator: http://example.org/people/librarian
@@ -90,7 +90,7 @@ Generates complete OWL ontologies with metadata, classes, object properties, and
 - `title` (string) - Ontology title
 
 **Optional Variables:**
-- `version` (string) - Version string (e.g., "1.0.0")
+- `version` (string) - Version string (e.g., "latest")
 - `description` (string) - Ontology description
 - `creator` (string) - Creator IRI
 - `created` (string) - Creation date (ISO format)
@@ -123,7 +123,7 @@ Generates complete OWL ontologies with metadata, classes, object properties, and
 
 <http://example.org/ontology/myonto> a owl:Ontology ;
     dc:title "My Example Ontology"@en ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 <http://example.org/ontology/myonto#Person> a owl:Class ;
     rdfs:label "Person"@en ;
@@ -436,7 +436,7 @@ classes:
 ```yaml
 # Good - complete metadata
 ontologyIRI: http://example.org/onto
-version: 1.0.0
+version: latest
 title: Example Ontology
 description: Comprehensive description of the ontology purpose
 creator: http://example.org/people/john-doe
@@ -543,7 +543,7 @@ const templateContent = await fs.readFile('my-ontology.njk', 'utf-8');
 const { data, content } = matter(templateContent);
 
 // Modify frontmatter programmatically
-data.version = '2.0.0';
+data.version = 'latest';
 data.modified = new Date().toISOString().split('T')[0];
 
 // Render with updated data

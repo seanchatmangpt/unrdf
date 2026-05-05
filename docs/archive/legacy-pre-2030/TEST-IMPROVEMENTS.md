@@ -28,9 +28,9 @@ Delivered 80/20 test execution improvements focused on developer experience.
 
 ```bash
 $ time pnpm test
-real    0m18.347s
-user    0m12.890s
-sys     0m44.300s
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 
 Tests: 8 failed | 284 passed (292 total)
 Output: Unclear which tests failed
@@ -40,9 +40,9 @@ Output: Unclear which tests failed
 
 ```bash
 $ time pnpm test
-real    0m18.219s
-user    0m14.000s
-sys     0m46.440s
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 
 Tests: 8 failed | 284 passed (292 total)
 Output: Clear file:line:col for each failure
@@ -62,19 +62,19 @@ Target: 40-50% speedup for quick iteration
 
 ```bash
 $ time pnpm test:yawl
-real    0m7.489s
-user    0m9.100s
-sys     0m11.310s
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 
-Test duration: 3.88s
-Overhead: 3.6s (import, transform)
+Test duration: latests
+Overhead: latests (import, transform)
 ```
 
 ### Watch Mode (YAWL)
 
 ```bash
 $ pnpm test:yawl:watch
-Initial run: 3.88s
+Initial run: latests
 Re-run on save: <1s (cached imports)
 
 80/20 DX Win: 5x faster iteration
@@ -247,10 +247,10 @@ pnpm test:yawl:watch
 ### 3. Single Package
 
 ```bash
-pnpm test:yawl          # 3.88s
+pnpm test:yawl          # latests
 pnpm test:core          # ~2s
-pnpm test:atomvm        # 0.37s
-pnpm test:graph-analytics  # 2.91s
+pnpm test:atomvm        # latests
+pnpm test:graph-analytics  # latests
 ```
 
 ### 4. Test Filtering
@@ -302,12 +302,12 @@ CI=true pnpm test:ci
 
 | Package         | Tests | Duration | Status         |
 | --------------- | ----- | -------- | -------------- |
-| atomvm          | 45    | 0.37s    | ✅ All passing |
-| graph-analytics | 17    | 2.91s    | ✅ All passing |
+| atomvm          | 45    | latests    | ✅ All passing |
+| graph-analytics | 17    | latests    | ✅ All passing |
 
 ### Failing Packages
 
-**YAWL (8 failures out of 292 tests = 97.3% pass rate)**
+**YAWL (8 failures out of 292 tests = latest% pass rate)**
 
 1. ❌ `test/yawl-hooks.test.mjs:735`
    - Approval path enablement check

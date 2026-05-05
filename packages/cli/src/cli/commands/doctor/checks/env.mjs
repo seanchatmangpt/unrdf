@@ -17,7 +17,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const projectRoot = join(__dirname, '../../../../../../..');
 
 /**
- * Check Node.js version (>=18.0.0)
+ * Check Node.js version (>=[VERSION])
  */
 function checkNodeVersion() {
   const version = process.version;
@@ -27,21 +27,21 @@ function checkNodeVersion() {
     return {
       status: 'pass',
       actual: version,
-      expected: '>=18.0.0',
+      expected: '>=[VERSION]',
     };
   }
 
   return {
     status: 'fail',
     actual: version,
-    expected: '>=18.0.0',
+    expected: '>=[VERSION]',
     critical: true,
     fix: 'Update Node.js to version 18 or later: https://nodejs.org/',
   };
 }
 
 /**
- * Check pnpm version (>=7.0.0)
+ * Check pnpm version (>=[VERSION])
  */
 function checkPnpmVersion() {
   try {
@@ -52,14 +52,14 @@ function checkPnpmVersion() {
       return {
         status: 'pass',
         actual: `v${version}`,
-        expected: '>=7.0.0',
+        expected: '>=[VERSION]',
       };
     }
 
     return {
       status: 'fail',
       actual: `v${version}`,
-      expected: '>=7.0.0',
+      expected: '>=[VERSION]',
       critical: true,
       fix: 'Update pnpm: npm install -g pnpm@latest',
     };
@@ -67,7 +67,7 @@ function checkPnpmVersion() {
     return {
       status: 'fail',
       actual: 'pnpm not found',
-      expected: 'pnpm >=7.0.0',
+      expected: 'pnpm >=[VERSION]',
       critical: true,
       fix: 'Install pnpm: npm install -g pnpm',
     };

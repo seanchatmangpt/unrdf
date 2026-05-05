@@ -2,7 +2,7 @@
 
 Production-grade SLO definitions for @unrdf/daemon operations, derived from 6 core JTBD (Jobs To Be Done) scenarios.
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Last Updated**: 2026-01-10
 **Measurement Period**: Monthly (30-day rolling window)
 

@@ -279,5 +279,5 @@ These runbooks evolve based on operational learnings:
 ---
 
 **Last Updated**: 2026-01-10
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Maintained By**: Operations Team + Compliance Team

@@ -17,8 +17,8 @@ yarn add unrdf
 
 ### System Requirements
 
-- **Node.js**: >=18.0.0
-- **Package Manager**: pnpm >=7.0.0 (required)
+- **Node.js**: >=latest
+- **Package Manager**: pnpm >=latest (required)
 - **Git**: For lockchain audit trails (optional)
 
 ## Quick Start (5 Minutes)
@@ -195,7 +195,7 @@ import { createPolicyPackManifest } from 'unrdf';
 
 const policyPack = createPolicyPackManifest({
   name: 'compliance-v1',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Enterprise compliance policies',
   hooks: [
     './hooks/large-transaction.mjs',

@@ -6,13 +6,13 @@
  * OTEL span-based validation for Knowledge Hooks API.
  * Tests hook definition, registration, execution, and evaluation.
  *
- * v3.1.0 Feature: Core Knowledge Hooks API validation (20% weight)
+ * [VERSION] Feature: Core Knowledge Hooks API validation (20% weight)
  *
  * @deprecated This validation is currently NON-FUNCTIONAL (scores 0/100).
  * Issue: No OTEL spans are collected during validation execution.
  * Root Cause: Hooks implementation exists but doesn't integrate with OTEL validation runner.
  * Impact: Lowers overall OTEL score from 100 to 83/100.
- * Status: Marked as deprecated for v5.0.0-beta.2.
+ * Status: Marked as deprecated for [VERSION]-beta.2.
  * Future: Either fix OTEL integration or remove feature entirely.
  */
 

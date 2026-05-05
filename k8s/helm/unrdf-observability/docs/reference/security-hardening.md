@@ -163,8 +163,8 @@ metadata:
 
 ```bash
 # Get digest for each image
-docker pull prom/prometheus:v2.48.0
-docker inspect --format='{{index .RepoDigests 0}}' prom/prometheus:v2.48.0
+docker pull prom/prometheus:latest
+docker inspect --format='{{index .RepoDigests 0}}' prom/prometheus:latest
 # → prom/prometheus@sha256:abc123...
 
 # Update values.yaml

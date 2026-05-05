@@ -2,7 +2,7 @@
 title: "API Reference"
 type: "reference"
 packageName: "test-package"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.126Z"
 confidenceScore: 0.95
 proof: "dd195914e600c469aac3a7998e4820170ce963a6ee331fd357366d03339b9dfd"

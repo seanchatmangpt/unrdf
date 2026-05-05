@@ -566,8 +566,8 @@ deployments_total{status="failure"} 1
 deployments_total{status="rollback"} 2
 
 # Gauge: test coverage
-deploy_test_coverage_percent{deployment_id="v1.2.3"} 85.2
-deploy_test_pass_rate_percent{deployment_id="v1.2.3"} 100
+deploy_test_coverage_percent{deployment_id="[VERSION]"} 85.2
+deploy_test_pass_rate_percent{deployment_id="[VERSION]"} 100
 ```
 
 #### Grafana Dashboard Panels

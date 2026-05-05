@@ -20,19 +20,19 @@ The UNRDF monorepo currently uses **3 different build approaches** across 19 pac
 
 ## 1. Build Configuration Files Inventory
 
-### 1.1 esbuild.config.* Files
+### latest esbuild.config.* Files
 **Count**: 0
 **Result**: No direct esbuild configs found in packages
 
-### 1.2 rollup.config.* Files
+### latest rollup.config.* Files
 **Count**: 0 in packages (10 in node_modules, ignored)
 **Result**: No direct rollup configs; rollup used internally by unbuild
 
-### 1.3 webpack.config.* Files
+### latest webpack.config.* Files
 **Count**: 0 in packages (81 in node_modules, ignored)
 **Result**: No direct webpack configs; webpack used by Next.js/Nuxt
 
-### 1.4 build.config.* Files
+### latest build.config.* Files
 **Count**: **15 files** (packages only)
 
 **Locations**:
@@ -54,7 +54,7 @@ The UNRDF monorepo currently uses **3 different build approaches** across 19 pac
 /Users/sac/unrdf/packages/validation/build.config.mjs ✅ unbuild
 ```
 
-### 1.5 Other Config Files
+### latest Other Config Files
 - **vite.config.js**: 1 file (`packages/atomvm/vite.config.js` - browser playground only)
 - **vitest.config.***: 20+ files (test configs, not build)
 - **next.config.***: Used by `packages/nextra` (Next.js framework)
@@ -64,7 +64,7 @@ The UNRDF monorepo currently uses **3 different build approaches** across 19 pac
 
 ## 2. Build Scripts Analysis by Package
 
-### 2.1 Package-by-Package Breakdown
+### latest Package-by-Package Breakdown
 
 | Package | Build Tool | Build Command | Config Type | Notes |
 |---------|-----------|---------------|-------------|-------|
@@ -93,7 +93,7 @@ The UNRDF monorepo currently uses **3 different build approaches** across 19 pac
 **Framework-specific**: 2 (11%)
 **No build**: 2 (10%)
 
-### 2.2 Build Script Patterns
+### latest Build Script Patterns
 
 #### Pattern 1: Standard unbuild (10 packages)
 ```bash
@@ -136,7 +136,7 @@ The UNRDF monorepo currently uses **3 different build approaches** across 19 pac
 
 ## 3. Build Configuration Differences
 
-### 3.1 Standard unbuild Config Template
+### latest Standard unbuild Config Template
 
 All 15 unbuild packages use **identical configuration**:
 
@@ -161,7 +161,7 @@ export default defineBuildConfig({
 - **rollup.emitCJS**: `false` (ESM-only output)
 - **rollup.inlineDependencies**: `false` (external dependencies)
 
-### 3.2 Root Config (Unused Legacy)
+### latest Root Config (Unused Legacy)
 
 ```javascript
 // /Users/sac/unrdf/build.config.mjs (NOT USED)
@@ -182,7 +182,7 @@ export default defineBuildConfig({
 
 **Issue**: Uses deprecated `obuild` instead of `unbuild`. Should be removed or updated.
 
-### 3.3 Special Cases
+### latest Special Cases
 
 #### packages/atomvm
 - **Additional**: `vite.config.js` for browser playground (development only)
@@ -198,11 +198,11 @@ export default defineBuildConfig({
 
 ## 4. Custom Build Scripts Analysis
 
-### 4.1 prebuild/postbuild Hooks
+### latest prebuild/postbuild Hooks
 **Count**: 0
 **Result**: No pre/post build hooks found in any package.json
 
-### 4.2 Custom Build Logic
+### latest Custom Build Logic
 **None** - All packages use standard unbuild or framework defaults.
 
 The packages using `node build.config.mjs` invocation (federation, hooks, knowledge-engine, project-engine, streaming) still use standard unbuild internally - they just invoke it differently for consistency with older build patterns.
@@ -217,14 +217,14 @@ Framework builds       ███████                              11% (2
 No build required      ██████                               10% (2 pkgs)
 ```
 
-### 5.1 unbuild Details
+### latest unbuild Details
 - **Version**: Consistent across all packages (via workspace)
 - **Backend**: Uses Rollup internally
 - **Output**: ESM-only (no CJS)
 - **TypeScript**: Generates `.d.ts` via `tsc --emitDeclarationOnly`
 - **Config**: 100% identical across packages
 
-### 5.2 Why unbuild Works
+### latest Why unbuild Works
 1. **Unified**: Single tool for library builds
 2. **Zero-config**: Sensible defaults for monorepos
 3. **Fast**: Rollup-based, optimized for ESM
@@ -235,14 +235,14 @@ No build required      ██████                               10% (2 p
 
 ## 6. Effort Estimation: Standardization to Single esbuild
 
-### 6.1 Current State
+### latest Current State
 - ✅ **79% already standardized** on unbuild
 - ✅ **100% config uniformity** across unbuild packages
 - ✅ **No conflicting build tools** in library packages
 - ⚠️ 2 framework packages (cannot change)
 - ⚠️ 1 legacy root config (unused)
 
-### 6.2 Migration Scenario: unbuild → esbuild
+### latest Migration Scenario: unbuild → esbuild
 
 #### Option A: Replace unbuild with esbuild
 **Effort**: **Medium-High (40-80 hours)**
@@ -285,9 +285,9 @@ No build required      ██████                               10% (2 p
 **Effort**: **Minimal (1-2 hours)**
 
 **Tasks**:
-1. Update root `build.config.mjs` to use `unbuild` (0.5h)
+1. Update root `build.config.mjs` to use `unbuild` (latesth)
 2. Standardize 4 custom invocation packages to direct `unbuild` (1h)
-3. Remove unused root config or update to unbuild (0.5h)
+3. Remove unused root config or update to unbuild (latesth)
 
 **Result**: **100% unbuild standardization** for buildable packages (excluding framework sites)
 
@@ -297,7 +297,7 @@ No build required      ██████                               10% (2 p
 
 ## 7. Recommendations
 
-### 7.1 Immediate Actions (Effort: 1-2h)
+### latest Immediate Actions (Effort: 1-2h)
 
 #### ✅ 1. Remove or Update Root build.config.mjs
 **Current**: Uses deprecated `obuild`
@@ -351,7 +351,7 @@ Create `/docs/BUILD-STANDARDS.md`:
 [Include standard build.config.mjs]
 ```
 
-### 7.2 Long-Term Strategy
+### latest Long-Term Strategy
 
 #### ✅ Keep unbuild (DO NOT migrate to esbuild)
 
@@ -376,7 +376,7 @@ Create `/docs/BUILD-STANDARDS.md`:
 
 ## 8. Summary Statistics
 
-### 8.1 Current State
+### latest Current State
 | Metric | Value |
 |--------|-------|
 | **Total Packages** | 19 |
@@ -390,7 +390,7 @@ Create `/docs/BUILD-STANDARDS.md`:
 | **Webpack Configs** | 0 (Webpack via Next.js/Nuxt) |
 | **Build Script Patterns** | 5 types |
 
-### 8.2 Standardization Effort
+### latest Standardization Effort
 
 #### Scenario A: Stay with unbuild (✅ RECOMMENDED)
 - **Effort**: 1-2 hours
@@ -451,4 +451,4 @@ export default defineBuildConfig({
 
 **Generated**: 2025-12-20
 **Analyzer**: Code Quality Analyzer
-**UNRDF Version**: 5.0.1
+**UNRDF Version**: latest

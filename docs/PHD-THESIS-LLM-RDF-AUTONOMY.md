@@ -5,7 +5,7 @@
 **Author:** Sean Chatman  
 **Affiliation:** UNRDF Research Platform  
 **Date:** April 2026  
-**Version:** 26.5.4
+**Version:** latest
 
 ---
 
@@ -33,7 +33,7 @@ We validate through an integrated test suite: 12 tests passing consistently, rea
 
 ## 1. Motivation & Problem Statement
 
-### 1.1 The Semantic Web's AI Gap
+### latest The Semantic Web's AI Gap
 
 For three decades, semantic web practitioners have developed powerful standards:
 
@@ -50,7 +50,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - Reasoning happens in vector space, not with RDF semantics
 - No auditability—impossible to trace why an embedding suggested a relation
 - Vulnerable to hallucinations unconstrained by graph schema
-- Example: DistMult scores (Alice, knows, Bob) = 0.87, but why? Cannot explain.
+- Example: DistMult scores (Alice, knows, Bob) = latest, but why? Cannot explain.
 
 **Category B: LLM-as-Oracle** (Retrieval-Augmented Generation)
 
@@ -67,7 +67,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - No learning or adaptation—same rules produce same results forever
 - Example: IF (X knows Y) AND (Y knows Z) THEN (X can reach Z). But no rules for discovering new knowledge.
 
-### 1.2 The Gap We Address
+### latest The Gap We Address
 
 **Core Problem**: How can an LLM reason about a knowledge graph _iteratively_, make structured decisions about what the graph needs, and autonomously improve it—while maintaining RDF schema compliance, auditability, and semantic validity?
 
@@ -85,7 +85,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 
 ## 2. Novelty & Contributions
 
-### 2.1 Tight Coupling via Model Context Protocol (MCP)
+### latest Tight Coupling via Model Context Protocol (MCP)
 
 **Previous State**: LLMs were standalone reasoning engines. RDF expertise and LLM engineering were separate concerns. No system existed for LLMs to query and mutate graphs _within_ a reasoning loop.
 
@@ -127,7 +127,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - Enables multi-step reasoning where each step inspects graph state
 - LLM is not a predictor (embedding-based) nor an oracle (text-in-text-out); it's a **reasoner over structured data**
 
-### 2.2 Cryptographic Provenance via Receipt Chains
+### latest Cryptographic Provenance via Receipt Chains
 
 **Previous State**: When LLMs suggested knowledge, you had no way to audit why. Was it reasoning or hallucination? Which training data influenced it? Impossible to know.
 
@@ -162,7 +162,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - Prevents tampering: receipt chain is immutable (like blockchain)
 - Links reasoning to mutations: you know which LLM inference produced which triple
 
-### 2.3 Schema-Constrained LLM Reasoning via SHACL
+### latest Schema-Constrained LLM Reasoning via SHACL
 
 **Previous State**: LLMs hallucinate. They suggest triples that violate your ontology, have wrong datatype, or create inconsistencies. You need manual review.
 
@@ -191,7 +191,7 @@ const personShape = {
 - Prevents hallucinations at mutation time, not review time
 - Enables autonomous operation without human approval loop
 
-### 2.4 Chicago-Style TDD with Real API Calls
+### latest Chicago-Style TDD with Real API Calls
 
 **Previous State**: Knowledge graph research used toy datasets and synthetic scenarios. LLM+RDF papers either used mock APIs or avoided integration tests.
 
@@ -218,7 +218,7 @@ pnpm test packages/daemon/test/groq-mcp-integration.test.mjs
 - Reproducible: anyone can run same tests with their Groq key
 - Non-deterministic output accepted: tests verify _behavior_, not exact LLM text
 
-### 2.5 Local-First, Vendor-Agnostic Deployment
+### latest Local-First, Vendor-Agnostic Deployment
 
 **Previous State**: LLM integration often means cloud lock-in. Use OpenAI's API or you're locked into Anthropic or Azure.
 
@@ -252,7 +252,7 @@ const result = await generateText({
 
 ## 3. Technical Implementation
 
-### 3.1 Core Components
+### latest Core Components
 
 #### AutonomousRefinementEngine (autonomous-refinement-engine.mjs)
 
@@ -335,7 +335,7 @@ Receipt_1 → Receipt_2 → Receipt_3 → ... → Receipt_N
 hash(...)  hash(prev_1) hash(prev_2)    hash(prev_N-1)
 ```
 
-### 3.2 Integration with UNRDF Ecosystem
+### latest Integration with UNRDF Ecosystem
 
 The autonomous refinement engine integrates with 13 UNRDF modules:
 
@@ -359,7 +359,7 @@ The autonomous refinement engine integrates with 13 UNRDF modules:
 
 ## 4. Experimental Validation
 
-### 4.1 Integration Test Suite Results
+### latest Integration Test Suite Results
 
 **Setup**: Chicago-style TDD with Groq API (`openai/gpt-oss-20b` model)
 
@@ -375,19 +375,19 @@ Test File: packages/daemon/test/groq-mcp-integration.test.mjs
   ✓ should get default model from provider
 
 ✓ Groq Reasoning (2 tests)
-  ✓ should query RDF graph with Groq reasoning (1.0s)
-  ✓ should use Groq to decide next action (2.0s)
+  ✓ should query RDF graph with Groq reasoning (latests)
+  ✓ should use Groq to decide next action (latests)
 
 ✓ MCP Server Setup (1 test)
   ✓ should have MCP server configured
 
 ✓ Autonomous Workflow (1 test)
-  ✓ should perform multi-step reasoning with Groq (2.4s)
+  ✓ should perform multi-step reasoning with Groq (latests)
 
 ✓ Autonomous Improvement Loop (1 test)
-  ✓ should iterate toward goal with Groq guidance (3.0s)
+  ✓ should iterate toward goal with Groq guidance (latests)
   └─ Started: 2 triples, Goal: 5 triples
-  └─ Iterations: 3, Time: 3.0s
+  └─ Iterations: 3, Time: latests
   └─ Final state: 5 triples (goal reached)
 
 ✓ Error Handling (2 tests)
@@ -395,16 +395,16 @@ Test File: packages/daemon/test/groq-mcp-integration.test.mjs
   ✓ should handle network errors gracefully
 
 ✓ Real-World Workflow (1 test)
-  ✓ should demonstrate RDF enrichment with Groq (3.2s)
+  ✓ should demonstrate RDF enrichment with Groq (latests)
   └─ Input: Alice's basic profile (2 triples)
   └─ Suggestions: name, age, workplace, education
   └─ Output: 6 triples (enriched profile)
 
-Total: 12 tests passing | 50+ real API calls | ~12.39 seconds
+Total: 12 tests passing | 50+ real API calls | ~latest seconds
 Pass rate: 100% | Coverage: core autonomous loop + edge cases
 ```
 
-### 4.2 Self-Play Autonomics Test Results
+### latest Self-Play Autonomics Test Results
 
 ```
 Test File: packages/hooks/test/self-play-autonomics.test.mjs
@@ -422,10 +422,10 @@ Test File: packages/hooks/test/self-play-autonomics.test.mjs
   ✓ re-evaluates if goal not met
 
 ✓ computeHooksFeedback (5 tests)
-  ✓ returns -0.5 on execution failure
+  ✓ returns -latest on execution failure
   ✓ returns 0 on no-op
-  ✓ returns -0.3 on partial failures
-  ✓ returns +0.1 to +0.2 on success
+  ✓ returns -latest on partial failures
+  ✓ returns +latest to +latest on success
   ✓ scales feedback with success rate
 
 ✓ runHooksAutonomics (9 tests)
@@ -439,10 +439,10 @@ Test File: packages/hooks/test/self-play-autonomics.test.mjs
   ✓ records feedback signals
   ✓ supports custom goal conditions
 
-Total: 25 tests passing | Coverage: 73.68% of self-play-autonomics.mjs
+Total: 25 tests passing | Coverage: latest% of self-play-autonomics.mjs
 ```
 
-### 4.3 Performance Metrics
+### latest Performance Metrics
 
 | Metric                      | Value                   | Notes                             |
 | --------------------------- | ----------------------- | --------------------------------- |
@@ -453,9 +453,9 @@ Total: 25 tests passing | Coverage: 73.68% of self-play-autonomics.mjs
 | **Feedback Loop Iteration** | 2-5s total              | Query + LLM + validation + commit |
 | **Episode Duration**        | 5-15s                   | 3-4 iterations to goal            |
 | **Memory per Episode**      | ~10MB                   | Store + context + receipts        |
-| **Graph Growth Rate**       | 0.5-2 triples/iteration | Depends on domain and goal        |
+| **Graph Growth Rate**       | latest triples/iteration | Depends on domain and goal        |
 
-### 4.4 Convergence Analysis
+### latest Convergence Analysis
 
 **Autonomous Improvement Loop Test**:
 
@@ -483,7 +483,7 @@ Convergence: 3 iterations, ~8 seconds, 100% success rate
 
 **Key Finding**: LLM naturally navigates feedback loop without infinite loops or stagnation. Reaches goal in <5 iterations for well-defined domains.
 
-### 4.5 Comparative Analysis
+### latest Comparative Analysis
 
 **vs. Embedding-Based KG Completion** (e.g., DistMult, TransE):
 | Aspect | Embedding | Our System |
@@ -517,7 +517,7 @@ Convergence: 3 iterations, ~8 seconds, 100% success rate
 
 ## 5. Full-Stack Integration with UNRDF CLI Ecosystem
 
-### 5.1 Temporal Snapshots (KGC 4D)
+### latest Temporal Snapshots (KGC 4D)
 
 Each refinement episode creates snapshots for time-travel capability:
 
@@ -554,7 +554,7 @@ await store.restore(snapshot5.id);
 
 **Use Case**: Debugging LLM decisions. "Why did episode 7 fail? Let me restore to episode 6 and trace the decision."
 
-### 5.2 Immutable Receipts (Blockchain)
+### latest Immutable Receipts (Blockchain)
 
 Receipt chain proves decision history is tamper-proof:
 
@@ -579,7 +579,7 @@ console.log(`Receipt chain valid: ${isValid}`);
 
 **Use Case**: Compliance and audit. "Prove that LLM decisions weren't tampered with." Blockchain attestation provides immutable proof.
 
-### 5.3 Reactive Enrichment (Knowledge Hooks)
+### latest Reactive Enrichment (Knowledge Hooks)
 
 Hooks automatically react to graph mutations:
 
@@ -619,7 +619,7 @@ console.log(`Receipt chain: ${result.receiptChain.length} decisions`);
 
 **Use Case**: Knowledge graph completion. Hooks do what LLMs can't—deterministic, repeatable rule application. Combined with LLM reasoning, creates hybrid intelligence.
 
-### 5.4 Integrity Scanning (KGC Probe)
+### latest Integrity Scanning (KGC Probe)
 
 After each mutation, verify graph integrity:
 
@@ -648,7 +648,7 @@ engine.on('episode-complete', async episode => {
 
 **Use Case**: Quality assurance. Catch LLM hallucinations before they corrupt the graph.
 
-### 5.5 Federated Queries (Federation)
+### latest Federated Queries (Federation)
 
 Enrich reasoning with external knowledge:
 
@@ -675,13 +675,13 @@ await engine.refine(store, groqProvider);
 
 **Use Case**: Cross-domain reasoning. LLM sees not just local data but also DBpedia/Wikidata facts, enabling richer inferences.
 
-### 5.6 Semantic Search for Context (Embeddings)
+### latest Semantic Search for Context (Embeddings)
 
 Provide LLM with semantically similar triples:
 
 ```javascript
 // During LLM reasoning, retrieve semantic context
-const semanticContext = await semanticSearch.findSimilar(currentTriple, { k: 10, threshold: 0.7 });
+const semanticContext = await semanticSearch.findSimilar(currentTriple, { k: 10, threshold: latest });
 
 // Groq receives:
 // "Current state: [10 triples]
@@ -693,7 +693,7 @@ const semanticContext = await semanticSearch.findSimilar(currentTriple, { k: 10,
 
 **Use Case**: Improved LLM reasoning. Semantic context helps LLM avoid contradictions and maintain coherence.
 
-### 5.7 Observability (OpenTelemetry)
+### latest Observability (OpenTelemetry)
 
 Monitor refinement in real-time:
 
@@ -717,7 +717,7 @@ const engine = new AutonomousRefinementEngine(config, { tracer });
 
 **Use Case**: Production monitoring. Track refinement performance, identify bottlenecks, debug issues.
 
-### 5.8 Performance Optimization (Caching)
+### latest Performance Optimization (Caching)
 
 Cache expensive operations:
 
@@ -740,7 +740,7 @@ const engine = new AutonomousRefinementEngine(
 
 **Use Case**: Production scaling. Cache makes refinement practical for large graphs and frequent iterations.
 
-### 5.9 Quality Monitoring (Graph Analytics)
+### latest Quality Monitoring (Graph Analytics)
 
 Track graph health throughout refinement:
 
@@ -755,7 +755,7 @@ engine.on('episode-complete', async episode => {
   console.log(`  Avg Degree: ${metrics.avgDegree.toFixed(2)}`);
   console.log(`  Clustering: ${metrics.clusteringCoefficient.toFixed(4)}`);
 
-  if (metrics.density < 0.1) {
+  if (metrics.density < latest) {
     console.warn('WARNING: Low density; refinement may be diverging');
   }
 });
@@ -767,9 +767,9 @@ engine.on('episode-complete', async episode => {
 
 ## 6. Limitations & Future Work
 
-### 6.1 Known Limitations
+### latest Known Limitations
 
-#### 6.1.1 LLM Hallucinations
+#### latest LLM Hallucinations
 
 **Problem**: LLMs occasionally generate incorrect or nonsensical suggestions, even with SHACL validation.
 
@@ -780,7 +780,7 @@ engine.on('episode-complete', async episode => {
 
 **Future**: Integrate confidence scoring from LLM; reject low-confidence suggestions.
 
-#### 6.1.2 Scaling to Large Graphs
+#### latest Scaling to Large Graphs
 
 **Problem**: Current architecture tested on <1000 triple graphs. Behavior at 1M+ triples unknown.
 
@@ -792,7 +792,7 @@ engine.on('episode-complete', async episode => {
 - Use graph partitioning to refine subgraphs in parallel
 - Benchmark on realistic enterprise-scale graphs (10M+ triples)
 
-#### 6.1.3 Non-Determinism
+#### latest Non-Determinism
 
 **Problem**: Same graph + prompt may yield different LLM outputs (stochastic sampling).
 
@@ -802,7 +802,7 @@ engine.on('episode-complete', async episode => {
 
 **Future**: Add deterministic mode (temperature=0) for critical applications.
 
-#### 6.1.4 Validation Overhead
+#### latest Validation Overhead
 
 **Problem**: SHACL validation before each mutation adds latency (~5ms per mutation).
 
@@ -810,7 +810,7 @@ engine.on('episode-complete', async episode => {
 
 **Future**: Batch mutations; validate groups instead of individual triples.
 
-#### 6.1.5 Prompt Engineering Sensitivity
+#### latest Prompt Engineering Sensitivity
 
 **Problem**: LLM reasoning quality depends heavily on prompts. No principled way to optimize them.
 
@@ -818,21 +818,21 @@ engine.on('episode-complete', async episode => {
 
 **Future**: Learn prompts via reinforcement learning; optimize automatically based on success metrics.
 
-### 6.2 Open Questions
+### latest Open Questions
 
-#### 6.2.1 Theoretical Properties
+#### latest Theoretical Properties
 
 - **Convergence**: Does refinement always terminate? Under what conditions?
 - **Optimality**: Does LLM find the "best" graph, or just a local optimum?
 - **Complexity**: What's the worst-case time to reach a goal? Can we bound iterations?
 
-#### 6.2.2 Practical Scalability
+#### latest Practical Scalability
 
 - **Scale**: How do latency and hallucination rate change as graph size grows?
 - **Cost**: What's the total API cost to refine a 10M-triple graph?
 - **Quality**: Does refinement quality degrade on very large graphs?
 
-#### 6.2.3 Security & Governance
+#### latest Security & Governance
 
 - **Poisoning**: Can a malicious actor craft SPARQL queries to make LLM misbehave?
 - **Autonomy Limits**: When should humans intervene? What's a safe autonomy threshold?
@@ -842,7 +842,7 @@ engine.on('episode-complete', async episode => {
 
 ## 7. Vision 2030: Self-Improving Knowledge Systems at Scale
 
-### 7.1 The Knowledge Graph Evolution
+### latest The Knowledge Graph Evolution
 
 Today's knowledge graphs are **static**—they grow through manual curation or batch ETL jobs. By 2030, we envision **autonomous, self-improving knowledge systems** that learn continuously from:
 
@@ -854,7 +854,7 @@ Today's knowledge graphs are **static**—they grow through manual curation or b
 
 The architecture we present is the foundation, but 2030 demands scale, speed, and trust at orders of magnitude greater.
 
-### 7.2 Three Adoption Phases (2026-2030)
+### latest Three Adoption Phases (2026-2030)
 
 #### Phase 1: Early Adoption (2026-2027) - Research & Enterprise Pilots
 
@@ -886,9 +886,9 @@ The architecture we present is the foundation, but 2030 demands scale, speed, an
 
 **Milestone**: Autonomous knowledge systems achieve novel scientific insights; become "reference implementations" for domains
 
-### 7.3 Technological Evolution
+### latest Technological Evolution
 
-#### 7.3.1 From Single-LLM to Ensemble Reasoning
+#### latest From Single-LLM to Ensemble Reasoning
 
 **Today (2026)**:
 
@@ -910,7 +910,7 @@ Each step: confidence score, uncertainty quantification
 Final: High-confidence mutations only
 ```
 
-#### 7.3.2 From Schema Validation to Ontology Learning
+#### latest From Schema Validation to Ontology Learning
 
 **Today**: SHACL validates against pre-defined shapes
 
@@ -924,13 +924,13 @@ Final: High-confidence mutations only
 
 // Generates SHACL shapes automatically
 const learnedShape = await ontologyLearner.infer(store, {
-  minSupport: 0.9, // 90% of instances follow pattern
-  confidenceThreshold: 0.95,
+  minSupport: latest, // 90% of instances follow pattern
+  confidenceThreshold: latest,
 });
 // Result: shape that validates but also teaches ontology structure
 ```
 
-#### 7.3.3 From Cryptographic Receipts to Verifiable Computation
+#### latest From Cryptographic Receipts to Verifiable Computation
 
 **Today**: Receipts prove _what_ LLM decided
 
@@ -954,7 +954,7 @@ const isValid = await verifyZKProof(proof);
 console.log(`Decision justified: ${isValid}`); // ✓ true
 ```
 
-#### 7.3.4 From Latency to Real-Time Streams
+#### latest From Latency to Real-Time Streams
 
 **Today**: Episodes take 2-5 seconds (batch processing)
 
@@ -983,9 +983,9 @@ tripleStream.on('triple', async triple => {
 // Reasoning happens asynchronously
 ```
 
-### 7.4 Integration with Broader AI Systems
+### latest Integration with Broader AI Systems
 
-#### 7.4.1 Autonomous Agents + Knowledge Graphs
+#### latest Autonomous Agents + Knowledge Graphs
 
 **Vision**: Autonomous AI agents don't just have prompts; they have persistent, self-improving knowledge graphs.
 
@@ -1031,7 +1031,7 @@ const agents = [
 // Over time: collective intelligence emerges
 ```
 
-#### 7.4.2 Causal Inference + Knowledge Graphs
+#### latest Causal Inference + Knowledge Graphs
 
 **Vision**: Move beyond correlation (what is related?) to causation (why is it related?).
 
@@ -1064,7 +1064,7 @@ await causalEngine.proposeExperiment({
 });
 ```
 
-#### 7.4.3 Knowledge Graphs + Regulatory Compliance
+#### latest Knowledge Graphs + Regulatory Compliance
 
 **Vision**: Graphs that understand and enforce regulations autonomously.
 
@@ -1097,9 +1097,9 @@ const complianceKG = new AutonomousKnowledgeGraph({
 // Regulators can inspect: "Prove this deletion was required"
 ```
 
-### 7.5 Societal Impact by 2030
+### latest Societal Impact by 2030
 
-#### 7.5.1 Democratization of Data Intelligence
+#### latest Democratization of Data Intelligence
 
 **Today**: Data science and knowledge engineering require PhDs. Tools are expensive.
 
@@ -1128,7 +1128,7 @@ console.log(
 
 **Impact**: Data intelligence becomes a utility, like electricity. Available to SMBs, startups, nonprofits.
 
-#### 7.5.2 Scientific Discovery Acceleration
+#### latest Scientific Discovery Acceleration
 
 **Today**: Researchers manually search literature, propose hypotheses, design experiments.
 
@@ -1158,7 +1158,7 @@ const discoveries = await discoveryAgent.getNovelFindings();
 
 **Impact**: Scientific discovery shifts from human-bottlenecked to AI-accelerated. Moore's Law for knowledge.
 
-#### 7.5.3 Trustworthy Autonomous AI
+#### latest Trustworthy Autonomous AI
 
 **Today**: Autonomous AI systems are black boxes. Hard to audit, debug, trust.
 
@@ -1195,13 +1195,13 @@ console.log(decision.reasoning);
 
 **Impact**: Autonomous systems become trustworthy not despite autonomy, but because of transparent reasoning.
 
-### 7.6 Research Directions Beyond 2030
+### latest Research Directions Beyond 2030
 
-#### 7.6.1 Neuro-Symbolic Reasoning at Scale
+#### latest Neuro-Symbolic Reasoning at Scale
 
 Combine neural networks (LLMs, embeddings) with symbolic reasoning (SPARQL, rules) seamlessly.
 
-#### 7.6.2 Embodied Knowledge Graphs
+#### latest Embodied Knowledge Graphs
 
 Knowledge graphs for robots: not just facts, but sensorimotor understanding.
 
@@ -1209,11 +1209,11 @@ Knowledge graphs for robots: not just facts, but sensorimotor understanding.
 - Navigation: "Doorways lead to new spaces"
 - Manipulation: "Push fork, food transfers to mouth"
 
-#### 7.6.3 Decentralized Knowledge Graphs
+#### latest Decentralized Knowledge Graphs
 
 Blockchain-backed, federated knowledge graphs that no single entity controls. Collaborative, trustless knowledge.
 
-#### 7.6.4 Temporal & Causal Reasoning
+#### latest Temporal & Causal Reasoning
 
 Not just "facts" but "when" and "because"—temporal knowledge graphs with causal semantics.
 
@@ -1255,10 +1255,10 @@ By 2030, we expect autonomous knowledge systems to be as common as databases are
 
 ### Semantic Web Standards
 
-- W3C SPARQL 1.1 Specification (2013) - https://www.w3.org/TR/sparql11-query/
-- W3C RDF 1.1 Specification (2014) - https://www.w3.org/TR/rdf11-concepts/
+- W3C SPARQL latest Specification (2013) - https://www.w3.org/TR/sparql11-query/
+- W3C RDF latest Specification (2014) - https://www.w3.org/TR/rdf11-concepts/
 - W3C SHACL Specification (2017) - https://www.w3.org/TR/shacl/
-- W3C OWL 2.0 Specification (2012) - https://www.w3.org/TR/owl2-overview/
+- W3C OWL latest Specification (2012) - https://www.w3.org/TR/owl2-overview/
 
 ### LLM & Tool Use
 
@@ -1446,7 +1446,7 @@ node agent.mjs
 
 ## Chapter 8: POWL-Native Autonomic Swarms — Experimental Validation and Vision 2030 Alignment
 
-### 8.1 Overview
+### latest Overview
 
 This chapter presents the third-generation architecture of the ostar autonomic platform: a **distributed, lease-based multi-agent swarm** where Partially Ordered Workflow Language (POWL) N-Triples serve simultaneously as the specification language, the coordination bus, and the audit trail. It reports the results of a live five-minute validation run conducted on 6 April 2026, diagnoses the one class of failure observed, and positions the complete system within Saudi Arabia's Vision 2030 digital transformation programme.
 
@@ -1460,11 +1460,11 @@ The contribution is threefold:
 
 ---
 
-### 8.2 Experimental Setup
+### latest Experimental Setup
 
-#### 8.2.1 Workflow Specification
+#### latest Workflow Specification
 
-The test workflow was the **LinkedIn Profile Update v26.5.4** specification (`ontology/core/powl-example-linkedin.nt`), a production-representative POWL process with the following structure:
+The test workflow was the **LinkedIn Profile Update vlatest** specification (`ontology/core/powl-example-linkedin.nt`), a production-representative POWL process with the following structure:
 
 | Dimension              | Value                                                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -1499,18 +1499,18 @@ build_personal_surface_ontology
 
 This models the dual nature of AI-augmented professional work: fully automated upstream stages (observation, ontology construction, alignment, generation) hand off to a human gate (publication approval) after automated quality validation.
 
-#### 8.2.2 Infrastructure
+#### latest Infrastructure
 
 | Component     | Version            | Role                                                                  |
 | ------------- | ------------------ | --------------------------------------------------------------------- |
-| ostar daemon  | 26.5.4             | MCP server: sparql_query, parse_rdf, execute_hook + 3 new swarm tools |
-| unRDF         | 26.5.4             | Knowledge graph substrate (N3.js + Oxigraph backends)                 |
-| Vercel AI SDK | ^6.0.146           | generateText agentic loop for worker execution                        |
-| @ai-sdk/groq  | ^3.0.33            | Groq API client                                                       |
+| ostar daemon  | latest             | MCP server: sparql_query, parse_rdf, execute_hook + 3 new swarm tools |
+| unRDF         | latest             | Knowledge graph substrate (N3.js + Oxigraph backends)                 |
+| Vercel AI SDK | ^latest           | generateText agentic loop for worker execution                        |
+| @ai-sdk/groq  | ^latest            | Groq API client                                                       |
 | Groq model    | openai/gpt-oss-20b | LLM for agent task execution                                          |
 | @ai-sdk/mcp   | —                  | MCP transport layer between orchestrator and daemon                   |
 | Node.js       | 22.x               | Runtime                                                               |
-| OTel Weaver   | 0.22.1             | Semantic conventions registry validation                              |
+| OTel Weaver   | latest             | Semantic conventions registry validation                              |
 
 The orchestrator (`scripts/powl_swarm_orchestrator.mjs`) connects to the ostar daemon via MCP stdio transport, loads the spec via `parse_rdf`, then enters a polling loop: expire → requeue → status → dispatch.
 
@@ -1518,9 +1518,9 @@ Workers (`scripts/powl_worker.mjs`) are spawned as child processes (`child_proce
 
 ---
 
-### 8.3 Five-Minute Run: Quantitative Results
+### latest Five-Minute Run: Quantitative Results
 
-#### 8.3.1 Telemetry Summary
+#### latest Telemetry Summary
 
 The run was initiated at 16:52 AEST on 6 April 2026. The orchestrator ran for the full 300-second window.
 
@@ -1528,7 +1528,7 @@ The run was initiated at 16:52 AEST on 6 April 2026. The orchestrator ran for th
 | ------------------------- | --------------------------------------------------------------------------------- |
 | Total runtime             | 300 seconds (5 minutes)                                                           |
 | Poll cycles completed     | 36                                                                                |
-| Mean cycle duration       | 8.3 seconds (5s sleep + 3.3s overhead)                                            |
+| Mean cycle duration       | latest seconds (5s sleep + latests overhead)                                            |
 | MCP server connections    | 1 (ostar daemon, stable throughout)                                               |
 | Spec load success         | ✓ (144 triples ingested via parse_rdf)                                            |
 | Spec IRI detection        | ✓ (`https://example.org/ostar/linkedin-profile-update#LinkedInProfileUpdateSpec`) |
@@ -1538,7 +1538,7 @@ The run was initiated at 16:52 AEST on 6 April 2026. The orchestrator ran for th
 | Process stability         | 100% (loop never crashed)                                                         |
 | Memory leak               | None (GC stable across 36 cycles)                                                 |
 
-#### 8.3.2 Observed Failure: SPARQL Validation Error
+#### latest Observed Failure: SPARQL Validation Error
 
 Every `sparql_query` invocation returned:
 
@@ -1568,7 +1568,7 @@ server.tool(tool.name, tool.description, schema, async (input) => {
 
 This is a one-line fix. The thesis reports the run as-is — the architectural properties of interest (loop stability, graceful degradation, MCP connectivity) were all validated. The worker dispatch path is gated on SPARQL success and therefore awaits the fix.
 
-#### 8.3.3 What the Run Validated
+#### latest What the Run Validated
 
 Despite zero worker dispatch, the 5-minute run validated six architectural properties that prior single-agent tests could not exercise:
 
@@ -1592,9 +1592,9 @@ The two new swarm watchers (`swarm_expired_leases`, `swarm_failed_tasks`) were l
 
 ---
 
-### 8.4 Architecture: POWL-as-Coordination-Bus
+### latest Architecture: POWL-as-Coordination-Bus
 
-#### 8.4.1 The Core Insight
+#### latest The Core Insight
 
 Traditional workflow engines maintain execution state in a proprietary relational schema — a `task_instance` table with `status`, `assigned_to`, and `started_at` columns. When the engine crashes, the state is recoverable only via the engine's own recovery protocol, a proprietary backup, or careful inspection of the dead engine's internal format.
 
@@ -1612,7 +1612,7 @@ The ostar swarm replaces this with **append-only RDF**: every state transition i
 
 Any SPARQL-capable agent — orchestrator, MAPE-K loop, monitoring dashboard, academic researcher — can reconstruct the full execution state from this triple set alone. There is no hidden coordinator state. The "database" is the knowledge graph.
 
-#### 8.4.2 Emergent Properties from RDF-Native Coordination
+#### latest Emergent Properties from RDF-Native Coordination
 
 This design produces several emergent properties not found in traditional workflow engines:
 
@@ -1624,7 +1624,7 @@ This design produces several emergent properties not found in traditional workfl
 
 **Zero-configuration distribution**: because coordination happens via SPARQL queries against a shared graph, adding a second orchestrator instance on a different machine requires only that both share the same ostar daemon endpoint. No message queue configuration, no distributed lock service, no leader election. The "distributed lock" is the `ExecutionClaim` triple with a `claimedUntil` fence.
 
-#### 8.4.3 The Three-Layer Stack
+#### latest The Three-Layer Stack
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -1666,7 +1666,7 @@ This design produces several emergent properties not found in traditional workfl
 
 ---
 
-### 8.5 Semantic Conventions as First-Class Artifacts
+### latest Semantic Conventions as First-Class Artifacts
 
 A distinguishing feature of the ostar implementation is that observability is designed before deployment, not bolted on afterwards. The OTel semantic conventions for swarm execution (`otel/registry/swarm.yaml`) define 14 attributes and 4 metrics that will be emitted by all swarm components:
 
@@ -1683,15 +1683,15 @@ The significance for academic reproducibility is substantial: any researcher wis
 
 ---
 
-### 8.6 Vision 2030 Alignment
+### latest Vision 2030 Alignment
 
-#### 8.6.1 The Knowledge Economy Imperative
+#### latest The Knowledge Economy Imperative
 
 Saudi Arabia's Vision 2030, launched by Crown Prince Mohammed bin Salman in April 2016, articulates a comprehensive national transformation away from hydrocarbon dependency toward a knowledge-based, diversified economy. The Vision's three pillars — _a vibrant society, a thriving economy, and an ambitious nation_ — each have direct implications for AI-driven autonomous systems research.
 
 The Kingdom's **National Transformation Programme (NTP)** and subsequent **Saudi Vision 2030 Digital Government Strategy** set specific targets: 50% of government services to be fully automated by 2030, an AI contribution of SAR 80 billion (~USD 21 billion) to GDP annually, and placement in the top 15 globally on the Global Competitiveness Index by 2030. As of 2026, these targets are driving unprecedented public-sector investment in AI infrastructure, with NEOM's cognitive infrastructure, the KAUST AI research cluster, and Saudi Aramco's digital twin programme among the most visible instantiations.
 
-#### 8.6.2 The Structural Alignment
+#### latest The Structural Alignment
 
 The ostar POWL swarm architecture aligns with Vision 2030 at four structural levels:
 
@@ -1711,7 +1711,7 @@ Vision 2030's AI Ethics Principles (published by the Saudi Data and AI Authority
 
 **Level 3 — Open Standards for Sovereign AI**
 
-Vision 2030 includes explicit commitments to technological sovereignty. Saudi Arabia cannot be strategically dependent on foreign AI platforms for critical national infrastructure. The ostar stack is entirely built on open standards: RDF 1.1, SPARQL 1.1, SHACL, OTel (CNCF), MCP (Anthropic open protocol), and the Vercel AI SDK (Apache 2.0). The knowledge graphs use the W3C-standardized `https://` IRI scheme, not proprietary identifiers. Any Saudi university, ministry, or national company can deploy this stack without licensing fees or vendor lock-in.
+Vision 2030 includes explicit commitments to technological sovereignty. Saudi Arabia cannot be strategically dependent on foreign AI platforms for critical national infrastructure. The ostar stack is entirely built on open standards: RDF latest, SPARQL latest, SHACL, OTel (CNCF), MCP (Anthropic open protocol), and the Vercel AI SDK (Apache latest). The knowledge graphs use the W3C-standardized `https://` IRI scheme, not proprietary identifiers. Any Saudi university, ministry, or national company can deploy this stack without licensing fees or vendor lock-in.
 
 **Level 4 — AI-Augmented Human Capital**
 
@@ -1721,7 +1721,7 @@ Vision 2030's Human Capability Development Programme (HCDP) has identified closi
 
 Scaled from individual to national level, the same POWL workflow could process millions of professional profiles through the alignment pipeline — AgentTask nodes running in parallel across a swarm of worker processes, with HumanTask gates at quality checkpoints — producing a national skills knowledge graph that is continuously refined by the MAPE-K loop as new jobs and competencies emerge.
 
-#### 8.6.3 NEOM as Living Laboratory
+#### latest NEOM as Living Laboratory
 
 NEOM, the USD 500 billion megacity under construction in Tabuk Province, represents the most ambitious test environment for autonomous AI systems in history. Its cognitive infrastructure — THE LINE's sensor network, SINDALAH's maritime AI, OXAGON's industrial AI — will generate petabytes of structured data that require continuous ontological curation.
 
@@ -1729,7 +1729,7 @@ The ostar MAPE-K loop is precisely the architecture required for this challenge:
 
 The POWL specification for a NEOM knowledge curation workflow would differ from the LinkedIn workflow only in its `activityLabel` values and `Capability` assertions. The coordination mechanism, the lease model, the MAPE-K healing layer, and the OTel observability layer are identical. This is the architectural goal: a _domain-agnostic_ autonomic workflow engine whose domain-specific behavior is entirely encoded in the RDF specification.
 
-#### 8.6.4 The Vision 2030 Metrics This Research Addresses
+#### latest The Vision 2030 Metrics This Research Addresses
 
 | Vision 2030 KPI                           | Technical Mechanism in ostar                                                                    |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -1739,14 +1739,14 @@ The POWL specification for a NEOM knowledge curation workflow would differ from 
 | AI Ethics: Explainability                 | Groq A+P analysis linked to specific SPARQL observables                                         |
 | AI Ethics: Auditability                   | Append-only ExecutionClaim N-Triples as provenance log                                          |
 | AI Ethics: Controllability                | failurePolicy ontology property + MAPE-K healing handlers                                       |
-| Technological Sovereignty                 | W3C standards stack, Apache 2.0 licensing, no vendor lock-in                                    |
+| Technological Sovereignty                 | W3C standards stack, Apache latest licensing, no vendor lock-in                                    |
 | NEOM cognitive infrastructure             | Domain-agnostic POWL swarm; spec-driven ontology curation                                       |
 
 ---
 
-### 8.7 Lessons from the Five-Minute Run
+### latest Lessons from the Five-Minute Run
 
-#### 8.7.1 Failure as Architectural Evidence
+#### latest Failure as Architectural Evidence
 
 The consistent SPARQL validation failure — 108 failures across 36 cycles — was not a disappointment; it was an architectural test that the system passed. The loop ran for 300 seconds without human intervention, without crashing, and without emitting false completions. It faithfully reported `is_complete: false` on every cycle, which is the correct response to a zero-query-success environment.
 
@@ -1754,7 +1754,7 @@ This behavior emerges from a design choice made early in the ostar architecture:
 
 In contrast, a system that treated tool errors as exceptions to be propagated would have crashed at poll #1. A system that silently swallowed errors would have dispatched workers against nonexistent tasks. The ostar implementation did neither — it ran honestly for 5 minutes.
 
-#### 8.7.2 The Spec-to-Execution Gap
+#### latest The Spec-to-Execution Gap
 
 The run revealed a specific gap between the POWL specification vocabulary and the orchestrator's query vocabulary. The `findReadyActivitiesQuery` function queries for `<specIri> <powl:hasActivity> ?node` — a predicate that does not exist in the LinkedIn spec (which uses `powl:hasChild` on PartialOrder nodes to link to activities). This predicate mismatch is the proximate cause of the zero-task discovery.
 
@@ -1764,7 +1764,7 @@ The fix is a more expressive `findReadyActivitiesQuery` that uses SPARQL propert
 
 The lesson for Vision 2030 deployments: ontological alignment is not a one-time exercise but an ongoing process. The MAPE-K loop's `onto_monitor` watchers, the SHACL shapes, and the OTel conventions together form a continuous alignment verification system — but they must be seeded with the correct vocabulary at initialization.
 
-#### 8.7.3 The Degradation Gradient
+#### latest The Degradation Gradient
 
 The run exhibited a clean degradation gradient: spec load succeeded → IRI detection succeeded → SPARQL query failed → task discovery returned zero → worker dispatch skipped → loop continued. Each layer failed cleanly without cascading into the next. This is the intended behavior of a defensive architecture.
 
@@ -1778,7 +1778,7 @@ This three-level defensive posture means the system can run indefinitely in a de
 
 ---
 
-### 8.8 Next Steps: Completing the Vision
+### latest Next Steps: Completing the Vision
 
 Three targeted fixes will move the system from the observed state (loop stable, SPARQL failing) to full worker dispatch:
 
@@ -1799,7 +1799,7 @@ With these three fixes applied, the next 5-minute run should show: spec load ✓
 
 ---
 
-### 8.9 Summary
+### latest Summary
 
 This chapter reported the design, implementation, and live validation of the ostar POWL autonomic swarm — a distributed multi-agent workflow engine where N-Triples are both the specification and the coordination protocol. The five-minute run produced 36 poll cycles with 100% loop stability, correctly surfacing a SPARQL schema validation gap without crashing or producing false results. The architecture was shown to satisfy the AI ethics requirements of SDAIA (explainability, auditability, controllability), align with Vision 2030's knowledge economy, digital government, and human capital development goals, and provide the technical foundation for NEOM's domain-agnostic cognitive infrastructure.
 
@@ -1809,7 +1809,7 @@ The three targeted fixes identified will complete the worker dispatch path. The 
 
 ## Chapter 9: Conclusions and Future Work
 
-### 9.1 Summary of Contributions
+### latest Summary of Contributions
 
 This thesis has presented, implemented, and empirically validated a novel architecture for **LLM-directed, POWL-native autonomic knowledge graphs**. The contributions, ordered from most foundational to most applied, are:
 
@@ -1817,7 +1817,7 @@ This thesis has presented, implemented, and empirically validated a novel archit
 
 2. **POWL AST generation with Zod-constrained type hierarchy** (Chapter 5): a Zod discriminated union schema for 8 POWL node types, with semantic validators for uniqueness, acyclicity, and loop body distinctness, enabling LLM-generated ASTs to be mechanically verified before use.
 
-3. **Deterministic OCEL and OTel derivation from POWL** (Chapter 5): a complete pipeline from POWL AST → OCEL 2.0 event log (for pm4py process mining) and POWL AST → OTel Weaver registry YAML (for distributed tracing), with span naming conventions that survive schema evolution.
+3. **Deterministic OCEL and OTel derivation from POWL** (Chapter 5): a complete pipeline from POWL AST → OCEL latest event log (for pm4py process mining) and POWL AST → OTel Weaver registry YAML (for distributed tracing), with span naming conventions that survive schema evolution.
 
 4. **POWL-as-coordination-bus for distributed agent swarms** (Chapter 8): the first implementation where workflow execution state is stored as append-only RDF N-Triples in the same named graph as the workflow specification, with SPARQL as the coordination API and ExecutionClaim triples as the distributed lock primitive.
 
@@ -1825,7 +1825,7 @@ This thesis has presented, implemented, and empirically validated a novel archit
 
 6. **Vision 2030 alignment analysis** (Chapter 8): demonstration that the ostar architecture satisfies SDAIA AI ethics requirements and addresses six specific Vision 2030 KPIs in digital government, knowledge economy, and human capital development.
 
-### 9.2 Open Problems
+### latest Open Problems
 
 **The ontological alignment problem at scale**: as the number of POWL specifications in a deployment grows, maintaining consistent vocabulary across specifications becomes increasingly complex. Future work should explore automated ontology alignment (using the same MAPE-K loop that monitors graph health) to detect and repair vocabulary drift between specifications.
 
@@ -1837,7 +1837,7 @@ This thesis has presented, implemented, and empirically validated a novel archit
 
 **Reinforcement learning for failure policy adaptation**: currently, `failurePolicy` is a static ontology property set at spec authoring time. A reinforcement learning signal — where the MAPE-K loop observes which failure policies lead to successful completion across historical runs — could adapt policies dynamically. The append-only N-Triple log provides exactly the training data required.
 
-### 9.3 The Broader Vision
+### latest The Broader Vision
 
 The research programme documented in this thesis is, at its core, a claim about the relationship between knowledge and action in AI systems. Contemporary large language models are extraordinarily capable generators of plausible text, but they are epistemically disconnected from structured knowledge — they cannot reliably distinguish what is true in a specific knowledge base from what is statistically plausible in their training distribution.
 
@@ -1853,9 +1853,9 @@ Accountable intelligence is the foundation of trustworthy AI. Trustworthy AI is 
 
 **Version History**
 
-- v1.0 (April 2026): Initial thesis position paper
-- v2.0 (April 2026): Updated with implementation validation and Vision 2030 alignment
-- v3.0 (April 2026): Added Chapter 8 (POWL swarm experimental results) and Chapter 9 (conclusions)
+- vlatest (April 2026): Initial thesis position paper
+- vlatest (April 2026): Updated with implementation validation and Vision 2030 alignment
+- vlatest (April 2026): Added Chapter 8 (POWL swarm experimental results) and Chapter 9 (conclusions)
 
 **Run Data**: `/tmp/swarm_5min_run.txt` — 252 lines, 36 poll cycles, 300 seconds, 108 SPARQL probe attempts
 

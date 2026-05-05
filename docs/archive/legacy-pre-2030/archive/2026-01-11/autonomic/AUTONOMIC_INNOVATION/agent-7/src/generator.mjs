@@ -69,7 +69,7 @@ function buildHeader(profile, service) {
   return {
     title: `${formattedName} Façade`,
     description: `Auto-generated from ${formattedName} spec`,
-    metadata: `Conventions: ${profile.name || 'target-org'} profile v${profile.version || '1.0.0'}`
+    metadata: `Conventions: ${profile.name || 'target-org'} profile v${profile.version || 'latest'}`
   };
 }
 

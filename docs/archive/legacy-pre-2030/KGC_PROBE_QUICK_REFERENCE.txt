@@ -124,7 +124,7 @@ Code Quality:
   ✓ ~3,800 LoC implementation
 
 Functionality:
-  ✓ 10 probes scoreable [0.0-1.0]
+  ✓ 10 probes scoreable [latest.0]
   ✓ 5 guards enforcing policies
   ✓ 4 merge strategies working
   ✓ Receipt generation + verification

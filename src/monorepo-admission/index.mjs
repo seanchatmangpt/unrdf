@@ -51,7 +51,7 @@
  * const delta = new PackageDelta({
  *   agent: 'developer',
  *   changes: [
- *     { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '5.0.2' } }
+ *     { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '[VERSION]' } }
  *   ]
  * });
  *

@@ -2,7 +2,7 @@
 
 > Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

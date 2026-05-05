@@ -1,6 +1,6 @@
 # Basic RDF Schema for UNRDF Sync Examples
 # A simple ontology demonstrating common RDF patterns
-# Version: 1.0.0
+# Version: [VERSION]
 # License: MIT
 
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -22,7 +22,7 @@ ex:SyncExampleOntology a owl:Ontology ;
     rdfs:comment """A basic RDF schema for demonstrating the UNRDF sync command.
     This ontology defines simple classes and properties for modeling people,
     organizations, and their relationships."""@en ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "[VERSION]" ;
     dcterms:created "2026-01-19"^^xsd:date ;
     dcterms:license <https://opensource.org/licenses/MIT> .
 

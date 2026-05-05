@@ -218,9 +218,9 @@ grep -c "^\s*/\*\*" max-combo-10-mega-framework-standalone.mjs
 **Result:** 15 JSDoc blocks
 
 **Analysis:**
-- 15 JSDoc blocks across 832 lines = 1.8% documentation density
+- 15 JSDoc blocks across 832 lines = latest% documentation density
 - Claim of "100% JSDoc coverage" **NOT VERIFIED**
-- 24 classes/functions found - only 15 documented = **62.5% coverage** (not 100%)
+- 24 classes/functions found - only 15 documented = **latest% coverage** (not 100%)
 
 ---
 
@@ -251,7 +251,7 @@ find /home/user/unrdf -name "*.test.mjs" -o -name "*.spec.mjs" | \
 | **Linting** | ❌ FAIL | Timeout after 2 minutes |
 | **Type Safety** | ❌ FAIL | Cannot verify (linter timeout) |
 | **Test Coverage** | ❌ FAIL | 0 test files exist |
-| **Documentation** | ⚠️ PARTIAL | 62.5% JSDoc coverage (not 100%) |
+| **Documentation** | ⚠️ PARTIAL | latest% JSDoc coverage (not 100%) |
 | **Zero External Deps** | ❌ FALSE | Uses Vue (500KB+) |
 | **File Count Match** | ❌ FAIL | 3 delivered vs 10 claimed |
 | **Line Count Match** | ❌ FAIL | 1,856 vs 8,816 claimed (21%) |

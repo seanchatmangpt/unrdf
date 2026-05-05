@@ -1,19 +1,19 @@
 # UNRDF — Claude Code Configuration
 
-## UNRDF v26.5.4 - RDF Knowledge Graph Platform
+## UNRDF vlatest - RDF Knowledge Graph Platform
 
 **REQUIRED READING:**
 
 - **Root instructions**: See `../CLAUDE.md` (Constitutional Law, Evidence Standards, Git Safety, Dependencies)
 
 > **Status**: Research Prototype | **Language**: JavaScript ESM (.mjs), Zod validation
-> **Package Manager**: pnpm (required) | **Test Framework**: Vitest 4.1.x
+> **Package Manager**: pnpm (required) | **Test Framework**: Vitest latest.x
 
 | Fact           | Value                                                  |
 | -------------- | ------------------------------------------------------ |
-| Version        | workspace 26.5.4                                       |
+| Version        | workspace latest                                       |
 | Packages       | 20 (YAWL/KGC moved to separate repos)                  |
-| Node.js / pnpm | >=18.0.0 / >=7.0.0 (.tool-versions: 24.11.1 / 10.33.0) |
+| Node.js / pnpm | >=latest / >=latest (.tool-versions: latest / latest) |
 
 ---
 
@@ -61,7 +61,7 @@ Backends (Memory, Oxigraph, Remote)
 - **Innovation 5** — Hooks Marketplace: SPARQL CONSTRUCT, N3 forward-chaining, SHACL soft-fail → `packages/hooks/`
 - **Innovation 6** — Streaming Admission: Delta receipts with chaining, I/O BLAKE3 hashes → `packages/streaming/`
 
-### MCP & Self-Play Autonomics (v26.5.4+)
+### MCP & Self-Play Autonomics (vlatest+)
 
 - 15 tools for ontology operations (`onto_validate`, `onto_query`, `onto_reason`, etc.)
 - Key files: `packages/daemon/src/mcp/`, `docs/MCP_INTEGRATION.md`, `packages/daemon/GROQ-INTEGRATION.md`
@@ -94,7 +94,7 @@ Backends (Memory, Oxigraph, Remote)
 
 ### OTel Weaver
 
-- Binary: `~/.cargo/bin/weaver` v0.22.1+; commands: `registry check`, `registry generate`, `registry live-check`
+- Binary: `~/.cargo/bin/weaver` vlatest+; commands: `registry check`, `registry generate`, `registry live-check`
 - Template path: `templates/{registry_basename}/{target}/`; iterate `ctx.groups` NOT `ctx`
 - `@unrdf/otel` is generated — don't edit `packages/otel/src/generated/` directly
 

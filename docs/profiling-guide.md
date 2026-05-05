@@ -2,7 +2,7 @@
 
 ## Overview
 
-UNRDF v3.1.0 includes comprehensive performance profiling tools for measuring latency, memory usage, and CPU performance. This guide covers all profiling capabilities and best practices.
+UNRDF latest includes comprehensive performance profiling tools for measuring latency, memory usage, and CPU performance. This guide covers all profiling capabilities and best practices.
 
 ## Quick Start
 
@@ -216,7 +216,7 @@ console.log('Duration:', profile.latency.duration, 'ms');
 
 ## UNRDF Performance Targets
 
-UNRDF v3.1.0 has the following performance targets:
+UNRDF latest has the following performance targets:
 
 | Operation | Target (p95) | Description |
 |-----------|--------------|-------------|

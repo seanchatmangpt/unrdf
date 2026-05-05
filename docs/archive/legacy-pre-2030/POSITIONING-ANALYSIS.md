@@ -36,7 +36,7 @@ Replace polling-based workflow activation with RDF quad hooks for O(1) task trig
 - Uses Kafka-like log for state management
 - Still requires worker polling
 
-**Apache Airflow 3.0 (2025)**:
+**Apache Airflow latest (2025)**:
 - Adding event-driven scheduling capabilities
 - External sensors and async listeners for real-time triggers
 - Not integrated with RDF/semantic models
@@ -77,7 +77,7 @@ Use SPARQL ASK queries for workflow routing decisions instead of imperative code
 **SPARQL Federation (W3C, 2013-2025)**:
 - SERVICE keyword for distributed queries
 - Query routing, not control flow routing
-- SPARQL 1.2 in development (2024-2025)
+- SPARQL latest in development (2024-2025)
 
 **Rule-Based Workflow Systems**:
 - Drools (Red Hat): Forward-chaining rules
@@ -193,7 +193,7 @@ Individual components exist (temporal databases, time-travel debugging, Git vers
 ## 5. Big Bang 80/20 Methodology
 
 ### Claim
-Single-pass feature implementation with 99.997% correctness through Pareto-optimized pattern reuse.
+Single-pass feature implementation with latest% correctness through Pareto-optimized pattern reuse.
 
 ### Prior Work Analysis
 

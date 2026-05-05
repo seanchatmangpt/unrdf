@@ -107,7 +107,7 @@ Measures validation performance:
 - **Term Validation**: Term type checking
 
 **Performance Targets**:
-- Quad validation: P95 < 0.1ms
+- Quad validation: P95 < latestms
 - Store validation (100): P95 < 5ms
 - Store validation (1K): P95 < 30ms
 
@@ -178,8 +178,8 @@ node runner.mjs --quick
 ### Console Output
 
 ```
-✓ parsing.turtle-small: P95=3.497ms (P95 < 50ms)
-✗ sparql.select-simple: P95=26.118ms (P95 < 10ms)
+✓ parsing.turtle-small: P95=latestms (P95 < 50ms)
+✗ sparql.select-simple: P95=latestms (P95 < 10ms)
 ```
 
 - ✓ = Passed performance target
@@ -191,7 +191,7 @@ Detailed results saved to `rdf-core-benchmarks-YYYY-MM-DDTHH-MM-SS.json`:
 
 ```json
 {
-  "timestamp": "2026-01-11T06:22:59.036Z",
+  "timestamp": "2026-01-11T06:22:latestZ",
   "summary": {
     "totalBenchmarks": 6,
     "passed": 4,
@@ -200,10 +200,10 @@ Detailed results saved to `rdf-core-benchmarks-YYYY-MM-DDTHH-MM-SS.json`:
   "benchmarks": {
     "parsing.turtle-small": {
       "latency": {
-        "mean": 0.292,
-        "p50": 0.090,
-        "p95": 3.497,
-        "p99": 3.497
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
       },
       "passed": true
     }
@@ -245,7 +245,7 @@ Benchmarks fail CI if:
    - Root cause: Query plan generation overhead
    - Fix: Implement query plan caching
 
-2. **Graph Add P95 Latency**: 16.7ms vs 10ms target
+2. **Graph Add P95 Latency**: latestms vs 10ms target
    - Root cause: Batch operation optimization needed
    - Fix: Optimize Oxigraph bulk insert
 
@@ -341,4 +341,4 @@ node --max-old-space-size=4096 benchmarks/rdf-core/runner.mjs
 
 **Maintainer**: UNRDF Performance Team
 **Last Updated**: 2026-01-11
-**Benchmark Version**: 1.0.0
+**Benchmark Version**: latest

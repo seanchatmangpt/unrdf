@@ -459,7 +459,7 @@ export class KGenFilters {
         algorithm: options.algorithm || 'sha256',
         timestamp,
         attestor: options.attestor || 'kgen-templates',
-        version: '1.0.0'
+        version: 'latest'
       };
     }, {
       category: 'cas',

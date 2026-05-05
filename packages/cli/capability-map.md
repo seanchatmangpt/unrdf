@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/cli
-**Version:** 5.0.1
+**Version:** [VERSION]
 
 ---
 
@@ -28,14 +28,14 @@ UNRDF CLI - Command-line Tools for Graph Operations and Context Management
 
 ### Dependencies
 
-- `@unrdf/core`: workspace:5.0.0-beta.1
-- `@unrdf/decision-fabric`: workspace:5.0.0-beta.1
-- `@unrdf/federation`: workspace:5.0.0-beta.1
-- `@unrdf/hooks`: workspace:5.0.0-beta.1
-- `@unrdf/streaming`: workspace:5.0.0-beta.1
-- `citty`: ^0.1.6
-- `table`: ^6.9.0
-- `yaml`: ^2.8.2
+- `@unrdf/core`: workspace:[VERSION]-beta.1
+- `@unrdf/decision-fabric`: workspace:[VERSION]-beta.1
+- `@unrdf/federation`: workspace:[VERSION]-beta.1
+- `@unrdf/hooks`: workspace:[VERSION]-beta.1
+- `@unrdf/streaming`: workspace:[VERSION]-beta.1
+- `citty`: ^[VERSION]
+- `table`: ^[VERSION]
+- `yaml`: ^[VERSION]
 
 ### Exports
 

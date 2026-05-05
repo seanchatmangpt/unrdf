@@ -23,7 +23,7 @@ parser.parse(turtleString, (error, quad, prefixes) => {
 });
 
 // Query (manual iteration, no SPARQL)
-const matches = store.getQuads(null, namedNode('http://xmlns.com/foaf/0.1/name'), null);
+const matches = store.getQuads(null, namedNode('http://xmlns.com/foaf/latest/name'), null);
 for (const quad of matches) {
   console.log(quad.object.value);
 }
@@ -53,7 +53,7 @@ store.load(turtleString);
 // Query with SPARQL (built-in!)
 const results = executeSelectSync(store, `
   SELECT ?name WHERE {
-    ?person <http://xmlns.com/foaf/0.1/name> ?name .
+    ?person <http://xmlns.com/foaf/latest/name> ?name .
   }
 `);
 
@@ -111,7 +111,7 @@ const oxiResults = executeSelectSync(oxiStore, `
 `);
 const oxiCount = [...oxiResults].length;
 console.timeEnd('oxigraph');
-// oxigraph: 0.4ms (100x faster!)
+// oxigraph: latestms (100x faster!)
 ```
 
 **Result:** Oxigraph is ~100x faster for queries.
@@ -130,7 +130,7 @@ g = Graph()
 
 # Add triples
 EX = Namespace("http://example.org/")
-FOAF = Namespace("http://xmlns.com/foaf/0.1/")
+FOAF = Namespace("http://xmlns.com/foaf/latest/")
 
 g.add((EX.Alice, FOAF.name, Literal("Alice")))
 g.add((EX.Alice, FOAF.knows, EX.Bob))
@@ -138,7 +138,7 @@ g.add((EX.Alice, FOAF.knows, EX.Bob))
 # Query with SPARQL
 results = g.query("""
     SELECT ?name WHERE {
-        ?person <http://xmlns.com/foaf/0.1/name> ?name .
+        ?person <http://xmlns.com/foaf/latest/name> ?name .
     }
 """)
 
@@ -159,7 +159,7 @@ const store = createStore();
 
 // Add triples
 const EX = 'http://example.org/';
-const FOAF = 'http://xmlns.com/foaf/0.1/';
+const FOAF = 'http://xmlns.com/foaf/latest/';
 
 store.add(
   namedNode(EX + 'Alice'),
@@ -176,7 +176,7 @@ store.add(
 // Query with SPARQL
 const results = executeSelectSync(store, `
   SELECT ?name WHERE {
-    ?person <http://xmlns.com/foaf/0.1/name> ?name .
+    ?person <http://xmlns.com/foaf/latest/name> ?name .
   }
 `);
 
@@ -214,12 +214,12 @@ Model model = ModelFactory.createDefaultModel();
 // Add triples
 String ex = "http://example.org/";
 Resource alice = model.createResource(ex + "Alice");
-Property name = model.createProperty("http://xmlns.com/foaf/0.1/name");
+Property name = model.createProperty("http://xmlns.com/foaf/latest/name");
 
 alice.addProperty(name, "Alice");
 
 // Query with SPARQL
-String sparql = "SELECT ?name WHERE { ?person <http://xmlns.com/foaf/0.1/name> ?name }";
+String sparql = "SELECT ?name WHERE { ?person <http://xmlns.com/foaf/latest/name> ?name }";
 QueryExecution qe = QueryExecutionFactory.create(QueryFactory.create(sparql), model);
 ResultSet results = qe.execSelect();
 
@@ -244,14 +244,14 @@ const store = createStore();
 // Add triples
 const ex = 'http://example.org/';
 const alice = namedNode(ex + 'Alice');
-const name = namedNode('http://xmlns.com/foaf/0.1/name');
+const name = namedNode('http://xmlns.com/foaf/latest/name');
 
 store.add(alice, name, literal('Alice'));
 
 // Query with SPARQL
 const results = executeSelectSync(store, `
   SELECT ?name WHERE {
-    ?person <http://xmlns.com/foaf/0.1/name> ?name .
+    ?person <http://xmlns.com/foaf/latest/name> ?name .
   }
 `);
 
@@ -302,13 +302,13 @@ import { createStore } from '@unrdf/oxigraph';
 
 ```javascript
 // ❌ WRONG
-store.add('http://example.org/Alice', 'http://xmlns.com/foaf/0.1/name', 'Alice');
+store.add('http://example.org/Alice', 'http://xmlns.com/foaf/latest/name', 'Alice');
 
 // ✅ CORRECT
 import { namedNode, literal } from '@unrdf/core';
 store.add(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/latest/name'),
   literal('Alice')
 );
 ```
@@ -347,7 +347,7 @@ const results = executeSelectSync(store, `
 
 // ✅ CORRECT (prefix defined)
 const results = executeSelectSync(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }
@@ -401,7 +401,7 @@ store.load(turtle);
 **Before (N3.js manual loops):**
 ```javascript
 const alice = namedNode('http://example.org/Alice');
-const knows = namedNode('http://xmlns.com/foaf/0.1/knows');
+const knows = namedNode('http://xmlns.com/foaf/latest/knows');
 
 const friends = [];
 for (const quad of store.getQuads(alice, knows, null)) {
@@ -419,7 +419,7 @@ for (const friend of friends) {
 **After (@unrdf/oxigraph with SPARQL):**
 ```javascript
 const results = executeSelectSync(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?friendName WHERE {
     <http://example.org/Alice> foaf:knows ?friend .
     ?friend foaf:name ?friendName .
@@ -465,10 +465,10 @@ console.log(ntriples);
 | Operation | N3.js | @unrdf/oxigraph | Speedup |
 |-----------|-------|-----------------|---------|
 | **Parse 10K triples** | 120ms | 15ms | 8x |
-| **SPARQL SELECT (simple)** | N/A (manual) | 0.5ms | N/A |
+| **SPARQL SELECT (simple)** | N/A (manual) | latestms | N/A |
 | **SPARQL SELECT (complex join)** | N/A | 2ms | N/A |
 | **Add 10K triples** | 80ms | 10ms | 8x |
-| **Iterate all triples** | 5ms | 3ms | 1.7x |
+| **Iterate all triples** | 5ms | 3ms | latestx |
 | **Export Turtle** | 100ms | 20ms | 5x |
 
 **Measured on:** Node.js 18, M1 MacBook Pro, 10,000 triples

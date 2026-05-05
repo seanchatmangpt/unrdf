@@ -20,9 +20,9 @@ Edit `package.json`:
 {
   "type": "module",
   "name": "my-knowledge-base",
-  "version": "1.0.0",
+  "version": "latest",
   "dependencies": {
-    "@unrdf/core": "^5.0.0"
+    "@unrdf/core": "^latest"
   },
   "scripts": {
     "start": "node src/index.mjs",
@@ -47,7 +47,7 @@ Create `src/data.ttl`:
 
 ```turtle
 @prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf: <http://xmlns.com/foaf/latest/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 
 # People
@@ -109,7 +109,7 @@ import { core, store } from './index.mjs';
 // Query 1: Find all people
 console.log('\n=== All People ===');
 const people = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT ?name ?email
   WHERE {
@@ -127,7 +127,7 @@ for (const row of people) {
 // Query 2: Find friend networks
 console.log('\n=== Friend Networks ===');
 const friends = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT ?person ?friend
   WHERE {
@@ -146,7 +146,7 @@ for (const row of friends) {
 console.log('\n=== Projects by Creator ===');
 const projects = await core.query(store, `
   PREFIX ex: <http://example.org/>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   PREFIX dct: <http://purl.org/dc/terms/>
 
   SELECT ?project ?title ?creator
@@ -168,7 +168,7 @@ for (const row of projects) {
 console.log('\n=== Team Collaboration Opportunities ===');
 const collab = await core.query(store, `
   PREFIX ex: <http://example.org/>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   PREFIX dct: <http://purl.org/dc/terms/>
 
   SELECT ?project ?member ?friend
@@ -231,7 +231,7 @@ Create `src/shapes.ttl`:
 ```turtle
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf: <http://xmlns.com/foaf/latest/> .
 
 # Person shape
 ex:PersonShape a sh:NodeShape ;
@@ -307,12 +307,12 @@ try {
   store.addQuad(
     namedNode('http://example.org/diana'),
     namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    namedNode('http://xmlns.com/foaf/0.1/Person')
+    namedNode('http://xmlns.com/foaf/latest/Person')
   );
 
   store.addQuad(
     namedNode('http://example.org/diana'),
-    namedNode('http://xmlns.com/foaf/0.1/name'),
+    namedNode('http://xmlns.com/foaf/latest/name'),
     literal('Diana Prince')
   );
 
@@ -352,7 +352,7 @@ const { namedNode, literal } = require('@rdfjs/data-model');
 
 store.addQuad(
   namedNode('http://example.org/eve'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/latest/name'),
   literal('Eve Wilson')
 );
 // Output: 🎉 New person added: Eve Wilson

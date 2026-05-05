@@ -102,7 +102,7 @@ CRITICAL FIXES (User requirement: "not doing sidecar anymore"):
 - **Commit 9a85eb4** (60 min ago): Implemented 5 critical commands (3 hours effort)
 - **Commit c97bbd0** (39 min ago): FMEA analysis + production readiness
 - **Commit 6fb07b8** (20 min ago): Removed sidecar (820 lines)
-- **Commit bdc9196** (5 min ago): JTBD analysis (54.5% broken)
+- **Commit bdc9196** (5 min ago): JTBD analysis (latest% broken)
 
 **Pattern**: **Rapid iteration, quick value delivery, 80/20 focus**
 
@@ -210,7 +210,7 @@ CRITICAL FIXES (User requirement: "not doing sidecar anymore"):
 - No load balancing
 
 ❌ **Not feature-complete**
-- 54.5% of commands are stubs
+- latest% of commands are stubs
 - 18% use mock data
 - Many "describe" commands show hardcoded data
 
@@ -279,7 +279,7 @@ unrdf policy apply governance.json
 
 | Commit | Theme | What It Reveals |
 |--------|-------|-----------------|
-| bdc9196 | JTBD analysis | 54.5% broken → **Testbed incomplete** |
+| bdc9196 | JTBD analysis | latest% broken → **Testbed incomplete** |
 | 6fb07b8 | Remove sidecar | User said "not doing sidecar" → **Simplification** |
 | b7c5e59 | Merge PR #14 | Add guard tests → **Hardening core** |
 | c97bbd0 | FMEA analysis | Production readiness 85/100 → **Dev/demo ready, not production** |

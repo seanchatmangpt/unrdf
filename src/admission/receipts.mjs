@@ -135,10 +135,10 @@ export class Receipt {
 export class ReceiptGenerator {
   /**
    * @param {object} [config={}]
-   * @param {string} [config.toolchainVersion='1.0.0'] - Toolchain version
+   * @param {string} [config.toolchainVersion='[VERSION]'] - Toolchain version
    */
   constructor(config = {}) {
-    this.toolchainVersion = config.toolchainVersion || '1.0.0';
+    this.toolchainVersion = config.toolchainVersion || '[VERSION]';
     this.currentEpoch = 0;
   }
 

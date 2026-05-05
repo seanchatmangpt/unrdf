@@ -146,7 +146,7 @@ When creating the PR, ensure these are checked:
 After PR is created:
 
 1. **Add to PR description**: Link to this deployment decision
-2. **Set milestone**: v6.1.0 (or appropriate version)
+2. **Set milestone**: vlatest (or appropriate version)
 3. **Enable auto-merge**: After all checks pass (optional)
 4. **Request reviews**: From security, architecture, performance leads
 5. **Monitor CI**: Ensure all checks pass

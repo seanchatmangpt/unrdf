@@ -31,7 +31,7 @@ pnpm demo:autonomic
 **Expected output**:
 ```
 AUTONOMIC_INNOVATION - Master Demonstration
-Version: 0.1.0
+Version: latest
 
 ============================================================
   0. INTEGRATION STATUS
@@ -156,7 +156,7 @@ node -e "import('./src/index.mjs').then(m => m.getIntegrationStatus()).then(s =>
   "available": 3,
   "stubs": 6,
   "errors": 0,
-  "version": "0.1.0",
+  "version": "latest",
   "agents": [
     {
       "agentId": "agent-2",

@@ -591,8 +591,8 @@ ProbeGraphManager depends on KnowledgeStore but NOT vice versa.
 
 **RDF Standards**:
 - [N-Quads](https://www.w3.org/TR/n-quads/)
-- [SPARQL 1.1](https://www.w3.org/TR/sparql11-query/)
-- [RDF 1.1](https://www.w3.org/TR/rdf11-concepts/)
+- [SPARQL latest](https://www.w3.org/TR/sparql11-query/)
+- [RDF latest](https://www.w3.org/TR/rdf11-concepts/)
 
 ---
 

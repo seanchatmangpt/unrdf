@@ -34,7 +34,7 @@ pnpm install --recursive
 ```
 
 ### Results
-- **Duration**: 31.8 seconds
+- **Duration**: latest seconds
 - **Scope**: 32 workspace projects
 - **Status**: ✅ Success
 
@@ -104,9 +104,9 @@ packages/oxigraph/test/comparison.test.mjs
 ### Changes Applied
 ```diff
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^latest",
 -   "@unrdf/core": "workspace:*",
-    "vitest": "^4.0.15"
+    "vitest": "^latest"
   }
 ```
 
@@ -121,10 +121,10 @@ packages/oxigraph/test/comparison.test.mjs
 ```json
 {
   "devDependencies": {
-    "@vitest/browser": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
-    "vitest": "^4.0.15"
+    "@vitest/browser": "^latest",
+    "@vitest/coverage-v8": "^latest",
+    "@vitest/ui": "^latest",
+    "vitest": "^latest"
   }
 }
 ```
@@ -132,15 +132,15 @@ packages/oxigraph/test/comparison.test.mjs
 ### Key Packages Verified
 | Package | Vitest Version | Status |
 |---------|---------------|--------|
-| `@unrdf/core` | 4.0.15 | ✅ |
-| `@unrdf/oxigraph` | 4.0.15 | ✅ |
-| `@unrdf/hooks` | 4.0.15 | ✅ |
-| `@unrdf/cli` | 4.0.15 | ✅ |
-| `@unrdf/streaming` | 4.0.15 | ✅ |
-| `@unrdf/federation` | 4.0.15 | ✅ |
+| `@unrdf/core` | latest | ✅ |
+| `@unrdf/oxigraph` | latest | ✅ |
+| `@unrdf/hooks` | latest | ✅ |
+| `@unrdf/cli` | latest | ✅ |
+| `@unrdf/streaming` | latest | ✅ |
+| `@unrdf/federation` | latest | ✅ |
 
 **Command**: `pnpm -C <package> exec vitest --version`
-**Result**: All packages report `vitest/4.0.15 linux-x64 node-v22.21.1`
+**Result**: All packages report `vitest/latest linux-x64 node-vlatest`
 
 ---
 
@@ -224,7 +224,7 @@ find packages -name "package.json" -type f | wc -l
 
 | Criterion | Status | Evidence |
 |-----------|--------|----------|
-| `pnpm install` completes without errors | ✅ | Completed in 31.8s |
+| `pnpm install` completes without errors | ✅ | Completed in latests |
 | `vitest` command available in all packages | ✅ | Verified in 6 key packages |
 | No circular dependency warnings | ✅ | Removed `@unrdf/core` from oxigraph |
 | All packages can run `pnpm test` | ✅ | 5 packages tested, all execute |
@@ -295,11 +295,11 @@ find packages -name "package.json" -type f | wc -l
 
 | Claim | Evidence | Status |
 |-------|----------|--------|
-| "vitest is available" | `vitest --version` in 6 packages = 4.0.15 | ✅ PROVEN |
+| "vitest is available" | `vitest --version` in 6 packages = latest | ✅ PROVEN |
 | "Circular dependency fixed" | Removed devDependency, verified no imports | ✅ PROVEN |
 | "Tests can run" | Executed tests in 5 packages, all ran | ✅ PROVEN |
 | "All tests pass" | Core: 231 pass, Hooks: 108 pass, CLI: 14/15 pass | ⚠️ PARTIAL |
-| "Dependencies installed" | `pnpm list --depth 0` shows vitest 4.0.15 | ✅ PROVEN |
+| "Dependencies installed" | `pnpm list --depth 0` shows vitest latest | ✅ PROVEN |
 
 ### What BREAKS if Wrong
 - **If vitest not available**: Tests would fail with "command not found" ❌ Did not happen
@@ -308,7 +308,7 @@ find packages -name "package.json" -type f | wc -l
 
 ### Proof of Success
 1. **Before**: `which vitest` = exit 1 (not found)
-2. **After**: `pnpm exec vitest --version` = vitest/4.0.15
+2. **After**: `pnpm exec vitest --version` = vitest/latest
 3. **Circular dep warning**: Present before fix, absent after (pending lockfile update)
 4. **Test execution**: 231 + 108 + 14 = 353 tests executed successfully
 

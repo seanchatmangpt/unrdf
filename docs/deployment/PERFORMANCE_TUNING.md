@@ -1,10 +1,10 @@
-# Performance Tuning Guide - UNRDF v6.0.0
+# Performance Tuning Guide - UNRDF latest
 
 **Optimize UNRDF daemon operations for production performance**
 
 ## Overview
 
-This guide provides performance optimization strategies for UNRDF v6.0.0 daemon operations, covering configuration tuning, caching, monitoring, and benchmarking.
+This guide provides performance optimization strategies for UNRDF latest daemon operations, covering configuration tuning, caching, monitoring, and benchmarking.
 
 **Target Performance**:
 - API Key Authentication: <5ms

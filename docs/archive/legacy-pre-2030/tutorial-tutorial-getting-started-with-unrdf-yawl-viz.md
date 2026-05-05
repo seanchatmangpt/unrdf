@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-viz"
 type: "tutorial"
 packageName: "@unrdf/yawl-viz"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "f2e275bc160667815fe527df5786ce517ad89861b1d637210f32dcf043623f22"

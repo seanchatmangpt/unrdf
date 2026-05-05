@@ -33,31 +33,31 @@
 
 | Innovation | Target | Actual (P95) | Status | Evidence |
 |------------|--------|--------------|--------|----------|
-| **Hook Definition** | <10 μs | **4.70 μs** | ✅ PASS | n=10, CV=8.3% |
-| **Hook Execution** | <1000 μs | **3.97 μs** | ✅ PASS | n=10, CV=10.1% |
-| **Hook Chain (3 hooks)** | <1000 μs | **7.16 μs** | ✅ PASS | n=10, CV=5.7% |
-| **System Throughput** | N/A | **365M ops/sec** | ✅ PASS | n=10, CV=7.2% |
-| **Receipt Generation (P95)** | N/A | **0.615 ms** | ✅ PASS | n=10, CV=3.6% |
-| **Receipt Generation (P99)** | N/A | **1.827 ms** | ✅ PASS | n=10, CV=11.2% |
-| **Receipt Throughput** | N/A | **2,225 rec/sec** | ✅ PASS | n=10, CV=3.2% |
+| **Hook Definition** | <10 μs | **latest μs** | ✅ PASS | n=10, CV=latest% |
+| **Hook Execution** | <1000 μs | **latest μs** | ✅ PASS | n=10, CV=latest% |
+| **Hook Chain (3 hooks)** | <1000 μs | **latest μs** | ✅ PASS | n=10, CV=latest% |
+| **System Throughput** | N/A | **365M ops/sec** | ✅ PASS | n=10, CV=latest% |
+| **Receipt Generation (P95)** | N/A | **latest ms** | ✅ PASS | n=10, CV=latest% |
+| **Receipt Generation (P99)** | N/A | **latest ms** | ✅ PASS | n=10, CV=latest% |
+| **Receipt Throughput** | N/A | **2,225 rec/sec** | ✅ PASS | n=10, CV=latest% |
 
 ### 📊 DETAILED METRICS
 
 **Hook Execution Performance:**
 ```
-Single hook:        2.73 ± 0.20 μs (mean ± σ)  →  P95 = 3.97 μs
-Hook chain (3):     5.08 ± 0.52 μs (mean ± σ)  →  P95 = 7.16 μs
-Registry register:  3.53 ± 0.44 μs (mean ± σ)  →  P95 = 5.50 μs
-Registry lookup:    0.71 ± 0.52 μs (mean ± σ)  →  P95 = 1.60 μs
-Batch per-quad:     2.06 ± 0.06 μs (mean ± σ)  →  P95 = 2.15 μs
+Single hook:        latest ± latest μs (mean ± σ)  →  P95 = latest μs
+Hook chain (3):     latest ± latest μs (mean ± σ)  →  P95 = latest μs
+Registry register:  latest ± latest μs (mean ± σ)  →  P95 = latest μs
+Registry lookup:    latest ± latest μs (mean ± σ)  →  P95 = latest μs
+Batch per-quad:     latest ± latest μs (mean ± σ)  →  P95 = latest μs
 ```
 
 **Receipt Generation Performance:**
 ```
-Median (P50):  0.277 ± 0.009 ms  →  P95 = 0.296 ms
-P90:           0.496 ± 0.016 ms  →  P95 = 0.523 ms
-P95:           0.583 ± 0.021 ms  →  P95 = 0.615 ms
-P99:           1.550 ± 0.173 ms  →  P95 = 1.827 ms
+Median (P50):  latest ± latest ms  →  P95 = latest ms
+P90:           latest ± latest ms  →  P95 = latest ms
+P95:           latest ± latest ms  →  P95 = latest ms
+P99:           latest ± latest ms  →  P95 = latest ms
 Throughput:    2,380 ± 77 rec/sec  →  P95 = 2,225 rec/sec
 ```
 
@@ -69,7 +69,7 @@ Throughput:    2,380 ± 77 rec/sec  →  P95 = 2,225 rec/sec
 
 | System | P95 Latency | UNRDF Speedup |
 |--------|-------------|---------------|
-| **UNRDF (this work)** | **3.97 μs** | 1x (baseline) |
+| **UNRDF (this work)** | **latest μs** | 1x (baseline) |
 | Temporal.io | ~5-10 ms | **1,000-2,500x slower** |
 | Apache Airflow | ~100-1000 ms | **25,000-250,000x slower** |
 | AWS Step Functions | ~25-100 ms | **6,000-25,000x slower** |
@@ -89,8 +89,8 @@ Throughput:    2,380 ± 77 rec/sec  →  P95 = 2,225 rec/sec
 ```
 CPU:        16 cores, x86_64, 1 thread per core
 Memory:     21 GiB RAM (20 GiB available)
-OS:         Linux 4.4.0 (gVisor sandbox)
-Node.js:    v22.21.1
+OS:         Linux latest (gVisor sandbox)
+Node.js:    vlatest
 Runtime:    Single-threaded JavaScript (V8)
 Environment: Isolated sandbox (potential virtualization overhead)
 ```
@@ -222,4 +222,4 @@ less results/statistical-run.log
 
 **Prepared by:** UNRDF Research Team
 **Date:** December 25, 2025
-**Version:** 1.0 (FINAL)
+**Version:** latest (FINAL)

@@ -1,6 +1,6 @@
 # Migration Runbooks (P1 Packages)
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Status**: Implementation Ready
 **Last Updated**: 2025-12-27
 
@@ -795,6 +795,6 @@ All P1 packages must meet:
 
 ---
 
-**Runbooks Version**: 1.0.0
+**Runbooks Version**: latest
 **Last Updated**: 2025-12-27
 **Researcher**: Claude Code (Researcher Agent)

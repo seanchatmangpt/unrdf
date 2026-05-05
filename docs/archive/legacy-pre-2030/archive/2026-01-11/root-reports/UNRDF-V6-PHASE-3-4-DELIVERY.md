@@ -108,7 +108,7 @@ write schema.json + receipt with hash
   "schemaPath": "packages/oxigraph/schema.json",
   "functionsExtracted": 8,
   "schemaHash": "a3f2d8...",
-  "generatedAt": "2025-12-27T10:00:00.000Z"
+  "generatedAt": "2025-12-27T10:00:latestZ"
 }
 ```
 
@@ -160,7 +160,7 @@ else:
   "pdfPath": "thesis/thesis.pdf",
   "contentHash": "b4e1c2...",
   "pdfHash": "f9a3d1...",
-  "compiledAt": "1970-01-01T00:00:00.000Z",
+  "compiledAt": "1970-01-01T00:00:latestZ",
   "skipped": false
 }
 ```
@@ -231,7 +231,7 @@ This thesis was generated with full receipt-driven provenance.
   "thesisPath": "thesis/thesis-complete.md",
   "chapters": 7,
   "contentHash": "e8f2a4...",
-  "generatedAt": "2025-12-27T10:00:00.000Z"
+  "generatedAt": "2025-12-27T10:00:latestZ"
 }
 ```
 
@@ -528,8 +528,8 @@ Each package migration generates a cryptographic receipt:
 ```json
 {
   "package": "@unrdf/oxigraph",
-  "version": "6.0.0",
-  "migrationDate": "2025-12-27T10:00:00.000Z",
+  "version": "latest",
+  "migrationDate": "2025-12-27T10:00:latestZ",
   "fromMaturity": "L3",
   "toMaturity": "L5",
   "changesApplied": [
@@ -704,7 +704,7 @@ node tools/generate-migration-receipt.mjs --package @unrdf/oxigraph
 ## Proof of Work
 
 ### Files Created:
-1. ✅ `/home/user/unrdf/PHASE-3-DOCS-PIPELINE-IMPLEMENTATION.md` (2.5KB)
+1. ✅ `/home/user/unrdf/PHASE-3-DOCS-PIPELINE-IMPLEMENTATION.md` (latestKB)
 2. ✅ `/home/user/unrdf/PHASE-4-L5-MIGRATION-PLAN.md` (12KB)
 3. ✅ `/home/user/unrdf/UNRDF-V6-PHASE-3-4-DELIVERY.md` (this file, 18KB)
 
@@ -718,9 +718,9 @@ node tools/generate-migration-receipt.mjs --package @unrdf/oxigraph
 
 ### Time Estimate:
 - Phase 3 implementation: ~2 hours
-- Phase 4 migration plan: ~1.5 hours
+- Phase 4 migration plan: ~latest hours
 - Documentation: ~1 hour
-- **Total**: ~4.5 hours
+- **Total**: ~latest hours
 
 ---
 
@@ -779,7 +779,7 @@ node tools/generate-migration-receipt.mjs --package @unrdf/oxigraph
 
 ---
 
-**Generated**: 2025-12-27T10:00:00.000Z
+**Generated**: 2025-12-27T10:00:latestZ
 **Agent**: claude-code-backend-dev
 **Methodology**: BB80/20 Single-Pass + Adversarial PM
 **Verification**: SHA-256 hashes available upon execution

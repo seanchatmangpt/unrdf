@@ -384,11 +384,11 @@ npm run lint
 
 **Tasks**:
 ```bash
-# Update to v3.0.0
-pnpm version major  # 2.1.1 → 3.0.0
+# Update to latest
+pnpm version major  # latest → latest
 
 # Or if on beta, promote to stable
-pnpm version 3.0.0
+pnpm version latest
 ```
 
 ---
@@ -423,10 +423,10 @@ Value: npm_xxxxxxxxxxxxxxxxxxxxx
 ```bash
 # Commit version bump
 git add package.json
-git commit -m "Release v3.0.0"
+git commit -m "Release latest"
 
 # Create tag
-git tag v3.0.0
+git tag latest
 
 # Push (triggers CI/CD)
 git push origin main --tags
@@ -446,7 +446,7 @@ git push origin main --tags
 1. Watch GitHub Actions tab
 2. Verify CI passes (all tests green)
 3. Confirm npm publication (`npm view unrdf version`)
-4. Test installation (`npx unrdf@3.0.0 --version`)
+4. Test installation (`npx unrdf@latest --version`)
 
 ---
 
@@ -557,8 +557,8 @@ git push origin main --tags
 
 ### Launch Success Criteria
 
-**v3.0.0 is successful when**:
-- ✅ npm shows v3.0.0
+**latest is successful when**:
+- ✅ npm shows latest
 - ✅ CI/CD all green
 - ✅ No critical bugs in first 24 hours
 - ✅ Documentation accessible
@@ -587,11 +587,11 @@ git push origin main --tags
 
 ```bash
 # 1. Unpublish from npm (within 72 hours)
-npm unpublish unrdf@3.0.0
+npm unpublish unrdf@latest
 
 # 2. Revert git tag
-git tag -d v3.0.0
-git push origin :refs/tags/v3.0.0
+git tag -d latest
+git push origin :refs/tags/latest
 
 # 3. Publish previous stable version
 npm publish --tag latest
@@ -664,11 +664,11 @@ npm publish --tag latest
 
 ### Launch Day
 
-- [ ] Git tag v3.0.0
+- [ ] Git tag latest
 - [ ] Push to GitHub (triggers CI/CD)
 - [ ] Monitor CI/CD (5-10 minutes)
 - [ ] Verify npm publication
-- [ ] Test installation (npx unrdf@3.0.0)
+- [ ] Test installation (npx unrdf@latest)
 - [ ] Announce release
 
 ### Post-Launch (24 hours)
@@ -728,6 +728,6 @@ npm publish --tag latest
 **Analyst Agent**: Hive Mind Swarm - Analyst
 **Analysis Method**: Tests + File System + OTEL (No Agent Claims)
 **Confidence**: 95%
-**Recommendation**: **SHIP v3.0.0** 🚀
+**Recommendation**: **SHIP latest** 🚀
 
 **Next Step**: Execute launch checklist in `/Users/sac/unrdf/docs/v3/LAUNCH-CHECKLIST.md`

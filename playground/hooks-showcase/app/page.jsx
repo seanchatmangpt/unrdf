@@ -129,7 +129,7 @@ export default function HooksShowcase() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Badge variant="success">v3.1.0</Badge>
+              <Badge variant="success">latest</Badge>
               <Badge variant="secondary">40 Hooks</Badge>
               <Badge variant="outline">10 Categories</Badge>
             </div>

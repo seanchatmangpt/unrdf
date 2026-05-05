@@ -33,7 +33,7 @@ export const create_purchase_request = {
 
   // WvdA Soundness: Timeout-protected async handler
   async handler(input, context) {
-    const tracer = trace.getTracer('codemanufactory-revops', '1.0.0');
+    const tracer = trace.getTracer('codemanufactory-revops', 'latest');
     const span = tracer.startSpan('mcp.create_purchase_request.execute', {
       attributes: {
         'mcp.tool.name': 'create_purchase_request',

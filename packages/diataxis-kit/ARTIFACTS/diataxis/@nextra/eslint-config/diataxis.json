@@ -96,5 +96,5 @@
       "title": "Getting Started with @nextra/eslint-config"
     }
   ],
-  "version": "0.0.1"
+  "version": "[VERSION]"
 }

@@ -1,6 +1,6 @@
 {
   "timestamp": "2025-12-27T03:06:44.698Z",
-  "analyzerVersion": "1.0.0",
+  "analyzerVersion": "latest",
   "summary": {
     "nodeOnly": [
       "@unrdf/atomvm",
@@ -53,7 +53,7 @@
     {
       "name": "@unrdf/atomvm",
       "path": "packages/atomvm",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
       "runtime": {
         "name": "@unrdf/atomvm",
@@ -75,7 +75,7 @@
     {
       "name": "@unrdf/blockchain",
       "path": "packages/blockchain",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
       "runtime": {
         "name": "@unrdf/blockchain",
@@ -108,7 +108,7 @@
     {
       "name": "@unrdf/caching",
       "path": "packages/caching",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Multi-layer caching system for RDF queries with Redis and LRU",
       "runtime": {
         "name": "@unrdf/caching",
@@ -127,7 +127,7 @@
     {
       "name": "@unrdf/cli",
       "path": "packages/cli",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
       "runtime": {
         "name": "@unrdf/cli",
@@ -171,7 +171,7 @@
     {
       "name": "@unrdf/collab",
       "path": "packages/collab",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
       "runtime": {
         "name": "@unrdf/collab",
@@ -190,7 +190,7 @@
     {
       "name": "@unrdf/composables",
       "path": "packages/composables",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
       "runtime": {
         "name": "@unrdf/composables",
@@ -217,7 +217,7 @@
     {
       "name": "@unrdf/consensus",
       "path": "packages/consensus",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Production-grade Raft consensus for distributed workflow coordination",
       "runtime": {
         "name": "@unrdf/consensus",
@@ -241,7 +241,7 @@
     {
       "name": "@unrdf/core",
       "path": "packages/core",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
       "runtime": {
         "name": "@unrdf/core",
@@ -296,7 +296,7 @@
     {
       "name": "@unrdf/dark-matter",
       "path": "packages/dark-matter",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
       "runtime": {
         "name": "@unrdf/dark-matter",
@@ -315,7 +315,7 @@
     {
       "name": "@unrdf/diataxis-kit",
       "path": "packages/diataxis-kit",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
       "runtime": {
         "name": "@unrdf/diataxis-kit",
@@ -336,7 +336,7 @@
     {
       "name": "@unrdf/engine-gateway",
       "path": "packages/engine-gateway",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
       "runtime": {
         "name": "@unrdf/engine-gateway",
@@ -355,7 +355,7 @@
     {
       "name": "@unrdf/federation",
       "path": "packages/federation",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
       "runtime": {
         "name": "@unrdf/federation",
@@ -385,7 +385,7 @@
     {
       "name": "@unrdf/fusion",
       "path": "packages/fusion",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
       "runtime": {
         "name": "@unrdf/fusion",
@@ -424,7 +424,7 @@
     {
       "name": "@unrdf/graph-analytics",
       "path": "packages/graph-analytics",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
       "runtime": {
         "name": "@unrdf/graph-analytics",
@@ -443,7 +443,7 @@
     {
       "name": "@unrdf/hooks",
       "path": "packages/hooks",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
       "runtime": {
         "name": "@unrdf/hooks",
@@ -487,7 +487,7 @@
     {
       "name": "@unrdf/kgc-4d",
       "path": "packages/kgc-4d",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
       "runtime": {
         "name": "@unrdf/kgc-4d",
@@ -516,7 +516,7 @@
     {
       "name": "@unrdf/kgc-claude",
       "path": "packages/kgc-claude",
-      "version": "5.0.0",
+      "version": "latest",
       "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
       "runtime": {
         "name": "@unrdf/kgc-claude",
@@ -545,7 +545,7 @@
     {
       "name": "@unrdf/kgc-cli",
       "path": "packages/kgc-cli",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
       "runtime": {
         "name": "@unrdf/kgc-cli",
@@ -566,7 +566,7 @@
     {
       "name": "@unrdf/kgc-substrate",
       "path": "packages/kgc-substrate",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
       "runtime": {
         "name": "@unrdf/kgc-substrate",
@@ -587,7 +587,7 @@
     {
       "name": "@unrdf/kgn",
       "path": "packages/kgn",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
       "runtime": {
         "name": "@unrdf/kgn",
@@ -659,7 +659,7 @@
     {
       "name": "@unrdf/knowledge-engine",
       "path": "packages/knowledge-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
       "runtime": {
         "name": "@unrdf/knowledge-engine",
@@ -728,7 +728,7 @@
     {
       "name": "@unrdf/ml-inference",
       "path": "packages/ml-inference",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
       "runtime": {
         "name": "@unrdf/ml-inference",
@@ -754,7 +754,7 @@
     {
       "name": "@unrdf/ml-versioning",
       "path": "packages/ml-versioning",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
       "runtime": {
         "name": "@unrdf/ml-versioning",
@@ -780,7 +780,7 @@
     {
       "name": "@unrdf/observability",
       "path": "packages/observability",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
       "runtime": {
         "name": "@unrdf/observability",
@@ -806,7 +806,7 @@
     {
       "name": "@unrdf/oxigraph",
       "path": "packages/oxigraph",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
       "runtime": {
         "name": "@unrdf/oxigraph",
@@ -825,7 +825,7 @@
     {
       "name": "@unrdf/project-engine",
       "path": "packages/project-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
       "runtime": {
         "name": "@unrdf/project-engine",
@@ -856,7 +856,7 @@
     {
       "name": "@unrdf/rdf-graphql",
       "path": "packages/rdf-graphql",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
       "runtime": {
         "name": "@unrdf/rdf-graphql",
@@ -875,7 +875,7 @@
     {
       "name": "@unrdf/semantic-search",
       "path": "packages/semantic-search",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
       "runtime": {
         "name": "@unrdf/semantic-search",
@@ -894,7 +894,7 @@
     {
       "name": "@unrdf/serverless",
       "path": "packages/serverless",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
       "runtime": {
         "name": "@unrdf/serverless",
@@ -927,7 +927,7 @@
     {
       "name": "@unrdf/streaming",
       "path": "packages/streaming",
-      "version": "5.0.1",
+      "version": "latest",
       "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
       "runtime": {
         "name": "@unrdf/streaming",
@@ -955,7 +955,7 @@
     {
       "name": "@unrdf/yawl",
       "path": "packages/yawl",
-      "version": "5.0.0",
+      "version": "latest",
       "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
       "runtime": {
         "name": "@unrdf/yawl",
@@ -994,7 +994,7 @@
     {
       "name": "@unrdf/yawl-ai",
       "path": "packages/yawl-ai",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
       "runtime": {
         "name": "@unrdf/yawl-ai",
@@ -1013,7 +1013,7 @@
     {
       "name": "@unrdf/yawl-api",
       "path": "packages/yawl-api",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
       "runtime": {
         "name": "@unrdf/yawl-api",
@@ -1041,7 +1041,7 @@
     {
       "name": "@unrdf/yawl-durable",
       "path": "packages/yawl-durable",
-      "version": "0.1.0",
+      "version": "latest",
       "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
       "runtime": {
         "name": "@unrdf/yawl-durable",
@@ -1060,7 +1060,7 @@
     {
       "name": "@unrdf/yawl-kafka",
       "path": "packages/yawl-kafka",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
       "runtime": {
         "name": "@unrdf/yawl-kafka",
@@ -1082,7 +1082,7 @@
     {
       "name": "@unrdf/yawl-langchain",
       "path": "packages/yawl-langchain",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
       "runtime": {
         "name": "@unrdf/yawl-langchain",
@@ -1109,7 +1109,7 @@
     {
       "name": "@unrdf/yawl-observability",
       "path": "packages/yawl-observability",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
       "runtime": {
         "name": "@unrdf/yawl-observability",
@@ -1135,7 +1135,7 @@
     {
       "name": "@unrdf/yawl-queue",
       "path": "packages/yawl-queue",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Distributed YAWL workflow execution using BullMQ and Redis",
       "runtime": {
         "name": "@unrdf/yawl-queue",
@@ -1154,7 +1154,7 @@
     {
       "name": "@unrdf/yawl-realtime",
       "path": "packages/yawl-realtime",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
       "runtime": {
         "name": "@unrdf/yawl-realtime",
@@ -1173,7 +1173,7 @@
     {
       "name": "@unrdf/yawl-viz",
       "path": "packages/yawl-viz",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
       "runtime": {
         "name": "@unrdf/yawl-viz",

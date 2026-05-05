@@ -95,15 +95,15 @@ EXAMPLE OUTPUT
 
 V6 PERFORMANCE BENCHMARK SUMMARY
 Overall Status: ✅ PASS
-Total Time: 28.45s
+Total Time: latests
 
 Benchmark              Status    Target    Actual              Time
 ------------------------------------------------------------------------
-Receipt Overhead       ✅ PASS   <1%       0.89%               5.12s
-Delta Compression      ✅ PASS   <10%      0.23%               3.45s
-Query Performance      ✅ PASS   <5%       avg:3.24% max:4.78% 10.23s
-Memory Usage           ✅ PASS   <2%       1.85%               4.67s
-Composition Latency    ✅ PASS   <10%      3-hop:8.91%         4.98s
+Receipt Overhead       ✅ PASS   <1%       latest%               latests
+Delta Compression      ✅ PASS   <10%      latest%               latests
+Query Performance      ✅ PASS   <5%       avg:latest% max:latest% latests
+Memory Usage           ✅ PASS   <2%       latest%               latests
+Composition Latency    ✅ PASS   <10%      3-hop:latest%         latests
 
 Summary: [Receipt: PASS] [Delta: PASS] [Query: PASS] [Memory: PASS] [Composition: PASS]
 

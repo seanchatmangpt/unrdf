@@ -303,9 +303,9 @@ User corrected initial approach: "I am talking about 4d kgc only" (library packa
 When 100% confident (post-production validation):
 
 1. **Publish Patterns as npm Packages**
-   - `@unrdf/hook-registry@1.0.0`
-   - `@unrdf/delta-sync-reducer@1.0.0`
-   - `@unrdf/sse-client@1.0.0`
+   - `@unrdf/hook-registry@[VERSION]`
+   - `@unrdf/delta-sync-reducer@[VERSION]`
+   - `@unrdf/sse-client@[VERSION]`
 
 2. **Add Framework Integrations**
    - Vue store integration

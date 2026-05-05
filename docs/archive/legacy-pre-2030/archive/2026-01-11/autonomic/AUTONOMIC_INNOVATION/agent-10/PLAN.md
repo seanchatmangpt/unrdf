@@ -198,7 +198,7 @@ Total: 76/76 passed (0 failed, 0 skipped)
 Coverage: 100%
 Score: 100/100
 
-E2E Validation: ✓ PASSED (1.8s)
+E2E Validation: ✓ PASSED (latests)
 Determinism: ✓ VERIFIED (2 runs, identical hashes)
 Quality Gates: ✓ PASSED (score: 100)
 

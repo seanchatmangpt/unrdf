@@ -20,7 +20,7 @@ export default defineTask({
   meta: {
     name: 'policies:refresh-packs',
     description: 'Hot-reload policy packs with signature validation and rollback',
-    version: '1.0.0'
+    version: '[VERSION]'
   },
 
   async run({ payload, context: taskContext }) {

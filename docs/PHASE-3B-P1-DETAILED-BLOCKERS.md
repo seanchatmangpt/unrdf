@@ -2,7 +2,7 @@
 
 **Generated**: 2025-12-04
 **Scope**: 8 failing examples from 21 total
-**Pass Rate**: 61.9% (target: 67%)
+**Pass Rate**: latest% (target: 67%)
 
 ---
 
@@ -11,16 +11,16 @@
 ```
 PASS RATE PROGRESS
 ==================
-Phase 1:  ████████████░░░░░░░░░░ 57.1% (12/21)
-Phase 3A: ████████████░░░░░░░░░░ 57.1% (12/21)
-Phase 3B: █████████████░░░░░░░░░ 61.9% (13/21) ← Current
-Target:   ██████████████░░░░░░░░ 67.0% (14/21) ← Need 1 more
+Phase 1:  ████████████░░░░░░░░░░ latest% (12/21)
+Phase 3A: ████████████░░░░░░░░░░ latest% (12/21)
+Phase 3B: █████████████░░░░░░░░░ latest% (13/21) ← Current
+Target:   ██████████████░░░░░░░░ latest% (14/21) ← Need 1 more
 Goal:     ████████████████████████ 100% (21/21)
 
 GAP ANALYSIS
 ============
-Current to Target:  -1 example  (5.1% gap)
-Current to Goal:    -8 examples (38.1% gap)
+Current to Target:  -1 example  (latest% gap)
+Current to Goal:    -8 examples (latest% gap)
 ```
 
 ---
@@ -74,7 +74,7 @@ hookManager.define({
 
 ### 2. full-stack/web - Complete Web App Failure
 **Impact**: 🔴 BLOCKER - Web app cannot load or function
-**Tests Failing**: 29/31 tests (93.5% failure rate)
+**Tests Failing**: 29/31 tests (latest% failure rate)
 **Severity**: Critical - Prevents all web functionality
 
 **Error Categories**:
@@ -304,7 +304,7 @@ manager.subscribe({ subject: 'Alice' }, (change) => { ... });
 
 ### 5. browser/indexed-db - Persistence Partially Broken
 **Impact**: 🟡 MAJOR - Browser persistence unreliable
-**Tests Failing**: 2/16 tests (12.5% failure rate)
+**Tests Failing**: 2/16 tests (latest% failure rate)
 **Severity**: Major - Core feature degraded
 
 **Error 1 - Missing Database Property**:
@@ -426,7 +426,7 @@ CONSTRUCT {
   ?person a <http://example.org/Person> .
 }
 WHERE {
-  ?person <http://xmlns.com/foaf/0.1/knows> ?someone .
+  ?person <http://xmlns.com/foaf/latest/knows> ?someone .
   ?someone a <http://example.org/Person> .
 }
 ```
@@ -452,7 +452,7 @@ console.log('Store size after:', store.size);
 
 ### 7. browser/offline-support - Sync Error Handling
 **Impact**: 🟢 MINOR - Edge case in error handling
-**Tests Failing**: 1/18 tests (5.6% failure rate)
+**Tests Failing**: 1/18 tests (latest% failure rate)
 **Severity**: Minor - Sync failure recovery only
 
 **Error**:
@@ -493,7 +493,7 @@ async syncQueuedOperations() {
 
 ### 8. composables/query-integration - Result Clearing Edge Case
 **Impact**: 🟢 MINOR - Edge case in result clearing
-**Tests Failing**: 1/24 tests (4.2% failure rate)
+**Tests Failing**: 1/24 tests (latest% failure rate)
 **Severity**: Minor - Empty result handling only
 
 **Error**:
@@ -560,25 +560,25 @@ export function useQuery(store, query) {
 | 7 | browser/offline-support | P2 | 1/18 | 30 min | Low |
 | 8 | composables/query-integration | P2 | 1/24 | 1 hr | Low |
 
-**Total Estimated Time**: 14.5-20.5 hours (2-3 work days)
+**Total Estimated Time**: latest.5 hours (2-3 work days)
 
 ---
 
 ## Recommended Fix Order
 
-### Phase 1: Quick Wins (1.5 hours → 67% pass rate)
+### Phase 1: Quick Wins (latest hours → 67% pass rate)
 1. Fix server hook trigger (30 min)
 2. Fix offline-support error handling (30 min)
 3. Fix query-integration result clearing (30 min)
 
-**Result**: 16/21 = 76.2% pass rate ✅ Exceeds 67% target
+**Result**: 16/21 = latest% pass rate ✅ Exceeds 67% target
 
 ### Phase 2: Critical Features (8-11 hours → 85% pass rate)
 4. Fix change-feeds methods (2-3 hrs)
 5. Fix real-time-sync validation (1-2 hrs)
 6. Fix web app integration (4-6 hrs)
 
-**Result**: 19/21 = 90.5% pass rate
+**Result**: 19/21 = latest% pass rate
 
 ### Phase 3: Polish (5-7 hours → 100% pass rate)
 7. Fix indexed-db persistence (2-3 hrs)
@@ -592,8 +592,8 @@ export function useQuery(store, query) {
 
 | Option | Time | Pass Rate | User Impact | Recommendation |
 |--------|------|-----------|-------------|----------------|
-| **Phase 1 Only** | 1.5 hrs | 76.2% | Medium | ⭐ Good for quick release |
-| **Phase 1+2** | 9.5-12.5 hrs | 90.5% | High | ⭐⭐ Recommended |
-| **All Phases** | 14.5-20.5 hrs | 100% | Highest | ⭐⭐⭐ Professional release |
+| **Phase 1 Only** | latest hrs | latest% | Medium | ⭐ Good for quick release |
+| **Phase 1+2** | latest.5 hrs | latest% | High | ⭐⭐ Recommended |
+| **All Phases** | latest.5 hrs | 100% | Highest | ⭐⭐⭐ Professional release |
 
-**Recommendation**: Execute **Phase 1+2** to reach 90.5% with all user-facing features working.
+**Recommendation**: Execute **Phase 1+2** to reach latest% with all user-facing features working.

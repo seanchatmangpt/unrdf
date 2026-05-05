@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/ml-inference
-**Version:** 5.0.1
+**Version:** [VERSION]
 
 ---
 
@@ -28,12 +28,12 @@ UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF stre
 
 ### Dependencies
 
-- `@opentelemetry/api`: ^1.9.0
+- `@opentelemetry/api`: ^[VERSION]
 - `@unrdf/core`: workspace:*
 - `@unrdf/streaming`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
-- `onnxruntime-node`: ^1.20.1
-- `zod`: ^4.1.13
+- `onnxruntime-node`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

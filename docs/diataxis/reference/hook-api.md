@@ -4,7 +4,7 @@
 
 **Audience:** All developers using hooks
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

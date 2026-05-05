@@ -30,7 +30,7 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'audit-trail-hook',
             description: 'Ensures audit trail compliance',
-            version: '1.0.0',
+            version: 'latest',
           },
           when: {
             kind: 'sparql-ask',
@@ -49,7 +49,7 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'data-retention-hook',
             description: 'Enforces data retention policies',
-            version: '1.0.0',
+            version: 'latest',
           },
           when: {
             kind: 'shacl',
@@ -68,7 +68,7 @@ async function demonstratePolicyPacks() {
       {
         description: 'SOX Compliance Policy Pack for financial data governance',
         author: 'compliance-team',
-        version: '1.2.0',
+        version: 'latest',
         license: 'MIT',
         tags: ['compliance', 'sox', 'financial'],
         ontology: ['http://example.org/sox-ontology'],
@@ -88,7 +88,7 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'privacy-hook',
             description: 'Enforces privacy regulations',
-            version: '1.0.0',
+            version: 'latest',
           },
           when: {
             kind: 'sparql-ask',
@@ -107,7 +107,7 @@ async function demonstratePolicyPacks() {
       {
         description: 'Data Governance Policy Pack for privacy and data quality',
         author: 'data-team',
-        version: '2.1.0',
+        version: 'latest',
         license: 'Apache-2.0',
         tags: ['governance', 'privacy', 'data-quality'],
       }
@@ -130,13 +130,13 @@ async function demonstratePolicyPacks() {
     console.log('\n🔍 Testing compatibility checks...');
 
     const devEnvironment = {
-      version: '1.0.0',
+      version: 'latest',
       environment: 'development',
       features: ['sparql', 'shacl', 'audit'],
     };
 
     const prodEnvironment = {
-      version: '2.0.0',
+      version: 'latest',
       environment: 'production',
       features: ['sparql', 'shacl', 'audit', 'monitoring'],
     };

@@ -1,7 +1,7 @@
 /**
  * @file use-critical-path.mjs
  * @description React hook for critical path analysis and bottleneck identification
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { useDarkMatterCore } from './use-dark-matter-core.mjs';
  * Hook for analyzing critical execution paths and identifying bottlenecks
  * Focus optimization on the path that delivers maximum value
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Critical path configuration
  * @param {string[]} [config.operations] - Operations to trace
  * @param {boolean} [config.autoTrace=true] - Auto-trace critical paths

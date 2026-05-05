@@ -37,7 +37,7 @@ Step 1: 80/20 Scan → Step 2: Identify Incomplete Capabilities → Step 3: Fini
 
 **Action**: Rapidly scan the codebase to identify incomplete capabilities using 80/20 thinking.
 
-#### 1.1: Quick Context Scan
+#### latest: Quick Context Scan
 
 **Action**: Use full context window to scan codebase efficiently.
 
@@ -59,7 +59,7 @@ find src -name "*.mjs" | wc -l     # Count total modules
 
 **Tool usage**: Use `grep`, `codebase_search`, `read_file` to quickly identify incomplete capabilities.
 
-#### 1.2: Identify Capability Patterns
+#### latest: Identify Capability Patterns
 
 **Action**: Look for patterns that indicate incomplete capabilities.
 
@@ -89,7 +89,7 @@ find src -name "*.mjs" | wc -l     # Count total modules
 
 **Action**: Identify capabilities that are incomplete and prioritize by 80/20.
 
-#### 2.1: Capability Categories
+#### latest: Capability Categories
 
 **Action**: Categorize incomplete capabilities.
 
@@ -142,7 +142,7 @@ find src -name "*.mjs" | wc -l     # Count total modules
 - Incomplete parameter documentation
 ```
 
-#### 2.2: 80/20 Prioritization
+#### latest: 80/20 Prioritization
 
 **Action**: Prioritize capabilities by impact and value (where value includes quality, consistency, maintainability).
 
@@ -188,7 +188,7 @@ find src -name "*.mjs" | wc -l     # Count total modules
 
 **Action**: Complete incomplete capabilities without asking for confirmation.
 
-#### 3.1: Implementation Strategy
+#### latest: Implementation Strategy
 
 **Action**: Finish capabilities systematically.
 
@@ -228,7 +228,7 @@ export function buildJson(data) {
 });
 ```
 
-#### 3.2: Capability Completion Checklist
+#### latest: Capability Completion Checklist
 
 **Action**: Ensure capabilities are fully complete.
 
@@ -243,7 +243,7 @@ export function buildJson(data) {
 - [ ] Linting passes: `pnpm lint`
 - [ ] Formatting passes: `pnpm format:check`
 
-#### 3.3: Batch Completion
+#### latest: Batch Completion
 
 **Action**: Complete multiple capabilities in parallel when possible.
 
@@ -269,7 +269,7 @@ export function buildJson(data) {
 
 **Action**: Validate that capabilities are complete and working correctly.
 
-#### 4.1: Functional Validation
+#### latest: Functional Validation
 
 **Action**: Ensure capabilities work as intended.
 
@@ -292,7 +292,7 @@ pnpm format:check
 pnpm test  # Run specific tests via test filters if needed
 ```
 
-#### 4.2: Capability Validation
+#### latest: Capability Validation
 
 **Action**: Verify each capability is complete.
 
@@ -331,7 +331,7 @@ pnpm test  # Run specific tests via test filters if needed
 
 **Action**: Determine what to do next based on completed capabilities.
 
-#### 5.1: Assess Completion Status
+#### latest: Assess Completion Status
 
 **Action**: Evaluate what's been completed and what remains.
 
@@ -365,7 +365,7 @@ pnpm test  # Run specific tests via test filters if needed
 8. Comprehensive test coverage - Incremental
 ```
 
-#### 5.2: Strategic Next Steps
+#### latest: Strategic Next Steps
 
 **Action**: Determine strategic next steps using 80/20 thinking (quality-first).
 
@@ -413,7 +413,7 @@ pnpm test  # Run specific tests via test filters if needed
    - Do when convenient
 ```
 
-#### 5.3: Capability Roadmap
+#### latest: Capability Roadmap
 
 **Action**: Create roadmap for remaining capabilities.
 

@@ -27,7 +27,7 @@ LaTeX includes several sources of non-determinism:
 | Source | Why Non-Deterministic | Example |
 |--------|----------------------|---------|
 | Timestamps | `\today`, creation date in PDF metadata | "Compiled on Dec 27, 2025" |
-| Package versions | Fetched from CTAN at different times | TikZ v3.1.8 vs v3.1.9 |
+| Package versions | Fetched from CTAN at different times | TikZ [VERSION] vs [VERSION] |
 | File ordering | Depends on filesystem iteration order | Multi-file `\input` order |
 | Random seeds | Some packages use randomness | Random diagram layouts |
 
@@ -54,7 +54,7 @@ This creates `.latex-cache/latex.lock.json`:
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {
     "algorithm2e.sty": {
@@ -394,7 +394,7 @@ The WebAssembly engine is vendored, so it's already deterministic. But to be exp
 // package.json
 {
   "dependencies": {
-    "@unrdf/kgc-cli": "5.0.1"  // Pin exact version
+    "@unrdf/kgc-cli": "[VERSION]"  // Pin exact version
   }
 }
 ```

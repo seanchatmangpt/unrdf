@@ -1,15 +1,15 @@
 # Novel RDF Patterns & Knowledge Graph Innovations
-## UNRDF v6.0.0 Research Report
+## UNRDF latest Research Report
 
 **Research Date**: 2026-01-11
 **Researcher**: Research Agent
-**Codebase**: UNRDF v6.0.0-rc.1 (56 packages, 547 tests, 429 docs)
+**Codebase**: UNRDF latest-rc.1 (56 packages, 547 tests, 429 docs)
 
 ---
 
 ## Executive Summary
 
-This report documents **12 novel RDF patterns** and **knowledge graph innovations** discovered through systematic analysis of the UNRDF v6.0.0 codebase. These patterns combine temporal semantics, cryptographic proofs, reactive computation, and distributed reasoning in ways not found in traditional RDF systems.
+This report documents **12 novel RDF patterns** and **knowledge graph innovations** discovered through systematic analysis of the UNRDF latest codebase. These patterns combine temporal semantics, cryptographic proofs, reactive computation, and distributed reasoning in ways not found in traditional RDF systems.
 
 **Key Innovations Identified:**
 1. Temporal RDF with nanosecond-precision time-travel

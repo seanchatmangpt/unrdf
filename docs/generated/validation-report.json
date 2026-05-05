@@ -7,7 +7,7 @@
   "packages": {
     "@unrdf/atomvm": {
       "name": "@unrdf/atomvm",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "atomvm",
       "valid": true,
       "checks": {
@@ -23,7 +23,7 @@
     },
     "@unrdf/blockchain": {
       "name": "@unrdf/blockchain",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "blockchain",
       "valid": true,
       "checks": {
@@ -39,7 +39,7 @@
     },
     "@unrdf/caching": {
       "name": "@unrdf/caching",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "caching",
       "valid": true,
       "checks": {
@@ -55,7 +55,7 @@
     },
     "@unrdf/cli": {
       "name": "@unrdf/cli",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "cli",
       "valid": true,
       "checks": {
@@ -71,7 +71,7 @@
     },
     "@unrdf/collab": {
       "name": "@unrdf/collab",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "collab",
       "valid": true,
       "checks": {
@@ -87,7 +87,7 @@
     },
     "@unrdf/composables": {
       "name": "@unrdf/composables",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "composables",
       "valid": true,
       "checks": {
@@ -103,7 +103,7 @@
     },
     "@unrdf/consensus": {
       "name": "@unrdf/consensus",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "consensus",
       "valid": true,
       "checks": {
@@ -119,7 +119,7 @@
     },
     "@unrdf/core": {
       "name": "@unrdf/core",
-      "version": "6.0.0-alpha.1",
+      "version": "latest-alpha.1",
       "path": "core",
       "valid": true,
       "checks": {
@@ -135,7 +135,7 @@
     },
     "@unrdf/dark-matter": {
       "name": "@unrdf/dark-matter",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "dark-matter",
       "valid": true,
       "checks": {
@@ -151,7 +151,7 @@
     },
     "@unrdf/decision-fabric": {
       "name": "@unrdf/decision-fabric",
-      "version": "0.1.0",
+      "version": "latest",
       "path": "decision-fabric",
       "valid": true,
       "checks": {
@@ -167,7 +167,7 @@
     },
     "@unrdf/diataxis-kit": {
       "name": "@unrdf/diataxis-kit",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "diataxis-kit",
       "valid": true,
       "checks": {
@@ -183,7 +183,7 @@
     },
     "docs": {
       "name": "docs",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "docs",
       "valid": true,
       "checks": {
@@ -199,7 +199,7 @@
     },
     "@unrdf/domain": {
       "name": "@unrdf/domain",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "domain",
       "valid": true,
       "checks": {
@@ -215,7 +215,7 @@
     },
     "@unrdf/engine-gateway": {
       "name": "@unrdf/engine-gateway",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "engine-gateway",
       "valid": true,
       "checks": {
@@ -231,7 +231,7 @@
     },
     "@unrdf/federation": {
       "name": "@unrdf/federation",
-      "version": "6.0.0",
+      "version": "latest",
       "path": "federation",
       "valid": true,
       "checks": {
@@ -247,7 +247,7 @@
     },
     "@unrdf/fusion": {
       "name": "@unrdf/fusion",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "fusion",
       "valid": true,
       "checks": {
@@ -263,7 +263,7 @@
     },
     "@unrdf/graph-analytics": {
       "name": "@unrdf/graph-analytics",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "graph-analytics",
       "valid": true,
       "checks": {
@@ -279,7 +279,7 @@
     },
     "@unrdf/hooks": {
       "name": "@unrdf/hooks",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "hooks",
       "valid": true,
       "checks": {
@@ -295,7 +295,7 @@
     },
     "@unrdf/integration-tests": {
       "name": "@unrdf/integration-tests",
-      "version": "5.1.0",
+      "version": "latest",
       "path": "integration-tests",
       "valid": true,
       "checks": {
@@ -311,7 +311,7 @@
     },
     "@unrdf/kgc-4d": {
       "name": "@unrdf/kgc-4d",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "kgc-4d",
       "valid": true,
       "checks": {
@@ -327,7 +327,7 @@
     },
     "@unrdf/kgc-claude": {
       "name": "@unrdf/kgc-claude",
-      "version": "5.0.0",
+      "version": "latest",
       "path": "kgc-claude",
       "valid": true,
       "checks": {
@@ -343,7 +343,7 @@
     },
     "@unrdf/kgc-cli": {
       "name": "@unrdf/kgc-cli",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "kgc-cli",
       "valid": true,
       "checks": {
@@ -359,7 +359,7 @@
     },
     "@unrdf/kgc-docs": {
       "name": "@unrdf/kgc-docs",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-docs",
       "valid": true,
       "checks": {
@@ -375,7 +375,7 @@
     },
     "@unrdf/kgc-multiverse": {
       "name": "@unrdf/kgc-multiverse",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-multiverse",
       "valid": true,
       "checks": {
@@ -391,7 +391,7 @@
     },
     "@unrdf/kgc-probe": {
       "name": "@unrdf/kgc-probe",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-probe",
       "valid": true,
       "checks": {
@@ -407,7 +407,7 @@
     },
     "@unrdf/kgc-runtime": {
       "name": "@unrdf/kgc-runtime",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-runtime",
       "valid": true,
       "checks": {
@@ -423,7 +423,7 @@
     },
     "@unrdf/kgc-substrate": {
       "name": "@unrdf/kgc-substrate",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-substrate",
       "valid": true,
       "checks": {
@@ -439,7 +439,7 @@
     },
     "@unrdf/kgc-swarm": {
       "name": "@unrdf/kgc-swarm",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-swarm",
       "valid": true,
       "checks": {
@@ -455,7 +455,7 @@
     },
     "@unrdf/kgc-tools": {
       "name": "@unrdf/kgc-tools",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "kgc-tools",
       "valid": true,
       "checks": {
@@ -471,7 +471,7 @@
     },
     "@unrdf/kgn": {
       "name": "@unrdf/kgn",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "kgn",
       "valid": true,
       "checks": {
@@ -487,7 +487,7 @@
     },
     "@unrdf/knowledge-engine": {
       "name": "@unrdf/knowledge-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "knowledge-engine",
       "valid": true,
       "checks": {
@@ -503,7 +503,7 @@
     },
     "@unrdf/ml-inference": {
       "name": "@unrdf/ml-inference",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "ml-inference",
       "valid": true,
       "checks": {
@@ -519,7 +519,7 @@
     },
     "@unrdf/ml-versioning": {
       "name": "@unrdf/ml-versioning",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "ml-versioning",
       "valid": true,
       "checks": {
@@ -535,7 +535,7 @@
     },
     "@unrdf/nextra-docs": {
       "name": "@unrdf/nextra-docs",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "nextra",
       "valid": true,
       "checks": {
@@ -551,7 +551,7 @@
     },
     "@unrdf/observability": {
       "name": "@unrdf/observability",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "observability",
       "valid": true,
       "checks": {
@@ -567,7 +567,7 @@
     },
     "@unrdf/oxigraph": {
       "name": "@unrdf/oxigraph",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "oxigraph",
       "valid": true,
       "checks": {
@@ -583,7 +583,7 @@
     },
     "@unrdf/project-engine": {
       "name": "@unrdf/project-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "project-engine",
       "valid": true,
       "checks": {
@@ -599,7 +599,7 @@
     },
     "@unrdf/rdf-graphql": {
       "name": "@unrdf/rdf-graphql",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "rdf-graphql",
       "valid": true,
       "checks": {
@@ -615,7 +615,7 @@
     },
     "@unrdf/react": {
       "name": "@unrdf/react",
-      "version": "5.0.0",
+      "version": "latest",
       "path": "react",
       "valid": true,
       "checks": {
@@ -631,7 +631,7 @@
     },
     "@unrdf/receipts": {
       "name": "@unrdf/receipts",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "receipts",
       "valid": true,
       "checks": {
@@ -647,7 +647,7 @@
     },
     "@unrdf/semantic-search": {
       "name": "@unrdf/semantic-search",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "semantic-search",
       "valid": true,
       "checks": {
@@ -663,7 +663,7 @@
     },
     "@unrdf/serverless": {
       "name": "@unrdf/serverless",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "serverless",
       "valid": true,
       "checks": {
@@ -679,7 +679,7 @@
     },
     "@unrdf/streaming": {
       "name": "@unrdf/streaming",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "streaming",
       "valid": true,
       "checks": {
@@ -695,7 +695,7 @@
     },
     "@unrdf/test-utils": {
       "name": "@unrdf/test-utils",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "test-utils",
       "valid": true,
       "checks": {
@@ -711,7 +711,7 @@
     },
     "@unrdf/v6-compat": {
       "name": "@unrdf/v6-compat",
-      "version": "6.0.0-rc.1",
+      "version": "latest-rc.1",
       "path": "v6-compat",
       "valid": true,
       "checks": {
@@ -727,7 +727,7 @@
     },
     "@unrdf/v6-core": {
       "name": "@unrdf/v6-core",
-      "version": "6.0.0-rc.1",
+      "version": "latest-rc.1",
       "path": "v6-core",
       "valid": true,
       "checks": {
@@ -743,7 +743,7 @@
     },
     "@unrdf/validation": {
       "name": "@unrdf/validation",
-      "version": "5.0.1",
+      "version": "latest",
       "path": "validation",
       "valid": true,
       "checks": {
@@ -759,7 +759,7 @@
     },
     "@unrdf/yawl": {
       "name": "@unrdf/yawl",
-      "version": "6.0.0",
+      "version": "latest",
       "path": "yawl",
       "valid": true,
       "checks": {
@@ -775,7 +775,7 @@
     },
     "@unrdf/yawl-ai": {
       "name": "@unrdf/yawl-ai",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-ai",
       "valid": true,
       "checks": {
@@ -791,7 +791,7 @@
     },
     "@unrdf/yawl-api": {
       "name": "@unrdf/yawl-api",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-api",
       "valid": true,
       "checks": {
@@ -807,7 +807,7 @@
     },
     "@unrdf/yawl-durable": {
       "name": "@unrdf/yawl-durable",
-      "version": "0.1.0",
+      "version": "latest",
       "path": "yawl-durable",
       "valid": true,
       "checks": {
@@ -823,7 +823,7 @@
     },
     "@unrdf/yawl-kafka": {
       "name": "@unrdf/yawl-kafka",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-kafka",
       "valid": true,
       "checks": {
@@ -839,7 +839,7 @@
     },
     "@unrdf/yawl-langchain": {
       "name": "@unrdf/yawl-langchain",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-langchain",
       "valid": true,
       "checks": {
@@ -855,7 +855,7 @@
     },
     "@unrdf/yawl-observability": {
       "name": "@unrdf/yawl-observability",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-observability",
       "valid": true,
       "checks": {
@@ -871,7 +871,7 @@
     },
     "@unrdf/yawl-queue": {
       "name": "@unrdf/yawl-queue",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-queue",
       "valid": true,
       "checks": {
@@ -887,7 +887,7 @@
     },
     "@unrdf/yawl-realtime": {
       "name": "@unrdf/yawl-realtime",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-realtime",
       "valid": true,
       "checks": {
@@ -903,7 +903,7 @@
     },
     "@unrdf/yawl-viz": {
       "name": "@unrdf/yawl-viz",
-      "version": "1.0.0",
+      "version": "latest",
       "path": "yawl-viz",
       "valid": true,
       "checks": {

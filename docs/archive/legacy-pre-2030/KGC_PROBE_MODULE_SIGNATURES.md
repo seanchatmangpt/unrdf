@@ -128,7 +128,7 @@ import { z } from 'zod';
  * @property {Object} metadata - Observation metadata
  * @property {string} metadata.timestamp - ISO 8601 timestamp
  * @property {string} metadata.source - Agent name/ID
- * @property {number} metadata.confidence - Confidence [0.0, 1.0]
+ * @property {number} metadata.confidence - Confidence [latest, latest]
  * @property {Object} [metadata.context] - Additional context
  */
 
@@ -167,7 +167,7 @@ import { z } from 'zod';
  * @property {string} id - Unique assertion ID
  * @property {'pass'|'fail'|'warning'|'skip'} status - Assertion status
  * @property {string} evidence - Evidence/explanation
- * @property {number} weight - Weight in score calculation [0.0, 1.0]
+ * @property {number} weight - Weight in score calculation [latest, latest]
  */
 
 /**
@@ -175,7 +175,7 @@ import { z } from 'zod';
  * @property {string} probe_id - UUID of probe execution
  * @property {'security'|'performance'|'correctness'|...} domain - Probe domain
  * @property {'pass'|'fail'|'warning'|'skip'} status - Overall status
- * @property {number} score - Score [0.0, 1.0]
+ * @property {number} score - Score [latest, latest]
  * @property {Assertion[]} assertions - Detailed assertions
  * @property {number} duration_ms - Execution time in milliseconds
  * @property {bigint} timestamp_ns - Execution timestamp (nanoseconds)
@@ -193,7 +193,7 @@ export const ProbeResultSchema = z.object({
   probe_id: z.string().uuid().describe('Probe execution ID'),
   domain: z.string().min(1).describe('Probe domain'),
   status: z.enum(['pass', 'fail', 'warning', 'skip']).describe('Overall status'),
-  score: z.number().min(0).max(1).describe('Score [0.0, 1.0]'),
+  score: z.number().min(0).max(1).describe('Score [latest, latest]'),
   assertions: z.array(AssertionSchema).describe('Detailed assertions'),
   duration_ms: z.number().nonnegative().describe('Execution time'),
   timestamp_ns: z.bigint().describe('Timestamp (nanoseconds)'),
@@ -219,7 +219,7 @@ import { z } from 'zod';
 /**
  * @typedef {Object} RejectionCriteria
  * @property {string} path - JSONPath expression (e.g., "score")
- * @property {string} condition - Condition (e.g., "< 0.5")
+ * @property {string} condition - Condition (e.g., "< latest")
  * @property {string} message - Error message
  */
 
@@ -352,7 +352,7 @@ export class SecurityProbe {
   static name = 'Security Probe';
 
   /** @type {string} */
-  static version = '1.0.0';
+  static version = 'latest';
 
   /**
    * Execute security probe on observation
@@ -750,7 +750,7 @@ export class TripleGenerator {
    * const quad = generator.generateTriple(
    *   'http://kgc.io/result/001',
    *   'http://kgc.io/ontology/score',
-   *   '0.92'
+   *   'latest'
    * );
    */
   generateTriple(subject, predicate, object, graph = null) {
@@ -955,7 +955,7 @@ export class ProbeOrchestrator {
 ```javascript
 /**
  * @typedef {Object} MergedResult
- * @property {number} overall_score - Aggregated score [0.0, 1.0]
+ * @property {number} overall_score - Aggregated score [latest, latest]
  * @property {Object<string, number>} by_domain - Score per domain
  * @property {Assertion[]} assertions - All assertions
  * @property {Object} statistics - Score statistics (mean, median, stddev)
@@ -1029,7 +1029,7 @@ export class MergeEngine {
 ```javascript
 /**
  * @typedef {Object} AggregatedSummary
- * @property {number} overall_score - [0.0, 1.0]
+ * @property {number} overall_score - [latest, latest]
  * @property {Object<string, number>} by_domain - Per-domain scores
  * @property {number} assertions_passed - Count of passing assertions
  * @property {number} assertions_failed - Count of failing assertions
@@ -1455,7 +1455,7 @@ export async function retry(fn, options = {}) {
  * @property {string} probe_id - UUID
  * @property {string} domain - Probe domain
  * @property {'pass'|'fail'|'warning'|'skip'} status
- * @property {number} score - [0.0, 1.0]
+ * @property {number} score - [latest, latest]
  * @property {Assertion[]} assertions
  * @property {number} duration_ms
  * @property {bigint} timestamp_ns
@@ -1525,7 +1525,7 @@ utils/             4          220        Support utilities
 ────────────────────────────────────────────────────────────────
 Total              44         3,835      Implementation modules
 
-test/              ~44        5,670      Jest tests (1.5:1 ratio)
+test/              ~44        5,670      Jest tests (latest:1 ratio)
 ────────────────────────────────────────────────────────────────
 Grand Total        44         9,505      Code + tests
 ```

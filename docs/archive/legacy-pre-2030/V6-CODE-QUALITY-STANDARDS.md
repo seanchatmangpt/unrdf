@@ -1,6 +1,6 @@
 # UNRDF v6 Code Quality Standards
 
-**Version**: 6.0.0
+**Version**: latest
 **Status**: CANONICAL - All v6 code MUST conform
 **Last Updated**: 2025-12-28
 
@@ -16,7 +16,7 @@ This document defines **enforceable, measurable** code quality standards for UNR
 
 ## 1. Complexity Limits
 
-### 1.1 Cyclomatic Complexity
+### latest Cyclomatic Complexity
 
 **RULE**: Maximum cyclomatic complexity of **10** per function.
 
@@ -76,7 +76,7 @@ function processPendingItem(item, config) {
 }
 ```
 
-### 1.2 Nesting Depth
+### latest Nesting Depth
 
 **RULE**: Maximum nesting depth of **3** levels (excluding function body).
 
@@ -122,7 +122,7 @@ export function validateReceipt(receipt) {
 }
 ```
 
-### 1.3 Parameter Count
+### latest Parameter Count
 
 **RULE**: Maximum **4** parameters per function. Use options object for more.
 
@@ -150,7 +150,7 @@ export function executeQuery(store, query, options = {}) {
 
 ## 2. File Size Limits
 
-### 2.1 Lines Per File
+### latest Lines Per File
 
 **RULE**: Maximum **500 lines** per `.mjs` file (excluding blank lines and comments).
 
@@ -168,7 +168,7 @@ find packages -name "*.mjs" -exec awk 'NF && !/^[[:space:]]*\/\// && !/^[[:space
 - Config files (`*.config.mjs`, `vitest.config.mjs`)
 - Test files with extensive fixtures (max 800 lines, requires justification)
 
-### 2.2 Lines Per Function
+### latest Lines Per Function
 
 **RULE**: Maximum **50 lines** per function body.
 
@@ -193,7 +193,7 @@ export function createMetricsCollector(config) {
 }
 ```
 
-### 2.3 Exports Per File
+### latest Exports Per File
 
 **RULE**: Maximum **15 named exports** per file.
 
@@ -230,7 +230,7 @@ export * from './network.mjs';
 
 ## 3. Dependency Rules
 
-### 3.1 Import Restrictions (Layer Architecture)
+### latest Import Restrictions (Layer Architecture)
 
 **RULE**: Enforce 5-layer architecture with NO upward dependencies.
 
@@ -262,7 +262,7 @@ Layer 1: INFRASTRUCTURE (@unrdf/oxigraph, @unrdf/consensus)
 }]
 ```
 
-### 3.2 N3 Import Policy (CRITICAL)
+### latest N3 Import Policy (CRITICAL)
 
 **RULE**: **ZERO** direct imports from `'n3'` in application code.
 
@@ -292,7 +292,7 @@ import { Parser } from '@unrdf/core/rdf/n3-justified-only';
 grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v n3-justified | wc -l
 ```
 
-### 3.3 Circular Dependencies
+### latest Circular Dependencies
 
 **RULE**: **ZERO** circular dependencies between packages.
 
@@ -303,7 +303,7 @@ npx madge --circular --extensions mjs packages/*/src
 
 **Enforcement**: CI gate (fails on any circular dependency)
 
-### 3.4 External Dependencies
+### latest External Dependencies
 
 **RULE**: All runtime dependencies must be:
 1. **Justified**: Document in `package.json` comments why needed
@@ -326,7 +326,7 @@ npx madge --circular --extensions mjs packages/*/src
 
 ## 4. Naming Conventions
 
-### 4.1 File Naming
+### latest File Naming
 
 **RULE**: `kebab-case.mjs` for all files.
 
@@ -346,7 +346,7 @@ npx madge --circular --extensions mjs packages/*/src
 - `.bench.mjs` - Benchmark files
 - `.config.mjs` - Configuration
 
-### 4.2 Function Naming
+### latest Function Naming
 
 **RULE**: `camelCase` for functions, descriptive verb-noun pattern.
 
@@ -374,7 +374,7 @@ export async function fetchData() { }
 export async function fetchDataAsync() { }  // Redundant
 ```
 
-### 4.3 Variable Naming
+### latest Variable Naming
 
 **RULE**:
 - `camelCase` for variables
@@ -394,7 +394,7 @@ const blake3HexLength = 64;          // Should be SCREAMING_SNAKE_CASE
 const receiptSchema = z.object({});  // Should be PascalCase for schemas
 ```
 
-### 4.4 Package Naming
+### latest Package Naming
 
 **RULE**: `@unrdf/kebab-case`
 
@@ -408,7 +408,7 @@ const receiptSchema = z.object({});  // Should be PascalCase for schemas
 ❌ @unrdf/KnowledgeEngine
 ```
 
-### 4.5 Boolean Naming
+### latest Boolean Naming
 
 **RULE**: Use `is`, `has`, `should`, `can` prefixes.
 
@@ -429,7 +429,7 @@ const retry = true;        // Ambiguous (verb or boolean?)
 
 ## 5. Documentation Requirements
 
-### 5.1 File Headers (MANDATORY)
+### latest File Headers (MANDATORY)
 
 **RULE**: Every `.mjs` file MUST have a JSDoc file header.
 
@@ -462,7 +462,7 @@ const retry = true;        // Ambiguous (verb or boolean?)
  */
 ```
 
-### 5.2 Function Documentation (MANDATORY for Public API)
+### latest Function Documentation (MANDATORY for Public API)
 
 **RULE**: All exported functions MUST have JSDoc with:
 - Brief description (1 sentence)
@@ -491,7 +491,7 @@ export function functionName(paramName, options = {}) {
 }
 ```
 
-### 5.3 Type Definitions (Zod + JSDoc)
+### latest Type Definitions (Zod + JSDoc)
 
 **RULE**: Define types with BOTH Zod schemas AND JSDoc typedefs.
 
@@ -512,7 +512,7 @@ export const ReceiptSchema = z.object({
  */
 ```
 
-### 5.4 Inline Comments
+### latest Inline Comments
 
 **RULE**: Comment **WHY**, not **WHAT**. Code should be self-documenting for "what".
 
@@ -537,7 +537,7 @@ for (const item of items) {
 }
 ```
 
-### 5.5 TODO/FIXME Policy
+### latest TODO/FIXME Policy
 
 **RULE**:
 - **ZERO** `TODO` comments in main branch (move to GitHub Issues)
@@ -562,7 +562,7 @@ for (const item of items) {
 
 ## 6. Antipatterns to Ban
 
-### 6.1 Default Exports (BANNED)
+### latest Default Exports (BANNED)
 
 **RULE**: **ZERO** `export default` in implementation files.
 
@@ -591,7 +591,7 @@ export default defineConfig({ /* ... */ });
 - Config files: `*.config.mjs`, `next.config.mjs`
 - Framework requirements: Next.js pages, Vite config
 
-### 6.2 Console Logging (BANNED in src/)
+### latest Console Logging (BANNED in src/)
 
 **RULE**: **ZERO** `console.log/warn/error` in `/packages/*/src/**/*.mjs`
 
@@ -618,7 +618,7 @@ logger.info('query_executed', { queryId, duration });
 - ✅ Test files (`*.test.mjs`)
 - ✅ Scripts (`scripts/**/*.mjs`)
 
-### 6.3 Defensive Programming (ANTI-PATTERN)
+### latest Defensive Programming (ANTI-PATTERN)
 
 **RULE**: NO redundant null checks. Use Zod validation at boundaries.
 
@@ -655,7 +655,7 @@ export function addQuad(store, quadData) {
 **From CLAUDE.md**:
 > "Add defensive code (guards hide real bugs)" - DON'T DO
 
-### 6.4 Try-Catch Everywhere (ANTI-PATTERN)
+### latest Try-Catch Everywhere (ANTI-PATTERN)
 
 **RULE**: Handle errors at boundaries, not every function.
 
@@ -689,13 +689,13 @@ export async function createReceipt(payload) {
 }
 ```
 
-### 6.5 God Objects (ANTI-PATTERN)
+### latest God Objects (ANTI-PATTERN)
 
 **RULE**: Files with >15 exports MUST be split.
 
-**Current Violations**: See section 2.3
+**Current Violations**: See section latest
 
-### 6.6 Magic Numbers (ANTI-PATTERN)
+### latest Magic Numbers (ANTI-PATTERN)
 
 **RULE**: Extract constants with descriptive names.
 
@@ -712,7 +712,7 @@ if (timeout > MAX_TIMEOUT_MS) { }
 const hash = data.slice(0, BLAKE3_HEX_LENGTH);
 ```
 
-### 6.7 Auto-Generated Weak Schemas (ANTI-PATTERN)
+### latest Auto-Generated Weak Schemas (ANTI-PATTERN)
 
 **Current Issue**: `config.schema.mjs` has `z.unknown()` everywhere (weak typing)
 
@@ -732,7 +732,7 @@ export const parseEnvParamsSchema = z.tuple([
 
 ## 7. ESLint Configuration
 
-### 7.1 Required ESLint Rules
+### latest Required ESLint Rules
 
 **RULE**: All packages MUST use this `.eslintrc.json`:
 
@@ -773,7 +773,7 @@ export const parseEnvParamsSchema = z.tuple([
     "no-restricted-imports": ["error", {
       "patterns": [{
         "group": ["n3"],
-        "message": "Use @unrdf/oxigraph instead. See CLAUDE.md section 3.2"
+        "message": "Use @unrdf/oxigraph instead. See CLAUDE.md section latest"
       }]
     }],
 
@@ -812,7 +812,7 @@ export const parseEnvParamsSchema = z.tuple([
 }
 ```
 
-### 7.2 Prettier Configuration
+### latest Prettier Configuration
 
 **RULE**: Use this `.prettierrc`:
 
@@ -829,7 +829,7 @@ export const parseEnvParamsSchema = z.tuple([
 }
 ```
 
-### 7.3 CI/CD Gates
+### latest CI/CD Gates
 
 **RULE**: ALL checks MUST pass before merge:
 
@@ -880,7 +880,7 @@ quality-gates:
 
 ## 8. Testing Standards
 
-### 8.1 Test File Structure
+### latest Test File Structure
 
 **RULE**:
 - Test files: `*.test.mjs` (co-located with source or in `/test`)
@@ -918,7 +918,7 @@ describe('base-receipt', () => {
 });
 ```
 
-### 8.2 Coverage Requirements
+### latest Coverage Requirements
 
 **RULE**: Minimum 80% coverage (lines, functions, branches, statements)
 
@@ -944,7 +944,7 @@ export default defineConfig({
 });
 ```
 
-### 8.3 Test Timeout (Andon Principle)
+### latest Test Timeout (Andon Principle)
 
 **RULE**: Default 5 seconds, explicit justification for longer.
 
@@ -967,7 +967,7 @@ describe('query executor', () => {
 
 ## 9. Enforcement Strategy
 
-### 9.1 Automated Checks (CI/CD)
+### latest Automated Checks (CI/CD)
 
 **Priority 1 (BLOCK merge)**:
 - ✅ ESLint complexity/size violations
@@ -982,7 +982,7 @@ describe('query executor', () => {
 - ⚠️ Functions >50 lines
 - ⚠️ >15 exports per file
 
-### 9.2 Pre-commit Hooks
+### latest Pre-commit Hooks
 
 ```bash
 # .husky/pre-commit
@@ -1003,7 +1003,7 @@ if [ "$n3_violations" -ne 0 ]; then
 fi
 ```
 
-### 9.3 Code Review Checklist
+### latest Code Review Checklist
 
 **Reviewers MUST verify**:
 - [ ] JSDoc complete for all public functions
@@ -1021,7 +1021,7 @@ fi
 
 ## 10. Migration Plan (Current → V6)
 
-### 10.1 Prioritized Fixes
+### latest Prioritized Fixes
 
 **Phase 1 (Week 1-2)**: Critical violations
 1. Remove 12 N3 direct imports → Use @unrdf/oxigraph
@@ -1038,7 +1038,7 @@ fi
 8. Remove 23 TODO/FIXME → Convert to GitHub Issues
 9. Remove 20+ default exports
 
-### 10.2 Measurement & Tracking
+### latest Measurement & Tracking
 
 **Weekly Quality Report**:
 ```bash
@@ -1059,7 +1059,7 @@ node scripts/quality-trends.mjs quality-*.json
 
 ## 11. Exceptions & Waivers
 
-### 11.1 Requesting Exception
+### latest Requesting Exception
 
 **Process**:
 1. Create GitHub Issue: `[QUALITY-WAIVER] <file>: <rule>`
@@ -1074,7 +1074,7 @@ node scripts/quality-trends.mjs quality-*.json
     */
    ```
 
-### 11.2 Auto-Approved Exceptions
+### latest Auto-Approved Exceptions
 
 - Config files (`*.config.mjs`) - default exports allowed
 - Auto-generated schemas - file size limit relaxed to 1000 lines
@@ -1179,7 +1179,7 @@ npx madge --circular --extensions mjs packages/*/src
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Effective Date**: 2025-01-01
 **Review Cycle**: Quarterly
 **Next Review**: 2025-04-01

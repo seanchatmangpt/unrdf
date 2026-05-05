@@ -259,7 +259,7 @@ pnpm run report --help                        # Show help
   "packages": [
     {
       "name": "@unrdf/core",
-      "version": "5.0.0-beta.1",
+      "version": "[VERSION]-beta.1",
       "dir": "/home/user/unrdf/packages/core"
     }
   ]
@@ -271,7 +271,7 @@ pnpm run report --help                        # Show help
 ```json
 {
   "packageName": "@unrdf/core",
-  "version": "5.0.0-beta.1",
+  "version": "[VERSION]-beta.1",
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "confidence": {
     "tutorials": 1.0,

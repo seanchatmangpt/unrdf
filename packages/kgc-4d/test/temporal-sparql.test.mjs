@@ -28,7 +28,7 @@ import { now, toISO, fromISO } from '../src/time.mjs';
 
 const { namedNode, literal } = dataFactory;
 
-// DEFERRED to v26.4.23: KGC-4D temporal SPARQL implementation incomplete
+// DEFERRED to [VERSION]: KGC-4D temporal SPARQL implementation incomplete
 describe('Temporal SPARQL - Query Parser', () => {
   describe('parseTemporalQuery()', () => {
     it('should parse AT TIMESTAMP query', () => {

@@ -205,7 +205,7 @@ import { useKnowledgeHook } from 'unrdf/react-hooks';
 
 function ValidationHook() {
   const { register, unregister, status } = useKnowledgeHook({
-    meta: { name: 'validator', version: '1.0.0' },
+    meta: { name: 'validator', version: 'latest' },
     when: { event: 'pre-transaction' },
     run: async (event) => {
       // Validation logic

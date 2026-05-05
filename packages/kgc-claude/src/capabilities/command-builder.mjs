@@ -41,7 +41,7 @@ const HookSchema = z.object({
 const CommandMetadataSchema = z.object({
   name: z.string().min(1).regex(/^[a-z][a-z0-9-]*$/i, 'Command name must be lowercase with hyphens'),
   description: z.string().min(1).max(200),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('latest'),
   arguments: z.array(ArgumentSchema).default([]),
   agents: z.array(z.string()).optional(),
   requires: z.array(z.string()).optional(),
@@ -84,7 +84,7 @@ export const CommandDefinitionSchema = CommandMetadataSchema.extend({
  *   .description('Systematically explore a capability area')
  *   .addArgument({ name: 'topic', description: 'The capability to explore', required: true })
  *   .addSection({ title: 'Objectives', content: '1. Discover features\n2. Test edge cases' })
- *   .setVersion('1.0.0')
+ *   .setVersion('latest')
  *   .build();
  */
 export class CommandBuilder {
@@ -96,7 +96,7 @@ export class CommandBuilder {
     this.command = {
       name,
       description: '',
-      version: '1.0.0',
+      version: 'latest',
       arguments: [],
       sections: [],
       priority: 'medium',

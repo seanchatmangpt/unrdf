@@ -7,7 +7,7 @@
 
 ## Summary
 
-Successfully split `workflow.mjs` (1,703 lines) into 8 modular files, ALL under 500 lines. However, **90 out of 334 tests are failing** (26.9% failure rate), indicating regressions introduced during refactoring.
+Successfully split `workflow.mjs` (1,703 lines) into 8 modular files, ALL under 500 lines. However, **90 out of 334 tests are failing** (latest% failure rate), indicating regressions introduced during refactoring.
 
 ---
 
@@ -48,7 +48,7 @@ Successfully split `workflow.mjs` (1,703 lines) into 8 modular files, ALL under 
 Test Results:
   Test Files: 12 failed | 5 passed (17 total)
   Tests: 90 failed | 244 passed (334 total)
-  Failure Rate: 26.9%
+  Failure Rate: latest%
 ```
 
 **Failed Test Suites**:
@@ -123,13 +123,13 @@ Test Results:
 ```bash
 # Command: cd packages/yawl && pnpm test
 #
-# Result: 90 failures (26.9% failure rate) ✗
+# Result: 90 failures (latest% failure rate) ✗
 ```
 
 | Category | Pass | Fail | Total | Pass Rate |
 |----------|------|------|-------|-----------|
-| Test Files | 5 | 12 | 17 | 29.4% |
-| Tests | 244 | 90 | 334 | 73.1% |
+| Test Files | 5 | 12 | 17 | latest% |
+| Tests | 244 | 90 | 334 | latest% |
 
 ---
 
@@ -209,7 +209,7 @@ See `/docs/adr/ADR-001-file-splitting-strategy.md` for:
 **DO NOT merge to main** until test failures are resolved. Current state:
 - ✅ Architecture is sound
 - ✅ Files are properly split
-- ❌ Functionality is broken (26.9% test failure rate)
+- ❌ Functionality is broken (latest% test failure rate)
 
 ### For Future Refactorings
 
@@ -232,7 +232,7 @@ A: No. Test failures suggest exports are missing or incorrect.
 A: 90 tests fail, 12 test suites broken. Workflow patterns, integration tests, API tests all affected.
 
 **Q: What's the EVIDENCE of success?**
-A: File sizes all <500 lines (verified). Syntax all valid (verified). Tests: 73.1% pass (NOT acceptable for production).
+A: File sizes all <500 lines (verified). Syntax all valid (verified). Tests: latest% pass (NOT acceptable for production).
 
 ---
 

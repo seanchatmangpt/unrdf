@@ -12,7 +12,7 @@ pnpm add @unrdf/core @unrdf/oxigraph
 npm install @unrdf/core @unrdf/oxigraph
 ```
 
-**Requirements:** Node.js ≥18.0.0, ES Modules enabled
+**Requirements:** Node.js ≥latest, ES Modules enabled
 
 ---
 
@@ -30,7 +30,7 @@ const store = createOxiStore();
 // Add triples (Turtle format)
 store.load(`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
   ex:Alice foaf:name "Alice" ;
            foaf:knows ex:Bob .
@@ -40,7 +40,7 @@ store.load(`
 // Query with SPARQL
 const results = executeSelectSync(store, `
   SELECT ?name WHERE {
-    ?person <http://xmlns.com/foaf/0.1/name> ?name .
+    ?person <http://xmlns.com/foaf/latest/name> ?name .
   }
 `);
 
@@ -71,7 +71,7 @@ const kgc = new KGCStore();
 await kgc.record({
   type: 'ORDER_CREATED',
   subject: 'order:12345',
-  data: { amount: 99.99, customer: 'Alice' }
+  data: { amount: latest, customer: 'Alice' }
 });
 
 await kgc.record({
@@ -109,7 +109,7 @@ import { namedNode, literal, quad } from '@unrdf/core';
 const validateEmail = defineHook({
   meta: { name: 'validate-email-format' },
   trigger: 'INSERT',
-  pattern: '?person <http://xmlns.com/foaf/0.1/mbox> ?email .',
+  pattern: '?person <http://xmlns.com/foaf/latest/mbox> ?email .',
 
   validate(context) {
     const email = context.quad.object.value;
@@ -126,7 +126,7 @@ registerHook(validateEmail);
 // Test: valid email (hook passes)
 const validQuad = quad(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/mbox'),
+  namedNode('http://xmlns.com/foaf/latest/mbox'),
   literal('alice@example.com')
 );
 const result1 = await executeHook(validateEmail, { quad: validQuad, trigger: 'INSERT' });
@@ -135,7 +135,7 @@ console.log(result1.passed); // true
 // Test: invalid email (hook vetoes)
 const invalidQuad = quad(
   namedNode('http://example.org/Bob'),
-  namedNode('http://xmlns.com/foaf/0.1/mbox'),
+  namedNode('http://xmlns.com/foaf/latest/mbox'),
   literal('bob-invalid-email')
 );
 const result2 = await executeHook(validateEmail, { quad: invalidQuad, trigger: 'INSERT' });
@@ -174,7 +174,7 @@ const approvalWorkflow = createWorkflow({
 // Create workflow case instance
 const workCase = await createCase(approvalWorkflow, {
   caseId: 'EXP-001',
-  data: { amount: 250.00, employee: 'Alice' }
+  data: { amount: latest, employee: 'Alice' }
 });
 
 // Enable first task

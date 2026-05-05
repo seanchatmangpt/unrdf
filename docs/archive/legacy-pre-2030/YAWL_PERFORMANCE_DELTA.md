@@ -2,7 +2,7 @@
 
 **Analysis Date**: 2026-01-11
 **Methodology**: Adversarial PM - Evidence-based comparison
-**UNRDF Version**: @unrdf/yawl v5.0.0
+**UNRDF Version**: @unrdf/yawl vlatest
 **Java YAWL Baseline**: YAWL 4.x Reference Implementation
 **Evaluator**: Research Agent (Adversarial Mode)
 
@@ -18,10 +18,10 @@
 
 | Dimension | UNRDF YAWL | Java YAWL 4.x | Delta | Status |
 |-----------|------------|---------------|-------|--------|
-| **Startup Latency** | 0.539ms | ~2000-5000ms | **3700-9260x faster** | ✅ MEASURED |
+| **Startup Latency** | latestms | ~2000-5000ms | **3700-9260x faster** | ✅ MEASURED |
 | **Task Activation** | O(1) | O(n) | **Asymptotic improvement** | ✅ MEASURED |
 | **Throughput** | 5,372 cases/sec | ~10-50 cases/sec | **107-537x faster** | ✅ MEASURED |
-| **Memory/Case** | 0.06 MB | ~5-10 MB | **83-167x more efficient** | ✅ MEASURED |
+| **Memory/Case** | latest MB | ~5-10 MB | **83-167x more efficient** | ✅ MEASURED |
 | **Feature Completeness** | 60% | 100% | **-40%** | ❌ GAP |
 | **Worklist Service** | Simplified | Full | **Missing 45%** | ❌ CRITICAL |
 | **Exception Handling** | Partial | Complete | **Missing 38%** | ❌ CRITICAL |
@@ -30,7 +30,7 @@
 
 ## 1. Performance Benchmarks - MEASURED vs ESTIMATED
 
-### 1.1 UNRDF YAWL Performance (MEASURED)
+### latest UNRDF YAWL Performance (MEASURED)
 
 **Source**: `/packages/yawl/benchmarks/performance-benchmark.mjs` (executed 2025-12-25)
 
@@ -38,11 +38,11 @@
 ```
 Metric                 | Measured      | Target    | Status
 -----------------------|---------------|-----------|--------
-Cold Startup (avg)     | 0.539ms       | <100ms    | ✅ PASS (185x under)
-Cold Startup (P95)     | 3.105ms       | <100ms    | ✅ PASS (32x under)
-Warm Startup (P50)     | 0.048ms       | <300ms    | ✅ PASS (6250x under)
-Daemon Cold (P50)      | 0.187ms       | <500ms    | ✅ PASS (2673x under)
-Memory (startup)       | 0.19 MB heap  | N/A       | ✅ MEASURED
+Cold Startup (avg)     | latestms       | <100ms    | ✅ PASS (185x under)
+Cold Startup (P95)     | latestms       | <100ms    | ✅ PASS (32x under)
+Warm Startup (P50)     | latestms       | <300ms    | ✅ PASS (6250x under)
+Daemon Cold (P50)      | latestms       | <500ms    | ✅ PASS (2673x under)
+Memory (startup)       | latest MB heap  | N/A       | ✅ MEASURED
 ```
 
 **Evidence Location**: `/packages/yawl/PERFORMANCE_REPORT.md` (lines 24-43)
@@ -51,10 +51,10 @@ Memory (startup)       | 0.19 MB heap  | N/A       | ✅ MEASURED
 ```
 Operation              | Rate               | Per-Op Time  | Status
 -----------------------|--------------------|--------------|--------
-Case Creation          | 5,372 cases/sec    | 0.186ms      | ✅ MEASURED
-Case (100 parallel)    | 2,212 cases/sec    | 0.452ms      | ✅ MEASURED
-WITH KGC-4D (100)      | 6,667 cases/sec    | 0.150ms      | ✅ MEASURED
-WITHOUT KGC-4D (100)   | 6,270 cases/sec    | 0.159ms      | ✅ MEASURED
+Case Creation          | 5,372 cases/sec    | latestms      | ✅ MEASURED
+Case (100 parallel)    | 2,212 cases/sec    | latestms      | ✅ MEASURED
+WITH KGC-4D (100)      | 6,667 cases/sec    | latestms      | ✅ MEASURED
+WITHOUT KGC-4D (100)   | 6,270 cases/sec    | latestms      | ✅ MEASURED
 ```
 
 **Evidence Location**: `/packages/yawl/PERFORMANCE_REPORT.md` (lines 73-99)
@@ -63,9 +63,9 @@ WITHOUT KGC-4D (100)   | 6,270 cases/sec    | 0.159ms      | ✅ MEASURED
 ```
 Load Scenario          | Memory Delta   | Per-Case     | Status
 -----------------------|----------------|--------------|--------
-Baseline               | 16.52 MB       | -            | ✅ MEASURED
-100 Cases              | +6.07 MB       | 0.06 MB      | ✅ MEASURED
-KGC-4D Overhead        | +0.04 MB       | 0.0004 MB    | ✅ MEASURED
+Baseline               | latest MB       | -            | ✅ MEASURED
+100 Cases              | +latest MB       | latest MB      | ✅ MEASURED
+KGC-4D Overhead        | +latest MB       | latest MB    | ✅ MEASURED
 ```
 
 **Evidence Location**: `/packages/yawl/PERFORMANCE_REPORT.md` (lines 45-69)
@@ -82,7 +82,7 @@ Hook Lookup            | O(1)             | ✅ Hash table
 
 **Evidence Location**: `/packages/yawl/THESIS-CONTRIBUTIONS.md` (lines 323-412)
 
-### 1.2 Java YAWL Performance (REFERENCE DATA)
+### latest Java YAWL Performance (REFERENCE DATA)
 
 **Source**: Published YAWL papers + community benchmarks (NO direct measurement in this codebase)
 
@@ -107,7 +107,7 @@ Idle CPU               | 10-20%             | Continuous polling
 
 ## 2. Implementation Complexity Analysis
 
-### 2.1 UNRDF YAWL Implementation Metrics
+### latest UNRDF YAWL Implementation Metrics
 
 **MEASURED** via codebase analysis:
 
@@ -140,9 +140,9 @@ Lines  | File
 700    | src/engine.mjs
 ```
 
-**Analysis**: 10 files account for 11,584 lines (29.8% of codebase), indicating moderate complexity concentration.
+**Analysis**: 10 files account for 11,584 lines (latest% of codebase), indicating moderate complexity concentration.
 
-### 2.2 Java YAWL Implementation Metrics (REFERENCE)
+### latest Java YAWL Implementation Metrics (REFERENCE)
 
 **Source**: YAWL 4.x GitHub repository (external)
 
@@ -163,7 +163,7 @@ ORM                              | Hibernate   | HIGH (documented)
 
 ## 3. Feature Parity Analysis
 
-### 3.1 Worklist Service Compliance
+### latest Worklist Service Compliance
 
 **Baseline**: Java YAWL 4.x Worklist Service (`InterfaceB_EngineBasedClient.java`)
 
@@ -171,7 +171,7 @@ ORM                              | Hibernate   | HIGH (documented)
 
 | Feature | Java YAWL | UNRDF YAWL | Gap | Impact |
 |---------|-----------|------------|-----|--------|
-| **Work Item States** | 8 states | 5 states | **-37.5%** | HIGH |
+| **Work Item States** | 8 states | 5 states | **-latest%** | HIGH |
 | `Created` state | ✅ | ⚠️ PENDING (different semantics) | Partial | MED |
 | `Offered` state | ✅ | ❌ MISSING | **Critical** | HIGH |
 | `Allocated` state | ✅ | ❌ MISSING | **Critical** | HIGH |
@@ -188,7 +188,7 @@ ORM                              | Hibernate   | HIGH (documented)
 
 **CRITICAL FINDING**: UNRDF YAWL transitions directly from ENABLED → ACTIVE, skipping OFFERED → ALLOCATED phases required for human task management. This makes it unsuitable for worklist-based human workflows.
 
-### 3.2 Exception Handling Compliance
+### latest Exception Handling Compliance
 
 **Source**: `/packages/yawl/ADVERSARIAL-EXCEPTION-HANDLING-EVALUATION.md`
 
@@ -215,7 +215,7 @@ ORM                              | Hibernate   | HIGH (documented)
 - Cryptographic receipt logging (superior to Java YAWL's basic logging)
 - Hook-based reactive exception handling (vs polling)
 
-### 3.3 YAWL Pattern Support
+### latest YAWL Pattern Support
 
 **Baseline**: Van der Aalst's 20 YAWL Control Flow Patterns (WP1-WP20)
 
@@ -237,22 +237,22 @@ TOTAL                  | 20/20     | 20/20      | ✅ 100% pattern coverage
 
 ## 4. Performance Delta vs Reference Implementation
 
-### 4.1 Quantitative Performance Comparison
+### latest Quantitative Performance Comparison
 
 **Method**: UNRDF measured data vs Java YAWL estimates
 
 | Operation | UNRDF YAWL (Measured) | Java YAWL (Est.) | Delta | Confidence |
 |-----------|------------------------|------------------|-------|------------|
-| **Cold Startup** | 0.539ms | 2000-5000ms | **3700-9260x faster** | ⚠️ Medium (Java est.) |
-| **Case Creation** | 0.186ms | 100-500ms | **537-2688x faster** | ⚠️ Medium (Java est.) |
+| **Cold Startup** | latestms | 2000-5000ms | **3700-9260x faster** | ⚠️ Medium (Java est.) |
+| **Case Creation** | latestms | 100-500ms | **537-2688x faster** | ⚠️ Medium (Java est.) |
 | **Throughput** | 5,372 cases/sec | 10-50 cases/sec | **107-537x faster** | ⚠️ Medium (Java est.) |
-| **Memory/Case** | 0.06 MB | 5-10 MB | **83-167x smaller** | ⚠️ Medium (Java est.) |
+| **Memory/Case** | latest MB | 5-10 MB | **83-167x smaller** | ⚠️ Medium (Java est.) |
 | **Task Activation** | O(1) hook-based | O(n) polling | **Asymptotic improvement** | ✅ High (architectural) |
 | **Idle CPU** | 0% (event-driven) | 10-20% (polling) | **Infinite improvement** | ✅ High (architectural) |
 
 **CRITICAL CAVEAT**: Java YAWL deltas are based on ESTIMATES, not direct measurements. Claims require validation by running Java YAWL benchmarks.
 
-### 4.2 Architectural Performance Advantages
+### latest Architectural Performance Advantages
 
 **UNRDF Advantages (High Confidence)**:
 
@@ -286,28 +286,28 @@ TOTAL                  | 20/20     | 20/20      | ✅ 100% pattern coverage
 2. **Memory Limits**:
    - UNRDF: Node.js heap limit (~4GB with flags)
    - Java: Configurable JVM heap (64GB+)
-   - **Impact**: UNRDF limited to ~70K concurrent cases (at 0.06 MB/case)
+   - **Impact**: UNRDF limited to ~70K concurrent cases (at latest MB/case)
 
 ---
 
 ## 5. Feature Completeness Gap Analysis
 
-### 5.1 Critical Missing Features
+### latest Critical Missing Features
 
 **ADVERSARIAL QUESTION**: What BREAKS when you try to use UNRDF as drop-in Java YAWL replacement?
 
 | Missing Feature | Impact | Workaround | Estimation to Fix |
 |----------------|--------|------------|-------------------|
 | **Worklet Selection** | Cannot dynamically choose exception handlers | Manual if/else | ~2000 LoC (~2 weeks) |
-| **Offered/Allocated States** | Cannot offer work to groups, then allocate to individual | Skip to direct assignment | ~1500 LoC (~1.5 weeks) |
-| **Formal Compensation** | No transactional rollback on failure | Manual cleanup code | ~1500 LoC (~1.5 weeks) |
+| **Offered/Allocated States** | Cannot offer work to groups, then allocate to individual | Skip to direct assignment | ~1500 LoC (~latest weeks) |
+| **Formal Compensation** | No transactional rollback on failure | Manual cleanup code | ~1500 LoC (~latest weeks) |
 | **Constraint Violations** | No business rule checking, only schema validation | Validate in application | ~800 LoC (~1 week) |
-| **Exlet Integration** | No external exception service | N/A | ~1200 LoC (~1.5 weeks) |
+| **Exlet Integration** | No external exception service | N/A | ~1200 LoC (~latest weeks) |
 | **Multi-Server Clustering** | Single Node.js process | Deploy multiple instances + message queue | ~3000 LoC (~3 weeks) |
 
 **Total Estimation**: ~10,000 LoC (~11 weeks) to reach Java YAWL parity
 
-### 5.2 Use Case Suitability
+### latest Use Case Suitability
 
 | Use Case | Java YAWL | UNRDF YAWL | Recommendation |
 |----------|-----------|------------|----------------|
@@ -324,27 +324,27 @@ TOTAL                  | 20/20     | 20/20      | ✅ 100% pattern coverage
 
 ## 6. Memory Footprint Comparison
 
-### 6.1 UNRDF YAWL Memory Profile (MEASURED)
+### latest UNRDF YAWL Memory Profile (MEASURED)
 
 **Source**: `/packages/yawl/PERFORMANCE_REPORT.md` (lines 45-69)
 
 ```
 Component              | Memory       | Notes
 -----------------------|--------------|-------
-Baseline Engine        | 16.52 MB     | Empty engine, no cases
-Per Workflow Case      | 0.06 MB      | Linear growth (100 cases = +6.07 MB)
-KGC-4D Overhead        | 0.04 MB      | Time-travel capability overhead
-Per Work Item          | ~0.01 MB     | Estimated (not directly measured)
+Baseline Engine        | latest MB     | Empty engine, no cases
+Per Workflow Case      | latest MB      | Linear growth (100 cases = +latest MB)
+KGC-4D Overhead        | latest MB      | Time-travel capability overhead
+Per Work Item          | ~latest MB     | Estimated (not directly measured)
 ```
 
 **Scalability**:
-- 1,000 cases = ~76 MB (16.52 + 60 MB)
+- 1,000 cases = ~76 MB (latest + 60 MB)
 - 10,000 cases = ~616 MB
-- 70,000 cases = ~4.2 GB (Node.js heap limit)
+- 70,000 cases = ~latest GB (Node.js heap limit)
 
 **Maximum Capacity**: ~70,000 concurrent workflow cases per Node.js process
 
-### 6.2 Java YAWL Memory Profile (ESTIMATED)
+### latest Java YAWL Memory Profile (ESTIMATED)
 
 **Source**: Typical Hibernate + PostgreSQL Java architecture
 
@@ -357,7 +357,7 @@ Per Work Item          | 1-2 MB        | Rich Java objects
 ```
 
 **Scalability (Estimated)**:
-- 1,000 cases = ~5.5-10.5 GB
+- 1,000 cases = ~latest.5 GB
 - 10,000 cases = ~50-100 GB
 
 **Maximum Capacity**: Limited by database capacity, not in-memory
@@ -368,7 +368,7 @@ Per Work Item          | 1-2 MB        | Rich Java objects
 
 ## 7. Benchmark Reproducibility
 
-### 7.1 UNRDF YAWL Benchmarks
+### latest UNRDF YAWL Benchmarks
 
 **CAN REPRODUCE** (code exists, but dependencies missing):
 
@@ -381,23 +381,23 @@ node --expose-gc benchmarks/performance-benchmark.mjs
 **Expected Output** (from PERFORMANCE_REPORT.md):
 ```
 📊 BENCHMARK 1: STARTUP TIME
-Average startup: 0.539ms
+Average startup: latestms
 Target: <100ms
 Status: ✅ PASS
 
 📊 BENCHMARK 2: MEMORY USAGE UNDER LOAD
-Per-case memory: 0.06 MB
+Per-case memory: latest MB
 
 📊 BENCHMARK 3: THROUGHPUT
-Case Creation: 5372.55 cases/sec
+Case Creation: latest cases/sec
 
 📊 BENCHMARK 4: KGC-4D INTEGRATION OVERHEAD
-Time Overhead: -0.998ms (-6.3%)
+Time Overhead: -latestms (-latest%)
 
-Total: 1803.147ms (1.80s)
+Total: latestms (latests)
 ```
 
-**Benchmark SLA**: Complete in <5000ms ✅ PASS (1.80s)
+**Benchmark SLA**: Complete in <5000ms ✅ PASS (latests)
 
 **ACTUAL RUN STATUS**: ❌ FAILED - Missing dependencies (@unrdf/kgc-4d, zod)
 ```
@@ -406,7 +406,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 
 **EVIDENCE QUALITY**: HIGH for reported numbers (detailed output in PERFORMANCE_REPORT.md), but CANNOT VERIFY independently without fixing dependencies.
 
-### 7.2 Java YAWL Benchmarks
+### latest Java YAWL Benchmarks
 
 **CANNOT REPRODUCE** - No Java YAWL benchmarks in UNRDF repository.
 
@@ -423,7 +423,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 
 ## 8. Adversarial PM Assessment
 
-### 8.1 Claims vs Reality
+### latest Claims vs Reality
 
 **ADVERSARIAL QUESTIONS**:
 
@@ -443,11 +443,11 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
    - **Confidence**: 85% (measured test results)
 
 4. ❓ **"KGC-4D has no performance overhead"**
-   - **Evidence**: -6.3% overhead (actually faster) measured in benchmarks
+   - **Evidence**: -latest% overhead (actually faster) measured in benchmarks
    - **Verdict**: ✅ **VERIFIED** - Counter-intuitive but measured
    - **Confidence**: 90% (reproducible measurement)
 
-### 8.2 What BREAKS?
+### latest What BREAKS?
 
 **CRITICAL FAILURE SCENARIOS**:
 
@@ -460,7 +460,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 | **Business constraint violation** | ❌ Runtime error | Constraint violation exception → Handler |
 | **70K+ concurrent cases** | ❌ Memory limit | ✅ Database-backed (no memory limit) |
 
-### 8.3 Performance vs Completeness Tradeoff
+### latest Performance vs Completeness Tradeoff
 
 **UNRDF Strengths**:
 - ✅ 100-500x faster (if estimates accurate)
@@ -482,19 +482,19 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 
 ## 9. Comparison Table: Before/After/With/Without
 
-### 9.1 UNRDF Configuration Comparison (MEASURED)
+### latest UNRDF Configuration Comparison (MEASURED)
 
 | Configuration | Duration | Memory | Rate | Notes |
 |--------------|----------|--------|------|-------|
-| **Baseline (no load)** | - | 16.52 MB | - | Empty engine |
-| **100 cases** | 45.2ms | +6.07 MB | 2,212 cases/sec | Parallel creation |
-| **1000 cases** | 186.1ms | - | 5,373 cases/sec | Higher throughput |
-| **WITH KGC-4D (100)** | 15.0ms | +5.32 MB | 6,667 cases/sec | Time-travel enabled |
-| **WITHOUT KGC-4D (100)** | 15.9ms | +5.28 MB | 6,270 cases/sec | Time-travel disabled |
+| **Baseline (no load)** | - | latest MB | - | Empty engine |
+| **100 cases** | latestms | +latest MB | 2,212 cases/sec | Parallel creation |
+| **1000 cases** | latestms | - | 5,373 cases/sec | Higher throughput |
+| **WITH KGC-4D (100)** | latestms | +latest MB | 6,667 cases/sec | Time-travel enabled |
+| **WITHOUT KGC-4D (100)** | latestms | +latest MB | 6,270 cases/sec | Time-travel disabled |
 
-**INSIGHT**: KGC-4D overhead is NEGATIVE (-6.3%), suggesting batch optimization or caching benefits.
+**INSIGHT**: KGC-4D overhead is NEGATIVE (-latest%), suggesting batch optimization or caching benefits.
 
-### 9.2 Java YAWL Configuration Comparison (ESTIMATED)
+### latest Java YAWL Configuration Comparison (ESTIMATED)
 
 | Configuration | Duration (Est.) | Memory (Est.) | Rate (Est.) | Notes |
 |--------------|-----------------|---------------|-------------|-------|
@@ -508,7 +508,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 
 ## 10. Recommendations
 
-### 10.1 For Users Choosing Between UNRDF and Java YAWL
+### latest For Users Choosing Between UNRDF and Java YAWL
 
 **Choose UNRDF YAWL if**:
 - ✅ Automated workflows (no human worklists)
@@ -526,11 +526,11 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
 - ✅ Need formal compensation framework
 - ✅ Require business constraint checking
 
-### 10.2 To Reach Java YAWL Parity
+### latest To Reach Java YAWL Parity
 
 **Critical Path** (estimated 11 weeks, 10,000 LoC):
 
-1. **Worklist Service** (~1500 LoC, 1.5 weeks)
+1. **Worklist Service** (~1500 LoC, latest weeks)
    - Add OFFERED and ALLOCATED states
    - Implement offer to role/group
    - Implement allocate to user
@@ -540,7 +540,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
    - Rule-based handler selection
    - Dynamic handler execution
 
-3. **Compensation Framework** (~1500 LoC, 1.5 weeks)
+3. **Compensation Framework** (~1500 LoC, latest weeks)
    - Compensation handler registry
    - Reverse-order execution on failure
    - Transactional semantics
@@ -555,12 +555,12 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
    - Message queue integration
    - Consensus protocol
 
-6. **Exlet Integration** (~1200 LoC, 1.5 weeks)
+6. **Exlet Integration** (~1200 LoC, latest weeks)
    - External service protocol
    - Async exception handling
    - Retry/circuit breaker
 
-### 10.3 Performance Validation DEFERRED_ACTION(#loop-closure)
+### latest Performance Validation DEFERRED_ACTION(#loop-closure)
 
 **CRITICAL GAPS**:
 
@@ -588,7 +588,7 @@ node --expose-gc benchmarks/performance-benchmark.mjs
 
 ## 11. Conclusion
 
-### 11.1 Final Verdict
+### latest Final Verdict
 
 **Performance**: ✅ **UNRDF SUPERIORITY LIKELY** (but unverified without Java benchmarks)
 - Architectural advantages (O(1) vs O(n), hook-native vs polling) are **provable**
@@ -608,15 +608,15 @@ node --expose-gc benchmarks/performance-benchmark.mjs
 - ❌ NOT ready for multi-server deployments
 - ⚠️ Limited to ~70K concurrent cases (memory)
 
-### 11.2 The Adversarial PM Question
+### latest The Adversarial PM Question
 
 **"If someone challenged EVERY claim today, which would survive scrutiny?"**
 
 **SURVIVES SCRUTINY** ✅:
 - O(1) task activation complexity (architectural proof)
 - 5,372 cases/sec throughput (measured)
-- 0.06 MB per case memory (measured)
-- KGC-4D overhead -6.3% (measured)
+- latest MB per case memory (measured)
+- KGC-4D overhead -latest% (measured)
 - 100% YAWL pattern coverage (20/20)
 
 **FAILS SCRUTINY** ❌:
@@ -630,7 +630,7 @@ node --expose-gc benchmarks/performance-benchmark.mjs
 - Multi-server deployment capability (not implemented)
 - Real-world scalability beyond 70K cases (not tested)
 
-### 11.3 Truth Statement
+### latest Truth Statement
 
 **UNRDF YAWL is a high-performance, event-driven workflow engine that implements Van der Aalst's 20 YAWL patterns with 100-500x better measured performance than estimated Java YAWL numbers, BUT covers only 60% of Java YAWL's feature set, making it suitable for automated workflows but NOT a drop-in replacement for human worklist management.**
 
@@ -683,9 +683,9 @@ unzip YAWL-4.x.zip
 
 | Claim | Source File | Lines | Confidence |
 |-------|-------------|-------|------------|
-| Startup 0.539ms | `/packages/yawl/PERFORMANCE_REPORT.md` | 24-43 | ✅ HIGH |
+| Startup latestms | `/packages/yawl/PERFORMANCE_REPORT.md` | 24-43 | ✅ HIGH |
 | 5,372 cases/sec | `/packages/yawl/PERFORMANCE_REPORT.md` | 73-99 | ✅ HIGH |
-| 0.06 MB per case | `/packages/yawl/PERFORMANCE_REPORT.md` | 45-69 | ✅ HIGH |
+| latest MB per case | `/packages/yawl/PERFORMANCE_REPORT.md` | 45-69 | ✅ HIGH |
 | O(1) activation | `/packages/yawl/THESIS-CONTRIBUTIONS.md` | 323-412 | ✅ HIGH |
 | 60% completeness | `/packages/yawl/ADVERSARIAL-WORKLIST-EVALUATION.md` | 10-14 | ✅ HIGH |
 | 38,831 LoC | Command: `find packages/yawl/src -name "*.mjs" \| xargs wc -l` | - | ✅ HIGH |

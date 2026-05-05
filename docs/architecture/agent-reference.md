@@ -1,4 +1,4 @@
-# UNRDF v5.0.0-alpha Agent Reference
+# UNRDF vlatest Agent Reference
 
 **FOR AGENTS ONLY**: Quick reference for coordinating v5 release fixes.
 

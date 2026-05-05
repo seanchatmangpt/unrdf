@@ -587,7 +587,7 @@ app.use(auditLog);
 {
   "timestamp": "2024-01-15T10:30:00.000Z",
   "userId": "user-123",
-  "ip": "203.0.113.45",
+  "ip": "latest.45",
   "method": "POST",
   "path": "/sparql",
   "query": "SELECT * WHERE { ?s ?p ?o } LIMIT 100",

@@ -25,7 +25,7 @@
 3. ❌ Missing federation/metrics.mjs → import errors
 4. ❌ 8 YAWL test failures → time-travel broken
 5. ❌ Missing build configs (core, hooks) → build incomplete
-6. ⚠️ Hooks coverage 13.1% → 80% target
+6. ⚠️ Hooks coverage latest% → 80% target
 7. ⚠️ OTEL validation 0% coverage → trust model broken
 8. ⚠️ Streaming tests 58% pass rate → reliability issues
 
@@ -36,7 +36,7 @@
 
 ## PART 1: SPECIFICATION (Define What's Missing)
 
-### 1.1 Dependency Gap Analysis
+### latest Dependency Gap Analysis
 
 **Evidence:**
 
@@ -50,19 +50,19 @@
 
 - **What:** graph-analytics package requires @dagrejs/graphlib
 - **Why:** Graph algorithm implementations (pagerank, clustering, centrality)
-- **Impact:** 4 test suites fail (17 tests), 63.6% coverage → 0%
+- **Impact:** 4 test suites fail (17 tests), latest% coverage → 0%
 - **Fix:** `pnpm add @dagrejs/graphlib` in packages/graph-analytics
 
 **Acceptance Criteria:**
 
 - ✅ Dependency installed in package.json
 - ✅ Tests pass: 17/17 tests green
-- ✅ Coverage maintained: 63.6%+
+- ✅ Coverage maintained: latest%+
 - ✅ Duration: <5s (SLA compliance)
 
 ---
 
-### 1.2 E2E Test Configuration Gap
+### latest E2E Test Configuration Gap
 
 **Evidence:**
 
@@ -114,7 +114,7 @@
 
 ---
 
-### 1.3 Missing Federation Metrics Module
+### latest Missing Federation Metrics Module
 
 **Evidence:**
 
@@ -160,63 +160,63 @@ export function initMetrics(config = {}) {
 
 ---
 
-### 1.4 YAWL Test Failures (8 Critical)
+### latest YAWL Test Failures (8 Critical)
 
 **Evidence:**
 
 ```bash
 # RAN: timeout 8s pnpm test:yawl
-# OUTPUT: 292 tests, 8 failures (97.3% pass rate)
+# OUTPUT: 292 tests, 8 failures (latest% pass rate)
 # FILES: yawl-patterns.test.mjs, yawl-hooks.test.mjs
 ```
 
 **Specification - 8 Failing Tests:**
 
-#### 1.4.1 Approval Path Enablement (yawl-hooks.test.mjs:735)
+#### latest Approval Path Enablement (yawl-hooks.test.mjs:735)
 
 - **Error:** `AssertionError: expected undefined to be defined`
 - **Root Cause:** Approval path validation logic returns undefined
 - **Impact:** Approval workflows broken
 
-#### 1.4.2 Loop Validation (yawl-patterns.test.mjs:540)
+#### latest Loop Validation (yawl-patterns.test.mjs:540)
 
 - **Error:** "Task 'process' has sequence join but 2 incoming flows"
 - **Root Cause:** Loop pattern validation too strict (false positive)
 - **Impact:** Cannot create valid loop workflows
 
-#### 1.4.3 Cancel Region (yawl-patterns.test.mjs:926)
+#### latest Cancel Region (yawl-patterns.test.mjs:926)
 
 - **Error:** `expected 0 to be 2` (tasks cancelled)
 - **Root Cause:** `findTasksInRegion` excludes enabled tasks
 - **Impact:** Cancellation doesn't propagate correctly
 
-#### 1.4.4 Time-Travel Reconstruction (yawl-patterns.test.mjs:1064)
+#### latest Time-Travel Reconstruction (yawl-patterns.test.mjs:1064)
 
 - **Error:** `expected undefined to be defined` (case object)
 - **Root Cause:** Reconstruction from receipts incomplete
 - **Impact:** Time-travel feature broken (CRITICAL)
 
-#### 1.4.5 Concurrent Cases (yawl-patterns.test.mjs:1140)
+#### latest Concurrent Cases (yawl-patterns.test.mjs:1140)
 
 - **Error:** `TypeError: Cannot read properties of undefined (reading 'data')`
 - **Root Cause:** Race condition in concurrent case state
 - **Impact:** Multi-case workflows corrupt state
 
-#### 1.4.6 Full Workflow Lifecycle (yawl-patterns.test.mjs:1405)
+#### latest Full Workflow Lifecycle (yawl-patterns.test.mjs:1405)
 
 - **Error:** `expected 'running' to be 'completed'`
 - **Root Cause:** Workflow completion check timing issue
 - **Impact:** Workflows don't complete properly
 
-#### 1.4.7 Resource Contention (yawl-patterns.test.mjs:1498)
+#### latest Resource Contention (yawl-patterns.test.mjs:1498)
 
 - **Error:** "No available resources for role specialist"
 - **Root Cause:** Resource allocation logic defect
 - **Impact:** Resource-bound workflows fail
 
-#### 1.4.8 WP20: Cancel Case (yawl-patterns.test.mjs:1737)
+#### latest WP20: Cancel Case (yawl-patterns.test.mjs:1737)
 
-- **Error:** `expected 0 to be 2` (duplicate of 1.4.3)
+- **Error:** `expected 0 to be 2` (duplicate of latest)
 - **Root Cause:** Same as cancel region issue
 - **Impact:** WP20 pattern broken
 
@@ -230,7 +230,7 @@ export function initMetrics(config = {}) {
 
 ---
 
-### 1.5 Missing Build Configurations
+### latest Missing Build Configurations
 
 **Evidence:**
 
@@ -277,21 +277,21 @@ export default defineBuildConfig({
 
 ---
 
-### 1.6 Hooks Package Coverage Gap (13.1% → 80%)
+### latest Hooks Package Coverage Gap (latest% → 80%)
 
 **Evidence:**
 
 ```bash
 # RAN: timeout 8s pnpm test:hooks
-# OUTPUT: 108 tests pass, 13.1% coverage
-# ANALYSIS: 19 source files, 2 test files = 10.5% test ratio
+# OUTPUT: 108 tests pass, latest% coverage
+# ANALYSIS: 19 source files, 2 test files = latest% test ratio
 ```
 
 **Specification:**
 
-- **Current Coverage:** 13.1% (86.9% uncovered)
+- **Current Coverage:** latest% (latest% uncovered)
 - **Target Coverage:** 80%+
-- **Gap:** 66.9 percentage points
+- **Gap:** latest percentage points
 - **Uncovered Critical Modules:**
   - hook-engine.mjs (354 lines, 0% coverage) - CRITICAL
   - rule-evaluator.mjs (721 lines, 0% coverage) - CRITICAL
@@ -315,7 +315,7 @@ export default defineBuildConfig({
 
 ---
 
-### 1.7 OTEL Validation Coverage Gap (0% → 70%)
+### latest OTEL Validation Coverage Gap (0% → 70%)
 
 **Evidence:**
 
@@ -351,7 +351,7 @@ export default defineBuildConfig({
 
 ---
 
-### 1.8 Streaming Tests Reliability Gap (58% → 100%)
+### latest Streaming Tests Reliability Gap (58% → 100%)
 
 **Evidence:**
 
@@ -398,7 +398,7 @@ export default defineBuildConfig({
 
 ## PART 2: PSEUDOCODE (Design Algorithms)
 
-### 2.1 Hooks Integration Test Suite Algorithm
+### latest Hooks Integration Test Suite Algorithm
 
 ```javascript
 /**
@@ -438,7 +438,7 @@ describe('Policy Pack Loading', () => {
     // ARRANGE
     const policyPack = {
       name: 'governance-pack',
-      version: '1.0.0',
+      version: 'latest',
       rules: [{ id: 'rule-1', sparql: 'ASK WHERE { ?s ?p ?o }' }],
     };
 
@@ -514,12 +514,12 @@ describe('Concurrency', () => {
 ```
 
 **Estimated LoC:** 200 lines
-**Expected Coverage:** 13.1% → 65%+
+**Expected Coverage:** latest% → 65%+
 **Effort:** 2 hours (Big Bang 80/20: one-pass implementation)
 
 ---
 
-### 2.2 YAWL Test Fixes Algorithm
+### latest YAWL Test Fixes Algorithm
 
 ```javascript
 /**
@@ -631,12 +631,12 @@ class YawlEngine {
 ```
 
 **Estimated LoC:** 300 lines (fixes + refactoring)
-**Expected Pass Rate:** 97.3% → 100%
+**Expected Pass Rate:** latest% → 100%
 **Effort:** 3 hours (TDD: Red → Green → Refactor for each test)
 
 ---
 
-### 2.3 Federation Metrics Implementation
+### latest Federation Metrics Implementation
 
 ```javascript
 /**
@@ -758,7 +758,7 @@ export function initMetrics(config = {}) {
 
 ---
 
-### 2.4 Streaming Tests Conversion Algorithm
+### latest Streaming Tests Conversion Algorithm
 
 ```javascript
 /**
@@ -834,19 +834,19 @@ describe('N3 Streaming Parser', () => {
 
 ## PART 3: ARCHITECTURE (Plan Structure)
 
-### 3.1 Dependency Graph
+### latest Dependency Graph
 
 ```
 Phase 1 (P0 Blockers - Must Complete Sequentially)
-├─ 1.1 Install @dagrejs/graphlib
+├─ latest Install @dagrejs/graphlib
 │   └─ No dependencies
-├─ 1.2 Fix E2E test config
+├─ latest Fix E2E test config
 │   └─ No dependencies
-├─ 1.3 Create metrics.mjs
+├─ latest Create metrics.mjs
 │   └─ No dependencies
-├─ 1.4 Fix YAWL tests
-│   └─ No dependencies (but benefits from 1.3)
-└─ 1.5 Add build configs
+├─ latest Fix YAWL tests
+│   └─ No dependencies (but benefits from latest)
+└─ latest Add build configs
     └─ No dependencies
 
 Phase 1 Validation Gate
@@ -854,11 +854,11 @@ Phase 1 Validation Gate
 └─ Must Pass: lint, test:fast, build
 
 Phase 2 (P1 High-Value - Can Execute in Parallel)
-├─ 2.1 Hooks Integration Suite
+├─ latest Hooks Integration Suite
 │   └─ Depends on: Phase 1 complete
-├─ 2.2 OTEL Validation Suite
+├─ latest OTEL Validation Suite
 │   └─ Depends on: Phase 1 complete
-└─ 2.3 Streaming Tests Fix
+└─ latest Streaming Tests Fix
     └─ Depends on: Phase 1 complete
 
 Phase 2 Validation Gate
@@ -866,7 +866,7 @@ Phase 2 Validation Gate
 └─ Must Pass: OTEL ≥80/100, tests 100%, coverage ≥70%
 ```
 
-### 3.2 File Structure
+### latest File Structure
 
 ```
 /home/user/unrdf/
@@ -896,7 +896,7 @@ Phase 2 Validation Gate
 └─ SPARC-IMPLEMENTATION-PLAN.md (THIS FILE)
 ```
 
-### 3.3 Testing Strategy (TDD Workflow)
+### latest Testing Strategy (TDD Workflow)
 
 **Red → Green → Refactor Cycle:**
 
@@ -950,13 +950,13 @@ timeout 5s pnpm test:yawl -- -t "Cancel Region"
 
 ## PART 4: REFINEMENT (TDD Implementation)
 
-### 4.1 Phase 1 Implementation Sequence
+### latest Phase 1 Implementation Sequence
 
 **Duration:** 90 minutes
 **Goal:** Fix all P0 blockers
 **Validation:** lint clean, tests pass, build complete
 
-#### Task 1.1: Install Missing Dependency (5 min)
+#### Task latest: Install Missing Dependency (5 min)
 
 **RED:**
 
@@ -976,7 +976,7 @@ pnpm add @dagrejs/graphlib
 
 # Verify tests pass
 timeout 5s pnpm test
-# Expected: ✅ 17 passed, 63.6% coverage
+# Expected: ✅ 17 passed, latest% coverage
 ```
 
 **REFACTOR:**
@@ -989,7 +989,7 @@ cat package.json | grep "graphlib"
 
 ---
 
-#### Task 1.2: Fix E2E Test Configuration (30 min)
+#### Task latest: Fix E2E Test Configuration (30 min)
 
 **RED:**
 
@@ -1050,7 +1050,7 @@ timeout 10s pnpm test
 
 ---
 
-#### Task 1.3: Create Federation Metrics Module (15 min)
+#### Task latest: Create Federation Metrics Module (15 min)
 
 **RED:**
 
@@ -1064,9 +1064,9 @@ timeout 5s pnpm test
 **GREEN:**
 
 ```bash
-# Create metrics.mjs using pseudocode from 2.3
+# Create metrics.mjs using pseudocode from latest
 cat > src/federation/metrics.mjs << 'EOF'
-[PSEUDOCODE FROM SECTION 2.3]
+[PSEUDOCODE FROM SECTION latest]
 EOF
 
 # Verify tests run (may still fail for other reasons)
@@ -1084,7 +1084,7 @@ timeout 5s pnpm test
 
 ---
 
-#### Task 1.4: Fix YAWL Test Failures (60 min)
+#### Task latest: Fix YAWL Test Failures (60 min)
 
 **RED (Verify all 8 failures):**
 
@@ -1177,7 +1177,7 @@ timeout 10s pnpm test:yawl
 
 ---
 
-#### Task 1.5: Add Build Configurations (20 min)
+#### Task latest: Add Build Configurations (20 min)
 
 **RED:**
 
@@ -1229,7 +1229,7 @@ ls -la /home/user/unrdf/packages/hooks/dist
 
 ---
 
-### 4.2 Phase 1 Validation Gate
+### latest Phase 1 Validation Gate
 
 **CRITICAL:** Must pass ALL criteria before Phase 2
 
@@ -1272,13 +1272,13 @@ echo "Production Readiness: 85/100 (estimated)"
 
 ---
 
-### 4.3 Phase 2 Implementation Sequence
+### latest Phase 2 Implementation Sequence
 
 **Duration:** 6 hours
 **Goal:** Add critical test coverage, fix streaming
 **Validation:** OTEL ≥80/100, coverage ≥70%, tests 100% pass
 
-#### Task 2.1: Hooks Integration Test Suite (2 hours)
+#### Task latest: Hooks Integration Test Suite (2 hours)
 
 **RED:**
 
@@ -1286,7 +1286,7 @@ echo "Production Readiness: 85/100 (estimated)"
 # Verify low coverage
 cd /home/user/unrdf/packages/hooks
 timeout 5s pnpm test -- --coverage
-# Expected: 13.1% coverage
+# Expected: latest% coverage
 ```
 
 **GREEN (Write 5 essential tests):**
@@ -1294,7 +1294,7 @@ timeout 5s pnpm test -- --coverage
 ```bash
 # Create test file
 cat > test/hook-engine-integration.test.mjs << 'EOF'
-[PSEUDOCODE FROM SECTION 2.1]
+[PSEUDOCODE FROM SECTION latest]
 EOF
 
 # Run tests (should pass)
@@ -1303,7 +1303,7 @@ timeout 10s pnpm test
 
 # Check coverage
 timeout 10s pnpm test -- --coverage
-# Expected: 13.1% → 65%+ coverage
+# Expected: latest% → 65%+ coverage
 ```
 
 **REFACTOR:**
@@ -1316,7 +1316,7 @@ timeout 10s pnpm test -- --coverage
 
 ---
 
-#### Task 2.2: OTEL Validation Test Suite (1.5 hours)
+#### Task latest: OTEL Validation Test Suite (latest hours)
 
 **RED:**
 
@@ -1383,7 +1383,7 @@ timeout 10s pnpm -C packages/validation test -- --coverage
 
 ---
 
-#### Task 2.3: Fix Streaming Tests (2 hours)
+#### Task latest: Fix Streaming Tests (2 hours)
 
 **RED:**
 
@@ -1399,7 +1399,7 @@ timeout 10s pnpm test
 For EACH failing test:
 
 1. Identify test using `done` callback
-2. Convert to async/await pattern (from pseudocode 2.4)
+2. Convert to async/await pattern (from pseudocode latest)
 3. Run test: verify passes
 4. Next test
 
@@ -1438,7 +1438,7 @@ timeout 10s pnpm test
 
 ---
 
-### 4.4 Phase 2 Validation Gate
+### latest Phase 2 Validation Gate
 
 ```bash
 # Run from /home/user/unrdf
@@ -1470,7 +1470,7 @@ echo "Production Readiness: 92/100 (estimated)"
 
 ## PART 5: COMPLETION (Validate Implementation)
 
-### 5.1 Success Metrics
+### latest Success Metrics
 
 | Metric             | Baseline | Target   | Measurement                   |
 | ------------------ | -------- | -------- | ----------------------------- |
@@ -1479,11 +1479,11 @@ echo "Production Readiness: 92/100 (estimated)"
 | **Build Time**     | TIMEOUT  | <30s     | `time pnpm build`             |
 | **Lint Status**    | FAILED   | 0 errors | `pnpm lint`                   |
 | **Examples**       | 1/3 work | 3/3 work | `node examples/*.mjs`         |
-| **Hooks Coverage** | 13.1%    | 80%+     | `pnpm test:hooks --coverage`  |
+| **Hooks Coverage** | latest%    | 80%+     | `pnpm test:hooks --coverage`  |
 | **OTEL Coverage**  | 0%       | 70%+     | Coverage report               |
 | **Streaming Pass** | 58%      | 100%     | `pnpm test:streaming`         |
 
-### 5.2 Evidence Requirements (Adversarial PM)
+### latest Evidence Requirements (Adversarial PM)
 
 **Before declaring ANY phase complete, MUST provide:**
 
@@ -1493,7 +1493,7 @@ echo "Production Readiness: 92/100 (estimated)"
    # Example evidence:
    $ timeout 5s pnpm test:yawl
    ✅ 292 passed (100%)
-   Duration: 2.73s
+   Duration: latests
    ```
 
 2. **File Counts** (not "~X files")
@@ -1507,7 +1507,7 @@ echo "Production Readiness: 92/100 (estimated)"
 
    ```bash
    $ pnpm test:hooks -- --coverage | grep "All files"
-   All files | 82.31% | ...
+   All files | latest% | ...
    # Specific percentage ≥80%
    ```
 
@@ -1518,7 +1518,7 @@ echo "Production Readiness: 92/100 (estimated)"
    # Actual score ≥80
    ```
 
-### 5.3 Adversarial PM Checklist
+### latest Adversarial PM Checklist
 
 **Claims vs Reality:**
 
@@ -1550,7 +1550,7 @@ echo "Production Readiness: 92/100 (estimated)"
 
 ---
 
-### 5.4 Final Validation Commands
+### latest Final Validation Commands
 
 **Copy-Paste Ready (Run All):**
 
@@ -1661,7 +1661,7 @@ echo "  Phase 2 Complete: 92/100"
 
 ---
 
-### 5.5 Production Readiness Scorecard
+### latest Production Readiness Scorecard
 
 **Current State → Target State:**
 
@@ -1672,7 +1672,7 @@ echo "  Phase 2 Complete: 92/100"
 | **Linting**         | ❌ Errors     | ✅ Clean      | ✅ Clean      | Phase 1  |
 | **Build**           | ❌ Timeout    | ✅ <30s       | ✅ <30s       | Phase 1  |
 | **Examples**        | ❌ 1/3 work   | ✅ 3/3 work   | ✅ 3/3 work   | Phase 1  |
-| **Hooks Coverage**  | ⚠️ 13.1%      | ⚠️ 13.1%      | ✅ 80%+       | Phase 2  |
+| **Hooks Coverage**  | ⚠️ latest%      | ⚠️ latest%      | ✅ 80%+       | Phase 2  |
 | **OTEL Coverage**   | ⚠️ 0%         | ⚠️ 0%         | ✅ 70%+       | Phase 2  |
 | **Streaming Tests** | ⚠️ 58%        | ⚠️ 58%        | ✅ 100%       | Phase 2  |
 | **OTEL Score**      | 83/100        | 85/100        | 100/100       | Phase 2  |
@@ -1784,33 +1784,33 @@ export function newFeature() {
 
 ### Phase 1 Timeline (90 minutes)
 
-- **Task 1.1:** Install dependency - 5 min
-- **Task 1.2:** Fix E2E tests - 30 min
-- **Task 1.3:** Create metrics.mjs - 15 min
-- **Task 1.4:** Fix YAWL tests - 60 min
+- **Task latest:** Install dependency - 5 min
+- **Task latest:** Fix E2E tests - 30 min
+- **Task latest:** Create metrics.mjs - 15 min
+- **Task latest:** Fix YAWL tests - 60 min
   - Cancel region: 15 min
   - Time-travel: 15 min
   - Remaining 6: 30 min
-- **Task 1.5:** Add build configs - 20 min
+- **Task latest:** Add build configs - 20 min
 - **Validation:** 10 min
 - **Total:** 90 minutes
 
 ### Phase 2 Timeline (6 hours)
 
-- **Task 2.1:** Hooks integration suite - 2 hours
+- **Task latest:** Hooks integration suite - 2 hours
   - Write 5 tests: 1 hour
   - Run and debug: 30 min
   - Refactor: 30 min
-- **Task 2.2:** OTEL validation suite - 1.5 hours
+- **Task latest:** OTEL validation suite - latest hours
   - Write 3 test suites: 1 hour
   - Integration: 30 min
-- **Task 2.3:** Fix streaming tests - 2 hours
-  - Convert 20 tests: 1.5 hours
+- **Task latest:** Fix streaming tests - 2 hours
+  - Convert 20 tests: latest hours
   - Debug: 30 min
 - **Validation:** 30 min
 - **Total:** 6 hours
 
-**Grand Total:** 7.5 hours (within 8-12 hour estimate)
+**Grand Total:** latest hours (within 8-12 hour estimate)
 
 ---
 
@@ -1844,4 +1844,4 @@ export function newFeature() {
 
 **END OF SPARC IMPLEMENTATION PLAN**
 
-**Next Action:** Execute Phase 1, Task 1.1 (Install @dagrejs/graphlib)
+**Next Action:** Execute Phase 1, Task latest (Install @dagrejs/graphlib)

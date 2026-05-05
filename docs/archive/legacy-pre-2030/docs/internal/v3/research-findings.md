@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-UNRDF v2.1.1 is a production-ready autonomic RDF framework with **Knowledge Hooks**, **policy pack governance**, and **cryptographic audit trails**. The v3 release will focus on **CLI maturity** and **sidecar deployment patterns** to enable enterprise adoption at Fortune 500 scale.
+UNRDF latest is a production-ready autonomic RDF framework with **Knowledge Hooks**, **policy pack governance**, and **cryptographic audit trails**. The v3 release will focus on **CLI maturity** and **sidecar deployment patterns** to enable enterprise adoption at Fortune 500 scale.
 
 ### Critical Findings (80/20 Analysis)
 
@@ -17,7 +17,7 @@ UNRDF v2.1.1 is a production-ready autonomic RDF framework with **Knowledge Hook
 |-----------|--------|---------|-------------|------|
 | **CLI v2 (citty-based)** | ✅ Architecture complete, partial implementation | 40% | **P0** | Medium |
 | **KGC Sidecar (gRPC)** | ✅ Architecture complete, core features implemented | 35% | **P0** | Low |
-| **Knowledge Hooks** | ✅ Production-ready (v2.1.1) | 15% | P1 | Low |
+| **Knowledge Hooks** | ✅ Production-ready (latest) | 15% | P1 | Low |
 | **Documentation** | ⚠️ Comprehensive but fragmented | 5% | P1 | Medium |
 | **Testing Infrastructure** | ✅ Vitest + Testcontainers | 5% | P2 | Low |
 
@@ -30,9 +30,9 @@ UNRDF v2.1.1 is a production-ready autonomic RDF framework with **Knowledge Hook
 ### 1. Project Overview
 
 **Name**: unrdf (Autonomic RDF Framework)
-**Version**: v2.1.1
+**Version**: latest
 **License**: MIT
-**Node**: >=18.0.0
+**Node**: >=latest
 **Package Manager**: pnpm (required)
 
 **Core Value Proposition**:
@@ -183,7 +183,7 @@ unrdf/
    - Error tracking and memory monitoring
    - Cache statistics and backpressure monitoring
 
-**Performance Targets (v2.1.1)**:
+**Performance Targets (latest)**:
 - ✅ p50 pre-hook pipeline ≤ 200 µs
 - ✅ p99 ≤ 2 ms (10k triples store, afterHashOnly=true)
 - ✅ Receipt write ≤ 5 ms median (no canonicalization)
@@ -518,7 +518,7 @@ unrdf context use prod
 unrdf context list
 ```
 
-**2. Embedded Pattern** (Current v2.1.1):
+**2. Embedded Pattern** (Current latest):
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -733,7 +733,7 @@ unrdf context delete staging
 // ~/.unrdf/plugins/my-plugin/index.mjs
 export default {
   name: 'my-plugin',
-  version: '1.0.0',
+  version: 'latest',
 
   async init(config) {
     console.log('Plugin initialized with config:', config);
@@ -1100,7 +1100,7 @@ unrdf --stack-trace hook eval broken.json
 
 ## Conclusion
 
-UNRDF v2.1.1 is a **production-ready autonomic RDF framework** with unique advantages:
+UNRDF latest is a **production-ready autonomic RDF framework** with unique advantages:
 - ✅ **Knowledge Hooks** - Reactive intelligence with 6 predicate types
 - ✅ **Policy-as-Code** - Versioned governance units
 - ✅ **Cryptographic Audit Trails** - Git-anchored lockchain
@@ -1136,17 +1136,17 @@ UNRDF v2.1.1 is a **production-ready autonomic RDF framework** with unique advan
 
 | Layer | Technology | Version | Justification |
 |-------|-----------|---------|---------------|
-| **RDF Store** | N3.Store | ^1.17.0 | W3C compliant, performant, battle-tested |
-| **Query Engine** | Comunica | ^3.0.0 | Most advanced SPARQL engine, federated query support |
-| **Validation** | rdf-validate-shacl | ^0.6.5 | W3C SHACL standard, comprehensive validation |
-| **Canonicalization** | rdf-canonize | ^2.0.0 | URDNA2015 for cryptographic integrity |
-| **Runtime Validation** | Zod | ^3.22.0 | Type-safe schemas, excellent error messages |
-| **Context Management** | unctx | ^1.0.0 | Isolated stores, no global state pollution |
-| **CLI Framework** | citty | ^0.1.6 | Type-safe, composable, excellent testing utilities |
-| **gRPC** | @grpc/grpc-js | ^1.14.0 | Node.js native gRPC, no native bindings |
-| **Observability** | @opentelemetry/sdk-node | ^0.45.0 | Industry standard, Jaeger/Prometheus support |
-| **Testing** | Vitest | ^1.0.0 | Fast, ESM-native, coverage reporting |
-| **Containers** | Testcontainers | ^10.0.0 | E2E testing with real services |
+| **RDF Store** | N3.Store | ^latest | W3C compliant, performant, battle-tested |
+| **Query Engine** | Comunica | ^latest | Most advanced SPARQL engine, federated query support |
+| **Validation** | rdf-validate-shacl | ^latest | W3C SHACL standard, comprehensive validation |
+| **Canonicalization** | rdf-canonize | ^latest | URDNA2015 for cryptographic integrity |
+| **Runtime Validation** | Zod | ^latest | Type-safe schemas, excellent error messages |
+| **Context Management** | unctx | ^latest | Isolated stores, no global state pollution |
+| **CLI Framework** | citty | ^latest | Type-safe, composable, excellent testing utilities |
+| **gRPC** | @grpc/grpc-js | ^latest | Node.js native gRPC, no native bindings |
+| **Observability** | @opentelemetry/sdk-node | ^latest | Industry standard, Jaeger/Prometheus support |
+| **Testing** | Vitest | ^latest | Fast, ESM-native, coverage reporting |
+| **Containers** | Testcontainers | ^latest | E2E testing with real services |
 
 ### B. File Size Analysis
 
@@ -1213,7 +1213,7 @@ All files                     78.45      72.31      81.23      79.12
 
 ### E. Performance Benchmarks
 
-**Knowledge Engine** (v2.1.1):
+**Knowledge Engine** (latest):
 ```
 Hook Evaluation (ASK predicate)
   p50:  0.18ms  ✅ (target: <0.2ms)

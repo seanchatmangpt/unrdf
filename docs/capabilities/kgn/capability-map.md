@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/kgn
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -30,10 +30,10 @@ Deterministic Nunjucks template system with custom filters and frontmatter suppo
 
 - `@unrdf/core`: workspace:*
 - `@unrdf/test-utils`: workspace:*
-- `fs-extra`: ^11.3.1
-- `gray-matter`: ^4.0.3
-- `nunjucks`: ^3.2.4
-- `yaml`: ^2.8.1
+- `fs-extra`: ^latest
+- `gray-matter`: ^latest
+- `nunjucks`: ^latest
+- `yaml`: ^latest
 
 ### Exports
 

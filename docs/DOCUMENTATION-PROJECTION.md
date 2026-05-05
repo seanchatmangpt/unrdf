@@ -289,7 +289,7 @@ const receipts = [
     receiptHash: 'abc123...',
     decision: 'allow',
     epoch: 'τ_2025_12_26_1200_000',
-    generatedAtTime: '2025-12-26T12:00:00.000Z',
+    generatedAtTime: '2025-12-26T12:00:latestZ',
     inputHashes: {
       ontologyReleases: ['hash1'],
       deltaCapsule: 'deltahash',
@@ -321,7 +321,7 @@ import { ProjectionPipeline } from '@unrdf/projection';
 
 const pipeline = new ProjectionPipeline({
   projectName: 'UNRDF',
-  version: '1.0.0',
+  version: 'latest',
   audiences: ['user', 'contributor', 'operator', 'auditor'],
 });
 
@@ -422,7 +422,7 @@ for (const receipt of result.receipts) {
   //   projectorType: 'jsdoc',
   //   inputHash: 'abc...',
   //   outputHash: 'def...',
-  //   timestamp: '2025-12-26T12:00:00.000Z',
+  //   timestamp: '2025-12-26T12:00:latestZ',
   //   documentCount: 5,
   //   deterministic: true,
   // }
@@ -529,8 +529,8 @@ Output:
 # Documentation Projection Report
 
 **Project**: UNRDF
-**Version**: 1.0.0
-**Generated**: 2025-12-26T12:00:00.000Z
+**Version**: latest
+**Generated**: 2025-12-26T12:00:latestZ
 
 ---
 

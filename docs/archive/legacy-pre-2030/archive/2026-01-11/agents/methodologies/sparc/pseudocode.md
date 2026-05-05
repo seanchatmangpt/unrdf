@@ -210,7 +210,7 @@ BEGIN
     
     // Boost by recency
     daysSinceUpdate ← (CurrentDate - item.updatedAt).days
-    recencyBoost ← 1 / (1 + daysSinceUpdate * 0.1)
+    recencyBoost ← 1 / (1 + daysSinceUpdate * latest)
     score ← score * recencyBoost
     
     RETURN score

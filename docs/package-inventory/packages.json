@@ -2,7 +2,7 @@
   {
     "name": "@unrdf/atomvm",
     "dir": "atomvm",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
     "exports": {
       "main": {
@@ -38,8 +38,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 10,
@@ -49,7 +49,7 @@
   {
     "name": "@unrdf/blockchain",
     "dir": "blockchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
     "exports": {
       "main": {
@@ -103,7 +103,7 @@
   {
     "name": "@unrdf/caching",
     "dir": "caching",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Multi-layer caching system for RDF queries with Redis and LRU",
     "exports": {
       "main": {
@@ -155,8 +155,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 4,
@@ -166,7 +166,7 @@
   {
     "name": "@unrdf/cli",
     "dir": "cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
     "exports": {
       "main": {
@@ -216,7 +216,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 33,
@@ -226,7 +226,7 @@
   {
     "name": "@unrdf/collab",
     "dir": "collab",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
     "exports": {
       "main": {
@@ -271,7 +271,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 16,
@@ -281,7 +281,7 @@
   {
     "name": "@unrdf/composables",
     "dir": "composables",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
     "exports": {
       "main": {
@@ -330,8 +330,8 @@
       "peer": ["vue"]
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 16,
@@ -341,7 +341,7 @@
   {
     "name": "@unrdf/consensus",
     "dir": "consensus",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Production-grade Raft consensus for distributed workflow coordination",
     "exports": {
       "main": {
@@ -396,7 +396,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -406,7 +406,7 @@
   {
     "name": "@unrdf/core",
     "dir": "core",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
     "exports": {
       "main": {
@@ -513,7 +513,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 58,
@@ -523,7 +523,7 @@
   {
     "name": "@unrdf/dark-matter",
     "dir": "dark-matter",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
     "exports": {
       "main": {
@@ -558,7 +558,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 9,
@@ -568,7 +568,7 @@
   {
     "name": "@unrdf/diataxis-kit",
     "dir": "diataxis-kit",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
     "exports": {
       "main": {
@@ -612,7 +612,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 9,
@@ -622,7 +622,7 @@
   {
     "name": "docs",
     "dir": "docs",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "",
     "exports": {},
     "entryPoints": [],
@@ -677,7 +677,7 @@
   {
     "name": "@unrdf/domain",
     "dir": "domain",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Domain models and types for UNRDF",
     "exports": {
       "main": {
@@ -704,8 +704,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 11,
@@ -715,7 +715,7 @@
   {
     "name": "@unrdf/engine-gateway",
     "dir": "engine-gateway",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
     "exports": {
       "main": {
@@ -761,8 +761,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 4,
@@ -772,7 +772,7 @@
   {
     "name": "@unrdf/federation",
     "dir": "federation",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
     "exports": {
       "main": {
@@ -824,7 +824,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 11,
@@ -834,7 +834,7 @@
   {
     "name": "@unrdf/fusion",
     "dir": "fusion",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
     "exports": {
       "main": {
@@ -880,7 +880,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 13,
@@ -890,7 +890,7 @@
   {
     "name": "@unrdf/graph-analytics",
     "dir": "graph-analytics",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
     "exports": {
       "main": {
@@ -933,7 +933,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -943,7 +943,7 @@
   {
     "name": "@unrdf/hooks",
     "dir": "hooks",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
     "exports": {
       "main": {
@@ -984,7 +984,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 31,
@@ -994,7 +994,7 @@
   {
     "name": "@unrdf/integration-tests",
     "dir": "integration-tests",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "Comprehensive integration tests for UNRDF multi-package workflows",
     "exports": {},
     "entryPoints": [],
@@ -1022,8 +1022,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 0,
@@ -1033,7 +1033,7 @@
   {
     "name": "@unrdf/kgc-4d",
     "dir": "kgc-4d",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
     "exports": {
       "main": {
@@ -1095,8 +1095,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 24,
@@ -1106,7 +1106,7 @@
   {
     "name": "@unrdf/kgc-claude",
     "dir": "kgc-claude",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
     "exports": {
       "main": {
@@ -1179,8 +1179,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 9,
@@ -1190,7 +1190,7 @@
   {
     "name": "@unrdf/kgc-cli",
     "dir": "kgc-cli",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
     "exports": {
       "main": {
@@ -1243,7 +1243,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 98,
@@ -1253,7 +1253,7 @@
   {
     "name": "@unrdf/kgc-substrate",
     "dir": "kgc-substrate",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
     "exports": {
       "main": {
@@ -1288,8 +1288,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 8,
@@ -1299,7 +1299,7 @@
   {
     "name": "@unrdf/kgn",
     "dir": "kgn",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
     "exports": {
       "main": {
@@ -1384,8 +1384,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 58,
@@ -1395,7 +1395,7 @@
   {
     "name": "@unrdf/knowledge-engine",
     "dir": "knowledge-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
     "exports": {
       "main": {
@@ -1483,7 +1483,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 57,
@@ -1493,7 +1493,7 @@
   {
     "name": "@unrdf/ml-inference",
     "dir": "ml-inference",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
     "exports": {
       "main": {
@@ -1545,7 +1545,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -1555,7 +1555,7 @@
   {
     "name": "@unrdf/ml-versioning",
     "dir": "ml-versioning",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
     "exports": {
       "main": {
@@ -1597,7 +1597,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 3,
@@ -1607,7 +1607,7 @@
   {
     "name": "@unrdf/nextra-docs",
     "dir": "nextra",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
     "exports": {},
     "entryPoints": [],
@@ -1618,8 +1618,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=20.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 0,
@@ -1629,7 +1629,7 @@
   {
     "name": "@unrdf/observability",
     "dir": "observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
     "exports": {
       "main": {
@@ -1697,7 +1697,7 @@
   {
     "name": "@unrdf/oxigraph",
     "dir": "oxigraph",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
     "exports": {
       "main": {
@@ -1732,7 +1732,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -1742,7 +1742,7 @@
   {
     "name": "@unrdf/project-engine",
     "dir": "project-engine",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
     "exports": {
       "main": {
@@ -1810,7 +1810,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 37,
@@ -1820,7 +1820,7 @@
   {
     "name": "@unrdf/rdf-graphql",
     "dir": "rdf-graphql",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
     "exports": {
       "main": {
@@ -1880,7 +1880,7 @@
   {
     "name": "@unrdf/semantic-search",
     "dir": "semantic-search",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
     "exports": {
       "main": {
@@ -1919,7 +1919,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 7,
@@ -1929,7 +1929,7 @@
   {
     "name": "@unrdf/serverless",
     "dir": "serverless",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
     "exports": {
       "main": {
@@ -1986,7 +1986,7 @@
       "peer": ["@aws-sdk/client-dynamodb", "@aws-sdk/client-lambda"]
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 9,
@@ -1996,7 +1996,7 @@
   {
     "name": "@unrdf/streaming",
     "dir": "streaming",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
     "exports": {
       "main": {
@@ -2040,7 +2040,7 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0"
+      "node": ">=latest"
     },
     "fileStats": {
       "count": 9,
@@ -2050,7 +2050,7 @@
   {
     "name": "@unrdf/test-utils",
     "dir": "test-utils",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "Testing utilities for UNRDF development",
     "exports": {
       "main": {
@@ -2086,8 +2086,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 3,
@@ -2097,7 +2097,7 @@
   {
     "name": "@unrdf/validation",
     "dir": "validation",
-    "version": "5.0.1",
+    "version": "latest",
     "description": "OTEL validation framework for UNRDF development",
     "exports": {
       "main": {
@@ -2136,8 +2136,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 8,
@@ -2147,7 +2147,7 @@
   {
     "name": "@unrdf/yawl",
     "dir": "yawl",
-    "version": "5.0.0",
+    "version": "latest",
     "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
     "exports": {
       "main": {
@@ -2233,8 +2233,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 97,
@@ -2244,7 +2244,7 @@
   {
     "name": "@unrdf/yawl-ai",
     "dir": "yawl-ai",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
     "exports": {
       "main": {
@@ -2287,8 +2287,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -2298,7 +2298,7 @@
   {
     "name": "@unrdf/yawl-api",
     "dir": "yawl-api",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
     "exports": {
       "main": {
@@ -2338,8 +2338,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 2,
@@ -2349,7 +2349,7 @@
   {
     "name": "@unrdf/yawl-durable",
     "dir": "yawl-durable",
-    "version": "0.1.0",
+    "version": "latest",
     "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
     "exports": {
       "main": {
@@ -2396,7 +2396,7 @@
   {
     "name": "@unrdf/yawl-kafka",
     "dir": "yawl-kafka",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
     "exports": {
       "main": {
@@ -2435,8 +2435,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -2446,7 +2446,7 @@
   {
     "name": "@unrdf/yawl-langchain",
     "dir": "yawl-langchain",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
     "exports": {
       "main": {
@@ -2489,8 +2489,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 2,
@@ -2500,7 +2500,7 @@
   {
     "name": "@unrdf/yawl-observability",
     "dir": "yawl-observability",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
     "exports": {
       "main": {
@@ -2546,8 +2546,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 5,
@@ -2557,7 +2557,7 @@
   {
     "name": "@unrdf/yawl-queue",
     "dir": "yawl-queue",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Distributed YAWL workflow execution using BullMQ and Redis",
     "exports": {
       "main": {
@@ -2592,8 +2592,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 2,
@@ -2603,7 +2603,7 @@
   {
     "name": "@unrdf/yawl-realtime",
     "dir": "yawl-realtime",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
     "exports": {
       "main": {
@@ -2638,8 +2638,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 4,
@@ -2649,7 +2649,7 @@
   {
     "name": "@unrdf/yawl-viz",
     "dir": "yawl-viz",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
     "exports": {
       "main": {
@@ -2685,8 +2685,8 @@
       "peer": []
     },
     "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=7.0.0"
+      "node": ">=latest",
+      "pnpm": ">=latest"
     },
     "fileStats": {
       "count": 1,

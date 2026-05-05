@@ -1,7 +1,7 @@
 # Code Quality Analysis Report - @unrdf/kgc-cli
 
 **Date:** 2025-12-27
-**Package:** @unrdf/kgc-cli v5.0.1
+**Package:** @unrdf/kgc-cli vlatest
 **Branch:** claude/add-kgc-cli-package-LjlUD
 **Reviewer:** Code Quality Analyzer (Adversarial PM Mode)
 

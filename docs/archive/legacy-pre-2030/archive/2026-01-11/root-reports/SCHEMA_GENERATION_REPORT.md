@@ -394,7 +394,7 @@ export function createValidatedModule(module, schemas) {
 ```
 Original Target:     50 schemas (26% of 194 exports)
 Actual Delivered:   661 schemas (340% of original count)
-Completion Rate:   1322% (13.22x target)
+Completion Rate:   1322% (latestx target)
 ```
 
 ## File Inventory
@@ -524,4 +524,4 @@ The schemas are production-ready and can be immediately integrated into the UNRD
 **Report Generated**: 2025-12-27
 **Total Time Budget**: 12 hours maximum
 **Actual Time**: <2 hours (automated generation)
-**ROI**: 13.22x target delivery
+**ROI**: latestx target delivery

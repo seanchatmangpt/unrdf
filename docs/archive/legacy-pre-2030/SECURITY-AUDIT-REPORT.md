@@ -22,7 +22,7 @@ The codebase has **strong validation coverage** (691 Zod validations) but has **
 - Searched 3,490 "execute/query" patterns across all .mjs files
 - Only 3 references to SQL databases (mysql/postgres/sqlite) found
 - All are in comments or documentation, not actual SQL queries
-- 99.9% of execute/query patterns are SPARQL queries or function names
+- latest% of execute/query patterns are SPARQL queries or function names
 
 ```bash
 # Validation command

@@ -1,7 +1,7 @@
 # UNRDF 6.0 Release Notes
 
 **Release Date**: 2025-12-27
-**Version**: 6.0.0
+**Version**: latest
 **Status**: Production Ready
 
 Welcome to UNRDF 6.0 - the most significant release in UNRDF history, delivering 71.7x query performance improvements, receipt-driven operations, and a modern ESM-first architecture.
@@ -39,7 +39,7 @@ UNRDF represents a complete architectural reimagination of the UNRDF framework, 
 | Query Latency P50         | 1.151ms     | 0.013ms        | **88.7% reduction**    |
 | Memory per Query          | 18.07 MB    | 2.58 MB        | **85.7% reduction** 💾 |
 | Bundle Size               | 2.4 MB      | 1.4 MB         | **40% smaller**        |
-| Node.js Requirement       | ≥16.0.0     | ≥18.0.0        | Modern runtime         |
+| Node.js Requirement       | ≥1latest     | ≥latest        | Modern runtime         |
 
 ### Who Should Upgrade?
 
@@ -530,7 +530,7 @@ store.registerHook({ name: 'validate', ... }); // Per-store
 
 ### BC-10: Node.js Version Requirement (Impact: Medium)
 
-**Change**: Require Node.js ≥18.0.0 (from ≥16.0.0)
+**Change**: Require Node.js ≥latest (from ≥1latest)
 
 **Why?**
 
@@ -586,7 +586,7 @@ git commit -am "Pre-6.0 migration checkpoint"
 **Step 2: Install this version**
 
 ```bash
-pnpm add @unrdf/core@6.0.0 @unrdf/oxigraph@latest
+pnpm add @unrdf/core@latest @unrdf/oxigraph@latest
 ```
 
 **Step 3: Run Auto-Migration**
@@ -601,7 +601,7 @@ npx @unrdf/migrate migrate . --all
 {
   "type": "module",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=latest"
   }
 }
 ```
@@ -699,7 +699,7 @@ await store.addAll(quads); // 100,000 ops/sec
 
 ## Deprecations
 
-### Deprecated in 6.0.0 (Removed in 6.1)
+### Deprecated in latest (Removed in 6.1)
 
 1. **N3 Store Direct Imports**
 
@@ -995,7 +995,7 @@ We believe this version sets a new standard for RDF frameworks, combining cuttin
 
 ---
 
-**Version**: 6.0.0
+**Version**: latest
 **Release Date**: 2025-12-27
 **License**: MIT
 **Maintained By**: UNRDF Core Team

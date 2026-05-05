@@ -125,7 +125,7 @@ Create a configuration file referencing the templates:
 ```toml
 [project]
 name = "my-project"
-version = "1.0.0"
+version = "[VERSION]"
 
 [ontology]
 source = "schema.ttl"

@@ -12,9 +12,9 @@
 |---|-------|--------|---------|--------|
 | 1 | **24 failing tests** | Blocks CI/CD | hooks, kgc-4d, core | Debug & fix |
 | 2 | **Validation has 0 tests** | Core validation untested | validation | Add 75 tests |
-| 3 | **Knowledge engine 1.75% test ratio** | Reasoning engine untested | knowledge-engine | Add 90 tests |
+| 3 | **Knowledge engine latest% test ratio** | Reasoning engine untested | knowledge-engine | Add 90 tests |
 | 4 | **CLI 3% test ratio** | User-facing bugs | cli | Add 40 tests |
-| 5 | **Project engine 2.7% test ratio** | Core features untested | project-engine | Add 50 tests |
+| 5 | **Project engine latest% test ratio** | Core features untested | project-engine | Add 50 tests |
 | 6 | **Security modules 0% coverage** | Sandbox escape risk | knowledge-engine/security | Add 55 tests |
 | 7 | **Zero concurrency tests** | Race conditions undetected | core, hooks | Add 30 tests |
 | 8 | **edge-case-handler.mjs untested** | Edge cases unhandled (ironic!) | core | Add 25 tests |
@@ -46,7 +46,7 @@
 | **react** | 4 | 0 | 0% | 🚨 Critical |
 | **nextra** | 2 | 0 | 0% | 🚨 Critical |
 
-**Total:** 376 source files, 77 test files (20.5% ratio)
+**Total:** 376 source files, 77 test files (latest% ratio)
 
 ---
 
@@ -259,6 +259,6 @@ pnpm stryker run
 
 ---
 
-**Quick Ref Version:** 1.0
+**Quick Ref Version:** latest
 **Last Updated:** 2025-12-21
 **Next Review:** Weekly

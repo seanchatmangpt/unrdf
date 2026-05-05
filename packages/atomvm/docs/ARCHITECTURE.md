@@ -1,6 +1,6 @@
 # AtomVM Integration Architecture
 
-**Version:** 6.0.0
+**Version:** [VERSION]
 **Last Updated:** 2025-12-28
 **Status:** Production
 
@@ -68,7 +68,7 @@ AtomVM is a comprehensive framework for running BEAM bytecode (Erlang/Elixir) in
 │  │  │   Browser Runtime        │  │   Node.js Runtime        │     │ │
 │  │  │ ┌──────────────────────┐ │  │ ┌──────────────────────┐ │     │ │
 │  │  │ │ AtomVM WASM Loader   │ │  │ │ AtomVM Node Executor │ │     │ │
-│  │  │ │ (v0.6.6)             │ │  │ │ (v0.6.6)             │ │     │ │
+│  │  │ │ ([VERSION])             │ │  │ │ ([VERSION])             │ │     │ │
 │  │  │ └──────────────────────┘ │  │ └──────────────────────┘ │     │ │
 │  │  │ ┌──────────────────────┐ │  │ ┌──────────────────────┐ │     │ │
 │  │  │ │ Service Worker Mgr   │ │  │ │ Process Spawner      │ │     │ │
@@ -161,8 +161,8 @@ index.mjs (Public API)
 **External Dependencies:**
 - `message-validator.mjs` → `zod` (runtime validation)
 - `service-worker-manager.mjs` → `coi-serviceworker` (COI)
-- `atomvm-runtime.mjs` → AtomVM WASM binary (v0.6.6)
-- `node-runtime.mjs` → AtomVM Node.js binary (v0.6.6)
+- `atomvm-runtime.mjs` → AtomVM WASM binary ([VERSION])
+- `node-runtime.mjs` → AtomVM Node.js binary ([VERSION])
 
 **@unrdf Ecosystem:**
 - `@unrdf/oxigraph` - RDF store (used by oxigraph-bridge.mjs)
@@ -813,7 +813,7 @@ pnpm run build
 │                      ↓                               │
 │  ┌────────────────────────────────────────────────┐ │
 │  │ child_process.spawn()                          │ │
-│  │  → AtomVM-node-v0.6.6.js                       │ │
+│  │  → AtomVM-node-[VERSION].js                       │ │
 │  └────────────────────────────────────────────────┘ │
 └──────────────────────────────────────────────────────┘
 ```
@@ -891,8 +891,8 @@ await runtime.execute('/path/to/module.avm');
 ## What's Working
 
 ### ✅ Runtime Execution
-- [x] Browser WASM loading (v0.6.6)
-- [x] Node.js process spawning (v0.6.6)
+- [x] Browser WASM loading ([VERSION])
+- [x] Node.js process spawning ([VERSION])
 - [x] Cross-Origin-Isolation (service worker)
 - [x] State machine (Poka-yoke design)
 - [x] Roundtrip SLA tracking (<10ms, <0.1% error rate)
@@ -1021,7 +1021,7 @@ await runtime.execute('/path/to/module.avm');
 
 ---
 
-**Document Version:** 1.0.0
+**Document Version:** [VERSION]
 **Last Review:** 2025-12-28
 **Next Review:** 2026-01-28
 **Maintainers:** AtomVM Integration Team

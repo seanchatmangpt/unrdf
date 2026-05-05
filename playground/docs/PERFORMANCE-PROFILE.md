@@ -8,7 +8,7 @@
     "perf": "urn:playground:performance:",
     "xsd": "http://www.w3.org/2001/XMLSchema#"
   },
-  "@id": "urn:playground:performance-profile:v1.0.0",
+  "@id": "urn:playground:performance-profile:latest",
   "@type": "perf:PerformanceProfile"
 }
 ```

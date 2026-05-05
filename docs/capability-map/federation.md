@@ -1,8 +1,8 @@
 # @unrdf/federation Capability Map
 
-**Version**: 6.0.0
+**Version**: latest
 **Status**: Production Ready
-**Runtime**: Node.js ≥18.0.0
+**Runtime**: Node.js ≥latest
 **Last Updated**: 2025-12-28
 
 ---
@@ -28,8 +28,8 @@ import {
 ```
 
 **Dependencies**:
-- Required: `@unrdf/core` (workspace), `@unrdf/hooks` (workspace), `@comunica/query-sparql` (^3.2.4), `zod` (^4.1.13)
-- Optional: `prom-client` (^15.0.0) for Prometheus metrics
+- Required: `@unrdf/core` (workspace), `@unrdf/hooks` (workspace), `@comunica/query-sparql` (^latest), `zod` (^latest)
+- Optional: `prom-client` (^1latest) for Prometheus metrics
 
 **Evidence**:
 - Test Coverage: Not specified
@@ -253,7 +253,7 @@ timeout 5s pnpm --filter @unrdf/federation test
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: 2025-12-28
 - **Maintainer**: @unrdf/core-team
 - **Last Review**: 2025-12-28

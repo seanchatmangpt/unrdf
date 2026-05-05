@@ -169,7 +169,7 @@ try {
     metadata: {
       name: 'Integration Test Universe',
       description: 'Testing module integration',
-      version: '1.0.0'
+      version: '[VERSION]'
     }
   });
   console.log(`   ✅ Universe created: ${universe.id}`);

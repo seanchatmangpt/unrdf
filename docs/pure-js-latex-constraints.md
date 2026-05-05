@@ -11,7 +11,7 @@ This document defines constraints and architecture for compiling LaTeX to PDF us
 | Factor | Value | Impact |
 |--------|-------|--------|
 | Runtime | gVisor container on GCE | No shell-out to native TeX |
-| Node.js | v22.21.1 | Full WASM support, ESM native |
+| Node.js | latest | Full WASM support, ESM native |
 | Network | Egress proxy with JWT auth | Vendor dependencies or allowlist |
 | CPU | 16 cores (AVX-512) | Parallel compilation viable |
 | RAM | ~21 GB | Large documents feasible |

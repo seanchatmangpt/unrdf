@@ -97,18 +97,18 @@ return this.getWorkItemsByStatus(TaskStatus.ACTIVE);
 ## Test Results
 
 ### Before Fixes
-- **Pass Rate**: 325/420 (77.4%)
+- **Pass Rate**: 325/420 (latest%)
 - **Failures**: 95 tests
 - **Common Error**: "Task X is not running (status: running)" - logic error due to TaskStatus.RUNNING being undefined
 
 ### After Fixes
-- **Pass Rate**: 333/420 (79.3%)
+- **Pass Rate**: 333/420 (latest%)
 - **Failures**: 87 tests
 - **Improvement**: +8 tests passing
 
 ### Remaining Issues
 
-The fixes resolved the core status and UUID issues, but test pass rate (79.3%) is still below the 90% target. Remaining failures appear to be in:
+The fixes resolved the core status and UUID issues, but test pass rate (latest%) is still below the 90% target. Remaining failures appear to be in:
 
 1. **Pattern tests** - Downstream task enabling logic
 2. **Cancellation tests** - Missing `engine.timeoutTask()` method (test calls `timeoutWorkItem`)

@@ -11,7 +11,7 @@
   a owl:Ontology ;
   dc:title "UNRDF Test Universe" ;
   dc:description "Test ontology for UNRDF admission system" ;
-  owl:versionInfo "1.0.0" .
+  owl:versionInfo "latest" .
 
 # Industrial Substrate - Read-only foundation
 substrate:Entity

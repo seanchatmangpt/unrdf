@@ -1,6 +1,6 @@
 # V6 Grammar Closure Matrix
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Status**: Alpha Implementation
 

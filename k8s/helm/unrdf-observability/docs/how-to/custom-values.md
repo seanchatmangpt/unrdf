@@ -12,7 +12,7 @@ Create `values-dev.yaml`:
 namespace: unrdf-observability
 
 prometheus:
-  imageTag: v2.54.0
+  imageTag: latest
   retention: 7d
   resources:
     requests:
@@ -64,7 +64,7 @@ helm upgrade --install unrdf-observability k8s/helm/unrdf-observability \
 helm upgrade --install unrdf-observability k8s/helm/unrdf-observability \
   --namespace unrdf-observability \
   --set unrdf.enabled=true \
-  --set unrdf.imageTag=6.0.0-rc.1
+  --set unrdf.imageTag=latest-rc.1
 ```
 
 ## Disable the example app
@@ -84,7 +84,7 @@ helm upgrade --install unrdf-observability k8s/helm/unrdf-observability \
 | Shorter retention | `--set prometheus.retention=7d` |
 | Stronger Grafana password | `--set grafana.adminPassword=<pass>` |
 | Change MinIO credentials | `--set minio.rootUser=<user> --set minio.rootPassword=<pass>` |
-| Pin image version | `--set tempo.imageTag=v2.7.1` |
+| Pin image version | `--set tempo.imageTag=latest` |
 | More replicas | `--set prometheus.replicas=3` |
 
 ## See current values

@@ -153,7 +153,7 @@ app.use(requestLogger());
 
 const health = createHealthMiddleware({
   serviceName: 'unrdf-api',
-  version: '5.0.1',
+  version: '[VERSION]',
   dependencies: {
     database: async () => await db.ping()
   }

@@ -47,7 +47,7 @@
 
 5. **False Claims**
    - "Zero external dependencies" - **FALSE** (uses Vue)
-   - "100% JSDoc coverage" - **FALSE** (62.5% actual)
+   - "100% JSDoc coverage" - **FALSE** (latest% actual)
    - "8,816 lines delivered" - **FALSE** (1,856 actual)
 
 ## Production Blockers

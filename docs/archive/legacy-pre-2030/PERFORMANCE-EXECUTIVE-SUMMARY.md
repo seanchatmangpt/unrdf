@@ -16,7 +16,7 @@
 | Claim | Stated | Reality | Verdict |
 |-------|--------|---------|---------|
 | **Idle CPU** | 0% | 0% (architectural) | ✅ **TRUE** |
-| **Task activation** | <1ms | 0.1-10ms (policy-dependent) | ⚠️ **PARTIAL** |
+| **Task activation** | <1ms | latest (policy-dependent) | ⚠️ **PARTIAL** |
 | **Receipt throughput** | >100K/sec | ~45K/sec (sequential) | ❌ **OVERSTATED 2x** |
 | **SPARQL swap** | <10ms | <2μs (swap itself) | ✅ **TRUE** |
 | **Time-travel** | O(log n) | O(log n) (architectural) | ✅ **TRUE** |
@@ -44,7 +44,7 @@
    - **Gap**: No end-to-end benchmarks exist
 
 5. **SPARQL Queries <10ms**:
-   - TRUE for simple ASK queries (estimated 0.1-5ms)
+   - TRUE for simple ASK queries (estimated latest)
    - UNKNOWN for complex patterns
    - **Gap**: No SPARQL performance tests exist
 
@@ -69,7 +69,7 @@ The thesis conflates two different concepts:
 - Checkpoint search: O(log n) ✅ TRUE
 
 **Runtime Performance** (wall-clock time):
-- Task activation: CLAIMED <1ms, REALITY 0.1-10ms
+- Task activation: CLAIMED <1ms, REALITY latest
 - Receipt generation: CLAIMED >100K/sec, REALITY ~45K/sec
 - SPARQL queries: CLAIMED <10ms, REALITY unmeasured
 
@@ -80,16 +80,16 @@ The thesis conflates two different concepts:
 ```javascript
 // Claimed <1ms includes:
 T_activation = T_lookup + T_circuit + T_policy + T_state + T_event
-T_activation = 0.5μs + 0.5μs + (35h + T_sparql) + 23μs + 3.5μs
+T_activation = latestμs + latestμs + (35h + T_sparql) + 23μs + latestμs
 
 // Best case (no policy):
 T_activation = 38μs ✅ <1ms TRUE
 
 // Realistic (3 hooks + SPARQL):
-T_activation = 38μs + 105μs + 1000μs = 1.14ms ❌ >1ms FALSE
+T_activation = 38μs + 105μs + 1000μs = latestms ❌ >1ms FALSE
 
 // Complex governance (5 hooks + complex SPARQL):
-T_activation = 38μs + 175μs + 10000μs = 10.2ms ❌ >>1ms FALSE
+T_activation = 38μs + 175μs + 10000μs = latestms ❌ >>1ms FALSE
 ```
 
 **Lesson**: The claim holds ONLY for simple/no policies. Real-world governance adds overhead.
@@ -98,11 +98,11 @@ T_activation = 38μs + 175μs + 10000μs = 10.2ms ❌ >>1ms FALSE
 
 ```javascript
 // Per-receipt overhead:
-T_receipt = UUID(0.1μs) + Time(0.1μs) + Serialize(2μs) +
-            BLAKE3(5μs) + BLAKE3(5μs) + Zod(10μs) = 22.2μs
+T_receipt = UUID(latestμs) + Time(latestμs) + Serialize(2μs) +
+            BLAKE3(5μs) + BLAKE3(5μs) + Zod(10μs) = latestμs
 
 // Throughput:
-Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
+Receipts/sec = 1,000,000μs / latestμs = 45,045/sec
 
 // Claim requires:
 100,000/sec → 10μs per receipt (impossible with current stack)
@@ -118,7 +118,7 @@ Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
 
 | Metric | Temporal | YAWL (Claimed) | YAWL (Reality) | Speedup |
 |--------|----------|----------------|----------------|---------|
-| Task activation | 100-500ms | <1ms | 0.1-10ms | **10-500x** ✅ |
+| Task activation | 100-500ms | <1ms | latest | **10-500x** ✅ |
 | Idle CPU | 10-20% | 0% | 0% | **Infinite** ✅ |
 | Time-travel | O(n) | O(log n) | O(log n) | **10-1000x** ✅ |
 | Auditability | Logs | Receipts | Receipts | **Cryptographic** ✅ |
@@ -129,7 +129,7 @@ Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
 
 | Metric | Camunda | YAWL (Claimed) | YAWL (Reality) | Speedup |
 |--------|---------|----------------|----------------|---------|
-| Task activation | 50-200ms | <1ms | 0.1-10ms | **5-2000x** ✅ |
+| Task activation | 50-200ms | <1ms | latest | **5-2000x** ✅ |
 | Policy swap | Minutes | <10ms | <2μs | **>100,000x** ✅ |
 | Tamper evidence | None | BLAKE3 | BLAKE3 | **Infinite** ✅ |
 
@@ -146,7 +146,7 @@ Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
 1. `/packages/yawl/test/benchmarks/task-activation.bench.mjs`
    - Measure actual `engine.enableTask()` latency
    - Test with 0, 1, 3, 5 hooks + SPARQL queries
-   - **Expected**: Prove 0.1-10ms range (not <1ms universally)
+   - **Expected**: Prove latest range (not <1ms universally)
 
 2. `/packages/yawl/test/benchmarks/receipt-throughput.bench.mjs`
    - Measure actual `generateReceipt()` throughput
@@ -172,7 +172,7 @@ Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
 
 ```diff
 - **<1ms task activation** (vs. 100-500ms)
-+ **0.1-10ms task activation** (vs. 100-500ms) - 10-500x faster depending on policy complexity
++ **latest task activation** (vs. 100-500ms) - 10-500x faster depending on policy complexity
 
 - **>100,000 receipts/sec**
 + **40,000-50,000 receipts/sec** (sequential); **180,000+/sec** with parallel batching
@@ -196,7 +196,7 @@ Receipts/sec = 1,000,000μs / 22.2μs = 45,045/sec
 - ✅ Sub-millisecond policy swaps (not minutes)
 
 **Performance Reality**:
-- ⚠️ Task activation: **0.1-10ms** (not <1ms universally)
+- ⚠️ Task activation: **latest** (not <1ms universally)
 - ⚠️ Receipt throughput: **~45K/sec** sequential (not >100K)
 - ✅ SPARQL queries: Likely <10ms (needs measurement)
 

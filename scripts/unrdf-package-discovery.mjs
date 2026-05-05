@@ -94,7 +94,7 @@ function scanPackages() {
 
       packages.push({
         name: pkg.name,
-        version: pkg.version || '0.0.0',
+        version: pkg.version || 'latest',
         description: pkg.description || 'No description',
         exports: extractExports(pkg),
         dependencies: pkg.dependencies || {},

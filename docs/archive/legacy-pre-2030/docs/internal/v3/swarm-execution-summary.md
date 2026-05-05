@@ -232,7 +232,7 @@ npm run test:dark-matter
 - ✅ Performance validation report: docs/v3/performance-validation.md (850 lines)
 - ✅ CI validation script: scripts/validate-performance.mjs (340 lines)
 
-**Performance Status (v2.1.1)**:
+**Performance Status (latest)**:
 ✅ 4 out of 5 targets MET:
 - Hook eval p99: 1.85ms ✅ (target: <2ms)
 - Transaction p99: 4.56ms ✅ (target: <5ms)

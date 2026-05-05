@@ -133,7 +133,7 @@ self.addEventListener('fetch', (event) => {
 
 ⚠️ **HTTPS or localhost required**
 - Service workers need secure context
-- Can't use `http://0.0.0.0` or `http://127.0.0.1`
+- Can't use `http://[VERSION].0` or `http://[VERSION].1`
 - Must use `http://localhost` or HTTPS
 
 ## Browser Compatibility

@@ -22,8 +22,8 @@
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0
+- Node.js >= latest
+- pnpm >= latest
 - Git
 
 ### Quick Start
@@ -74,7 +74,7 @@ cp completions/fish-completion.fish ~/.config/fish/completions/unrdf.fish
 
 ```bash
 # Install from VSIX (when published)
-code --install-extension unrdf-vscode-0.1.0.vsix
+code --install-extension unrdf-vscode-latest.vsix
 
 # Or symlink for development
 ln -s /path/to/unrdf/vscode-extension ~/.vscode/extensions/unrdf-vscode
@@ -410,7 +410,7 @@ import { defineHook } from 'unrdf';
 export const myHook = defineHook({
   name: 'my-hook',
   description: 'Hook description',
-  version: '1.0.0',
+  version: 'latest',
 
   triggers: {
     events: ['onCreate', 'onUpdate'],
@@ -479,7 +479,7 @@ import { definePolicyPack } from 'unrdf';
 export const myPolicyPack = definePolicyPack({
   name: 'my-policy-pack',
   description: 'Policy pack description',
-  version: '1.0.0',
+  version: 'latest',
 
   rules: [
     {
@@ -558,7 +558,7 @@ npm install
 npm run package
 
 # Install locally
-code --install-extension unrdf-vscode-0.1.0.vsix
+code --install-extension unrdf-vscode-latest.vsix
 ```
 
 ---

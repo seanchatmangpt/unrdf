@@ -12,7 +12,7 @@
     rdfs:label "UNRDF Project Structure Ontology" ;
     dcterms:title "Project Layout and Documentation Structure" ;
     dcterms:description "Ontology for UNRDF project organization and documentation" ;
-    dcterms:version "6.0.0-rc.1" .
+    dcterms:version "latest-rc.1" .
 
 # Directory Structures
 

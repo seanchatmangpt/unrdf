@@ -16,7 +16,7 @@
 | 1. pnpm install timeout | ✅ RESOLVED | Manual symlink workaround | @unrdf/oxigraph imports successfully |
 | 2. Missing @unrdf/oxigraph | ✅ FIXED | Added to package.json + symlink | Dependency declared & working |
 | 3. YAWL test import errors | ✅ FIXED | Fixed 5 test files imports | 244/334 tests passing (73%) |
-| 4. ESLint timeout | ✅ FIXED | Already working | ESLint v9.39.1 verified |
+| 4. ESLint timeout | ✅ FIXED | Already working | ESLint vlatest verified |
 
 ---
 
@@ -71,12 +71,12 @@ $ cd packages/knowledge-engine && node -e "import('@unrdf/oxigraph').then(m => c
 ```json
 // packages/knowledge-engine/package.json
 "dependencies": {
-  "@noble/hashes": "^1.5.0",
+  "@noble/hashes": "^latest",
   "@unrdf/core": "workspace:*",
   "@unrdf/oxigraph": "workspace:*",  // ← ADDED
   "@unrdf/streaming": "workspace:*",
-  "@xenova/transformers": "^2.17.2",
-  "eyereasoner": "^18.23.0"
+  "@xenova/transformers": "^latest",
+  "eyereasoner": "^latest"
 }
 ```
 
@@ -149,7 +149,7 @@ $ cd packages/yawl && pnpm test
 
 Test Files  12 failed | 5 passed (17)
 Tests       90 failed | 244 passed (334)
-Duration    4.42s
+Duration    latests
 
 ✅ Tests now RUN (import errors fixed)
 ⚠️ 90 tests fail due to logic issues (not infrastructure blockers)
@@ -176,7 +176,7 @@ timeout 5s eslint --version
 ### Evidence
 ```bash
 $ timeout 10s npx eslint --version
-v9.39.1
+vlatest
 ✅ ESLint works
 ```
 
@@ -200,7 +200,7 @@ import { blake3 } from '@noble/hashes/blake3.js';
 
 ```json
 "dependencies": {
-  "@noble/hashes": "^1.5.0",  // ← ADDED
+  "@noble/hashes": "^latest",  // ← ADDED
   "@unrdf/core": "workspace:*",
   ...
 }
@@ -230,7 +230,7 @@ cd packages/yawl && pnpm test
 
 # ✅ 4. ESLint works
 npx eslint --version
-# Output: v9.39.1
+# Output: vlatest
 ```
 
 ---
@@ -242,7 +242,7 @@ npx eslint --version
 **Configuration Files**:
 1. `/home/user/unrdf/packages/knowledge-engine/package.json`
    - Added `@unrdf/oxigraph: workspace:*`
-   - Added `@noble/hashes: ^1.5.0`
+   - Added `@noble/hashes: ^latest`
 
 **Test Files**:
 2. `/home/user/unrdf/packages/yawl/test/yawl-patterns.test.mjs`
@@ -280,7 +280,7 @@ npx eslint --version
 |-----------|--------|-------|--------|
 | knowledge-engine imports | ❌ Cannot find @unrdf/oxigraph | ✅ Imports successfully | Can run knowledge-engine code |
 | YAWL tests | ❌ Import errors block tests | ✅ 244/334 tests passing | 73% test coverage verified |
-| ESLint | ✅ Already working | ✅ Confirmed v9.39.1 | Code quality validation ready |
+| ESLint | ✅ Already working | ✅ Confirmed vlatest | Code quality validation ready |
 | Workspace linking | ❌ Blocked by pnpm timeout | ✅ Manual symlinks work | Development unblocked |
 
 ### ⚠️ Known Limitations

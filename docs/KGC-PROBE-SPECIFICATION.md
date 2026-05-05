@@ -1,6 +1,6 @@
 # KGC Probe Specification - SPARC Methodology
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Agent**: Agent-1 (Specification)
 **Status**: Implementation-Ready
@@ -50,7 +50,7 @@ KGC Markdown documents are verifiable by design, but **verification is non-trivi
 - `bounds`: Resource limits within ranges (queries: 1-10k, runtime: 100-60k ms, fileScans: 1-1k)
 - `views`: Non-empty array of Diátaxis types (tutorial, how-to, reference, explanation)
 - `sources`: Array of file ranges with hashes; `lineEnd >= lineStart`
-- `version`: Valid semver (e.g., "1.0.0")
+- `version`: Valid semver (e.g., "latest")
 - `createdAt`, `lastProved`: ISO 8601 datetimes; `lastProved >= createdAt`
 
 **Example Test**:
@@ -60,7 +60,7 @@ $ kgc probe scan docs/api-reference.kgcmd --domain frontmatter
 ✅ policy_id: valid UUID (550e8400-e29b-41d4-a716-446655440000)
 ✅ receipts: 10 items, all 64-char hex
 ✅ bounds: maxQueries=100 (valid range [1,10000])
-✅ version: valid semver (1.0.0)
+✅ version: valid semver (latest)
 ✅ createdAt: 2025-12-26T10:00:00Z
 ✅ lastProved: 2025-12-26T14:00:00Z (>= createdAt)
 Domain: frontmatter - PASS
@@ -251,11 +251,11 @@ Bounds declared:
 
 Receipt: b4c5d6e7 (kgc:extract)
   ✅ filesScanned: 1 (<= 50) - Utilization: 2%
-  ✅ executionTime: 245ms (<= 5000ms) - Utilization: 4.9%
+  ✅ executionTime: 245ms (<= 5000ms) - Utilization: latest%
   ✅ ⚠️ Recommend: maxFileScans could be reduced to 5 (current: 1 file scanned)
 
 Receipt: c5d6e7f8 (kgc:render)
-  ✅ executionTime: 185ms (<= 5000ms) - Utilization: 3.7%
+  ✅ executionTime: 185ms (<= 5000ms) - Utilization: latest%
 
 Summary:
   ✅ All resources within bounds
@@ -339,7 +339,7 @@ FrontmatterSchema:
   ✅ bounds.maxFileScans: 50 (within [1,1000])
   ✅ views: ["reference"] (valid values)
   ✅ sources: 1 item, all fields valid
-  ✅ version: 1.0.0 (valid semver)
+  ✅ version: latest (valid semver)
   ✅ createdAt: ISO 8601 ✓
   ✅ lastProved: ISO 8601, >= createdAt ✓
 
@@ -581,7 +581,7 @@ kgc probe scan docs/api-reference.kgcmd
 ```bash
 npm test -- test/probe/error-accuracy.test.mjs --corpus 100
 # Results: TP=1245, FP=2, FN=3
-# Precision: 99.8%, Recall: 99.8%
+# Precision: latest%, Recall: latest%
 ```
 
 ### Metric 3: Latency (<100ms)

@@ -2,7 +2,7 @@
 
 ### 6.1 Performance Benchmarks
 
-#### 6.1.1 Transaction Latency
+#### latest Transaction Latency
 
 **Experimental Setup**:
 - **Hardware**: 2.3 GHz 8-Core Intel Core i9, 16 GB RAM
@@ -33,7 +33,7 @@ Canonical Path (URDNA2015):
   p99: 201 ms
 ```
 
-#### 6.1.2 Hook Throughput
+#### latest Hook Throughput
 
 **Experimental Setup**:
 - **Hooks**: 100 concurrent hooks
@@ -60,7 +60,7 @@ SHACL:      Mean 120 ms, p99 280 ms
 WINDOW:     Mean 25 ms,  p99 55 ms
 ```
 
-#### 6.1.3 Error Isolation
+#### latest Error Isolation
 
 **Experimental Setup**:
 - **Scenarios**: 1,000 transactions with intentional failures
@@ -110,7 +110,7 @@ Core Component Tests:
 
 ### 6.3 Cryptographic Verification
 
-#### 6.3.1 Canonicalization Correctness
+#### latest Canonicalization Correctness
 
 **Test**: URDNA2015 determinism validation
 
@@ -121,7 +121,7 @@ Core Component Tests:
 
 **Results**: 10,000/10,000 canonicalizations deterministic (100%)
 
-#### 6.3.2 Lockchain Integrity
+#### latest Lockchain Integrity
 
 **Test**: Git-anchored audit trail verification
 
@@ -142,7 +142,7 @@ Tampering detected: 25/25 attempts (100%)
 
 ### 6.4 Scalability Analysis
 
-#### 6.4.1 Store Size Impact
+#### latest Store Size Impact
 
 **Experimental Setup**: Vary store size from 1k to 1M triples
 
@@ -157,7 +157,7 @@ Tampering detected: 25/25 attempts (100%)
 
 **Analysis**: Fast path scales linearly (O(n)), canonical path has O(n log n) complexity due to sorting in URDNA2015.
 
-#### 6.4.2 Hook Scaling
+#### latest Hook Scaling
 
 **Experimental Setup**: Vary number of concurrent hooks
 

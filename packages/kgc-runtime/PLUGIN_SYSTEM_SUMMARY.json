@@ -22,7 +22,7 @@
       "usage_stats": true
     },
     "api_versioning": {
-      "current_version": "5.0.1",
+      "current_version": "[VERSION]",
       "status": "beta",
       "deprecation_policy": {
         "releases_before_removal": 2,

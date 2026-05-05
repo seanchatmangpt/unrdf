@@ -2,7 +2,7 @@
 
 **Status**: ✅ **FULLY IMPLEMENTED AND VALIDATED**
 **Date**: 2026-04-04
-**Version**: 26.4.23
+**Version**: latest
 
 ---
 
@@ -141,7 +141,7 @@ All OTEL Weaver integration tasks have been completed successfully across **all 
 - **Verification**:
   - ✅ All imports resolve correctly
   - ✅ Daemon instantiates with OTEL integration
-  - ✅ 99.4% test pass rate maintained (1036/1042 tests)
+  - ✅ latest% test pass rate maintained (1036/1042 tests)
 
 ---
 
@@ -269,7 +269,7 @@ weaver registry live-check < otlp-data.json
 ### Alerts
 
 - **High Latency**: API latency > 100ms
-- **Low Availability**: Availability < 99.9%
+- **Low Availability**: Availability < latest%
 - **High Error Rate**: Error rate > 1%
 - **Sidecar Failure**: Connection loss
 
@@ -289,7 +289,7 @@ weaver registry live-check < otlp-data.json
 ### Weaver Configuration (`weaver.yaml`)
 
 ```yaml
-version: 1.0.0
+version: latest
 project_name: 'unrdf'
 registry: 'https://github.com/open-telemetry/semantic-conventions.git[model]'
 
@@ -299,7 +299,7 @@ enforcement:
 
 export:
   grpc:
-    address: '0.0.0.0'
+    address: 'latest.0'
     port: 4317
     protocol: 'otlp'
 
@@ -372,7 +372,7 @@ slo:
 - ✅ W3C trace context propagation (15 utility functions)
 - ✅ Daemon lifecycle integration (start/stop)
 - ✅ Feature flag support (`OTEL_ENABLED`)
-- ✅ 99.4% test pass rate maintained
+- ✅ latest% test pass rate maintained
 - ✅ Complete documentation (26 KB)
 
 ---

@@ -2,7 +2,7 @@
 
 **Agent 6 Research Deliverable**
 **Date:** 2025-12-27
-**Version:** 2.0.59
+**Version:** [VERSION]
 
 ## Executive Summary
 

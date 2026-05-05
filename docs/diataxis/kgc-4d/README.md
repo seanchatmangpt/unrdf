@@ -168,7 +168,7 @@ Every document in this Diataxis structure:
 **Total:** 25 documentation files
 
 **Created:** 2025-12-27  
-**Evidence Base:** kgc-4d v5.0.1
+**Evidence Base:** kgc-4d latest
 
 ---
 

@@ -14,7 +14,7 @@
 - **Conservative Estimates**: Lower bounds for safety
 
 ### Test Environment
-- **Platform**: Node.js 20.x, Linux 4.4.0
+- **Platform**: Node.js 20.x, Linux latest
 - **Hardware**: Standard development machine
 - **Concurrency**: Max 10 parallel operations (daemon default)
 - **Database**: Oxigraph SPARQL engine

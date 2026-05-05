@@ -139,8 +139,8 @@ Total: 1074 lines of implementation + docs
 
 ## Dependencies
 
-- **zod**: ^4.1.13 - Schema validation
-- **hash-wasm**: ^4.12.0 - BLAKE3 hashing
+- **zod**: ^[VERSION] - Schema validation
+- **hash-wasm**: ^[VERSION] - BLAKE3 hashing
 
 ## Adversarial PM Verification
 

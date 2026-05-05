@@ -139,7 +139,7 @@
 
 - [ ] Deployment communication sent
   ```
-  Subject: Production Deployment - UNRDF v6.0.0-rc.1
+  Subject: Production Deployment - UNRDF latest-rc.1
   Time: 2026-01-11 14:00 UTC
   Duration: ~30 minutes
   Expected Impact: None (zero-downtime deployment)
@@ -177,7 +177,7 @@
   ```bash
   curl -X POST $SLACK_WEBHOOK_URL \
     -H 'Content-Type: application/json' \
-    -d '{"text":"🚀 Production deployment starting in 30 minutes\nVersion: v6.0.0-rc.1\nExpected duration: 30 minutes"}'
+    -d '{"text":"🚀 Production deployment starting in 30 minutes\nVersion: latest-rc.1\nExpected duration: 30 minutes"}'
   ```
 
 - [ ] **T-25m** Enable maintenance mode (if needed)
@@ -194,7 +194,7 @@
 
 - [ ] **T+0m** Start deployment
   ```bash
-  export IMAGE_TAG="ghcr.io/unrdf/unrdf:6.0.0-rc.1"
+  export IMAGE_TAG="ghcr.io/unrdf/unrdf:latest-rc.1"
   export DEPLOY_HOST="production.example.com"
   ./scripts/deploy-production.sh
   ```
@@ -262,7 +262,7 @@
   ```bash
   curl -X POST $SLACK_WEBHOOK_URL \
     -H 'Content-Type: application/json' \
-    -d '{"text":"✅ Production deployment completed successfully\nVersion: v6.0.0-rc.1\nDuration: XX minutes\nStatus: All systems operational"}'
+    -d '{"text":"✅ Production deployment completed successfully\nVersion: latest-rc.1\nDuration: XX minutes\nStatus: All systems operational"}'
   ```
 
 - [ ] Grafana annotation created
@@ -271,7 +271,7 @@
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $GRAFANA_API_KEY" \
     -d '{
-      "text": "Production deployment: v6.0.0-rc.1",
+      "text": "Production deployment: latest-rc.1",
       "tags": ["deployment", "production"],
       "time": '$(date +%s000)'
     }'
@@ -279,7 +279,7 @@
 
 - [ ] Git deployment tag created
   ```bash
-  git tag -a "deployed-$(date +%Y%m%d-%H%M%S)" -m "Production deployment v6.0.0-rc.1"
+  git tag -a "deployed-$(date +%Y%m%d-%H%M%S)" -m "Production deployment latest-rc.1"
   git push origin --tags
   ```
 

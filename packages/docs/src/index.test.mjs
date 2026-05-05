@@ -9,7 +9,7 @@ describe('docs', () => {
   it('should export package metadata', () => {
     expect(metadata).toBeDefined();
     expect(metadata.name).toBe('docs');
-    expect(metadata.version).toBe('5.0.1');
+    expect(metadata.version).toBe('[VERSION]');
   });
 
   it('should return package info', () => {

@@ -6,7 +6,7 @@
 ───────────────────────────────────────────────────────────────────
 
 BLOCKER 1: Vitest Version Mismatch
-  Current: "vitest": "^1.0.0"
+  Current: "vitest": "^latest"
   Impact:  Tests fail with version conflict
   Severity: CRITICAL (blocks test execution)
 
@@ -51,7 +51,7 @@ OTEL VALIDATION:
 ───────────────────────────────────────────────────────────────────
 
 BLOCKER 1: Vitest Version
-  Target:  "vitest": "^4.0.15"
+  Target:  "vitest": "^latest"
   Status:  ✅ FIXED (PHASE 0, 15 min)
 
 BLOCKER 2: Dependencies
@@ -100,7 +100,7 @@ Lint Violations:         UNKNOWN → 0 violations
 OTEL Score:              BLOCKED → ≥80/100
 
 Time to Production:      54-74 hours (with 4-agent parallelization)
-Critical Path Duration:  6.25-10.25 hours (PHASE 0+1+4)
+Critical Path Duration:  latest.25 hours (PHASE 0+1+4)
 Parallel Speedup:        ~25-29 hours saved (38-39% faster)
 
 ───────────────────────────────────────────────────────────────────
@@ -136,7 +136,7 @@ PHASE 4: Full Validation
 TOTAL DURATION:
   Sequential:    54-74 hours
   Parallel:      54-74 hours (same, but 4 agents working)
-  Critical Path: 6.25-10.25 hours (minimum to validation)
+  Critical Path: latest.25 hours (minimum to validation)
 
 ───────────────────────────────────────────────────────────────────
 
@@ -144,7 +144,7 @@ TOTAL DURATION:
 ───────────────────────────────────────────────────────────────────
 
 Gate 1: PHASE 0 → PHASE 1
-  Check:  grep '"vitest": "\^4.0.15"' package.json
+  Check:  grep '"vitest": "\^latest"' package.json
   Status: PENDING
 
 Gate 2: PHASE 1 → PHASE 2/3
@@ -176,13 +176,13 @@ Planning Documents (COMPLETE):
 
 Execution Evidence (PENDING):
   ⏳ pnpm-install.log (PHASE 1)
-  ⏳ determinism-proof-output.log (PHASE 2.4)
-  ⏳ zod-coverage-audit.log (PHASE 3.4)
-  ⏳ build-output.log (PHASE 4.1)
-  ⏳ test-output.log (PHASE 4.2)
-  ⏳ lint-output.log (PHASE 4.3)
-  ⏳ validation-output.log (PHASE 4.4)
-  ⏳ V6-PRODUCTION-READINESS-REPORT.md (PHASE 4.5)
+  ⏳ determinism-proof-output.log (PHASE latest)
+  ⏳ zod-coverage-audit.log (PHASE latest)
+  ⏳ build-output.log (PHASE latest)
+  ⏳ test-output.log (PHASE latest)
+  ⏳ lint-output.log (PHASE latest)
+  ⏳ validation-output.log (PHASE latest)
+  ⏳ V6-PRODUCTION-READINESS-REPORT.md (PHASE latest)
 
 ───────────────────────────────────────────────────────────────────
 
@@ -193,7 +193,7 @@ AWAITING USER APPROVAL TO PROCEED WITH PHASE 0
 
 Options:
   1. FULL APPROVAL    → Execute all 4 phases (54-74 hours)
-  2. PARTIAL APPROVAL → Execute PHASE 0+1 only (6.25-10.25 hours)
+  2. PARTIAL APPROVAL → Execute PHASE 0+1 only (latest.25 hours)
   3. REQUEST CHANGES  → Provide feedback on plan adjustments
   4. DEFER            → Archive plan for future execution
 

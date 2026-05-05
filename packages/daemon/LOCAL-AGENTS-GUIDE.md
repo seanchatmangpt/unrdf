@@ -21,7 +21,7 @@ This guide uses the **AI SDK** from Vercel (which supports Groq) and the **UNRDF
 
 Before you begin, make sure you have:
 
-- **Node.js** ≥ 18.0.0
+- **Node.js** ≥ [VERSION]
 - **pnpm** package manager
 - A **Groq API key** from https://console.groq.com
 - Basic knowledge of JavaScript/ESM and RDF (optional but helpful)

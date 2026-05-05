@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= [VERSION]
 - pnpm (recommended) or npm
 - 2GB+ RAM for transformer model
 

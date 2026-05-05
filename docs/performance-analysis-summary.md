@@ -156,11 +156,11 @@ it('should achieve acceptable cache performance', async () => {
 
 ### Documentation
 
-1. **`docs/performance-targets-v4.0.0.md`**
+1. **`docs/performance-targets-latest.md`**
    - Comprehensive performance targets with rationale
    - 10-section guide covering all performance aspects
    - Monitoring thresholds and alerting guidelines
-   - Performance improvement roadmap (v4.1.0, v4.2.0)
+   - Performance improvement roadmap (latest, latest)
 
 2. **`docs/performance-analysis-summary.md`** (this document)
    - Executive summary of benchmark results
@@ -227,7 +227,7 @@ Successfully established realistic performance targets for the Real-time SHACL V
 **Key Achievements:**
 - ✅ Measured baseline performance across 5 benchmark suites
 - ✅ Updated test assertions with realistic, achievable targets
-- ✅ Created comprehensive documentation (performance-targets-v4.0.0.md)
+- ✅ Created comprehensive documentation (performance-targets-latest.md)
 - ✅ Fixed ESM import bug in validator
 - ✅ Provided performance monitoring and alerting guidelines
 - ✅ Identified optimization opportunities for future releases
@@ -242,12 +242,12 @@ Successfully established realistic performance targets for the Real-time SHACL V
 **Next Steps:**
 1. ✅ Performance tests updated (complete)
 2. ⏭️ Monitor metrics in production
-3. ⏭️ Implement P99 optimizations (v4.1.0)
-4. ⏭️ Add streaming validation (v4.2.0)
+3. ⏭️ Implement P99 optimizations (latest)
+4. ⏭️ Add streaming validation (latest)
 
 ---
 
 **Benchmark Suite:** scripts/benchmark-real-time-validator.mjs
-**Documentation:** docs/performance-targets-v4.0.0.md
+**Documentation:** docs/performance-targets-latest.md
 **Agent:** Performance Benchmarker (Hyper-Advanced)
 **Status:** ✅ Complete

@@ -10,7 +10,7 @@
  * - CloudFront CDN integration
  *
  * @module serverless
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  *
  * @example
@@ -64,7 +64,7 @@ export { DynamoDBAdapter, createAdapterFromEnv } from './storage/dynamodb-adapte
  * Package version
  * @constant {string}
  */
-export const VERSION = '1.0.0';
+export const VERSION = '[VERSION]';
 
 /**
  * Supported AWS regions

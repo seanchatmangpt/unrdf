@@ -13,7 +13,7 @@
  * - Async support via async context propagation
  * - Minimal overhead for production use
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author UNRDF Team
  * @license MIT
  */
@@ -30,7 +30,7 @@ export const SERVICE_NAME = 'unrdf';
  * Default tracer version
  * @constant {string}
  */
-export const TRACER_VERSION = '6.0.0';
+export const TRACER_VERSION = '[VERSION]';
 
 /**
  * Get the default tracer for UNRDF operations

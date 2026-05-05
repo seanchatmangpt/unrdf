@@ -3,7 +3,7 @@
     "validator": "Agent-8 (production-validator)",
     "timestamp": "2025-12-27T10:15:00Z",
     "package": "@unrdf/kgc-probe",
-    "version": "1.0.0"
+    "version": "[VERSION]"
   },
   "package_structure": {
     "total_items": 50,
@@ -79,7 +79,7 @@
         "count": 7,
         "patterns": [
           "file://*", "javascript:*", "data:*", "*.local",
-          "localhost:*", "127.0.0.1:*", "169.254.169.254/*"
+          "localhost:*", "[VERSION].1:*", "[VERSION].254/*"
         ]
       }
     }

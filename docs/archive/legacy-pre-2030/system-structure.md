@@ -551,7 +551,7 @@ const orchestrator = new ProbeOrchestrator({
 
 | Property | Value |
 |----------|-------|
-| Version | 1.0.0 |
+| Version | latest |
 | Created | 2025-12-27 |
 | Status | Authoritative |
 | Maintainer | Agent-3 (System Architect) |

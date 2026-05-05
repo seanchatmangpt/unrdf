@@ -2,7 +2,7 @@
 
 > Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

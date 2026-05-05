@@ -28,7 +28,7 @@ if (d < 1 || d > 31) {
 }
 // Missing: February 29 validation, April/June/September/November 30-day limits
 ```
-**Evidence**: Pass `2025-02-31T00:00:00.000Z` or `2025-04-31T00:00:00.000Z` - would be incorrectly accepted
+**Evidence**: Pass `2025-02-31T00:00:latestZ` or `2025-04-31T00:00:latestZ` - would be incorrectly accepted
 **Impact**: Silent acceptance of impossible dates; time-travel to non-existent moments
 
 #### GAP-T2: `toISO()` Truncates Nanosecond Precision Silently
@@ -52,7 +52,7 @@ const nanoFrac = frac.padEnd(9, '0').slice(0, 9);
 // ".1" → "100000000" (100ms as nanoseconds)
 // ".123456789X" → ".123456789" (truncated)
 ```
-**Evidence**: `fromISO('2025-01-15T10:30:00.1Z')` is treated as `100,000,000 ns` not `100 ns`
+**Evidence**: `fromISO('2025-01-15T10:30:latestZ')` is treated as `100,000,000 ns` not `100 ns`
 **Impact**: Ambiguous semantics; users may expect `.1` to mean "100 nanoseconds" not "100 milliseconds"
 
 #### GAP-T4: Monotonic Clock Doesn't Account for Large Time Jumps
@@ -430,7 +430,7 @@ The KGC 4D package is **functionally capable** but has **significant gaps** in:
 3. Independent code audit performed
 4. Performance benchmarks under concurrent load established
 
-**Current Status**: Beta (v0.1.0) - Operational but incomplete ✓
+**Current Status**: Beta (vlatest) - Operational but incomplete ✓
 
 ---
 

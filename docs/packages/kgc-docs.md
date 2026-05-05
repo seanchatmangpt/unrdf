@@ -2,7 +2,7 @@
 
 > KGC Markdown parser and dynamic documentation generator with proof anchoring
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Internal
 
 ## Overview

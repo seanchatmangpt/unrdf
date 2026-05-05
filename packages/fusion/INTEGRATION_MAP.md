@@ -162,12 +162,12 @@ Ledger: { ... }
     "verificationPassed": true
   },
   "versions": {
-    "fusion": "1.0.0",
-    "kgc-4d": "0.1.0",
-    "oxigraph": "0.4.0-alpha.5",
-    "blockchain": "0.1.0",
-    "hooks": "0.1.0",
-    "caching": "0.1.0"
+    "fusion": "latest",
+    "kgc-4d": "latest",
+    "oxigraph": "latest-alpha.5",
+    "blockchain": "latest",
+    "hooks": "latest",
+    "caching": "latest"
   },
   "hashes": {
     "packages": { ... },

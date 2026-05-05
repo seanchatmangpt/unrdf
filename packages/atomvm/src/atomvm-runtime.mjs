@@ -18,7 +18,7 @@ import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES } from './ro
 function getTracer() {
   return trace.getTracer('atomvm-runtime');
 }
-const ATOMVM_VERSION = 'v0.6.6';
+const ATOMVM_VERSION = '[VERSION]';
 
 /** @constant {number} Delay before checking if Module is ready after script load */
 const MODULE_LOAD_CHECK_DELAY_MS = 100;

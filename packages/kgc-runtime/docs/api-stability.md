@@ -2,18 +2,18 @@
 
 ## Current Version
 
-**API Version**: 5.0.1 (Beta)
+**API Version**: [VERSION] (Beta)
 
-**Status**: Beta - API is stable but may have minor changes before 5.1.0 stable release
+**Status**: Beta - API is stable but may have minor changes before [VERSION] stable release
 
 ## Semantic Versioning
 
-KGC Runtime follows [Semantic Versioning 2.0.0](https://semver.org/):
+KGC Runtime follows [Semantic Versioning [VERSION]](https://semver.org/):
 
 ```
 MAJOR.MINOR.PATCH
 
-5.0.1
+[VERSION]
 │ │ └─ Patch: Backward compatible bug fixes
 │ └─── Minor: Backward compatible new features
 └───── Major: Breaking changes
@@ -43,8 +43,8 @@ API feature is marked as deprecated:
 
 ```javascript
 /**
- * @deprecated Since v5.0.0. Use newFunction() instead.
- * Will be removed in v7.0.0 (March 2025)
+ * @deprecated Since [VERSION]. Use newFunction() instead.
+ * Will be removed in [VERSION] (March 2025)
  */
 export function oldFunction() {
   console.warn('[DEPRECATION] oldFunction is deprecated. Use newFunction instead.');
@@ -57,8 +57,8 @@ export function oldFunction() {
 Deprecated APIs continue to function but emit warnings:
 
 ```
-[DEPRECATION WARNING] oldFunction is deprecated since v5.0.0.
-Use newFunction instead. Removal scheduled for v7.0.0 (March 2025).
+[DEPRECATION WARNING] oldFunction is deprecated since [VERSION].
+Use newFunction instead. Removal scheduled for [VERSION] (March 2025).
 ```
 
 #### 3. Removal (Release N+3 or later)
@@ -66,7 +66,7 @@ Use newFunction instead. Removal scheduled for v7.0.0 (March 2025).
 After minimum 90 days AND 2 releases, API is removed:
 
 ```javascript
-// v7.0.0 - Function removed
+// [VERSION] - Function removed
 // Import will fail
 // Migration guide: docs/migration/v5-to-v7.md
 ```
@@ -89,7 +89,7 @@ import { ReceiptSchema } from '@unrdf/kgc-runtime/schemas';
 - **Guarantee**: API shape is stable but may have additions
 - **Changes**: New fields/methods can be added in minor versions
 - **Deprecation**: Same as stable (2 releases + 90 days)
-- **Examples**: Plugin system (v5.0.1), API versioning
+- **Examples**: Plugin system ([VERSION]), API versioning
 
 ```javascript
 // Beta API - Stable but may expand
@@ -117,7 +117,7 @@ Plugins must declare their required API version:
 ```json
 {
   "name": "my-plugin",
-  "api_version": "5.0.1"
+  "api_version": "[VERSION]"
 }
 ```
 
@@ -127,9 +127,9 @@ Runtime validates compatibility:
 import { validatePluginVersion } from '@unrdf/kgc-runtime/api-version';
 
 try {
-  validatePluginVersion('5.0.0'); // OK - compatible
-  validatePluginVersion('4.0.0'); // WARNING - deprecated
-  validatePluginVersion('3.0.0'); // ERROR - removed
+  validatePluginVersion('[VERSION]'); // OK - compatible
+  validatePluginVersion('[VERSION]'); // WARNING - deprecated
+  validatePluginVersion('[VERSION]'); // ERROR - removed
 } catch (error) {
   console.error('Incompatible plugin version:', error.message);
 }
@@ -137,11 +137,11 @@ try {
 
 ### Compatibility Rules
 
-| Plugin API | Runtime 5.0.1 | Status |
+| Plugin API | Runtime [VERSION] | Status |
 |-----------|---------------|---------|
-| 5.0.1 | ✅ Compatible | Exact match |
-| 5.0.0 | ✅ Compatible | Patch difference OK |
-| 4.9.9 | ⚠️ Deprecated | Works but warns |
+| [VERSION] | ✅ Compatible | Exact match |
+| [VERSION] | ✅ Compatible | Patch difference OK |
+| [VERSION] | ⚠️ Deprecated | Works but warns |
 | 3.x.x | ❌ Removed | Error thrown |
 
 ## Migration Guides
@@ -169,20 +169,20 @@ const receipt = await generateReceipt(op, inputs, outputs, parentHash);
 
 ## Deprecation Timeline
 
-### Current Deprecations (v5.0.1)
+### Current Deprecations ([VERSION])
 
 | Feature | Deprecated | Removal | Alternative |
 |---------|-----------|---------|-------------|
-| `WorkItem.metadata` direct mutation | v5.0.0 | v7.0.0 | Use `updateMetadata()` method |
-| `Receipt.hash` MD5 | v4.0.0 | v6.0.0 | Now using BLAKE3 (automatic) |
+| `WorkItem.metadata` direct mutation | [VERSION] | [VERSION] | Use `updateMetadata()` method |
+| `Receipt.hash` MD5 | [VERSION] | [VERSION] | Now using BLAKE3 (automatic) |
 
 ### Upcoming Changes (Planned)
 
 | Feature | Target Version | Type | Description |
 |---------|---------------|------|-------------|
-| Plugin hot-reload | v5.1.0 | Addition | Reload plugins without restart |
-| WASM plugin support | v5.2.0 | Addition | Run plugins in WASM sandbox |
-| GraphQL API | v6.0.0 | Addition | Query runtime via GraphQL |
+| Plugin hot-reload | [VERSION] | Addition | Reload plugins without restart |
+| WASM plugin support | [VERSION] | Addition | Run plugins in WASM sandbox |
+| GraphQL API | [VERSION] | Addition | Query runtime via GraphQL |
 
 ## Stability Guarantees by Module
 
@@ -228,11 +228,11 @@ const receipt = await generateReceipt(op, inputs, outputs, parentHash);
 ### Example Scenarios
 
 ```javascript
-// ❌ BREAKING - Requires v6.0.0
+// ❌ BREAKING - Requires [VERSION]
 // v5: generateReceipt(op, data)
 // v6: generateReceipt(op, inputs, outputs) // Changed signature
 
-// ✅ NOT BREAKING - Can be v5.1.0
+// ✅ NOT BREAKING - Can be [VERSION]
 // v5.0: generateReceipt(op, inputs, outputs)
 // v5.1: generateReceipt(op, inputs, outputs, options = {}) // Added optional param
 ```
@@ -266,4 +266,4 @@ npm run validate-plugin-version
 ---
 
 **Last Updated**: 2024-12-27
-**Next Review**: 2025-03-01 (with v5.1.0 release)
+**Next Review**: 2025-03-01 (with [VERSION] release)

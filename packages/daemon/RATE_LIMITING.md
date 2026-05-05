@@ -27,7 +27,7 @@ const limiter = createRateLimiter();
 
 // Check rate limit
 const result = limiter.check({
-  ip: '192.168.1.1',
+  ip: '[VERSION].1',
   apiKey: 'user-key-123',
 });
 
@@ -151,7 +151,7 @@ Check rate limit without throwing errors.
 
 ```javascript
 const result = limiter.check({
-  ip: '192.168.1.1',
+  ip: '[VERSION].1',
   apiKey: 'user-key',
   path: '/api/endpoint',
   method: 'POST',
@@ -188,7 +188,7 @@ console.log(`Block rate: ${stats.blockRate * 100}%`);
 Reset rate limits for specific identifier.
 
 ```javascript
-limiter.reset('ratelimit:ip:192.168.1.1');
+limiter.reset('ratelimit:ip:[VERSION].1');
 ```
 
 ##### clear()
@@ -515,7 +515,7 @@ async function loadTest() {
   const results = [];
 
   for (let i = 0; i < 1000; i++) {
-    results.push(limiter.check({ ip: '192.168.1.1' }));
+    results.push(limiter.check({ ip: '[VERSION].1' }));
   }
 
   const allowed = results.filter(r => r.allowed).length;
@@ -569,4 +569,4 @@ const limiter = createRateLimitMiddleware({
 
 ## License
 
-Part of UNRDF v6.0.0 - See repository LICENSE
+Part of UNRDF [VERSION] - See repository LICENSE

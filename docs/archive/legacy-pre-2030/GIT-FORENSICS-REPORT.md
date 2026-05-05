@@ -12,7 +12,7 @@
 |-------|-----------|------------|----------|--------|
 | KGC-4D (2-3 hours) | 5,465 | **590** (initial) | **-89%** | ❌ **FALSE** |
 | KGC-4D (current) | 5,465 | **6,327** | +16% | ⚠️ Understated |
-| YAWL | 26,449 | **26,826** | +1.4% | ✅ Accurate |
+| YAWL | 26,449 | **26,826** | +latest% | ✅ Accurate |
 | Microframeworks | 13,027 | **1,856** | **-86%** | ❌ **7x INFLATION** |
 
 **Key Finding**: The "5,465 LOC in 2-3 hours" claim is **demonstrably false**. Git evidence shows 590 LOC in initial commit, with development continuing over **multiple days**.
@@ -148,7 +148,7 @@ $ find packages/yawl -name "*.mjs" | xargs wc -l
 
 ### Verdict
 
-- ✅ **26,449 LOC claim**: ACCURATE (within 1.4% - actual: 26,826)
+- ✅ **26,449 LOC claim**: ACCURATE (within latest% - actual: 26,826)
 - ✅ **Single commit**: TRUE
 - ⚠️ **No tests**: FALSE (7,208 LOC of tests included)
 - ❓ **63% pattern reuse**: UNVERIFIED (no measurement methodology provided)
@@ -283,8 +283,8 @@ Total: 2 commits, 1 author, 1,856 LOC
 | Current LOC | 5,465 | **6,327** | ⚠️ Understated |
 | Commits | (implied 1) | **12+** | ❌ Incremental |
 | Authors | (implied 1) | **2** | - |
-| Test Pass Rate | 90.4% (85/94) | **Requires verification** | ❓ |
-| Pattern Reuse | 64.3% | **No measurement** | ❓ |
+| Test Pass Rate | latest% (85/94) | **Requires verification** | ❓ |
+| Pattern Reuse | latest% | **No measurement** | ❓ |
 
 **Corrected Summary**: "KGC-4D: 6,327 LOC developed incrementally over 20+ days (Dec 4-25, 2025) across 12+ commits by 2 authors (Sean Chatman, Claude), starting with 590 LOC initial commit."
 
@@ -320,7 +320,7 @@ Total: 2 commits, 1 author, 1,856 LOC
 
 ### Claims That Survived Scrutiny
 
-1. ✅ **YAWL 26,449 LOC**: Accurate (26,826 actual, 1.4% variance)
+1. ✅ **YAWL 26,449 LOC**: Accurate (26,826 actual, latest% variance)
 2. ✅ **YAWL single commit**: Confirmed (a37453f)
 3. ✅ **Microframeworks 1,856 LOC**: Confirmed in correction documents
 
@@ -340,9 +340,9 @@ Total: 2 commits, 1 author, 1,856 LOC
 
 ### Claims Requiring Verification
 
-1. ❓ **Test pass rates** (90.4%, etc.): Requires running tests
+1. ❓ **Test pass rates** (latest%, etc.): Requires running tests
 2. ❓ **Pattern reuse** (63-64%): No measurement methodology
-3. ❓ **P(Correctness) ≥ 99.997%**: Theoretical, not empirical
+3. ❓ **P(Correctness) ≥ latest%**: Theoretical, not empirical
 
 ---
 
@@ -392,7 +392,7 @@ All claims can be independently verified using these commands against commit has
 ```markdown
 **Results** (KGC 4D empirical - git-verified):
 - 6,327 LoC developed over 20+ days in 12+ commits (initial: 590 LoC Dec 4)
-- 90.4% test pass rate (85/94 tests) - requires re-verification
+- latest% test pass rate (85/94 tests) - requires re-verification
 - Current development demonstrates incremental Big Bang approach, not single-pass
 ```
 
@@ -450,7 +450,7 @@ Applied to this forensics investigation:
 2. **Development timeline**: 20+ days, 12+ commits, 2 authors
 3. **Current state**: 6,327 LOC (Dec 25)
 
-**The claim inflates initial LOC by 9.3x and misrepresents development timeline from 20+ days to "2-3 hours".**
+**The claim inflates initial LOC by latestx and misrepresents development timeline from 20+ days to "2-3 hours".**
 
 YAWL claims are largely accurate (26,826 LOC actual vs 26,449 claimed), but the "no tests" claim is false (7,208 LOC of tests exist).
 

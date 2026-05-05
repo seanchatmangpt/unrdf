@@ -16,13 +16,13 @@
 
 **Actions:**
 - ✅ Removed vm2 (was not present)
-- ✅ Added `isolated-vm@6.0.1` with native V8 compilation
+- ✅ Added `isolated-vm@latest` with native V8 compilation
 - ✅ Added `@wasmer/wasi` for WASM support
 
 **Dependencies:**
 ```json
 {
-  "isolated-vm": "^6.0.1",
+  "isolated-vm": "^latest",
   "@wasmer/wasi": "latest"
 }
 ```
@@ -183,7 +183,7 @@ function add(a, b) { return a + b }
     "executionTime": 245,
     "memoryUsage": {
       "used": 1234567,
-      "percentage": 12.3
+      "percentage": latest
     }
   }
 }

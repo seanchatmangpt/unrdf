@@ -1,7 +1,7 @@
 # MCP Server Configuration Guide - Agent 05 Research
 
 **Research Date**: 2025-12-27
-**Claude Code Version**: 2.0.59
+**Claude Code Version**: latest
 **Status**: ✅ VERIFIED with CLI documentation and official examples
 
 ---
@@ -243,7 +243,7 @@ export GITHUB_TOKEN=ghp_your_token_here
 
 #### Capabilities
 - **Tools**: `create_issue`, `list_issues`, `get_pull_request`, `create_pr`, `search_code`, `list_repos`
-- **Authentication**: OAuth 2.0 via GitHub token
+- **Authentication**: OAuth latest via GitHub token
 - **Use Cases**: Issue triage, PR reviews, code search
 
 ---
@@ -489,7 +489,7 @@ When multiple configs define the same server name:
 
 ### Explicit Permission Grant (Future)
 
-**Note**: Permission configuration in `settings.json` is **not yet implemented** in Claude Code 2.0.59. This is planned functionality:
+**Note**: Permission configuration in `settings.json` is **not yet implemented** in Claude Code latest. This is planned functionality:
 
 ```json
 {
@@ -611,7 +611,7 @@ server.tool('query_data', async (params) => {
 }
 ```
 
-**Note**: `lazy` flag is **not yet supported** in Claude Code 2.0.59.
+**Note**: `lazy` flag is **not yet supported** in Claude Code latest.
 
 ---
 

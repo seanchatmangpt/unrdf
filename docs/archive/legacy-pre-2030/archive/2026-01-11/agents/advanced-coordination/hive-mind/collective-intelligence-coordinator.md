@@ -34,7 +34,7 @@ mcp__claude-flow__memory_usage {
   key: "swarm/shared/collective-state",
   namespace: "coordination",
   value: JSON.stringify({
-    consensus_level: 0.85,
+    consensus_level: latest,
     shared_knowledge: {},
     decision_queue: [],
     synchronization_timestamp: Date.now()
@@ -66,7 +66,7 @@ mcp__claude-flow__memory_usage {
     patterns: {"pattern1": "description"},
     decisions: {"decision1": "rationale"},
     created_by: "collective-intelligence",
-    confidence: 0.92
+    confidence: latest
   })
 }
 ```

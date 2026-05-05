@@ -12,14 +12,14 @@
 
 **Q1: Did you RUN the tests?**
 ✅ YES - `timeout 15s npm run test:fast` executed
-- Output: 256/370 tests passing (69.2%)
+- Output: 256/370 tests passing (latest%)
 - YAWL: 110 failures
 - graph-analytics: Missing @dagrejs/graphlib
 
 **Q2: Can you PROVE prerequisite is met?**
-❌ NO - Evidence shows 69.2% pass rate, not 100%
+❌ NO - Evidence shows latest% pass rate, not 100%
 - Required: 100% pass rate per CLAUDE.md
-- Actual: 69.2% pass rate
+- Actual: latest% pass rate
 - Blocker: Multiple test failures
 
 **Q3: What BREAKS if we proceed anyway?**
@@ -42,11 +42,11 @@ Duration: 15s (completed within timeout)
 Result: FAILED
 
 Breakdown:
-- Overall: 256/370 passed (69.2%)
-- YAWL: 182/292 passed (62.3%) - 110 failures
-- KGC-4D: 296/305 passed (97.0%) - 9 failures
+- Overall: 256/370 passed (latest%)
+- YAWL: 182/292 passed (latest%) - 110 failures
+- KGC-4D: 296/305 passed (latest%) - 9 failures
 - AtomVM: 45/45 passed (100%) ✅
-- Root: 24/28 passed (85.7%) - 4 failures
+- Root: 24/28 passed (latest%) - 4 failures
 
 Critical Errors:
 - graph-analytics: Cannot find package '@dagrejs/graphlib'
@@ -57,7 +57,7 @@ Critical Errors:
 ```bash
 Command: find packages -type f -name "*.mjs" ! -path "*/node_modules/*" ! -path "*/dist/*"
 Total source files: 737
-Files >500 lines: 83 (11.3% violation rate)
+Files >500 lines: 83 (latest% violation rate)
 
 Distribution:
 - >1000 lines: 5 files (CRITICAL)
@@ -145,7 +145,7 @@ Per CLAUDE.md CRITICAL PREREQUISITE:
 > "Only proceed if tests are at 100% pass rate. If tests not 100%,
 > document which files need refactoring and skip execution"
 
-**Evidence**: Tests at 69.2% (NOT 100%)
+**Evidence**: Tests at latest% (NOT 100%)
 **Action**: Documentation mode ONLY
 **Validation**: Adversarial PM principle applied
 
@@ -269,7 +269,7 @@ grep "Score:" validation-output.log
 - [x] Adversarial PM principles applied
 
 ### Execution Phase (BLOCKED) ❌
-- [ ] Tests at 100% pass rate (currently 69.2%)
+- [ ] Tests at 100% pass rate (currently latest%)
 - [ ] Dependencies installed (@dagrejs/graphlib)
 - [ ] Files 1-5 refactored to <500 lines each
 - [ ] All tests still passing after refactoring
@@ -283,7 +283,7 @@ grep "Score:" validation-output.log
 **If someone challenged EVERY claim, which would survive?**
 
 ✅ **Survives Scrutiny**:
-- Test pass rate 69.2% - MEASURED via `npm run test:fast`
+- Test pass rate latest% - MEASURED via `npm run test:fast`
 - 83 files >500 lines - COUNTED via `find + wc -l`
 - Top 10 files identified - VERIFIED via `wc -l` on each file
 - Documentation complete - FILES created and visible
@@ -291,7 +291,7 @@ grep "Score:" validation-output.log
 - Decision per CLAUDE.md - CITED directly
 
 ❌ **Would NOT Survive**:
-- "Tests probably work" - NO, measured at 69.2%
+- "Tests probably work" - NO, measured at latest%
 - "~100 files violated" - NO, exactly 83 files
 - "Could refactor anyway" - NO, violates CLAUDE.md prerequisite
 - "Refactoring complete" - NO, blocked and skipped

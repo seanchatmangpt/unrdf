@@ -2,7 +2,7 @@
 
 > Multi-layer caching system for RDF queries with Redis and LRU
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

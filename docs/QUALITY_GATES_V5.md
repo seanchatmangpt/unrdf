@@ -1,4 +1,4 @@
-# UNRDF v5.0.0-alpha Quality Gates
+# UNRDF vlatest Quality Gates
 
 **Last Updated**: 2025-12-03
 **Commit**: fb85767
@@ -139,7 +139,7 @@ pnpm test  # Should pass inference tests
 **Status**: ❌ NOT FIXED
 **Estimate**: 2-3 hours (requires pattern matching + inference logic)
 
-**Alternative**: Mark as experimental in README, remove from v5.0.0-alpha
+**Alternative**: Mark as experimental in README, remove from vlatest
 
 ---
 
@@ -315,7 +315,7 @@ node -e "import('@unrdf/federation').then(m => console.log(Object.keys(m)))"
 
 ## Recommendations
 
-### For v5.0.0-alpha Release
+### For vlatest Release
 
 **MUST FIX**:
 1. ✅ Federation exports (15 min)
@@ -334,7 +334,7 @@ node -e "import('@unrdf/federation').then(m => console.log(Object.keys(m)))"
 
 ---
 
-### For v5.0.0 GA Release
+### For vlatest GA Release
 
 **MUST COMPLETE**:
 - All alpha fixes
@@ -351,7 +351,7 @@ node -e "import('@unrdf/federation').then(m => console.log(Object.keys(m)))"
 
 ## Sign-off Checklist
 
-Before releasing v5.0.0-alpha:
+Before releasing vlatest:
 
 - [ ] All blocker fixes implemented
 - [ ] All blocker tests passing
@@ -359,7 +359,7 @@ Before releasing v5.0.0-alpha:
 - [ ] README documents experimental packages
 - [ ] CHANGELOG updated
 - [ ] Version bumped in all package.json
-- [ ] Git tagged as v5.0.0-alpha.0
+- [ ] Git tagged as vlatest.0
 - [ ] Published to npm (alpha tag)
 
 **Signed off by**: _______________

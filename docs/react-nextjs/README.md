@@ -139,17 +139,17 @@ Visualization components in `packages/react/components/`:
 ### Next.js Applications (3)
 
 1. **packages/react** - μ(O) Calculus Benchmark Dashboard
-   - Next.js 16.0.7, React 18.3.1
+   - Next.js latest, React latest
    - Static export mode
    - Visualization components
 
 2. **playground/hooks-showcase** - Interactive Hooks Demo
-   - Next.js 14.2.0, React 18.3.0
+   - Next.js latest, React latest
    - 10 demo components showcasing hooks
    - Radix UI components
 
 3. **packages/kgc-4d/playground** - Shard-Based Architecture Demo
-   - Next.js 15.1.0, React 19.0.0
+   - Next.js latest, React latest
    - WebSocket Tether protocol
    - Framer Motion animations
 
@@ -174,8 +174,8 @@ Usage examples in `examples/`:
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| **React** | 18.3.1 / 19.0.0 | UI framework |
-| **Next.js** | 14.2.0 - 16.0.7 | React framework |
+| **React** | latest / latest | UI framework |
+| **Next.js** | latest - latest | React framework |
 | **@unrdf/oxigraph** | Workspace | RDF store (WASM) |
 | **@unrdf/core** | Workspace | Knowledge engine |
 
@@ -371,5 +371,5 @@ Found an issue or have a suggestion?
 ---
 
 **Last Updated:** 2025-12-05
-**Documentation Version:** 1.0.0
+**Documentation Version:** latest
 **Covers:** 36 JSX files, 101 hooks, 3 Next.js apps

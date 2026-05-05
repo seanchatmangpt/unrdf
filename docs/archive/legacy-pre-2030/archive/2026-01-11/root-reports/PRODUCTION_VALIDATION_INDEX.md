@@ -1,8 +1,8 @@
 # Production Validation - Complete Documentation Package
 
 **Generated:** 2025-12-25
-**Project:** UNRDF v5.0.1
-**Score:** 4.5/10 (NOT production ready)
+**Project:** UNRDF vlatest
+**Score:** latest/10 (NOT production ready)
 
 ---
 
@@ -13,7 +13,7 @@
 **Purpose:** Quick overview for decision-makers
 **Read Time:** 5 minutes
 **Key Info:**
-- Current score: 4.5/10
+- Current score: latest/10
 - 2 critical blockers
 - 3-5 day timeline to fix
 - Deployment recommendations
@@ -236,7 +236,7 @@ pnpm -r test 2>&1 | grep -E "Test Files.*failed|passed"
 ## VERSION HISTORY
 
 - **2025-12-25:** Initial validation complete
-  - Score: 4.5/10
+  - Score: latest/10
   - Blockers: 2 critical (OTEL, file sizes)
   - Status: Not production ready
 

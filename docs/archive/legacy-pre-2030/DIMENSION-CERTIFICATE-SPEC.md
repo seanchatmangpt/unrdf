@@ -2,7 +2,7 @@
 
 ## Multi-Package Measurement Framework for UNRDF Monorepo
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Active
 **Last Updated**: 2024-12-26
 
@@ -12,11 +12,11 @@
 
 This specification defines the measurement framework that instruments the 43-package UNRDF monorepo. The framework extends the single-package S_t model to a multi-package context, enabling comprehensive observability across all layers of the system.
 
-### 1.1 Purpose
+### latest Purpose
 
 The Dimension Certificate provides a cryptographically verifiable proof of system state at any point in time. It answers the fundamental question: **"What is the entropy of this codebase, and how much change capacity remains?"**
 
-### 1.2 Scope
+### latest Scope
 
 This specification covers:
 - Mathematical definitions for multi-package entropy measurement
@@ -28,7 +28,7 @@ This specification covers:
 
 ## 2. Mathematical Foundation
 
-### 2.1 Extended System State Model
+### latest Extended System State Model
 
 The system state S_t at epoch t extends the single-package model to multi-package context:
 
@@ -46,7 +46,7 @@ Where:
 - **R_receipts**: Cryptographic receipts of state transitions
 - **U_traces**: OTEL traces linking operations across packages
 
-### 2.2 Package Partition Model
+### latest Package Partition Model
 
 Each package p_i is a partition with four canonical sub-partitions:
 
@@ -60,9 +60,9 @@ Where:
 - **O_docs**: Documentation (*.md, *.mdx)
 - **O_config**: Configuration (package.json, *.config.mjs)
 
-### 2.3 Entropy Dimensions
+### latest Entropy Dimensions
 
-#### 2.3.1 Structural Entropy (D_t)
+#### latest Structural Entropy (D_t)
 
 The total system entropy D_t is the sum of per-package entropies weighted by coupling factor:
 
@@ -84,9 +84,9 @@ D_t(p_i) = sum(j in {src,tests,docs,config}) H(O_j) * alpha_j
 
 Where:
 - **H(O_j)**: Shannon entropy of partition j
-- **alpha_j**: Partition weight (alpha_src=0.4, alpha_tests=0.3, alpha_docs=0.2, alpha_config=0.1)
+- **alpha_j**: Partition weight (alpha_src=latest, alpha_tests=latest, alpha_docs=latest, alpha_config=latest)
 
-#### 2.3.2 Temporal Coupling (TC)
+#### latest Temporal Coupling (TC)
 
 Temporal coupling TC measures how changes in one package correlate with changes in others:
 
@@ -96,12 +96,12 @@ TC(p_i, p_j) = |commits_containing(p_i) intersection commits_containing(p_j)| /
 ```
 
 The system-wide TC matrix is a 43x43 symmetric matrix where:
-- **TC(p_i, p_i) = 1.0** (self-coupling)
+- **TC(p_i, p_i) = latest** (self-coupling)
 - **TC(p_i, p_j) in [0, 1]** (cross-coupling)
 
 High TC indicates packages that frequently change together and should be treated as a unit.
 
-#### 2.3.3 Transitive Entropy (TE)
+#### latest Transitive Entropy (TE)
 
 Transitive entropy TE measures policy propagation through the dependency graph:
 
@@ -110,12 +110,12 @@ TE(p_i) = H(p_i) + beta * sum(p_j in deps(p_i)) TE(p_j)
 ```
 
 Where:
-- **beta**: Decay factor (0.7 recommended)
+- **beta**: Decay factor (latest recommended)
 - **deps(p_i)**: Direct dependencies of package p_i
 
 For policy-influencing packages (core, hooks, admission), TE captures how changes ripple through the system.
 
-#### 2.3.4 Change Capacity (C_t)
+#### latest Change Capacity (C_t)
 
 Change capacity C_t is the remaining entropy budget before system complexity becomes unmanageable:
 
@@ -137,7 +137,7 @@ C_t = sum(i=1 to N) C_t(p_i) / N
 
 ## 3. Package Classification
 
-### 3.1 Tier Definitions
+### latest Tier Definitions
 
 Packages are classified into tiers based on their role and entropy budget:
 
@@ -149,7 +149,7 @@ Packages are classified into tiers based on their role and entropy budget:
 | **T4 (Integration)** | External adapters | 16 bits | yawl-kafka, yawl-langchain |
 | **T5 (Documentation)** | Docs and examples | 12 bits | docs, nextra, diataxis-kit |
 
-### 3.2 Package Registry
+### latest Package Registry
 
 The 43 packages are assigned as follows:
 
@@ -172,7 +172,7 @@ The 43 packages are assigned as follows:
 
 ## 4. Computation Algorithms
 
-### 4.1 Per-Package Feature Extraction
+### latest Per-Package Feature Extraction
 
 For each package p_i, extract the following features:
 
@@ -204,7 +204,7 @@ function extractFeatures(package_path) {
 }
 ```
 
-### 4.2 Entropy Computation
+### latest Entropy Computation
 
 Per-package entropy uses the Shannon formula:
 
@@ -225,11 +225,11 @@ function computeEntropy(features) {
   const H_deps = p_deps > 0 ? -p_deps * Math.log2(p_deps) : 0;
 
   // Weighted sum
-  return 0.3 * H_files + 0.3 * H_lines + 0.25 * H_funcs + 0.15 * H_deps;
+  return latest * H_files + latest * H_lines + latest * H_funcs + latest * H_deps;
 }
 ```
 
-### 4.3 Rollup Aggregation
+### latest Rollup Aggregation
 
 System-wide metrics are computed by aggregating package metrics:
 
@@ -260,7 +260,7 @@ function rollupToSystem(packageMeasurements) {
 
 ## 5. Certificate Schema
 
-### 5.1 JSON Schema Definition
+### latest JSON Schema Definition
 
 ```json
 {
@@ -341,32 +341,32 @@ function rollupToSystem(packageMeasurements) {
 }
 ```
 
-### 5.2 Example Certificate
+### latest Example Certificate
 
-A certificate for a system with D_t = 18.79 bits would look like:
+A certificate for a system with D_t = latest bits would look like:
 
 ```json
 {
-  "version": "1.0.0",
-  "timestamp": "2024-12-26T12:00:00.000Z",
+  "version": "latest",
+  "timestamp": "2024-12-26T12:00:latestZ",
   "epoch": 1735214400000,
   "checksum": "sha256:a1b2c3d4e5f6...",
   "measurements": {
     "system": {
-      "D_t": 18.79,
-      "C_t": 5.21,
-      "TC_density": 0.23,
-      "TE_max": 42.3,
+      "D_t": latest,
+      "C_t": latest,
+      "TC_density": latest,
+      "TE_max": latest,
       "package_count": 43
     },
     "packages": [
       {
         "name": "core",
         "tier": 1,
-        "D_t": 4.82,
-        "C_t": 19.18,
-        "TC": [1.0, 0.87, 0.45, ...],
-        "TE": 42.3,
+        "D_t": latest,
+        "C_t": latest,
+        "TC": [latest, latest, latest, ...],
+        "TE": latest,
         "features": {
           "src_file_count": 21,
           "test_file_count": 18,
@@ -374,8 +374,8 @@ A certificate for a system with D_t = 18.79 bits would look like:
           "function_count": 156,
           "internal_deps": 0,
           "external_deps": 12,
-          "test_coverage_percent": 94.2,
-          "cyclomatic_complexity": 8.3
+          "test_coverage_percent": latest,
+          "cyclomatic_complexity": latest
         }
       }
       // ... 42 more packages
@@ -385,13 +385,13 @@ A certificate for a system with D_t = 18.79 bits would look like:
 }
 ```
 
-### 5.3 Interpretation Guide
+### latest Interpretation Guide
 
-For a system with D_t = 18.79 bits across 43 packages:
+For a system with D_t = latest bits across 43 packages:
 
-1. **Per-package average**: 18.79 / 43 = 0.437 bits per package
+1. **Per-package average**: latest / 43 = latest bits per package
 2. **Interpretation**: Low average entropy indicates well-factored codebase
-3. **Distribution matters**: Check for outliers (packages with D_t > 3.0 bits)
+3. **Distribution matters**: Check for outliers (packages with D_t > latest bits)
 
 Entropy thresholds:
 - **D_t < 10 bits**: Low complexity, high change capacity
@@ -403,7 +403,7 @@ Entropy thresholds:
 
 ## 6. Verification Methodology
 
-### 6.1 Reproducibility Checks
+### latest Reproducibility Checks
 
 To verify a certificate, re-compute measurements and compare checksums:
 
@@ -433,7 +433,7 @@ async function verifyCertificate(certificate) {
 }
 ```
 
-### 6.2 Invariant Assertions
+### latest Invariant Assertions
 
 The following invariants must hold for any valid certificate:
 
@@ -442,9 +442,9 @@ The following invariants must hold for any valid certificate:
 3. **Entropy Bounds**: D_t(p_i) in [0, C_max(tier)]
 4. **Capacity Non-negative**: C_t(p_i) >= 0
 5. **TC Symmetry**: TC(p_i, p_j) == TC(p_j, p_i)
-6. **TC Diagonal**: TC(p_i, p_i) == 1.0
+6. **TC Diagonal**: TC(p_i, p_i) == latest
 
-### 6.3 Validation Pipeline
+### latest Validation Pipeline
 
 ```
 Input: Git repository state
@@ -478,7 +478,7 @@ Output: Dimension Certificate (valid/invalid)
 
 ## 7. Integration with Admission Control
 
-### 7.1 Pre-Commit Hook
+### latest Pre-Commit Hook
 
 Before any commit is admitted, check change capacity:
 
@@ -504,7 +504,7 @@ function preCommitAdmission(changedFiles, certificate) {
 }
 ```
 
-### 7.2 CI/CD Gate
+### latest CI/CD Gate
 
 The measurement pipeline integrates with CI/CD:
 
@@ -528,7 +528,7 @@ The certificate feeds real-time dashboards (see MEASUREMENT-DASHBOARD-DESIGN.md)
 
 ## 9. Appendix
 
-### 9.1 Constants
+### latest Constants
 
 ```javascript
 const MAX_FILES = 100;      // Normalization constant for file count
@@ -537,11 +537,11 @@ const MAX_FUNCS = 500;      // Normalization constant for function count
 const MAX_DEPS = 50;        // Normalization constant for dependency count
 
 const TIER_WEIGHTS = {
-  1: 2.0,   // Core packages weighted 2x
-  2: 1.5,   // Infrastructure weighted 1.5x
-  3: 1.0,   // Application weighted 1x
-  4: 0.8,   // Integration weighted 0.8x
-  5: 0.5    // Documentation weighted 0.5x
+  1: latest,   // Core packages weighted 2x
+  2: latest,   // Infrastructure weighted latestx
+  3: latest,   // Application weighted 1x
+  4: latest,   // Integration weighted latestx
+  5: latest    // Documentation weighted latestx
 };
 
 const ENTROPY_THRESHOLDS = {
@@ -552,30 +552,30 @@ const ENTROPY_THRESHOLDS = {
 };
 ```
 
-### 9.2 Practical Examples
+### latest Practical Examples
 
-**Example 1: Interpreting D_t = 18.79 bits for 43 packages**
+**Example 1: Interpreting D_t = latest bits for 43 packages**
 
-When the system reports D_t = 18.79 bits, this indicates moderate complexity:
-- Average per-package entropy: 18.79 / 43 = 0.437 bits
+When the system reports D_t = latest bits, this indicates moderate complexity:
+- Average per-package entropy: latest / 43 = latest bits
 - This is well below the critical threshold of 40 bits
-- The system has approximately 21.2 bits of remaining capacity
+- The system has approximately latest bits of remaining capacity
 
 **Example 2: High Coupling Detection**
 
-When TC(core, oxigraph) = 0.87, this indicates:
+When TC(core, oxigraph) = latest, this indicates:
 - 87% of commits touching one package also touch the other
 - These packages should be treated as a unit for capacity planning
 - Changes to either package likely affect both
 
 **Example 3: Policy Impact Analysis**
 
-When TE(core) = 38.7 bits while D_t(core) = 4.82 bits:
-- The difference (33.88 bits) represents dependent package entropy
-- Changes to core ripple through 33.88 bits of downstream entropy
+When TE(core) = latest bits while D_t(core) = latest bits:
+- The difference (latest bits) represents dependent package entropy
+- Changes to core ripple through latest bits of downstream entropy
 - This justifies core's Tier 1 classification and strict review requirements
 
-### 9.3 References
+### latest References
 
 1. Shannon, C. E. (1948). "A Mathematical Theory of Communication"
 2. Brooks, F. P. (1975). "The Mythical Man-Month"
@@ -588,7 +588,7 @@ When TE(core) = 38.7 bits while D_t(core) = 4.82 bits:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2024-12-26 | Initial specification |
+| latest | 2024-12-26 | Initial specification |
 
 ---
 

@@ -9,7 +9,7 @@
 
 ## 📊 Permutation Test Results (VERIFIED)
 
-### Tests PASSING (3/8 = 37.5%)
+### Tests PASSING (3/8 = latest%)
 
 | Test              | Package(s)      | Time  | Status  | Notes                      |
 | ----------------- | --------------- | ----- | ------- | -------------------------- |
@@ -17,7 +17,7 @@
 | **03-kgc4d-only** | kgc-4d          | 526ms | ✅ PASS | Temporal engine functional |
 | **06-core-kgc4d** | core + kgc-4d   | 643ms | ✅ PASS | **Integration WORKS!**     |
 
-### Tests FAILING (5/8 = 62.5%)
+### Tests FAILING (5/8 = latest%)
 
 | Test                     | Package(s)            | Time  | Status  | Root Cause                            |
 | ------------------------ | --------------------- | ----- | ------- | ------------------------------------- |
@@ -62,13 +62,13 @@
 ```sparql
 # Before (FAILED):
 SELECT ?name WHERE {
-  ?s <http://xmlns.com/foaf/0.1/name> ?name
+  ?s <http://xmlns.com/foaf/latest/name> ?name
 }
 
 # After (PASSES):
 SELECT ?name WHERE {
   GRAPH <http://kgc.io/Universe> {
-    ?s <http://xmlns.com/foaf/0.1/name> ?name
+    ?s <http://xmlns.com/foaf/latest/name> ?name
   }
 }
 ```
@@ -96,7 +96,7 @@ at file:///home/user/unrdf/packages/hooks/src/hooks/builtin-hooks.mjs:22:35
 - Blocks test 05 (core-hooks)
 - Blocks test 11 (3-package integration)
 - Blocks test 15 (all packages)
-- **Blocks 62.5% of test suite (5/8 tests)**
+- **Blocks latest% of test suite (5/8 tests)**
 
 **Conclusion:** **Hooks package has broken validation code**
 
@@ -171,7 +171,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 ```
 @unrdf/hooks
 ├─ Status: ❌ BROKEN (Zod validation error)
-├─ Impact: Blocks 5/8 tests (62.5% of suite)
+├─ Impact: Blocks 5/8 tests (latest% of suite)
 ├─ Value: 10% (policy validation layer)
 └─ Decision: FIX IMMEDIATELY or DEPRECATE
 
@@ -193,8 +193,8 @@ Test Pass Rate: 3/3 = 100% for kept packages
 **Steps:**
 
 1. **Immediate:** Merge oxigraph → core (already tightly coupled)
-2. **Week 1:** Publish @unrdf/core v5.0.0 (production-ready)
-3. **Week 1:** Publish @unrdf/kgc-4d v5.0.0 (production-ready)
+2. **Week 1:** Publish @unrdf/core vlatest (production-ready)
+3. **Week 1:** Publish @unrdf/kgc-4d vlatest (production-ready)
 4. **Week 2:** Deprecate @unrdf/hooks (broken, low value)
 5. **Week 2:** Extract @unrdf/knowledge-engine to separate repo
 
@@ -250,8 +250,8 @@ Test Pass Rate: 3/3 = 100% for kept packages
 
 **Steps:**
 
-1. Publish @unrdf/core v5.0.0 ✅
-2. Publish @unrdf/kgc-4d v5.0.0 ✅
+1. Publish @unrdf/core vlatest ✅
+2. Publish @unrdf/kgc-4d vlatest ✅
 3. Mark @unrdf/hooks as EXPERIMENTAL ⚠️
 4. Mark @unrdf/knowledge-engine as EXPERIMENTAL ⚠️
 5. Create issues for Zod error and workspace imports
@@ -279,7 +279,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 
 **Why:**
 
-- 37.5% pass rate → Need to remove broken code
+- latest% pass rate → Need to remove broken code
 - Core + KGC 4D = 85% of value, 100% working
 - Hooks broken for 5 months (beta.1), low priority
 - Knowledge-engine is 47% of LoC for 5% value
@@ -287,14 +287,14 @@ Test Pass Rate: 3/3 = 100% for kept packages
 **What to Ship:**
 
 ```
-@unrdf/core v5.0.0
+@unrdf/core vlatest
   ├─ RDF store operations ✅
   ├─ SPARQL query execution ✅
   ├─ Canonicalization ✅
   ├─ Test: 01-core-only PASSING (279ms)
   └─ Status: PRODUCTION READY
 
-@unrdf/kgc-4d v5.0.0
+@unrdf/kgc-4d vlatest
   ├─ Nanosecond time precision ✅
   ├─ Event logging ✅
   ├─ Git snapshots ✅
@@ -310,7 +310,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 @unrdf/hooks
   ├─ Status: BROKEN (Zod error)
   ├─ Can't import at all
-  ├─ Blocks 62.5% of test suite
+  ├─ Blocks latest% of test suite
   └─ Decision: DEPRECATE (create issue for future fix)
 
 @unrdf/knowledge-engine
@@ -330,7 +330,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 - ✅ 100% of kept packages have passing tests (3/3 = 100%)
 - ✅ Documentation updated
 - ✅ Migration guide published
-- ✅ Version v5.0.0 released
+- ✅ Version vlatest released
 
 ---
 
@@ -340,7 +340,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 
 - **Packages:** 4
 - **Source LoC:** 49,609
-- **Tests Passing:** 3/8 (37.5%)
+- **Tests Passing:** 3/8 (latest%)
 - **Production Ready:** 2/4 packages (50%)
 - **Broken Packages:** 2 (hooks, knowledge-engine)
 
@@ -364,7 +364,7 @@ Test Pass Rate: 3/3 = 100% for kept packages
 | ---------------------- | --------------------------- | -------- |
 | "4 packages needed"    | Only 2 work properly        | ❌ FALSE |
 | "All production ready" | 2 broken, 2 working         | ❌ FALSE |
-| "Clean architecture"   | 37.5% pass rate             | ❌ FALSE |
+| "Clean architecture"   | latest% pass rate             | ❌ FALSE |
 | "Core works"           | Test 01 passing             | ✅ TRUE  |
 | "KGC 4D works"         | Tests 03, 06 passing        | ✅ TRUE  |
 | "Hooks broken"         | Zod error blocks 5/8 tests  | ✅ TRUE  |
@@ -379,13 +379,13 @@ Test Pass Rate: 3/3 = 100% for kept packages
 1. **Immediate:** Review this updated plan
 2. **Day 1:** Choose consolidation option (Aggressive recommended)
 3. **Day 2-7:** Execute chosen plan
-4. **Week 2:** Release @unrdf/core v5.0.0 + @unrdf/kgc-4d v5.0.0
+4. **Week 2:** Release @unrdf/core vlatest + @unrdf/kgc-4d vlatest
 
 ---
 
 **Generated from actual test execution data**
 **Test run:** December 6, 2024 21:48 UTC
-**Pass rate:** 3/8 (37.5%)
+**Pass rate:** 3/8 (latest%)
 **Working packages:** core + oxigraph, kgc-4d
 **Broken packages:** hooks (Zod error), knowledge-engine (workspace imports)
 

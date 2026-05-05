@@ -175,7 +175,7 @@ PDF Compilation:
   Size:               389 KB
   Pages:              107
   Format:             PDF 1.5
-  Generator:          LuaTeX 1.18.0
+  Generator:          LuaTeX [VERSION]
   Status:             ✅ Successfully compiled
   
   Compilation Passes:

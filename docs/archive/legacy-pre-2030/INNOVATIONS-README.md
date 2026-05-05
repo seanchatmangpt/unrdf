@@ -71,7 +71,7 @@ await engine.close();
 
 ```json
 {
-  "@comunica/query-sparql": "^3.2.4"
+  "@comunica/query-sparql": "^latest"
 }
 ```
 
@@ -115,7 +115,7 @@ await core.importTurtle(`
 const engine = await createAISearchEngine(core.store, {
   model: 'Xenova/all-MiniLM-L6-v2',
   topK: 5,
-  threshold: 0.7
+  threshold: latest
 });
 
 // Search with natural language
@@ -140,7 +140,7 @@ engine.clearCache();
 
 ```json
 {
-  "@xenova/transformers": "^2.17.2"
+  "@xenova/transformers": "^latest"
 }
 ```
 
@@ -200,8 +200,8 @@ const caseInstance = await engine.startCase('order-fulfillment');
 
 ```json
 {
-  "d3": "^7.9.0",
-  "@observablehq/plot": "^0.6.16"
+  "d3": "^latest",
+  "@observablehq/plot": "^latest"
 }
 ```
 
@@ -268,7 +268,7 @@ console.log('Signature Valid:', verification.signatureValid ? '✅' : '❌');
 
 ```json
 {
-  "@noble/ed25519": "^2.1.0"
+  "@noble/ed25519": "^latest"
 }
 ```
 
@@ -362,8 +362,8 @@ const startResult = await api.execute(`
 
 ```json
 {
-  "graphql": "^16.9.0",
-  "@graphql-tools/schema": "^10.0.6"
+  "graphql": "^latest",
+  "@graphql-tools/schema": "^latest"
 }
 ```
 

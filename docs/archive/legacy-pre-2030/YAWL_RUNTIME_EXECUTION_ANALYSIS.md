@@ -18,7 +18,7 @@
 
 ## 1. Execution Model
 
-### 1.1 Task Lifecycle - State Machine Only
+### latest Task Lifecycle - State Machine Only
 
 Tasks follow a state machine pattern:
 
@@ -38,7 +38,7 @@ CANCELLED  CANCELLED  FAILED/TIMEOUT
 
 **Critical Insight**: These are PURE STATE TRANSITIONS. No actual work execution happens here.
 
-### 1.2 Where Does Work Actually Execute?
+### latest Where Does Work Actually Execute?
 
 **Answer**: Work execution is EXTERNAL to YAWL core.
 
@@ -63,7 +63,7 @@ export async function completeTask(taskInstance, outputData = {}, options = {}) 
 - There is NO `task.execute()` or `task.handler()` call
 - The caller must execute work BEFORE calling `completeTask()`
 
-### 1.3 Execution Flow Trace
+### latest Execution Flow Trace
 
 **Engine Level** (`engine.mjs:293-399`):
 ```javascript
@@ -114,13 +114,13 @@ await engine.completeTask(caseId, workItemId, output);
 
 ## 2. Concurrency Model
 
-### 2.1 Single-Threaded Event Loop
+### latest Single-Threaded Event Loop
 
 **Platform**: JavaScript/Node.js
 **Thread Model**: Single-threaded with async I/O
 **Concurrency Mechanism**: Event loop + Promises
 
-### 2.2 How Multiple Tasks Run "Concurrently"
+### latest How Multiple Tasks Run "Concurrently"
 
 **Answer**: They don't run concurrently in the engine - they WAIT concurrently.
 
@@ -145,7 +145,7 @@ const barrierResult = await barrier.wait();
 
 **Key Pattern**: `Promise.all` semantics via SyncBarrier
 
-### 2.3 SyncBarrier - The Concurrency Primitive
+### latest SyncBarrier - The Concurrency Primitive
 
 **File**: `sync-barrier.mjs`
 
@@ -189,7 +189,7 @@ class SyncBarrier {
 
 ## 3. Task Scheduling
 
-### 3.1 Is There a Task Queue?
+### latest Is There a Task Queue?
 
 **Answer**: NO
 
@@ -198,7 +198,7 @@ class SyncBarrier {
 - No `enqueue()` or `dequeue()` methods
 - Tasks are stored in `Map<string, TaskInstance>` (lookup structure, not queue)
 
-### 3.2 Is There an Executor Service?
+### latest Is There an Executor Service?
 
 **Answer**: NO
 
@@ -208,7 +208,7 @@ class SyncBarrier {
 - No thread pool (JavaScript is single-threaded)
 - No background task runner
 
-### 3.3 How Are Tasks Ordered?
+### latest How Are Tasks Ordered?
 
 **Answer**: By control flow graph evaluation
 
@@ -258,7 +258,7 @@ export async function evaluateControlFlowAndEnable(workItem, result, caseObj, wo
 
 ## 4. Result Collection
 
-### 4.1 How Are Results Stored?
+### latest How Are Results Stored?
 
 **Answer**: In-memory on `TaskInstance` objects
 
@@ -279,7 +279,7 @@ taskInstance.statusHistory.set(`completed:${taskInstance.completedAt}`, {
 2. `TaskInstance.statusHistory` - Audit trail
 3. `TaskInstance.receipts[]` - Cryptographic receipts
 
-### 4.2 Result Aggregation (Multiple Instances)
+### latest Result Aggregation (Multiple Instances)
 
 **Code** (`wp13-design-time.mjs:209-239`):
 ```javascript
@@ -316,7 +316,7 @@ const result = {
 
 ## 5. Inter-Task Communication
 
-### 5.1 Direct Communication
+### latest Direct Communication
 
 **Answer**: NO direct task-to-task communication
 
@@ -325,7 +325,7 @@ const result = {
 - No message passing
 - No shared channels
 
-### 5.2 Indirect Communication via Case Data
+### latest Indirect Communication via Case Data
 
 **Code** (`case-core.mjs`):
 ```javascript
@@ -341,7 +341,7 @@ export class CaseCore {
 - Tasks write to `case.data`
 - No coordination mechanism (race conditions possible)
 
-### 5.3 Event-Based Coordination
+### latest Event-Based Coordination
 
 **Code** (`engine.mjs:362-382`):
 ```javascript
@@ -379,7 +379,7 @@ for (const downstream of result.downstreamEnabled) {
 
 ## 6. Async Patterns Used
 
-### 6.1 Promise-Based State Transitions
+### latest Promise-Based State Transitions
 
 All state transition methods are async:
 
@@ -394,7 +394,7 @@ export async function completeTask(taskInstance, outputData = {}, options = {}) 
 - Hook execution (async validators/routers)
 - Event logging to KGC-4D store (async)
 
-### 6.2 Promise.all Equivalent
+### latest Promise.all Equivalent
 
 **Code** (`sync-barrier.mjs`):
 ```javascript
@@ -418,7 +418,7 @@ await Promise.race([
 ]);
 ```
 
-### 6.3 No Worker Threads
+### latest No Worker Threads
 
 **Evidence**:
 ```bash
@@ -435,7 +435,7 @@ $ grep -r "Worker" packages/yawl/src --include="*.mjs"
 
 ## 7. Gap Analysis: What's Missing for MI Patterns?
 
-### 7.1 Current Capabilities
+### latest Current Capabilities
 
 ✅ **Have**:
 - State machine for task lifecycle
@@ -445,7 +445,7 @@ $ grep -r "Worker" packages/yawl/src --include="*.mjs"
 - Event emission for coordination
 - Resource pool management
 
-### 7.2 Missing for Advanced MI Patterns
+### latest Missing for Advanced MI Patterns
 
 ❌ **Missing**:
 
@@ -489,7 +489,7 @@ $ grep -r "Worker" packages/yawl/src --include="*.mjs"
 
 ## 8. Do We Need a Daemon?
 
-### 8.1 Analysis
+### latest Analysis
 
 **Current Model**: Library (in-process execution)
 ```javascript
@@ -510,7 +510,7 @@ await daemonClient.startTask(caseId, taskId);
 // Client polls or receives callback when complete
 ```
 
-### 8.2 Decision Matrix
+### latest Decision Matrix
 
 | Feature | Library (Current) | Daemon (Proposed) | Winner |
 |---------|-------------------|-------------------|--------|
@@ -525,7 +525,7 @@ await daemonClient.startTask(caseId, taskId);
 | Failure Recovery | ❌ Process crash = data loss | ✅ Persistent queue | Daemon |
 | WASM Support | ✅ Direct import | ❌ IPC overhead | Library |
 
-### 8.3 Recommendation
+### latest Recommendation
 
 **For MI Patterns**: **Extend Library, No Daemon Needed**
 
@@ -536,7 +536,7 @@ await daemonClient.startTask(caseId, taskId);
 4. **YAWL is a library** - Designed for in-process usage
 5. **Can extend without breaking changes** - Add optional auto-execution
 
-### 8.4 Proposed Extension: Task Handler Auto-Execution
+### latest Proposed Extension: Task Handler Auto-Execution
 
 **Current**:
 ```javascript
@@ -610,7 +610,7 @@ async startTask(caseId, workItemId, options = {}) {
 
 ## 10. Recommendations
 
-### 10.1 For MI Patterns Implementation
+### latest For MI Patterns Implementation
 
 1. **Extend WP13 Pattern**:
    - Add WP14 (runtime cardinality) by allowing dynamic count
@@ -638,7 +638,7 @@ async startTask(caseId, workItemId, options = {}) {
    engine.on('MI_PROGRESS', ({ completed, total, percentage }) => {});
    ```
 
-### 10.2 What NOT to Do
+### latest What NOT to Do
 
 ❌ **Don't**:
 - Create a separate daemon process

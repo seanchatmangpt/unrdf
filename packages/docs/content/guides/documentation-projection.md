@@ -53,7 +53,7 @@ Initialize a projection pipeline with your project configuration:
 ```javascript
 const pipeline = new ProjectionPipeline({
   projectName: 'MyProject',
-  version: '1.0.0',
+  version: '[VERSION]',
   description: 'My project description',
   audiences: ['user', 'contributor'],
 });

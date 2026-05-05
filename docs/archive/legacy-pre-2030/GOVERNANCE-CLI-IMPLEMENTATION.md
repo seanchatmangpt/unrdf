@@ -224,7 +224,7 @@ node ./src/cli.mjs project \
 # Output:
 # === Artifact Projection ===
 # Epoch: τ_001
-# Timestamp: 2025-12-26T22:35:19.552Z
+# Timestamp: 2025-12-26T22:35:latestZ
 #
 # Artifacts (3):
 #   - universe-snapshot-τ_001.ttl (Hash: fe107f90...)
@@ -386,7 +386,7 @@ The CLI integrates with existing governance substrate components:
 Total: 8
 Passed: 8
 Failed: 0
-Success rate: 100.0%
+Success rate: latest%
 ✅ All tests passed!
 
 # Performance proof

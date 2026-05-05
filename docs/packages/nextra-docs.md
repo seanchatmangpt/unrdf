@@ -2,7 +2,7 @@
 
 > UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Internal
 
 ## Overview

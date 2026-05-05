@@ -2,7 +2,7 @@
 title: "empty-package Explanation"
 type: "explanation"
 packageName: "empty-package"
-version: "0.0.1"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.162Z"
 confidenceScore: 0
 proof: "d10e1c3c48b31942bc49c4138fa54ceba73dd01cd79a814c2a0f323b198c9ba8"

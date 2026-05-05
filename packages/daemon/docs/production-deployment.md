@@ -31,7 +31,7 @@ Complete guide for deploying and operating @unrdf/daemon in production environme
 - RAM: 512 MB minimum, 1 GB recommended
 - Storage: 1 GB for operation logs and receipts
 - Network: Standard TCP/IP
-- Node.js: 18.0.0+, 20 LTS recommended
+- Node.js: [VERSION]+, 20 LTS recommended
 
 **3-Node Cluster** (High Availability):
 - Per Node: 4 CPU cores, 2 GB RAM, 10 GB storage
@@ -156,7 +156,7 @@ CMD ["node", "src/daemon.mjs"]
 
 # Metadata
 LABEL org.unrdf.component="daemon" \
-      org.unrdf.version="1.0.0" \
+      org.unrdf.version="[VERSION]" \
       org.opencontainers.image.description="UNRDF background daemon for scheduled tasks and event-driven operations"
 ```
 
@@ -172,7 +172,7 @@ LABEL org.unrdf.component="daemon" \
 docker build \
   --target runtime \
   --build-arg NODE_ENV=production \
-  -t unrdf-daemon:1.0.0 \
+  -t unrdf-daemon:[VERSION] \
   -t unrdf-daemon:latest \
   -f Dockerfile .
 ```
@@ -300,7 +300,7 @@ metadata:
   namespace: unrdf-daemons
   labels:
     app: unrdf-daemon
-    version: "1.0.0"
+    version: "[VERSION]"
 spec:
   serviceName: unrdf-daemon
   replicas: 3
@@ -313,7 +313,7 @@ spec:
     metadata:
       labels:
         app: unrdf-daemon
-        version: "1.0.0"
+        version: "[VERSION]"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
@@ -348,7 +348,7 @@ spec:
       # Main daemon container
       containers:
       - name: daemon
-        image: unrdf-daemon:1.0.0
+        image: unrdf-daemon:[VERSION]
         imagePullPolicy: IfNotPresent
 
         ports:

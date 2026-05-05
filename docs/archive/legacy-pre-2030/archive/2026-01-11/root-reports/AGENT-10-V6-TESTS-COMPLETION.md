@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Comprehensive analysis of UNRDF v6 test infrastructure reveals **robust test coverage with 99.5%+ pass rates** across core packages. Identified and fixed critical issues preventing 100% test pass rate.
+Comprehensive analysis of UNRDF v6 test infrastructure reveals **robust test coverage with latest%+ pass rates** across core packages. Identified and fixed critical issues preventing 100% test pass rate.
 
 ### Key Metrics (MEASURED)
 
@@ -19,17 +19,17 @@ Comprehensive analysis of UNRDF v6 test infrastructure reveals **robust test cov
 | **Total Test LoC** | 66,292 | `wc -l` across all test files |
 | **Packages with Tests** | 64/69 | 93% coverage |
 | **Benchmark Files** | 38 | Core + integration + regression |
-| **Test Runners** | 2 | vitest v4.0.16, node:test |
+| **Test Runners** | 2 | vitest vlatest, node:test |
 
 ### Test Pass Rates (ACTUAL RUN RESULTS)
 
 | Package | Passed | Failed | Total | Rate | OTEL Score |
 |---------|--------|--------|-------|------|------------|
-| **@unrdf/core** | 438 | 1 | 439 | 99.8% | N/A |
+| **@unrdf/core** | 438 | 1 | 439 | latest% | N/A |
 | **@unrdf/kgc-4d** | 443 | 0 | 444 | **100%** | **100/100** |
 | **@unrdf/v6-core** | 17 | 12 | 29 | 59% | N/A |
 
-**Overall**: ~900 tests passing, ~13 tests failing (98.6% pass rate)
+**Overall**: ~900 tests passing, ~13 tests failing (latest% pass rate)
 
 ---
 
@@ -97,7 +97,7 @@ unrdf/
 
 **Problem**:
 ```javascript
-expect(elapsed).toBeGreaterThanOrEqual(50);  // Failed with 49.24ms
+expect(elapsed).toBeGreaterThanOrEqual(50);  // Failed with latestms
 ```
 
 **Root Cause**: Timing assertions in CI/test environments vary ±5ms
@@ -109,7 +109,7 @@ expect(elapsed).toBeGreaterThanOrEqual(45);
 expect(elapsed).toBeLessThan(110);
 ```
 
-**Validation**: Re-ran tests → 438/439 passing (99.8% → target met)
+**Validation**: Re-ran tests → 438/439 passing (latest% → target met)
 
 ---
 
@@ -162,7 +162,7 @@ SyntaxError: The requested module 'vitest/node' does not
 provide an export named 'parseAstAsync'
 ```
 
-**Root Cause**: vitest v4.0.16 vs @vitest/coverage-v8 API mismatch
+**Root Cause**: vitest vlatest vs @vitest/coverage-v8 API mismatch
 
 **Impact**:
 - Tests run successfully WITHOUT `--coverage` flag
@@ -174,8 +174,8 @@ provide an export named 'parseAstAsync'
 // package.json
 {
   "devDependencies": {
-    "vitest": "^4.0.16",
-    "@vitest/coverage-v8": "^4.0.16"  // Must match major version
+    "vitest": "^latest",
+    "@vitest/coverage-v8": "^latest"  // Must match major version
   }
 }
 ```
@@ -289,7 +289,7 @@ pnpm test --coverage   # ❌ Fails
 
 2. **Align Vitest Versions**
    ```bash
-   pnpm add -D vitest@4.0.16 @vitest/coverage-v8@4.0.16 --filter @unrdf/oxigraph
+   pnpm add -D vitest@latest @vitest/coverage-v8@latest --filter @unrdf/oxigraph
    ```
 
 3. **Build Packages for Benchmarks**
@@ -332,7 +332,7 @@ pnpm test --coverage   # ❌ Fails
 |--------|------|-------------|-----|-------------|------------|
 | **v6-core** | ⚠️ 59% | ❌ Missing | ❌ Missing | ❌ Blocked | ~60% |
 | **kgc-4d** | ✅ 100% | ✅ Pass | ✅ Pass | ✅ 100/100 | ~95% |
-| **core** | ✅ 99.8% | ✅ Pass | ⚠️ Partial | ⚠️ Blocked | ~87% |
+| **core** | ✅ latest% | ✅ Pass | ⚠️ Partial | ⚠️ Blocked | ~87% |
 | **hooks** | ✅ Pass | ✅ Pass | ⚠️ Partial | ⚠️ Blocked | ~80% |
 | **atomvm** | ✅ Pass | ✅ Pass | ✅ Playwright | ❌ Missing | ~75% |
 | **oxigraph** | ✅ Pass | ✅ Pass | N/A | ⚠️ Blocked | ~85% |
@@ -352,14 +352,14 @@ pnpm test --coverage   # ❌ Fails
 ```
 Test Files  1 failed | 14 passed (15)
 Tests       1 failed | 438 passed (439)
-Duration    3.51s
+Duration    latests
 ```
 
 **kgc-4d Package** (443/444 passing):
 ```
 Test Files  24 passed (24)
 Tests       443 passed | 1 skipped (444)
-Duration    5.72s
+Duration    latests
 OTEL Score: 100/100
 ```
 
@@ -417,7 +417,7 @@ UNRDF v6 has **excellent test infrastructure** with 385 test files covering 66,2
 - Build packages to enable benchmark execution
 - Add missing v6 integration/E2E tests
 
-**Evidence-Based Quality Score**: 98.6% (900/913 tests passing)
+**Evidence-Based Quality Score**: latest% (900/913 tests passing)
 
 ---
 
@@ -446,7 +446,7 @@ UNRDF v6 has **excellent test infrastructure** with 385 test files covering 66,2
 | Claim | Evidence Type | Trust Level |
 |-------|---------------|-------------|
 | 385 test files | `find` command output | 95% |
-| 99.8% pass rate | Test runner output | 95% |
+| latest% pass rate | Test runner output | 95% |
 | Fix improved tests | Before/after comparison | 90% |
 | OTEL 100/100 | kgc-4d test output | 95% |
 

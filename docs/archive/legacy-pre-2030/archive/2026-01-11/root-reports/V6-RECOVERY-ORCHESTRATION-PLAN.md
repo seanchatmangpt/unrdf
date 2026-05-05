@@ -22,7 +22,7 @@
 ```
 PHASE 0 → PHASE 1 → PHASE 4
   (15m)     (2-4h)    (4-6h)
-= 6.25-10.25 hours MINIMUM before production validation
+= latest.25 hours MINIMUM before production validation
 ```
 
 ### Parallel Execution Opportunities
@@ -38,7 +38,7 @@ PHASE 0 → PHASE 1 → PHASE 4
 ```mermaid
 graph TD
     subgraph "PHASE 0: Prerequisite (15 min)"
-        P0[Fix vitest version: ^1.0.0 → ^4.0.15]
+        P0[Fix vitest version: ^latest → ^latest]
     end
 
     subgraph "PHASE 1: Unblock Testing (2-4 hours)"
@@ -105,7 +105,7 @@ find packages/v6-*/src -name "*.schema.mjs" | wc -l
 # Result: 4 schema files (45 missing)
 
 cat package.json | grep '"vitest"'
-# Result: "vitest": "^1.0.0" (BLOCKER - needs ^4.0.15)
+# Result: "vitest": "^latest" (BLOCKER - needs ^latest)
 ```
 
 ### Blockers Mapped to Phases
@@ -127,12 +127,12 @@ cat package.json | grep '"vitest"'
 **Actions**:
 ```bash
 # Edit /home/user/unrdf/package.json line 107
-# BEFORE: "vitest": "^1.0.0"
-# AFTER:  "vitest": "^4.0.15"
+# BEFORE: "vitest": "^latest"
+# AFTER:  "vitest": "^latest"
 ```
 
 **Success Criteria**:
-- [ ] package.json line 107 shows "vitest": "^4.0.15"
+- [ ] package.json line 107 shows "vitest": "^latest"
 - [ ] No git diff shows unexpected changes
 
 **Validation Gate**: Manual review of package.json diff
@@ -175,7 +175,7 @@ pnpm install --frozen-lockfile
 ### PHASE 2: Fix Determinism Violations (16-24 hours, PARALLEL)
 **Blocker**: 63 Date.now/Math.random/randomUUID violations
 
-#### PHASE 2.1: CLI Modules (Agent 2 - Backend Dev)
+#### PHASE latest: CLI Modules (Agent 2 - Backend Dev)
 **Scope**: `/packages/v6-core/src/cli/`
 **Violations**: ~18 instances
 
@@ -205,7 +205,7 @@ export function generateTimestamp(context = {}) {
 
 ---
 
-#### PHASE 2.2: Delta Adapters (Agent 3 - Backend Dev)
+#### PHASE latest: Delta Adapters (Agent 3 - Backend Dev)
 **Scope**: `/packages/v6-core/src/delta/adapters/`
 **Violations**: ~23 instances
 
@@ -235,7 +235,7 @@ export function generateUUID(context = {}) {
 
 ---
 
-#### PHASE 2.3: Compat Adapters (Agent 4 - Backend Dev)
+#### PHASE latest: Compat Adapters (Agent 4 - Backend Dev)
 **Scope**: `/packages/v6-compat/src/adapters.mjs`
 **Violations**: ~22 instances
 
@@ -263,9 +263,9 @@ export function randomSample(arr, context = {}) {
 
 ---
 
-#### PHASE 2.4: Determinism Proof Validation (Agent 5 - Tester)
+#### PHASE latest: Determinism Proof Validation (Agent 5 - Tester)
 **Scope**: Run existing determinism tests
-**Depends On**: PHASE 2.1, 2.2, 2.3 complete
+**Depends On**: PHASE latest, latest, latest complete
 
 **Actions**:
 ```bash
@@ -288,7 +288,7 @@ grep "✅ 100/100" test-output.log
 ### PHASE 3: Add Zod Schemas (32-40 hours, PARALLEL)
 **Blocker**: 45 files missing Zod schemas (only 4/49 have schemas)
 
-#### PHASE 3.1: Generate v6-core Schemas (Agent 6 - Coder)
+#### PHASE latest: Generate v6-core Schemas (Agent 6 - Coder)
 **Scope**: `/packages/v6-core/src/` (~30 files)
 
 **Actions**:
@@ -313,7 +313,7 @@ find packages/v6-core/src -name "*.schema.mjs" | wc -l
 
 ---
 
-#### PHASE 3.2: Generate v6-compat Schemas (Agent 7 - Coder)
+#### PHASE latest: Generate v6-compat Schemas (Agent 7 - Coder)
 **Scope**: `/packages/v6-compat/src/` (~15 files)
 
 **Actions**:
@@ -334,9 +334,9 @@ find packages/v6-compat/src -name "*.schema.mjs" | wc -l
 
 ---
 
-#### PHASE 3.3: Add .parse() Calls (Agent 8 - Backend Dev)
+#### PHASE latest: Add .parse() Calls (Agent 8 - Backend Dev)
 **Scope**: API boundaries in v6-core and v6-compat
-**Depends On**: PHASE 3.1, 3.2 complete
+**Depends On**: PHASE latest, latest complete
 
 **Pattern**:
 ```javascript
@@ -361,9 +361,9 @@ export function createReceipt(data) {
 
 ---
 
-#### PHASE 3.4: Verify 100% Coverage (Agent 9 - Reviewer)
+#### PHASE latest: Verify 100% Coverage (Agent 9 - Reviewer)
 **Scope**: Comprehensive Zod coverage audit
-**Depends On**: PHASE 3.1, 3.2, 3.3 complete
+**Depends On**: PHASE latest, latest, latest complete
 
 **Actions**:
 ```bash
@@ -391,7 +391,7 @@ npm run lint 2>&1 | grep -i "missing.*schema"
 **Agent**: Production Validator (Agent 10)
 **Depends On**: All previous phases complete
 
-#### PHASE 4.1: Build Validation
+#### PHASE latest: Build Validation
 ```bash
 timeout 60s npm run build 2>&1 | tee build-output.log
 
@@ -407,7 +407,7 @@ grep -i "error" build-output.log
 
 ---
 
-#### PHASE 4.2: Test Validation
+#### PHASE latest: Test Validation
 ```bash
 timeout 120s npm test 2>&1 | tee test-output.log
 
@@ -424,7 +424,7 @@ grep "❌.*fail" test-output.log | wc -l
 
 ---
 
-#### PHASE 4.3: Lint Validation
+#### PHASE latest: Lint Validation
 ```bash
 timeout 60s npm run lint 2>&1 | tee lint-output.log
 
@@ -440,7 +440,7 @@ grep -i "error\|warning" lint-output.log | wc -l
 
 ---
 
-#### PHASE 4.4: OTEL Validation
+#### PHASE latest: OTEL Validation
 ```bash
 timeout 300s node validation/run-all.mjs comprehensive 2>&1 | \
   tee validation-output.log
@@ -460,7 +460,7 @@ grep "FAILED\|Error" validation-output.log | wc -l
 
 ---
 
-#### PHASE 4.5: Evidence Report
+#### PHASE latest: Evidence Report
 **Deliverable**: `/home/user/unrdf/V6-PRODUCTION-READINESS-REPORT.md`
 
 **Contents**:
@@ -482,7 +482,7 @@ grep "FAILED\|Error" validation-output.log | wc -l
 
 ### Gate 1: PHASE 0 → PHASE 1
 **Condition**: Vitest version fixed in package.json
-**Check**: `grep '"vitest": "\^4.0.15"' package.json`
+**Check**: `grep '"vitest": "\^latest"' package.json`
 **Failure Action**: Manual edit of package.json line 107
 
 ---
@@ -648,21 +648,21 @@ node validation/run-all.mjs comprehensive | grep "Score:"
 ### Agents 1-5 (PHASE 0-2)
 | Agent # | Role | Assignment | Hours |
 |---------|------|------------|-------|
-| **1** | Backend Dev | PHASE 0 + PHASE 1 (critical path) | 2.5-4.5 |
-| **2** | Backend Dev | PHASE 2.1 (CLI determinism) | 5-8 |
-| **3** | Backend Dev | PHASE 2.2 (Delta determinism) | 7-10 |
-| **4** | Backend Dev | PHASE 2.3 (Compat determinism) | 6-9 |
-| **5** | Tester | PHASE 2.4 (Determinism proof) | 2-3 |
+| **1** | Backend Dev | PHASE 0 + PHASE 1 (critical path) | latest.5 |
+| **2** | Backend Dev | PHASE latest (CLI determinism) | 5-8 |
+| **3** | Backend Dev | PHASE latest (Delta determinism) | 7-10 |
+| **4** | Backend Dev | PHASE latest (Compat determinism) | 6-9 |
+| **5** | Tester | PHASE latest (Determinism proof) | 2-3 |
 
 ---
 
 ### Agents 6-9 (PHASE 3)
 | Agent # | Role | Assignment | Hours |
 |---------|------|------------|-------|
-| **6** | Coder | PHASE 3.1 (v6-core schemas) | 16-20 |
-| **7** | Coder | PHASE 3.2 (v6-compat schemas) | 8-12 |
-| **8** | Backend Dev | PHASE 3.3 (.parse() calls) | 6-8 |
-| **9** | Reviewer | PHASE 3.4 (Coverage audit) | 2-4 |
+| **6** | Coder | PHASE latest (v6-core schemas) | 16-20 |
+| **7** | Coder | PHASE latest (v6-compat schemas) | 8-12 |
+| **8** | Backend Dev | PHASE latest (.parse() calls) | 6-8 |
+| **9** | Reviewer | PHASE latest (Coverage audit) | 2-4 |
 
 ---
 
@@ -707,17 +707,17 @@ node validation/run-all.mjs comprehensive | grep "Score:"
 - **44:30-50:30**: PHASE 4 (Agent 10: Full validation)
   - Build: 1h
   - Test: 1-2h
-  - Lint: 0.5h
+  - Lint: latesth
   - OTEL: 1-2h
-  - Report: 0.5-1h
+  - Report: latest
 
 ---
 
 ### Final Timeline
 - **Start**: Day 1, Hour 0
-- **Critical path complete**: Hour 4.5 (PHASE 0+1)
-- **Parallel work complete**: Hour 44.5 (PHASE 2+3)
-- **Validation complete**: Hour 50.5 (PHASE 4)
+- **Critical path complete**: Hour latest (PHASE 0+1)
+- **Parallel work complete**: Hour latest (PHASE 2+3)
+- **Validation complete**: Hour latest (PHASE 4)
 - **Production ready**: Hour 54 (minimum) to Hour 74 (maximum)
 
 ---
@@ -820,6 +820,6 @@ node validation/run-all.mjs comprehensive | grep "Score:"
 **Status**: ✅ Ready for Execution
 **Estimated Time to Production**: 54-74 hours
 **Agents Required**: 10 (Agents 1-10)
-**Critical Path Duration**: 6.25-10.25 hours
+**Critical Path Duration**: latest.25 hours
 
 **Awaiting approval to proceed with PHASE 0.**

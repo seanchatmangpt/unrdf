@@ -314,7 +314,7 @@ import { ChangelogProjector } from '@unrdf/projection';
 const projector = new ChangelogProjector();
 const result = await projector.project(receiptChain.getAll(), {
   projectName: 'MyProject',
-  version: '1.0.0',
+  version: '[VERSION]',
 });
 
 console.log(result.markdown);  // Changelog in Markdown format
@@ -383,7 +383,7 @@ import { DiataxisRenderer } from '@unrdf/projection';
 
 const renderer = new DiataxisRenderer({
   projectName: 'UNRDF',
-  version: '1.0.0',
+  version: '[VERSION]',
   audiences: ['user', 'contributor'],
 });
 
@@ -468,7 +468,7 @@ import { ProjectionPipeline } from '@unrdf/projection';
 
 const pipeline = new ProjectionPipeline({
   projectName: 'UNRDF',
-  version: '1.0.0',
+  version: '[VERSION]',
 });
 
 const result = await pipeline.run({

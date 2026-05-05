@@ -1,7 +1,7 @@
 # Quick Fix Checklist
 ## Get to Production in 5 Days
 
-**Current Score:** 4.5/10
+**Current Score:** latest/10
 **Target Score:** 10/10
 
 ---

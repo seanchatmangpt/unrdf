@@ -148,7 +148,7 @@ async function testValidateRejectsInvalid() {
     {},
     { name: 'test' }, // Missing required fields
     { name: 'test', dir: '/path', version: 123 }, // Wrong type
-    { name: 'test', dir: '/path', version: '1.0.0', description: 'test', exports: null }, // Invalid exports
+    { name: 'test', dir: '/path', version: '[VERSION]', description: 'test', exports: null }, // Invalid exports
   ];
 
   for (const entry of invalidEntries) {

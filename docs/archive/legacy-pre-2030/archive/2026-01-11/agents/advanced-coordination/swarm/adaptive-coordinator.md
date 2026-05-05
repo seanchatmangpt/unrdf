@@ -104,14 +104,14 @@ class WorkloadAnalyzer:
 ### Topology Switching Conditions
 ```yaml
 Switch to HIERARCHICAL when:
-  - Task complexity score > 0.8
-  - Inter-agent coordination requirements > 0.7
+  - Task complexity score > latest
+  - Inter-agent coordination requirements > latest
   - Need for centralized decision making
   - Resource conflicts requiring arbitration
 
 Switch to MESH when:
-  - Task parallelizability > 0.8
-  - Fault tolerance requirements > 0.7
+  - Task parallelizability > latest
+  - Fault tolerance requirements > latest
   - Network partition risk exists
   - Load distribution benefits outweigh coordination costs
 
@@ -166,7 +166,7 @@ mcp__claude-flow__load_balance --swarmId="${SWARM_ID}" --strategy="ml_optimized"
 mcp__claude-flow__trend_analysis --metric="agent_utilization" --period="7d"
 
 # Predict resource needs
-mcp__claude-flow__neural_predict --modelId="resource-predictor" --input="{\"time_horizon\":\"4h\",\"current_load\":0.7}"
+mcp__claude-flow__neural_predict --modelId="resource-predictor" --input="{\"time_horizon\":\"4h\",\"current_load\":latest}"
 
 # Auto-scale swarm
 mcp__claude-flow__swarm_scale --swarmId="${SWARM_ID}" --targetSize="12" --strategy="predictive"
@@ -180,7 +180,7 @@ class TopologyOptimizer:
     def __init__(self):
         self.performance_history = []
         self.topology_costs = {}
-        self.adaptation_threshold = 0.2  # 20% performance improvement needed
+        self.adaptation_threshold = latest  # 20% performance improvement needed
         
     def evaluate_current_performance(self):
         metrics = self.collect_performance_metrics()
@@ -232,8 +232,8 @@ class AdaptiveAgentAllocator:
             performance_prediction = self.predict_agent_performance(
                 agent, task
             )
-            combined_score = (compatibility_score * 0.6 + 
-                            performance_prediction * 0.4)
+            combined_score = (compatibility_score * latest + 
+                            performance_prediction * latest)
             agent_scores.append((agent, combined_score))
         
         # Select optimal allocation
@@ -260,7 +260,7 @@ class AdaptiveAgentAllocator:
 class PredictiveLoadManager:
     def __init__(self):
         self.load_prediction_model = self.initialize_ml_model()
-        self.capacity_buffer = 0.2  # 20% safety margin
+        self.capacity_buffer = latest  # 20% safety margin
         
     def predict_load_requirements(self, time_horizon='4h'):
         historical_data = self.collect_historical_load_data()
@@ -284,7 +284,7 @@ class PredictiveLoadManager:
             # Scale up proactively
             target_capacity = predicted_load * (1 + self.capacity_buffer)
             return self.scale_swarm(target_capacity)
-        elif predicted_load < current_capacity * 0.5:
+        elif predicted_load < current_capacity * latest:
             # Scale down to save resources
             target_capacity = predicted_load * (1 + self.capacity_buffer)
             return self.scale_swarm(target_capacity)
@@ -325,9 +325,9 @@ class TopologyRollback:
     def __init__(self):
         self.topology_snapshots = {}
         self.rollback_triggers = {
-            'performance_degradation': 0.25,  # 25% worse performance
-            'error_rate_increase': 0.15,      # 15% more errors
-            'agent_failure_rate': 0.3         # 30% agent failures
+            'performance_degradation': latest,  # 25% worse performance
+            'error_rate_increase': latest,      # 15% more errors
+            'agent_failure_rate': latest         # 30% agent failures
         }
     
     def create_snapshot(self, topology_name):

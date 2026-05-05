@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "generatedAt": "2025-12-26T07:56:55.798Z",
+  "version": "latest",
+  "generatedAt": "2025-12-26T07:56:latestZ",
   "generator": "agent-2/contract-scanner.mjs",
   "packages": {
     "@unrdf/atomvm": {
@@ -141,7 +141,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/blockchain": {
       "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
@@ -298,7 +298,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/caching": {
       "description": "Multi-layer caching system for RDF queries with Redis and LRU",
@@ -442,7 +442,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/cli": {
       "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
@@ -523,7 +523,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/collab": {
       "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
@@ -607,7 +607,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/composables": {
       "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
@@ -706,7 +706,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/consensus": {
       "description": "Production-grade Raft consensus for distributed workflow coordination",
@@ -847,7 +847,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/core": {
       "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
@@ -1766,7 +1766,7 @@
           "info"
         ]
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/dark-matter": {
       "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
@@ -1875,7 +1875,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/domain": {
       "description": "Domain models and types for UNRDF",
@@ -1995,7 +1995,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/engine-gateway": {
       "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
@@ -2188,7 +2188,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/federation": {
       "description": "UNRDF Federation - Peer Discovery and Distributed Query Execution",
@@ -2346,7 +2346,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/graph-analytics": {
       "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
@@ -2711,7 +2711,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/hooks": {
       "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
@@ -2928,7 +2928,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/kgc-4d": {
       "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
@@ -3275,7 +3275,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/knowledge-engine": {
       "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
@@ -3884,7 +3884,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/ml-inference": {
       "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
@@ -4029,7 +4029,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/ml-versioning": {
       "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
@@ -4087,7 +4087,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/observability": {
       "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
@@ -4218,7 +4218,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/oxigraph": {
       "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
@@ -4317,7 +4317,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/project-engine": {
       "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
@@ -4553,7 +4553,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/rdf-graphql": {
       "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
@@ -4692,7 +4692,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/semantic-search": {
       "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
@@ -4780,7 +4780,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/serverless": {
       "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
@@ -4919,7 +4919,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/streaming": {
       "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
@@ -4990,7 +4990,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/test-utils": {
       "description": "Testing utilities for UNRDF development",
@@ -5108,7 +5108,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/validation": {
       "description": "OTEL validation framework for UNRDF development",
@@ -5202,7 +5202,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.1"
+      "version": "latest"
     },
     "@unrdf/yawl": {
       "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
@@ -7250,7 +7250,7 @@
         ],
         "levels": []
       },
-      "version": "5.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-ai": {
       "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
@@ -7432,7 +7432,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-api": {
       "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
@@ -7501,7 +7501,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-durable": {
       "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
@@ -7681,7 +7681,7 @@
         ],
         "levels": []
       },
-      "version": "0.1.0"
+      "version": "latest"
     },
     "@unrdf/yawl-kafka": {
       "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
@@ -7872,7 +7872,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-langchain": {
       "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
@@ -7983,7 +7983,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-observability": {
       "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
@@ -8131,7 +8131,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-queue": {
       "description": "Distributed YAWL workflow execution using BullMQ and Redis",
@@ -8190,7 +8190,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-realtime": {
       "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
@@ -8276,7 +8276,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     },
     "@unrdf/yawl-viz": {
       "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
@@ -8325,7 +8325,7 @@
         ],
         "levels": []
       },
-      "version": "1.0.0"
+      "version": "latest"
     }
   },
   "metadata": {

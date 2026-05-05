@@ -3,7 +3,7 @@
     "validator": "Agent-8 (production-validator)",
     "timestamp": "2025-12-27T10:15:00Z",
     "package": "@unrdf/kgc-probe",
-    "version": "1.0.0"
+    "version": "[VERSION]"
   },
   "algorithm_verification": {
     "merge_monoid": {

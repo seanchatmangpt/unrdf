@@ -89,7 +89,7 @@ const matcher = new SPARQLPatternMatcher(store);
 const results = await matcher.executeQuery(
   'SELECT ?name WHERE { ?person foaf:name ?name }'
 );
-// Latency proven: P50=0.13ms, P95=0.53ms (SLA passed)
+// Latency proven: P50=latestms, P95=latestms (SLA passed)
 ```
 
 ### Gap 3: Data Streaming ✅
@@ -126,7 +126,7 @@ await loader.reloadModule('handler');
 const cache = new QueryCache({ maxSize: 100, ttl: 60000 });
 cache.set(query, {}, result);
 const hit = cache.get(query, {});
-// Latency: <0.1ms, Hit rate: >80%
+// Latency: <latestms, Hit rate: >80%
 ```
 
 ### Gap 7: Observability ✅
@@ -198,11 +198,11 @@ Performance SLA compliance: proven
 ### Performance Evidence
 | Operation | Target | Measured | Status |
 |-----------|--------|----------|--------|
-| RDF query (SPARQL P50) | <10ms | 0.13ms | ✅ |
-| RDF query (SPARQL P95) | <100ms | 0.53ms | ✅ |
-| Cache lookup | <1ms | <0.1ms | ✅ |
+| RDF query (SPARQL P50) | <10ms | latestms | ✅ |
+| RDF query (SPARQL P95) | <100ms | latestms | ✅ |
+| Cache lookup | <1ms | <latestms | ✅ |
 | Triple streaming | >1k/sec | 769k/sec | ✅ |
-| Bulk insert | >1k/sec | 20.8k/sec | ✅ |
+| Bulk insert | >1k/sec | latestk/sec | ✅ |
 
 ### Public API Surface
 - **New exports:** 48+

@@ -2,7 +2,7 @@
 
 **Validator**: Agent-8 (production-validator)
 **Date**: 2025-12-27T10:15:00Z
-**Package Version**: 1.0.0
+**Package Version**: latest
 **SPARC Phase**: Validation (Final)
 
 ---
@@ -121,7 +121,7 @@ hashObservations([...obs]) at T0 === hashObservations([...obs]) at T1
 |----------|----------|--------|
 | Environment Variables (H1-H10) | API_KEY, SECRET_KEY, ACCESS_TOKEN, PASSWORD, PRIVATE_KEY, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, NPM_TOKEN, DATABASE_PASSWORD | PASS |
 | File Paths (H11-H18) | /etc/passwd, /etc/shadow, /root/.ssh/id_rsa, /home/*/.ssh/*, **/.env, **/.env.local, **/credentials.json, **/secrets.yaml | PASS |
-| URL Patterns (H19-H25) | file://*, javascript:*, data:*, *.local, localhost:*, 127.0.0.1:*, 169.254.169.254/* | PASS |
+| URL Patterns (H19-H25) | file://*, javascript:*, data:*, *.local, localhost:*, latest.1:*, latest.254/* | PASS |
 
 **Guard Enforcement Test**: 6/7 deny + 2/2 allow = 8/9 (89%)
 - Note: 1 edge case for path pattern matching needs attention

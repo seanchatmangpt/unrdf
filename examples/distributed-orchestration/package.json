@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/distributed-orchestration",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Production-grade distributed workflow orchestration using YAWL + Federation + Streaming",
   "type": "module",
   "main": "src/index.mjs",

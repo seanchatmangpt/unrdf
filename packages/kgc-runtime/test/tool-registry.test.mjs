@@ -24,7 +24,7 @@ describe('ToolRegistry', () => {
     it('should register a tool with valid manifest', () => {
       const manifest = {
         name: 'TestTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Test tool',
         schema_in: z.object({ input: z.string() }),
         schema_out: z.object({ output: z.string() }),
@@ -36,7 +36,7 @@ describe('ToolRegistry', () => {
 
       expect(tool).toBeDefined();
       expect(tool.name).toBe('TestTool');
-      expect(tool.version).toBe('1.0.0');
+      expect(tool.version).toBe('[VERSION]');
     });
 
     it('should reject invalid manifest', () => {
@@ -51,7 +51,7 @@ describe('ToolRegistry', () => {
     it('should store multiple versions of same tool', () => {
       const v1 = {
         name: 'Tool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: [],
@@ -59,7 +59,7 @@ describe('ToolRegistry', () => {
 
       const v2 = {
         name: 'Tool',
-        version: '2.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: [],
@@ -68,9 +68,9 @@ describe('ToolRegistry', () => {
       registry.registerTool(v1);
       registry.registerTool(v2);
 
-      expect(registry.getToolVersion('Tool', '1.0.0')).toBeDefined();
-      expect(registry.getToolVersion('Tool', '2.0.0')).toBeDefined();
-      expect(registry.getTool('Tool').version).toBe('2.0.0'); // Latest
+      expect(registry.getToolVersion('Tool', '[VERSION]')).toBeDefined();
+      expect(registry.getToolVersion('Tool', '[VERSION]')).toBeDefined();
+      expect(registry.getTool('Tool').version).toBe('[VERSION]'); // Latest
     });
   });
 
@@ -78,7 +78,7 @@ describe('ToolRegistry', () => {
     it('should convert object schema definition to Zod', () => {
       const manifest = {
         name: 'Read',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: {
           type: 'object',
           properties: {
@@ -108,7 +108,7 @@ describe('ToolRegistry', () => {
     it('should handle nested object schemas', () => {
       const manifest = {
         name: 'Complex',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: {
           type: 'object',
           properties: {
@@ -143,7 +143,7 @@ describe('ToolRegistry', () => {
     it('should handle array schemas', () => {
       const manifest = {
         name: 'ArrayTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: {
           type: 'object',
           properties: {},
@@ -174,7 +174,7 @@ describe('ToolRegistry', () => {
     beforeEach(() => {
       registry.registerTool({
         name: 'Read',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: ['file-read', 'filesystem-access'],
@@ -182,7 +182,7 @@ describe('ToolRegistry', () => {
 
       registry.registerTool({
         name: 'Write',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: ['file-write', 'filesystem-access'],
@@ -190,7 +190,7 @@ describe('ToolRegistry', () => {
 
       registry.registerTool({
         name: 'Bash',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: ['command-execution'],
@@ -227,7 +227,7 @@ describe('ToolRegistry', () => {
     beforeEach(() => {
       registry.registerTool({
         name: 'TestTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({
           result: z.string(),
@@ -258,7 +258,7 @@ describe('ToolRegistry', () => {
     beforeEach(() => {
       registry.registerTool({
         name: 'Read',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: ['file-read', 'filesystem-access'],
@@ -266,7 +266,7 @@ describe('ToolRegistry', () => {
 
       registry.registerTool({
         name: 'Write',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({}),
         capabilities: ['file-write', 'filesystem-access'],

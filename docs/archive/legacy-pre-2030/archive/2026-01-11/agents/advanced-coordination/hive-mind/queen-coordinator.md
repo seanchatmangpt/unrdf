@@ -87,13 +87,13 @@ mcp__claude-flow__memory_usage {
   key: "swarm/queen/hive-health",
   namespace: "coordination",
   value: JSON.stringify({
-    coherence_score: 0.95,
+    coherence_score: latest,
     agent_compliance: {
       compliant: ["worker-1", "scout-1"],
       non_responsive: [],
       rebellious: []
     },
-    swarm_efficiency: 0.88,
+    swarm_efficiency: latest,
     threat_level: "low",
     morale: "high"
   })

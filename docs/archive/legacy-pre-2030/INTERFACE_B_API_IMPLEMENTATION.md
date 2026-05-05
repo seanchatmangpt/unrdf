@@ -14,7 +14,7 @@ Interface B is the external service integration API for YAWL workflow systems. I
 
 ## Part 1: Original YAWL Interface B (Java)
 
-### 1.1 HTTP Server Setup
+### latest HTTP Server Setup
 
 #### Servlet Container
 - **Container**: Apache Tomcat (typical deployment)
@@ -71,7 +71,7 @@ WorkItemRecord item = checkOut(workItemID, sessionHandle);
 
 ---
 
-### 1.2 REST Endpoints (HTTP Methods)
+### latest REST Endpoints (HTTP Methods)
 
 All Interface B operations are exposed as HTTP POST requests with form-encoded parameters or XML payloads.
 
@@ -106,7 +106,7 @@ All Interface B operations are exposed as HTTP POST requests with form-encoded p
 
 ---
 
-### 1.3 Request/Response Format
+### latest Request/Response Format
 
 #### Format Standard
 - **Primary Format**: XML (JDOM-based)
@@ -118,7 +118,7 @@ All Interface B operations are exposed as HTTP POST requests with form-encoded p
 
 **Session Establishment**
 ```http
-POST /yawl/ib HTTP/1.1
+POST /yawl/ib HTTP/latest
 Content-Type: application/x-www-form-urlencoded
 
 action=connect&userID=admin&password=YAWL
@@ -126,7 +126,7 @@ action=connect&userID=admin&password=YAWL
 
 **Checkout Work Item**
 ```http
-POST /yawl/ib HTTP/1.1
+POST /yawl/ib HTTP/latest
 Content-Type: application/x-www-form-urlencoded
 
 action=checkOut&workItemID=wi-12345&sessionHandle=abc123def456
@@ -134,7 +134,7 @@ action=checkOut&workItemID=wi-12345&sessionHandle=abc123def456
 
 **Check-in Work Item with Data**
 ```http
-POST /yawl/ib HTTP/1.1
+POST /yawl/ib HTTP/latest
 Content-Type: application/x-www-form-urlencoded
 
 action=checkInWorkItem&workItemID=wi-12345&sessionHandle=abc123def456&inputData=<data><amount>1500</amount></data>&outputData=<data><approved>true</approved></data>&logPredicate=<complete/>
@@ -169,7 +169,7 @@ action=checkInWorkItem&workItemID=wi-12345&sessionHandle=abc123def456&inputData=
     <taskID>review</taskID>
     <specificationID>
         <identifier>purchase-order</identifier>
-        <version>1.0</version>
+        <version>latest</version>
     </specificationID>
     <status>Enabled</status>
     <enablementTime>2024-12-25T10:30:00Z</enablementTime>
@@ -190,7 +190,7 @@ boolean successful(String xmlResponse) {
 
 ---
 
-### 1.4 Service Invocation
+### latest Service Invocation
 
 #### Architecture Pattern
 Interface B uses a **callback/observer pattern** for service invocation:
@@ -355,7 +355,7 @@ private Element processWorkItem(WorkItemRecord workItem) throws Exception {
 **Push Notifications**: Engine uses HTTP POST to notify services of events
 
 ```http
-POST http://custom-service.example.com/yawl/ib HTTP/1.1
+POST http://custom-service.example.com/yawl/ib HTTP/latest
 Content-Type: text/xml
 
 <enabledWorkItem>
@@ -398,7 +398,7 @@ public class MyCustomService extends InterfaceBWebsideController {
 
 ---
 
-### 1.5 Data Marshalling
+### latest Data Marshalling
 
 #### XML Processing (JDOM)
 
@@ -513,7 +513,7 @@ String encodedXML = URLEncoder.encode(xmlString, StandardCharsets.UTF_8);
 |-----------|-----------------|-----------|---------|
 | String | `xs:string` | `String` | `<name>John</name>` |
 | Integer | `xs:integer` | `int`/`Integer` | `<count>42</count>` |
-| Double | `xs:double` | `double`/`Double` | `<amount>1500.50</amount>` |
+| Double | `xs:double` | `double`/`Double` | `<amount>latest</amount>` |
 | Boolean | `xs:boolean` | `boolean`/`Boolean` | `<approved>true</approved>` |
 | Date | `xs:date` | `LocalDate` | `<date>2024-12-25</date>` |
 | DateTime | `xs:dateTime` | `Instant` | `<timestamp>2024-12-25T10:30:00Z</timestamp>` |
@@ -521,7 +521,7 @@ String encodedXML = URLEncoder.encode(xmlString, StandardCharsets.UTF_8);
 
 ---
 
-### 1.6 Authentication Details
+### latest Authentication Details
 
 #### Session-Based Authentication
 
@@ -552,17 +552,17 @@ if (!isValid) {
 
 ---
 
-### 1.7 Servlet Configuration
+### latest Servlet Configuration
 
 #### Complete web.xml Example
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="latest" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
+         version="latest">
 
     <display-name>YAWL Custom Service</display-name>
 
@@ -608,7 +608,7 @@ if (!isValid) {
 #### Tomcat server.xml Configuration
 
 ```xml
-<Connector port="8080" protocol="HTTP/1.1"
+<Connector port="8080" protocol="HTTP/latest"
            connectionTimeout="20000"
            redirectPort="8443"
            URIEncoding="UTF-8"
@@ -619,7 +619,7 @@ if (!isValid) {
 
 ## Part 2: UNRDF YAWL Implementation (JavaScript/Node.js)
 
-### 2.1 HTTP Server Setup
+### latest HTTP Server Setup
 
 #### Fastify Framework
 - **Framework**: Fastify (high-performance Node.js web framework)
@@ -645,18 +645,18 @@ const server = await createYAWLAPIServer({
     },
 });
 
-await server.listen({ port: 3000, host: '0.0.0.0' });
+await server.listen({ port: 3000, host: 'latest.0' });
 ```
 
 #### Middleware/Plugins
 - **CORS**: `@fastify/cors` - Cross-origin resource sharing
-- **Swagger**: `@fastify/swagger` - OpenAPI 3.1 documentation
+- **Swagger**: `@fastify/swagger` - OpenAPI latest documentation
 - **Swagger UI**: `@fastify/swagger-ui` - Interactive API explorer
 - **Logging**: Built-in Fastify logger
 
 ---
 
-### 2.2 REST Endpoints
+### latest REST Endpoints
 
 UNRDF YAWL uses true RESTful design with resource-oriented URLs and standard HTTP methods.
 
@@ -694,7 +694,7 @@ UNRDF YAWL uses true RESTful design with resource-oriented URLs and standard HTT
 
 ---
 
-### 2.3 Request/Response Format
+### latest Request/Response Format
 
 #### Format Standard
 - **Format**: JSON (primary)
@@ -706,7 +706,7 @@ UNRDF YAWL uses true RESTful design with resource-oriented URLs and standard HTT
 
 **Create Case**
 ```http
-POST /api/workflows/purchase-order/cases HTTP/1.1
+POST /api/workflows/purchase-order/cases HTTP/latest
 Host: localhost:3000
 Content-Type: application/json
 
@@ -721,7 +721,7 @@ Content-Type: application/json
 
 **Start Task**
 ```http
-POST /api/cases/case-001/tasks/wi-12345/start HTTP/1.1
+POST /api/cases/case-001/tasks/wi-12345/start HTTP/latest
 Host: localhost:3000
 Content-Type: application/json
 
@@ -732,7 +732,7 @@ Content-Type: application/json
 
 **Complete Task**
 ```http
-POST /api/cases/case-001/tasks/wi-12345/complete HTTP/1.1
+POST /api/cases/case-001/tasks/wi-12345/complete HTTP/latest
 Host: localhost:3000
 Content-Type: application/json
 
@@ -846,7 +846,7 @@ Content-Type: application/json
 
 ---
 
-### 2.4 HATEOAS Hypermedia Controls
+### latest HATEOAS Hypermedia Controls
 
 UNRDF YAWL implements HATEOAS (Hypermedia as the Engine of Application State) to guide clients through available actions.
 
@@ -919,7 +919,7 @@ function generateHATEOASLinks(caseInstance, baseUrl) {
 
 ---
 
-### 2.5 Service Invocation (UNRDF)
+### latest Service Invocation (UNRDF)
 
 UNRDF YAWL uses a **direct API invocation model** rather than callback/observer pattern.
 
@@ -1061,7 +1061,7 @@ const externalServiceHook = {
 
 ---
 
-### 2.6 Data Marshalling (UNRDF)
+### latest Data Marshalling (UNRDF)
 
 #### Zod Schema Validation
 
@@ -1179,7 +1179,7 @@ async function createReceipt(eventType, payload, justification = {}) {
 | **HTTP Methods** | POST (all operations) | GET, POST (RESTful) |
 | **Data Format** | XML (JDOM) | JSON |
 | **Schema Validation** | XML Schema (XSD) | Zod runtime validation |
-| **API Documentation** | JavaDoc | OpenAPI 3.1 + Swagger UI |
+| **API Documentation** | JavaDoc | OpenAPI latest + Swagger UI |
 | **Service Invocation** | Callback/Observer pattern | Direct API + Hooks |
 | **Session Management** | Session-based authentication | Stateless (can add JWT) |
 | **HATEOAS** | Not implemented | Full HATEOAS support |
@@ -1226,7 +1226,7 @@ async function createReceipt(eventType, payload, justification = {}) {
 
 ## Part 4: Integration Patterns
 
-### 4.1 Original YAWL Integration
+### latest Original YAWL Integration
 
 **Custom Service Pattern**
 ```java
@@ -1239,7 +1239,7 @@ public class ApprovalService extends InterfaceBWebsideController {
 }
 ```
 
-### 4.2 UNRDF YAWL Integration
+### latest UNRDF YAWL Integration
 
 **Polling Pattern**
 ```javascript
@@ -1284,7 +1284,7 @@ const notificationHook = {
 
 ## Part 5: Performance Considerations
 
-### 5.1 Original YAWL
+### latest Original YAWL
 
 **Strengths**:
 - Mature, battle-tested in enterprise environments
@@ -1297,7 +1297,7 @@ const notificationHook = {
 - Session state management complexity
 - ~1000-5000 req/s throughput
 
-### 5.2 UNRDF YAWL
+### latest UNRDF YAWL
 
 **Strengths**:
 - High throughput (~30,000 req/s)
@@ -1315,7 +1315,7 @@ const notificationHook = {
 
 ## Part 6: Security Comparison
 
-### 6.1 Original YAWL
+### latest Original YAWL
 
 - Session-based authentication
 - Server-side session storage
@@ -1323,7 +1323,7 @@ const notificationHook = {
 - HTTPS recommended
 - XSD schema validation
 
-### 6.2 UNRDF YAWL
+### latest UNRDF YAWL
 
 - Stateless (can add JWT/OAuth2)
 - Zod runtime validation
@@ -1382,10 +1382,10 @@ class YAWLAdapter {
 ## Sources
 
 ### Original YAWL Documentation
-- [InterfaceBWebsideController (YAWL Version 4.3)](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/interfce/interfaceB/InterfaceBWebsideController.html)
-- [YAWL Technical Manual Version 5](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual5.0.pdf)
-- [YAWL Technical Manual Version 4.3](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
-- [InterfaceBClient (YAWL Version 2.3)](http://www.yawlfoundation.org/javadoc/yawl/org/yawlfoundation/yawl/engine/interfce/interfaceB/InterfaceBClient.html)
+- [InterfaceBWebsideController (YAWL Version latest)](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/interfce/interfaceB/InterfaceBWebsideController.html)
+- [YAWL Technical Manual Version 5](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf)
+- [YAWL Technical Manual Version latest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
+- [InterfaceBClient (YAWL Version latest)](http://www.yawlfoundation.org/javadoc/yawl/org/yawlfoundation/yawl/engine/interfce/interfaceB/InterfaceBClient.html)
 - [YAWL Foundation GitHub](https://github.com/yawlfoundation/yawl)
 - [YAWL BPM Official Website](https://yawlfoundation.github.io/)
 

@@ -34,13 +34,13 @@ project/
 
 ---
 
-## Schema Version 1.0.0
+## Schema Version [VERSION]
 
 ### Top-Level Object
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": { /* ... */ },
   "createdAt": "2025-12-27T10:00:00.000Z",
@@ -54,20 +54,20 @@ project/
 
 **Description**: Lockfile schema version (semver).
 
-**Type**: `"1.0.0"` (literal)
+**Type**: `"[VERSION]"` (literal)
 
 **Purpose**: Future-proofing for schema evolution.
 
 **Example**:
 ```json
 {
-  "version": "1.0.0"
+  "version": "[VERSION]"
 }
 ```
 
 **Validation**:
-- Must be exactly `"1.0.0"` in current implementation
-- Future versions may support `"1.1.0"`, `"2.0.0"`, etc.
+- Must be exactly `"[VERSION]"` in current implementation
+- Future versions may support `"[VERSION]"`, `"[VERSION]"`, etc.
 
 ---
 
@@ -223,7 +223,7 @@ project/
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {
     "algorithm2e.sty": {
@@ -265,7 +265,7 @@ The lockfile uses **stable, sorted JSON** for deterministic diffs:
 
 **Example** (before sorting):
 ```json
-{"updatedAt": "...", "version": "1.0.0", "engine": "xetex"}
+{"updatedAt": "...", "version": "[VERSION]", "engine": "xetex"}
 ```
 
 **Example** (after sorting):
@@ -275,7 +275,7 @@ The lockfile uses **stable, sorted JSON** for deterministic diffs:
   "engine": "xetex",
   "resolvedInputs": {},
   "updatedAt": "...",
-  "version": "1.0.0"
+  "version": "[VERSION]"
 }
 ```
 
@@ -317,7 +317,7 @@ const ResolvedInputSchema = z.object({
 });
 
 const LatexLockSchema = z.object({
-  version: z.literal('1.0.0'),
+  version: z.literal('[VERSION]'),
   engine: z.enum(['xetex', 'pdftex', 'luatex']),
   resolvedInputs: z.record(z.string(), ResolvedInputSchema),
   createdAt: z.string().datetime(),
@@ -343,7 +343,7 @@ kgc latex build --input main.tex
 Creates:
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {},
   "createdAt": "2025-12-27T10:00:00.000Z",
@@ -361,7 +361,7 @@ Creates:
 After build:
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "xetex",
   "resolvedInputs": {
     "algorithm2e.sty": {
@@ -482,8 +482,8 @@ Rebuild verifies lockfile matches actual usage.
 **Error**:
 ```
 ⚠ Invalid lockfile at .latex-cache/latex.lock.json
-  Expected version: "1.0.0"
-  Got: "0.9.0"
+  Expected version: "[VERSION]"
+  Got: "[VERSION]"
 ```
 
 **Solution**: Delete lockfile, rebuild:

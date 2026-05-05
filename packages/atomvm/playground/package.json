@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/atomvm-playground",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Production validation playground for AtomVM - validates processes, supervision, KGC-4D integration",
   "type": "module",
   "scripts": {

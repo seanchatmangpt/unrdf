@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/autonomic-innovation",
-  "version": "0.1.0",
+  "version": "0.0.0-agnostic",
   "description": "AUTONOMIC_INNOVATION - 10 Swarm Agents Building Graph Innovations",
   "type": "module",
   "main": "./src/index.mjs",

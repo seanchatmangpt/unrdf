@@ -1,6 +1,6 @@
 # UNRDF Troubleshooting Guide
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-28
 **Status**: Production Ready
 
@@ -176,7 +176,7 @@ TypeError: createStore is not a function
 cat packages/yourapp/package.json | grep oxigraph
 
 # Should see:
-# "@unrdf/oxigraph": "^5.0.1"
+# "@unrdf/oxigraph": "^latest"
 ```
 
 **Fix**:
@@ -889,8 +889,8 @@ pnpm list @unrdf/oxigraph
 Title: store.insert() not working with valid quad
 
 Environment:
-- Node: v18.12.0
-- @unrdf/oxigraph: 5.0.1
+- Node: latest
+- @unrdf/oxigraph: latest
 
 Reproduction:
 [paste minimal code]

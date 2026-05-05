@@ -2,13 +2,13 @@
 
 ## Overview
 
-This document identifies gaps between the current state (v4.2.3) and the target state (v5.0.0), analyzes root causes of feature bloat, and prioritizes improvements for the IMPROVE phase.
+This document identifies gaps between the current state (latest) and the target state (latest), analyzes root causes of feature bloat, and prioritizes improvements for the IMPROVE phase.
 
 ---
 
 ## Executive Summary
 
-**Gap**: UNRDF v4.2.3 carries 300+ functions and 65,867 lines of code when a successful RDF client needs only ~30 functions and ~35,000 lines.
+**Gap**: UNRDF latest carries 300+ functions and 65,867 lines of code when a successful RDF client needs only ~30 functions and ~35,000 lines.
 
 **Root Causes**:
 1. Accidental feature accumulation across versions
@@ -198,7 +198,7 @@ Result: 130 functions → 70 functions (46% reduction)
 ### Current Bloat Distribution
 
 ```
-Package Composition (v4.2.3):
+Package Composition (latest):
 
 unrdf (CORE + BLOAT):
 ├─ Core RDF:                    ~5,000 LOC  (7.6%)   ✓ Essential

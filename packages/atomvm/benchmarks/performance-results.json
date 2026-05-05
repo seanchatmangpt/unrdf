@@ -1,6 +1,6 @@
 {
   "timestamp": "2025-12-21T10:17:31.831Z",
-  "nodeVersion": "v24.11.1",
+  "nodeVersion": "[VERSION]",
   "platform": "darwin",
   "arch": "arm64",
   "storeOperations": {

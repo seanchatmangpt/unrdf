@@ -163,7 +163,7 @@ Sean Chatman (2020-2025)
 | 2024 | Chatman Constant (Θ = 8) proven |
 | 2024 | KGC-4D development completed |
 | 2025 | Chatman Equation formalized |
-| 2025 | UNRDF v6.0.0 released |
+| 2025 | UNRDF [VERSION] released |
 
 ---
 

@@ -11,7 +11,7 @@
 
 Fix 3 failing browser compatibility tests by correcting API usage in test file and fixing missing imports in implementation.
 
-**Initial Status**: 5/8 tests passing (62.5%)
+**Initial Status**: 5/8 tests passing (latest%)
 **Final Status**: **8/8 tests passing (100%)**
 
 ---
@@ -171,7 +171,7 @@ TAP version 13
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1310.087068
+# duration_ms latest
 
 ✅ All browser exports available
 ✅ CLI correctly excluded from browser build
@@ -185,7 +185,7 @@ TAP version 13
 ✅ BLAKE3 hashing works in browser
    Hash of "test data": 6a953581d60dbebc...
 ✅ Version info accessible in browser
-   Version: 6.0.0-alpha.1
+   Version: latest.1
    Features: receipts, delta, cli, grammar, docs
 ```
 
@@ -303,7 +303,7 @@ Reading `execution-receipt.mjs` schema was essential to understand required vs o
 ## 📈 Impact
 
 **Before**:
-- 5/8 tests passing (62.5%)
+- 5/8 tests passing (latest%)
 - 3 failing tests blocking browser build validation
 - Unclear API usage patterns
 

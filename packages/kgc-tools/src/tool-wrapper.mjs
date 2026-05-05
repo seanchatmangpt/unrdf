@@ -40,7 +40,7 @@ const ReceiptSchema = z.object({
  *
  * const manifest = {
  *   name: 'Read',
- *   version: '1.0.0',
+ *   version: '[VERSION]',
  *   schema_in: z.object({ path: z.string() }),
  *   schema_out: z.object({ content: z.string(), size: z.number() }),
  *   capabilities: ['file-read']

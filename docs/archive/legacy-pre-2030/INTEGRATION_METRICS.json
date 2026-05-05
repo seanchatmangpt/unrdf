@@ -344,7 +344,7 @@
       "Fix kgc-docs test",
       "Achieve 100% test pass rate"
     ],
-    "recommendation": "Complete 3 blockers (total 5.5 hours), then merge. Remaining 11% can be follow-up PRs.",
+    "recommendation": "Complete 3 blockers (total latest hours), then merge. Remaining 11% can be follow-up PRs.",
     "confidence_level": "95%",
     "verification_basis": "Direct measurement via file inspection and command execution"
   },

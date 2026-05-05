@@ -2,7 +2,7 @@
 
 > KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration
 
-**Version**: `5.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

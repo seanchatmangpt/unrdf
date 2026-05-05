@@ -9,7 +9,7 @@
 ce:Ontology a owl:Ontology ;
     rdfs:label "Chatman Equation Ontology" ;
     rdfs:comment "Defines the core concepts of the 3T methodology for knowledge graph generation" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "[VERSION]" .
 
 # Classes
 ce:Methodology a owl:Class ;
@@ -58,7 +58,7 @@ ce:hasDescription a owl:DatatypeProperty ;
 ce:3TMethodology a ce:Methodology ;
     rdfs:label "3T Methodology" ;
     ce:hasDescription "TOML + Tera + Turtle methodology for configuration-driven knowledge graph generation" ;
-    ce:hasVersion "1.0.0" ;
+    ce:hasVersion "[VERSION]" ;
     ce:hasComponent ce:TOML, ce:Tera, ce:Turtle .
 
 ce:TOML a ce:ConfigurationFormat ;

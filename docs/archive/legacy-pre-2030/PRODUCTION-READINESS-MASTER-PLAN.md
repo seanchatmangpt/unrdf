@@ -27,7 +27,7 @@
 | --------------------------- | ------------------------ | -------------------------------------------- | ------------- |
 | **production-validator**    | gap-closure-report-final | OTEL 83/100, tests FAILED, build TIMEOUT     | ❌ P0 Blocker |
 | **code-analyzer**           | DX-UX-VALIDATION-REPORT  | 42/100 DX score, examples broken, lint fails | ❌ P0 Blocker |
-| **performance-benchmarker** | BUILD-PERFORMANCE-REPORT | Build optimized 66.6% (37.87s → 12.64s)      | ✅ Complete   |
+| **performance-benchmarker** | BUILD-PERFORMANCE-REPORT | Build optimized latest% (latests → latests)      | ✅ Complete   |
 | **tester**                  | TEST-IMPROVEMENTS        | Fast mode <10s, watch mode, 8 YAWL failures  | ⚠️ P1 Issue   |
 | **system-architect**        | (Inferred from reports)  | 2 direct N3 imports, missing exports         | ⚠️ P1 Issue   |
 | **backend-dev**             | (Inferred from reports)  | Federation missing metrics.mjs               | ❌ P0 Blocker |
@@ -120,7 +120,7 @@
 
 ### Task Sequence (Execute in Order)
 
-#### 1.1 Install Missing Dependencies (5 min)
+#### latest Install Missing Dependencies (5 min)
 
 **File:** `/home/user/unrdf/packages/graph-analytics/package.json`
 
@@ -142,7 +142,7 @@ timeout 10s pnpm test
 
 ---
 
-#### 1.2 Fix Linting Syntax Error (5 min)
+#### latest Fix Linting Syntax Error (5 min)
 
 **File:** `/home/user/unrdf/packages/core/test/enhanced-errors.test.mjs`
 **Line:** 310
@@ -179,11 +179,11 @@ timeout 5s pnpm -C packages/core lint
 
 ---
 
-#### 1.3 Fix Linting Warnings (15 min)
+#### latest Fix Linting Warnings (15 min)
 
 **Files to Modify:**
 
-**1.3.1 `/home/user/unrdf/packages/observability/examples/observability-demo.mjs:18`**
+**latest `/home/user/unrdf/packages/observability/examples/observability-demo.mjs:18`**
 
 ```javascript
 // Before
@@ -194,7 +194,7 @@ import { AlertSeverity } from '../src/index.mjs';
 import { AlertSeverity as _AlertSeverity } from '../src/index.mjs';
 ```
 
-**1.3.2 `/home/user/unrdf/packages/observability/src/alerts/alert-manager.mjs:153`**
+**latest `/home/user/unrdf/packages/observability/src/alerts/alert-manager.mjs:153`**
 
 ```javascript
 // Before
@@ -204,7 +204,7 @@ const ruleId = rule.id;
 const _ruleId = rule.id; // OR remove if truly unused
 ```
 
-**1.3.3 `/home/user/unrdf/packages/observability/validation/observability-validation.mjs:99`**
+**latest `/home/user/unrdf/packages/observability/validation/observability-validation.mjs:99`**
 
 ```javascript
 // Before
@@ -218,7 +218,7 @@ alerts.forEach(_alert => {
 }); // OR use the variable
 ```
 
-**1.3.4 `/home/user/unrdf/packages/observability/validation/observability-validation.mjs:177`**
+**latest `/home/user/unrdf/packages/observability/validation/observability-validation.mjs:177`**
 
 ```javascript
 // Before
@@ -228,7 +228,7 @@ const hasTemplating = checkTemplating(config);
 const _hasTemplating = checkTemplating(config); // OR use the variable
 ```
 
-**1.3.5 `/home/user/unrdf/packages/graph-analytics/src/clustering/community-detector.mjs:127`**
+**latest `/home/user/unrdf/packages/graph-analytics/src/clustering/community-detector.mjs:127`**
 
 ```javascript
 // Before
@@ -238,7 +238,7 @@ const nodeDegree = graph.degree(node);
 const _nodeDegree = graph.degree(node); // OR use the variable
 ```
 
-**1.3.6 `/home/user/unrdf/packages/graph-analytics/test/clustering.test.mjs:6`**
+**latest `/home/user/unrdf/packages/graph-analytics/test/clustering.test.mjs:6`**
 
 ```javascript
 // Before
@@ -259,9 +259,9 @@ timeout 10s pnpm lint
 
 ---
 
-#### 1.4 Fix Broken Examples (30 min)
+#### latest Fix Broken Examples (30 min)
 
-**1.4.1 `/home/user/unrdf/examples/01-minimal-parse-query.mjs`**
+**latest `/home/user/unrdf/examples/01-minimal-parse-query.mjs`**
 
 **Current Issue:** `Error: Cannot find package 'unrdf'`
 
@@ -284,7 +284,7 @@ cd examples
 pnpm link --global @unrdf/core
 ```
 
-**1.4.2 `/home/user/unrdf/examples/context-example.mjs`**
+**latest `/home/user/unrdf/examples/context-example.mjs`**
 
 **Current Issue:** `SyntaxError: Missing export 'initStore'`
 
@@ -323,9 +323,9 @@ done
 
 ---
 
-#### 1.5 Add Missing Build Configs (20 min)
+#### latest Add Missing Build Configs (20 min)
 
-**1.5.1 `/home/user/unrdf/packages/core/build.config.mjs` (if missing)**
+**latest `/home/user/unrdf/packages/core/build.config.mjs` (if missing)**
 
 **Check first:**
 
@@ -367,7 +367,7 @@ export default defineBuildConfig({
 });
 ```
 
-**1.5.2 `/home/user/unrdf/packages/hooks/build.config.mjs` (if missing)**
+**latest `/home/user/unrdf/packages/hooks/build.config.mjs` (if missing)**
 
 Same approach as core package above.
 
@@ -382,7 +382,7 @@ timeout 30s pnpm build
 
 ---
 
-#### 1.6 Add Missing Federation Metrics File (15 min)
+#### latest Add Missing Federation Metrics File (15 min)
 
 **File:** `/home/user/unrdf/packages/federation/src/federation/metrics.mjs`
 
@@ -485,62 +485,62 @@ timeout 30s node /home/user/unrdf/validation/run-all.mjs comprehensive
 
 ### Task Sequence (Can Execute in Parallel)
 
-#### 2.1 Fix YAWL Test Failures (2 hours)
+#### latest Fix YAWL Test Failures (2 hours)
 
 **Files:** `/home/user/unrdf/packages/yawl/test/yawl-patterns.test.mjs`, `/home/user/unrdf/packages/yawl/test/yawl-hooks.test.mjs`
 
 **8 Failing Tests:**
 
-**2.1.1 Approval path enablement check (yawl-hooks.test.mjs:735)**
+**latest Approval path enablement check (yawl-hooks.test.mjs:735)**
 
 - Expected: `valid=true`
 - Received: `valid=false`
 - Root cause: Investigate approval path validation logic
 
-**2.1.2 Loop validation error (yawl-patterns.test.mjs:540)**
+**latest Loop validation error (yawl-patterns.test.mjs:540)**
 
 - Error: "Task 'process' has sequence join but 2 incoming flows"
 - Root cause: Loop pattern validation too strict
 
-**2.1.3 Cancel region (yawl-patterns.test.mjs:926)**
+**latest Cancel region (yawl-patterns.test.mjs:926)**
 
 - Expected: 2 tasks cancelled
 - Received: 0
 - Root cause: `findTasksInRegion` not including enabled tasks
 
-**2.1.4 Time-travel reconstruction (yawl-patterns.test.mjs:1064)**
+**latest Time-travel reconstruction (yawl-patterns.test.mjs:1064)**
 
 - Expected: `case` to be defined
 - Received: `undefined`
 - Root cause: Reconstruction logic incomplete
 
-**2.1.5 Concurrent cases (yawl-patterns.test.mjs:1140)**
+**latest Concurrent cases (yawl-patterns.test.mjs:1140)**
 
 - TypeError: Cannot read properties of undefined (reading 'data')
 - Root cause: Concurrent case state management issue
 
-**2.1.6 Full workflow lifecycle (yawl-patterns.test.mjs:1405)**
+**latest Full workflow lifecycle (yawl-patterns.test.mjs:1405)**
 
 - Expected: status='completed'
 - Received: status='running'
 - Root cause: Workflow completion check timing issue
 
-**2.1.7 Resource contention (yawl-patterns.test.mjs:1498)**
+**latest Resource contention (yawl-patterns.test.mjs:1498)**
 
 - Error: "No available resources for role specialist"
 - Root cause: Resource allocation logic
 
-**2.1.8 WP20: Cancel Case pattern (yawl-patterns.test.mjs:1737)**
+**latest WP20: Cancel Case pattern (yawl-patterns.test.mjs:1737)**
 
 - Expected: 2 tasks cancelled
 - Received: 0
-- Root cause: Same as 2.1.3 (cancel region implementation)
+- Root cause: Same as latest (cancel region implementation)
 
 **Strategy:**
 
 1. Use watch mode: `pnpm test:yawl:watch`
 2. Fix one test at a time, verify with watch
-3. Start with duplicate issues (2.1.3 = 2.1.8)
+3. Start with duplicate issues (latest = latest)
 
 **Validation:**
 
@@ -551,7 +551,7 @@ timeout 10s pnpm test:yawl
 
 ---
 
-#### 2.2 Fix Docs E2E Test Configuration (1 hour)
+#### latest Fix Docs E2E Test Configuration (1 hour)
 
 **File:** `/home/user/unrdf/packages/docs/test/*.e2e.test.mjs` (7 files)
 
@@ -590,7 +590,7 @@ timeout 20s pnpm -C packages/docs test
 
 ---
 
-#### 2.3 Fix Streaming Tests (2 hours)
+#### latest Fix Streaming Tests (2 hours)
 
 **File:** `/home/user/unrdf/packages/streaming/test/*.test.mjs`
 
@@ -635,7 +635,7 @@ timeout 10s pnpm -C packages/streaming test
 
 ---
 
-#### 2.4 Fix Knowledge Hooks API OTEL Feature (1 hour)
+#### latest Fix Knowledge Hooks API OTEL Feature (1 hour)
 
 **File:** `/home/user/unrdf/packages/validation/features/knowledge-hooks-api.mjs`
 
@@ -667,7 +667,7 @@ timeout 30s node /home/user/unrdf/validation/run-all.mjs comprehensive
 
 ---
 
-#### 2.5 Add CI Validation for Examples and Exports (1 hour)
+#### latest Add CI Validation for Examples and Exports (1 hour)
 
 **File:** `.github/workflows/ci.yml` (create if missing)
 
@@ -727,13 +727,13 @@ for f in /home/user/unrdf/examples/*.mjs; do timeout 30s node "$f" || exit 1; do
 
 ---
 
-#### 2.6 Improve Error Messages (2 hours)
+#### latest Improve Error Messages (2 hours)
 
 **Goal:** Increase actionable error rate from 25% to 80%
 
 **Files to Modify:**
 
-**2.6.1 `/home/user/unrdf/packages/core/src/utils/enhanced-errors.mjs`**
+**latest `/home/user/unrdf/packages/core/src/utils/enhanced-errors.mjs`**
 
 Add suggestions to common errors:
 
@@ -810,7 +810,7 @@ timeout 90s pnpm test
 
 ### Tasks (Lower Priority)
 
-#### 3.1 Security Validation (4 hours)
+#### latest Security Validation (4 hours)
 
 **Scope:**
 
@@ -826,7 +826,7 @@ timeout 90s pnpm test
 
 ---
 
-#### 3.2 Performance Benchmarking (4 hours)
+#### latest Performance Benchmarking (4 hours)
 
 **Scope:**
 
@@ -841,7 +841,7 @@ timeout 90s pnpm test
 
 ---
 
-#### 3.3 Increase Code Coverage to 80% (8 hours)
+#### latest Increase Code Coverage to 80% (8 hours)
 
 **Current:** ~70% estimated
 **Target:** 80%+
@@ -854,7 +854,7 @@ timeout 90s pnpm test
 
 ---
 
-#### 3.4 Documentation Updates (3 hours)
+#### latest Documentation Updates (3 hours)
 
 **Scope:**
 
@@ -873,30 +873,30 @@ timeout 90s pnpm test
 
 ```
 Phase 1 (P0 - Sequential)
-├─ 1.1 Install Dependencies (no deps)
-├─ 1.2 Fix Lint Syntax (no deps)
-├─ 1.3 Fix Lint Warnings (depends on 1.2)
-├─ 1.4 Fix Examples (depends on 1.1, 1.5)
-├─ 1.5 Add Build Configs (no deps)
-└─ 1.6 Add Missing Files (no deps)
+├─ latest Install Dependencies (no deps)
+├─ latest Fix Lint Syntax (no deps)
+├─ latest Fix Lint Warnings (depends on latest)
+├─ latest Fix Examples (depends on latest, latest)
+├─ latest Add Build Configs (no deps)
+└─ latest Add Missing Files (no deps)
 
 Phase 1 Validation (Sequential, depends on all Phase 1 tasks)
 
 Phase 2 (P1 - Can be Parallel)
-├─ 2.1 Fix YAWL Tests (independent)
-├─ 2.2 Fix Docs E2E (independent)
-├─ 2.3 Fix Streaming Tests (independent)
-├─ 2.4 Fix OTEL Feature (independent)
-├─ 2.5 Add CI Validation (depends on Phase 1 complete)
-└─ 2.6 Improve Errors (independent)
+├─ latest Fix YAWL Tests (independent)
+├─ latest Fix Docs E2E (independent)
+├─ latest Fix Streaming Tests (independent)
+├─ latest Fix OTEL Feature (independent)
+├─ latest Add CI Validation (depends on Phase 1 complete)
+└─ latest Improve Errors (independent)
 
 Phase 2 Validation (Sequential, depends on all Phase 2 tasks)
 
 Phase 3 (P2 - Can be Parallel or Deferred)
-├─ 3.1 Security (independent)
-├─ 3.2 Performance (independent)
-├─ 3.3 Coverage (independent)
-└─ 3.4 Documentation (independent)
+├─ latest Security (independent)
+├─ latest Performance (independent)
+├─ latest Coverage (independent)
+└─ latest Documentation (independent)
 ```
 
 ---
@@ -936,7 +936,7 @@ pnpm build                   # → <30s, all packages
 # CI simulation passes
 ```
 
-**Phase 3 Gate (OPTIONAL for v1.0):**
+**Phase 3 Gate (OPTIONAL for vlatest):**
 
 ```bash
 # Security scan passes
@@ -981,16 +981,16 @@ pnpm build                   # → <30s, all packages
 
 1. ✅ Execute all Phase 1 tasks (90 min)
 2. ✅ Run Phase 1 validation (30 min)
-3. ✅ Start Phase 2.1 (YAWL tests) - 2 hours
-4. ✅ Start Phase 2.4 (OTEL feature) - 1 hour
+3. ✅ Start Phase latest (YAWL tests) - 2 hours
+4. ✅ Start Phase latest (OTEL feature) - 1 hour
 
 **Day 2 (4-6 hours):**
 
-1. ✅ Complete Phase 2.2 (Docs E2E) - 1 hour
-2. ✅ Complete Phase 2.3 (Streaming tests) - 2 hours
-3. ✅ Complete Phase 2.5 (CI validation) - 1 hour
+1. ✅ Complete Phase latest (Docs E2E) - 1 hour
+2. ✅ Complete Phase latest (Streaming tests) - 2 hours
+3. ✅ Complete Phase latest (CI validation) - 1 hour
 4. ✅ Run Phase 2 validation (30 min)
-5. ✅ Phase 2.6 (Error messages) - 2 hours
+5. ✅ Phase latest (Error messages) - 2 hours
 
 **Day 3+ (Optional - Phase 3):**
 
@@ -1144,7 +1144,7 @@ echo "Production Readiness: 92/100 (estimated)"
 
 ### Immediate Action (Right Now)
 
-1. **Execute Phase 1.1** (Install dependency):
+1. **Execute Phase latest** (Install dependency):
 
    ```bash
    cd /home/user/unrdf/packages/graph-analytics
@@ -1152,7 +1152,7 @@ echo "Production Readiness: 92/100 (estimated)"
    timeout 10s pnpm test
    ```
 
-2. **Execute Phase 1.2** (Fix lint syntax error):
+2. **Execute Phase latest** (Fix lint syntax error):
 
    ```bash
    # Edit /home/user/unrdf/packages/core/test/enhanced-errors.test.mjs:310
@@ -1176,25 +1176,25 @@ echo "Production Readiness: 92/100 (estimated)"
 
 **For backend-dev:**
 
-- "Execute Phase 1.6: Add missing metrics.mjs to federation package"
+- "Execute Phase latest: Add missing metrics.mjs to federation package"
 - "File: /home/user/unrdf/packages/federation/src/federation/metrics.mjs"
-- "See Phase 1.6 section for implementation details"
+- "See Phase latest section for implementation details"
 
 **For tester:**
 
-- "Execute Phase 2.1: Fix 8 YAWL test failures"
+- "Execute Phase latest: Fix 8 YAWL test failures"
 - "Files: /home/user/unrdf/packages/yawl/test/\*.test.mjs"
 - "Use watch mode for rapid iteration: pnpm test:yawl:watch"
 
 **For code-analyzer:**
 
-- "Execute Phase 1.3: Fix 6 linting warnings"
+- "Execute Phase latest: Fix 6 linting warnings"
 - "Prefix unused variables with underscore (\_)"
 - "Target: 0 errors, 0 warnings"
 
 **For cicd-engineer:**
 
-- "Execute Phase 2.5: Add CI validation for examples and exports"
+- "Execute Phase latest: Add CI validation for examples and exports"
 - "File: /home/user/unrdf/.github/workflows/ci.yml"
 - "Include example validation step"
 
@@ -1206,7 +1206,7 @@ echo "Production Readiness: 92/100 (estimated)"
 
 ---
 
-**Master Plan Version:** 1.0.0
+**Master Plan Version:** latest
 **Generated:** 2025-12-26
 **Orchestrator:** Task Orchestrator Agent
 **Total Estimated Effort:** 8-12 hours (Phases 1-2), +19 hours (Phase 3 optional)

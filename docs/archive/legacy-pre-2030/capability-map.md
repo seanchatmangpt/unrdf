@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/v6-core
-**Version:** 6.0.0-rc.1
+**Version:** latest.1
 
 ---
 
@@ -35,9 +35,9 @@ UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts
 - `@unrdf/hooks`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
 - `@unrdf/blockchain`: workspace:*
-- `citty`: ^0.1.5
-- `zod`: ^3.22.4
-- `hash-wasm`: ^4.11.0
+- `citty`: ^latest
+- `zod`: ^latest
+- `hash-wasm`: ^latest
 
 ### Exports
 

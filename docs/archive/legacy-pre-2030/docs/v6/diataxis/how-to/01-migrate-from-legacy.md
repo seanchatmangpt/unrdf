@@ -18,7 +18,7 @@ This guide walks you through migrating a v5 package to v6, addressing all 7 brea
 6. ✅ Federation query API
 7. ✅ Streaming API changes
 
-**Example**: We'll migrate `@unrdf/example-package` from v5.2.0 to v6.0.0.
+**Example**: We'll migrate `@unrdf/example-package` from latest to latest.
 
 ---
 
@@ -40,7 +40,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ```json
 {
   "name": "@unrdf/example-package",
-  "version": "5.2.0",
+  "version": "latest",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "exports": {
@@ -52,7 +52,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
     "test": "jest"
   },
   "dependencies": {
-    "n3": "^1.16.0"
+    "n3": "^latest"
   }
 }
 ```
@@ -62,7 +62,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ```json
 {
   "name": "@unrdf/example-package",
-  "version": "6.0.0",
+  "version": "latest",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
@@ -78,7 +78,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/v6-compat": "workspace:*",
-    "zod": "^3.22.4"
+    "zod": "^latest"
   },
   "peerDependencies": {
     "@unrdf/core": "workspace:*"
@@ -438,7 +438,7 @@ npx @unrdf/v6-compat migration-report --package @unrdf/example-package
 ```json
 {
   "package": "@unrdf/example-package",
-  "version": "6.0.0",
+  "version": "latest",
   "migrationComplete": true,
   "receipt": {
     "hash": "sha256:migration-abc123...",

@@ -368,7 +368,7 @@ BACKMATTER
 - **Pages:** 107 (comprehensive, publication-ready)
 - **File Size:** 389 KB (optimized for distribution)
 - **Format:** PDF 1.5 with hyperref support
-- **Generator:** LuaTeX 1.18.0
+- **Generator:** LuaTeX [VERSION]
 - **Creation Date:** December 5, 2025
 
 ### LaTeX Compilation Process

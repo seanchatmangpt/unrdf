@@ -35,7 +35,7 @@ The file must be a JSON array even when it contains only one hook.
 | Field         | Type     | Required | Description                                                                             |
 | ------------- | -------- | -------- | --------------------------------------------------------------------------------------- |
 | `name`        | string   | yes      | Human-readable hook name (1–100 characters)                                             |
-| `version`     | string   | yes      | Semantic version string, e.g. `"1.0.0"` (must match `\d+\.\d+\.\d+`)                    |
+| `version`     | string   | yes      | Semantic version string, e.g. `"latest"` (must match `\d+\.\d+\.\d+`)                    |
 | `description` | string   | no       | Free-text description (max 1000 characters)                                             |
 | `author`      | string   | no       | Author name or identifier                                                               |
 | `license`     | string   | no       | License identifier, e.g. `"MIT"`                                                        |
@@ -97,7 +97,7 @@ The smallest valid hook definition — only the required fields with defaults us
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "meta": {
       "name": "any-triple-exists",
-      "version": "1.0.0"
+      "version": "latest"
     },
     "condition": {
       "kind": "sparql-ask",
@@ -121,7 +121,7 @@ The smallest valid hook definition — only the required fields with defaults us
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "meta": {
       "name": "tag-compliant-trades",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Adds a compliance timestamp to trades that have a status",
       "tags": ["compliance", "fibo"]
     },

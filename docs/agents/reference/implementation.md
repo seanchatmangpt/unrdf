@@ -12,9 +12,9 @@ This document provides direct references to implementation files, enabling agent
     "@vocab": "urn:unrdf:implementation:",
     "schema": "http://schema.org/"
   },
-  "@id": "urn:unrdf:implementation-reference:v4.0.0",
+  "@id": "urn:unrdf:implementation-reference:vlatest",
   "@type": "implementation:Reference",
-  "version": "4.0.0",
+  "version": "latest",
   "targetAudience": ["AutonomicAgent", "HyperintelligentSystem"]
 }
 ```
@@ -216,7 +216,7 @@ PENDING → ACTIVE → HOOKS_PASSED → APPLYING → POST_HOOKS → COMMITTED
 | Phase 3: Project Model | ~200-250 | Build project structure |
 | Phase 4: File Roles | ~250-300 | Classify file roles |
 | Phase 5: Domain Inference | ~300-350 | Infer domain model |
-| Phase 6.5: Code Complexity | ~570-615 | Analyze JS/TS complexity |
+| Phase latest: Code Complexity | ~570-615 | Analyze JS/TS complexity |
 | Phase 6: Template Inference | ~350-400 | Infer templates |
 | Phase 7: Hooks | ~400-450 | Register hooks |
 | Phase 8: Snapshot | ~450-500 | Create baseline |
@@ -224,7 +224,7 @@ PENDING → ACTIVE → HOOKS_PASSED → APPLYING → POST_HOOKS → COMMITTED
 **Code Complexity Integration:**
 - **Implementation:** `src/project-engine/code-complexity-js.mjs`
 - **Function:** `analyzeJsComplexity`
-- **Phase:** 6.5 (after domain inference, before template inference)
+- **Phase:** latest (after domain inference, before template inference)
 - **Capability:** `CODE_COMPLEXITY_JS` (from `capabilities-manifest.mjs`)
 
 ### Capabilities Manifest
@@ -448,8 +448,8 @@ PENDING → ACTIVE → HOOKS_PASSED → APPLYING → POST_HOOKS → COMMITTED
 
 ## Version Information
 
-- **UNRDF Version:** 4.0.0
-- **Documentation Version:** 4.0.0
+- **UNRDF Version:** latest
+- **Documentation Version:** latest
 - **Last Updated:** 2024-01-01
 - **Implementation Language:** JavaScript (ESM `.mjs`)
 - **Validation:** Zod schemas

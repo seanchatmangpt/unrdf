@@ -352,7 +352,7 @@ async function generateGlobalReceipt({ validationResults, conflictCheck, e2eResu
     status: validationResults.valid && !conflictCheck.hasConflicts && e2eResult.passed ? 'success' : 'failure',
 
     // Toolchain
-    toolchain_version: 'kgc-claude@5.0.0',
+    toolchain_version: 'kgc-claude@latest',
     node_version: process.version,
   };
 

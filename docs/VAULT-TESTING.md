@@ -25,10 +25,10 @@ docker compose -f docker-compose.vault.yml ps
 ### Expected Output
 ```
 NAME                IMAGE                          STATUS
-kgc-vault          hashicorp/vault:1.15           healthy
+kgc-vault          hashicorp/vault:latest           healthy
 kgc-sidecar        unrdf-sidecar:latest          healthy
 kgc-postgres       postgres:16-alpine             healthy
-kgc-jaeger         jaegertracing/all-in-one:1.52  running
+kgc-jaeger         jaegertracing/all-in-one:latest  running
 ```
 
 ### Verify Vault Status
@@ -72,7 +72,7 @@ docker logs kgc-sidecar 2>&1 | grep -A 5 "Vault"
 
 # Expected output:
 # [KGC] Initializing Vault client...
-# [Vault] Connected to Vault 1.15.0
+# [Vault] Connected to Vault latest
 # [Vault] Initialized: true, Sealed: false
 # [Vault] Secret retrieved: api-credentials
 # [Vault] Secret retrieved: encryption-credentials
@@ -331,7 +331,7 @@ docker logs kgc-sidecar 2>&1 | grep -A 3 "Vault"
 
 # Expected:
 # [KGC] Initializing Vault client...
-# [Vault] Connected to Vault 1.15.0
+# [Vault] Connected to Vault latest
 # [Vault] Secret retrieved: api-credentials
 # [KGC] Vault secrets retrieved successfully ✅
 

@@ -2,7 +2,7 @@
 
 **Report Date**: 2025-12-25
 **Branch**: claude/e2e-testing-advanced-4wNg4
-**Analyzer**: Custom Architecture Analyzer v1.0
+**Analyzer**: Custom Architecture Analyzer vlatest
 **Evidence**: Measured execution data, not claims
 
 ---
@@ -15,7 +15,7 @@
 - ❌ **OTEL Contamination**: 115 OTEL usages in 32 business logic files (-20 points)
 - ❌ **File Size Violations**: 71 files exceed 500-line limit (-15 points)
 - ✅ **No Circular Dependencies**: Clean dependency graph (+20 points)
-- ✅ **High Purity**: 90.7% pure functions (+15 points)
+- ✅ **High Purity**: latest% pure functions (+15 points)
 - ✅ **Good Architecture**: Low coupling, high reuse (+30 points)
 
 **Regression Analysis**:
@@ -136,19 +136,19 @@ export function createChangeFeed() {
 
 **Results**:
 ```
-✅ Pure functions: 1431/1577 (90.7%)
+✅ Pure functions: 1431/1577 (latest%)
 ✅ Target: >80%
-✅ Exceeded target by 10.7%
+✅ Exceeded target by latest%
 ```
 
 **Purity Analysis by Package** (top 5):
 | Package | Pure | Total | Purity % |
 |---------|------|-------|----------|
-| **core** | 187 | 198 | 94.4% |
-| **yawl** | 342 | 385 | 88.8% |
-| **kgc-4d** | 156 | 172 | 90.7% |
-| **federation** | 89 | 104 | 85.6% |
-| **hooks** | 78 | 91 | 85.7% |
+| **core** | 187 | 198 | latest% |
+| **yawl** | 342 | 385 | latest% |
+| **kgc-4d** | 156 | 172 | latest% |
+| **federation** | 89 | 104 | latest% |
+| **hooks** | 78 | 91 | latest% |
 
 **Impure Function Patterns** (acceptable):
 - I/O operations (file read/write, network calls)
@@ -225,9 +225,9 @@ export function createChangeFeed() {
 ```
 
 **Coupling Metrics**:
-- Afferent Coupling (Ca): Low (average: 2.3 dependencies per module)
-- Efferent Coupling (Ce): Low (average: 3.1 dependents per module)
-- Instability (I = Ce/(Ca+Ce)): 0.57 (balanced)
+- Afferent Coupling (Ca): Low (average: latest dependencies per module)
+- Efferent Coupling (Ce): Low (average: latest dependents per module)
+- Instability (I = Ce/(Ca+Ce)): latest (balanced)
 
 **Verdict**: ✅ Good module boundaries. No action required.
 
@@ -289,14 +289,14 @@ export function createChangeFeed() {
 
 | Criterion | Weight | Score | Weighted | Status |
 |-----------|--------|-------|----------|--------|
-| No Circular Dependencies | 20% | 20/20 | 20.0 | ✅ |
-| OTEL Separation | 20% | 0/20 | 0.0 | ❌ |
-| Pure Functions (>80%) | 15% | 15/15 | 15.0 | ✅ |
-| File Size <500 lines | 15% | 0/15 | 0.0 | ❌ |
-| Low Module Coupling | 10% | 10/10 | 10.0 | ✅ |
-| Pattern Reuse | 10% | 10/10 | 10.0 | ✅ |
-| Scalability | 10% | 10/10 | 10.0 | ✅ |
-| **TOTAL** | **100%** | **65/100** | **65.0** | **C+** |
+| No Circular Dependencies | 20% | 20/20 | latest | ✅ |
+| OTEL Separation | 20% | 0/20 | latest | ❌ |
+| Pure Functions (>80%) | 15% | 15/15 | latest | ✅ |
+| File Size <500 lines | 15% | 0/15 | latest | ❌ |
+| Low Module Coupling | 10% | 10/10 | latest | ✅ |
+| Pattern Reuse | 10% | 10/10 | latest | ✅ |
+| Scalability | 10% | 10/10 | latest | ✅ |
+| **TOTAL** | **100%** | **65/100** | **latest** | **C+** |
 
 **Letter Grade Mapping**:
 - A+ : 95-100
@@ -315,14 +315,14 @@ export function createChangeFeed() {
 
 | Criterion | Weight | Score | Weighted | Change |
 |-----------|--------|-------|----------|--------|
-| No Circular Dependencies | 20% | 20/20 | 20.0 | - |
-| OTEL Separation | 20% | **20/20** | **20.0** | **+20** |
-| Pure Functions (>80%) | 15% | 15/15 | 15.0 | - |
-| File Size <500 lines | 15% | 0/15 | 0.0 | - |
-| Low Module Coupling | 10% | 10/10 | 10.0 | - |
-| Pattern Reuse | 10% | 10/10 | 10.0 | - |
-| Scalability | 10% | 10/10 | 10.0 | - |
-| **TOTAL** | **100%** | **85/100** | **85.0** | **+20** |
+| No Circular Dependencies | 20% | 20/20 | latest | - |
+| OTEL Separation | 20% | **20/20** | **latest** | **+20** |
+| Pure Functions (>80%) | 15% | 15/15 | latest | - |
+| File Size <500 lines | 15% | 0/15 | latest | - |
+| Low Module Coupling | 10% | 10/10 | latest | - |
+| Pattern Reuse | 10% | 10/10 | latest | - |
+| Scalability | 10% | 10/10 | latest | - |
+| **TOTAL** | **100%** | **85/100** | **latest** | **+20** |
 
 ### Scenario 2: Fix OTEL + Top 10 Files (Phase 1 + Phase 2)
 
@@ -330,14 +330,14 @@ export function createChangeFeed() {
 
 | Criterion | Weight | Score | Weighted | Change |
 |-----------|--------|-------|----------|--------|
-| No Circular Dependencies | 20% | 20/20 | 20.0 | - |
-| OTEL Separation | 20% | **20/20** | **20.0** | **+20** |
-| Pure Functions (>80%) | 15% | 15/15 | 15.0 | - |
-| File Size <500 lines | 15% | **10/15** | **10.0** | **+10** |
-| Low Module Coupling | 10% | 10/10 | 10.0 | - |
-| Pattern Reuse | 10% | 10/10 | 10.0 | - |
-| Scalability | 10% | 10/10 | 10.0 | - |
-| **TOTAL** | **100%** | **95/100** | **95.0** | **+30** |
+| No Circular Dependencies | 20% | 20/20 | latest | - |
+| OTEL Separation | 20% | **20/20** | **latest** | **+20** |
+| Pure Functions (>80%) | 15% | 15/15 | latest | - |
+| File Size <500 lines | 15% | **10/15** | **latest** | **+10** |
+| Low Module Coupling | 10% | 10/10 | latest | - |
+| Pattern Reuse | 10% | 10/10 | latest | - |
+| Scalability | 10% | 10/10 | latest | - |
+| **TOTAL** | **100%** | **95/100** | **latest** | **+30** |
 
 **Note**: Partial credit (10/15) for fixing 10 out of 71 large files
 
@@ -350,21 +350,21 @@ export function createChangeFeed() {
 **Commit 996873e (E2E Test Report)**: A- (85/100)
 - ✅ No circular dependencies
 - ✅ 0 OTEL violations (claimed)
-- ✅ 87.8% pure functions
+- ✅ latest% pure functions
 - ❌ 11 large files
 - **Issue**: Large files were known problem
 
 **Commit 6a7bd3e (Innovation Sprint)**: C+ (65/100)
 - ✅ No circular dependencies
 - ❌ 115 OTEL violations (NEW - regression)
-- ✅ 90.7% pure functions (improved!)
+- ✅ latest% pure functions (improved!)
 - ❌ 71 large files (NEW - added 60 more)
 - **Issue**: INNOVATION SPRINT added packages with OTEL contamination
 
 **After Fixes (Projected)**: A+ (95/100)
 - ✅ No circular dependencies
 - ✅ 0 OTEL violations (FIXED)
-- ✅ 90.7% pure functions
+- ✅ latest% pure functions
 - ✅ 10-15 large files (IMPROVED from 71)
 - **Outcome**: Production-ready architecture
 
@@ -503,7 +503,7 @@ node scripts/architecture-analyzer.mjs
 ✅ No circular dependencies found
 ❌ Found 115 OTEL usages in business logic
 ❌ Found 71 files exceeding 500 lines
-📊 Pure functions: 1431/1577 (90.7%)
+📊 Pure functions: 1431/1577 (latest%)
 ================================================================================
 Overall Grade: C+ (65/100)
 ```
@@ -524,7 +524,7 @@ Overall Grade: C+ (65/100)
 
 **What's Good** ✅:
 - Clean dependency graph (no circular dependencies)
-- High pure function ratio (90.7%)
+- High pure function ratio (latest%)
 - Excellent pattern reuse
 - Scalable architecture with federation and caching
 
@@ -570,6 +570,6 @@ Overall Grade: C+ (65/100)
 ---
 
 **Report Generated**: 2025-12-25
-**Analyzer Version**: 1.0
+**Analyzer Version**: latest
 **Methodology**: Evidence-based measurement (not claims)
 **Next Steps**: See ARCHITECTURE-RESTORATION-PLAN.md for implementation details

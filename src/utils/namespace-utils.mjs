@@ -4,7 +4,7 @@
  * These utilities provide comprehensive namespace management, vocabulary handling,
  * and prefix management for RDF operations.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

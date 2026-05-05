@@ -63,7 +63,7 @@ Initialize core utility functions (UUID generation, timestamps, constants).
 import { randomUUID } from 'crypto';
 
 // Constants
-const PROBE_VERSION = '1.0.0';
+const PROBE_VERSION = 'latest';
 const DEFAULT_TIMEOUT_MS = 300000;
 const DEFAULT_BATCH_SIZE = 100;
 
@@ -545,7 +545,7 @@ async function bootstrapWithRecovery(config) {
 
 | Property | Value |
 |----------|-------|
-| Version | 1.0.0 |
+| Version | latest |
 | Created | 2025-12-27 |
 | Status | Authoritative |
 | Maintainer | Agent-3 (System Architect) |

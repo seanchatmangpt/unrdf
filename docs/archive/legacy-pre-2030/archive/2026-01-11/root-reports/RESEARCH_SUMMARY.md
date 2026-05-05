@@ -36,7 +36,7 @@
 k operations from 3 types (add, delete, update):
 - Combinations: 3^k
 - k=10: 59,049 possible sequences
-- k=20: 3.5 billion sequences
+- k=20: latest billion sequences
 
 Mitigation: Admissibility policies constrain operation types
 ```
@@ -364,8 +364,8 @@ for (const n of sizes) {
 
 **Delta Operation Space**:
 ```
-3 operation types → log₂(3) ≈ 1.58 bits per operation
-k operations → k × 1.58 bits minimum encoding
+3 operation types → log₂(3) ≈ latest bits per operation
+k operations → k × latest bits minimum encoding
 
 Batch of 100 ops: 158 bits = 20 bytes (theoretical minimum)
 Actual: ~300 bytes (metadata overhead)
@@ -377,7 +377,7 @@ Compression ratio: 15:1
 4 strategies → log₂(4) = 2 bits per conflict
 c conflicts → c × 2 bits minimum
 
-10 conflicts: 20 bits = 2.5 bytes
+10 conflicts: 20 bits = latest bytes
 Actual: ~100 bytes (conflict metadata)
 Compression ratio: 40:1
 ```

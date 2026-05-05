@@ -2,7 +2,7 @@
 
 > UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate
 
-**Version**: `6.0.0-alpha.1`
+**Version**: `latest-alpha.1`
 **Tier**: Essential
 
 ## Overview

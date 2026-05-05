@@ -92,7 +92,7 @@ function extractMetadata(pkgJson, pkgJsonPath) {
 
   return {
     name: pkgJson.name || '',
-    version: pkgJson.version || '0.0.0',
+    version: pkgJson.version || 'latest',
     description: pkgJson.description || '',
     path: packagePath,
     main: pkgJson.main || 'src/index.mjs',
@@ -186,7 +186,7 @@ function generatePackageTriples(metadata) {
   turtle += `    unrdf:tier ${tierClass} ;\n`;
   turtle += `    unrdf:mainExport "${mainExport}" ;\n`;
   turtle += `    unrdf:testCoverage ${testCoverage}.0 ;\n`;
-  turtle += `    unrdf:minNodeVersion "18.0.0" ;\n`;
+  turtle += `    unrdf:minNodeVersion "latest" ;\n`;
 
   // Add external dependencies
   for (const dep of Object.keys(metadata.dependencies).slice(0, 5)) {
@@ -242,7 +242,7 @@ function generateOntology(packages) {
 <https://unrdf.io/ns/> a owl:Ontology ;
     rdfs:label "UNRDF Package Ontology" ;
     rdfs:comment "Defines packages, tiers, capabilities, and dependencies in the UNRDF platform" ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "latest" ;
     rdfs:seeAlso <https://unrdf.io/docs/> .
 
 # ============================================================================

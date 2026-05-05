@@ -324,7 +324,7 @@ ORDER BY ?path ?method
 ---
 to: {{ output_dir }}/openapi.yaml
 ---
-openapi: "3.0.3"
+openapi: "[VERSION]"
 info:
   title: {{ project.name }}
   version: {{ project.version }}

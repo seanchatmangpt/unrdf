@@ -2,7 +2,7 @@
 
 > KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

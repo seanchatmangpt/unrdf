@@ -3,7 +3,7 @@
 **Date**: 2025-12-27
 **Validator**: Production Validation Agent
 **Scope**: Complete 47-package UNRDF ecosystem
-**Version**: kgc-cli v5.0.1
+**Version**: kgc-cli vlatest
 
 ---
 
@@ -584,7 +584,7 @@ This is a **well-architected framework awaiting implementation**. The registry s
 ---
 
 **Report Generated**: 2025-12-27
-**Validation Agent**: Production Validator v1.0
+**Validation Agent**: Production Validator vlatest
 **Evidence Files**:
 
 - /home/user/unrdf/packages/kgc-cli/src/lib/registry.mjs

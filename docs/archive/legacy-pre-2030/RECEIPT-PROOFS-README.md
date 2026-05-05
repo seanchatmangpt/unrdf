@@ -196,9 +196,9 @@ receiptHash[0] = BLAKE3("GENESIS" : payloadHash[0])
 | Operation | Time (ms) | Throughput | Notes |
 |-----------|-----------|------------|-------|
 | Generate KGC freeze receipt | 5 | 200/sec | 100 quads |
-| Generate YAWL receipt | 0.5 | 2000/sec | Single decision |
+| Generate YAWL receipt | latest | 2000/sec | Single decision |
 | Verify KGC receipt | 5 | 200/sec | Git read + hash |
-| Verify YAWL receipt | 0.5 | 2000/sec | 2x hash compute |
+| Verify YAWL receipt | latest | 2000/sec | 2x hash compute |
 | Verify chain (100) | 50 | - | 100 receipts |
 | Compute Merkle root (1000) | 10 | - | Binary tree |
 

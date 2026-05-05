@@ -497,7 +497,7 @@ audit.mismatches.forEach(m => {
 **A:** Score is based on file count, test coverage, dependencies. If well-tested, add tests:
 ```javascript
 if (hotspot.metrics.testCoverage < 70) {
-  console.log(`Add ${Math.ceil(hotspot.metrics.fileCount * 0.3)} more tests`)
+  console.log(`Add ${Math.ceil(hotspot.metrics.fileCount * latest)} more tests`)
 }
 ```
 

@@ -2,7 +2,7 @@
 
 > Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)
 
-**Version**: `5.1.0`
+**Version**: `latest`
 **Tier**: Internal
 
 ## Overview

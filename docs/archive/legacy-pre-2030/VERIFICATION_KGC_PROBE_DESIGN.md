@@ -31,9 +31,9 @@ Generated: 2025-12-27
 ### 2. Package Structure
 - **Root Directory**: `/home/user/unrdf/packages/kgc-probe/`
 
-#### 2.1 Configuration Files
+#### latest Configuration Files
 - ✓ `package.json` (62 lines)
-  - Name: @unrdf/kgc-probe@1.0.0
+  - Name: @unrdf/kgc-probe@latest
   - Type: module (ESM)
   - 7 export paths
   - 6 @unrdf dependencies
@@ -41,7 +41,7 @@ Generated: 2025-12-27
   - 2 devDependencies (vitest, coverage)
   - No circular dependencies
 
-#### 2.2 Source Code Files
+#### latest Source Code Files
 Total lines: **2,220 lines**
 
 | File | Lines | Purpose |
@@ -56,7 +56,7 @@ Total lines: **2,220 lines**
 | src/storage/index.mjs | 350 | Storage backends (3 implementations) |
 | **Total** | **2,220** | **Production-ready pseudocode** |
 
-#### 2.3 Documentation
+#### latest Documentation
 - ✓ `README.md` (350 lines)
   - Overview and quick start
   - Installation instructions
@@ -169,8 +169,8 @@ All required exports present:
 ├── @unrdf/oxigraph ✓
 ├── @unrdf/hooks ✓
 ├── @unrdf/yawl ✓
-├── hash-wasm@^4.12.0 ✓
-└── zod@^4.1.13 ✓
+├── hash-wasm@^latest ✓
+└── zod@^latest ✓
 ```
 
 ### Conflict Analysis
@@ -178,7 +178,7 @@ All required exports present:
 - ✓ No CJS-only packages
 - ✓ No circular dependencies detected
 - ✓ hash-wasm already used by: kgc-4d, yawl, kgc-substrate
-- ✓ zod version matches workspace (^4.1.13)
+- ✓ zod version matches workspace (^latest)
 
 ### Policy Compliance
 - ✓ No axios, lodash, winston, external OTEL

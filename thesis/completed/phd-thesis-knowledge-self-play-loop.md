@@ -145,7 +145,7 @@ This dissertation fills three critical gaps:
 
 We formalize Knowledge Self-Play as a Markov Decision Process (MDP):
 
-**Definition 3.1.1 (Knowledge Self-Play MDP):** A Knowledge Self-Play MDP is a tuple $(S, A, T, R, \gamma)$ where:
+**Definition [VERSION] (Knowledge Self-Play MDP):** A Knowledge Self-Play MDP is a tuple $(S, A, T, R, \gamma)$ where:
 
 - $S$: State space = set of all RDF graphs (knowledge states)
 - $A$: Action space = set of hook executions (transformations)
@@ -153,11 +153,11 @@ We formalize Knowledge Self-Play as a Markov Decision Process (MDP):
 - $R$: Reward function $R(s, a, s') = \mathbb{1}[\text{hash}(s) \neq \text{hash}(s')]$ (binary reward for state change)
 - $\gamma$: Discount factor = 1 (episodic, infinite-horizon)
 
-**Theorem 3.1.1 (Convergence in Finite Action Spaces):** In a Knowledge Self-Play MDP with finite action space $|A| < \infty$, the system converges in at most $|A|$ iterations if actions are deterministic and state changes are monotonic.
+**Theorem [VERSION] (Convergence in Finite Action Spaces):** In a Knowledge Self-Play MDP with finite action space $|A| < \infty$, the system converges in at most $|A|$ iterations if actions are deterministic and state changes are monotonic.
 
 _Proof:_ Each hook either fires (changing state) or doesn't. With deterministic hooks and finite actions, the system must reach a fixed point where no hook changes the state. $\blacksquare$
 
-**Corollary 3.1.1 (Empty Hook System Convergence):** A Knowledge Self-Play MDP with $|A| = 0$ (no registered hooks) converges in exactly 1 iteration.
+**Corollary [VERSION] (Empty Hook System Convergence):** A Knowledge Self-Play MDP with $|A| = 0$ (no registered hooks) converges in exactly 1 iteration.
 
 _Proof:_ With no actions available, the system cannot change state. Thus $\text{hash}(s_0) = \text{hash}(s_1)$ and convergence is detected immediately. $\blacksquare$
 
@@ -165,7 +165,7 @@ This corollary is **empirically validated** in Chapter 6.
 
 ### 3.2 Cryptographic Receipt Chaining
 
-**Definition 3.2.1 (Cryptographic Receipt):** A cryptographic receipt for hook execution is a tuple:
+**Definition [VERSION] (Cryptographic Receipt):** A cryptographic receipt for hook execution is a tuple:
 
 $$
 r = (\text{id}, \text{input\_hash}, \text{output\_hash}, \text{receipt\_hash}, \text{previous\_receipt\_hash}, t)
@@ -179,7 +179,7 @@ where:
 - $\text{previous\_receipt\_hash}$ links to prior receipt (forming chain)
 - $t$ is nanosecond timestamp
 
-**Theorem 3.2.1 (Receipt Chain Integrity):** Given a receipt chain $r_1, r_2, \ldots, r_n$ where $r_{i}.previous\_receipt\_hash = r_{i-1}.receipt\_hash$, any tampering with receipt $r_k$ invalidates all subsequent receipts $r_{k+1}, \ldots, r_n$.
+**Theorem [VERSION] (Receipt Chain Integrity):** Given a receipt chain $r_1, r_2, \ldots, r_n$ where $r_{i}.previous\_receipt\_hash = r_{i-1}.receipt\_hash$, any tampering with receipt $r_k$ invalidates all subsequent receipts $r_{k+1}, \ldots, r_n$.
 
 _Proof:_ Receipt $r_{k+1}$ contains $r_k.receipt\_hash$ in its input*hash computation. Changing $r_k$ changes $r_k.receipt\_hash$, which changes $r*{k+1}.input_hash$, which changes $r_{k+1}.receipt\_hash$, invalidating the self-referential hash. By induction, all subsequent receipts are invalidated. $\blacksquare$
 
@@ -187,14 +187,14 @@ This provides **tamper-evident provenance tracking** for autonomous knowledge re
 
 ### 3.3 Hook Execution Semantics
 
-**Definition 3.3.1 (Knowledge Hook):** A knowledge hook is a tuple $h = (\text{id}, \text{condition}, \text{run}, \text{priority})$ where:
+**Definition [VERSION] (Knowledge Hook):** A knowledge hook is a tuple $h = (\text{id}, \text{condition}, \text{run}, \text{priority})$ where:
 
 - $\text{id}$: Unique identifier
 - $\text{condition}: S \rightarrow \{\text{true}, \text{false}\}$: Predicate determining when hook fires
 - $\text{run}: S \rightarrow S'$: Transformation function (SPARQL CONSTRUCT)
 - $\text{priority} \in \mathbb{N}$: Execution order (lower = higher priority)
 
-**Definition 3.3.2 (Hook Execution):** Given knowledge hook set $H$ and state $s$, hook execution proceeds as:
+**Definition [VERSION] (Hook Execution):** Given knowledge hook set $H$ and state $s$, hook execution proceeds as:
 
 $$
 \begin{aligned}
@@ -206,13 +206,13 @@ $$
 
 where $\oplus$ denotes RDF merge (set union of quads).
 
-**Theorem 3.3.1 (Hook Execution Convergence):** If $\forall h \in H: h.\text{run}(s) = s$ (hooks are identity functions), then the system converges in 1 iteration regardless of $|H|$.
+**Theorem [VERSION] (Hook Execution Convergence):** If $\forall h \in H: h.\text{run}(s) = s$ (hooks are identity functions), then the system converges in 1 iteration regardless of $|H|$.
 
 _Proof:_ If all hooks are identity functions, $s' = s \oplus \bigoplus_{h \in H} s = s$. Thus $\text{hash}(s) = \text{hash}(s')$ and convergence is immediate. $\blacksquare$
 
 ### 3.4 Feedback Signal Computation
 
-**Definition 3.4.1 (Feedback Signal):** The feedback signal for iteration $i$ is:
+**Definition [VERSION] (Feedback Signal):** The feedback signal for iteration $i$ is:
 
 $$
 \text{feedback}_i =
@@ -222,7 +222,7 @@ $$
 \end{cases}
 $$
 
-**Theorem 3.4.1 (Feedback Boundedness):** Feedback signals are bounded: $0 \leq \text{feedback}_i \leq 0.1 \times |H|$.
+**Theorem [VERSION] (Feedback Boundedness):** Feedback signals are bounded: $0 \leq \text{feedback}_i \leq 0.1 \times |H|$.
 
 _Proof:_ Lower bound: convergence yields 0. Upper bound: maximum hooks executed is $|H|$, each contributing 0.1. $\blacksquare$
 
@@ -257,7 +257,7 @@ Total feedback over episode: $\text{total\_feedback} = \sum_{i=1}^{n} \text{feed
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-**Algorithm 4.1.1 (KSPL Main Loop):**
+**Algorithm [VERSION] (KSPL Main Loop):**
 
 ```
 INPUT: maxIterations, triggerType
@@ -331,7 +331,7 @@ OUTPUT: Episode result
 
 ### 4.3 Receipt Generation & Chaining
 
-**Algorithm 4.3.1 (Receipt Generation):**
+**Algorithm [VERSION] (Receipt Generation):**
 
 ```
 INPUT: store_before, store_after, executionResults, previousReceiptHash
@@ -430,8 +430,8 @@ OUTPUT: receipt
 
 **Controlled Variables:**
 
-- Node.js version: v25.7.0
-- pnpm version: 8.15.0
+- Node.js version: [VERSION]
+- pnpm version: [VERSION]
 - Hardware: [execution environment]
 - Store implementation: @unrdf/core (Oxigraph-backed)
 
@@ -440,16 +440,16 @@ OUTPUT: receipt
 **Language & Runtime:**
 
 - JavaScript ES2022 (ESM modules)
-- Node.js v25.7.0
-- pnpm 8.15.0 for package management
+- Node.js [VERSION]
+- pnpm [VERSION] for package management
 
 **Dependencies:**
 
 ```json
 {
-  "@unrdf/core": "^26.5.4",
-  "@unrdf/hooks": "^26.5.4",
-  "@unrdf/daemon": "^26.5.4"
+  "@unrdf/core": "^[VERSION]",
+  "@unrdf/hooks": "^[VERSION]",
+  "@unrdf/daemon": "^[VERSION]"
 }
 ```
 
@@ -555,7 +555,7 @@ Max iterations: 1000
 
 ### 6.2 Convergence Analysis
 
-**Theorem Validation (Corollary 3.1.1):**
+**Theorem Validation (Corollary [VERSION]):**
 
 Empirical results **exactly validate** theoretical prediction:
 
@@ -640,7 +640,7 @@ Therefore, repeated runs would yield **identical results**, rendering statistica
 
 ### 7.1 Interpretation of Results
 
-**Key Finding:** The Knowledge Self-Play Loop correctly converges in 1 iteration when no hooks are registered, validating Corollary 3.1.1.
+**Key Finding:** The Knowledge Self-Play Loop correctly converges in 1 iteration when no hooks are registered, validating Corollary [VERSION].
 
 **Implications:**
 
@@ -703,7 +703,7 @@ Therefore, repeated runs would yield **identical results**, rendering statistica
 **Construct Validity:**
 
 - **Convergence definition:** "No state change" may not capture all notions of convergence
-- **Mitigation:** Formal definition (Theorem 3.1.1) provides theoretical foundation
+- **Mitigation:** Formal definition (Theorem [VERSION]) provides theoretical foundation
 
 ---
 
@@ -715,7 +715,7 @@ This dissertation made four primary contributions:
 
 1. **Knowledge Self-Play Loop (KSPL):** A formal framework for autonomous knowledge graph refinement with cryptographic receipt chaining
 
-2. **Convergence Theory:** Mathematical analysis proving O(1) convergence for empty hook systems (Theorem 3.1.1, Corollary 3.1.1)
+2. **Convergence Theory:** Mathematical analysis proving O(1) convergence for empty hook systems (Theorem [VERSION], Corollary [VERSION])
 
 3. **Production Infrastructure:** Background execution system supporting 10+ hour continuous autonomous operation with PID tracking, log management, and graceful shutdown
 
@@ -1054,7 +1054,7 @@ Max iterations: 1000
 
 ### Appendix C: Mathematical Proofs
 
-**Theorem 3.1.1 (Convergence in Finite Action Spaces):** _Proof Restated:_
+**Theorem [VERSION] (Convergence in Finite Action Spaces):** _Proof Restated:_
 
 Let $(S, A, T, R, \gamma)$ be a Knowledge Self-Play MDP with finite action space $|A| < \infty$ and deterministic transitions $T(s' | s, a) = s \oplus \text{execute}(a, s)$.
 
@@ -1078,7 +1078,7 @@ Let $(S, A, T, R, \gamma)$ be a Knowledge Self-Play MDP with finite action space
 
 $\blacksquare$
 
-**Corollary 3.1.1 (Empty Hook System Convergence):** _Proof Restated:_
+**Corollary [VERSION] (Empty Hook System Convergence):** _Proof Restated:_
 
 Let $|A| = 0$ (no registered hooks). Then:
 
@@ -1106,7 +1106,7 @@ $\blacksquare$
                              │
                              v
 ┌──────────────────────────────────────────────────────────────────────┐
-│                    Node.js Runtime (v25.7.0)                         │
+│                    Node.js Runtime ([VERSION])                         │
 └────────────────────────────┬─────────────────────────────────────────┘
                              │
                              v
@@ -1150,7 +1150,7 @@ I hereby declare that this dissertation represents my original work and has not 
 
 The author acknowledges the support of the ChatmanGPT research community and the open-source contributors to the UNRDF project. Special thanks to the MIOSA collaboration (Roberto, Straughter) for their work on BusinessOS, Canopy, and OSA systems that enabled this research.
 
-The 10-hour autonomous execution experiment was conducted on UNRDF v26.5.4, a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
+The 10-hour autonomous execution experiment was conducted on UNRDF [VERSION], a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
 
 This dissertation is dedicated to advancing the state of the art in autonomous knowledge systems.
 

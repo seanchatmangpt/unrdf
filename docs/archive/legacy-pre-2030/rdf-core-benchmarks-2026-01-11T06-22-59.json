@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-01-11T06:22:latestZ",
+  "summary": {
+    "totalBenchmarks": 6,
+    "passed": 4,
+    "failed": 2,
+    "totalRegressions": 0,
+    "totalImprovements": 0
+  },
+  "benchmarks": {
+    "parsing.turtle-small": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": true,
+      "target": "P95 < 50ms",
+      "unit": "parses/s",
+      "comparison": null
+    },
+    "graph-operations.add-100": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": false,
+      "target": "P95 < 10ms",
+      "unit": "ops/s",
+      "comparison": null
+    },
+    "graph-operations.find-pattern": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": true,
+      "target": "P95 < 5ms",
+      "unit": "queries/s",
+      "comparison": null
+    },
+    "graph-operations.count-100": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": true,
+      "target": "P95 < 1ms",
+      "unit": "counts/s",
+      "comparison": null
+    },
+    "sparql.select-simple": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": false,
+      "target": "P95 < 10ms",
+      "unit": "queries/s",
+      "comparison": null
+    },
+    "validation.quad-validation": {
+      "latency": {
+        "mean": latest,
+        "p50": latest,
+        "p95": latest,
+        "p99": latest
+      },
+      "passed": true,
+      "target": "P95 < latestms",
+      "unit": "validations/s",
+      "comparison": null
+    }
+  },
+  "regressions": [],
+  "improvements": []
+}

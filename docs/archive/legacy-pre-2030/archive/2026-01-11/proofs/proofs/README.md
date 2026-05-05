@@ -49,30 +49,30 @@ node proofs/perf-harness.mjs
 ```
 Performance Measurements (CSV):
 operation,time_ms,memory_delta_bytes,result_size
-parse-nquads-100,0.110,19752,9491
-parse-nquads-500,0.088,61128,48291
-parse-nquads-1000,0.276,130528,96791
-query-select-all,0.060,2040,10
+parse-nquads-100,latest,19752,9491
+parse-nquads-500,latest,61128,48291
+parse-nquads-1000,latest,130528,96791
+query-select-all,latest,2040,10
 ...
 
 Statistical Summary:
 ===================
 
 PARSE:
-  Mean: 0.158ms
-  Min:  0.088ms
-  Max:  0.276ms
-  p50:  0.110ms
-  p95:  0.276ms
+  Mean: latestms
+  Min:  latestms
+  Max:  latestms
+  p50:  latestms
+  p95:  latestms
 
 Performance Budget Validation:
 ==============================
 
-✓ parse-nquads-1000: 0.276ms (budget: 50ms) - PASS
-✓ query-select-all: 0.060ms (budget: 10ms) - PASS
-✓ insert-quads-1000: 0.170ms (budget: 30ms) - PASS
-✓ serialize-nquads-1000: 0.176ms (budget: 20ms) - PASS
-✓ freeze-universe-1000: 0.136ms (budget: 100ms) - PASS
+✓ parse-nquads-1000: latestms (budget: 50ms) - PASS
+✓ query-select-all: latestms (budget: 10ms) - PASS
+✓ insert-quads-1000: latestms (budget: 30ms) - PASS
+✓ serialize-nquads-1000: latestms (budget: 20ms) - PASS
+✓ freeze-universe-1000: latestms (budget: 100ms) - PASS
 
 Budget Summary: 5 passed, 0 failed
 ```

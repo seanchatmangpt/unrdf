@@ -44,10 +44,10 @@ kubectl run -it --rm debug --image=busybox --restart=Never -- \
 **Step 2: Verify container image** (10 min)
 ```bash
 # Pull image
-docker pull unrdf-daemon:1.0.0
+docker pull unrdf-daemon:[VERSION]
 
 # Run image test
-docker run --rm unrdf-daemon:1.0.0 \
+docker run --rm unrdf-daemon:[VERSION] \
   node -e "console.log('Image OK')"
 
 # Check image size
@@ -763,13 +763,13 @@ echo "✓ Backup created"
 # 2. Test new version locally
 docker run -it --rm \
   -e NODE_ENV=test \
-  unrdf-daemon:1.1.0 \
+  unrdf-daemon:[VERSION] \
   npm test
 echo "✓ Tests pass on new version"
 
 # 3. Check breaking changes
-echo "Breaking changes from $(git describe --tags):1.1.0:"
-git log $(git describe --tags)..1.1.0 --grep="BREAKING" --oneline
+echo "Breaking changes from $(git describe --tags):[VERSION]:"
+git log $(git describe --tags)..[VERSION] --grep="BREAKING" --oneline
 
 # 4. Verify cluster is healthy before upgrade
 kubectl exec -n unrdf-daemons unrdf-daemon-0 -- \
@@ -794,7 +794,7 @@ echo "=== Blue-Green Upgrade ==="
 
 # 1. Deploy new version alongside old
 kubectl set image statefulset/unrdf-daemon \
-  daemon=unrdf-daemon:1.1.0 \
+  daemon=unrdf-daemon:[VERSION] \
   -n unrdf-daemons \
   --record
 
@@ -834,7 +834,7 @@ For non-breaking changes:
 # Update StatefulSet
 kubectl patch statefulset unrdf-daemon \
   -n unrdf-daemons \
-  -p '{"spec":{"template":{"spec":{"containers":[{"name":"daemon","image":"unrdf-daemon:1.1.0"}]}}}}'
+  -p '{"spec":{"template":{"spec":{"containers":[{"name":"daemon","image":"unrdf-daemon:[VERSION]"}]}}}}'
 
 # Watch rollout
 kubectl rollout status statefulset/unrdf-daemon \

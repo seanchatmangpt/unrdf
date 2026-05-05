@@ -15,37 +15,37 @@ Total samples: 500 transactions
 
 METRIC 1: RECONCILIATION LATENCY
   Target:           < 100ms (1000 quads)
-  Measured (p99):   2.62ms
+  Measured (p99):   latestms
   Status:           ✅ PASS
-  Margin:           97.4% faster than SLA
+  Margin:           latest% faster than SLA
   Verdict:          EXCELLENT
 
 METRIC 2: GUARD EVALUATION
   Target:           < 30ms (10 guards)
-  Measured (p99):   1.29ms
+  Measured (p99):   latestms
   Status:           ✅ PASS
-  Margin:           95.7% faster than SLA
+  Margin:           latest% faster than SLA
   Verdict:          EXCELLENT
 
 METRIC 3: RECEIPT VERIFICATION
   Target:           < 10ms (complex)
-  Measured (p99):   9.40ms
+  Measured (p99):   latestms
   Status:           ✅ PASS
-  Margin:           6.0% margin remaining
+  Margin:           latest% margin remaining
   Verdict:          ACCEPTABLE
 
 METRIC 4: BRIDGE PROOF VERIFICATION
   Target:           < 500ms (depth 10)
-  Measured (p99):   1.34ms
+  Measured (p99):   latestms
   Status:           ✅ PASS
-  Margin:           99.7% faster than SLA
+  Margin:           latest% faster than SLA
   Verdict:          EXCELLENT
 
 METRIC 5: THROUGHPUT
   Target:           >= 10 scenes/sec
-  Measured:         863.86 scenes/sec
+  Measured:         latest scenes/sec
   Status:           ✅ PASS
-  Margin:           86.3x above minimum
+  Margin:           latestx above minimum
   Batch-100:        89,281 scenes/sec (8,928x above)
   Verdict:          EXCELLENT
 
@@ -59,9 +59,9 @@ Performance Issues: 0
 Regressions:        None detected
 Production Ready:   YES ✅
 
-Average Performance Margin:  75.0%
-Tightest Constraint:         Receipt Verification (6.0% margin)
-Most Headroom:               Bridge Proofs (99.7% margin)
+Average Performance Margin:  latest%
+Tightest Constraint:         Receipt Verification (latest% margin)
+Most Headroom:               Bridge Proofs (latest% margin)
 
 ================================================================================
                       PRODUCTION DECISION
@@ -88,48 +88,48 @@ RECONCILIATION LATENCY (RDF Quad Processing)
 ┌─────────┬────────┬────────┬────────┬────────┬───────────┐
 │ Quads   │ p50    │ p95    │ p99    │ SLA    │ Status    │
 ├─────────┼────────┼────────┼────────┼────────┼───────────┤
-│ 1       │ 1.14ms │ 1.25ms │ 1.29ms │ 5ms    │ ✅ PASS   │
-│ 10      │ 1.14ms │ 1.24ms │ 1.31ms │ 10ms   │ ✅ PASS   │
-│ 100     │ 1.14ms │ 1.31ms │ 1.37ms │ 50ms   │ ✅ PASS   │
-│ 1000    │ 1.15ms │ 1.33ms │ 2.62ms │ 100ms  │ ✅ PASS   │
+│ 1       │ latestms │ latestms │ latestms │ 5ms    │ ✅ PASS   │
+│ 10      │ latestms │ latestms │ latestms │ 10ms   │ ✅ PASS   │
+│ 100     │ latestms │ latestms │ latestms │ 50ms   │ ✅ PASS   │
+│ 1000    │ latestms │ latestms │ latestms │ 100ms  │ ✅ PASS   │
 └─────────┴────────┴────────┴────────┴────────┴───────────┘
 
 GUARD EVALUATION (Invariant Checking)
 ┌──────────┬────────┬────────┬────────┬────────┬───────────┐
 │ Guards   │ p50    │ p95    │ p99    │ SLA    │ Status    │
 ├──────────┼────────┼────────┼────────┼────────┼───────────┤
-│ 1        │ 1.15ms │ 1.24ms │ 1.30ms │ 30ms   │ ✅ PASS   │
-│ 5        │ 1.13ms │ 1.27ms │ 1.37ms │ 30ms   │ ✅ PASS   │
-│ 10       │ 1.14ms │ 1.25ms │ 1.29ms │ 30ms   │ ✅ PASS   │
+│ 1        │ latestms │ latestms │ latestms │ 30ms   │ ✅ PASS   │
+│ 5        │ latestms │ latestms │ latestms │ 30ms   │ ✅ PASS   │
+│ 10       │ latestms │ latestms │ latestms │ 30ms   │ ✅ PASS   │
 └──────────┴────────┴────────┴────────┴────────┴───────────┘
 
 RECEIPT VERIFICATION (Cryptographic Validation)
 ┌───────────┬────────┬────────┬────────┬────────┬───────────┐
 │ Type      │ p50    │ p95    │ p99    │ SLA    │ Status    │
 ├───────────┼────────┼────────┼────────┼────────┼───────────┤
-│ Simple    │ 1.40ms │ 1.64ms │ 2.84ms │ 10ms   │ ✅ PASS   │
-│ Medium    │ 1.29ms │ 1.46ms │ 1.91ms │ 10ms   │ ✅ PASS   │
-│ Complex   │ 2.46ms │ 7.67ms │ 9.40ms │ 10ms   │ ✅ PASS   │
+│ Simple    │ latestms │ latestms │ latestms │ 10ms   │ ✅ PASS   │
+│ Medium    │ latestms │ latestms │ latestms │ 10ms   │ ✅ PASS   │
+│ Complex   │ latestms │ latestms │ latestms │ 10ms   │ ✅ PASS   │
 └───────────┴────────┴────────┴────────┴────────┴───────────┘
 
 BRIDGE PROOF VERIFICATION (Type Coercion + Invariant Preservation)
 ┌─────────────────────────────────┬────────┬────────┬────────┬────────┬───────────┐
 │ Proof Type (Depth)              │ p50    │ p95    │ p99    │ SLA    │ Status    │
 ├─────────────────────────────────┼────────┼────────┼────────┼────────┼───────────┤
-│ Type Coercion (5)               │ 1.17ms │ 1.30ms │ 1.36ms │ 500ms  │ ✅ PASS   │
-│ Type Coercion (10)              │ 1.17ms │ 1.31ms │ 1.34ms │ 500ms  │ ✅ PASS   │
-│ Invariant Preservation (5)      │ 1.17ms │ 1.30ms │ 1.40ms │ 500ms  │ ✅ PASS   │
-│ Invariant Preservation (10)     │ 1.18ms │ 1.30ms │ 1.42ms │ 500ms  │ ✅ PASS   │
+│ Type Coercion (5)               │ latestms │ latestms │ latestms │ 500ms  │ ✅ PASS   │
+│ Type Coercion (10)              │ latestms │ latestms │ latestms │ 500ms  │ ✅ PASS   │
+│ Invariant Preservation (5)      │ latestms │ latestms │ latestms │ 500ms  │ ✅ PASS   │
+│ Invariant Preservation (10)     │ latestms │ latestms │ latestms │ 500ms  │ ✅ PASS   │
 └─────────────────────────────────┴────────┴────────┴────────┴────────┴───────────┘
 
 THROUGHPUT (Scene Admission)
 ┌────────────┬──────────────┬──────────────┬─────────────┐
 │ Mode       │ Throughput   │ Per-Scene    │ SLA         │
 ├────────────┼──────────────┼──────────────┼─────────────┤
-│ Individual │ 863.86/sec   │ 1.16ms       │ ≥10/sec ✅  │
-│ Batch-10   │ 8,991/sec    │ 1.14ms       │ (86x)       │
-│ Batch-50   │ 44,361/sec   │ 1.12ms       │ (4,436x)    │
-│ Batch-100  │ 89,281/sec   │ 1.12ms       │ (8,928x)    │
+│ Individual │ latest/sec   │ latestms       │ ≥10/sec ✅  │
+│ Batch-10   │ 8,991/sec    │ latestms       │ (86x)       │
+│ Batch-50   │ 44,361/sec   │ latestms       │ (4,436x)    │
+│ Batch-100  │ 89,281/sec   │ latestms       │ (8,928x)    │
 └────────────┴──────────────┴──────────────┴─────────────┘
 
 ================================================================================
@@ -157,17 +157,17 @@ No GC pauses or anomalies detected.
 ✅ LINEAR SCALING VERIFIED
 
 Reconciliation (1 → 1000 quads):
-  - p99 latency: 1.29ms → 2.62ms (2.03x increase)
+  - p99 latency: latestms → latestms (latestx increase)
   - Data size: 1000x increase
-  - Ratio: 0.002x per order of magnitude (EXCELLENT)
+  - Ratio: latestx per order of magnitude (EXCELLENT)
 
 Guard Evaluation (1 → 10 guards):
-  - p99 latency: 1.30ms → 1.29ms (0.99x, essentially flat)
+  - p99 latency: latestms → latestms (latestx, essentially flat)
   - Guard count: 10x increase
-  - Per-guard overhead: 0.13ms (EXCELLENT)
+  - Per-guard overhead: latestms (EXCELLENT)
 
 Bridge Proofs (depth 5 → 10):
-  - p99 latency: 1.36ms → 1.34ms (0.98x, no degradation)
+  - p99 latency: latestms → latestms (latestx, no degradation)
   - Proof depth: 2x increase
   - Scaling: Constant time algorithm (EXCELLENT)
 
@@ -188,7 +188,7 @@ Go/No-Go Criteria:
   ✅ Ready for production
 
 Recommended Monitoring (Post-Deployment):
-  - Receipt verification p99: Alert if exceeds 9.5ms
+  - Receipt verification p99: Alert if exceeds latestms
   - Reconciliation: Monitor for regressions on 1000+ quads
   - Throughput: Alert if drops below 100 scenes/sec
   - Guard overhead: Track as feature count increases
@@ -206,7 +206,7 @@ STATUS:          ✅ GO FOR PRODUCTION DEPLOYMENT
 AUTHORIZATION:   APPROVED
 RISK LEVEL:      MINIMAL
 DATE:            2025-12-27
-MARGIN:          75% average (range 6% - 99.7%)
+MARGIN:          75% average (range 6% - latest%)
 
 The narrative-state-chain distributed consensus protocol is PRODUCTION READY.
 All SLAs passed. Deployment authorized with standard monitoring practices.

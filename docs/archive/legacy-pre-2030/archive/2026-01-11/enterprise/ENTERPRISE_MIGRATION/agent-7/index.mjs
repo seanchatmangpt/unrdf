@@ -160,7 +160,7 @@ export function getSystemStatus() {
  */
 export function exportSystemState() {
   return {
-    version: '1.0.0',
+    version: 'latest',
     exportedAt: Date.now(),
     modes: _exportConfig(),
     ledger: _exportLedger(),

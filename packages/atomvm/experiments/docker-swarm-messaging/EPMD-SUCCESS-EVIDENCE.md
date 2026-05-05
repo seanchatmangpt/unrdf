@@ -185,7 +185,7 @@ networks:
     attachable: true
     ipam:
       config:
-        - subnet: 10.20.0.0/16
+        - subnet: [VERSION].0/16
 ```
 
 ### Key Configuration Details
@@ -335,7 +335,7 @@ This implementation demonstrates **distributed Erlang in Docker Swarm**:
 │                                                             │
 │  ┌────────────────────────────────────────────────────┐   │
 │  │         atomvm-messaging_atomvm-net (overlay)       │   │
-│  │           Subnet: 10.20.0.0/16                      │   │
+│  │           Subnet: [VERSION].0/16                      │   │
 │  │                                                      │   │
 │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐ │   │
 │  │  │  atomvm-1    │  │  atomvm-2    │  │ atomvm-3 │ │   │

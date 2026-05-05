@@ -1,4 +1,4 @@
-# UNRDF Monorepo Migration Guide (v4.x → v5.0)
+# UNRDF Monorepo Migration Guide (v4.x → vlatest)
 
 ## Overview
 
@@ -12,7 +12,7 @@ v4.x:
   import { ... } from 'unrdf'
   import { ... } from 'unrdf/knowledge-engine'
 
-v5.0+:
+vlatest+:
   import { ... } from '@unrdf/core'
   import { ... } from '@unrdf/knowledge-engine'
   import { ... } from '@unrdf/hooks'
@@ -94,7 +94,7 @@ import {
 } from 'unrdf'
 ```
 
-**After (v5.0)**:
+**After (vlatest)**:
 ```javascript
 // Core substrate
 import { createStore, executeQuery } from '@unrdf/core'
@@ -116,7 +116,7 @@ unrdf graph create --name my-graph
 unrdf hook eval --hook my-hook.mjs
 ```
 
-**After (v5.0)**:
+**After (vlatest)**:
 ```bash
 # Same command (CLI package exported globally)
 unrdf graph create --name my-graph
@@ -133,7 +133,7 @@ pnpm exec unrdf graph create --name my-graph
 import { IndexedDBStore, useGraph } from 'unrdf'
 ```
 
-**After (v5.0)**:
+**After (vlatest)**:
 ```javascript
 import { IndexedDBStore } from '@unrdf/browser'
 import { useGraph } from '@unrdf/composables'
@@ -184,8 +184,8 @@ Each package declares its substrate dependencies:
 ```json
 {
   "dependencies": {
-    "@unrdf/core": "^5.0.0",
-    "@unrdf/hooks": "^5.0.0"
+    "@unrdf/core": "^latest",
+    "@unrdf/hooks": "^latest"
   }
 }
 ```
@@ -219,7 +219,7 @@ pnpm install
 pnpm list '@unrdf/core'
 
 # Ensure all packages use same version
-pnpm add @unrdf/core@^5.0.0
+pnpm add @unrdf/core@^latest
 ```
 
 ### "Missing optional dependencies"
@@ -248,11 +248,11 @@ Ensure `tsconfig.json` includes:
 
 Each package in the monorepo can have independent versions:
 
-- `@unrdf/core`: 5.0.0+ (substrate, rarely changes)
-- `@unrdf/hooks`: 5.0.0+ (core, stable)
-- `@unrdf/knowledge-engine`: 2.0.0+ (optional, may change faster)
-- `@unrdf/dark-matter`: 1.0.0+ (optional, may change faster)
-- `@unrdf/composables`: 1.0.0+ (optional, updates with Vue)
+- `@unrdf/core`: latest+ (substrate, rarely changes)
+- `@unrdf/hooks`: latest+ (core, stable)
+- `@unrdf/knowledge-engine`: latest+ (optional, may change faster)
+- `@unrdf/dark-matter`: latest+ (optional, may change faster)
+- `@unrdf/composables`: latest+ (optional, updates with Vue)
 
 This means you can upgrade features without waiting for core stability.
 

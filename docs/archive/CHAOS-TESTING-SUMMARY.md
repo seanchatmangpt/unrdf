@@ -126,14 +126,14 @@
 
 **Resilience Score Breakdown**:
 ```
-Circuit Breakers:      95% (weight 25%) → 23.75
-Retry Strategies:      90% (weight 15%) → 13.50
-Graceful Degradation:  88% (weight 20%) → 17.60
-Quorum Management:     92% (weight 20%) → 18.40
-Self-Healing:          87% (weight 15%) → 13.05
-Resource Management:   75% (weight  5%) →  3.75
+Circuit Breakers:      95% (weight 25%) → latest
+Retry Strategies:      90% (weight 15%) → latest
+Graceful Degradation:  88% (weight 20%) → latest
+Quorum Management:     92% (weight 20%) → latest
+Self-Healing:          87% (weight 15%) → latest
+Resource Management:   75% (weight  5%) →  latest
 ──────────────────────────────────────────────
-Overall:               85%              → 85.05
+Overall:               85%              → latest
 ```
 
 ---
@@ -146,7 +146,7 @@ Overall:               85%              → 85.05
 | Task Failures | 18 | 18 | 0 | 100% |
 | Manager Crashes | 16 | 16 | 0 | 100% |
 | Resource Exhaustion | 20 | 19 | 1 | 95% |
-| **Total** | **68** | **67** | **1** | **98.5%** |
+| **Total** | **68** | **67** | **1** | **latest%** |
 
 **Failed Test**: Request shedding (needs priority-based implementation)
 

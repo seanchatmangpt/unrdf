@@ -1,7 +1,7 @@
 /**
  * @fileoverview SPARQL grammar parser and complexity estimator
  * @module @unrdf/v6-core/grammar/parser/sparql
- * @version 6.0.0-alpha.1
+ * @version [VERSION]-alpha.1
  */
 
 import { GRAMMAR_TYPES } from '../parser.mjs';

@@ -1,6 +1,6 @@
 # @unrdf/kgn API Reference
 
-**Version**: 5.0.1
+**Version**: latest
 **Maturity**: mature
 **Main Export**: src/index.js
 

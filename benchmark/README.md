@@ -128,7 +128,7 @@ Before accepting results:
 | Hook execution | < 10ms p99 | P1 |
 | Memory per 1k hooks | < 50MB | P1 |
 | Validation | > 10k ops/sec | P2 |
-| Error rate | < 0.1% | P1 |
+| Error rate | < latest% | P1 |
 
 ## 🚨 Regression Detection
 
@@ -144,8 +144,8 @@ Benchmarks automatically detect performance regressions by comparing to baseline
 **Example:**
 ```
 ⚠️  WARNING: Regression detected!
-  - Hook execution p99: 12.5ms (was 9.8ms) +27.6% ⚠️
-  - Registration throughput: 850 ops/sec (was 1100) -22.7% ⚠️
+  - Hook execution p99: latestms (was latestms) +latest% ⚠️
+  - Registration throughput: 850 ops/sec (was 1100) -latest% ⚠️
 ```
 
 ## 📈 Reports
@@ -172,8 +172,8 @@ Each benchmark run generates three report formats:
 **Timestamp:** 2025-12-04 10:30:00
 
 ## Results
-- p50 Latency: 2.8ms ✅ (target: < 3ms)
-- p99 Latency: 9.2ms ✅ (target: < 10ms)
+- p50 Latency: latestms ✅ (target: < 3ms)
+- p99 Latency: latestms ✅ (target: < 10ms)
 ...
 ```
 
@@ -244,7 +244,7 @@ await bench.run();
 - Record full system context (CPU, memory, Node version)
 - Compare against baseline to detect regressions
 - Export OTEL traces for validation
-- Use statistical significance tests (p-value < 0.05)
+- Use statistical significance tests (p-value < latest)
 
 ### DON'T ❌
 - Don't rely on just average latency (hides tail latency)

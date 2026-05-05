@@ -242,7 +242,7 @@ Before handing off to implementation team:
 - `checklists/requirements.md` - Quality validation checklist
 
 **Related Documentation**:
-- `.specify/memory/constitution.md` - UNRDF Constitution v1.0.0 (ratified)
+- `.specify/memory/constitution.md` - UNRDF Constitution latest (ratified)
 - `/docs/MONOREPO-DEVELOPMENT.md` - Development guide (will be updated during implementation)
 
 ---
@@ -282,5 +282,5 @@ Next Command: /speckit.implement (or assign Phase 1 tasks to team)
 
 **Generated**: 2025-12-20 20:47 UTC
 **Author**: Claude Code (Haiku 4.5)
-**Reviewed By**: UNRDF Constitution v1.0.0
+**Reviewed By**: UNRDF Constitution latest
 **Approved For**: Phase 3 (Refinement) or Direct Implementation

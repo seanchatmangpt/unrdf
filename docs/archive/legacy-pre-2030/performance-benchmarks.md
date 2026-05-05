@@ -2,7 +2,7 @@
 
 **Category:** Reference
 **Diataxis Type:** Information-oriented technical specification
-**Version:** v5.0.1
+**Version:** latest
 **Last Updated:** 2025-12-25
 
 ## Overview
@@ -68,7 +68,7 @@ timeout 5s pnpm test
 
 ### Single Validation Latency
 
-**Source:** `/home/user/unrdf/docs/performance-targets-v4.0.0.md`
+**Source:** `/home/user/unrdf/docs/performance-targets-latest.md`
 
 | Metric | Measured | Target | Status |
 |--------|----------|--------|--------|
@@ -446,7 +446,7 @@ du -sh packages
 
 ## References
 
-- [Performance Targets v4.0.0](/home/user/unrdf/docs/performance-targets-v4.0.0.md)
+- [Performance Targets latest](/home/user/unrdf/docs/performance-targets-latest.md)
 - [Performance Analysis Summary](/home/user/unrdf/docs/performance-analysis-summary.md)
 - [Knowledge Hooks Performance](/home/user/unrdf/docs/benchmarks/KNOWLEDGE-HOOKS-PERFORMANCE.md)
 - [Hook Batching Benchmark](/home/user/unrdf/test/performance/hook-batching.bench.mjs)

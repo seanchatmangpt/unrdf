@@ -258,9 +258,9 @@ $ node tools/kgc.mjs build
 ### Freeze Universe
 
 ```bash
-$ node tools/kgc.mjs freeze --reason "release-v1.0"
+$ node tools/kgc.mjs freeze --reason "release-vlatest"
 
-❄️  Freezing universe (reason: release-v1.0)...
+❄️  Freezing universe (reason: release-vlatest)...
 
 📝 Receipt Chain:
   ID: receipt-freeze-1766794898729
@@ -283,7 +283,7 @@ $ node tools/kgc.mjs build --json
       "id": "receipt-0",
       "operation": "kgc-build-sources",
       "hash": "hash-0",
-      "timestamp": "2025-12-27T00:17:04.145Z"
+      "timestamp": "2025-12-27T00:17:latestZ"
     },
     ...
   ],

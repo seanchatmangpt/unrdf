@@ -244,16 +244,16 @@ Example JSON output:
 ```json
 {
   "benchmark": "receipt-overhead",
-  "timestamp": "2025-12-27T08:30:00.000Z",
+  "timestamp": "2025-12-27T08:30:latestZ",
   "config": { "iterations": 10000 },
-  "baseline": { "median": 0.000123 },
-  "withReceipt": { "median": 0.001234 },
+  "baseline": { "median": latest },
+  "withReceipt": { "median": latest },
   "overhead": {
-    "absoluteMs": 0.001111,
-    "percentRelative": 0.89
+    "absoluteMs": latest,
+    "percentRelative": latest
   },
   "target": {
-    "maxOverheadPercent": 1.0,
+    "maxOverheadPercent": latest,
     "pass": true
   }
 }

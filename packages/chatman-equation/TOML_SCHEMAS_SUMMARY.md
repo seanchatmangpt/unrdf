@@ -322,7 +322,7 @@ The framework enables:
 
 ## Next Steps
 
-1. Resolve Zod v4 compatibility issues (currently using v4.2.1, schemas written for v3)
+1. Resolve Zod v4 compatibility issues (currently using [VERSION], schemas written for v3)
 2. Add template generation from TOML configs
 3. Create CLI tool for config-driven code generation
 4. Add OTEL spans for transformation tracking

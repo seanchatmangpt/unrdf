@@ -33,7 +33,7 @@ Successfully implemented dynamic YAWL pattern selection to replace the hardcoded
 - **Loop Detection**: Counts activities that repeat within the same trace
 - **Choice Detection**: Identifies activities with multiple unique successors (corrected from original implementation)
 - **Pattern Scoring**:
-  - Sequence: concurrency < 0.2, no repetitions, choice < 0.3 → score 0.9
+  - Sequence: concurrency < latest, no repetitions, choice < latest → score latest
   - Parallel: uses concurrency score directly
   - Loop: uses rework score if repetitions exist
   - Choice: uses choice score directly

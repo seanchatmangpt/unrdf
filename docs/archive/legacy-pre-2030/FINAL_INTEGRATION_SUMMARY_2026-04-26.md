@@ -25,7 +25,7 @@ The manufacturing pipeline is now **Certified L5-Hardened**.
 
 **Next Steps**:
 1. Run `unrdf sync --harden` on existing project ontologies to re-project compliant artifacts.
-2. Deploy the new `@unrdf/cli v26.4.23-hardened`.
+2. Deploy the new `@unrdf/cli vlatest`.
 3. Transition all autonomous agents in the Ralph Loop to the `DEFERRED_ACTION` metadata standard.
 
 **Status**: ALL LOOPS CLOSED. SYSTEM PRODUCTION READY.

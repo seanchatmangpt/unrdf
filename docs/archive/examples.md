@@ -113,7 +113,7 @@ const pointer = usePointer(store);
 // Parse data
 await turtle.parse(`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   
   ex:person a foaf:Person ;
     foaf:name "John Doe" ;
@@ -151,7 +151,7 @@ const jsonld = useJsonLd();
 const doc = await jsonld.toJSONLD(store, {
   context: {
     '@vocab': 'http://example.org/',
-    'name': 'http://xmlns.com/foaf/0.1/name'
+    'name': 'http://xmlns.com/foaf/latest/name'
   }
 });
 
@@ -161,7 +161,7 @@ console.log('JSON-LD:', JSON.stringify(doc, null, 2));
 const jsonldData = {
   '@context': {
     '@vocab': 'http://example.org/',
-    'name': 'http://xmlns.com/foaf/0.1/name'
+    'name': 'http://xmlns.com/foaf/latest/name'
   },
   '@graph': [
     {

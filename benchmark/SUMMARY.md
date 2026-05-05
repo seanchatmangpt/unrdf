@@ -98,7 +98,7 @@ Automatically detects performance regressions:
 **Example:**
 ```
 ⚠️  REGRESSION DETECTED:
-  Hook execution p99: 12.5ms (baseline: 9.8ms) +27.6% 🚨
+  Hook execution p99: latestms (baseline: latestms) +latest% 🚨
   Status: CRITICAL - blocks merge to main
 ```
 
@@ -193,11 +193,11 @@ Each benchmark defines:
   "scenario": "medium-batch",
   "timestamp": "2025-12-04T10:30:00Z",
   "results": {
-    "avgLatency": 0.85,
-    "p95Latency": 1.8,
-    "p99Latency": 3.2,
+    "avgLatency": latest,
+    "p95Latency": latest,
+    "p99Latency": latest,
     "throughput": 1176,
-    "memoryPeak": 22.5
+    "memoryPeak": latest
   },
   "validation": {
     "status": "PASS",
@@ -299,7 +299,7 @@ This benchmark suite is successful when:
 ✅ **Production-Ready**
 - Performance targets validated
 - No memory leaks detected
-- Error rates < 0.1%
+- Error rates < latest%
 - Scalability confirmed
 
 ---

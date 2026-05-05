@@ -7,7 +7,7 @@
  * - pre-push: Validate push operations
  * - post-receive: Process received changes and trigger actions
  *
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */

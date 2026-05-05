@@ -204,7 +204,7 @@ const redactedInput = z.record(z.any())
  * Captures Node.js/JavaScript engine capabilities
  *
  * @typedef {object} RuntimeOutput
- * @property {string} nodeVersion - Semantic version (e.g., "20.10.0")
+ * @property {string} nodeVersion - Semantic version (e.g., "latest")
  * @property {string} jsEngine - JavaScript engine (v8|spidermonkey|jsc|chakra)
  * @property {boolean} wasm - WebAssembly support
  * @property {number} workers - Available worker threads (0-32768)

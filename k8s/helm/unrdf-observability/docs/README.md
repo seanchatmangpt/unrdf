@@ -67,15 +67,15 @@ Conceptual background for why things work the way they do.
 
 | Component | Purpose | Image |
 |-----------|---------|-------|
-| Prometheus | Metrics storage | `prom/prometheus:v2.48.0` |
-| Grafana | Visualization | `grafana/grafana:10.2.2` |
-| Tempo | Trace storage | `grafana/tempo:2.7.1` |
-| Loki | Log aggregation | `grafana/loki:2.9.3` |
-| Promtail | Log collection | `grafana/promtail:2.9.3` |
-| OTel Collector | Telemetry pipeline | `otel/opentelemetry-collector-contrib:0.91.0` |
-| Alertmanager | Alert routing | `prom/alertmanager:v0.26.0` |
+| Prometheus | Metrics storage | `prom/prometheus:latest` |
+| Grafana | Visualization | `grafana/grafana:latest` |
+| Tempo | Trace storage | `grafana/tempo:latest` |
+| Loki | Log aggregation | `grafana/loki:latest` |
+| Promtail | Log collection | `grafana/promtail:latest` |
+| OTel Collector | Telemetry pipeline | `otel/opentelemetry-collector-contrib:latest` |
+| Alertmanager | Alert routing | `prom/alertmanager:latest` |
 | MinIO | S3-compatible storage | `minio/minio:RELEASE.2024-11-07T00-52-20Z` |
-| Pyroscope | Continuous profiling | `grafana/pyroscope:1.10.1` |
-| Node Exporter | Host metrics | `prom/node-exporter:v1.7.0` |
-| HotROD | Example trace app | `jaegertracing/example-hotrod:1.62.0` |
-| UNRDF | Application (optional) | `unrdf:6.0.0-rc.1` |
+| Pyroscope | Continuous profiling | `grafana/pyroscope:latest` |
+| Node Exporter | Host metrics | `prom/node-exporter:latest` |
+| HotROD | Example trace app | `jaegertracing/example-hotrod:latest` |
+| UNRDF | Application (optional) | `unrdf:latest-rc.1` |

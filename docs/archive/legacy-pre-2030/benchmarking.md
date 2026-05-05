@@ -63,8 +63,8 @@ Measures the time required to schedule operations into the daemon queue.
 - Queue impact analysis
 
 **Expected Performance**:
-- Baseline: 0.15ms mean
-- Target: < 0.5ms p99
+- Baseline: latestms mean
+- Target: < latestms p99
 - Regression threshold: 15% increase
 
 **Example**:
@@ -153,8 +153,8 @@ Simulates and measures Raft consensus replication across cluster nodes.
 - Quorum acknowledgment time
 
 **Expected Performance**:
-- Leader replication: 8.5ms mean
-- Consensus commit: 12.3ms mean
+- Leader replication: latestms mean
+- Consensus commit: latestms mean
 - Replication throughput: > 1000 ops/sec
 - Regression threshold: 15% increase
 
@@ -184,9 +184,9 @@ Measures workflow execution performance for different YAWL patterns.
 - Mixed workflow throughput
 
 **Expected Performance**:
-- Sequential: 125.5ms per workflow
-- Parallel: 85.3ms per workflow
-- Conditional: 95.8ms per workflow
+- Sequential: latestms per workflow
+- Parallel: latestms per workflow
+- Conditional: latestms per workflow
 - Mixed throughput: > 8 workflows/sec
 - Regression threshold: 15% increase
 
@@ -273,13 +273,13 @@ timeout 60s node benchmarks/runner.mjs --benchmark=operation-scheduling
 
 ```json
 {
-  "timestamp": "2025-01-11T12:30:45.123Z",
+  "timestamp": "2025-01-11T12:30:latestZ",
   "summary": {
     "totalBenchmarks": 15,
     "totalRegressions": 0,
     "criticalRegressions": 0,
     "warningRegressions": 0,
-    "passRate": "100.00"
+    "passRate": "latest"
   },
   "regressions": [],
   "results": {
@@ -288,8 +288,8 @@ timeout 60s node benchmarks/runner.mjs --benchmark=operation-scheduling
       "baseline": { /* baseline data */ },
       "regression": {
         "isRegression": false,
-        "ratio": "0.9800",
-        "percentChange": "-2.00%",
+        "ratio": "latest",
+        "percentChange": "-latest%",
         "severity": "none"
       }
     }
@@ -332,10 +332,10 @@ Default thresholds for regression detection:
 
 ```javascript
 {
-  latency: 1.15,        // 15% increase = regression
-  memory: 1.25,         // 25% increase = regression
-  throughput: 0.85,     // 15% decrease = regression
-  variance: 0.05        // 5% max variance
+  latency: latest,        // 15% increase = regression
+  memory: latest,         // 25% increase = regression
+  throughput: latest,     // 15% decrease = regression
+  variance: latest        // 5% max variance
 }
 ```
 
@@ -450,7 +450,7 @@ const newBaseline = {
     name: 'operation-scheduling-latency',
     type: 'latency',
     unit: 'ms',
-    value: 0.15
+    value: latest
   }
 };
 
@@ -481,8 +481,8 @@ console.log('Baseline updated');
 ### Operation Scheduling
 
 ```
-Mean Latency:    < 0.3ms
-P99 Latency:     < 0.5ms
+Mean Latency:    < latestms
+P99 Latency:     < latestms
 Throughput:      > 8000 ops/sec
 Queue Impact:    < 15% increase per 10x queue size
 ```

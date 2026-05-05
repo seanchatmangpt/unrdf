@@ -37,12 +37,12 @@ The KGC CLI includes a complete LaTeX → PDF compilation system that runs **ent
 
 ### Node.js Requirements
 
-- **Minimum**: Node.js 18.0.0 (WASM support required)
+- **Minimum**: Node.js [VERSION] (WASM support required)
 - **Recommended**: Node.js 20+ (improved WASM performance)
 
 Check your version:
 ```bash
-node --version  # Should output v18.0.0 or higher
+node --version  # Should output [VERSION] or higher
 ```
 
 ---
@@ -207,7 +207,7 @@ The lockfile records resolved dependencies for **deterministic builds**:
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "engine": "pdftex",
   "resolvedInputs": {
     "amsmath.sty": {

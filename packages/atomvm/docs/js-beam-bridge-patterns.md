@@ -325,7 +325,7 @@ node packages/atomvm/examples/demo-message-passing.mjs
 ```
 
 **All demos verified on**: 2025-12-28
-**Node version**: v22.21.1
+**Node version**: [VERSION]
 **Platform**: Linux (UNRDF project environment)
 
 ---

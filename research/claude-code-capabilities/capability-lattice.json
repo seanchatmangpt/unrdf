@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Claude Code Capability Lattice",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "Graph representation of Claude Code primitive capabilities and their compositional relationships",
 
   "nodes": [

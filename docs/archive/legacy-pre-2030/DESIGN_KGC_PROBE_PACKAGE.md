@@ -20,7 +20,7 @@
 ```json
 {
   "name": "@unrdf/kgc-probe",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
   "type": "module",
   "main": "./src/index.mjs",
@@ -66,17 +66,17 @@
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/yawl": "workspace:*",
-    "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
+    "hash-wasm": "^latest",
+    "zod": "^latest"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "vitest": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15"
+    "@types/node": "^latest",
+    "vitest": "^latest",
+    "@vitest/coverage-v8": "^latest"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=7.0.0"
+    "node": ">=latest",
+    "pnpm": ">=latest"
   },
   "repository": {
     "type": "git",
@@ -170,7 +170,7 @@ export * from './types.mjs';
 // Default export (package metadata)
 export default {
   name: '@unrdf/kgc-probe',
-  version: '1.0.0',
+  version: 'latest',
   description: 'KGC Probe - Automated integrity scanning'
 };
 ```
@@ -207,7 +207,7 @@ SCHEMA: Observation
 
 ```
 SCHEMA: Artifact
-  - version: "1.0"
+  - version: "latest"
   - universe_id: string (4D universe reference)
   - snapshot_id: string (KGC-4D snapshot hash)
   - generated_at: ISO8601
@@ -314,7 +314,7 @@ BEGIN
   execution_time ← end_time - start_time
 
   artifact ← {
-    version: '1.0',
+    version: 'latest',
     universe_id: config.universe_id,
     snapshot_id: config.snapshot_id,
     generated_at: end_time.toISO(),
@@ -366,8 +366,8 @@ OUTPUT:
 CONSTANTS:
   THRESHOLDS = {
     critical_observations: 50,
-    avg_confidence_min: 0.8,
-    coverage_min: 0.7
+    avg_confidence_min: latest,
+    coverage_min: latest
   }
 
 BEGIN
@@ -375,7 +375,7 @@ BEGIN
 
   // Guard 1: Observation Quality
   guard_id ← 'quality_check'
-  low_confidence ← FILTER observations WHERE confidence < 0.6
+  low_confidence ← FILTER observations WHERE confidence < latest
 
   IF length(low_confidence) > THRESHOLDS.critical_observations THEN
     violations.append({
@@ -503,7 +503,7 @@ BEGIN
   evidence_quality ← ScoreEvidence(observation.evidence)
   witness_count ← length(observation.evidence.witnesses)
 
-  confidence ← MIN(1.0, evidence_quality * (1 + witness_count * 0.1))
+  confidence ← MIN(latest, evidence_quality * (1 + witness_count * latest))
 
   observation.metrics.confidence ← confidence
   RETURN observation
@@ -777,27 +777,27 @@ export default extension;
 
 ```
 @unrdf/kgc-probe
-├── @unrdf/kgc-substrate (^1.0.0)
+├── @unrdf/kgc-substrate (^latest)
 │   ├── @unrdf/kgc-4d
 │   ├── @unrdf/oxigraph
 │   └── @unrdf/core
-├── @unrdf/kgc-4d (^5.0.1)
+├── @unrdf/kgc-4d (^latest)
 │   ├── @unrdf/core
 │   ├── @unrdf/oxigraph
 │   └── isomorphic-git
-├── @unrdf/v6-core (^6.0.0-alpha.1)
+├── @unrdf/v6-core (^latest.1)
 │   ├── @unrdf/kgc-substrate
 │   ├── @unrdf/yawl
 │   ├── @unrdf/kgc-cli
 │   ├── @unrdf/kgc-4d
 │   ├── @unrdf/hooks
 │   └── @unrdf/oxigraph
-├── @unrdf/oxigraph (^5.0.1)
-│   └── oxigraph (^0.5.2) [native]
-├── @unrdf/hooks (^5.0.1)
+├── @unrdf/oxigraph (^latest)
+│   └── oxigraph (^latest) [native]
+├── @unrdf/hooks (^latest)
 │   ├── @unrdf/core
 │   └── @unrdf/oxigraph
-└── @unrdf/yawl (^5.0.0)
+└── @unrdf/yawl (^latest)
     ├── @unrdf/hooks
     ├── @unrdf/kgc-4d
     └── @unrdf/oxigraph
@@ -807,8 +807,8 @@ export default extension;
 
 | Package | Version | Status | Notes |
 |---------|---------|--------|-------|
-| zod | ^4.1.13 | OK | Already used by kgc-substrate, kgc-4d, hooks, yawl |
-| hash-wasm | ^4.12.0 | OK | Used by kgc-4d, yawl, kgc-substrate |
+| zod | ^latest | OK | Already used by kgc-substrate, kgc-4d, hooks, yawl |
+| hash-wasm | ^latest | OK | Used by kgc-4d, yawl, kgc-substrate |
 | @unrdf/core | workspace:* | OK | Core foundation, no conflicts |
 | @unrdf/oxigraph | workspace:* | OK | SPARQL engine, required for queries |
 | isomorphic-git | (via kgc-4d) | OK | Transitive, no direct use needed |

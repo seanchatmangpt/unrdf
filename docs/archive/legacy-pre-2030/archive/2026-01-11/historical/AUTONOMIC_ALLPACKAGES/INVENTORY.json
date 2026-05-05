@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-26T07:43:04.408Z",
+  "timestamp": "2025-12-26T07:43:latestZ",
   "count": 41,
   "packages": [
     {
       "name": "@unrdf/atomvm",
       "dir": "packages/atomvm",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -24,7 +24,7 @@
     {
       "name": "@unrdf/blockchain",
       "dir": "packages/blockchain",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -43,7 +43,7 @@
     {
       "name": "@unrdf/caching",
       "dir": "packages/caching",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": false,
@@ -62,7 +62,7 @@
     {
       "name": "@unrdf/cli",
       "dir": "packages/cli",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -80,7 +80,7 @@
     {
       "name": "@unrdf/collab",
       "dir": "packages/collab",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -100,7 +100,7 @@
     {
       "name": "@unrdf/composables",
       "dir": "packages/composables",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -118,7 +118,7 @@
     {
       "name": "@unrdf/consensus",
       "dir": "packages/consensus",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -137,7 +137,7 @@
     {
       "name": "@unrdf/core",
       "dir": "packages/core",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -155,7 +155,7 @@
     {
       "name": "@unrdf/dark-matter",
       "dir": "packages/dark-matter",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -173,7 +173,7 @@
     {
       "name": "@unrdf/domain",
       "dir": "packages/domain",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": false,
@@ -190,7 +190,7 @@
     {
       "name": "@unrdf/engine-gateway",
       "dir": "packages/engine-gateway",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": true,
@@ -202,7 +202,7 @@
     {
       "name": "@unrdf/federation",
       "dir": "packages/federation",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -220,7 +220,7 @@
     {
       "name": "@unrdf/graph-analytics",
       "dir": "packages/graph-analytics",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -242,7 +242,7 @@
     {
       "name": "@unrdf/hooks",
       "dir": "packages/hooks",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -260,7 +260,7 @@
     {
       "name": "@unrdf/integration-tests",
       "dir": "packages/integration-tests",
-      "version": "5.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "index.js",
       "hasTests": false,
@@ -279,7 +279,7 @@
     {
       "name": "@unrdf/kgc-4d",
       "dir": "packages/kgc-4d",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": true,
@@ -299,7 +299,7 @@
     {
       "name": "@unrdf/kgn",
       "dir": "packages/kgn",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.js",
       "hasTests": true,
@@ -320,7 +320,7 @@
     {
       "name": "@unrdf/knowledge-engine",
       "dir": "packages/knowledge-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -338,7 +338,7 @@
     {
       "name": "@unrdf/ml-inference",
       "dir": "packages/ml-inference",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -358,7 +358,7 @@
     {
       "name": "@unrdf/ml-versioning",
       "dir": "packages/ml-versioning",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": true,
@@ -379,7 +379,7 @@
     {
       "name": "@unrdf/nextra-docs",
       "dir": "packages/nextra",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "index.js",
       "hasTests": false,
@@ -391,7 +391,7 @@
     {
       "name": "@unrdf/observability",
       "dir": "packages/observability",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": false,
@@ -412,7 +412,7 @@
     {
       "name": "@unrdf/oxigraph",
       "dir": "packages/oxigraph",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -431,7 +431,7 @@
     {
       "name": "@unrdf/project-engine",
       "dir": "packages/project-engine",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -448,7 +448,7 @@
     {
       "name": "@unrdf/rdf-graphql",
       "dir": "packages/rdf-graphql",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/adapter.mjs",
       "hasTests": true,
@@ -468,7 +468,7 @@
     {
       "name": "@unrdf/semantic-search",
       "dir": "packages/semantic-search",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -489,7 +489,7 @@
     {
       "name": "@unrdf/serverless",
       "dir": "packages/serverless",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -509,7 +509,7 @@
     {
       "name": "@unrdf/streaming",
       "dir": "packages/streaming",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -527,7 +527,7 @@
     {
       "name": "@unrdf/test-utils",
       "dir": "packages/test-utils",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": true,
@@ -543,7 +543,7 @@
     {
       "name": "@unrdf/validation",
       "dir": "packages/validation",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "./src/index.mjs",
       "hasTests": false,
@@ -560,7 +560,7 @@
     {
       "name": "@unrdf/yawl",
       "dir": "packages/yawl",
-      "version": "5.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -580,7 +580,7 @@
     {
       "name": "@unrdf/yawl-ai",
       "dir": "packages/yawl-ai",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": false,
@@ -600,7 +600,7 @@
     {
       "name": "@unrdf/yawl-api",
       "dir": "packages/yawl-api",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/server.mjs",
       "hasTests": true,
@@ -621,7 +621,7 @@
     {
       "name": "@unrdf/yawl-durable",
       "dir": "packages/yawl-durable",
-      "version": "0.1.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/engine.mjs",
       "hasTests": true,
@@ -640,7 +640,7 @@
     {
       "name": "@unrdf/yawl-kafka",
       "dir": "packages/yawl-kafka",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -659,7 +659,7 @@
     {
       "name": "@unrdf/yawl-langchain",
       "dir": "packages/yawl-langchain",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -680,7 +680,7 @@
     {
       "name": "@unrdf/yawl-observability",
       "dir": "packages/yawl-observability",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -702,7 +702,7 @@
     {
       "name": "@unrdf/yawl-queue",
       "dir": "packages/yawl-queue",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/adapter.mjs",
       "hasTests": true,
@@ -722,7 +722,7 @@
     {
       "name": "@unrdf/yawl-realtime",
       "dir": "packages/yawl-realtime",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/index.mjs",
       "hasTests": true,
@@ -742,7 +742,7 @@
     {
       "name": "@unrdf/yawl-viz",
       "dir": "packages/yawl-viz",
-      "version": "1.0.0",
+      "version": "latest",
       "type": "module",
       "entryPoint": "src/visualizer.mjs",
       "hasTests": true,
@@ -762,7 +762,7 @@
     {
       "name": "docs",
       "dir": "packages/docs",
-      "version": "5.0.1",
+      "version": "latest",
       "type": "module",
       "entryPoint": "index.js",
       "hasTests": true,

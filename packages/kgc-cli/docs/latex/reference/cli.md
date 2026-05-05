@@ -496,7 +496,7 @@ chmod 755 .latex-cache/
 
 ## Changelog
 
-**v5.0.1** (2025-12-27)
+**[VERSION]** (2025-12-27)
 - Initial implementation of `build` command
 - Support for `pdflatex`, `xelatex`, `lualatex`
 - Automatic CTAN package resolution

@@ -28,12 +28,12 @@ These tasks create the foundation for all package unification. Complete sequenti
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 1.1.1 | P0 | Create `/esbuild.config.mjs` with all 17 packages as entry points | None (first) |
-| 1.1.2 | P0 | Create `/ruffrc.toml` with 400+ rules (0 suppression comments allowed) | 1.1.1 |
-| 1.1.3 | P0 | Create `/vitest.config.mjs` with v8 coverage provider, 80% thresholds | 1.1.2 |
-| 1.1.4 | P0 | Update root `/package.json` scripts: build, lint, test, coverage, check-deps | 1.1.3 |
-| 1.1.5 | P0 | Create `/pnpm-workspace.yaml` (or verify existing) with all 17 packages | 1.1.4 |
-| 1.1.6 | P1 | Create `/docs/MONOREPO-DEVELOPMENT.md` with unification guide | 1.1.5 |
+| latest | P0 | Create `/esbuild.config.mjs` with all 17 packages as entry points | None (first) |
+| latest | P0 | Create `/ruffrc.toml` with 400+ rules (0 suppression comments allowed) | latest |
+| latest | P0 | Create `/vitest.config.mjs` with v8 coverage provider, 80% thresholds | latest |
+| latest | P0 | Update root `/package.json` scripts: build, lint, test, coverage, check-deps | latest |
+| latest | P0 | Create `/pnpm-workspace.yaml` (or verify existing) with all 17 packages | latest |
+| latest | P1 | Create `/docs/MONOREPO-DEVELOPMENT.md` with unification guide | latest |
 
 **Validation**:
 - `pnpm run build` succeeds (dry run, no files changed yet)
@@ -46,16 +46,16 @@ These tasks create the foundation for all package unification. Complete sequenti
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 1.2.1 | P0 | Audit all 17 `package.json` files for shared dependencies | 1.1.5 |
-| 1.2.2 | P0 | Identify version conflicts for top 30 shared dependencies | 1.2.1 |
-| 1.2.3 | P0 | Create dependency alignment spreadsheet (pkg name → all versions → recommended) | 1.2.2 |
-| 1.2.4 | P1 | Resolve version conflicts to highest compatible version | 1.2.3 |
-| 1.2.5 | P1 | Run full test suite after version alignment (verify no regressions) | 1.2.4 |
-| 1.2.6 | P1 | Update all `package.json` files with aligned versions | 1.2.5 |
-| 1.2.7 | P1 | Rebuild `pnpm-lock.yaml` with `pnpm install` (deterministic) | 1.2.6 |
-| 1.2.8 | P0 | Install circular dependency detection tool (madge or similar) | 1.2.7 |
-| 1.2.9 | P1 | Run circular dependency scan on all packages | 1.2.8 |
-| 1.2.10 | P1 | Document any found circular dependencies and refactoring plan | 1.2.9 |
+| latest | P0 | Audit all 17 `package.json` files for shared dependencies | latest |
+| latest | P0 | Identify version conflicts for top 30 shared dependencies | latest |
+| latest | P0 | Create dependency alignment spreadsheet (pkg name → all versions → recommended) | latest |
+| latest | P1 | Resolve version conflicts to highest compatible version | latest |
+| latest | P1 | Run full test suite after version alignment (verify no regressions) | latest |
+| latest | P1 | Update all `package.json` files with aligned versions | latest |
+| latest | P1 | Rebuild `pnpm-lock.yaml` with `pnpm install` (deterministic) | latest |
+| latest | P0 | Install circular dependency detection tool (madge or similar) | latest |
+| latest | P1 | Run circular dependency scan on all packages | latest |
+| latest | P1 | Document any found circular dependencies and refactoring plan | latest |
 
 **Validation**:
 - `pnpm list` shows all shared deps at single version
@@ -69,12 +69,12 @@ These tasks create the foundation for all package unification. Complete sequenti
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 1.3.1 | P0 | Install esbuild dependencies: `esbuild`, `esbuild-plugin-dts` | 1.1.5 |
-| 1.3.2 | P0 | Install Ruff (system or via pnpm) | 1.3.1 |
-| 1.3.3 | P0 | Install Vitest + v8 coverage provider | 1.3.2 |
-| 1.3.4 | P0 | Install depcheck for dependency auditing | 1.3.3 |
-| 1.3.5 | P1 | Verify all tools work: `pnpm run build`, `pnpm run lint`, `pnpm test` | 1.3.4 |
-| 1.3.6 | P1 | Update CI/CD pipeline (e.g., `.github/workflows/ci.yml`) to use unified commands | 1.3.5 |
+| latest | P0 | Install esbuild dependencies: `esbuild`, `esbuild-plugin-dts` | latest |
+| latest | P0 | Install Ruff (system or via pnpm) | latest |
+| latest | P0 | Install Vitest + v8 coverage provider | latest |
+| latest | P0 | Install depcheck for dependency auditing | latest |
+| latest | P1 | Verify all tools work: `pnpm run build`, `pnpm run lint`, `pnpm test` | latest |
+| latest | P1 | Update CI/CD pipeline (e.g., `.github/workflows/ci.yml`) to use unified commands | latest |
 
 **Validation**:
 - All tools installed and runnable
@@ -89,17 +89,17 @@ Implement for all 17 packages. This is the foundation for Stories 2-5. Each pack
 
 ### Phase 2.1: Per-Package Structure Migration
 
-For each of 17 packages, execute tasks 2.1.1 → 2.1.7 in order:
+For each of 17 packages, execute tasks latest → latest in order:
 
 | Task | Priority | Description | Per-Package? | Effort |
 |------|----------|-------------|--------------|--------|
-| 2.1.1 | P1 | Create `packages/{name}/src/` directory | ✓ 17x | 1h |
-| 2.1.2 | P1 | Move source files from `lib/` or root to `src/` | ✓ 17x | 2h |
-| 2.1.3 | P1 | Move test files to `src/` with `*.test.mjs` pattern | ✓ 17x | 1h |
-| 2.1.4 | P1 | Create `src/index.mjs` with consolidated named exports (no default) | ✓ 17x | 1h |
-| 2.1.5 | P1 | Update `packages/{name}/package.json` main/exports fields | ✓ 17x | 30m |
-| 2.1.6 | P1 | Verify no broken imports: run linting on migrated package | ✓ 17x | 30m |
-| 2.1.7 | P1 | Verify tests pass for migrated package (at least smoke test) | ✓ 17x | 1h |
+| latest | P1 | Create `packages/{name}/src/` directory | ✓ 17x | 1h |
+| latest | P1 | Move source files from `lib/` or root to `src/` | ✓ 17x | 2h |
+| latest | P1 | Move test files to `src/` with `*.test.mjs` pattern | ✓ 17x | 1h |
+| latest | P1 | Create `src/index.mjs` with consolidated named exports (no default) | ✓ 17x | 1h |
+| latest | P1 | Update `packages/{name}/package.json` main/exports fields | ✓ 17x | 30m |
+| latest | P1 | Verify no broken imports: run linting on migrated package | ✓ 17x | 30m |
+| latest | P1 | Verify tests pass for migrated package (at least smoke test) | ✓ 17x | 1h |
 
 **Dependencies**: Phase 1 complete (1.1-1.3)
 
@@ -119,10 +119,10 @@ After all 17 packages migrated:
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 2.2.1 | P1 | Write and run structure audit script (verify all 17 have src/index.mjs) | 2.1.1→2.1.7 for all 17 |
-| 2.2.2 | P1 | Verify all 17 packages have consistent directory layout | 2.2.1 |
-| 2.2.3 | P1 | Document structure in `/docs/MONOREPO-DEVELOPMENT.md` | 2.2.2 |
-| 2.2.4 | P1 | Update project templates for new packages to use standard structure | 2.2.3 |
+| latest | P1 | Write and run structure audit script (verify all 17 have src/index.mjs) | latest→latest for all 17 |
+| latest | P1 | Verify all 17 packages have consistent directory layout | latest |
+| latest | P1 | Document structure in `/docs/MONOREPO-DEVELOPMENT.md` | latest |
+| latest | P1 | Update project templates for new packages to use standard structure | latest |
 
 **Validation**:
 - Audit script: 17/17 packages pass
@@ -139,13 +139,13 @@ Build all packages with unified esbuild config; ensure 0 linting violations; run
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 3.1.1 | P1 | Delete per-package build configs (*.esbuild.config.*, *.rollup.config.*) | Phase 2 complete |
-| 3.1.2 | P1 | Delete per-package build scripts from all `package.json` files | 3.1.1 |
-| 3.1.3 | P1 | Test root build: `pnpm run build` on all 17 packages | 3.1.2 |
-| 3.1.4 | P1 | Verify all `packages/*/dist/index.mjs` files created | 3.1.3 |
-| 3.1.5 | P1 | Verify all `packages/*/dist/index.d.ts` (TypeScript definitions) created | 3.1.4 |
-| 3.1.6 | P1 | Verify build time <30 seconds (measure with `time pnpm run build`) | 3.1.5 |
-| 3.1.7 | P1 | Document build troubleshooting in development guide | 3.1.6 |
+| latest | P1 | Delete per-package build configs (*.esbuild.config.*, *.rollup.config.*) | Phase 2 complete |
+| latest | P1 | Delete per-package build scripts from all `package.json` files | latest |
+| latest | P1 | Test root build: `pnpm run build` on all 17 packages | latest |
+| latest | P1 | Verify all `packages/*/dist/index.mjs` files created | latest |
+| latest | P1 | Verify all `packages/*/dist/index.d.ts` (TypeScript definitions) created | latest |
+| latest | P1 | Verify build time <30 seconds (measure with `time pnpm run build`) | latest |
+| latest | P1 | Document build troubleshooting in development guide | latest |
 
 **Validation**:
 - All 17 packages build successfully
@@ -159,12 +159,12 @@ Build all packages with unified esbuild config; ensure 0 linting violations; run
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 3.2.1 | P1 | Delete per-package lint configs (.eslintrc*, .prettierrc*, etc.) | Phase 2 complete |
-| 3.2.2 | P1 | Run `pnpm run lint` on all packages | 3.2.1 |
-| 3.2.3 | P1 | Fix ALL linting violations (0 suppression comments allowed) | 3.2.2 |
-| 3.2.4 | P1 | Re-run linting to verify 0 violations | 3.2.3 |
-| 3.2.5 | P1 | Add pre-commit hook to run linting automatically | 3.2.4 |
-| 3.2.6 | P1 | Document linting rules and exceptions (if any) | 3.2.5 |
+| latest | P1 | Delete per-package lint configs (.eslintrc*, .prettierrc*, etc.) | Phase 2 complete |
+| latest | P1 | Run `pnpm run lint` on all packages | latest |
+| latest | P1 | Fix ALL linting violations (0 suppression comments allowed) | latest |
+| latest | P1 | Re-run linting to verify 0 violations | latest |
+| latest | P1 | Add pre-commit hook to run linting automatically | latest |
+| latest | P1 | Document linting rules and exceptions (if any) | latest |
 
 **Validation**:
 - `pnpm run lint` exits with code 0
@@ -179,15 +179,15 @@ Build all packages with unified esbuild config; ensure 0 linting violations; run
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 3.3.1 | P1 | Delete per-package test configs (jest.config.*, vitest.config.* from packages/) | Phase 2 complete |
-| 3.3.2 | P1 | Delete per-package test scripts from `package.json` | 3.3.1 |
-| 3.3.3 | P1 | Verify all test files follow `*.test.mjs` pattern | 3.3.2 |
-| 3.3.4 | P1 | Run `pnpm test` to execute all tests | 3.3.3 |
-| 3.3.5 | P1 | Run `pnpm run coverage` to generate coverage report | 3.3.4 |
-| 3.3.6 | P1 | Identify packages below 80% coverage | 3.3.5 |
-| 3.3.7 | P1 | For each package <80%: add tests to reach ≥80% coverage | 3.3.6 |
-| 3.3.8 | P1 | Re-run coverage to verify all ≥80% | 3.3.7 |
-| 3.3.9 | P1 | Generate final coverage report (HTML) | 3.3.8 |
+| latest | P1 | Delete per-package test configs (jest.config.*, vitest.config.* from packages/) | Phase 2 complete |
+| latest | P1 | Delete per-package test scripts from `package.json` | latest |
+| latest | P1 | Verify all test files follow `*.test.mjs` pattern | latest |
+| latest | P1 | Run `pnpm test` to execute all tests | latest |
+| latest | P1 | Run `pnpm run coverage` to generate coverage report | latest |
+| latest | P1 | Identify packages below 80% coverage | latest |
+| latest | P1 | For each package <80%: add tests to reach ≥80% coverage | latest |
+| latest | P1 | Re-run coverage to verify all ≥80% | latest |
+| latest | P1 | Generate final coverage report (HTML) | latest |
 
 **Validation**:
 - All tests pass (0 failures)
@@ -204,12 +204,12 @@ Clean up unused dependencies; verify deterministic installs.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 4.1.1 | P1 | Run `depcheck` on each package to find unused dependencies | Phase 3 complete |
-| 4.1.2 | P1 | Manually verify depcheck findings (false positives possible) | 4.1.1 |
-| 4.1.3 | P1 | Remove all confirmed unused dependencies from `package.json` | 4.1.2 |
-| 4.1.4 | P1 | Run `pnpm install` to rebuild lock file | 4.1.3 |
-| 4.1.5 | P1 | Verify all tests still pass after dependency removal | 4.1.4 |
-| 4.1.6 | P1 | Document any edge cases or false positives found | 4.1.5 |
+| latest | P1 | Run `depcheck` on each package to find unused dependencies | Phase 3 complete |
+| latest | P1 | Manually verify depcheck findings (false positives possible) | latest |
+| latest | P1 | Remove all confirmed unused dependencies from `package.json` | latest |
+| latest | P1 | Run `pnpm install` to rebuild lock file | latest |
+| latest | P1 | Verify all tests still pass after dependency removal | latest |
+| latest | P1 | Document any edge cases or false positives found | latest |
 
 **Validation**:
 - depcheck: 0 unused dependencies (or documented exceptions)
@@ -222,11 +222,11 @@ Clean up unused dependencies; verify deterministic installs.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 4.2.1 | P1 | Clean install from scratch: `rm pnpm-lock.yaml && pnpm install` | 4.1.6 |
-| 4.2.2 | P1 | Compare new lock file with previous: `git diff pnpm-lock.yaml` | 4.2.1 |
-| 4.2.3 | P1 | Verify identical (only diff should be lock version metadata if applicable) | 4.2.2 |
-| 4.2.4 | P1 | Verify node_modules size is acceptable (measure with `du -sh node_modules`) | 4.2.3 |
-| 4.2.5 | P1 | Document final dependency state: shared versions, optional dependencies | 4.2.4 |
+| latest | P1 | Clean install from scratch: `rm pnpm-lock.yaml && pnpm install` | latest |
+| latest | P1 | Compare new lock file with previous: `git diff pnpm-lock.yaml` | latest |
+| latest | P1 | Verify identical (only diff should be lock version metadata if applicable) | latest |
+| latest | P1 | Verify node_modules size is acceptable (measure with `du -sh node_modules`) | latest |
+| latest | P1 | Document final dependency state: shared versions, optional dependencies | latest |
 
 **Validation**:
 - Clean install produces identical lock file
@@ -243,11 +243,11 @@ Convert any remaining default exports to named exports; generate TypeScript defi
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 5.1.1 | P2 | Audit `src/index.mjs` in each package for default exports | Phase 3 complete |
-| 5.1.2 | P2 | Convert any default exports to named exports | 5.1.1 |
-| 5.1.3 | P2 | Update consumer code if any internal packages import defaults | 5.1.2 |
-| 5.1.4 | P2 | Verify all exports are named-only (no `export default`) | 5.1.3 |
-| 5.1.5 | P2 | Document public API for each package | 5.1.4 |
+| latest | P2 | Audit `src/index.mjs` in each package for default exports | Phase 3 complete |
+| latest | P2 | Convert any default exports to named exports | latest |
+| latest | P2 | Update consumer code if any internal packages import defaults | latest |
+| latest | P2 | Verify all exports are named-only (no `export default`) | latest |
+| latest | P2 | Document public API for each package | latest |
 
 **Validation**:
 - All exports are named
@@ -261,12 +261,12 @@ Convert any remaining default exports to named exports; generate TypeScript defi
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 5.2.1 | P2 | Verify `esbuild-plugin-dts` installed and configured | Phase 1 complete |
-| 5.2.2 | P2 | Run `pnpm run build` to trigger .d.ts generation | 5.1.5 |
-| 5.2.3 | P2 | Verify all `packages/*/dist/index.d.ts` files generated | 5.2.2 |
-| 5.2.4 | P2 | Validate TypeScript definitions: `npx tsc --noEmit --allowJs dist/**/*.d.ts` | 5.2.3 |
-| 5.2.5 | P2 | Fix any type errors in definitions (usually from JSDoc annotations) | 5.2.4 |
-| 5.2.6 | P2 | Verify all public exports have JSDoc 100% type coverage | 5.2.5 |
+| latest | P2 | Verify `esbuild-plugin-dts` installed and configured | Phase 1 complete |
+| latest | P2 | Run `pnpm run build` to trigger .d.ts generation | latest |
+| latest | P2 | Verify all `packages/*/dist/index.d.ts` files generated | latest |
+| latest | P2 | Validate TypeScript definitions: `npx tsc --noEmit --allowJs dist/**/*.d.ts` | latest |
+| latest | P2 | Fix any type errors in definitions (usually from JSDoc annotations) | latest |
+| latest | P2 | Verify all public exports have JSDoc 100% type coverage | latest |
 
 **Validation**:
 - All .d.ts files generated
@@ -283,13 +283,13 @@ Complete package.json metadata, README files, LICENSE files.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 6.1.1 | P2 | Audit all 17 `package.json` for: name, version, description, license, keywords | Phase 5 complete |
-| 6.1.2 | P2 | Add/update descriptions for packages missing them (clear, one-line) | 6.1.1 |
-| 6.1.3 | P2 | Verify all packages have `license: "MIT"` | 6.1.2 |
-| 6.1.4 | P2 | Add/verify keywords (min 3, max 10) for each package | 6.1.3 |
-| 6.1.5 | P2 | Update repository field to point to monorepo + package directory | 6.1.4 |
-| 6.1.6 | P2 | Verify all export configurations correct in package.json | 6.1.5 |
-| 6.1.7 | P2 | Validate all package.json files with `jq` or JSON schema validator | 6.1.6 |
+| latest | P2 | Audit all 17 `package.json` for: name, version, description, license, keywords | Phase 5 complete |
+| latest | P2 | Add/update descriptions for packages missing them (clear, one-line) | latest |
+| latest | P2 | Verify all packages have `license: "MIT"` | latest |
+| latest | P2 | Add/verify keywords (min 3, max 10) for each package | latest |
+| latest | P2 | Update repository field to point to monorepo + package directory | latest |
+| latest | P2 | Verify all export configurations correct in package.json | latest |
+| latest | P2 | Validate all package.json files with `jq` or JSON schema validator | latest |
 
 **Validation**:
 - All package.json files have required fields
@@ -303,11 +303,11 @@ Complete package.json metadata, README files, LICENSE files.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 6.2.1 | P2 | Copy monorepo LICENSE to all 17 packages | 6.1.7 |
-| 6.2.2 | P2 | Create/update README.md for each package with: title, description, installation, usage, API | 6.2.1 |
-| 6.2.3 | P2 | Include public API section in each README (exported functions/classes) | 6.2.2 |
-| 6.2.4 | P2 | Verify all READMEs follow template format | 6.2.3 |
-| 6.2.5 | P2 | Validate all README links work (relative and external) | 6.2.4 |
+| latest | P2 | Copy monorepo LICENSE to all 17 packages | latest |
+| latest | P2 | Create/update README.md for each package with: title, description, installation, usage, API | latest |
+| latest | P2 | Include public API section in each README (exported functions/classes) | latest |
+| latest | P2 | Verify all READMEs follow template format | latest |
+| latest | P2 | Validate all README links work (relative and external) | latest |
 
 **Validation**:
 - All 17 packages have README.md
@@ -325,10 +325,10 @@ Comprehensive validation that entire unification is production-ready.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 7.1.1 | P1 | Run structure audit: verify all 17 packages have `src/index.mjs` | Phase 6 complete |
-| 7.1.2 | P1 | Verify all packages build successfully | 7.1.1 |
-| 7.1.3 | P1 | Verify all `dist/` directories created correctly | 7.1.2 |
-| 7.1.4 | P1 | Verify all test files follow `*.test.mjs` pattern | 7.1.3 |
+| latest | P1 | Run structure audit: verify all 17 packages have `src/index.mjs` | Phase 6 complete |
+| latest | P1 | Verify all packages build successfully | latest |
+| latest | P1 | Verify all `dist/` directories created correctly | latest |
+| latest | P1 | Verify all test files follow `*.test.mjs` pattern | latest |
 
 **Validation**: All checks pass
 
@@ -338,11 +338,11 @@ Comprehensive validation that entire unification is production-ready.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 7.2.1 | P1 | Run linting: `pnpm run lint` → exit code 0 | Phase 6 complete |
-| 7.2.2 | P1 | Run tests: `pnpm test` → all tests pass | 7.2.1 |
-| 7.2.3 | P1 | Run coverage: `pnpm run coverage` → all ≥80% | 7.2.2 |
-| 7.2.4 | P1 | Verify build time: `time pnpm run build` → <30 seconds | 7.2.3 |
-| 7.2.5 | P1 | Verify no circular dependencies: `pnpm run check-deps` | 7.2.4 |
+| latest | P1 | Run linting: `pnpm run lint` → exit code 0 | Phase 6 complete |
+| latest | P1 | Run tests: `pnpm test` → all tests pass | latest |
+| latest | P1 | Run coverage: `pnpm run coverage` → all ≥80% | latest |
+| latest | P1 | Verify build time: `time pnpm run build` → <30 seconds | latest |
+| latest | P1 | Verify no circular dependencies: `pnpm run check-deps` | latest |
 
 **Validation**: All quality gates pass
 
@@ -352,11 +352,11 @@ Comprehensive validation that entire unification is production-ready.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 7.3.1 | P2 | Update `/docs/MONOREPO-DEVELOPMENT.md` with unification details | Phase 7.2 complete |
-| 7.3.2 | P2 | Create migration guide for external consumers (if breaking changes) | 7.3.1 |
-| 7.3.3 | P2 | Document troubleshooting guide for common issues | 7.3.2 |
-| 7.3.4 | P2 | Create pull request with all changes | 7.3.3 |
-| 7.3.5 | P2 | Internal review: verify unification meets all spec requirements | 7.3.4 |
+| latest | P2 | Update `/docs/MONOREPO-DEVELOPMENT.md` with unification details | Phase 7.2 complete |
+| latest | P2 | Create migration guide for external consumers (if breaking changes) | latest |
+| latest | P2 | Document troubleshooting guide for common issues | latest |
+| latest | P2 | Create pull request with all changes | latest |
+| latest | P2 | Internal review: verify unification meets all spec requirements | latest |
 
 **Validation**: Documentation complete, PR ready
 
@@ -370,11 +370,11 @@ Nice-to-have improvements after core unification complete.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 8.1.1 | P3 | Profile build time per package: identify slowest builds | Phase 7 complete |
-| 8.1.2 | P3 | Optimize esbuild config if any package >5s build | 8.1.1 |
-| 8.1.3 | P3 | Profile test execution time per package | 8.1.2 |
-| 8.1.4 | P3 | Optimize test setup/teardown if tests >60s | 8.1.3 |
-| 8.1.5 | P3 | Document performance baseline (build time, test time, bundle size) | 8.1.4 |
+| latest | P3 | Profile build time per package: identify slowest builds | Phase 7 complete |
+| latest | P3 | Optimize esbuild config if any package >5s build | latest |
+| latest | P3 | Profile test execution time per package | latest |
+| latest | P3 | Optimize test setup/teardown if tests >60s | latest |
+| latest | P3 | Document performance baseline (build time, test time, bundle size) | latest |
 
 ---
 
@@ -382,10 +382,10 @@ Nice-to-have improvements after core unification complete.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 8.2.1 | P3 | Set up automated dependency update tool (Dependabot) | Phase 7 complete |
-| 8.2.2 | P3 | Create GitHub Actions workflow for CI/CD (if not present) | 8.2.1 |
-| 8.2.3 | P3 | Configure pre-commit hooks for all developers | 8.2.2 |
-| 8.2.4 | P3 | Document CI/CD pipeline in development guide | 8.2.3 |
+| latest | P3 | Set up automated dependency update tool (Dependabot) | Phase 7 complete |
+| latest | P3 | Create GitHub Actions workflow for CI/CD (if not present) | latest |
+| latest | P3 | Configure pre-commit hooks for all developers | latest |
+| latest | P3 | Document CI/CD pipeline in development guide | latest |
 
 ---
 
@@ -393,9 +393,9 @@ Nice-to-have improvements after core unification complete.
 
 | Task | Priority | Description | Dependencies |
 |------|----------|-------------|--------------|
-| 8.3.1 | P3 | Add OTEL instrumentation to build process (optional: measure build telemetry) | Phase 7 complete |
-| 8.3.2 | P3 | Add metrics collection for test execution (coverage per package, duration) | 8.3.1 |
-| 8.3.3 | P3 | Create dashboard/report showing monorepo health metrics | 8.3.2 |
+| latest | P3 | Add OTEL instrumentation to build process (optional: measure build telemetry) | Phase 7 complete |
+| latest | P3 | Add metrics collection for test execution (coverage per package, duration) | latest |
+| latest | P3 | Create dashboard/report showing monorepo health metrics | latest |
 
 ---
 

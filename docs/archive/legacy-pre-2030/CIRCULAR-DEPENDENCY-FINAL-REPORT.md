@@ -1,6 +1,6 @@
 # Circular Dependency Analysis - Final Report
 
-**Project:** UNRDF v5.0.1 Monorepo
+**Project:** UNRDF vlatest Monorepo
 **Date:** 2025-12-20
 **Status:** ✅ **RESOLVED - 0 CIRCULAR DEPENDENCIES**
 
@@ -31,8 +31,8 @@
 |-----------|------|---------------|--------------|--------|
 | **Package Dependencies (Scan 1)** | check-circular-deps.mjs | 19 packages | 0 | ✅ PASS |
 | **Package Dependencies (Scan 2)** | check-circular-deps.mjs | 19 packages | 0 | ✅ PASS |
-| **Runtime Imports (Core)** | madge v8.0.0 | 48 files | 0 | ✅ PASS |
-| **Runtime Imports (Oxigraph)** | madge v8.0.0 | 3 files | 0 | ✅ PASS |
+| **Runtime Imports (Core)** | madge vlatest | 48 files | 0 | ✅ PASS |
+| **Runtime Imports (Oxigraph)** | madge vlatest | 3 files | 0 | ✅ PASS |
 | **Test Suite (Oxigraph)** | vitest | 40 tests | 0 failures | ✅ PASS |
 
 **Result:** ✅ **ALL SCANS PASSED - NO CIRCULAR DEPENDENCIES**
@@ -161,9 +161,9 @@ LAYER 4 (Depth: 4) - APPLICATIONS
 
 ```diff
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^latest",
 -   "@unrdf/core": "workspace:*",
-    "vitest": "^4.0.15"
+    "vitest": "^latest"
   },
 ```
 
@@ -234,8 +234,8 @@ Processed 3 files (227ms) (1 warning)
 ```
 Test Files  4 passed (4)
 Tests       40 passed (40)
-Duration    5.76s
-Coverage    71.73% (unchanged)
+Duration    latests
+Coverage    latest% (unchanged)
 
 ✅ ALL TESTS PASSING
 ```
@@ -255,9 +255,9 @@ Coverage    71.73% (unchanged)
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
 | **Circular Dependencies** | 2 cycles | 0 cycles | ✅ **100% eliminated** |
-| **Leaf Packages** | 6 (31.6%) | 7 (36.8%) | ✅ **+16.5%** |
-| **Mid-Level Packages** | 12 (63.2%) | 11 (57.9%) | ✅ **-8.3%** |
-| **Hub Packages** | 1 (5.3%) | 1 (5.3%) | → Unchanged |
+| **Leaf Packages** | 6 (latest%) | 7 (latest%) | ✅ **+latest%** |
+| **Mid-Level Packages** | 12 (latest%) | 11 (latest%) | ✅ **-latest%** |
+| **Hub Packages** | 1 (latest%) | 1 (latest%) | → Unchanged |
 | **Oxigraph Classification** | Mid-level (depth 2) | Leaf (depth 0) | ✅ **Promoted to leaf** |
 | **Core Dependency Depth** | 2 | 1 | ✅ **50% reduction** |
 
@@ -266,7 +266,7 @@ Coverage    71.73% (unchanged)
 | Metric | Before | After | Status |
 |--------|--------|-------|--------|
 | **Test Pass Rate** | 40/40 (100%) | 40/40 (100%) | ✅ Maintained |
-| **Code Coverage** | 71.73% | 71.73% | ✅ Maintained |
+| **Code Coverage** | latest% | latest% | ✅ Maintained |
 | **Runtime Import Cycles** | 0 | 0 | ✅ Already clean |
 | **Build Determinism** | ❌ Ambiguous | ✅ Deterministic | ✅ **Fixed** |
 | **Package Isolation** | ❌ Coupled | ✅ Independent | ✅ **Fixed** |
@@ -361,17 +361,17 @@ Coverage    71.73% (unchanged)
 **Before Fix:**
 ```
 Total Packages: 19
-├─ Leaf (0 deps):     6 (31.6%)
-├─ Mid-Level (1-3):  12 (63.2%)
-└─ Hub (4+ deps):     1 (5.3%)
+├─ Leaf (0 deps):     6 (latest%)
+├─ Mid-Level (1-3):  12 (latest%)
+└─ Hub (4+ deps):     1 (latest%)
 ```
 
 **After Fix:**
 ```
 Total Packages: 19
-├─ Leaf (0 deps):     7 (36.8%) ⬆ IMPROVED
-├─ Mid-Level (1-3):  11 (57.9%) ⬇ IMPROVED
-└─ Hub (4+ deps):     1 (5.3%) → Unchanged
+├─ Leaf (0 deps):     7 (latest%) ⬆ IMPROVED
+├─ Mid-Level (1-3):  11 (latest%) ⬇ IMPROVED
+└─ Hub (4+ deps):     1 (latest%) → Unchanged
 ```
 
 **Analysis:** More leaf packages = simpler architecture = easier to reason about
@@ -414,7 +414,7 @@ All required items completed:
 - [x] Ran runtime import scan (madge) on core → **0 cycles**
 - [x] Ran runtime import scan (madge) on oxigraph → **0 cycles**
 - [x] Verified tests still pass (40/40) → **All passing**
-- [x] Verified coverage unchanged (71.73%) → **Maintained**
+- [x] Verified coverage unchanged (latest%) → **Maintained**
 - [x] Generated updated dependency graph → **Oxigraph now leaf**
 - [x] Confirmed deterministic results (2 scans) → **Identical**
 - [x] Created comprehensive fix validation report
@@ -541,7 +541,7 @@ pnpm run deps:stats
 3. ✅ **Established deterministic build order** (DAG confirmed)
 4. ✅ **Enabled independent package publishing**
 5. ✅ **Maintained 100% test pass rate** (40/40 tests)
-6. ✅ **Preserved code coverage** (71.73% unchanged)
+6. ✅ **Preserved code coverage** (latest% unchanged)
 7. ✅ **Created comprehensive documentation** (42 KB)
 
 ### Production Status

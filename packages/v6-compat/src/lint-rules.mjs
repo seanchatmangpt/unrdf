@@ -263,7 +263,7 @@ export const noDateNow = {
 export const plugin = {
   meta: {
     name: '@unrdf/v6-compat',
-    version: '6.0.0-alpha.1',
+    version: '[VERSION]-alpha.1',
   },
   rules: {
     'no-n3-imports': noN3Imports,

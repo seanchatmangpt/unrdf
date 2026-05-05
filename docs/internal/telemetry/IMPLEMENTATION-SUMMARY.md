@@ -288,13 +288,13 @@ Click in Grafana → Jump to trace in Tempo
 ## Technology Stack
 
 **Dependencies Installed**:
-- `@opentelemetry/api-logs` v0.205.0
-- `@opentelemetry/sdk-logs` v0.205.0
+- `@opentelemetry/api-logs` latest
+- `@opentelemetry/sdk-logs` latest
 
 **Standards Compliance**:
 - OpenTelemetry 1.0 API
 - W3C Trace Context 1.0
-- Semantic Conventions 1.23.0
+- Semantic Conventions latest
 - gRPC Core 1.9
 
 ---

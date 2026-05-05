@@ -136,20 +136,20 @@ Orchestrator:
   Total Submitted: 5
   Total Completed: 5
   Total Failed: 0
-  Success Rate: 100.00%
+  Success Rate: latest%
   Checkpoints: 0
 
 Worker Pool:
   Current Workers: 5
   Peak Workers: 5
-  Success Rate: 100.00%
+  Success Rate: latest%
 
 Task Queue:
-  Success Rate: 100.00%
+  Success Rate: latest%
 
 Agent Router:
   Total Agents: 10
-  Routing Success Rate: 100.00%
+  Routing Success Rate: latest%
 ```
 
 **Evidence**:

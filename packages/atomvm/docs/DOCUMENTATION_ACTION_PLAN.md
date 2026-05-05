@@ -331,12 +331,12 @@ export function useGraph(graphUrl, options = {}) {
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/[VERSION]/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/[VERSION].html).
 
 ## [Unreleased]
 
-## [5.0.0-beta.1] - 2025-01-15
+## [[VERSION]-beta.1] - 2025-01-15
 
 ### Added
 - New synchronous SPARQL API (executeQuerySync)
@@ -346,7 +346,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING:** Async APIs now require UnrdfStore instead of N3 Store
 
 ### Deprecated
-- N3 Store compatibility mode (will be removed in v6.0.0)
+- N3 Store compatibility mode (will be removed in [VERSION])
 
 ### Fixed
 - Query timeout not working with abort signals
@@ -408,10 +408,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Action:**
 Create `packages/cli/docs/openapi.yaml`:
 ```yaml
-openapi: 3.0.0
+openapi: [VERSION]
 info:
   title: UNRDF CLI API
-  version: 5.0.0
+  version: [VERSION]
   description: Command-line interface for RDF operations
 
 paths:

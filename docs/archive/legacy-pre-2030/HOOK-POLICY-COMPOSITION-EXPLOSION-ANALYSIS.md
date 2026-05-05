@@ -15,15 +15,15 @@ The UNRDF hooks system exhibits **exponential combinatorial complexity** with:
 - **7 condition kinds** (SPARQL ASK/SELECT, SHACL, delta, threshold, count, window)
 - **7 policy patterns** (ALLOW_ALL, DENY_ALL, SUBJECT_PATTERN, PREDICATE_PATTERN, OBJECT_PATTERN, NAMESPACE, CUSTOM)
 - **Theoretical combinations**: ~1,617 unique hook/policy/operation combinations
-- **Actual usage**: ~15-20 common patterns (98.8% gap between theoretical and real usage)
+- **Actual usage**: ~15-20 common patterns (latest% gap between theoretical and real usage)
 
-**Key Finding**: The system is designed for **massive composability** but **conservative usage** - only ~1.2% of possible combinations are actively used in production.
+**Key Finding**: The system is designed for **massive composability** but **conservative usage** - only ~latest% of possible combinations are actively used in production.
 
 ---
 
 ## 1. Hook Chain Combinations
 
-### 1.1 Hook Trigger Types (33 Total)
+### latest Hook Trigger Types (33 Total)
 
 Found in `/packages/hooks/src/hooks/define-hook.mjs:55-95`:
 
@@ -76,7 +76,7 @@ export const HookTriggerSchema = z.enum([
 ]);
 ```
 
-### 1.2 Hook Chain Depth Analysis
+### latest Hook Chain Depth Analysis
 
 From `/packages/hooks/examples/hook-chains/src/index.mjs`:
 
@@ -97,7 +97,7 @@ const completeProcessingChain = [
 - Transformation chaining (output → input)
 - No cycles or recursion allowed
 
-### 1.3 Hook Interception Patterns
+### latest Hook Interception Patterns
 
 **Before/After Pairs** (12 pairs):
 ```
@@ -136,7 +136,7 @@ on-startup
 
 ## 2. Policy Condition Matrices
 
-### 2.1 Condition Types (7 Kinds)
+### latest Condition Types (7 Kinds)
 
 From `/packages/hooks/src/hooks/condition-evaluator.mjs:39-55`:
 
@@ -152,7 +152,7 @@ switch (condition.kind) {
 }
 ```
 
-### 2.2 Policy Pattern Types (7 Patterns)
+### latest Policy Pattern Types (7 Patterns)
 
 From `/packages/hooks/src/policy-compiler.mjs:52-66`:
 
@@ -168,7 +168,7 @@ export const PolicyPatterns = {
 };
 ```
 
-### 2.3 Boolean Composition
+### latest Boolean Composition
 
 **Current State**: NO EXPLICIT BOOLEAN OPERATORS
 
@@ -198,7 +198,7 @@ const chainedPolicies = [
 - `XOR(policy1, policy2)` - Exactly one must pass
 - `NAND`, `NOR`, etc.
 
-### 2.4 Condition Nesting Depth
+### latest Condition Nesting Depth
 
 **Maximum observed**: 0 levels (no nesting in current implementation)
 
@@ -224,7 +224,7 @@ const chainedPolicies = [
 }
 ```
 
-### 2.5 Total Possible Policy Expressions
+### latest Total Possible Policy Expressions
 
 **Single condition**: 7 kinds
 
@@ -248,7 +248,7 @@ const chainedPolicies = [
 
 ## 3. Hook × Policy × Operation Combinations
 
-### 3.1 Operation Types
+### latest Operation Types
 
 **Core RDF Operations** (3):
 - ADD (insert triple)
@@ -264,7 +264,7 @@ const chainedPolicies = [
 
 **Total operations**: 8
 
-### 3.2 Combinatorial Explosion
+### latest Combinatorial Explosion
 
 **Formula**: Hooks × Policies × Operations
 
@@ -284,7 +284,7 @@ Total = 33 × 7 × 8 = 1,848 unique combinations
 - COMMIT operations: 4 triggers × 7 policies = 28 combinations
 - ... (continues for all 8 operations)
 
-### 3.3 Actually Used Combinations
+### latest Actually Used Combinations
 
 **From test analysis** (`/packages/hooks/test/*.test.mjs`):
 
@@ -305,18 +305,18 @@ Total = 33 × 7 × 8 = 1,848 unique combinations
 14. `on-timeout` + circuit breaker
 15. `audit-trail` + logging
 
-**Usage rate**: 15 / 1,848 = **0.81%**
+**Usage rate**: 15 / 1,848 = **latest%**
 
-**Unused combinations**: 1,833 (99.19%)
+**Unused combinations**: 1,833 (latest%)
 
-### 3.4 Real vs. Theoretical Usage Gap
+### latest Real vs. Theoretical Usage Gap
 
 | Category | Theoretical | Actual | Gap |
 |----------|-------------|--------|-----|
-| Hook triggers | 33 | ~12 actively used | 63.6% unused |
-| Policy patterns | 7 | 5 actively used | 28.6% unused |
+| Hook triggers | 33 | ~12 actively used | latest% unused |
+| Policy patterns | 7 | 5 actively used | latest% unused |
 | Operations | 8 | 4 actively used | 50% unused |
-| **Total combinations** | **1,848** | **~15** | **99.19% unused** |
+| **Total combinations** | **1,848** | **~15** | **latest% unused** |
 
 **Analysis**: The system is **massively over-provisioned** for extensibility but shows **conservative usage** in practice.
 
@@ -324,7 +324,7 @@ Total = 33 × 7 × 8 = 1,848 unique combinations
 
 ## 4. Policy Evaluation Order
 
-### 4.1 Sequential Evaluation
+### latest Sequential Evaluation
 
 From `/packages/hooks/src/hooks/hook-executor.mjs:160-191`:
 
@@ -358,7 +358,7 @@ export function executeHookChain(hooks, quad) {
 - **Stateful**: Transformations affect subsequent hooks
 - **Non-commutative**: Changing order changes outcome
 
-### 4.2 Evaluation Order Impact
+### latest Evaluation Order Impact
 
 **Example**: Different orders produce different results
 
@@ -375,7 +375,7 @@ const chain2 = [normalizeWhitespace, validateIRIs];
 
 **Critical insight**: Hook ordering is a **first-class design decision**, not an implementation detail.
 
-### 4.3 Permutations of Policy Evaluation Sequences
+### latest Permutations of Policy Evaluation Sequences
 
 **For N hooks in chain**: N! permutations
 
@@ -389,7 +389,7 @@ const chain2 = [normalizeWhitespace, validateIRIs];
 
 **Semantic constraint**: Not all orderings are valid (e.g., transform before validate may be incorrect)
 
-### 4.4 Short-Circuit Optimization Impact
+### latest Short-Circuit Optimization Impact
 
 **Performance benefit**: Early termination saves execution time
 
@@ -428,7 +428,7 @@ const suboptimalChain = [
 
 ## 5. Hook Registration Patterns
 
-### 5.1 Dynamic vs. Static Registration
+### latest Dynamic vs. Static Registration
 
 **Static registration** (compile-time):
 ```javascript
@@ -451,7 +451,7 @@ registerHook(registry, dynamicHook);
 - Static: ~80% (builtin hooks, examples)
 - Dynamic: ~20% (user-defined, plugin system)
 
-### 5.2 Runtime Hook Addition/Removal
+### latest Runtime Hook Addition/Removal
 
 From `/packages/hooks/src/hooks/hook-management.mjs:64-109`:
 
@@ -492,7 +492,7 @@ export function unregisterHook(registry, name) {
 - ✅ List hooks by trigger
 - ❌ Modify existing hook (must unregister + re-register)
 
-### 5.3 Hook Priority and Ordering
+### latest Hook Priority and Ordering
 
 **Priority field**: Defined in schema but NOT enforced in execution
 
@@ -523,7 +523,7 @@ function sortHooksByPriority(hooks) {
 
 ## 6. Builtin Hooks Analysis
 
-### 6.1 Standard Hook Library
+### latest Standard Hook Library
 
 From `/packages/hooks/src/hooks/builtin-hooks.mjs`:
 
@@ -549,7 +549,7 @@ From `/packages/hooks/src/hooks/builtin-hooks.mjs`:
 
 **Total builtin hooks**: 12
 
-### 6.2 Hook Composition Patterns
+### latest Hook Composition Patterns
 
 **Pattern 1: Validation Chain**
 ```javascript
@@ -594,7 +594,7 @@ const policyChain = [
 
 ## 7. Performance Characteristics
 
-### 7.1 Hook Execution Overhead
+### latest Hook Execution Overhead
 
 From benchmark tests (`/packages/hooks/test/benchmarks/hook-overhead.test.mjs`):
 
@@ -609,7 +609,7 @@ From benchmark tests (`/packages/hooks/test/benchmarks/hook-overhead.test.mjs`):
 - 5-hook chain: ~50-100ms
 - Compiled chain: ~10-20ms (5× speedup)
 
-### 7.2 JIT Compilation Impact
+### latest JIT Compilation Impact
 
 From `/packages/hooks/src/hooks/hook-chain-compiler.mjs:76-125`:
 
@@ -633,7 +633,7 @@ function compiledChain(hooks, quad) {
 
 **Performance gain**: Eliminates loop dispatch overhead (18μs → ~0μs per iteration)
 
-### 7.3 Policy Compilation Caching
+### latest Policy Compilation Caching
 
 From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 
@@ -649,7 +649,7 @@ From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 
 ## 8. Gaps and Missing Features
 
-### 8.1 Boolean Policy Composition
+### latest Boolean Policy Composition
 
 **Status**: 🔴 **NOT IMPLEMENTED**
 
@@ -657,7 +657,7 @@ From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 
 **Impact**: Users must manually chain hooks for AND semantics; no OR/NOT support
 
-### 8.2 Priority-Based Execution
+### latest Priority-Based Execution
 
 **Status**: 🟡 **PARTIALLY IMPLEMENTED**
 
@@ -666,14 +666,14 @@ From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 
 **Workaround**: Register hooks in desired order
 
-### 8.3 Nested Conditions
+### latest Nested Conditions
 
 **Status**: 🔴 **NOT IMPLEMENTED**
 
 **Current**: Flat condition structure only
 **Needed**: Recursive condition evaluation for complex logic
 
-### 8.4 Dynamic Policy Loading
+### latest Dynamic Policy Loading
 
 **Status**: 🟡 **PARTIALLY IMPLEMENTED**
 
@@ -681,7 +681,7 @@ From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 **Hot-reload**: ❌
 **Policy versioning**: ❌
 
-### 8.5 Conflict Resolution
+### latest Conflict Resolution
 
 **Status**: 🔴 **NOT IMPLEMENTED**
 
@@ -693,20 +693,20 @@ From `/packages/hooks/src/policy-compiler.mjs:24-42`:
 
 ## 9. Recommendations
 
-### 9.1 Short-Term (1-2 sprints)
+### latest Short-Term (1-2 sprints)
 
 1. **Implement boolean composition**: Add `AND`, `OR`, `NOT` operators
 2. **Priority-based sorting**: Honor `priority` field in execution
 3. **Add conflict detection**: Warn when multiple hooks modify same quad
 
-### 9.2 Medium-Term (3-6 sprints)
+### latest Medium-Term (3-6 sprints)
 
 4. **Nested conditions**: Support recursive condition trees
 5. **Policy versioning**: Semantic versioning for policy packs
 6. **Hot-reload**: Dynamic policy update without restart
 7. **Performance optimization**: Expand JIT compilation to more scenarios
 
-### 9.3 Long-Term (6+ sprints)
+### latest Long-Term (6+ sprints)
 
 8. **Policy analytics**: Track decision metrics (allow/deny rates, latency)
 9. **Policy DSL**: Declarative language (e.g., Rego, Cedar)
@@ -726,7 +726,7 @@ The UNRDF hooks system demonstrates **well-architected composability** with:
 - Type-safe (Zod validation throughout)
 
 ⚠️ **Weaknesses**:
-- 99.19% of theoretical combinations unused (over-provisioned)
+- latest% of theoretical combinations unused (over-provisioned)
 - Missing boolean composition operators
 - Priority field defined but not enforced
 - No conflict resolution mechanism
@@ -734,7 +734,7 @@ The UNRDF hooks system demonstrates **well-architected composability** with:
 📊 **Complexity Metrics**:
 - Theoretical combinations: 1,848
 - Actual usage: ~15 patterns
-- Utilization rate: 0.81%
+- Utilization rate: latest%
 - Code coverage: 2,676 test lines
 
 **Verdict**: The system is **production-ready** for current use cases but has significant **untapped potential** for advanced policy composition scenarios.

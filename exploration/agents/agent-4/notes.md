@@ -60,7 +60,7 @@ export function validateShacl(store, shapes, options = {})
 
 **SHACL Validation Stack**:
 
-- `rdf-validate-shacl` - W3C SHACL validator (v0.6.5)
+- `rdf-validate-shacl` - W3C SHACL validator (latest)
 - `rdf-ext` - RDF dataset manipulation library
 - `@rdfjs/types` - RDF/JS type definitions
 

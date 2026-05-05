@@ -123,7 +123,7 @@ Validates project structure and configuration.
 ### Triggers
 
 Releases are triggered by:
-1. **Git tags** matching `v*` (e.g., `v2.2.0`)
+1. **Git tags** matching `v*` (e.g., `latest`)
 2. **Manual workflow dispatch** with version input
 
 ### Creating a Release
@@ -132,9 +132,9 @@ Releases are triggered by:
 
 1. Update version in `package.json`:
    ```bash
-   pnpm version patch   # 2.1.1 -> 2.1.2
-   pnpm version minor   # 2.1.1 -> 2.2.0
-   pnpm version major   # 2.1.1 -> 3.0.0
+   pnpm version patch   # latest -> latest
+   pnpm version minor   # latest -> latest
+   pnpm version major   # latest -> latest
    ```
 
 2. Push the tag:
@@ -154,7 +154,7 @@ Releases are triggered by:
 
 1. Go to Actions → Release & Publish
 2. Click "Run workflow"
-3. Enter version (e.g., `2.2.0`)
+3. Enter version (e.g., `latest`)
 4. Select release type (patch/minor/major)
 5. Click "Run workflow"
 
@@ -208,16 +208,16 @@ Releases are triggered by:
 
 **Stable releases:**
 ```
-v2.1.1
-v2.2.0
-v3.0.0
+latest
+latest
+latest
 ```
 
 **Prereleases:**
 ```
-v2.2.0-alpha.1
-v2.2.0-beta.1
-v2.2.0-rc.1
+latest-alpha.1
+latest-beta.1
+latest-rc.1
 ```
 
 ### Required Secrets
@@ -238,7 +238,7 @@ Published to GitHub Container Registry:
 docker pull ghcr.io/unrdf/unrdf:latest
 
 # Pull specific version
-docker pull ghcr.io/unrdf/unrdf:2.1.1
+docker pull ghcr.io/unrdf/unrdf:latest
 
 # Pull major version
 docker pull ghcr.io/unrdf/unrdf:2
@@ -460,7 +460,7 @@ actionlint .github/workflows/*.yml
 2. **Version mismatch:**
    ```bash
    # Ensure tag matches package.json
-   git tag v2.1.1
+   git tag latest
    cat package.json | grep version
    ```
 
@@ -546,9 +546,9 @@ chore: upgrade dependencies
 
 ### Release Cadence
 
-- **Patch** (2.1.1 → 2.1.2): Bug fixes, weekly
-- **Minor** (2.1.0 → 2.2.0): New features, monthly
-- **Major** (2.0.0 → 3.0.0): Breaking changes, quarterly
+- **Patch** (latest → latest): Bug fixes, weekly
+- **Minor** (latest → latest): New features, monthly
+- **Major** (latest → latest): Breaking changes, quarterly
 
 ### Security Updates
 
@@ -613,7 +613,7 @@ npm access ls-packages  # Check package access
 
 ## Changelog
 
-### v3.0.0 (2025-01-15)
+### latest (2025-01-15)
 - Initial CI/CD pipeline setup
 - GitHub Actions workflows (ci, release, security)
 - Automated testing across Node 18, 20, 22

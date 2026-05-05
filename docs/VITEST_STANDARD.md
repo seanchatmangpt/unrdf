@@ -1,6 +1,6 @@
 # UNRDF Vitest Testing Standard
 
-**Version:** 1.0.0
+**Version:** latest
 **Last Updated:** 2025-12-04
 **Applies To:** All 26 UNRDF subprojects (11 packages + examples)
 
@@ -469,7 +469,7 @@ expect(value).toBeNull();
 expect(number).toBeGreaterThan(0);
 expect(number).toBeGreaterThanOrEqual(0);
 expect(number).toBeLessThan(100);
-expect(number).toBeCloseTo(0.3, 5);
+expect(number).toBeCloseTo(latest, 5);
 
 // Strings
 expect(string).toContain('substring');
@@ -1138,5 +1138,5 @@ describe('Basic Store Example', () => {
 ---
 
 **Last Updated:** 2025-12-04
-**Version:** 1.0.0
+**Version:** latest
 **Maintained By:** UNRDF Architecture Team

@@ -1,6 +1,6 @@
 # UNRDF v3 Acceptance Criteria & Validation Strategy
 
-**Version**: 3.0.0
+**Version**: latest
 **Status**: Definition Phase (No Implementation Yet)
 **Date**: 2025-10-01
 **Agent**: Hive Mind Swarm - Tester
@@ -329,7 +329,7 @@ These features deliver **15% of value** and are deferred to v3.1+:
 **Objective**: New developer installs UNRDF, creates project, runs first query
 
 **Steps:**
-1. Install: `npx unrdf@3.0.0 --version`
+1. Install: `npx unrdf@latest --version`
 2. Create project: `unrdf init my-knowledge-graph`
 3. Enter directory: `cd my-knowledge-graph`
 4. Inspect structure: `ls -la`
@@ -716,9 +716,9 @@ cat src/knowledge-engine/dark-matter-core.mjs | grep "class DarkMatterCore"
 ### 5.3 Business Readiness
 
 #### Release Artifacts
-- [ ] npm package published (v3.0.0)
+- [ ] npm package published (latest)
 - [ ] GitHub release created
-- [ ] Docker images tagged (v3.0.0)
+- [ ] Docker images tagged (latest)
 - [ ] Documentation website updated
 - [ ] Changelog complete
 
@@ -798,8 +798,8 @@ cat src/knowledge-engine/dark-matter-core.mjs | grep "class DarkMatterCore"
 
 ### 7.1 Launch Success Criteria
 
-**v3.0.0 is successful when:**
-- [ ] npm shows v3.0.0 (`npm view unrdf version`)
+**latest is successful when:**
+- [ ] npm shows latest (`npm view unrdf version`)
 - [ ] CI/CD all green (GitHub Actions)
 - [ ] No critical bugs in first 24 hours
 - [ ] Documentation accessible (website up)
@@ -847,7 +847,7 @@ cat src/knowledge-engine/dark-matter-core.mjs | grep "class DarkMatterCore"
 
 ### 8.1 Rollback Triggers
 
-**Rollback v3.0.0 if:**
+**Rollback latest if:**
 - Critical security vulnerability discovered
 - >50% installation failure rate
 - Data corruption in production
@@ -858,14 +858,14 @@ cat src/knowledge-engine/dark-matter-core.mjs | grep "class DarkMatterCore"
 
 ```bash
 # Step 1: Unpublish from npm (within 72 hours)
-npm unpublish unrdf@3.0.0
+npm unpublish unrdf@latest
 
 # Step 2: Revert git tag
-git tag -d v3.0.0
-git push origin :refs/tags/v3.0.0
+git tag -d latest
+git push origin :refs/tags/latest
 
 # Step 3: Publish previous stable version
-git checkout v2.1.1
+git checkout latest
 npm publish --tag latest
 
 # Step 4: Communicate to users

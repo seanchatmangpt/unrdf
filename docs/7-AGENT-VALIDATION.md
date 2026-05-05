@@ -94,7 +94,7 @@ pub struct TestGateAgent {
 impl TestGateAgent {
     pub async fn validate(&self, package: &str) -> GateResult {
         self.gate.check(package).await
-            .check_test_coverage(0.80) // 80% minimum
+            .check_test_coverage(latest) // 80% minimum
             .check_no_skipped_tests()
             .check_determinism()
             .execute()
@@ -354,7 +354,7 @@ impl ConsensusLayer {
 | SHACL       | ✅/❌ | 1      | Conditional (ontologies only) |
 | OTEL        | ✅/❌ | 1      | Conditional (operations only) |
 | Security    | ✅/❌ | 1      | Blocking (must be secure)     |
-| Performance | ✅/❌ | 0.5    | Non-blocking (warning only)   |
+| Performance | ✅/❌ | latest    | Non-blocking (warning only)   |
 
 ---
 

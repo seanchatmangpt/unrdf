@@ -1,6 +1,6 @@
 # Daemon+YAWL Integration Coverage Matrix
 
-**Version**: 1.0.0
+**Version**: latest
 **Generated**: 2026-01-10
 **Package**: @unrdf/daemon
 **Integration**: YawlDaemonBridge v1 + Event Listeners + Receipt Chain
@@ -1113,8 +1113,8 @@ grep -c "toThrow\|rejects\|Error" packages/daemon/test/e2e-daemon-yawl-errors.te
 | Field | Value |
 |-------|-------|
 | Generated Date | 2026-01-10 |
-| Test Suite Version | 1.0.0 |
-| Coverage Snapshot | yawl.mjs v1.0.0 |
+| Test Suite Version | latest |
+| Coverage Snapshot | yawl.mjs latest |
 | Integration Patterns | 6 (12 scenarios) |
 | Total Test Lines | 2,596 |
 | Integration Points | 10 |

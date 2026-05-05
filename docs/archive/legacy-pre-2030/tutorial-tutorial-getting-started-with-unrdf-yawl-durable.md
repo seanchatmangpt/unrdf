@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-durable"
 type: "tutorial"
 packageName: "@unrdf/yawl-durable"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "927006155f82b770c6054f9cb475bda86238905c6abf55729f29b4ae1f52a283"

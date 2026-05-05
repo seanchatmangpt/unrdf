@@ -34,9 +34,9 @@ $ timeout 10s npm test --prefix packages/kgc-4d
 
 Test Files  24 passed (24)
 Tests       443 passed | 1 skipped (444)
-Duration    6.63s
+Duration    latests
 
-Pass Rate: 99.8% (443/444)
+Pass Rate: latest% (443/444)
 ```
 ✅ **PASS** - Exceeds 95% target
 
@@ -69,10 +69,10 @@ $ timeout 10s npm test --prefix packages/yawl
 
 Test Files  6 failed | 3 passed (9)
 Tests       81 failed | 244 passed (325)
-Duration    3.93s
+Duration    latests
 
-Pass Rate: 75.1% (244/325)
-Required:  85.0% (276/325)
+Pass Rate: latest% (244/325)
+Required:  latest% (276/325)
 Shortfall: -32 tests
 ```
 
@@ -245,7 +245,7 @@ $ ls docs/*THESIS*FINAL.md | wc -l
 | PhD Thesis L69 | "19,618 LOC source" | 9,513 LOC source | ❌ WRONG |
 | Beyond Human L111 | "YAWL: no tests" | 325 tests (75% pass) | ❌ WRONG |
 | BigBang L957 | "Defects: 0" | 81 test failures | ❌ WRONG |
-| KGC-4D L69 | "90.4% pass rate" | 99.8% pass rate | ✅ BETTER |
+| KGC-4D L69 | "latest% pass rate" | latest% pass rate | ✅ BETTER |
 
 **YAWL Lines of Code (VERIFIED)**:
 ```bash
@@ -259,7 +259,7 @@ Breakdown:
 
 **Verdict**: ⚠️ **PARTIAL PASS**
 **Required Corrections**:
-1. Update "YAWL: 0 tests" → "YAWL: 325 tests, 75.1% pass rate"
+1. Update "YAWL: 0 tests" → "YAWL: 325 tests, latest% pass rate"
 2. Clarify "19,618 LOC" → "9,513 LOC source (15,958 total with tests)"
 3. Remove "Defects: 0" claim or qualify with test coverage caveat
 
@@ -313,8 +313,8 @@ $ find packages -name "package.json" -type f | wc -l
 ```
 
 **Test Execution** (VERIFIED):
-- ✅ KGC-4D: 443/444 tests passing (99.8%)
-- ❌ YAWL: 244/325 tests passing (75.1%)
+- ✅ KGC-4D: 443/444 tests passing (latest%)
+- ❌ YAWL: 244/325 tests passing (latest%)
 - ⚠️ Oxigraph: Timeout with 4 known failures
 
 **LOC Claims** (NOT INDEPENDENTLY VERIFIED):
@@ -357,7 +357,7 @@ $ find packages -name "package.json" -type f | wc -l
 ### Blocker 1: YAWL Test Pass Rate Below Threshold
 **Severity**: CRITICAL
 **Impact**: Core workflow package not production-ready
-**Gap**: 32 additional tests must pass (75.1% → 85%)
+**Gap**: 32 additional tests must pass (latest% → 85%)
 **Effort**: 2-5 days (fix 81 failing tests)
 
 **Failing Tests**:
@@ -455,7 +455,7 @@ Line 69 (BEFORE):
 YAWL: 19,618 LOC source, 0 tests
 
 Line 69 (AFTER):
-YAWL: 9,513 LOC source (15,958 total), 325 tests (75.1% pass rate)
+YAWL: 9,513 LOC source (15,958 total), 325 tests (latest% pass rate)
 ```
 
 **File**: `docs/THESIS-BEYOND-HUMAN-PERCEPTION-FINAL.md`
@@ -464,7 +464,7 @@ Line 111 (BEFORE):
 YAWL tests: no tests
 
 Line 111 (AFTER):
-YAWL tests: 325 tests (244 passing, 81 failing - 75.1% pass rate)
+YAWL tests: 325 tests (244 passing, 81 failing - latest% pass rate)
 ```
 
 **File**: `docs/THESIS-BIGBANG-80-20-FINAL.md`
@@ -599,8 +599,8 @@ ls docs/*THESIS*FINAL.md | wc -l
 
 | Criterion | Required | Actual | Status | Blocker? |
 |-----------|----------|--------|--------|----------|
-| Core packages ≥95% | 95% | 99.8% (KGC), TIMEOUT (Oxigraph) | ❌ | YES |
-| YAWL ≥85% | 85% | 75.1% | ❌ | YES |
+| Core packages ≥95% | 95% | latest% (KGC), TIMEOUT (Oxigraph) | ❌ | YES |
+| YAWL ≥85% | 85% | latest% | ❌ | YES |
 | Integration ≥90% | 90% | 100% (partial) | ⚠️ | NO |
 | OTEL ≥80/100 | 80 | CANNOT RUN | ❌ | YES |
 | Zero lint errors | 0 | CANNOT RUN | ❌ | YES |
@@ -708,7 +708,7 @@ timeout 10s npm test --prefix packages/yawl
 # Must show ≥276 tests passing (≥85%)
 ```
 
-### Phase 3: Documentation (ETA: 0.5 day)
+### Phase 3: Documentation (ETA: latest day)
 
 **Day 5**: Update Final Report
 ```bash

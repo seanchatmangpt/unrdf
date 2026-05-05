@@ -1,6 +1,6 @@
 # Patterns Library
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Status**: Research Complete
 **Last Updated**: 2025-12-27
 
@@ -53,7 +53,7 @@ function withReceipt(fn, options = {}) {
     const endTime = performance.now();
 
     const receipt = {
-      version: '6.0.0-alpha.1',
+      version: 'latest.1',
       operation: options.operation || fn.name,
       timestamp: Date.now(),
       duration: endTime - startTime,
@@ -93,10 +93,10 @@ console.log(result);
 
 console.log(receipt);
 // {
-//   version: '6.0.0-alpha.1',
+//   version: 'latest.1',
 //   operation: 'workflow.execute',
 //   timestamp: 1704067200000,
-//   duration: 42.5,
+//   duration: latest,
 //   args: '["task-123","approve"]',
 //   result: '{"status":"completed","taskId":"task-123"}'
 // }
@@ -1260,6 +1260,6 @@ This matrix shows which patterns compose with each other:
 
 ---
 
-**Pattern Library Version**: 1.0.0
+**Pattern Library Version**: latest
 **Last Research Update**: 2025-12-27
 **Researcher**: Claude Code (Researcher Agent)

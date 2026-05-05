@@ -48,7 +48,7 @@ Print this page. Keep it with you. Use it for rapid decision-making.
 2. Benchmark and verify targets met
 3. Set up monitoring and alerts
 4. Have rollback plan ready
-- See: BENCHMARKS.md section 4.1.1 + DEPLOYMENT-CHECKLIST.md
+- See: BENCHMARKS.md section [VERSION] + DEPLOYMENT-CHECKLIST.md
 
 ### Deploy with >10K operations?
 ❌ **NO** - Optimize before deploying
@@ -98,9 +98,9 @@ Memory per hook:           9.9KB (scales well)
 ### "Latency is too high"
 1. Check operation count (Phase 2, DEPLOYMENT-CHECKLIST.md)
 2. Is it >10K ops? → Must optimize (see below)
-3. Implement validation caching (BENCHMARKS.md 4.1.1)
+3. Implement validation caching (BENCHMARKS.md [VERSION])
 4. Measure improvement (should see 35% gain)
-5. Still too high? → Implement fast-path (BENCHMARKS.md 4.1.2)
+5. Still too high? → Implement fast-path (BENCHMARKS.md [VERSION])
 
 ### "Performance targets not met"
 1. Current latency: __________ ms

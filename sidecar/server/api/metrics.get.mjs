@@ -142,7 +142,7 @@ function collectSystemMetrics() {
  */
 export default defineEventHandler(async (event) => {
   // Set content type to Prometheus text format
-  event.node.res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')
+  event.node.res.setHeader('Content-Type', 'text/plain; version=[VERSION]; charset=utf-8')
 
   let output = ''
 

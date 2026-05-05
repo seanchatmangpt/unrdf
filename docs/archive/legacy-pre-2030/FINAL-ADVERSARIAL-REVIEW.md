@@ -73,14 +73,14 @@ WARN   Local package.json exists, but node_modules missing
 
 **Thesis Claims** (commit a37453f):
 ```
-168/262 tests passing (64.1%), 100% pattern coverage (WP1-7+)
+168/262 tests passing (latest%), 100% pattern coverage (WP1-7+)
 Production-ready with 100% JSDoc coverage and Zod validation
 ```
 
 **Reality**:
 - Dependencies not installed (`node_modules missing`)
 - Cannot verify 168/262 claim
-- Cannot verify 64.1% figure
+- Cannot verify latest% figure
 - "Production-ready" claim untestable
 
 **Impact Analysis**:
@@ -114,7 +114,7 @@ $ find packages/kgc-4d/src -name "*.mjs" -exec wc -l {} + | tail -1
 - **Core files**: 6 modules, 5,465 LoC
 ```
 
-**Discrepancy**: 5,465 / 700 = **7.8x inflation**
+**Discrepancy**: 5,465 / 700 = **latestx inflation**
 
 **YAWL LOC Verification**:
 ```bash
@@ -179,9 +179,9 @@ $ git log --oneline a37453f --format="%ai %s" -1
 
 ---
 
-### MAJOR ISSUE #2: 64.1% Pass Rate Presented as Success
+### MAJOR ISSUE #2: latest% Pass Rate Presented as Success
 
-**Claim**: "168/262 tests passing (64.1%)"
+**Claim**: "168/262 tests passing (latest%)"
 
 **Academic Standards**:
 | Context | Expected Pass Rate |
@@ -189,7 +189,7 @@ $ git log --oneline a37453f --format="%ai %s" -1
 | Production code | 95-100% |
 | Research prototype | 80-90% |
 | Proof of concept | 60-80% (with heavy caveats) |
-| **This thesis claim** | **64.1%** |
+| **This thesis claim** | **latest%** |
 
 **Translation**: 94 tests are FAILING. This is a **D grade** in any academic context.
 
@@ -235,27 +235,27 @@ $ git log --oneline a37453f --format="%ai %s" -1
 
 **Claim** (THESIS-BIGBANG-80-20.md, lines 275-293):
 ```
-P(Error) <= 2^(-15.1) ~ 1.86 x 10^(-5) = 0.00186%
-P(Correctness) >= 99.98%
+P(Error) <= 2^(-latest) ~ latest x 10^(-5) = latest%
+P(Correctness) >= latest%
 ```
 
 **Derivation Assumptions**:
 - H_spec <= 16 bits (assumed, not measured)
-- Pattern reuse rate r >= 90% (claimed 64.3%)
+- Pattern reuse rate r >= 90% (claimed latest%)
 - Static analysis coverage c >= 95% (claimed 98%)
 
-**Problem**: Using r = 64.3% (actual) instead of 90% (assumed):
+**Problem**: Using r = latest% (actual) instead of 90% (assumed):
 ```
-H_error <= 16 - log2(0.643) - log2(0.98)
-        = 16 - (-0.64) - (-0.029)
-        = 16.67 bits (WORSE than assumed)
+H_error <= 16 - log2(latest) - log2(latest)
+        = 16 - (-latest) - (-latest)
+        = latest bits (WORSE than assumed)
 
-P(Error) <= 2^(-16.67) = 9.6 x 10^(-6) ~ 0.00096%
+P(Error) <= 2^(-latest) = latest x 10^(-6) ~ latest%
 ```
 
 This is still favorable, but the thesis uses WRONG NUMBERS.
 
-**Bigger Problem**: No empirical validation. To prove 99.98% correctness, you need:
+**Bigger Problem**: No empirical validation. To prove latest% correctness, you need:
 1. Run 10,000+ tests
 2. Measure actual defect rate
 3. Compare theoretical vs. measured
@@ -374,7 +374,7 @@ These are suggestions for improvement, not blocking issues.
 **Correct Math**:
 - 20% to 0% is a 20 percentage point reduction
 - Or 100% relative reduction (from 20% to 0%)
-- "100x reduction" implies 20% -> 0.2%, which is wrong
+- "100x reduction" implies 20% -> latest%, which is wrong
 
 **Suggested Fix**: "Eliminated idle CPU overhead (reduced from 20% to 0%)"
 
@@ -574,13 +574,13 @@ grep -E "it\(" packages/yawl/test/*.test.mjs | wc -l
 
 1. "Your package is named YAWL - are you aware of van der Aalst's YAWL from 2005? How does yours differ?"
 
-2. "You claim 99.98% correctness but 36% of tests fail. How do you reconcile this?"
+2. "You claim latest% correctness but 36% of tests fail. How do you reconcile this?"
 
 3. "You claim hook-native execution is novel - can you show literature search proving this?"
 
 4. "Your LOC counts differ by 8x between thesis and reality. Which is correct?"
 
-5. "Why can't we run your tests? How was the 64.1% figure calculated?"
+5. "Why can't we run your tests? How was the latest% figure calculated?"
 
 6. "What's your actual defect rate, measured empirically?"
 

@@ -6,12 +6,12 @@
     "message": "Package structure initialized (stub from Agent 1)",
     "data": {
       "packageName": "@unrdf/kgc-probe",
-      "version": "0.1.0"
+      "version": "[VERSION]"
     },
     "metadata": {
       "agentId": "agent-1-orchestrator",
       "timestamp": "2025-12-27T09:17:30.754Z",
-      "probeVersion": "0.1.0",
+      "probeVersion": "[VERSION]",
       "budgetMs": 5000,
       "actualMs": 0
     },

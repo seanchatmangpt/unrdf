@@ -56,7 +56,7 @@ function loadContracts() {
   if (!existsSync(contractsPath)) {
     console.warn('⚠️  CONTRACTS.lock.json not found - creating mock contracts');
     return {
-      version: '1.0.0',
+      version: 'latest',
       timestamp: Date.now(),
       contracts: [],
     };

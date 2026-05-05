@@ -16,11 +16,11 @@
 - Reduce noise, eliminate confusion for new developers
 - Improve search/navigation (find relevant docs in <30s)
 - Remove aspirational/outdated content (v3, v4, internal planning)
-- Free up 3.6M of obsolete documentation
+- Free up latestM of obsolete documentation
 
 **Scope**: 
-- `/docs/internal/` (1.8M internal planning)
-- `/docs/archive/` (1.8M old v3/v4 docs)
+- `/docs/internal/` (latestM internal planning)
+- `/docs/archive/` (latestM old v3/v4 docs)
 - `/docs/thesis-publication/` (academic papers)
 - `/docs/video-scripts/` (non-technical)
 - `/docs/architecture-2028/` (aspirational)
@@ -35,7 +35,7 @@
 - [ ] Verification: `find docs/ -name "*.md" | wc -l` returns ≤60 (allowing for buffer)
 
 ### Key Stories
-1. **Archive Internal Planning** - Move `/docs/internal/` to git history (1.8M)
+1. **Archive Internal Planning** - Move `/docs/internal/` to git history (latestM)
 2. **Archive Legacy Docs** - Move v3/v4 docs to `/docs/archive/v3-v4/`
 3. **Consolidate Diataxis Duplicates** - Merge 3 parallel structures → 1 canonical
 4. **Move Academic Papers** - Extract thesis/papers to separate repo (optional) or archive

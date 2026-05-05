@@ -151,7 +151,7 @@ async function main() {
 
   const receipt3 = createReceipt(
     'publish',
-    { action: 'PUBLISH', manifest: 'manifest-v1.0.0' },
+    { action: 'PUBLISH', manifest: 'manifest-latest' },
     'publisher',
     receipt2
   );

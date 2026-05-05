@@ -186,10 +186,10 @@
 ```json
 {
   "devDependencies": {
-    "k6": "^0.0.0",           // Load testing framework
-    "autocannon": "^8.0.0",   // Quick benchmarking
-    "clinic": "^13.0.0",      // Performance profiling
-    "0x": "^6.0.0"           // Flamegraph generation
+    "k6": "^[VERSION]",           // Load testing framework
+    "autocannon": "^[VERSION]",   // Quick benchmarking
+    "clinic": "^1[VERSION]",      // Performance profiling
+    "0x": "^[VERSION]"           // Flamegraph generation
   }
 }
 ```
@@ -341,7 +341,7 @@ jobs:
       - run: pnpm test:chaos
 
       # k6 load testing
-      - uses: grafana/k6-action@v0.3.0
+      - uses: grafana/k6-action@[VERSION]
         with:
           filename: sidecar/scripts/load-test.mjs
           flags: --out json=results.json

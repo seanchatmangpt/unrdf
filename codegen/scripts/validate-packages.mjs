@@ -80,7 +80,7 @@ function generateCompatibilityMatrix() {
     matrix.tiers[tier] = {
       count: pkgs.length,
       versions: [...new Set(pkgs.map(p => p.version))],
-      allVersionCompatible: pkgs.every(p => p.version.includes('5.') || p.version.includes('6.') || p.version.includes('1.0.0'))
+      allVersionCompatible: pkgs.every(p => p.version.includes('5.') || p.version.includes('6.') || p.version.includes('latest'))
     };
   });
 

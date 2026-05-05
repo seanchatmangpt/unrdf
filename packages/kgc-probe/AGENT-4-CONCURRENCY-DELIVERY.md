@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Successfully probed all concurrency surfaces in Node.js v22.21.1 environment. Identified 15 distinct concurrency capabilities with bounded, deterministic tests. All observations include guard decisions, timestamps, and statistical measurements.
+Successfully probed all concurrency surfaces in Node.js [VERSION] environment. Identified 15 distinct concurrency capabilities with bounded, deterministic tests. All observations include guard decisions, timestamps, and statistical measurements.
 
 ---
 
@@ -68,7 +68,7 @@ Successfully probed all concurrency surfaces in Node.js v22.21.1 environment. Id
 }
 ```
 
-**Discovery**: Event loop ordering differs from canonical Node.js documentation. In Node.js v22.21.1, `queueMicrotask` executes **before** `process.nextTick`, contradicting expected behavior. This could indicate:
+**Discovery**: Event loop ordering differs from canonical Node.js documentation. In Node.js [VERSION], `queueMicrotask` executes **before** `process.nextTick`, contradicting expected behavior. This could indicate:
 - Node.js v22 changed event loop semantics
 - Test timing issue (needs verification)
 - Critical for precise async scheduling
@@ -169,8 +169,8 @@ Successfully probed all concurrency surfaces in Node.js v22.21.1 environment. Id
   "timestamp": 1766824576998,
   "guardDecision": "allowed",
   "metadata": {
-    "nodeVersion": "v22.21.1",
-    "note": "AsyncLocalStorage available since Node.js v13.10.0"
+    "nodeVersion": "[VERSION]",
+    "note": "AsyncLocalStorage available since Node.js [VERSION]"
   }
 }
 ```
@@ -187,7 +187,7 @@ Successfully probed all concurrency surfaces in Node.js v22.21.1 environment. Id
   "outputs": {
     "available": true,
     "module": "worker_threads",
-    "nodeVersion": "v22.21.1"
+    "nodeVersion": "[VERSION]"
   },
   "guardDecision": "allowed"
 }
@@ -297,7 +297,7 @@ All probes implement strict guard constraints:
 ## Architecture Integration
 
 ### Schema Compatibility
-- ✅ Zod v4.2.1 compatible (fixed `z.record()` syntax)
+- ✅ Zod [VERSION] compatible (fixed `z.record()` syntax)
 - ✅ Matches observation schema from `/home/user/unrdf/packages/kgc-probe/src/observation.mjs`
 - ✅ All observations validated with `ObservationSchema.parse()`
 
@@ -355,7 +355,7 @@ timeout 45s node test-concurrency.mjs
 ### Prerequisites
 ```bash
 cd /home/user/unrdf/packages/kgc-probe
-npm install  # zod@4.2.1 required
+npm install  # zod@[VERSION] required
 ```
 
 ### Run Probes
@@ -384,7 +384,7 @@ cat /tmp/concurrency-test.log
   type: "threat",
   severity: "high",
   category: "behavioral-change",
-  description: "Event loop ordering in Node.js v22.21.1 differs from documented behavior (queueMicrotask before nextTick)",
+  description: "Event loop ordering in Node.js [VERSION] differs from documented behavior (queueMicrotask before nextTick)",
   location: "concurrency.event_loop_ordering",
   impact: "Potential timing bugs in async code",
   detected_by: "agent-4-concurrency",
@@ -411,7 +411,7 @@ cat /tmp/concurrency-test.log
     stack_depth_limit: 8946,
     thread_pool_size: 4
   },
-  node_version: "v22.21.1",
+  node_version: "[VERSION]",
   concurrency_capabilities: "high",
   timestamp: 1766824577002
 }
@@ -423,7 +423,7 @@ cat /tmp/concurrency-test.log
 
 **Mission Status**: ✅ **COMPLETE**
 
-All 15 concurrency probes implemented, tested, and validated. Discovered 1 critical anomaly (event loop ordering), 2 high-value opportunities (promise throughput, I/O efficiency), and comprehensive environmental scan of Node.js v22.21.1 concurrency capabilities.
+All 15 concurrency probes implemented, tested, and validated. Discovered 1 critical anomaly (event loop ordering), 2 high-value opportunities (promise throughput, I/O efficiency), and comprehensive environmental scan of Node.js [VERSION] concurrency capabilities.
 
 **Proof**:
 - ✅ Code: `/home/user/unrdf/packages/kgc-probe/src/probes/concurrency.mjs`

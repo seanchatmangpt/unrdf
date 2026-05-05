@@ -12,7 +12,7 @@
  */
 export const metadata = {
   name: '@unrdf/nextra-docs',
-  version: '5.0.1',
+  version: '[VERSION]',
   description: 'UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation',
 };
 

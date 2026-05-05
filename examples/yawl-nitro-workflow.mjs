@@ -68,7 +68,7 @@ async function createDocumentWorkflow(store) {
     id: 'document-approval-v1',
     name: 'Document Approval Workflow',
     description: 'Four-step document review and publication process',
-    version: '1.0.0',
+    version: 'latest',
     tasks: [
       {
         id: 'submit',

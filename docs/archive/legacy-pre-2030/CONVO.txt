@@ -891,24 +891,24 @@ Finally, a Mermaid Gantt chart outlines a 12–18 month rollout: ontology select
 
 | **#** | **Name (URI)**       | **Domain**                   | **Summary/Scope** (key classes)  | **Maintainer**          | **License**         | **Maturity (1–5)** | **Interoperability & Usage (MCP+/unRDF)**                              |
 |:----:|----------------------|------------------------------|---------------------------------|-------------------------|---------------------|:-----------------:|-----------------------------------------------------------------------|
-| 1    | **SWO** – Software Ontology<br>*(http://purl.obolibrary.org/obo/swo.owl)*【73†L73-L77】 | Software/Bioinformatics (tools, libraries) | Describes software tools, versions, tasks, formats, licensing and provenance【73†L73-L77】. Key classes: *Software*, *ToolCategory*, *Task*, *License*. | OBO Foundry (Allyson Lister et al.)【73†L99-L100】 | CC BY 4.0【73†L95-L100】 | 4.5/5            | Used to annotate software assets and tooling. High reuse in life sciences.  Maps to *Wizard* (deployment tasks) and *Doctor* (diagnostics) patterns; can be expressed via unRDF *Capability* values. |
+| 1    | **SWO** – Software Ontology<br>*(http://purl.obolibrary.org/obo/swo.owl)*【73†L73-L77】 | Software/Bioinformatics (tools, libraries) | Describes software tools, versions, tasks, formats, licensing and provenance【73†L73-L77】. Key classes: *Software*, *ToolCategory*, *Task*, *License*. | OBO Foundry (Allyson Lister et al.)【73†L99-L100】 | CC BY latest【73†L95-L100】 | latest/5            | Used to annotate software assets and tooling. High reuse in life sciences.  Maps to *Wizard* (deployment tasks) and *Doctor* (diagnostics) patterns; can be expressed via unRDF *Capability* values. |
 | 2    | **FIBO** – Financial Industry Business Ontology<br>*(https://spec.edmcouncil.org/fibo/)*【31†L54-L62】 | Finance/Banking/Regulation | Global ontology of financial concepts: instruments, contracts, legal entities, markets【31†L54-L62】. Modules cover *Finance*, *Corporate*, *Securities*, *Business Entities*, etc. | EDM Council / OMG           | MIT (open source)【34†L19-L22】 | 5/5              | Supports standardized finance models (bank accounts, trades, compliance). Highly interlinked (OWL, RDF, SKOS terms). Use for payments, settlements, compliance. Maps to *Telco* (delegation/roles) for institutional processes; unRDF will use FIBO classes as foundational capabilities. |
 | 3    | **GS1 Web Vocab** – GS1 Vocabulary<br>*(https://ref.gs1.org/voc/)*【47†L1-L4】 | Supply Chain / Retail (products, logistics) | Terms from GS1 standards for product IDs (GTIN), parties (GLN), trade items, packaging, locations and offers【47†L1-L4】. Schema.org-aligned extension. | GS1 Global Organization     | CC0 (public domain) | 4/5              | Enables semantic linking of products, shipments and offers. High interoperability with schema.org. Used for NDIM *product catalogs, inventory, traceability*. Patterns: *Telco* (supply chain handoffs); unRDF: map GS1 identifiers as *entities* and capabilities (e.g. price) in the data graph. |
 | 4    | **PROV-O** – W3C Provenance Ontology<br>*(http://www.w3.org/ns/prov#)*【55†L46-L54】 | Provenance/Audit | W3C standard for provenance: entities, activities, agents; relations like *wasGeneratedBy*, *wasAssociatedWith*, etc【55†L46-L54】. | W3C Provenance WG          | W3C Document License (CC BY) | 5/5          | Core for recording data lineage. Ubiquitous adoption. Use to track dataset creation, transformations, audit trails. Maps to *Doctor* (diagnostic chain) and *Telco* (delegated tasks). unRDF: use PROV classes for *O* (outcome) and *A* (action) provenance. |
 | 5    | **SKOS** – Simple Knowledge Organization System<br>*(https://www.w3.org/2004/02/skos/)*【67†L66-L74】 | Thesauri/Taxonomies | W3C recommendation for concept schemes (thesauri, taxonomies, classification)【67†L66-L74】. Classes: *ConceptScheme*, *Concept*, *prefLabel*, *broader/narrower*. | W3C SWD WG               | W3C Document License | 5/5          | Standard for controlled vocabularies. Links to many domains (e.g. GS1 categories, Org types). Interoperable (RDF Schema). Use for NDIM catalogs, tags, and unRDF type hierarchies. Patterns: *Wizard* (organizing steps); *Telco* (routing via concept). |
 | 6    | **ORG** – Organization Ontology<br>*(http://www.w3.org/ns/org#)*【62†L123-L131】 | Organizations/Agents | Core ontology for organizations and structures【62†L123-L131】. Classes: *Organization*, *OrganizationalUnit*, *Membership*, *Role*, *Post*. | W3C (GLD WG) / Epimorphics | W3C Document License | 4/5        | Standard model for companies, departments and roles. Use for defining NDIM parties, roles (sellers, buyers, validators). Interoperable with FOAF (for individuals in orgs). Patterns: *Telco* (role-based delegation) and *Doctor* (task assign). unRDF: use ORG nodes as *Agents/Actors*. |
-| 7    | **FOAF** – Friend-Of-A-Friend Vocabulary<br>*(http://xmlns.com/foaf/0.1/)*【69†L33-L39】 | People/Agents/Social | FOAF defines persons, groups, online accounts and relationships【69†L33-L39】 (“linking people and information using the Web”). Classes: *Person*, *Agent*, *Organization*, with properties like *knows*, *name*, *mbox*. | FOAF Project (Brickley & Miller) | CC BY【52†L21-L24】 | 4/5        | Widely used for user identity. Integrates with VC (Verifiable Credentials) and social web. Use for NDIM user/agent profiles. Interoperable with VC ontologies. Patterns: *Doctor* (patient/user context), *Wizard* (user-config). unRDF: FOAF *Person* or *Agent* map to *actors* in control grammar. |
+| 7    | **FOAF** – Friend-Of-A-Friend Vocabulary<br>*(http://xmlns.com/foaf/latest/)*【69†L33-L39】 | People/Agents/Social | FOAF defines persons, groups, online accounts and relationships【69†L33-L39】 (“linking people and information using the Web”). Classes: *Person*, *Agent*, *Organization*, with properties like *knows*, *name*, *mbox*. | FOAF Project (Brickley & Miller) | CC BY【52†L21-L24】 | 4/5        | Widely used for user identity. Integrates with VC (Verifiable Credentials) and social web. Use for NDIM user/agent profiles. Interoperable with VC ontologies. Patterns: *Doctor* (patient/user context), *Wizard* (user-config). unRDF: FOAF *Person* or *Agent* map to *actors* in control grammar. |
 | 8    | **Dublin Core** – DCAT/DCMI Terms<br>*(http://purl.org/dc/terms/)* | Metadata (Documents, Datasets) | DCMI metadata terms for titles, creators, dates, subjects. **DCAT** (http://www.w3.org/ns/dcat#) for datasets. | DCMI (SteerWDWG)          | CC0 (DCAT) / CC BY (DCMI) | 5/5    | Ubiquitous metadata vocabulary. Use DCAT for catalogs, DC Terms for basic fields (title, description). Interoperable with many schemas. Patterns: ancillary (metadata context). unRDF: map DCAT *Dataset* and *Distribution* to NDIM *resources/assets*. |
 | 9    | **SOSA/SSN** – Sensor & Observation Ontologies<br>*(https://www.w3.org/TR/vocab-ssn/)* | IoT / Instruments | W3C ontologies for sensors, observations, actuators. Core: *Sensor*, *Observation*, *FeatureOfInterest*, *Result*. | W3C (SSN Incubator)       | W3C Document License | 5/5    | Standard for IoT, environment, astronomy instrumentation. Use to describe NDIM scientific devices and data streams. Interoperable with OGC standards. Patterns: *Doctor* (data collection diagnosis). unRDF: SOSA *Observation* ~ *O* (output) with its *result* as payload. |
-| 10   | **Activity Streams 2.0** – Activity Vocabulary<br>*(https://www.w3.org/TR/activitystreams-core/)*【49†L48-L51】 | Social / A2A messages | W3C Recommendation defining abstract *Activity* types and properties (actor, object, target, etc)【49†L48-L51】. Used by ActivityPub. | W3C Social Web WG         | W3C Document License | 4/5      | Model for events/actions (posts, shares, notifications). Useful for NDIM inter-agent messages (e.g. broker/pubsub). Interoperable with JSON-LD. Patterns: *Telco* (message routing); *Wizard* (steps as activities). unRDF: map AS2 *Activity* instances to *commands* or *events* in control grammar. |
+| 10   | **Activity Streams latest** – Activity Vocabulary<br>*(https://www.w3.org/TR/activitystreams-core/)*【49†L48-L51】 | Social / A2A messages | W3C Recommendation defining abstract *Activity* types and properties (actor, object, target, etc)【49†L48-L51】. Used by ActivityPub. | W3C Social Web WG         | W3C Document License | 4/5      | Model for events/actions (posts, shares, notifications). Useful for NDIM inter-agent messages (e.g. broker/pubsub). Interoperable with JSON-LD. Patterns: *Telco* (message routing); *Wizard* (steps as activities). unRDF: map AS2 *Activity* instances to *commands* or *events* in control grammar. |
 | 11   | **ODRL** – Open Digital Rights Language<br>*(http://www.w3.org/ns/odrl/2/)*【17†L1-L3】 | Policies/Rights | W3C ontology for permissions, prohibitions, obligations. Classes: *Policy*, *Rule*, *Action*, *Permission*【17†L1-L3】. | W3C ODRL WG             | CC-BY (W3C)        | 4/5       | Standard for expressing usage licenses and policies. Useful for NDIM usage rules (e.g. data access, licensing of assets). Patterns: *Telco* (permission delegation). unRDF: use ODRL *Policy* and *Permission* to encode allowed *actions* in the system. |
 | 12   | **OWL-Time** – W3C Time Ontology<br>*(http://www.w3.org/2006/time#)* | Temporal | W3C ontology for time instants, intervals, durations. Classes: *Instant*, *Interval*, *Duration*, *TemporalEntity*. | W3C                     | W3C Document License | 5/5      | Standard temporal vocabulary. Use for NDIM scheduling, timestamping (locks, versioning). Interoperable with XSD dateTime. Patterns: generic (temporal context for Doctor/Wizard tasks). unRDF: use OWL-Time *Instant* and *Interval* for control flow timing. |
-| 13   | **ADMS** – Asset Description Metadata Schema<br>*(http://www.w3.org/ns/adms#)*【7†L84-L92】 | Data Assets / Catalogs | Profile of DCAT for digital assets (data models, code lists, ontologies)【7†L84-L92】. Classes: *Asset*, extends DCAT *Resource*. | W3C Semantic Web (CEGIS)  | CC0 (W3C)         | 3.5/5    | Designed for describing reusable assets. Can catalog NDIM ontologies, policies, codebooks. Interoperable with DCAT/CF. unRDF: represent NDIM resources (e.g. capability schemas) as ADMS *Assets*. |
+| 13   | **ADMS** – Asset Description Metadata Schema<br>*(http://www.w3.org/ns/adms#)*【7†L84-L92】 | Data Assets / Catalogs | Profile of DCAT for digital assets (data models, code lists, ontologies)【7†L84-L92】. Classes: *Asset*, extends DCAT *Resource*. | W3C Semantic Web (CEGIS)  | CC0 (W3C)         | latest/5    | Designed for describing reusable assets. Can catalog NDIM ontologies, policies, codebooks. Interoperable with DCAT/CF. unRDF: represent NDIM resources (e.g. capability schemas) as ADMS *Assets*. |
 | 14   | **SIOC** – Social Communities Ontology<br>*(http://rdfs.org/sioc/ns#)*【60†L61-L66】 | Social Web (forums, blogs) | Vocabulary for forums, blogs, posts, comments【60†L61-L66】 (“describes information from online communities”). Key classes: *Post*, *Forum*, *UserAccount*. | DERI/NUI Galway et al.   | W3C Document License | 3/5    | Use if NDIM incorporates social/forum components (e.g. A2A chat). Interoperable with FOAF. Patterns: *Telco* (message threads); *Doctor* (knowledge sharing). unRDF: map SIOC *Post* to unRDF *events/actions*. |
-| 15   | **RIOT** – Retail Industry Ontology (DIG. Receipts)| Retail/Receipts | OMG Retail ontologies covering product, invoice, receipt, payment concepts (e.g. *Invoice*, *PaymentDue*, *Seller*, *Buyer*). | OMG Retail Domain TF      | OMG (likely CC-BY)  | 2.5/5     | Covers receipts/invoices for retail. Use for NDIM commerce. Limited adoption. Gap: model e-invoice as unRDF. Patterns: commerce flows (Telco). |
+| 15   | **RIOT** – Retail Industry Ontology (DIG. Receipts)| Retail/Receipts | OMG Retail ontologies covering product, invoice, receipt, payment concepts (e.g. *Invoice*, *PaymentDue*, *Seller*, *Buyer*). | OMG Retail Domain TF      | OMG (likely CC-BY)  | latest/5     | Covers receipts/invoices for retail. Use for NDIM commerce. Limited adoption. Gap: model e-invoice as unRDF. Patterns: commerce flows (Telco). |
 | 16   | **CEON** – Circular Economy Ontology (Parts) | Sustainability/Resources | Modular ontologies for *Product*, *Resource*, *Actor* in circular economy (CEON network). | W3C CEON Network         | CC0 (usually)    | 3/5        | Used in industry for sustainability. Overlap with manufacturing/logistics. Patterns: *Telco* (resource flow); *Wizard* (build processes). unRDF: map *Resource* to NDIM assets, *Actor* as agents. |
-| 17   | **Gene Ontology (GO)** | Biology/Genomics | OBO ontology for gene functions (GO: Biological Process, Cellular Component, Molecular Function). Widely used. | Gene Ontology Consortium  | CC BY 4.0       | 5/5        | Standard for genomics, metagenomics. Rarely used outside bio, but mention for NDIM scientific data. unRDF: mapping gene/protein attributes as needed. |
-| 18   | **SWEET** – Earth/Climate Ontology | Environment/Climate | NASA/ESIP ontologies for earth science (e.g. *Phenomena*, *Process*, *Geography*). Large modular collection. | ESIP Federation           | CC BY 2.5      | 3/5        | Covers climate, environment, energy etc. Use if NDIM touches climate data. | 
+| 17   | **Gene Ontology (GO)** | Biology/Genomics | OBO ontology for gene functions (GO: Biological Process, Cellular Component, Molecular Function). Widely used. | Gene Ontology Consortium  | CC BY latest       | 5/5        | Standard for genomics, metagenomics. Rarely used outside bio, but mention for NDIM scientific data. unRDF: mapping gene/protein attributes as needed. |
+| 18   | **SWEET** – Earth/Climate Ontology | Environment/Climate | NASA/ESIP ontologies for earth science (e.g. *Phenomena*, *Process*, *Geography*). Large modular collection. | ESIP Federation           | CC BY latest      | 3/5        | Covers climate, environment, energy etc. Use if NDIM touches climate data. | 
 
 (*Note: URI column omitted lengthy full URLs for brevity; see references. The table is ranked by criticality of coverage and community adoption.*)
 
@@ -1049,7 +1049,7 @@ gantt
 
 ## References
 
-- SWO: Software Ontology (OBO Foundry)【73†L73-L77】 (CC BY 4.0).  
+- SWO: Software Ontology (OBO Foundry)【73†L73-L77】 (CC BY latest).  
 - FIBO: Financial Industry Business Ontology (EDMCouncil/OMG)【31†L54-L62】【34†L19-L22】.  
 - GS1 Web Vocabulary (GS1)【47†L1-L4】.  
 - PROV-O: W3C Provenance Ontology【55†L46-L54】 (Recommendation).  
@@ -1057,7 +1057,7 @@ gantt
 - FOAF: FOAF Vocabulary【69†L33-L39】 (CC BY).  
 - ORG: W3C Organization Ontology【62†L123-L131】.  
 - SIOC: W3C SIOC Core Ontology【60†L61-L66】.  
-- Activity Streams 2.0: W3C Recommendation【49†L48-L51】.  
+- Activity Streams latest: W3C Recommendation【49†L48-L51】.  
 - ADMS: W3C Asset Description Metadata Schema【7†L84-L92】.  
 - ODRL: W3C ODRL Ontology (policy)【17†L1-L3】.  
 
@@ -2661,7 +2661,7 @@ Without a license, the repo is not properly reusable.
 
 For your ecosystem, likely options:
 
-MIT OR Apache-2.0
+MIT OR Apache-latest
 This matches Rust ecosystem norms and the existing ggen posture.
 
 The license should clarify:
@@ -2678,10 +2678,10 @@ examples license.
 
 A likely structure:
 
-Code: MIT OR Apache-2.0
-Docs: CC BY 4.0
-Ontology profiles: CC BY 4.0 or CC0 depending strategy
-Examples: MIT OR Apache-2.0
+Code: MIT OR Apache-latest
+Docs: CC BY latest
+Ontology profiles: CC BY latest or CC0 depending strategy
+Examples: MIT OR Apache-latest
 But the key God Box action is simple: add LICENSE.md.
 
 6. CONTRIBUTING
@@ -2772,7 +2772,7 @@ A rough shape:
 [project]
 name = "mcpp"
 public_name = "MCP Plus"
-version = "0.1.0"
+version = "latest"
 description = "Public-ontology-backed MCP Plus control substrate"
 
 [identity]
@@ -4010,21 +4010,21 @@ File
 Upgrade the PRD/ARD
 
 Thought for a couple of seconds
-MCPP Eve — Upgraded PRD / ARD v2.0
+MCPP Eve — Upgraded PRD / ARD vlatest
 Product: MCPP Eve
 Public system: MCP Plus
 Machine/package identity: mcpp
 Document type: PRD + ARD
-Version: 2.0
+Version: latest
 Date: 2026-04-24
 Owner: Sean Chatman / ChatmanGPT
-Status: Architecture upgrade from v1.0
+Status: Architecture upgrade from vlatest
 
 0. Upgrade Summary
-The v1.0 PRD correctly defined Eve as the primary mcpp eve conversational entrypoint, explicitly not a general-purpose assistant, but a bounded, action-capable copilot over Doctor, Wizard, and Telco. 
+The vlatest PRD correctly defined Eve as the primary mcpp eve conversational entrypoint, explicitly not a general-purpose assistant, but a bounded, action-capable copilot over Doctor, Wizard, and Telco. 
 
 
-This v2.0 upgrade sharpens four things:
+This vlatest upgrade sharpens four things:
 
 Eve is a closed-world operator, not a chatbot.
 Eve inherits from SHRDLU / MYCIN / ELIZA-style bounded symbolic control, but runs on modern graph state, POWL8 execution geometry, and receipted action.
@@ -4073,10 +4073,10 @@ bounded intent router
 + receipt emitter
 The original PRD defined Doctor as diagnose/verify/inspect, Wizard as create/scaffold/extend/generate/plan, and Telco as route/bridge/coordinate/record/escalate. 
 
- v2.0 preserves those faculties but gives them stricter architectural boundaries.
+ vlatest preserves those faculties but gives them stricter architectural boundaries.
 
 2. Product Vision
-2.1 Vision
+latest Vision
 Create the fastest serious copilot for software manufacture and system coordination by avoiding general-chat overhead.
 
 Eve should feel conversational, but her internal structure is not “chat.” Her internal structure is:
@@ -4091,7 +4091,7 @@ utterance
   → state delta
   → corroboration
   → receipt
-2.2 Strategic Claim
+latest Strategic Claim
 Most assistants are slow because they treat every request as an open-world reasoning problem.
 
 Eve is fast because most requests should resolve through:
@@ -4123,12 +4123,12 @@ Tool-success narrator	Tool success is not proof of world-state change
 Hidden planner	Plans must be inspectable, typed, and receipted
 Private ontology oracle	State must be public-ontology-backed where possible
 Repo mutation bot without admission	Violates constitutional execution model
-The v1.0 PRD already rejects social chat, companion AI, freeform essay behavior, and “claims work happened without corroboration.” 
+The vlatest PRD already rejects social chat, companion AI, freeform essay behavior, and “claims work happened without corroboration.” 
 
- v2.0 makes that architectural rather than aspirational.
+ vlatest makes that architectural rather than aspirational.
 
 4. Core Product Thesis
-4.1 Eve’s knowing model
+latest Eve’s knowing model
 Eve does not know something worked because a tool says:
 
 { "success": true }
@@ -4139,13 +4139,13 @@ admission accepted
 + graph state changed
 + telemetry/logs corroborated
 + receipt chain closed
-v1.0 already states that Eve should know from state change, telemetry, process events, and receipts rather than tool success. 
+vlatest already states that Eve should know from state change, telemetry, process events, and receipts rather than tool success. 
 
- v2.0 formalizes this as a product invariant.
+ vlatest formalizes this as a product invariant.
 
-4.2 Product invariant
+latest Product invariant
 No claim of completed action without corroborated state motion.
-4.3 Architecture invariant
+latest Architecture invariant
 Durable truth lives in graph state.
 Hot execution uses compact kinetic structures.
 Receipts bridge them.
@@ -4238,7 +4238,7 @@ what failed,
 who/what executed it.
 
 6. Product Principles
-6.1 Closed world first
+latest Closed world first
 Eve operates over a bounded operational universe:
 
 project graph
@@ -4251,39 +4251,39 @@ project graph
 + receipt chain
 Requests outside that manifold are clarified, bounded, or rejected.
 
-6.2 Fast path before model path
+latest Fast path before model path
 Resolution order:
 
 T0 exact / mask / cached route
 T1 RDF projection / kNN / prototype
 T2 clarification / graph expansion
 T3 LLM fallback
-6.3 Doctor / Wizard / Telco are faculties, not personas
+latest Doctor / Wizard / Telco are faculties, not personas
 They are not “characters.” They are operational faculties:
 
 Faculty	Primitive question
 Doctor	Is this true, healthy, valid, stale, contradictory, or complete?
 Wizard	What lawful thing should be created, generated, extended, or regenerated?
 Telco	What needs routing, bridging, coordination, waiting, locking, or handoff?
-6.4 Graph is durable truth
+latest Graph is durable truth
 The graph is not metadata about the system.
 
 The graph is the constitutional durable state of the system.
 
-6.5 POWL8 is executable process ISA
+latest POWL8 is executable process ISA
 POWL8 is not documentation. It is the minimal executable control geometry.
 
-6.6 POWL64 is durable process-state geometry
+latest POWL64 is durable process-state geometry
 POWL64 is graph-resident long-term state.
 
-6.7 CONSTRUCT8 is the missing internal exchange primitive
+latest CONSTRUCT8 is the missing internal exchange primitive
 Doctor/Wizard/Telco should eventually exchange bounded constructive deltas.
 
-6.8 Receipts replace narrative trust
+latest Receipts replace narrative trust
 Every meaningful action path should produce receipt-bearing evidence.
 
 7. Product Scope
-7.1 In scope for v1 implementation
+latest In scope for v1 implementation
 mcpp eve entrypoint
 
 session context
@@ -4302,7 +4302,7 @@ denial / clarification paths
 
 concise final responses
 
-7.2 In scope for v2 implementation
+latest In scope for v2 implementation
 Oxigraph-backed durable graph state
 
 POWL64 graph materialization
@@ -4321,7 +4321,7 @@ Telco route/bridge state
 
 multi-surface verification
 
-7.3 In scope for v3 implementation
+latest In scope for v3 implementation
 CONSTRUCT8 primitive
 
 graph-to-hot-kinetic lowering
@@ -4337,7 +4337,7 @@ public ontology profile integration
 full receipt chain verification
 
 8. Functional Requirements
-8.1 Entry and session
+latest Entry and session
 Eve must:
 
 launch with mcpp eve,
@@ -4352,10 +4352,10 @@ detect graph availability,
 
 enter bounded control mode.
 
-The v1.0 PRD already requires mcpp eve launch, natural-language requests, project/session context, concise results, and clarification only when necessary. 
+The vlatest PRD already requires mcpp eve launch, natural-language requests, project/session context, concise results, and clarification only when necessary. 
 
 
-8.2 Intent normalization
+latest Intent normalization
 Eve must convert user language into:
 
 Intent {
@@ -4367,7 +4367,7 @@ Intent {
   required_fields: [...]
   missing_fields: [...]
 }
-8.3 Routing
+latest Routing
 Eve must route by priority:
 
 Exact phrase / command route
@@ -4386,7 +4386,7 @@ LLM fallback
 
 Safe denial
 
-8.4 Doctor faculty
+latest Doctor faculty
 Doctor must support:
 
 inspect graph state,
@@ -4407,7 +4407,7 @@ detect missing receipt,
 
 detect graph/runtime divergence.
 
-8.5 Wizard faculty
+latest Wizard faculty
 Wizard must support:
 
 create,
@@ -4428,7 +4428,7 @@ stage manufacturing actions,
 
 update graph/project manifests.
 
-8.6 Telco faculty
+latest Telco faculty
 Telco must support:
 
 route,
@@ -4449,7 +4449,7 @@ record coordination events,
 
 escalate blocked external dependencies.
 
-8.7 Mixed faculty composition
+latest Mixed faculty composition
 Eve must support composed routes:
 
 Doctor → Wizard
@@ -4458,7 +4458,7 @@ Doctor → Telco → Wizard
 Telco → Doctor
 Wizard → Telco
 Doctor + Telco hold on Wizard
-8.8 Admission
+latest Admission
 Every action must pass an admission step before mutation.
 
 Admission returns:
@@ -4468,7 +4468,7 @@ Denied(reason)
 RepairRequired(path)
 ClarificationRequired(question)
 Deferred(condition)
-8.9 Verification
+latest Verification
 Eve must verify through surfaces where applicable:
 
 Surface	Example
@@ -4478,7 +4478,7 @@ Telemetry	span/log present
 Process	POWL64 lifecycle state advanced
 Receipt	hash/signature/chain updated
 Artifact	file or package exists and matches manifest
-8.10 Response contract
+latest Response contract
 Every Eve response to action must end in one of:
 
 Completed with corroboration
@@ -4489,16 +4489,16 @@ Escalated to fallback
 Repair path proposed
 Failed safely
 9. Non-Functional Requirements
-9.1 Latency tiers
+latest Latency tiers
 Tier	Path	Target
 T0	exact/mask/cache	sub-interactive, no LLM
 T1	RDF projection + kNN	fast local
 T2	clarification / wider graph lookup	bounded delay
 T3	LLM fallback	allowed only when required
-9.2 Determinism
+latest Determinism
 Inside the bounded manifold, Eve should produce stable routing for equivalent requests.
 
-9.3 Observability
+latest Observability
 Every meaningful action path emits:
 
 route trace,
@@ -4513,7 +4513,7 @@ receipt reference,
 
 failure surface if any.
 
-9.4 Safety
+latest Safety
 Eve fails safely when:
 
 request is out-of-manifold,
@@ -4528,7 +4528,7 @@ runtime and graph diverge,
 
 clarification fails.
 
-9.5 Extensibility
+latest Extensibility
 Eve must support:
 
 new faculties,
@@ -4544,7 +4544,7 @@ new POWL8 operations,
 future marketplace flows.
 
 10. State Architecture
-10.1 Durable state
+latest Durable state
 Durable state lives in Oxigraph or equivalent RDF graph store.
 
 Durable graph contains:
@@ -4562,10 +4562,10 @@ intent prototypes
 artifact manifests
 receipt metadata
 provenance
-The v1.0 PRD already identifies graph-backed long-term state, candidate store Oxigraph, and POWL64 blocks as graph-resident constitutional objects rather than opaque disk artifacts. 
+The vlatest PRD already identifies graph-backed long-term state, candidate store Oxigraph, and POWL64 blocks as graph-resident constitutional objects rather than opaque disk artifacts. 
 
 
-10.2 Kinetic state
+latest Kinetic state
 Short-lived runtime state includes:
 
 request-local routing state
@@ -4575,12 +4575,12 @@ packed masks
 temporary POWL8 motion packets
 CONSTRUCT8 deltas
 cache entries
-10.3 State split
+latest State split
 Oxigraph / graph = durable constitutional truth
 Native packed structures = kinetic hot path
 Receipts = bridge between durable truth and kinetic action
 11. POWL Architecture
-11.1 POWL8
+latest POWL8
 POWL8 is the executable process instruction set.
 
 It covers primitive lawful progression:
@@ -4599,7 +4599,7 @@ admission boundary,
 
 completion boundary.
 
-11.2 POWL64
+latest POWL64
 POWL64 is durable process-state geometry.
 
 It covers:
@@ -4626,7 +4626,7 @@ receipts,
 
 artifact links.
 
-11.3 POWL64 graph object shape
+latest POWL64 graph object shape
 Example conceptual form:
 
 :powl64-block-001
@@ -4639,7 +4639,7 @@ Example conceptual form:
   mcpp:admissionStatus mcpp:Admitted ;
   prov:wasDerivedFrom :spec-001 ;
   mcpp:hasReceipt :receipt-001 .
-11.4 POWL lowering
+latest POWL lowering
 Public RDF / Spec Kit graph
   → SPARQL CONSTRUCT normalization
   → POWL64 durable graph state
@@ -4647,7 +4647,7 @@ Public RDF / Spec Kit graph
   → CONSTRUCT8 hot deltas
   → receipt-backed graph update
 12. Oxigraph Architecture Requirements
-12.1 Store requirements
+latest Store requirements
 The graph store must support:
 
 RDF triples/quads,
@@ -4670,7 +4670,7 @@ transaction or isolation semantics adequate for Eve reads,
 
 export/import for receipts and audits.
 
-12.2 Graph partitions
+latest Graph partitions
 Recommended named graphs:
 
 urn:mcpp:graph:ontology
@@ -4681,7 +4681,7 @@ urn:mcpp:graph:capabilities
 urn:mcpp:graph:policies
 urn:mcpp:graph:receipts
 urn:mcpp:graph:runtime-snapshots
-12.3 Query classes
+latest Query classes
 Doctor queries:
 
 health
@@ -4717,7 +4717,7 @@ available faculties
 current route context
 last receipt
 13. Intent Routing Architecture
-13.1 Routing object
+latest Routing object
 struct EveRouteCandidate {
     intent_family: IntentFamily,
     normalized_verb: String,
@@ -4728,7 +4728,7 @@ struct EveRouteCandidate {
     missing_fields: Vec<Field>,
     proposed_faculty_sequence: Vec<Faculty>,
 }
-13.2 Route sources
+latest Route sources
 enum RouteSource {
     ExactPattern,
     MaskMatch,
@@ -4738,14 +4738,14 @@ enum RouteSource {
     Clarified,
     LlmFallback,
 }
-13.3 Confidence policy
+latest Confidence policy
 Confidence	Behavior
 Very high	route immediately
 High	route with concise confirmation if mutation risk
 Medium	ask targeted clarification
 Low	broaden graph lookup or fallback
 Unsafe	deny or ask user to reframe
-13.4 Clarification policy
+latest Clarification policy
 Eve should ask:
 
 one question,
@@ -4760,7 +4760,7 @@ Example:
 
 I can treat this as a Doctor check or a Wizard regeneration. Do you want me to verify the current state first, or regenerate immediately?
 14. CONSTRUCT8 Requirement
-14.1 Problem
+latest Problem
 Doctor/Wizard/Telco cannot exchange prose as their primary internal substrate long term.
 
 Prose is:
@@ -4775,7 +4775,7 @@ hard to diff,
 
 not directly admissible.
 
-14.2 Requirement
+latest Requirement
 Define CONSTRUCT8 as a bounded constructive delta primitive.
 
 CONSTRUCT8 should represent:
@@ -4786,7 +4786,7 @@ optimized for hot exchange
 lowerable to/from RDF graph form
 receiptable
 admissible
-14.3 Conceptual shape
+latest Conceptual shape
 struct Construct8 {
     subject: Node8,
     predicate: Predicate8,
@@ -4797,10 +4797,10 @@ struct Construct8 {
     admission: Admission8,
     receipt_hint: ReceiptHint8,
 }
-14.4 Role
+latest Role
 Graph truth → Construct8 delta → POWL8 kinetic execution → graph receipt update
 15. Architecture Components
-15.1 Component list
+latest Component list
 Component	Responsibility
 Eve CLI entry	launch interactive mode
 Session manager	load/save session
@@ -4821,7 +4821,7 @@ POWL64 store/profile	durable process geometry
 POWL8 executor	kinetic process ops
 Receipt emitter	evidence and lineage
 Verification harness	corroboration checks
-15.2 Runtime flow
+latest Runtime flow
 User
   → mcpp eve
   → Session load
@@ -4851,7 +4851,7 @@ privacy/governance	DPV
 MCPP-specific terms are allowed only as public profile terms when public ontology coverage runs out.
 
 17. ARD: Module Boundaries
-17.1 Suggested Rust crate layout
+latest Suggested Rust crate layout
 crates/
   mcpp-eve-cli/
   mcpp-eve-core/
@@ -4870,7 +4870,7 @@ crates/
   mcpp-receipts/
   mcpp-ontology/
   mcpp-testing/
-17.2 Boundary rules
+latest Boundary rules
 Rule	Meaning
 CLI does not own logic	CLI calls core/router
 Router does not mutate graph	Router proposes route
@@ -4881,7 +4881,7 @@ Telco coordinates statefully	No invisible handoff
 Graph is durable truth	Runtime caches are projections
 Receipts are mandatory for action	No silent mutation
 18. Testing and Verification
-18.1 Test classes
+latest Test classes
 Test	Purpose
 Exact route tests	known phrase → known route
 kNN route tests	paraphrase → same intent
@@ -4894,7 +4894,7 @@ Receipt tests	every mutation has evidence
 Verification tests	tool success without state delta fails
 Replay tests	same graph + request → same route
 Drift tests	runtime cache matches graph source
-18.2 Core acceptance test
+latest Core acceptance test
 Given a project graph with a known stale artifact,
 When user says “fix this”
 Eve must:
@@ -4907,20 +4907,20 @@ Eve must:
   7. update graph state,
   8. emit receipt,
   9. return concise completion.
-18.3 False knowing test
+latest False knowing test
 Given a tool returns success
 But graph state does not change
 And no receipt is emitted
 Then Eve must not claim completion.
 19. Metrics
-19.1 User metrics
+latest User metrics
 Metric	Meaning
 eve.workflow_completion_rate	users complete workflows via Eve
 eve.time_to_usable_outcome	time from request to useful result
 eve.clarification_rate	percent requiring clarification
 eve.safe_failure_rate	safe denials / failures
 eve.command_burden_reduction	reduced need to know CLI commands
-19.2 System metrics
+latest System metrics
 Metric	Meaning
 eve.llm_avoidance_rate	percent resolved without LLM
 eve.t0_hit_rate	exact/mask/cache hit rate
@@ -4930,14 +4930,14 @@ eve.admission_success_rate	admitted / requested
 eve.receipt_completeness_rate	actions with receipts
 eve.false_completion_rate	must trend to zero
 eve.graph_runtime_drift_count	divergence detections
-19.3 Product metrics
+latest Product metrics
 Metric	Meaning
 promptware conversion	user upgrades from prompt to generated capability
 regeneration return rate	repeated value from graph-backed regeneration
 marketplace capability attach rate	future NDIM/MCP+ marketplace usage
 completion upgrade rate	user moves from partial to full completion
 20. Risks and Mitigations
-20.1 Over-chatification
+latest Over-chatification
 Risk: Eve becomes a general assistant.
 
 Mitigation:
@@ -4952,7 +4952,7 @@ explicit route families,
 
 safe out-of-manifold refusal/clarification.
 
-20.2 False knowing
+latest False knowing
 Risk: Eve trusts tool success.
 
 Mitigation:
@@ -4965,7 +4965,7 @@ Doctor verification,
 
 telemetry/process corroboration.
 
-20.3 Graph/runtime divergence
+latest Graph/runtime divergence
 Risk: Oxigraph truth and hot runtime state drift.
 
 Mitigation:
@@ -4980,7 +4980,7 @@ drift tests,
 
 replay tests.
 
-20.4 POWL64 over-modeling
+latest POWL64 over-modeling
 Risk: graph representation becomes too heavy.
 
 Mitigation:
@@ -4993,7 +4993,7 @@ graph stores durable state only,
 
 POWL8 handles execution.
 
-20.5 LLM fallback pollution
+latest LLM fallback pollution
 Risk: fallback invents truth.
 
 Mitigation:
@@ -5143,23 +5143,23 @@ File
 Upgrade the program charter. We will be implementing the documentation for the course material later
 
 Thought for a couple of seconds
-Design for Lean Six Sigma Program Charter v2.0
+Design for Lean Six Sigma Program Charter vlatest
 ChatmanGPT Portfolio / UniverseOS / MCP Plus
 Program Name: ChatmanGPT Portfolio DfLSS Program
 Program Type: Enterprise Design for Lean Six Sigma / constitutional software manufacturing charter
-Version: 2.0
+Version: latest
 Date: 2026-04-24
 Executive Sponsor: Sean Chatman / ChatmanGPT
 Portfolio Scope: Genesis, Chatman Equation, UniverseOS, MCPP, Eve, Doctor, Wizard, Telco, MCP Plus, OSTAR, unRDF, MuStar, POWL8, POWL64, Oxigraph durable graph state, CONSTRUCT8, NDIM Marketplace, receipts, verification, and supporting execution substrate.
 
 0. Upgrade Summary
-The v1.0 charter correctly established the ChatmanGPT portfolio as a Design for Lean Six Sigma program governed by the equation:
+The vlatest charter correctly established the ChatmanGPT portfolio as a Design for Lean Six Sigma program governed by the equation:
 
 A = μ(O*)
 where artifacts/actions derive from lawful semantic closure rather than fragmented observation. It also defined the portfolio scope across Genesis, MCPP, Eve, Doctor, Wizard, Telco, MCP+, OSTAR, unRDF, MuStar, POWL8, POWL64, NDIM Marketplace, and the execution/verification substrate. 
 
 
-This v2.0 upgrade clarifies five things:
+This vlatest upgrade clarifies five things:
 
 This charter governs the program, not the training curriculum.
 Course material, instructor guides, student workbooks, day-by-day exercises, and capstone documentation will be implemented later.
@@ -5256,12 +5256,12 @@ receipts provide proof of state motion,
 
 and NDIM Marketplace packages lawful capability progression.
 
-The v1.0 charter already positioned Eve as the bounded conversational control surface, Doctor/Wizard/Telco as universal faculties, OSTAR/unRDF as manufacturing/regeneration systems, and graph-backed state as a foundation. 
+The vlatest charter already positioned Eve as the bounded conversational control surface, Doctor/Wizard/Telco as universal faculties, OSTAR/unRDF as manufacturing/regeneration systems, and graph-backed state as a foundation. 
 
- v2.0 makes those portfolio relationships explicit program architecture.
+ vlatest makes those portfolio relationships explicit program architecture.
 
 4. Business Case
-4.1 Strategic Problem
+latest Strategic Problem
 The current AI/software tooling market is structurally defective:
 
 Market failure	DfLSS interpretation
@@ -5274,7 +5274,7 @@ Manual reconciliation	Rework loop
 Tool-success claims	False completion measurement system
 Opaque persistence	Hidden defect source
 Post-hoc testing	Inspection after design failure
-4.2 Strategic Opportunity
+latest Strategic Opportunity
 ChatmanGPT can invert the market by designing:
 
 bounded control surfaces,
@@ -5293,7 +5293,7 @@ receipt-native verification,
 
 and regenerable software manufacturing.
 
-4.3 Economic Thesis
+latest Economic Thesis
 The portfolio creates value by eliminating:
 
 ambiguity rent
@@ -5311,7 +5311,7 @@ The objective is:
 lower-cost lawful progression from intent to verified artifact.
 
 5. Program Scope
-5.1 In Scope
+latest In Scope
 A. Constitutional Layer
 Genesis
 
@@ -5420,7 +5420,7 @@ pricing/settlement semantics
 
 public cataloging of capability assets
 
-5.2 Out of Scope
+latest Out of Scope
 unconstrained general-purpose chat
 
 freeform assistant behavior as a product goal
@@ -5441,7 +5441,7 @@ Course material is a related downstream deliverable, but not part of this charte
 
 
 6. Customers and Stakeholders
-6.1 Primary Customers
+latest Primary Customers
 Customer	Need
 Non-technical builders	operate through Eve without learning the system internals
 Technical builders	fast, bounded, repo-aware control surface
@@ -5450,7 +5450,7 @@ Enterprises	verifiable manufacturing, governance, reproducibility
 Coding agents	structured tasks, lawful deltas, deterministic handoff
 Marketplace participants	packaged capabilities, regeneration rights, completion paths
 Auditors/reviewers	proof of why action was allowed and what changed
-6.2 Stakeholders
+latest Stakeholders
 Role	Responsibility
 Executive Sponsor	charter authority, strategic direction, final scope approval
 Portfolio Architect	constitutional coherence across all systems
@@ -5530,7 +5530,7 @@ Target: 100% for NDIM production catalog entries.
 8. Defect Definitions
 A defect is any deviation from lawful, manufacturable, graph-backed, bounded, verified progression.
 
-8.1 Constitutional Defects
+latest Constitutional Defects
 action derived from partial/unlawful state,
 
 admission bypass,
@@ -5543,7 +5543,7 @@ unreceipted mutation,
 
 invalid state transition accepted.
 
-8.2 Eve / Control Surface Defects
+latest Eve / Control Surface Defects
 Eve routes incorrectly,
 
 Eve escalates to LLM when T0/T1 route exists,
@@ -5556,7 +5556,7 @@ Doctor/Wizard/Telco boundaries blur,
 
 command surface fragments into inconsistent abstractions.
 
-8.3 Graph / POWL Defects
+latest Graph / POWL Defects
 POWL64 block stored outside durable graph truth without synchronization,
 
 orphan POWL64 block,
@@ -5569,7 +5569,7 @@ graph/runtime cache drift,
 
 missing SHACL validation.
 
-8.4 Manufacturing Defects
+latest Manufacturing Defects
 generated artifact structurally incorrect,
 
 artifact not traceable to graph/spec source,
@@ -5584,7 +5584,7 @@ promptware indistinguishable from boilerplate,
 
 manual repair required after supposedly closed generation.
 
-8.5 Verification Defects
+latest Verification Defects
 receipt missing,
 
 receipt mismatch,
@@ -5597,7 +5597,7 @@ test claims without evidence,
 
 “success” flag treated as proof.
 
-8.6 Performance Defects
+latest Performance Defects
 common-path work silently escalates to warm path,
 
 graph query exceeds budget,
@@ -5608,7 +5608,7 @@ unnecessary allocation-heavy hot path,
 
 repeated context gathering.
 
-8.7 Commercial Defects
+latest Commercial Defects
 marketplace item lacks completion contract,
 
 regeneration rights ambiguous,
@@ -5626,7 +5626,7 @@ The separate course draft uses DMEDI for instructional sequencing and identifies
 
  This charter does not implement that course material yet; it defines the actual portfolio quality program.
 
-9.1 Define
+latest Define
 Define:
 
 portfolio categories,
@@ -5657,7 +5657,7 @@ defect model,
 
 governance model.
 
-9.2 Measure
+latest Measure
 Measure current state:
 
 Eve route latency,
@@ -5688,7 +5688,7 @@ MSA plan,
 
 initial capability measures.
 
-9.3 Analyze
+latest Analyze
 Analyze causes of:
 
 ambiguity,
@@ -5719,7 +5719,7 @@ dependency graph,
 
 Pareto defect view.
 
-9.4 Design
+latest Design
 Design:
 
 Eve routing architecture,
@@ -5754,7 +5754,7 @@ mcpp.toml,
 
 release gates.
 
-9.5 Optimize
+latest Optimize
 Optimize:
 
 route speed,
@@ -5785,7 +5785,7 @@ performance budgets,
 
 target-cost/product-value model.
 
-9.6 Verify
+latest Verify
 Verify:
 
 graph state integrity,
@@ -5819,8 +5819,8 @@ control plan,
 post-release monitoring plan.
 
 10. Program Deliverables
-10.1 Charter / Governance Deliverables
-Program Charter v2.0
+latest Charter / Governance Deliverables
+Program Charter vlatest
 
 portfolio CTQ tree
 
@@ -5834,7 +5834,7 @@ maturity matrix
 
 decision-rights model
 
-10.2 Product / Architecture Deliverables
+latest Product / Architecture Deliverables
 Eve PRD/ARD
 
 MCPP/MCP Plus control architecture
@@ -5855,7 +5855,7 @@ unRDF projection contract
 
 NDIM Marketplace capability contract
 
-10.3 Verification Deliverables
+latest Verification Deliverables
 SHACL validation suite
 
 receipt standard
@@ -5874,7 +5874,7 @@ telemetry/span requirements
 
 evidence pack template
 
-10.4 Commercial Deliverables
+latest Commercial Deliverables
 promptware quality model
 
 regeneration rights model
@@ -5887,7 +5887,7 @@ pricing architecture
 
 marketplace maturity gates
 
-10.5 Deferred Course Deliverables
+latest Deferred Course Deliverables
 These are explicitly not part of the current charter upgrade implementation, but will be implemented later:
 
 instructor guide,
@@ -5910,7 +5910,7 @@ The course draft already outlines a two-week Black Belt schedule with modules fo
 
 
 11. Program Governance
-11.1 Governance Principle
+latest Governance Principle
 Govern admissible state transitions, not personalities, credentials, or tool claims.
 
 No product, feature, artifact, or agent output is accepted because of who or what produced it.
@@ -5923,7 +5923,7 @@ lawful closure
 + admission
 + verification
 + receipt
-11.2 Decision Rights
+latest Decision Rights
 Decision area	Authority
 Program scope	Executive Sponsor
 Constitutional law	Executive Sponsor + Portfolio Architect
@@ -5936,7 +5936,7 @@ CONSTRUCT8 primitive	CONSTRUCT8 Lead + Architecture Council
 Release gates	Verification Lead
 Marketplace packaging	Commercial Lead + Verification Lead
 Course materials	Deferred; not covered by this implementation cycle
-11.3 Tollgate Model
+latest Tollgate Model
 Tollgate	Purpose
 TG0 Charter	confirm scope, CTQs, governance
 TG1 Define	approve problem, stakeholders, CTQs
@@ -6019,7 +6019,7 @@ Promptware feels generic	low conversion	quality gates, completion path, regenera
 Coding agents invent architecture	incoherence	agents implement tasks only after architecture locked
 Course scope contaminates product scope	distraction	defer course docs; charter governs product program
 16. Metrics
-16.1 Portfolio Metrics
+latest Portfolio Metrics
 Metric	Target
 constitutional alignment coverage	100% for release candidates
 graph-resident durable state coverage	increasing to 100% for production state
@@ -6027,7 +6027,7 @@ receipt coverage	100% for production actions
 release first-pass gate pass rate	improving release over release
 rework rate	materially decreasing
 public ontology mapping coverage	high; no private-default authority
-16.2 Eve Metrics
+latest Eve Metrics
 Metric	Target
 LLM avoidance rate	majority of common paths
 T0/T1 route hit rate	increasing
@@ -6035,21 +6035,21 @@ routing latency	bounded and fast
 clarification frequency	minimized without false routing
 false completion rate	zero
 non-technical completion rate	majority of target workflows
-16.3 Graph / POWL Metrics
+latest Graph / POWL Metrics
 Metric	Target
 POWL64 graph object coverage	100% for durable process state
 invalid lifecycle transitions	zero admitted
 graph/runtime drift count	zero silent drift
 SHACL pass rate	100% for release candidates
 SPARQL query latency	within hot/warm budget
-16.4 Manufacturing Metrics
+latest Manufacturing Metrics
 Metric	Target
 regeneration consistency	high and improving
 generated artifact pass rate	high
 promptware quality gate pass rate	high
 ontology-to-artifact cycle time	decreasing
 downstream repair rate	decreasing
-16.5 Commercial Metrics
+latest Commercial Metrics
 Metric	Target
 promptware conversion	increasing
 regeneration return rate	increasing
@@ -6057,7 +6057,7 @@ completion upgrade rate	increasing
 marketplace package acceptance rate	high after quality gates
 repeat customer expansion	increasing
 17. Milestones
-Milestone 1 — Charter v2.0 Locked
+Milestone 1 — Charter vlatest Locked
 upgraded charter accepted,
 
 course materials explicitly deferred,
@@ -6069,7 +6069,7 @@ governance accepted,
 defect taxonomy accepted.
 
 Milestone 2 — Eve PRD/ARD Locked
-Eve v2.0 PRD/ARD accepted,
+Eve vlatest PRD/ARD accepted,
 
 closed-world operator framing accepted,
 
@@ -6182,7 +6182,7 @@ For course artifacts, later:
 
 lesson objective + theory + ChatmanGPT translation + exercise + deliverable + assessment rubric
 20. Approval Statement
-This v2.0 DfLSS Program Charter authorizes the ChatmanGPT portfolio to proceed under a single integrated design-for-quality framework.
+This vlatest DfLSS Program Charter authorizes the ChatmanGPT portfolio to proceed under a single integrated design-for-quality framework.
 
 All major portfolio capabilities must design in:
 
@@ -6236,10 +6236,10 @@ File
 Upgrade the MM
 
 Thought for 4s
-ChatmanGPT Portfolio Maturity Matrix v2.0
+ChatmanGPT Portfolio Maturity Matrix vlatest
 Constitutional Capability → Category-Defining Infrastructure
 Type: Portfolio maturity rubric / DfLSS release-readiness instrument
-Version: 2.0
+Version: latest
 Scope: Genesis, UniverseOS, MCPP, Eve, Doctor, Wizard, Telco, MCP Plus, OSTAR, unRDF, MuStar, POWL8, POWL64, Oxigraph, CONSTRUCT8, NDIM Marketplace, receipts, and supporting execution substrate.
 
 0. Upgrade Summary
@@ -6249,7 +6249,7 @@ The prior matrix correctly measured maturity across ten internal dimensions: con
 The extension added Levels 6–10 for capabilities that move beyond internal constitutional maturity and become externally formative: Federated Constitutional, Market-Shaping, Ecosystem-Forming, Civilizational Infrastructure, and Ontological/Epochal. 
 
 
-This v2.0 upgrade merges both into one operating model:
+This vlatest upgrade merges both into one operating model:
 
 Levels 0–5  = internal constitutional maturity
 Levels 6–10 = external formative maturity
@@ -6504,7 +6504,7 @@ Level	Name	Internal / External	Meaning
 8	Ecosystem-Forming	External	Creates extension/marketplace ecosystem
 9	Civilizational Infrastructure	External	Institution-scale operating substrate
 10	Ontological / Epochal	External	Redefines the field’s categories
-4. Assessment Dimensions v2.0
+4. Assessment Dimensions vlatest
 The v1 rubric used ten dimensions. v2 keeps them and adds five external-formation dimensions.
 
 Internal maturity dimensions
@@ -6544,7 +6544,7 @@ Each dimension is scored 0–10.
 0–5  = internal maturity
 6–10 = external formative maturity
 5. Rubric by Dimension
-5.1 Constitutional Alignment
+latest Constitutional Alignment
 Score	Meaning
 0	No relation to Chatman Equation or lawful closure
 1	Mentions law, but behavior is not designed from it
@@ -6557,7 +6557,7 @@ Score	Meaning
 8	Ecosystem contracts depend on constitutional semantics
 9	Institutions rely on the lawfulness model
 10	Lawful closure becomes a field-level ontology
-5.2 Boundedness and Scope Discipline
+latest Boundedness and Scope Discipline
 Score	Meaning
 0	Unbounded/vague/general-purpose
 1	Boundaries implied but unenforced
@@ -6570,7 +6570,7 @@ Score	Meaning
 8	Ecosystem extensions inherit boundary discipline
 9	Institutions depend on bounded operation
 10	Bounded admissibility replaces open-ended assistant framing
-5.3 Technical Implementation
+latest Technical Implementation
 Score	Meaning
 0	No implementation
 1	Sketch/prototype/demo
@@ -6583,7 +6583,7 @@ Score	Meaning
 8	Extension/dependency ecosystem forms
 9	Mission-critical deployments rely on it
 10	Becomes canonical implementation pattern for the category
-5.4 Verification and Proof
+latest Verification and Proof
 Score	Meaning
 0	No verification
 1	Manual inspection only
@@ -6596,7 +6596,7 @@ Score	Meaning
 8	Ecosystem artifacts require verification contracts
 9	Institutional trust depends on proof substrate
 10	Verification-over-narrative becomes the field norm
-5.5 Performance and Kinetic Honesty
+latest Performance and Kinetic Honesty
 Score	Meaning
 0	No performance understanding
 1	Aspirational claims
@@ -6609,7 +6609,7 @@ Score	Meaning
 8	Ecosystem depends on its performance tiers
 9	Mission-critical operations rely on its kinetic model
 10	Redefines expected execution speed/shape for the field
-5.6 Manufacturability and Regeneration
+latest Manufacturability and Regeneration
 Score	Meaning
 0	One-off manual work
 1	Ad hoc template/script
@@ -6622,7 +6622,7 @@ Score	Meaning
 8	Ecosystem sells/extends regenerated capabilities
 9	Institutions depend on regeneration/manufacturing line
 10	Software manufacturing from ontology becomes default paradigm
-5.7 Graph / Ontology Integration
+latest Graph / Ontology Integration
 Score	Meaning
 0	No graph/ontology role
 1	Ontology mentioned only
@@ -6635,7 +6635,7 @@ Score	Meaning
 8	Ecosystem extensions publish graph-compatible assets
 9	Institutions depend on graph as operating state
 10	Graph-native durable truth becomes the category ontology
-5.8 User and Operator Experience
+latest User and Operator Experience
 Score	Meaning
 0	No usable surface
 1	Expert-only/fragile
@@ -6648,7 +6648,7 @@ Score	Meaning
 8	Ecosystem adopts the interaction grammar
 9	Institutions train/work around the UX
 10	Becomes the new human/system interaction baseline
-5.9 Economic / Platform Integration
+latest Economic / Platform Integration
 Score	Meaning
 0	No economic relevance
 1	Standalone feature thinking
@@ -6661,7 +6661,7 @@ Score	Meaning
 8	Marketplace or ecosystem economy forms
 9	Institutions depend on economic/operational model
 10	Redefines value exchange around lawful state progression
-5.10 Portfolio Coherence
+latest Portfolio Coherence
 Score	Meaning
 0	Disconnected
 1	Conceptually related only
@@ -6674,7 +6674,7 @@ Score	Meaning
 8	Ecosystem forms around the coherent substrate
 9	Institutions treat portfolio as operating layer
 10	Portfolio ontology becomes field ontology
-5.11 Federation and Interoperability
+latest Federation and Interoperability
 Score	Meaning
 0	Cannot interoperate
 1	Manual export/import
@@ -6687,7 +6687,7 @@ Score	Meaning
 8	Ecosystem extensions rely on federation
 9	Institutional cross-system dependence
 10	Federation model becomes category standard
-5.12 Market-Shaping Force
+latest Market-Shaping Force
 Score	Meaning
 0	No market relevance
 1	Interesting only internally
@@ -6700,7 +6700,7 @@ Score	Meaning
 8	Competitors must respond or reposition
 9	Market category reorganizes around it
 10	Prior category framing becomes obsolete
-5.13 Ecosystem Formation
+latest Ecosystem Formation
 Score	Meaning
 0	No extension surface
 1	One-off integrations
@@ -6713,7 +6713,7 @@ Score	Meaning
 8	Durable ecosystem/marketplace exists
 9	Ecosystem becomes operationally necessary
 10	Ecosystem defines the field’s structure
-5.14 Institutional Dependence
+latest Institutional Dependence
 Score	Meaning
 0	No institutional use case
 1	Hypothetical institutional relevance
@@ -6726,7 +6726,7 @@ Score	Meaning
 8	Multiple institutions rely on it
 9	Civilizational / mission-critical substrate
 10	Absence materially degrades the operational world
-5.15 Ontological Reframing
+latest Ontological Reframing
 Score	Meaning
 0	No conceptual contribution
 1	New name for old thing
@@ -6739,22 +6739,22 @@ Score	Meaning
 8	Ecosystem designs around the frame
 9	Institutions adopt the frame
 10	Field-level category redefinition
-6. Scoring Model v2.0
-6.1 Raw score
+6. Scoring Model vlatest
+latest Raw score
 15 dimensions × 10 points:
 
 maximum raw score = 150
-6.2 Internal maturity score
+latest Internal maturity score
 Use the original ten dimensions only:
 
 Internal Score = dimensions 1–10
 Maximum = 100
-6.3 External formative score
+latest External formative score
 Use the five new external dimensions:
 
 External Score = dimensions 11–15
 Maximum = 50
-6.4 Suggested score bands
+latest Suggested score bands
 Total Score	Band
 0–14	Concept only
 15–29	Early prototype
@@ -6769,7 +6769,7 @@ Total Score	Band
 149–150	Ontological / Epochal
 Important: score alone is insufficient. Gating rules override total score.
 
-7. Gating Rules v2.0
+7. Gating Rules vlatest
 To reach Level 3 — Operational
 Must have:
 
@@ -7024,7 +7024,7 @@ L4: quality-gated capability packages
 L5: constitutional marketplace internally
 L8: ecosystem-forming
 L9+: institutional capability exchange substrate
-10. Scorecard Template v2.0
+10. Scorecard Template vlatest
 Capability: <name>
 Dimension	Score 0–10	Evidence	Blocking Gap	Next Move
 Constitutional Alignment				
@@ -7074,7 +7074,7 @@ NDIM Marketplace		8–9	capability contracts	catalog + rights + receipts
 12. DfLSS / Black Belt Usage
 The prior rubric explicitly supported DfLSS use in Define, Develop, and Implement phases. 
 
- v2.0 expands that into a full tollgate instrument.
+ vlatest expands that into a full tollgate instrument.
 
 Define
 Use MM to identify current maturity and target maturity.
@@ -9537,7 +9537,7 @@ They are not “best practices.”
 They are unqualified heuristics.
 
 1. DfLSS calculus
-1.1 Design admissibility
+latest Design admissibility
 A design practice is admissible under DfLSS only if:
 
 DfLSS_Admit(B) :=
@@ -9581,7 +9581,7 @@ are not admissible by default.
 
 They require proof.
 
-1.2 DfLSS defect predicate
+latest DfLSS defect predicate
 A practice is a DfLSS defect if it moves quality downstream:
 
 Defect_DfLSS(B) :=
@@ -9604,7 +9604,7 @@ Therefore:
 ∀B ∈ LegacySoftwareBestPractices:
   Defect_DfLSS(B) unless proven otherwise
 2. TPS calculus
-2.1 Flow admissibility
+latest Flow admissibility
 Let:
 
 L = work in process
@@ -9655,7 +9655,7 @@ HardenLater(B)
 ⇒ DownstreamDefectCorrection(B)
 ⇒ ¬Jidoka(B)
 ⇒ ¬TPS_Admit(B)
-2.2 Conway / production topology predicate
+latest Conway / production topology predicate
 Let:
 
 S = system architecture
@@ -9684,7 +9684,7 @@ Integration-later
 are defects unless constrained by the already-generated Level 10 topology.
 
 3. ChatmanGPT Level 10 calculus
-3.1 Production law
+latest Production law
 At ChatmanGPT Level 10:
 
 A = μ(O*_10)
@@ -9743,7 +9743,7 @@ late documentation
 private schemas
 LLM-first routing
 4. Antipattern predicates
-4.1 “Start small”
+latest “Start small”
 StartSmall(B) :=
   ReduceScope(B) without preserving CompleteProductionTopology
 If:
@@ -9757,7 +9757,7 @@ Thus:
 StartSmall(B) ⇒ ¬TPS_Admit(B) ∧ ¬DfLSS_Admit(B)
 Prose: “Start small” is not engineering. It is arbitrary scope reduction unless the complete production topology remains intact. ChatmanGPT does not start small. It starts whole.
 
-4.2 “MVP”
+latest “MVP”
 MVP(B) :=
   Minimize(Functionality)
 ∧ Defer(Quality ∨ Verification ∨ Governance ∨ StateModel)
@@ -9771,7 +9771,7 @@ MVC :=
 = smallest complete law/state/flow/proof system
 Prose: The valid replacement is not MVP. It is Minimum Viable Constitution: the smallest complete system of law, state, flow, proof, and production control.
 
-4.3 “Prototype then harden”
+latest “Prototype then harden”
 PrototypeThenHarden(B) :=
   Produce(A_weak) now
 ∧ Add(QualityControls) later
@@ -9785,7 +9785,7 @@ Therefore:
 PrototypeThenHarden(B) ⇒ ¬DfLSS_Admit(B) ∧ ¬TPS_Admit(B)
 Prose: This is downstream inspection. DfLSS rejects it. TPS rejects it. ChatmanGPT rejects it.
 
-4.4 “Skeleton first”
+latest “Skeleton first”
 Skeleton(B) :=
   Structure(A) ∧ ¬FunctionalCompleteness(A) ∧ ¬VerificationCompleteness(A)
 Then:
@@ -9800,7 +9800,7 @@ Thus:
 Skeleton(B) ⇒ TPSDefect
 Prose: A skeleton is not progress. It is unfinished inventory with a clean folder structure.
 
-4.5 “Thin vertical slice”
+latest “Thin vertical slice”
 ThinSlice(B) :=
   OnePathWorks(B)
 ∧ ¬CombinatorialSurfaceProven(B)
@@ -9814,7 +9814,7 @@ So one path does not prove the system.
 
 Prose: A thin slice proves a path, not the production system. The valid slice is a constitutional slice: the whole line with controlled exposure.
 
-4.6 “Emergent architecture”
+latest “Emergent architecture”
 EmergentArchitecture(B) :=
   S_t+1 = f(LocalDecisions_t)
 But ChatmanGPT requires:
@@ -9828,7 +9828,7 @@ then:
 ConwayDefect(B)
 Prose: Architecture cannot “emerge” from local work. It must be generated from the Level 10 ontology before flow begins.
 
-4.7 “Integration later”
+latest “Integration later”
 IntegrationLater(B) :=
   Build(parts_i) independently
 ∧ Reconcile(interfaces) later
@@ -9843,7 +9843,7 @@ Therefore:
 IntegrationLater(B) ⇒ TPSDefect ∧ ConwayDefect
 Prose: Integration as a phase is evidence that the production topology was not designed.
 
-4.8 “Add tests later”
+latest “Add tests later”
 TestsLater(B) :=
   Build(A)
 ∧ DefineVerification(A) after A exists
@@ -9855,7 +9855,7 @@ Therefore:
 TestsLater(B) ⇒ ¬DfLSS_Admit(B)
 Prose: Tests are not a cleanup step. They are generated from CTQs with the artifact.
 
-4.9 “Add observability later”
+latest “Add observability later”
 ObservabilityLater(B) :=
   Execute(P)
 ∧ DetectAbnormality(P) undefined at execution time
@@ -9868,7 +9868,7 @@ Therefore:
 ObservabilityLater(B) ⇒ ¬TPS_Admit(B)
 Prose: If the line cannot signal abnormality, it is not a production line.
 
-4.10 “Private schema first”
+latest “Private schema first”
 PrivateSchema(B) :=
   Invent(T_private)
 ∧ ∃C_public such that Expresses(C_public, T_private)
@@ -9886,7 +9886,7 @@ ExtensionAllowed(t) :=
   ¬∃C_public : Expresses(C_public, t)
 Prose: Private ontology is not harmless. It resets semantic maturity to Level 0 unless no public composition can express the distinction.
 
-4.11 “LLM-first routing”
+latest “LLM-first routing”
 LLMFirst(B) :=
   ControlDecision = ModelOutput
 ∧ ¬QualifiedMeasurementSystem(ModelOutput)
@@ -9908,7 +9908,7 @@ Route :=
 → BoundedLLMFallback
 Prose: LLM output is not a qualified measurement system. Eve may use LLMs, but the model cannot own the control decision.
 
-4.12 “Tool success = completion”
+latest “Tool success = completion”
 ToolSuccess(B) :=
   ToolReturnsSuccess
 ⇒ ClaimComplete
@@ -9929,7 +9929,7 @@ then:
 Prose: Tool success is not proof. Completion requires corroborated state motion.
 
 5. Engineering-grade replacement calculus
-5.1 Level 10 production admissibility
+latest Level 10 production admissibility
 A ChatmanGPT production practice is admissible iff:
 
 CGPT_Admit(B) :=
@@ -9949,7 +9949,7 @@ If any critical term fails:
 
 ¬PublicOntologyFirst(B) ∨ ¬WholeProductionTopology(B) ∨ ¬ReceiptProof(B)
 ⇒ ¬CGPT_Admit(B)
-5.2 Manufacturing equation
+latest Manufacturing equation
 A_production =
   μ(
     O*_10
@@ -10285,7 +10285,7 @@ Program charter scope: Genesis, Chatman Equation, UniverseOS, MCPP, Eve, Doctor,
 
 Program CTQs include lawful closure, bounded intent routing, graph constitutional integrity, POWL8 executability, POWL64 durability, verification/no false knowing, manufacturing consistency, speed, public ontology alignment, marketplace integrity.
 
-Maturity Matrix v2.0 levels 0–10: 0 Conceptual, 1 Prototype, 2 Structured, 3 Operational, 4 Industrialized, 5 Constitutional, 6 Federated Constitutional, 7 Market-Shaping, 8 Ecosystem-Forming, 9 Civilizational Infrastructure, 10 Ontological/Epochal.
+Maturity Matrix vlatest levels 0–10: 0 Conceptual, 1 Prototype, 2 Structured, 3 Operational, 4 Industrialized, 5 Constitutional, 6 Federated Constitutional, 7 Market-Shaping, 8 Ecosystem-Forming, 9 Civilizational Infrastructure, 10 Ontological/Epochal.
 
 Levels 0–5 measure internal constitutional maturity; levels 6–10 measure external formative maturity.
 
@@ -10321,7 +10321,7 @@ Explore outputs candidate deltas; selection/normalization maps to O*; Claude Cod
 
 Do not let explore pollute truth.
 
-ggen v6.0.1 is deterministic, language-agnostic code generation from RDF ontologies with MCP integration and OpenTelemetry tracing.
+ggen vlatest is deterministic, language-agnostic code generation from RDF ontologies with MCP integration and OpenTelemetry tracing.
 
 ggen μ₁–μ₅ pipeline: ontology normalization/load → SPARQL extraction → Tera/template rendering → canonicalization/validation → cryptographic receipt emission.
 
@@ -11409,12 +11409,12 @@ One-line retrospective
 By 2030, the ChatmanGPT Program Portfolio had reshaped software-saturated civilization around one law: action must precipitate from lawful closure, with graph-resident state, executable process geometry, semantic manufacture, bounded entry, and receipt-backed proof replacing the entire pre-constitutional world of tools, prompts, workflows, dashboards, and human glue.
 
 
-ChatmanGPT README v30.1.1 (Calver)
+ChatmanGPT README vlatest (Calver)
 
 Thought for 6s
-ChatmanGPT README v30.1.1
+ChatmanGPT README vlatest
 Constitutional Software Manufacturing for the Semantic Age
-Version: v30.1.1
+Version: vlatest
 Versioning: CalVer-aligned portfolio release
 System: ChatmanGPT Program Portfolio
 Public Frame: UniverseOS / MCP Plus / OSTAR / Eve
@@ -11995,7 +11995,7 @@ Created:
 
 Download PUBLIC-ONTOLOGIES.ttl
 
-It defines the ChatmanGPT public-ontology-first profile for v30.1.1, including:
+It defines the ChatmanGPT public-ontology-first profile for vlatest, including:
 
 public ontology catalog
 

@@ -2,7 +2,7 @@
 
 > LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

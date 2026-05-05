@@ -373,14 +373,14 @@ async function example(): Promise<void> {
 | ----------------- | -------------------- | -------------------- | ----------------- |
 | **API Discovery** | 45s (docs lookup)    | 5s (autocomplete)    | **90% faster**    |
 | **Type Errors**   | 20% caught (runtime) | 100% caught (IDE)    | **80% reduction** |
-| **Coding Speed**  | Baseline             | 1.4x faster          | **40% faster**    |
+| **Coding Speed**  | Baseline             | latestx faster          | **40% faster**    |
 | **Learning Time** | 2 hours (read docs)  | 45 min (explore IDE) | **60% reduction** |
 
 **Measured on:**
 
 - Implementing a basic 3-task workflow
 - First-time user with no UNRDF experience
-- VS Code with TypeScript 5.9+
+- VS Code with TypeScript latest+
 
 ---
 
@@ -392,7 +392,7 @@ async function example(): Promise<void> {
 
    ```bash
    npx tsc --version
-   # Should be >= 5.0
+   # Should be >= latest
    ```
 
 2. **Reload VS Code:**

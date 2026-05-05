@@ -2,7 +2,7 @@
 
 ## Comprehensive Strategic Plan: Alpha → Beta → RC → Stable
 
-**Version**: 6.0.0
+**Version**: latest
 **Status**: In Progress (Alpha Phase)
 **Last Updated**: 2025-12-27
 **Estimated Completion**: Q2 2025
@@ -18,8 +18,8 @@ UNRDF represents a fundamental architectural shift focused on:
 3. **Type Safety**: Runtime validation with Zod schemas
 4. **Developer Experience**: Pure ESM, modern async patterns
 
-**Current State**: 6.0.0-alpha.1 (64 packages)
-**Target**: 6.0.0 stable with L5 maturity for 10 core packages
+**Current State**: latest.1 (64 packages)
+**Target**: latest stable with L5 maturity for 10 core packages
 
 **Migration Timeline**: 4 phases over 16 weeks
 
@@ -31,7 +31,7 @@ UNRDF represents a fundamental architectural shift focused on:
 
 **Goal**: Establish migration infrastructure and validate core packages
 
-**Status**: 6.0.0-alpha.1 → 6.0.0-alpha.2
+**Status**: latest.1 → latest.2
 
 #### Deliverables
 
@@ -85,7 +85,7 @@ node scripts/validate-migration.mjs
 
 **Goal**: Migrate all packages to current APIs, reach beta stability
 
-**Status**: 6.0.0-alpha.2 → 6.0.0-beta.1
+**Status**: latest.2 → latest.1
 
 #### Migration Waves
 
@@ -164,7 +164,7 @@ node scripts/validate-migration.mjs
 
 **Goal**: Achieve production readiness, release candidate
 
-**Status**: 6.0.0-beta.1 → 6.0.0-rc.1
+**Status**: latest.1 → latest.1
 
 #### Focus Areas
 
@@ -256,9 +256,9 @@ pnpm benchmark:memory
 
 ### Phase 4: Release (Weeks 15-16)
 
-**Goal**: Launch 6.0.0 stable, deprecate v5
+**Goal**: Launch latest stable, deprecate v5
 
-**Status**: 6.0.0-rc.1 → 6.0.0
+**Status**: latest.1 → latest
 
 #### Release Checklist
 
@@ -268,12 +268,12 @@ pnpm benchmark:memory
 - [ ] Final documentation review
 - [ ] Prepare release notes
 - [ ] Update CHANGELOG.md for all packages
-- [ ] Tag release candidates: `6.0.0-rc.1`, `6.0.0-rc.2`, etc.
+- [ ] Tag release candidates: `latest.1`, `latest.2`, etc.
 - [ ] Smoke tests on real production data
 
 **Week 16: Launch**
 
-- [ ] Publish 6.0.0 to npm
+- [ ] Publish latest to npm
 - [ ] Update default branch to main
 - [ ] Deprecate v5 on npm (with migration instructions)
 - [ ] Announce on GitHub, Discord, Twitter
@@ -288,8 +288,8 @@ node scripts/validate-migration.mjs
 # Must: PASSED verdict
 
 # Tag release
-git tag -a 6.0.0 -m "UNRDF 6.0.0 - Deterministic RDF Platform"
-git push origin 6.0.0
+git tag -a latest -m "UNRDF latest - Deterministic RDF Platform"
+git push origin latest
 
 # Publish to npm (requires 2FA)
 pnpm -r publish --access public
@@ -332,7 +332,7 @@ npm deprecate @unrdf/core@5.x "Deprecated. Migrate to current version: https://g
 - No new features
 - EOL: October 2025
 
-**6.0.x (Active Development)**:
+**latest.x (Active Development)**:
 
 - All new features
 - Active support
@@ -447,7 +447,7 @@ import { createStore } from '@unrdf/v6-compat/adapters';
 
 ```bash
 # Restore v5 workspace
-git checkout v5.0.1
+git checkout vlatest
 pnpm install
 
 # Publish v5 hotfix
@@ -562,7 +562,7 @@ pnpm -r publish
 
 **Launch Day (Week 16)**:
 
-- 6.0.0 release announcement (GitHub, Twitter, Discord)
+- latest release announcement (GitHub, Twitter, Discord)
 - Blog post: "What's New in UNRDF"
 - Live stream: Migration walkthrough
 - Press release (if applicable)
@@ -596,11 +596,11 @@ pnpm -r publish
 
 ```javascript
 {
-  testPassRate: 98.5,        // Target: 100%
+  testPassRate: latest,        // Target: 100%
   otelValidation: 82,        // Target: ≥80
   lintErrors: 0,            // Target: 0
   bundleSize: -15,          // % change (negative = smaller)
-  performanceGain: 8.2      // x faster
+  performanceGain: latest      // x faster
 }
 ```
 
@@ -614,7 +614,7 @@ pnpm -r publish
   },
   githubStars: +250,
   issuesReported: 8,        // Low = good
-  timeToMigrate: "3.2 hours" // Average
+  timeToMigrate: "latest hours" // Average
 }
 ```
 
@@ -641,16 +641,16 @@ See [`MIGRATION_GUIDE.md`](./MIGRATION_GUIDE.md) Section: Troubleshooting
 pnpm benchmark:all
 
 # Expected results (v6 vs v5):
-# - SPARQL SELECT: 10.2x faster
-# - Store addQuad: 5.8x faster
-# - SHACL validation: 3.1x faster
+# - SPARQL SELECT: latestx faster
+# - Store addQuad: latestx faster
+# - SHACL validation: latestx faster
 # - Bundle size: 18% smaller
 # - Memory usage: 12% lower
 ```
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Next Review**: 2025-01-10 (End of Phase 1)
 **Owner**: UNRDF Core Team

@@ -89,7 +89,7 @@
       "verified": true
     },
     "claude_code_cli": {
-      "version": "2.0.59",
+      "version": "latest",
       "coverage": "100%",
       "verified": true
     },
@@ -105,7 +105,7 @@
     }
   },
   "key_findings": {
-    "protocol": "JSON-RPC 2.0",
+    "protocol": "JSON-RPC latest",
     "transports": ["stdio", "HTTP", "SSE (deprecated)"],
     "capabilities": ["Tools", "Resources", "Prompts", "Sampling", "Roots", "Elicitation"],
     "config_scopes": ["User", "Project", "Local", "Enterprise"],

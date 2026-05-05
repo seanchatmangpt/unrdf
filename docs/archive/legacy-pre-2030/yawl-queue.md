@@ -2,7 +2,7 @@
 
 > Distributed YAWL workflow execution using BullMQ and Redis
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

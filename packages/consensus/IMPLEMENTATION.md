@@ -323,10 +323,10 @@ Initial leader: node-1
 {
   "dependencies": {
     "@unrdf/federation": "workspace:*",   // Integration
-    "msgpackr": "^1.11.8",                // Efficient serialization
-    "ws": "^8.18.3",                      // WebSocket transport
-    "zod": "^4.1.13",                     // Schema validation
-    "@opentelemetry/api": "^1.9.0"        // Observability
+    "msgpackr": "^latest",                // Efficient serialization
+    "ws": "^latest",                      // WebSocket transport
+    "zod": "^latest",                     // Schema validation
+    "@opentelemetry/api": "^latest"        // Observability
   }
 }
 ```

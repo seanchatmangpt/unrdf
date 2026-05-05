@@ -76,7 +76,7 @@ mcp__claude-flow__memory_usage {
     findings: ["finding1", "finding2"],
     recommendations: ["rec1", "rec2"],
     data_sources: ["source1", "source2"],
-    confidence_level: 0.85,
+    confidence_level: latest,
     created_by: "worker-analyst-1"
   })
 }
@@ -209,9 +209,9 @@ mcp__claude-flow__memory_usage {
   value: JSON.stringify({
     tasks_completed: 15,
     average_time_ms: 2500,
-    success_rate: 0.93,
-    resource_efficiency: 0.78,
-    collaboration_score: 0.85
+    success_rate: latest,
+    resource_efficiency: latest,
+    collaboration_score: latest
   })
 }
 ```

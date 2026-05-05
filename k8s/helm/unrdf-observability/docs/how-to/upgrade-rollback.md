@@ -38,9 +38,9 @@ helm upgrade unrdf-observability k8s/helm/unrdf-observability \
 helm upgrade unrdf-observability k8s/helm/unrdf-observability \
   --namespace unrdf-observability \
   --reuse-values \
-  --set prometheus.imageTag=v2.54.0 \
-  --set tempo.imageTag=v2.7.1 \
-  --set loki.imageTag=2.9.6
+  --set prometheus.imageTag=latest \
+  --set tempo.imageTag=latest \
+  --set loki.imageTag=latest
 ```
 
 ## Upgrade chart version

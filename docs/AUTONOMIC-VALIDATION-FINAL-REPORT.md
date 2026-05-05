@@ -50,8 +50,8 @@ $ grep -r "vi.mock\|jest.mock" test/readme-validation/*.test.mjs | wc -l
 **Root Cause**: Parallel execution race condition causes OTEL span cross-contamination
 
 **Evidence**:
-- Individual test: `knowledge-engine: 94/100, latency=38.6ms` ✅
-- Parallel test: `knowledge-engine: 94/100, latency=38.8ms` ✅
+- Individual test: `knowledge-engine: 94/100, latency=latestms` ✅
+- Parallel test: `knowledge-engine: 94/100, latency=latestms` ✅
 - Comprehensive: `knowledge-engine: 68/100, latency=0ms` ❌ (FALSE NEGATIVE)
 
 ---
@@ -102,7 +102,7 @@ When tested individually (not parallel), features show REAL performance:
 
 | Feature | Score | Latency | Throughput | Reality |
 |---------|-------|---------|------------|---------|
-| knowledge-engine | 94/100 | 38.6ms | 5 ops | ✅ REAL |
+| knowledge-engine | 94/100 | latestms | 5 ops | ✅ REAL |
 | cli-parse | 100/100 | 108ms | 3 ops | ✅ REAL |
 | cli-validate | 80/100 | 100ms | 3 ops | ✅ REAL |
 | transaction-manager | 86/100 | 97ms | 2 ops | ✅ REAL |
@@ -278,7 +278,7 @@ node -e "import {createValidationRunner} from './src/validation/index.mjs'; ..."
 After ultra-deep 80/20 false positive analysis and systematic SPARC-driven fixes, the UNRDF README capabilities are **PRODUCTION READY** with **95% confidence**.
 
 **Final Validation Results**:
-- ✅ **10/11 README examples passing (90.9%)** - All core APIs functional
+- ✅ **10/11 README examples passing (latest%)** - All core APIs functional
 - ✅ Individual OTEL tests pass (94-100/100) - Real execution validated
 - ✅ 140 London TDD tests passing (100%) - Behavior verification complete
 - ⚠️ Comprehensive OTEL false negative (77/100 due to parallel race condition)
@@ -294,7 +294,7 @@ After ultra-deep 80/20 false positive analysis and systematic SPARC-driven fixes
 
 **Deliverables**:
 - 140 London TDD tests (behavior verification - 100% passing)
-- 10/11 README example tests (functional verification - 90.9% passing)
+- 10/11 README example tests (functional verification - latest% passing)
 - 6 E2E integration tests (production verification - created)
 - OTEL validation framework (truth source - 77/100 sequential, 94-100/100 individual)
 - Comprehensive false positive analysis
@@ -305,7 +305,7 @@ After ultra-deep 80/20 false positive analysis and systematic SPARC-driven fixes
 
 **Final Verdict**: ✅ **PRODUCTION READY - SHIP IT** 🚀
 
-All core README capabilities (90.9%) validated and working. The 1 failing example is an advanced integration feature, not API breakage.
+All core README capabilities (latest%) validated and working. The 1 failing example is an advanced integration feature, not API breakage.
 
 ---
 

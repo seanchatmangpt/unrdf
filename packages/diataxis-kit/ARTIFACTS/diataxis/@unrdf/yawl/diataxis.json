@@ -39,7 +39,7 @@
     ]
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0-blue) ![Production Ready](https://img.shields.",
+    "architecture": "![Version](https://img.shields.io/badge/version-[VERSION]-blue) ![Production Ready](https://img.shields.",
     "concepts": [
       "workflow",
       "yawl",
@@ -240,5 +240,5 @@
       "title": "Getting Started with @unrdf/yawl"
     }
   ],
-  "version": "26.4.3"
+  "version": "[VERSION]"
 }

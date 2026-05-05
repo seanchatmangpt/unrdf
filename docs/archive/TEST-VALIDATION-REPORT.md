@@ -2,7 +2,7 @@
 ## Executive Summary
 
 **Test Run Date**: October 1, 2025
-**Test Duration**: 277.66 seconds (~4.6 minutes)
+**Test Duration**: latest seconds (~latest minutes)
 **Overall Status**: ⚠️ PARTIAL PASS - Core functionality validated, edge cases need fixes
 
 ---
@@ -10,8 +10,8 @@
 ## Test Results Summary
 
 ### Overall Statistics
-- **Total Tests**: 491 passed / 971 total (50.6% pass rate)
-- **Test Files**: 12 passed / 72 total (16.7% pass rate)
+- **Total Tests**: 491 passed / 971 total (latest% pass rate)
+- **Test Files**: 12 passed / 72 total (latest% pass rate)
 - **Skipped Tests**: 18 tests, 1 file
 - **Failed Tests**: 427 tests across 59 files
 - **Errors**: 23 unhandled rejections
@@ -312,13 +312,13 @@ expected [] to have a length of 1 but got +0
 
 ## Appendix: Test Environment
 
-**Operating System**: macOS (Darwin 24.5.0)
+**Operating System**: macOS (Darwin latest)
 **Node.js Version**: v23.x (requires NODE_MODULE_VERSION 137)
-**Test Framework**: Vitest 1.6.1
+**Test Framework**: Vitest latest
 **Working Directory**: `/Users/sac/unrdf`
 **Git Branch**: `main`
 **Test Start Time**: 16:31:26
-**Test Duration**: 277.66 seconds
+**Test Duration**: latest seconds
 **Coverage**: V8 (report generation incomplete)
 
 ---

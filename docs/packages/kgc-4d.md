@@ -2,7 +2,7 @@
 
 > KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Essential
 
 ## Overview

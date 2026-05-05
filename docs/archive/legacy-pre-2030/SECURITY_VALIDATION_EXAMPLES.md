@@ -354,11 +354,11 @@ describe('Federation Query Security', () => {
 
 | Operation | Before Security | After Security | Overhead |
 |-----------|----------------|----------------|----------|
-| `detectInjection()` | N/A | 0.12ms | 0.12ms |
-| `validatePayload()` | N/A | 0.35ms | 0.35ms |
-| `sanitizeError()` | N/A | 0.05ms | 0.05ms |
-| `detectSecrets()` | N/A | 0.22ms | 0.22ms |
-| **Total per operation** | 0ms | ~0.74ms | **0.74ms** |
+| `detectInjection()` | N/A | latestms | latestms |
+| `validatePayload()` | N/A | latestms | latestms |
+| `sanitizeError()` | N/A | latestms | latestms |
+| `detectSecrets()` | N/A | latestms | latestms |
+| **Total per operation** | 0ms | ~latestms | **latestms** |
 
 **Conclusion**: < 1ms overhead per secured operation is acceptable for P0 security.
 

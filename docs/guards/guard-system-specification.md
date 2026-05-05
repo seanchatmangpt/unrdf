@@ -172,11 +172,11 @@ CATEGORY: Allowed URLs Whitelist (H15)
 
 CATEGORY: DNS Resolution (H16)
 ├── Patterns:
-│   ├── localhost, 127.0.0.1, ::1 (allowed)
+│   ├── localhost, latest.1, ::1 (allowed)
 │   ├── Internal IPs: 10.*, 172.16.*, 192.168.* (blocked unless config)
 │   ├── Metadata services: 169.254.* (blocked)
 │   ├── Any: *.internal (blocked)
-│   └── Cloud metadata: metadata.google.internal, 169.254.169.254 (blocked)
+│   └── Cloud metadata: metadata.google.internal, latest.254 (blocked)
 ├── Impact: Cloud metadata extraction, internal network access
 └── Guard: guardDNSResolution()
 
@@ -563,7 +563,7 @@ CONSTANTS:
 
     FORBIDDEN_DOMAINS = [
         "metadata.google.internal",
-        "169.254.169.254",  // AWS metadata
+        "latest.254",  // AWS metadata
         "*.internal",
         "localhost:8080",
         "*.local"

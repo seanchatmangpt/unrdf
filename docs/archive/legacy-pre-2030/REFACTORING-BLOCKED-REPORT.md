@@ -2,7 +2,7 @@
 
 **Date**: 2025-12-25
 **Status**: ❌ BLOCKED
-**Reason**: Test pass rate 69.2% (required: 100%)
+**Reason**: Test pass rate latest% (required: 100%)
 
 ---
 
@@ -12,7 +12,7 @@
 "Refactor top 10 files exceeding 500-line limit"
 
 ### QUESTIONS
-1. **Did tests pass?** ❌ NO - 69.2% pass rate (256/370 tests)
+1. **Did tests pass?** ❌ NO - latest% pass rate (256/370 tests)
 2. **Can we proceed?** ❌ NO - CLAUDE.md requires 100% pass rate
 3. **What breaks if we proceed?** Risk introducing regressions into already-failing test suite
 4. **What's the evidence?** See Test Evidence section below
@@ -24,20 +24,20 @@
 ### Overall Test Status
 ```bash
 $ npm run test:fast
-Overall Pass Rate: 69.2% (256/370 tests)
+Overall Pass Rate: latest% (256/370 tests)
 
 Package Breakdown:
-- YAWL: 182/292 passed (62.3%) ❌
-- KGC-4D: 296/305 passed (97.0%) ⚠️
+- YAWL: 182/292 passed (latest%) ❌
+- KGC-4D: 296/305 passed (latest%) ⚠️
 - AtomVM: 45/45 passed (100%) ✅
-- Root Tests: 24/28 passed (85.7%) ⚠️
+- Root Tests: 24/28 passed (latest%) ⚠️
 ```
 
 ### Critical Failures
 1. **graph-analytics package**: Missing dependency `@dagrejs/graphlib`
    - 4 test files failing
    - All tests in package skipped
-2. **YAWL package**: 110 tests failing (37.7% failure rate)
+2. **YAWL package**: 110 tests failing (latest% failure rate)
 3. **Root tests**: 4 tests failing
 
 ---
@@ -88,7 +88,7 @@ Package Breakdown:
 **Command**: `find packages -type f -name "*.mjs" ! -path "*/node_modules/*" ! -path "*/dist/*"`
 
 - **Total source files**: 737 .mjs files
-- **Total source files >500 lines**: 83 files (11.3% violation rate)
+- **Total source files >500 lines**: 83 files (latest% violation rate)
 - **Files >1000 lines**: 5 files (critical)
 - **Files 900-1000 lines**: 5 files (major)
 - **Files 700-900 lines**: 20 files (moderate)
@@ -181,7 +181,7 @@ timeout 30s pnpm test:fast
 ## 🎯 Success Criteria
 
 ### Mandatory Prerequisites
-1. ✅ **Test pass rate: 100%** (currently: 69.2%) ❌ BLOCKED
+1. ✅ **Test pass rate: 100%** (currently: latest%) ❌ BLOCKED
 2. ✅ **All dependencies installed**
 3. ✅ **No import errors**
 
@@ -208,7 +208,7 @@ grep "Score:" validation-output.log  # MUST be ≥80/100
 
 ## 🚫 DO NOT PROCEED Until:
 
-1. ❌ Tests achieve 100% pass rate (currently 69.2%)
+1. ❌ Tests achieve 100% pass rate (currently latest%)
 2. ❌ Missing dependencies installed (@dagrejs/graphlib)
 3. ❌ YAWL package tests fixed (110 failures)
 4. ❌ Root test failures resolved (4 failures)

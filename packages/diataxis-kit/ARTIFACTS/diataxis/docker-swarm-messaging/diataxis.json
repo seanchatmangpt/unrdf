@@ -96,5 +96,5 @@
       "title": "Getting Started with docker-swarm-messaging"
     }
   ],
-  "version": "26.5.4"
+  "version": "[VERSION]"
 }

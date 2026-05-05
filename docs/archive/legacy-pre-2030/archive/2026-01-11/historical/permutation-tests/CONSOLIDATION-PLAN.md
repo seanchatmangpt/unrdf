@@ -325,7 +325,7 @@ Deprecated:
 
 **Day 1-3:** 12. Run OTEL validation on remaining packages 13. Benchmark performance 14. Update deployment docs
 
-**Day 4-5:** 15. Create migration guide for users 16. Publish release notes 17. Release v5.0.0 stable (or v6.0.0 if breaking)
+**Day 4-5:** 15. Create migration guide for users 16. Publish release notes 17. Release vlatest stable (or vlatest if breaking)
 
 ---
 

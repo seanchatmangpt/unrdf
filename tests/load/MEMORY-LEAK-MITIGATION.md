@@ -292,7 +292,7 @@ If you fix the leak, contribute back to Oxigraph:
 3. **File issue**: https://github.com/oxigraph/oxigraph/issues
    - Title: "Memory leak in JS bindings during iterator usage"
    - Attach: reproduction.log, heap-snapshots.tar.gz
-   - Environment: Node v24.11.1, oxigraph version X.Y.Z
+   - Environment: Node latest, oxigraph version X.Y.Z
 
 ---
 

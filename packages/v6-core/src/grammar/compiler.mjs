@@ -5,7 +5,7 @@
  * Reject overly complex constructs with denial receipts (never crashes).
  *
  * @module @unrdf/v6-core/grammar/compiler
- * @version 6.0.0-alpha.1
+ * @version [VERSION]-alpha.1
  */
 
 import { z } from 'zod';
@@ -420,7 +420,7 @@ function compileASTToRuntime(ast) {
     metadata: {
       compiledAt: new Date().toISOString(),
       compiler: 'v6-aot-compiler',
-      version: '6.0.0-alpha.1',
+      version: '[VERSION]-alpha.1',
     },
   };
 }

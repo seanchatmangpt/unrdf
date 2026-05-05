@@ -14,7 +14,7 @@ const main = defineCommand({
   meta: {
     name: 'validate-cli',
     description: 'Validate @unrdf/cli package functionality',
-    version: '1.0.0',
+    version: '[VERSION]',
   },
   args: {
     verbose: {

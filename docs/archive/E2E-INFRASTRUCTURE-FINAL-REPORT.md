@@ -223,8 +223,8 @@ Total: ~870 lines of production-grade infrastructure code
 ```json
 {
   "devDependencies": {
-    "dockerode": "^4.0.9",    // Docker API control
-    "wait-on": "^9.0.1"       // URL waiting with retry
+    "dockerode": "^latest",    // Docker API control
+    "wait-on": "^latest"       // URL waiting with retry
   }
 }
 ```

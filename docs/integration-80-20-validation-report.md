@@ -24,7 +24,7 @@
 | Architecture Analyzer | "90% production-ready, 4 days to complete" | 81/100 OTEL score, 26 violations | B | 75% |
 | Production Validator | "DEPLOYMENT BLOCKED - 4 CRITICAL vulns, 34% test failure" | Tests exist but validation uses wrong metric | C | 60% |
 | v3 Readiness | "DEFER REASONING to v3.1, proceed with v3" | Reasoning not in v3 scope per README | B+ | 85% |
-| Coder Agent | "95% complete core, 6 days to v2.4.0" | Outdated (v3.0.0 released), but analysis solid | C | 65% |
+| Coder Agent | "95% complete core, 6 days to latest" | Outdated (latest released), but analysis solid | C | 65% |
 | README Claims | "✅ 100% core test coverage (114/114 tests passing)" | OTEL shows 81/100, NOT 100% | C- | 55% |
 
 **VALIDATION METHODOLOGY USED:**
@@ -97,9 +97,9 @@
 **Issue 7: CLI features have 4 violations each**
 - **OTEL Result:** All CLI features score **82/100** (just above threshold)
 - **Violations:** 4 missing spans per feature (cli-parse, cli-query, cli-validate, cli-hook)
-- **Impact:** **30% of CLI users** (but v3.0.0 removed CLI!)
+- **Impact:** **30% of CLI users** (but latest removed CLI!)
 - **Fix:** **DEFER** - CLI moved to separate `@unrdf/cli` package
-- **Effort:** 0 hours (out of scope for v3.0.0)
+- **Effort:** 0 hours (out of scope for latest)
 - **Value:** LOW (not in v3 core)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -124,21 +124,21 @@
 - **Effort:** 10 minutes
 - **Value:** MEDIUM-HIGH
 
-**Issue 10: Outdated v2.4.0 references in architecture docs**
-- **Files:** `docs/architecture-80-20-analysis.md`, `docs/implementation-roadmap-v2.4.0.md`
-- **Reality:** v3.0.0 is current release
+**Issue 10: Outdated latest references in architecture docs**
+- **Files:** `docs/architecture-80-20-analysis.md`, `docs/implementation-roadmap-latest.md`
+- **Reality:** latest is current release
 - **Impact:** 40% of contributors will follow outdated roadmap
-- **Fix:** Update docs to reflect v3.0.0 reality
+- **Fix:** Update docs to reflect latest reality
 - **Effort:** 1-2 hours
 - **Value:** MEDIUM
 
 ### Security Documentation
 
 **Issue 11: vm2 deprecation warning insufficient**
-- **README Line 618:** `⚠️ **vm2 deprecation** - Migrating to isolated-vm in v3.1.0`
+- **README Line 618:** `⚠️ **vm2 deprecation** - Migrating to isolated-vm in latest`
 - **Reality:** Production Validator found 4 CRITICAL RCE vulnerabilities in vm2
 - **Impact:** 60% of security-conscious users need stronger warning
-- **Fix:** Change to "🚨 **vm2 REMOVED in v3.0.0** - Known RCE vulnerabilities (CVE-2023-37466)"
+- **Fix:** Change to "🚨 **vm2 REMOVED in latest** - Known RCE vulnerabilities (CVE-2023-37466)"
 - **Effort:** 5 minutes
 - **Value:** HIGH (security transparency)
 
@@ -150,7 +150,7 @@
 
 **Issue 12: Example code uses outdated imports**
 - **README Line 113:** `import { parseTurtle, toTurtle, parseJsonLd, toNQuads } from 'unrdf';`
-- **Reality:** Need to verify these exports exist in v3.0.0
+- **Reality:** Need to verify these exports exist in latest
 - **Impact:** 30% of new users will hit import errors
 - **Priority:** MEDIUM
 - **Effort:** 30 minutes (verify exports)
@@ -164,14 +164,14 @@
 
 **Issue 14: Security features accuracy**
 - **README Lines 609-613:** Lists Merkle verification, VM2 sandbox, lockchain integrity
-- **Reality:** VM2 removed in v3.0.0 per security findings
+- **Reality:** VM2 removed in latest per security findings
 - **Impact:** 15% of security-focused users
 - **Priority:** MEDIUM
 - **Effort:** 10 minutes (update security section)
 
 **Issue 15: Roadmap outdated**
-- **README Lines 634-659:** Shows v3.0.0 as current but lists future features
-- **Reality:** v3.0.0 is released, roadmap should show v3.1.0+
+- **README Lines 634-659:** Shows latest as current but lists future features
+- **Reality:** latest is released, roadmap should show latest+
 - **Impact:** 10% of users tracking roadmap
 - **Priority:** LOW
 - **Effort:** 15 minutes
@@ -226,7 +226,7 @@ node validation/run-all.mjs comprehensive
 **Step 4: Update Security Warning (5 min)**
 ```markdown
 # Change README line 618 from:
-- ⚠️ **vm2 deprecation** - Migrating to isolated-vm in v3.1.0
+- ⚠️ **vm2 deprecation** - Migrating to isolated-vm in latest
 
 # To:
 - 🚨 **vm2 REMOVED** - Eliminated 4 CRITICAL RCE vulnerabilities (CVE-2023-37466, CVE-2023-37903)
@@ -326,7 +326,7 @@ grep -E "(registerHook|deregisterHook|evaluateHook)" src/index.mjs
 | Installation | "npm install unrdf" | Works | 100% | LOW |
 | Examples | Code samples | Appear valid | 90% | MEDIUM |
 | Architecture | System diagrams | Matches source | 95% | LOW |
-| Roadmap | v3.0.0 current | v3.0.0 released | 100% | LOW |
+| Roadmap | latest current | latest released | 100% | LOW |
 
 **Overall README Accuracy: 72%** (Functional but misleading in key areas)
 
@@ -350,8 +350,8 @@ Missing spans (6 violations):
 
 Missing spans (4 violations each):
 - CLI features have consistent pattern of missing spans
-- However, CLI was removed in v3.0.0 (moved to @unrdf/cli)
-- **Decision:** DEFER - not in v3.0.0 scope
+- However, CLI was removed in latest (moved to @unrdf/cli)
+- **Decision:** DEFER - not in latest scope
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 VALIDATION EVIDENCE SUMMARY
@@ -406,7 +406,7 @@ Passing Features:
 
 **v3 Readiness Agent:**
 - **Claimed:** "DEFER REASONING to v3.1, proceed with v3"
-- **Reality:** Correct - reasoning not in v3.0.0 scope per README
+- **Reality:** Correct - reasoning not in latest scope per README
 - **Accuracy:** High
 
 **README Claims:**
@@ -446,7 +446,7 @@ Passing Features:
 
 ### SHIP CRITERIA
 
-**v3.0.0 can ship when:**
+**latest can ship when:**
 1. ✅ README test coverage claim corrected (5 min)
 2. ✅ OTEL validation explanation added (20 min)
 3. ✅ Security warnings updated (5 min)
@@ -454,9 +454,9 @@ Passing Features:
 5. ❌ knowledge-engine ≥80/100 (2-3 hours) **OR** document as "experimental"
 
 **RECOMMENDATION:**
-- **Ship v3.0.0 NOW** with README fixes (30 minutes)
+- **Ship latest NOW** with README fixes (30 minutes)
 - Mark knowledge-engine as "beta" in docs
-- Plan v3.0.1 for knowledge-engine OTEL span completion
+- Plan latest for knowledge-engine OTEL span completion
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📎 APPENDIX: VALIDATION METHODOLOGY

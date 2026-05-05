@@ -76,7 +76,7 @@ $ unrdf policy test policy-pack.json
 🧪 Testing Policy Pack: data-governance
 ══════════════════════════════════════════════════════
 File:        /path/to/policy-pack.json
-Version:     1.0.0
+Version:     latest
 Hooks:       3
 Dry Run:     No
 
@@ -106,7 +106,7 @@ $ unrdf policy test policy-pack.json --dry-run
 🧪 Testing Policy Pack: data-governance
 ══════════════════════════════════════════════════════
 File:        /path/to/policy-pack.json
-Version:     1.0.0
+Version:     latest
 Hooks:       3
 Dry Run:     Yes
 

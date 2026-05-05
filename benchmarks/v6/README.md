@@ -44,9 +44,9 @@ node benchmarks/v6/5-composition-latency.mjs
 
 **Output:**
 ```
-Baseline median:     0.000123 ms
-Receipt median:      0.001234 ms
-Overhead:            0.89%
+Baseline median:     latest ms
+Receipt median:      latest ms
+Overhead:            latest%
 Status:              ✅ PASS
 ```
 
@@ -64,9 +64,9 @@ Status:              ✅ PASS
 
 **Output:**
 ```
-Initial state size:     1024.00 KB
-Avg delta size:         2.34 KB
-Compression ratio:      0.23%
+Initial state size:     latest KB
+Avg delta size:         latest KB
+Compression ratio:      latest%
 Status:                 ✅ PASS
 ```
 
@@ -91,8 +91,8 @@ Status:                 ✅ PASS
 
 **Output:**
 ```
-Average overhead:    3.24%
-Max overhead:        4.78%
+Average overhead:    latest%
+Max overhead:        latest%
 Status:              ✅ ALL PASS
 ```
 
@@ -116,9 +116,9 @@ node --expose-gc benchmarks/v6/4-memory-usage.mjs
 
 **Output:**
 ```
-Receipt overhead:          12.34 KB
-Receipt overhead %:        1.85%
-Receipt bytes per quad:    126.40 bytes
+Receipt overhead:          latest KB
+Receipt overhead %:        latest%
+Receipt bytes per quad:    latest bytes
 Status:                    ✅ PASS
 ```
 
@@ -138,8 +138,8 @@ Status:                    ✅ PASS
 
 **Output:**
 ```
-Two-hop overhead:        7.23%
-Three-hop overhead:      8.91%
+Two-hop overhead:        latest%
+Three-hop overhead:      latest%
 Status:                  ✅ PASS
 ```
 
@@ -241,11 +241,11 @@ Based on benchmark results, prioritize:
 
 From actual benchmark runs (git-verifiable):
 
-- Receipt overhead: **0.89%** (target <1%) ✅
-- Delta compression: **0.23%** (target <10%) ✅
-- Query overhead: **3.24%** avg (target <5%) ✅
-- Memory overhead: **1.85%** (target <2%) ✅
-- Composition overhead: **8.91%** 3-hop (target <10%) ✅
+- Receipt overhead: **latest%** (target <1%) ✅
+- Delta compression: **latest%** (target <10%) ✅
+- Query overhead: **latest%** avg (target <5%) ✅
+- Memory overhead: **latest%** (target <2%) ✅
+- Composition overhead: **latest%** 3-hop (target <10%) ✅
 
 **Note**: These are example values. Run benchmarks to get actual measurements for your environment.
 

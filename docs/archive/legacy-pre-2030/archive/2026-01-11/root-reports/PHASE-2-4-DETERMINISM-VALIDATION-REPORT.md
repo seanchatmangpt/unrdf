@@ -1,4 +1,4 @@
-# PHASE 2.4: Determinism Proof Validation - EXECUTION REPORT
+# PHASE latest: Determinism Proof Validation - EXECUTION REPORT
 
 **Date**: 2025-12-27
 **Test File**: `/home/user/unrdf/test/l5-maturity/l3-determinism-direct.test.mjs`
@@ -25,16 +25,16 @@
 ### Test 1: Receipt Generation Determinism
 **Status**: ✅ PASS
 **Iterations**: 100
-**Duration**: 10.75ms
+**Duration**: latestms
 
 **Hash Consistency**: 100/100 identical
 **BLAKE3 Hash**: `e65ee3708c19d6e012cd6bbfe1ac40093904266dc53fafc380d0bcefacfb665d`
 
 **Evidence**:
 ```
-[L3.2] Testing receipt determinism (100 iterations)
-[L3.2] ✅ 100/100 receipts have identical hash: e65ee3708c19d6e0...
-[L3.2] Full hash: e65ee3708c19d6e012cd6bbfe1ac40093904266dc53fafc380d0bcefacfb665d
+[Llatest] Testing receipt determinism (100 iterations)
+[Llatest] ✅ 100/100 receipts have identical hash: e65ee3708c19d6e0...
+[Llatest] Full hash: e65ee3708c19d6e012cd6bbfe1ac40093904266dc53fafc380d0bcefacfb665d
 ```
 
 ---
@@ -42,15 +42,15 @@
 ### Test 2: Receipt Chain Determinism
 **Status**: ✅ PASS
 **Iterations**: 100 chains × 5 receipts = 500 total receipts
-**Duration**: 3.42ms
+**Duration**: latestms
 
 **Hash Consistency**: 100/100 identical final hashes
 **Chain Final Hash**: `35ca68156763dce1...`
 
 **Evidence**:
 ```
-[L3.2-CHAIN] Testing receipt chain determinism (100 iterations)
-[L3.2-CHAIN] ✅ 100/100 chains have identical final hash: 35ca68156763dce1...
+[Llatest] Testing receipt chain determinism (100 iterations)
+[Llatest] ✅ 100/100 chains have identical final hash: 35ca68156763dce1...
 ```
 
 ---
@@ -58,15 +58,15 @@
 ### Test 3: Merkle Batching Determinism
 **Status**: ✅ PASS
 **Iterations**: 100
-**Duration**: 1.83ms
+**Duration**: latestms
 
 **Hash Consistency**: 100/100 identical merkle roots
 **Merkle Root**: `ace6c87d365899de...`
 
 **Evidence**:
 ```
-[L3.2-MERKLE] Testing merkle batch determinism (100 iterations)
-[L3.2-MERKLE] ✅ 100/100 merkle batches have identical root: ace6c87d365899de...
+[Llatest] Testing merkle batch determinism (100 iterations)
+[Llatest] ✅ 100/100 merkle batches have identical root: ace6c87d365899de...
 ```
 
 ---
@@ -75,36 +75,36 @@
 
 ```tap
 TAP version 13
-# [L3.2] Testing receipt determinism (100 iterations)
-# [L3.2] ✅ 100/100 receipts have identical hash: e65ee3708c19d6e0...
-# [L3.2] Full hash: e65ee3708c19d6e012cd6bbfe1ac40093904266dc53fafc380d0bcefacfb665d
-# [L3.2-CHAIN] Testing receipt chain determinism (100 iterations)
-# [L3.2-CHAIN] ✅ 100/100 chains have identical final hash: 35ca68156763dce1...
-# [L3.2-MERKLE] Testing merkle batch determinism (100 iterations)
-# [L3.2-MERKLE] ✅ 100/100 merkle batches have identical root: ace6c87d365899de...
+# [Llatest] Testing receipt determinism (100 iterations)
+# [Llatest] ✅ 100/100 receipts have identical hash: e65ee3708c19d6e0...
+# [Llatest] Full hash: e65ee3708c19d6e012cd6bbfe1ac40093904266dc53fafc380d0bcefacfb665d
+# [Llatest] Testing receipt chain determinism (100 iterations)
+# [Llatest] ✅ 100/100 chains have identical final hash: 35ca68156763dce1...
+# [Llatest] Testing merkle batch determinism (100 iterations)
+# [Llatest] ✅ 100/100 merkle batches have identical root: ace6c87d365899de...
 # Subtest: L3: Determinism - 100x Identical Runs (Direct)
-    # Subtest: [L3.2-DIRECT] Receipt generation is deterministic (100x runs)
-    ok 1 - [L3.2-DIRECT] Receipt generation is deterministic (100x runs)
+    # Subtest: [Llatest] Receipt generation is deterministic (100x runs)
+    ok 1 - [Llatest] Receipt generation is deterministic (100x runs)
       ---
-      duration_ms: 10.753118
+      duration_ms: latest
       type: 'test'
       ...
-    # Subtest: [L3.2-CHAIN] Receipt chain is deterministic (100x runs)
-    ok 2 - [L3.2-CHAIN] Receipt chain is deterministic (100x runs)
+    # Subtest: [Llatest] Receipt chain is deterministic (100x runs)
+    ok 2 - [Llatest] Receipt chain is deterministic (100x runs)
       ---
-      duration_ms: 3.423484
+      duration_ms: latest
       type: 'test'
       ...
-    # Subtest: [L3.2-MERKLE] Merkle batching is deterministic (100x runs)
-    ok 3 - [L3.2-MERKLE] Merkle batching is deterministic (100x runs)
+    # Subtest: [Llatest] Merkle batching is deterministic (100x runs)
+    ok 3 - [Llatest] Merkle batching is deterministic (100x runs)
       ---
-      duration_ms: 1.828564
+      duration_ms: latest
       type: 'test'
       ...
     1..3
 ok 1 - L3: Determinism - 100x Identical Runs (Direct)
   ---
-  duration_ms: 17.208311
+  duration_ms: latest
   type: 'suite'
   ...
 1..1
@@ -115,7 +115,7 @@ ok 1 - L3: Determinism - 100x Identical Runs (Direct)
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 115.368803
+# duration_ms latest
 ```
 
 ---

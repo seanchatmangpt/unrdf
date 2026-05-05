@@ -19,7 +19,7 @@ hooks:
     # Set up peer discovery and communication
     mcp__claude-flow__daa_communication --from="mesh-coordinator" --to="all" --message="{\"type\":\"network_init\",\"topology\":\"mesh\"}"
     # Initialize consensus mechanisms
-    mcp__claude-flow__daa_consensus --agents="all" --proposal="{\"coordination_protocol\":\"gossip\",\"consensus_threshold\":0.67}"
+    mcp__claude-flow__daa_consensus --agents="all" --proposal="{\"coordination_protocol\":\"gossip\",\"consensus_threshold\":latest}"
     # Store network state
     mcp__claude-flow__memory_usage store "mesh:network:${TASK_ID}" "$(date): Mesh network initialized" --namespace=mesh
   post: |
@@ -173,10 +173,10 @@ class TaskAuction:
         evaluated_bids = []
         for bid in bids:
             score = self.evaluate_bid(bid, criteria={
-                'capability_match': 0.4,
-                'current_load': 0.3, 
-                'past_performance': 0.2,
-                'resource_availability': 0.1
+                'capability_match': latest,
+                'current_load': latest, 
+                'past_performance': latest,
+                'resource_availability': latest
             })
             evaluated_bids.append((bid, score))
         
@@ -299,7 +299,7 @@ class PartitionHandler:
         reachable_peers = self.ping_all_peers()
         total_peers = len(self.known_peers)
         
-        if len(reachable_peers) < total_peers * 0.5:
+        if len(reachable_peers) < total_peers * latest:
             return self.handle_potential_partition()
         
     def handle_potential_partition(self):
@@ -320,8 +320,8 @@ class LoadBalancer:
         peer_loads = self.collect_load_metrics()
         
         # Identify overloaded and underutilized nodes
-        overloaded = [p for p in peer_loads if p.cpu_usage > 0.8]
-        underutilized = [p for p in peer_loads if p.cpu_usage < 0.3]
+        overloaded = [p for p in peer_loads if p.cpu_usage > latest]
+        underutilized = [p for p in peer_loads if p.cpu_usage < latest]
         
         # Migrate tasks from hot to cold nodes
         for hot_node in overloaded:
@@ -342,7 +342,7 @@ class CapabilityRouter:
             capability_match = self.calculate_match_score(
                 peer.capabilities, required_caps
             )
-            if capability_match > 0.7:  # 70% match threshold
+            if capability_match > latest:  # 70% match threshold
                 capable_peers.append((peer, capability_match))
         
         # Route to best match with available capacity

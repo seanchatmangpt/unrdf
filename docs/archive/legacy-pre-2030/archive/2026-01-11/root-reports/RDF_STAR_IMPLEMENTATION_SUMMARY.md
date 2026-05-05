@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented native RDF-star (W3C RDF 1.2) support for UNRDF v6.2.0, providing quoted triples, provenance tracking, temporal annotations, and confidence scores with Oxigraph backend integration.
+Successfully implemented native RDF-star (W3C RDF latest) support for UNRDF vlatest, providing quoted triples, provenance tracking, temporal annotations, and confidence scores with Oxigraph backend integration.
 
 ## Implementation Status
 
@@ -59,7 +59,7 @@ Successfully implemented native RDF-star (W3C RDF 1.2) support for UNRDF v6.2.0,
 
 ### Performance Benchmarks (Measured)
 - **Quoted triple creation**: <1ms (target: <1ms) ✓
-- **Annotation addition**: <0.5ms (target: <0.5ms) ✓
+- **Annotation addition**: <latestms (target: <latestms) ✓
 - **1000 annotated triples**: 362ms (with reification overhead)
 - **Storage overhead**: 6+ quads per annotated triple (reification pattern)
 
@@ -84,7 +84,7 @@ Successfully implemented native RDF-star (W3C RDF 1.2) support for UNRDF v6.2.0,
 ## Architecture Decisions
 
 ### Reification-Based Approach
-Due to Oxigraph JavaScript bindings (v0.5.3) not supporting quoted triples as subjects directly, implemented a **reification-based hybrid approach**:
+Due to Oxigraph JavaScript bindings (vlatest) not supporting quoted triples as subjects directly, implemented a **reification-based hybrid approach**:
 
 - Quoted triples are represented with a wrapper object containing:
   - The base triple
@@ -95,7 +95,7 @@ Due to Oxigraph JavaScript bindings (v0.5.3) not supporting quoted triples as su
 This approach:
 - ✓ Works with current Oxigraph JavaScript bindings
 - ✓ Provides full RDF-star functionality
-- ✓ Compatible with W3C RDF 1.2 specification
+- ✓ Compatible with W3C RDF latest specification
 - ✓ Allows future migration to native quoted triple support
 - ✓ Maintains backward compatibility
 
@@ -112,7 +112,7 @@ _:qt rdf:predicate foaf:age .
 _:qt rdf:object "30" .
 
 # Annotations
-_:qt rdfstar:confidence "0.95"^^xsd:decimal .
+_:qt rdfstar:confidence "latest"^^xsd:decimal .
 ```
 
 ## API Examples
@@ -124,7 +124,7 @@ import { RDFStarFactory } from '@unrdf/core';
 const factory = new RDFStarFactory();
 const quoted = factory.quotedTriple(
   factory.namedNode('http://example.org/Alice'),
-  factory.namedNode('http://xmlns.com/foaf/0.1/knows'),
+  factory.namedNode('http://xmlns.com/foaf/latest/knows'),
   factory.namedNode('http://example.org/Bob')
 );
 ```
@@ -142,7 +142,7 @@ const result = factory.createAnnotatedTriple(subject, predicate, object, {
     validTo: '2026-12-31T23:59:59Z'
   },
   confidence: {
-    confidence: 0.95
+    confidence: latest
   }
 });
 
@@ -156,7 +156,7 @@ import { QuotedTriple } from '@unrdf/core';
 
 const qt = new QuotedTriple(subject, predicate, object)
   .addProvenance({ source: 'http://example.org/dataset' })
-  .addConfidence({ confidence: 0.95 })
+  .addConfidence({ confidence: latest })
   .addTemporal({ validFrom: '2026-01-01T00:00:00Z' });
 
 const quads = qt.toQuads();
@@ -172,7 +172,7 @@ const query = new SPARQLStarQueryBuilder()
   .where('?s', '?p', '?o')
   .whereQuoted('?s', '?p', '?o')
   .whereAnnotation('?confidence', 'confidence')
-  .filter('?confidence > 0.9')
+  .filter('?confidence > latest')
   .orderBy('?confidence', 'DESC')
   .limit(10)
   .build();
@@ -187,7 +187,7 @@ import { AnnotationBuilder } from '@unrdf/core';
 const annotation = new AnnotationBuilder()
   .source('http://example.org/dataset')
   .creator('Alice')
-  .confidence(0.95)
+  .confidence(latest)
   .validFrom('2026-01-01T00:00:00Z')
   .custom('customKey', 'customValue')
   .build();
@@ -223,7 +223,7 @@ import { SPARQLStarQueryBuilder } from '@unrdf/oxigraph';
 const factory = new RDFStarFactory();
 const result = factory.createAnnotatedTriple(
   subject, predicate, object,
-  { confidence: { confidence: 0.95 } }
+  { confidence: { confidence: latest } }
 );
 ```
 
@@ -236,7 +236,7 @@ result.allQuads.forEach(quad => store.add(quad));
 const query = new SPARQLStarQueryBuilder()
   .select(['?s', '?p', '?o'])
   .where('?s', '?p', '?o')
-  .confidenceThreshold(0.9)
+  .confidenceThreshold(latest)
   .build();
 ```
 
@@ -253,7 +253,7 @@ const query = new SPARQLStarQueryBuilder()
 - **Performance**: All benchmarks within targets
 
 ### Production Readiness
-- ✓ Full W3C RDF 1.2 compliance (reification-based)
+- ✓ Full W3C RDF latest compliance (reification-based)
 - ✓ Comprehensive error handling
 - ✓ Input validation with Zod
 - ✓ Performance optimized
@@ -278,15 +278,15 @@ const query = new SPARQLStarQueryBuilder()
 ## Performance Analysis
 
 ### Creation Performance
-- Quoted triple creation: ~0.01ms (well within <1ms target)
-- Annotation addition: ~0.3ms (within <0.5ms target)
-- Annotated triple creation: ~0.36ms (includes reification overhead)
+- Quoted triple creation: ~latestms (well within <1ms target)
+- Annotation addition: ~latestms (within <latestms target)
+- Annotated triple creation: ~latestms (includes reification overhead)
 
 ### Storage Overhead
 - Base approach (native RDF-star): 1 base triple + N annotation quads
 - Current approach (reification): 1 base triple + 4 reification quads + N annotation quads
 - Example: Triple with 2 annotations = 7 quads (vs 3 with native support)
-- Overhead ratio: ~2.3x (acceptable trade-off for compatibility)
+- Overhead ratio: ~latestx (acceptable trade-off for compatibility)
 
 ### Query Performance
 - SPARQL query construction: <1ms
@@ -295,7 +295,7 @@ const query = new SPARQLStarQueryBuilder()
 
 ## Conclusion
 
-Successfully delivered production-ready RDF-star (W3C RDF 1.2) integration for UNRDF v6.2.0 with:
+Successfully delivered production-ready RDF-star (W3C RDF latest) integration for UNRDF vlatest with:
 - **100% test pass rate** (41/41 tests)
 - **Zero lint errors** in new code
 - **Full W3C compliance** via reification-based approach
@@ -305,4 +305,4 @@ Successfully delivered production-ready RDF-star (W3C RDF 1.2) integration for U
 
 The implementation uses a reification-based approach to work around current Oxigraph JavaScript binding limitations while maintaining full RDF-star functionality and W3C compliance. Future migration to native quoted triple support is straightforward when bindings are updated.
 
-Ready for v6.2.0 release.
+Ready for vlatest release.

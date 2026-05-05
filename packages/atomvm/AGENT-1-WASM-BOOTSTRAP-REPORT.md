@@ -14,10 +14,10 @@
 ```bash
 $ node scripts/download-atomvm.mjs
 ✅ All required assets present:
-   - AtomVM-web-v0.6.6.js
-   - AtomVM-web-v0.6.6.wasm
-   - AtomVM-node-v0.6.6.js
-   - AtomVM-node-v0.6.6.wasm
+   - AtomVM-web-[VERSION].js
+   - AtomVM-web-[VERSION].wasm
+   - AtomVM-node-[VERSION].js
+   - AtomVM-node-[VERSION].wasm
 ```
 
 **Proof**: 
@@ -49,7 +49,7 @@ Exit code: 0
 **Exports**:
 - `checkAssets()` - Returns {missing, present, allPresent}
 - `getPublicDir()` - Returns absolute path to public/
-- `ATOMVM_VERSION` - Current version (v0.6.6)
+- `ATOMVM_VERSION` - Current version ([VERSION])
 - `REQUIRED_ASSETS` - Array of required filenames
 
 ### 2. `/home/user/unrdf/packages/atomvm/src/wasm-bootstrap.mjs` (244 lines)
@@ -197,14 +197,14 @@ ls -1 /home/user/unrdf/packages/atomvm/scripts/download-atomvm.mjs \
 AtomVM Asset Verification
 ========================
 
-Version: v0.6.6
+Version: [VERSION]
 Public directory: /home/user/unrdf/packages/atomvm/public
 
 ✅ All required assets present:
-   - AtomVM-web-v0.6.6.js
-   - AtomVM-web-v0.6.6.wasm
-   - AtomVM-node-v0.6.6.js
-   - AtomVM-node-v0.6.6.wasm
+   - AtomVM-web-[VERSION].js
+   - AtomVM-web-[VERSION].wasm
+   - AtomVM-node-[VERSION].js
+   - AtomVM-node-[VERSION].wasm
 
 ✅ AtomVM WASM assets verified successfully
 ```
@@ -216,10 +216,10 @@ Exports: [ 'checkAssets', 'getPublicDir', 'ATOMVM_VERSION', 'REQUIRED_ASSETS' ]
 Asset check result: {
   missing: [],
   present: [
-    'AtomVM-web-v0.6.6.js',
-    'AtomVM-web-v0.6.6.wasm',
-    'AtomVM-node-v0.6.6.js',
-    'AtomVM-node-v0.6.6.wasm'
+    'AtomVM-web-[VERSION].js',
+    'AtomVM-web-[VERSION].wasm',
+    'AtomVM-node-[VERSION].js',
+    'AtomVM-node-[VERSION].wasm'
   ],
   allPresent: true
 }

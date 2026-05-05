@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-**54.5% of CLI commands are non-functional** - they appear to work but do not complete their intended Jobs To Be Done.
+**latest% of CLI commands are non-functional** - they appear to work but do not complete their intended Jobs To Be Done.
 
 ### Breakdown by Functionality:
 - ✅ **9 commands** (27%) - Fully functional
@@ -33,7 +33,7 @@
 
 These commands can complete their JTBD.
 
-### 1.1 init - "Initialize a new UNRDF project"
+### latest init - "Initialize a new UNRDF project"
 **File**: `cli/commands/init.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -48,7 +48,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.2 repl - "Start interactive SPARQL REPL"
+### latest repl - "Start interactive SPARQL REPL"
 **File**: `cli/commands/repl.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -62,7 +62,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.3 policy apply - "Apply a policy pack configuration"
+### latest policy apply - "Apply a policy pack configuration"
 **File**: `cli/commands/policy/apply.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -76,7 +76,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.4 policy validate - "Validate policy pack configuration"
+### latest policy validate - "Validate policy pack configuration"
 **File**: `cli/commands/policy/validate.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -89,7 +89,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.5 hook create - "Create a new knowledge hook"
+### latest hook create - "Create a new knowledge hook"
 **File**: `cli/commands/hook/create.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -103,7 +103,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.6 hook delete - "Delete a hook"
+### latest hook delete - "Delete a hook"
 **File**: `cli/commands/hook/delete.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -117,7 +117,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.7 graph delete - "Delete a graph"
+### latest graph delete - "Delete a graph"
 **File**: `cli/commands/graph/delete.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -131,7 +131,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.8 store import - "Import RDF data into store"
+### latest store import - "Import RDF data into store"
 **File**: `cli/commands/store/import.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -145,7 +145,7 @@ These commands can complete their JTBD.
 
 ---
 
-### 1.9 store export - "Export store data"
+### latest store export - "Export store data"
 **File**: `cli/commands/store/export.mjs`
 **Status**: ✅ FUNCTIONAL
 
@@ -163,7 +163,7 @@ These commands can complete their JTBD.
 
 These commands work but use hardcoded mock data instead of real data.
 
-### 2.1 graph describe - "Show detailed information about a graph"
+### latest graph describe - "Show detailed information about a graph"
 **File**: `cli/commands/graph/describe.mjs`
 **Status**: ⚠️  MOCK DATA
 
@@ -178,7 +178,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 ---
 
-### 2.2 policy describe - "Describe a policy pack in detail"
+### latest policy describe - "Describe a policy pack in detail"
 **File**: `cli/commands/policy/describe.mjs`
 **Status**: ⚠️  MOCK DATA
 
@@ -193,7 +193,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 ---
 
-### 2.3 policy list - "List all policy packs"
+### latest policy list - "List all policy packs"
 **File**: `cli/commands/policy/list.mjs`
 **Status**: ⚠️  MOCK DATA
 
@@ -208,7 +208,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 ---
 
-### 2.4 hook describe - "Describe a hook in detail"
+### latest hook describe - "Describe a hook in detail"
 **File**: `cli/commands/hook/describe.mjs`
 **Status**: ⚠️  MOCK DATA
 
@@ -223,7 +223,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 ---
 
-### 2.5 hook history - "Show evaluation history for a hook"
+### latest hook history - "Show evaluation history for a hook"
 **File**: `cli/commands/hook/history.mjs`
 **Status**: ⚠️  MOCK DATA
 
@@ -238,7 +238,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 ---
 
-### 2.6 hook list - "List all knowledge hooks"
+### latest hook list - "List all knowledge hooks"
 **File**: `cli/commands/hook/list.mjs`
 **Status**: ⚠️  FUNCTIONAL BUT LIMITED
 
@@ -257,7 +257,7 @@ These commands work but use hardcoded mock data instead of real data.
 
 These commands print success messages but **do not perform any actual work**.
 
-### 3.1 graph update - "Update graph metadata"
+### latest graph update - "Update graph metadata"
 **File**: `cli/commands/graph/update.mjs`
 **Status**: ❌ STUB
 
@@ -273,7 +273,7 @@ console.log(`✅ Graph updated: ${name}`);
 
 ---
 
-### 3.2 hook get - "Get hook details"
+### latest hook get - "Get hook details"
 **File**: `cli/commands/hook/get.mjs`
 **Status**: ❌ STUB
 
@@ -289,7 +289,7 @@ console.log(`Hook: ${ctx.args.name}`);
 
 ---
 
-### 3.3 hook update - "Update hook"
+### latest hook update - "Update hook"
 **File**: `cli/commands/hook/update.mjs`
 **Status**: ❌ STUB
 
@@ -305,7 +305,7 @@ console.log(`✅ Hook updated: ${ctx.args.name}`);
 
 ---
 
-### 3.4 policy get - "Get policy pack details"
+### latest policy get - "Get policy pack details"
 **File**: `cli/commands/policy/get.mjs`
 **Status**: ❌ STUB
 
@@ -321,7 +321,7 @@ console.log(`Policy Pack: ${ctx.args.name}`);
 
 ---
 
-### 3.5 policy test - "Test policy pack against sample data"
+### latest policy test - "Test policy pack against sample data"
 **File**: `cli/commands/policy/test.mjs`
 **Status**: ❌ STUB
 
@@ -338,7 +338,7 @@ console.log(`✅ All tests passed`);
 
 ---
 
-### 3.6 store stats - "Show store statistics"
+### latest store stats - "Show store statistics"
 **File**: `cli/commands/store/stats.mjs`
 **Status**: ❌ STUB
 
@@ -357,7 +357,7 @@ console.log('  Namespaces: 10');
 
 ---
 
-### 3.7 store query - "Execute SPARQL query"
+### latest store query - "Execute SPARQL query"
 **File**: `cli/commands/store/query.mjs`
 **Status**: ⚠️  VALIDATES BUT DOESN'T EXECUTE
 
@@ -372,7 +372,7 @@ console.log('  Namespaces: 10');
 
 ---
 
-### 3.8-3.14: Context Commands (7 commands)
+### latest.14: Context Commands (7 commands)
 **Files**:
 - `cli/commands/context/create.mjs`
 - `cli/commands/context/current.mjs`
@@ -575,7 +575,7 @@ Before declaring "CLI is production ready":
 | Claim | Evidence Required | Status |
 |-------|-------------------|--------|
 | "CLI has 33 commands" | Count in cli/index.mjs | ✅ TRUE |
-| "All commands work" | Test each one | ❌ FALSE (54.5% broken) |
+| "All commands work" | Test each one | ❌ FALSE (latest% broken) |
 | "Users can manage hooks" | Test create/list/delete/update | ⚠️  PARTIAL (create/delete work, get/update don't) |
 | "Users can manage policies" | Test apply/list/describe/test | ⚠️  PARTIAL (apply/validate work, rest don't) |
 | "Context commands work" | Test all 7 context commands | ⚠️  PARTIAL (work but show sidecar) |

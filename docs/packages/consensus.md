@@ -2,7 +2,7 @@
 
 > Production-grade Raft consensus for distributed workflow coordination
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

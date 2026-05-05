@@ -121,7 +121,7 @@ When adding new composables:
  * 
  * This composable provides example functionality.
  * 
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */
@@ -172,7 +172,7 @@ When adding new utilities:
 /**
  * @fileoverview Example utility functions
  * 
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */

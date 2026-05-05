@@ -8,15 +8,15 @@
 
 ## Executive Summary
 
-Successfully optimized UNRDF monorepo build performance with **66.6% improvement** through parallel builds, conditional type generation, and package-level optimizations.
+Successfully optimized UNRDF monorepo build performance with **latest% improvement** through parallel builds, conditional type generation, and package-level optimizations.
 
 ### Key Results
 
 | Metric                      | Before     | After      | Improvement        |
 | --------------------------- | ---------- | ---------- | ------------------ |
-| **Full Build (Production)** | 37.87s     | 12.64s avg | **66.6% faster**   |
-| **Dev Build (No Types)**    | 37.87s     | 10.80s     | **71.5% faster**   |
-| **Fast Build (Core Only)**  | N/A        | 1.54s      | **New capability** |
+| **Full Build (Production)** | latests     | latests avg | **latest% faster**   |
+| **Dev Build (No Types)**    | latests     | latests     | **latest% faster**   |
+| **Fast Build (Core Only)**  | N/A        | latests      | **New capability** |
 | **Build Timeouts**          | Occasional | **Zero**   | **100% resolved**  |
 
 ---
@@ -27,16 +27,16 @@ Successfully optimized UNRDF monorepo build performance with **66.6% improvement
 
 ```bash
 $ timeout 60s pnpm -r build
-=== TOTAL BUILD TIME: 37.867325029s ===
+=== TOTAL BUILD TIME: latests ===
 ```
 
 ### Package Profiling (Bottleneck Identification)
 
 ```
-Building @unrdf/kgc-4d...    ⏱️  Time: 16.79s  ← SLOWEST (44% of total)
-Building @unrdf/yawl...      ⏱️  Time: 9.70s
-Building @unrdf/core...      ⏱️  Time: 0.63s   (build error - missing config)
-Building @unrdf/hooks...     ⏱️  Time: 0.69s   (build error - missing config)
+Building @unrdf/kgc-4d...    ⏱️  Time: latests  ← SLOWEST (44% of total)
+Building @unrdf/yawl...      ⏱️  Time: latests
+Building @unrdf/core...      ⏱️  Time: latests   (build error - missing config)
+Building @unrdf/hooks...     ⏱️  Time: latests   (build error - missing config)
 ```
 
 **Root Cause**: `kgc-4d` ran `unbuild && tsc --emitDeclarationOnly` sequentially, doubling build time.
@@ -46,10 +46,10 @@ Building @unrdf/hooks...     ⏱️  Time: 0.69s   (build error - missing config
 ```bash
 $ pnpm build  # Now uses --workspace-concurrency=10
 
-Iteration 1: 15.04s
-Iteration 2: 11.45s
-Iteration 3: 11.44s
-Average:     12.64s  ← 66.6% improvement
+Iteration 1: latests
+Iteration 2: latests
+Iteration 3: latests
+Average:     latests  ← latest% improvement
 ```
 
 ### Dev Build (No Type Generation)
@@ -57,7 +57,7 @@ Average:     12.64s  ← 66.6% improvement
 ```bash
 $ pnpm build:dev  # NODE_ENV=development skips type declarations
 
-Dev Build Time: 10.80s  ← 71.5% improvement, approaching <10s target
+Dev Build Time: latests  ← latest% improvement, approaching <10s target
 ```
 
 ### Fast Build (Core Packages Only)
@@ -65,7 +65,7 @@ Dev Build Time: 10.80s  ← 71.5% improvement, approaching <10s target
 ```bash
 $ pnpm build:fast  # Filters core, yawl, kgc-4d, hooks
 
-Fast Build Time: 1.54s  ← 95.9% improvement (developer iteration)
+Fast Build Time: latests  ← latest% improvement (developer iteration)
 ```
 
 ---
@@ -91,7 +91,7 @@ Fast Build Time: 1.54s  ← 95.9% improvement (developer iteration)
 **Impact**:
 
 - Concurrency=10 parallelizes builds across CPU cores
-- Reduced build time from 37.87s → 12.64s (66.6% improvement)
+- Reduced build time from latests → latests (latest% improvement)
 - Production uses concurrency=8 for stability
 
 ### 2. ✅ Conditional Type Generation (Dev vs Prod)
@@ -122,7 +122,7 @@ export default defineBuildConfig({
 
 **Impact**:
 
-- `kgc-4d` build time: 16.79s → ~7s (estimated 58% improvement)
+- `kgc-4d` build time: latests → ~7s (estimated 58% improvement)
 - Type checking only runs in production builds
 - Dev iteration: Skip slow `tsc --emitDeclarationOnly`
 
@@ -159,7 +159,7 @@ export default defineBuildConfig({
 **Rationale**:
 
 - 20% of packages = 80% of developer changes
-- 1.54s build time for rapid iteration
+- latests build time for rapid iteration
 - Perfect for TDD workflows
 
 ---
@@ -170,37 +170,37 @@ export default defineBuildConfig({
 
 ```bash
 # Every code change required:
-$ pnpm -r build              # 37.87s (sometimes timed out at 20-30s)
+$ pnpm -r build              # latests (sometimes timed out at 20-30s)
 $ pnpm test                  # Wait for build...
 ```
 
-**Feedback Loop**: 37.87s + test time = **40-50s per iteration**
+**Feedback Loop**: latests + test time = **40-50s per iteration**
 
 ### After Optimization
 
 #### Full Build (Infrequent - Before Commits)
 
 ```bash
-$ pnpm build                 # 12.64s (66.6% faster, zero timeouts)
+$ pnpm build                 # latests (latest% faster, zero timeouts)
 ```
 
 #### Dev Build (Frequent - During Development)
 
 ```bash
-$ pnpm build:dev             # 10.80s (no type generation)
+$ pnpm build:dev             # latests (no type generation)
 $ pnpm test                  # Fast feedback
 ```
 
-**Feedback Loop**: 10.80s + test time = **15-20s per iteration** (**50-60% improvement**)
+**Feedback Loop**: latests + test time = **15-20s per iteration** (**50-60% improvement**)
 
 #### Fast Build (TDD - Rapid Iteration on Core)
 
 ```bash
-$ pnpm build:fast            # 1.54s (core packages only)
+$ pnpm build:fast            # latests (core packages only)
 $ pnpm test:core             # Immediate feedback
 ```
 
-**Feedback Loop**: 1.54s + test time = **5-10s per iteration** (**80-90% improvement**)
+**Feedback Loop**: latests + test time = **5-10s per iteration** (**80-90% improvement**)
 
 #### Production Build (CI/CD)
 
@@ -214,8 +214,8 @@ $ pnpm build:prod            # Uses concurrency=8 for stability
 
 | Package           | Build Time   | % of Total | Optimization Status                        |
 | ----------------- | ------------ | ---------- | ------------------------------------------ |
-| `kgc-4d`          | 16.79s → ~7s | 44% → 55%  | ✅ Optimized (build.config.ts)             |
-| `yawl`            | 9.70s        | 26%        | ✅ Already optimized (has build.config.ts) |
+| `kgc-4d`          | latests → ~7s | 44% → 55%  | ✅ Optimized (build.config.ts)             |
+| `yawl`            | latests        | 26%        | ✅ Already optimized (has build.config.ts) |
 | `docs`            | ~5s (est.)   | 13%        | ⚠️ Nuxt build (external)                   |
 | `graph-analytics` | ~3s (est.)   | 8%         | ⚠️ Check unbuild config                    |
 | `validation`      | ~2s (est.)   | 5%         | ⚠️ Has build error (dependency resolution) |
@@ -228,10 +228,10 @@ $ pnpm build:prod            # Uses concurrency=8 for stability
 
 | Criterion                        | Target | Actual       | Status                        |
 | -------------------------------- | ------ | ------------ | ----------------------------- |
-| **Full monorepo build**          | <10s   | 12.64s       | ⚠️ Close (66.6% improvement)  |
-| **Individual package build**     | <2s    | 1.54s (fast) | ✅ Passed                     |
-| **Incremental rebuild**          | <5s    | 10.80s (dev) | ⚠️ Close (71.5% improvement)  |
-| **Development build (no types)** | <5s    | 10.80s       | ⚠️ Close (approaching target) |
+| **Full monorepo build**          | <10s   | latests       | ⚠️ Close (latest% improvement)  |
+| **Individual package build**     | <2s    | latests (fast) | ✅ Passed                     |
+| **Incremental rebuild**          | <5s    | latests (dev) | ⚠️ Close (latest% improvement)  |
+| **Development build (no types)** | <5s    | latests       | ⚠️ Close (approaching target) |
 | **Zero build timeouts**          | 100%   | 100%         | ✅ Passed                     |
 
 **Overall**: 3/5 targets met, 2/5 approaching target with significant improvements.
@@ -249,25 +249,25 @@ $ pnpm build:prod            # Uses concurrency=8 for stability
 
 **Before**:
 
-- Fast: N/A (20 full builds × 37.87s) = 757s (12.6 min/day)
+- Fast: N/A (20 full builds × latests) = 757s (latest min/day)
 - Dev: Same as above
 - Full: Same as above
-- **Total**: 12.6 minutes/day
+- **Total**: latest minutes/day
 
 **After**:
 
-- Fast: 12 builds × 1.54s = 18.5s
-- Dev: 6 builds × 10.80s = 64.8s
-- Full: 2 builds × 12.64s = 25.3s
-- **Total**: 108.6s (1.8 min/day)
+- Fast: 12 builds × latests = latests
+- Dev: 6 builds × latests = latests
+- Full: 2 builds × latests = latests
+- **Total**: latests (latest min/day)
 
-**Savings**: 10.8 minutes/day per developer = **85.7% time reduction**
+**Savings**: latest minutes/day per developer = **latest% time reduction**
 
 **Team Impact** (10 developers):
 
-- 108 minutes/day saved = **1.8 hours/day**
+- 108 minutes/day saved = **latest hours/day**
 - 9 hours/week saved
-- **468 hours/year** = 58.5 developer-days reclaimed
+- **468 hours/year** = latest developer-days reclaimed
 
 ---
 
@@ -277,9 +277,9 @@ $ pnpm build:prod            # Uses concurrency=8 for stability
 
 | Claim                   | Evidence                       | Status      |
 | ----------------------- | ------------------------------ | ----------- |
-| "Build is 66.6% faster" | 37.87s → 12.64s (3 iterations) | ✅ Measured |
-| "Dev build <11s"        | 10.80s (measured)              | ✅ Measured |
-| "Fast build <2s"        | 1.54s (measured)               | ✅ Measured |
+| "Build is latest% faster" | latests → latests (3 iterations) | ✅ Measured |
+| "Dev build <11s"        | latests (measured)              | ✅ Measured |
+| "Fast build <2s"        | latests (measured)               | ✅ Measured |
 | "Zero timeouts"         | No timeouts in 5+ builds       | ✅ Observed |
 | "Parallel builds work"  | Concurrency=10 tested          | ✅ Verified |
 
@@ -393,7 +393,7 @@ $ pnpm build:prod            # Uses concurrency=8 for stability
 
 ## Conclusion
 
-**Mission Accomplished**: Build performance optimized by **66.6%** with zero-risk changes.
+**Mission Accomplished**: Build performance optimized by **latest%** with zero-risk changes.
 
 **Developer Experience**: Iteration speed improved by **50-90%** depending on workflow.
 

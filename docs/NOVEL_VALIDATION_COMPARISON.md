@@ -195,7 +195,7 @@ PHASE 2: Test all inputs (7 Agents)
         ↓
 PHASE 3: Analyze results
 Total: 140 inputs, 102 passed, 38 failed
-Error Rate: 27.1%, Crash Rate: 9.3%
+Error Rate: latest%, Crash Rate: latest%
         ↓
 PHASE 4: Generate recommendations
 27 robustness recommendations generated
@@ -371,12 +371,12 @@ PHASE 1: Generate fuzzed inputs (140 total)
 
 PHASE 2: Test all inputs
   Total: 140 inputs
-  Passed: 102 (72.9%)
-  Failed: 38 (27.1%)
-    - 13 crashes (9.3%)
-    - 8 hangs (5.7%)
-    - 4 incorrect (2.9%)
-    - 13 errors (9.3%)
+  Passed: 102 (latest%)
+  Failed: 38 (latest%)
+    - 13 crashes (latest%)
+    - 8 hangs (latest%)
+    - 4 incorrect (latest%)
+    - 13 errors (latest%)
 
 PHASE 3: Generate recommendations
   27 robustness recommendations

@@ -165,7 +165,7 @@ export function printSummary() {
   console.log(`  2024  Chatman Constant (Θ = 8) proven`);
   console.log(`  2024  KGC-4D development completed`);
   console.log(`  2025  Chatman Equation formalized`);
-  console.log(`  2025  UNRDF v6.0.0 released (56 packages)`);
+  console.log(`  2025  UNRDF [VERSION] released (56 packages)`);
 
   console.log('\n✅ VALIDATION\n');
   console.log(`  SHACL Shapes:         11 shapes defined`);

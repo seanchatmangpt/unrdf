@@ -9,7 +9,7 @@
 
 `@unrdf/cli` will provide a command-line interface for UNRDF, decoupled from the core library as a standalone package.
 
-**Planned Release:** Q2 2026 (v1.0.0)
+**Planned Release:** Q2 2026 (vlatest)
 
 ---
 
@@ -17,7 +17,7 @@
 
 ### Why Separate Package?
 
-**v3.0.0 removed CLI** from core to:
+**vlatest removed CLI** from core to:
 1. **Reduce bundle size** - Core library is 45% smaller
 2. **Independent evolution** - CLI and core can evolve separately
 3. **Optional dependency** - Users who don't need CLI save install time
@@ -76,13 +76,13 @@
 ```json
 {
   "dependencies": {
-    "unrdf": "^3.1.0",
-    "citty": "^0.1.6",
-    "consola": "^3.2.3",
-    "chalk": "^5.3.0",
-    "ora": "^8.0.1",
-    "inquirer": "^9.2.12",
-    "table": "^6.8.1"
+    "unrdf": "^latest",
+    "citty": "^latest",
+    "consola": "^latest",
+    "chalk": "^latest",
+    "ora": "^latest",
+    "inquirer": "^latest",
+    "table": "^latest"
   }
 }
 ```
@@ -174,7 +174,7 @@ unrdf query data.ttl -q "ASK { ?s a foaf:Person }"
 ```bash
 # Find all people
 unrdf query foaf.ttl -q "
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person a foaf:Person ;
             foaf:name ?name .
@@ -623,7 +623,7 @@ Charlie,35
 $ unrdf parse data.nq --format turtle --pretty
 
 @prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf: <http://xmlns.com/foaf/latest/> .
 
 ex:alice a foaf:Person ;
          foaf:name "Alice" ;
@@ -733,19 +733,19 @@ validate-rdf:
 
 ## Roadmap
 
-### v1.0.0 (Q2 2026)
+### vlatest (Q2 2026)
 - Core commands (parse, query, validate, convert)
 - Interactive init
 - Shell completions
 - Basic web server
 
-### v1.1.0 (Q3 2026)
+### vlatest (Q3 2026)
 - Hook management commands
 - Advanced server features (auth, WebSocket)
 - Plugin system
 - Performance profiling commands
 
-### v1.2.0 (Q4 2026)
+### vlatest (Q4 2026)
 - LSP server for RDF/SPARQL
 - VS Code extension
 - Data migration tools

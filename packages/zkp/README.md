@@ -3,7 +3,7 @@
 > **First production ZK-RDF system** - Privacy-preserving query proofs using zk-SNARKs
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-6.2.0--alpha.1-green.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-[VERSION]--alpha.1-green.svg)](package.json)
 
 Prove SPARQL query results are correct **without revealing the underlying RDF data** using zero-knowledge proofs (zk-SNARKs).
 

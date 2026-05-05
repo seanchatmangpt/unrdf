@@ -2,7 +2,7 @@
 
 > UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

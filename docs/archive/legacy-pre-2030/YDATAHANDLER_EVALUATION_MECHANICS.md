@@ -1,7 +1,7 @@
 # YDataHandler Evaluation Mechanics - Research Report
 
 **Research Date**: 2026-01-11
-**Package**: @unrdf/yawl v5.0.0
+**Package**: @unrdf/yawl vlatest
 **Researcher**: Research & Analysis Agent
 **Focus**: Expression evaluation and data transformation mechanics
 
@@ -23,7 +23,7 @@ The UNRDF YAWL implementation uses a **custom-built, security-hardened expressio
 
 ## Part 1: Expression Engine Architecture
 
-### 1.1 Expression Type System
+### latest Expression Type System
 
 The system supports **four expression types**, each with different evaluation semantics:
 
@@ -73,7 +73,7 @@ function detectExpressionType(expression) {
 | Aspect | YAWL Java (Saxon XPath) | UNRDF YAWL (Custom) |
 |--------|-------------------------|---------------------|
 | Library | Saxon 9.x or Jaxen | Custom implementation |
-| Expression Language | Full XPath 2.0 | JSONPath subset + SPARQL |
+| Expression Language | Full XPath latest | JSONPath subset + SPARQL |
 | Security | Sandbox XML evaluation | Regex whitelist + safe functions |
 | Performance | JVM + XML parsing | JavaScript + JSON native |
 | Extensibility | Custom XPath functions | Zod schema + function registry |
@@ -82,7 +82,7 @@ function detectExpressionType(expression) {
 
 ## Part 2: JSONPath Evaluator Deep Dive
 
-### 2.1 Core Evaluation Algorithm
+### latest Core Evaluation Algorithm
 
 The JSONPath evaluator implements a **simplified XPath-like traversal** without arbitrary code execution:
 
@@ -137,7 +137,7 @@ export function evaluateJSONPath(expression, data) {
 }
 ```
 
-### 2.2 Nested Property Traversal
+### latest Nested Property Traversal
 
 **Dot-notation path resolution** (lines 131-145):
 
@@ -182,7 +182,7 @@ evaluateJSONPath('count($.orders.pending)', data)
 // → Result: 3
 ```
 
-### 2.3 Security Hardening
+### latest Security Hardening
 
 **Injection Prevention**:
 
@@ -204,7 +204,7 @@ evaluateJSONPath('$.items/../../../etc/passwd', data)
 
 ## Part 3: SPARQL COUNT Evaluator
 
-### 3.1 SPARQL Integration
+### latest SPARQL Integration
 
 The SPARQL evaluator integrates with the **Oxigraph SPARQL engine** for RDF-native queries:
 
@@ -262,7 +262,7 @@ WHERE {
 
 ## Part 4: Function Evaluator
 
-### 4.1 Whitelisted Function Registry
+### latest Whitelisted Function Registry
 
 **Safe function pattern** - NO arbitrary code execution:
 
@@ -310,7 +310,7 @@ export function evaluateFunction(expression, data) {
 
 ## Part 5: Unified Expression Evaluation
 
-### 5.1 Evaluation Pipeline with Cryptographic Receipts
+### latest Evaluation Pipeline with Cryptographic Receipts
 
 The `evaluateExpression` function is the **unified entry point** that generates **provably correct receipts**:
 
@@ -385,7 +385,7 @@ export async function evaluateExpression(expression, data) {
 }
 ```
 
-### 5.2 Cryptographic Proof Generation
+### latest Cryptographic Proof Generation
 
 **Simple hash function** (BLAKE3 used in production, simplified here for clarity):
 
@@ -428,7 +428,7 @@ function simpleHash(input) {
 
 ## Part 6: Data Flow in Multiple Instance Tasks
 
-### 6.1 WP14 Pattern - Runtime A Priori Knowledge
+### latest WP14 Pattern - Runtime A Priori Knowledge
 
 **Complete execution flow** (File: `packages/yawl/src/multiple-instance/wp14-runtime-apriori.mjs`):
 
@@ -482,7 +482,7 @@ const receipt = await generateWP14Receipt(
 // }
 ```
 
-### 6.2 Data Slicing Algorithm
+### latest Data Slicing Algorithm
 
 **Splitting input data across instances** (lines 162-197):
 
@@ -561,7 +561,7 @@ sliceInputData(inputData, 3)
 
 ## Part 7: Type Handling and Validation
 
-### 7.1 Zod Schema Validation
+### latest Zod Schema Validation
 
 **All data structures validated with Zod** (File: `packages/yawl/src/multiple-instance/expression-evaluator.mjs`):
 
@@ -593,7 +593,7 @@ export const EvaluationResultSchema = z.object({
 - **Proof structure**: Cryptographic proof is always present
 - **Parse errors**: Invalid data throws Zod validation errors
 
-### 7.2 Type Conversion Mechanics
+### latest Type Conversion Mechanics
 
 **JavaScript to Count Integer**:
 
@@ -605,12 +605,12 @@ export const EvaluationResultSchema = z.object({
 { a: 1, b: 2, c: 3 } → 3
 
 // Numbers → floor to integer
-3.14159 → 3
--2.5 → -2 (then rejected as negative)
+latest → 3
+-latest → -2 (then rejected as negative)
 
 // Strings (literal) → parseInt
 "10" → 10
-"5.5" → 5
+"latest" → 5
 "-3" → -3 (rejected)
 
 // Null/Undefined → 0
@@ -638,7 +638,7 @@ evaluateExpression('$.items; malicious', {})
 
 ## Part 8: Performance Characteristics
 
-### 8.1 Benchmarks from Test Suite
+### latest Benchmarks from Test Suite
 
 **Test file**: `packages/yawl/test/multiple-instance/wp14.test.mjs`
 
@@ -667,12 +667,12 @@ it('should handle large instance counts efficiently', async () => {
 
 | Operation | Input Size | Duration | Per-Item Latency |
 |-----------|-----------|----------|------------------|
-| Expression Evaluation | 100 items | <10ms | <0.1ms |
+| Expression Evaluation | 100 items | <10ms | <latestms |
 | Instance Spawning | 100 instances | <1000ms | <10ms |
-| Data Slicing | 100 items | <5ms | <0.05ms |
-| Receipt Generation (BLAKE3) | 100 receipts | <50ms | <0.5ms |
+| Data Slicing | 100 items | <5ms | <latestms |
+| Receipt Generation (BLAKE3) | 100 receipts | <50ms | <latestms |
 
-### 8.2 Complexity Analysis
+### latest Complexity Analysis
 
 **JSONPath Evaluation**:
 - Time: O(d) where d = depth of nested path
@@ -694,7 +694,7 @@ it('should handle large instance counts efficiently', async () => {
 | Operation | YAWL Java (Saxon) | UNRDF YAWL (Custom) |
 |-----------|-------------------|---------------------|
 | XPath Compile | 5-20ms (XML parsing) | <1ms (regex match) |
-| XPath Evaluate | 1-10ms (DOM traversal) | <0.1ms (property access) |
+| XPath Evaluate | 1-10ms (DOM traversal) | <latestms (property access) |
 | Type Conversion | Java → XPath types | Native JavaScript |
 | Memory Overhead | 1-5MB (Saxon context) | <100KB (function registry) |
 
@@ -702,7 +702,7 @@ it('should handle large instance counts efficiently', async () => {
 
 ## Part 9: Error Handling and Edge Cases
 
-### 9.1 Expression Validation Errors
+### latest Expression Validation Errors
 
 ```javascript
 // Invalid characters
@@ -721,15 +721,15 @@ evaluateJSONPath('$.self', circular)
 // → Returns: 1 (object exists, count keys)
 ```
 
-### 9.2 Type Coercion Edge Cases
+### latest Type Coercion Edge Cases
 
 ```javascript
 // Floats floor to integer
-evaluateJSONPath('$.value', { value: 3.9 })
+evaluateJSONPath('$.value', { value: latest })
 // → Returns: 3 (Math.floor applied)
 
 // Strings in literal mode
-evaluateExpression('5.5', {})
+evaluateExpression('latest', {})
 // → Returns: { count: 5, ... } (parseInt floors)
 
 // Empty arrays
@@ -741,7 +741,7 @@ evaluateJSONPath('$.data', { data: null })
 // → Returns: 0 (null = missing)
 ```
 
-### 9.3 SPARQL Query Edge Cases
+### latest SPARQL Query Edge Cases
 
 ```javascript
 // Empty results
@@ -764,7 +764,7 @@ evaluateSPARQL('SELECT ?x WHERE { ?x a :Task }', data)
 
 ## Part 10: Comparison to Original YAWL Implementation
 
-### 10.1 YAWL Java Architecture
+### latest YAWL Java Architecture
 
 **Original YAWL (Java) YDataHandler**:
 
@@ -799,7 +799,7 @@ public class YDataHandler {
 | Aspect | YAWL Java | UNRDF YAWL JavaScript |
 |--------|-----------|----------------------|
 | **Data Model** | XML (DOM) | JSON (native JavaScript) |
-| **Expression Engine** | Saxon XPath 2.0 | Custom JSONPath + SPARQL |
+| **Expression Engine** | Saxon XPath latest | Custom JSONPath + SPARQL |
 | **Type System** | Java types + XML Schema | JavaScript types + Zod |
 | **Validation** | XSD schema validation | Zod runtime validation |
 | **Performance** | 5-20ms (XML parsing) | <1ms (JSON native) |
@@ -809,7 +809,7 @@ public class YDataHandler {
 | **Receipts** | None (logging only) | Cryptographic BLAKE3 hashes |
 | **Time Travel** | Not supported | Full deterministic replay |
 
-### 10.2 Architecture Evolution
+### latest Architecture Evolution
 
 **YAWL Java Evaluation Flow**:
 ```
@@ -822,7 +822,7 @@ Input XML → Saxon Parser → XPath Compile → DOM Traversal → Java Object �
 ```
 Input JSON → Type Detection → JSONPath/SPARQL → Count → Receipt → Task
    ↓            ↓                 ↓              ↓        ↓
- <0.1ms       <0.1ms            <0.5ms        <0.1ms   <1ms
+ <latestms       <latestms            <latestms        <latestms   <1ms
 ```
 
 **Total Latency**:
@@ -834,7 +834,7 @@ Input JSON → Type Detection → JSONPath/SPARQL → Count → Receipt → Task
 
 ## Part 11: How "count(//item)" Becomes an Integer
 
-### 11.1 Complete Example Walkthrough
+### latest Complete Example Walkthrough
 
 **Given**: YAWL Multiple Instance Task with count expression
 
@@ -849,9 +849,9 @@ const taskDef = new TaskDefinition({
 // Case Data (equivalent to YAWL case variables)
 const caseData = {
   orders: [
-    { orderId: 'ORD-001', amount: 100.00 },
-    { orderId: 'ORD-002', amount: 250.50 },
-    { orderId: 'ORD-003', amount: 75.25 }
+    { orderId: 'ORD-001', amount: latest },
+    { orderId: 'ORD-002', amount: latest },
+    { orderId: 'ORD-003', amount: latest }
   ],
   metadata: {
     source: 'production',
@@ -867,7 +867,7 @@ const miConfig = {
 };
 ```
 
-### 11.2 Execution Step-by-Step
+### latest Execution Step-by-Step
 
 **Step 1: Parse Expression**
 
@@ -927,7 +927,7 @@ const result = await spawnInstancesRuntimeApriori(
       inputData: {
         orders: [...],
         metadata: {...},
-        item: { orderId: 'ORD-001', amount: 100.00 },
+        item: { orderId: 'ORD-001', amount: latest },
         itemIndex: 0,
         totalInstances: 3
       },
@@ -939,7 +939,7 @@ const result = await spawnInstancesRuntimeApriori(
       inputData: {
         orders: [...],
         metadata: {...},
-        item: { orderId: 'ORD-002', amount: 250.50 },
+        item: { orderId: 'ORD-002', amount: latest },
         itemIndex: 1,
         totalInstances: 3
       },
@@ -951,7 +951,7 @@ const result = await spawnInstancesRuntimeApriori(
       inputData: {
         orders: [...],
         metadata: {...},
-        item: { orderId: 'ORD-003', amount: 75.25 },
+        item: { orderId: 'ORD-003', amount: latest },
         itemIndex: 2,
         totalInstances: 3
       },
@@ -1028,7 +1028,7 @@ const aggregatedOutput = result.instances.map(inst => inst.outputData);
 caseData.processedOrders = aggregatedOutput;
 ```
 
-### 11.3 Receipt Chain Verification
+### latest Receipt Chain Verification
 
 **Cryptographic Proof of Correct Evaluation**:
 
@@ -1083,7 +1083,7 @@ assert(countResult.proof.inputHash === originalReceipt.countEvaluation.proof.inp
 
 ## Part 12: Key Innovations Summary
 
-### 12.1 Novel Contributions
+### latest Novel Contributions
 
 1. **Cryptographic Expression Receipts**: Every evaluation produces a BLAKE3-signed receipt
 2. **JSONPath + SPARQL Hybrid**: Combines document traversal (JSONPath) with RDF queries (SPARQL)
@@ -1093,11 +1093,11 @@ assert(countResult.proof.inputHash === originalReceipt.countEvaluation.proof.inp
 6. **Deterministic Replay**: Same input + same expression = same output + same hash
 7. **Data Slicing**: Automatic distribution of array items to instances
 
-### 12.2 Research Questions Answered
+### latest Research Questions Answered
 
 **Q1: Which XPath/XQuery library does YAWL use?**
 
-**A**: The original YAWL Java implementation uses **Saxon HE 9.x** for XPath 2.0 evaluation. UNRDF YAWL uses a **custom JSONPath evaluator** (no external library) for security and performance.
+**A**: The original YAWL Java implementation uses **Saxon HE 9.x** for XPath latest evaluation. UNRDF YAWL uses a **custom JSONPath evaluator** (no external library) for security and performance.
 
 **Q2: How is the evaluation context set up?**
 
@@ -1154,7 +1154,7 @@ assert(countResult.proof.inputHash === originalReceipt.countEvaluation.proof.inp
 1. **YAWL Specification**: van der Aalst & ter Hofstede (2005) - "YAWL: Yet Another Workflow Language"
 2. **Saxon XPath**: https://www.saxonica.com/documentation/index.html
 3. **JSONPath Spec**: https://goessner.net/articles/JsonPath/
-4. **SPARQL 1.1**: https://www.w3.org/TR/sparql11-query/
+4. **SPARQL latest**: https://www.w3.org/TR/sparql11-query/
 5. **Zod Validation**: https://zod.dev/
 6. **BLAKE3 Hashing**: https://github.com/BLAKE3-team/BLAKE3
 

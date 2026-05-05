@@ -136,9 +136,9 @@
     "83": {
       "js": [
         {
-          "file": "assets/js/c9a49581.89ba4299.js",
+          "file": "assets/js/c9a[VERSION]ba4299.js",
           "hash": "608bc27f3475c4f0",
-          "publicPath": "/unrdf/assets/js/c9a49581.89ba4299.js"
+          "publicPath": "/unrdf/assets/js/c9a[VERSION]ba4299.js"
         }
       ]
     },
@@ -181,18 +181,18 @@
     "235": {
       "js": [
         {
-          "file": "assets/js/a7456010.2aa0b2cb.js",
+          "file": "assets/js/a[VERSION]aa0b2cb.js",
           "hash": "891cf979ee62ad97",
-          "publicPath": "/unrdf/assets/js/a7456010.2aa0b2cb.js"
+          "publicPath": "/unrdf/assets/js/a[VERSION]aa0b2cb.js"
         }
       ]
     },
     "292": {
       "js": [
         {
-          "file": "assets/js/5b052980.9da1e0cb.js",
+          "file": "assets/js/5b[VERSION]da1e0cb.js",
           "hash": "78eff3b779b28e3c",
-          "publicPath": "/unrdf/assets/js/5b052980.9da1e0cb.js"
+          "publicPath": "/unrdf/assets/js/5b[VERSION]da1e0cb.js"
         }
       ]
     },
@@ -208,9 +208,9 @@
     "344": {
       "js": [
         {
-          "file": "assets/js/84df4452.59e28796.js",
+          "file": "assets/js/84df[VERSION]e28796.js",
           "hash": "eb4c23978fc969c0",
-          "publicPath": "/unrdf/assets/js/84df4452.59e28796.js"
+          "publicPath": "/unrdf/assets/js/84df[VERSION]e28796.js"
         }
       ]
     },
@@ -235,18 +235,18 @@
     "356": {
       "js": [
         {
-          "file": "assets/js/606abb77.392131c0.js",
+          "file": "assets/js/606abb[VERSION]c0.js",
           "hash": "3159032b2302bf45",
-          "publicPath": "/unrdf/assets/js/606abb77.392131c0.js"
+          "publicPath": "/unrdf/assets/js/606abb[VERSION]c0.js"
         }
       ]
     },
     "374": {
       "js": [
         {
-          "file": "assets/js/374.2380d009.js",
+          "file": "assets/js/[VERSION]d009.js",
           "hash": "c99fb163a8185e5b",
-          "publicPath": "/unrdf/assets/js/374.2380d009.js"
+          "publicPath": "/unrdf/assets/js/[VERSION]d009.js"
         }
       ]
     },
@@ -262,18 +262,18 @@
     "471": {
       "js": [
         {
-          "file": "assets/js/471.7d155b73.js",
+          "file": "assets/js/[VERSION]d155b73.js",
           "hash": "9d0d531829dbc95d",
-          "publicPath": "/unrdf/assets/js/471.7d155b73.js"
+          "publicPath": "/unrdf/assets/js/[VERSION]d155b73.js"
         }
       ]
     },
     "541": {
       "js": [
         {
-          "file": "assets/js/1b5cc697.09e8b73f.js",
+          "file": "assets/js/1b5cc[VERSION]e8b73f.js",
           "hash": "d1e5b0ec8dcabe69",
-          "publicPath": "/unrdf/assets/js/1b5cc697.09e8b73f.js"
+          "publicPath": "/unrdf/assets/js/1b5cc[VERSION]e8b73f.js"
         }
       ]
     },
@@ -316,9 +316,9 @@
     "647": {
       "js": [
         {
-          "file": "assets/js/5e95c892.8db6e79a.js",
+          "file": "assets/js/5e95c[VERSION]db6e79a.js",
           "hash": "45be9d860c5bb224",
-          "publicPath": "/unrdf/assets/js/5e95c892.8db6e79a.js"
+          "publicPath": "/unrdf/assets/js/5e95c[VERSION]db6e79a.js"
         }
       ]
     },
@@ -334,18 +334,18 @@
     "723": {
       "js": [
         {
-          "file": "assets/js/fb414144.4d114622.js",
+          "file": "assets/js/fb[VERSION]d114622.js",
           "hash": "13e9846fd2be163e",
-          "publicPath": "/unrdf/assets/js/fb414144.4d114622.js"
+          "publicPath": "/unrdf/assets/js/fb[VERSION]d114622.js"
         }
       ]
     },
     "742": {
       "js": [
         {
-          "file": "assets/js/aba21aa0.14fe4509.js",
+          "file": "assets/js/aba21aa[VERSION]fe4509.js",
           "hash": "27d4c81f0106c53f",
-          "publicPath": "/unrdf/assets/js/aba21aa0.14fe4509.js"
+          "publicPath": "/unrdf/assets/js/aba21aa[VERSION]fe4509.js"
         }
       ]
     },
@@ -379,9 +379,9 @@
     "889": {
       "js": [
         {
-          "file": "assets/js/4ab97117.8b088f55.js",
+          "file": "assets/js/4ab[VERSION]b088f55.js",
           "hash": "721d5f2da1c00269",
-          "publicPath": "/unrdf/assets/js/4ab97117.8b088f55.js"
+          "publicPath": "/unrdf/assets/js/4ab[VERSION]b088f55.js"
         }
       ]
     },
@@ -406,9 +406,9 @@
     "987": {
       "js": [
         {
-          "file": "assets/js/987.08015a5f.js",
+          "file": "assets/js/[VERSION]a5f.js",
           "hash": "75a6b938873ba68d",
-          "publicPath": "/unrdf/assets/js/987.08015a5f.js"
+          "publicPath": "/unrdf/assets/js/[VERSION]a5f.js"
         }
       ]
     },

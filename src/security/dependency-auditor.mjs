@@ -45,93 +45,93 @@ export const VulnerabilitySchema = z.object({
 const KNOWN_VULNERABILITIES = [
   {
     package: 'lodash',
-    affectedVersions: '<4.17.21',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2021-23337',
     severity: 'high',
     title: 'Command Injection in lodash',
-    description: 'Lodash versions prior to 4.17.21 are vulnerable to Command Injection via the template function.',
-    patchedVersions: '>=4.17.21'
+    description: 'Lodash versions prior to [VERSION] are vulnerable to Command Injection via the template function.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'minimist',
-    affectedVersions: '<1.2.6',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2021-44906',
     severity: 'critical',
     title: 'Prototype Pollution in minimist',
-    description: 'Prototype pollution vulnerability in minimist before 1.2.6.',
-    patchedVersions: '>=1.2.6'
+    description: 'Prototype pollution vulnerability in minimist before [VERSION].',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'node-fetch',
-    affectedVersions: '<2.6.7 || >=3.0.0 <3.1.1',
+    affectedVersions: '<[VERSION] || >=[VERSION] <[VERSION]',
     vulnerability: 'CVE-2022-0235',
     severity: 'high',
     title: 'Exposure of Sensitive Information in node-fetch',
     description: 'node-fetch is vulnerable to Exposure of Sensitive Information to an Unauthorized Actor.',
-    patchedVersions: '>=2.6.7 <3.0.0 || >=3.1.1'
+    patchedVersions: '>=[VERSION] <[VERSION] || >=[VERSION]'
   },
   {
     package: 'express',
-    affectedVersions: '<4.17.3',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2022-24999',
     severity: 'high',
     title: 'Open Redirect in Express.js',
-    description: 'Express.js prior to 4.17.3 are vulnerable to an Open Redirect.',
-    patchedVersions: '>=4.17.3'
+    description: 'Express.js prior to [VERSION] are vulnerable to an Open Redirect.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'got',
-    affectedVersions: '<11.8.5',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2022-33987',
     severity: 'moderate',
     title: 'Unintended cookie exposure in Got',
-    description: 'Got before 11.8.5 exposes cookies on cross-origin redirects.',
-    patchedVersions: '>=11.8.5'
+    description: 'Got before [VERSION] exposes cookies on cross-origin redirects.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'json5',
-    affectedVersions: '<2.2.2',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2022-46175',
     severity: 'high',
     title: 'Prototype Pollution in JSON5',
-    description: 'JSON5 before 2.2.2 is vulnerable to prototype pollution.',
-    patchedVersions: '>=2.2.2'
+    description: 'JSON5 before [VERSION] is vulnerable to prototype pollution.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'semver',
-    affectedVersions: '<7.5.2',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2022-25883',
     severity: 'moderate',
     title: 'Regular Expression Denial of Service in semver',
-    description: 'semver before 7.5.2 is vulnerable to ReDoS.',
-    patchedVersions: '>=7.5.2'
+    description: 'semver before [VERSION] is vulnerable to ReDoS.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'axios',
-    affectedVersions: '<0.21.2',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2021-3749',
     severity: 'high',
     title: 'Server-Side Request Forgery in Axios',
-    description: 'Axios before 0.21.2 is vulnerable to SSRF attacks.',
-    patchedVersions: '>=0.21.2'
+    description: 'Axios before [VERSION] is vulnerable to SSRF attacks.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'shell-quote',
-    affectedVersions: '<1.7.3',
+    affectedVersions: '<[VERSION]',
     vulnerability: 'CVE-2021-42740',
     severity: 'critical',
     title: 'Command Injection in shell-quote',
-    description: 'shell-quote before 1.7.3 allows command injection.',
-    patchedVersions: '>=1.7.3'
+    description: 'shell-quote before [VERSION] allows command injection.',
+    patchedVersions: '>=[VERSION]'
   },
   {
     package: 'ws',
-    affectedVersions: '<7.4.6 || >=8.0.0 <8.17.1',
+    affectedVersions: '<[VERSION] || >=[VERSION] <[VERSION]',
     vulnerability: 'CVE-2024-37890',
     severity: 'high',
     title: 'Denial of Service in ws',
     description: 'ws is vulnerable to DoS when Sec-WebSocket-Extensions header is malformed.',
-    patchedVersions: '>=7.4.6 <8.0.0 || >=8.17.1'
+    patchedVersions: '>=[VERSION] <[VERSION] || >=[VERSION]'
   }
 ];
 
@@ -184,7 +184,7 @@ function checkCondition(parts, condition) {
  * Check a single version comparison
  *
  * @param {Array<number>} parts - Version parts
- * @param {string} condition - Single condition like "<4.17.21"
+ * @param {string} condition - Single condition like "<[VERSION]"
  * @returns {boolean} True if met
  */
 function checkSingleCondition(parts, condition) {

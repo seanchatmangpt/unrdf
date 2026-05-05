@@ -24,8 +24,8 @@ vi.mock('../../src/cli/commands/doctor/checks/env.mjs', () => ({
       {
         name: 'Node.js version',
         status: 'pass',
-        actual: 'Node.js v18.19.0',
-        expected: 'Node.js >=18.0.0',
+        actual: 'Node.js [VERSION]',
+        expected: 'Node.js >=[VERSION]',
       },
     ],
   }),

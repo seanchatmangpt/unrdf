@@ -137,7 +137,7 @@ pnpm test -- --test-threads 1 --nocapture 2>&1 | grep "test result"
 
 **Action**: Establish consistent standards.
 
-#### 3.1: Define Standards
+#### latest: Define Standards
 
 **Action**: Define what the standard should be.
 
@@ -178,7 +178,7 @@ pnpm test -- --test-threads 1 --nocapture 2>&1 | grep "test result"
 - **Examples**: Public APIs should have usage examples
 ```
 
-#### 3.2: Choose Reference Implementation
+#### latest: Choose Reference Implementation
 
 **Action**: Select best example as reference.
 
@@ -212,7 +212,7 @@ pnpm test -- --test-threads 1 --nocapture 2>&1 | grep "test result"
 
 **Action**: Apply standards across codebase.
 
-#### 4.1: Apply Style Standards
+#### latest: Apply Style Standards
 
 **Action**: Standardize code style.
 
@@ -233,7 +233,7 @@ pnpm format
 pnpm lint
 ```
 
-#### 4.2: Apply Pattern Standards
+#### latest: Apply Pattern Standards
 
 **Action**: Standardize patterns.
 
@@ -257,7 +257,7 @@ function parse(input: string) => Promise<Value | Error> {
 });
 ```
 
-#### 4.3: Apply Quality Standards
+#### latest: Apply Quality Standards
 
 **Action**: Bring all code to minimum quality level.
 
@@ -298,7 +298,7 @@ describe('tests', () => {
 });
 ```
 
-#### 4.4: Apply Documentation Standards
+#### latest: Apply Documentation Standards
 
 **Action**: Standardize documentation.
 
@@ -315,7 +315,7 @@ describe('tests', () => {
 
 **Action**: Establish controls to prevent Mura from returning.
 
-#### 5.1: Automated Checks
+#### latest: Automated Checks
 
 **Action**: Use automated tools to enforce standards.
 
@@ -336,7 +336,7 @@ pnpm test         # Fail if tests fail
 # Coverage check       # Fail if coverage < 80%
 ```
 
-#### 5.2: Code Review Checklist
+#### latest: Code Review Checklist
 
 **Action**: Add standards to code review checklist.
 
@@ -347,7 +347,7 @@ pnpm test         # Fail if tests fail
 - [ ] Code meets quality standards
 - [ ] Code has required documentation
 
-#### 5.3: Documentation
+#### latest: Documentation
 
 **Action**: Document standards for reference.
 
@@ -379,7 +379,7 @@ pnpm test         # Fail if tests fail
 - All public APIs documented
 ```
 
-#### 5.4: Regular Audits
+#### latest: Regular Audits
 
 **Action**: Periodically audit for consistency.
 

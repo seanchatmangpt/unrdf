@@ -1,4 +1,4 @@
-# Phase 4.1: Protocol Design - Binary-Level Compatibility
+# Phase latest: Protocol Design - Binary-Level Compatibility
 
 ## Overview
 
@@ -93,7 +93,7 @@ All messages follow this structure:
   "type": "command|response|event|error",
   "id": "uuid-or-integer",
   "timestamp": "ISO-8601",
-  "version": "1.0.0",
+  "version": "latest",
   "payload": {},
   "meta": {
     "correlation_id": "uuid",
@@ -336,11 +336,11 @@ X.Y.Z
 ### Compatibility Matrix
 
 ```
-Client v1.0.0 can talk to:
-  - Server v1.0.0 ✓ (exact match)
-  - Server v1.1.0 ✓ (minor upgrade, ignore new fields)
-  - Server v1.2.5 ✓ (patch, ignore new fields)
-  - Server v2.0.0 ✗ (major version, fail)
+Client vlatest can talk to:
+  - Server vlatest ✓ (exact match)
+  - Server vlatest ✓ (minor upgrade, ignore new fields)
+  - Server vlatest ✓ (patch, ignore new fields)
+  - Server vlatest ✗ (major version, fail)
 
 Rules:
   - Minor version: Ignore unknown fields
@@ -363,7 +363,7 @@ const { type, id, payload } = message;
 
 // Erlang: Similar approach
 case maps:get(<<"version">>, Message) of
-    SupportedVersion when SupportedVersion == <<"1.0">> ->
+    SupportedVersion when SupportedVersion == <<"latest">> ->
         process_message(Message);
     _ ->
         {error, protocol_version_mismatch}

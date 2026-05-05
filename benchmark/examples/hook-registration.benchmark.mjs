@@ -27,7 +27,7 @@ import { KnowledgeHookManager } from '../../src/knowledge-engine/knowledge-hook-
  */
 
 // Initialize OTEL tracer
-const tracer = trace.getTracer('knowledge-hooks-benchmark', '1.0.0');
+const tracer = trace.getTracer('knowledge-hooks-benchmark', 'latest');
 
 // Benchmark configuration from spec
 const BENCHMARK_CONFIG = {
@@ -60,7 +60,7 @@ function generateTestHooks(count, complexity = 'medium') {
       id: `test-hook-${i}`,
       name: `Test Hook ${i}`,
       description: `Generated test hook for benchmarking`,
-      version: '1.0.0',
+      version: 'latest',
 
       // Hook complexity varies based on parameter
       triggers: complexity === 'simple'
@@ -138,7 +138,7 @@ export async function runHookRegistrationBenchmark() {
       try {
         // Set root span attributes
         rootSpan.setAttribute('benchmark.suite.name', 'Knowledge Hooks Performance Benchmark Suite');
-        rootSpan.setAttribute('benchmark.suite.version', '1.0.0');
+        rootSpan.setAttribute('benchmark.suite.version', 'latest');
         rootSpan.setAttribute('benchmark.id', BENCHMARK_CONFIG.id);
         rootSpan.setAttribute('benchmark.name', 'Hook Registration Benchmark');
         rootSpan.setAttribute('benchmark.scenario', BENCHMARK_CONFIG.scenario);

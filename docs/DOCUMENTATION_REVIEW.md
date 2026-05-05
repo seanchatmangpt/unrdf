@@ -18,7 +18,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 
 ### Score: 82/100
 
-### 1.1 Tutorials (Learning-Oriented) - Score: 85/100
+### latest Tutorials (Learning-Oriented) - Score: 85/100
 
 **Strengths:**
 - `/docs/getting-started.md` provides excellent step-by-step introduction
@@ -36,7 +36,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 2. Add prerequisite sections with links to RDF fundamentals
 3. Include architecture diagrams for visual learners
 
-### 1.2 How-to Guides (Problem-Oriented) - Score: 80/100
+### latest How-to Guides (Problem-Oriented) - Score: 80/100
 
 **Strengths:**
 - `/docs/guides/knowledge-hooks.md` is comprehensive (554 lines)
@@ -54,7 +54,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 2. Consolidate error handling patterns into single guide
 3. Add integration guides for popular frameworks
 
-### 1.3 Reference (Information-Oriented) - Score: 85/100
+### latest Reference (Information-Oriented) - Score: 85/100
 
 **Strengths:**
 - `/docs/api-reference.md` is comprehensive (490 lines)
@@ -72,7 +72,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 2. Add dedicated Zod schema reference section
 3. Include TypeScript declaration file references for IDE support
 
-### 1.4 Explanation (Understanding-Oriented) - Score: 78/100
+### latest Explanation (Understanding-Oriented) - Score: 78/100
 
 **Strengths:**
 - `/docs/explanation/README.md` provides excellent topic index
@@ -90,7 +90,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 2. Add ADRs for key architectural decisions
 3. Complete comparison documentation (vs. Jena, RDFLib, etc.)
 
-### 1.5 Cross-References - Score: 80/100
+### latest Cross-References - Score: 80/100
 
 **Verified Working Links:**
 - Internal documentation links mostly functional
@@ -112,7 +112,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 
 ### Score: 78/100
 
-### 2.1 Organization (Preventing Users from Getting Lost) - Score: 85/100
+### latest Organization (Preventing Users from Getting Lost) - Score: 85/100
 
 **Strengths:**
 - Clear directory structure (`/docs/api`, `/docs/guides`, `/docs/cli`, `/docs/examples`)
@@ -124,7 +124,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Duplicate content between root and subdirectory files
 - Some orphaned documents without clear navigation path
 
-### 2.2 Code Examples (Tested and Current) - Score: 75/100
+### latest Code Examples (Tested and Current) - Score: 75/100
 
 **Strengths:**
 - `/docs/examples/basic-usage.mjs` is executable with proper error handling
@@ -149,7 +149,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
    const store = useStoreContext(); // Will fail
    ```
 
-### 2.3 API Documentation Completeness - Score: 80/100
+### latest API Documentation Completeness - Score: 80/100
 
 **Comprehensive Areas:**
 - Core composables fully documented
@@ -161,7 +161,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Performance tuning parameters
 - Memory management options
 
-### 2.4 Performance Guidance - Score: 75/100
+### latest Performance Guidance - Score: 75/100
 
 **Documented:**
 - Batch processing recommendations
@@ -173,7 +173,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Memory usage guidelines by dataset size
 - Query optimization specific examples
 
-### 2.5 Prerequisites Documentation - Score: 82/100
+### latest Prerequisites Documentation - Score: 82/100
 
 **Well Documented:**
 - Node.js version requirements (18+)
@@ -184,7 +184,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Browser compatibility requirements not in getting-started
 - Optional dependencies not clearly marked
 
-### 2.6 Edge Cases and Errors - Score: 80/100
+### latest Edge Cases and Errors - Score: 80/100
 
 **Strengths:**
 - Comprehensive troubleshooting guide
@@ -202,7 +202,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 
 ### Score: 7/10
 
-### 3.1 Progressive Disclosure - Score: 8/10
+### latest Progressive Disclosure - Score: 8/10
 
 **Implementation:**
 - Getting started -> Guides -> API Reference progression
@@ -213,7 +213,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Some advanced topics in beginner guides
 - Missing intermediate-level content in some areas
 
-### 3.2 Audience Segmentation - Score: 7/10
+### latest Audience Segmentation - Score: 7/10
 
 **Clear Segments:**
 - New users: Getting Started
@@ -226,7 +226,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Migration paths for existing RDF users
 - Quick reference cards for experienced users
 
-### 3.3 Content Segmentation by Complexity - Score: 7/10
+### latest Content Segmentation by Complexity - Score: 7/10
 
 **Good Separation:**
 - Basic examples vs Advanced examples
@@ -237,7 +237,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Add estimated reading times
 - Include difficulty badges
 
-### 3.4 Feedback Mechanisms - Score: 6/10
+### latest Feedback Mechanisms - Score: 6/10
 
 **Present:**
 - GitHub Issues reference
@@ -249,7 +249,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - "Was this helpful?" prompts
 - Documentation issue templates
 
-### 3.5 Contradiction Resolution - Score: 7/10
+### latest Contradiction Resolution - Score: 7/10
 
 **Resolved:**
 - Type safety without TypeScript (JSDoc + Zod approach explained)
@@ -265,7 +265,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 
 ### Score: 76/100
 
-### 4.1 Metrics Definition - Score: 80/100
+### latest Metrics Definition - Score: 80/100
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
@@ -274,7 +274,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 | Code Examples | Tested | Partial | Needs Work |
 | API Coverage | 100% | ~90% | Good |
 
-### 4.2 Feature Coverage - Score: 88/100
+### latest Feature Coverage - Score: 88/100
 
 **Covered Features:**
 - [x] Store operations (100%)
@@ -291,7 +291,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - [ ] Federation features (50%)
 - [ ] Enterprise deployment (40%)
 
-### 4.3 Example Validation - Score: 70/100
+### latest Example Validation - Score: 70/100
 
 **Testing Results:**
 - Syntax errors found in 2 code examples
@@ -299,7 +299,7 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Missing await keywords in 1 example
 - Overall pass rate: ~93% (target: 95%)
 
-### 4.4 Clarity Score - Score: 78/100
+### latest Clarity Score - Score: 78/100
 
 **Readability Analysis:**
 - Average sentence length: Appropriate (15-20 words)
@@ -311,13 +311,13 @@ The unrdf documentation is comprehensive and well-organized, demonstrating stron
 - Acronyms not always defined first use
 - Some passive voice constructions
 
-### 4.5 Broken Links - Score: 72/100
+### latest Broken Links - Score: 72/100
 
 **Verified Links:** 85% functional
 **Broken Internal Links:** 47 (primarily in explanation/README.md)
 **Missing Files:** ~45 referenced but non-existent documents
 
-### 4.6 Formatting Consistency - Score: 85/100
+### latest Formatting Consistency - Score: 85/100
 
 **Consistent:**
 - Code block formatting

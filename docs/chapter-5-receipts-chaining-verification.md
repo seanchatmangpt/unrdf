@@ -24,7 +24,7 @@ A receipt **r** is a tuple ⟨τ, d, H_in, H_out, T, t_stamp, activity⟩ where:
   - h_O_new: SHA-256 hash of the updated knowledge graph O_τ
   - h_reason: hash of the structured rejection reason (e.g., RDF graph explaining which constraint failed)
 - **T** = ⟨software_versions, config_params, random_seed⟩ is the toolchain descriptor:
-  - software_versions: exact versions of all libraries (e.g., @unrdf/oxigraph@1.2.3, @unrdf/policy-engine@2.0.1)
+  - software_versions: exact versions of all libraries (e.g., @unrdf/oxigraph@latest, @unrdf/policy-engine@latest)
   - config_params: admissibility checker configuration (timeout limits, constraint solver strategy)
   - random_seed: if any non-deterministic processes are used (normally none; included for completeness)
 - **t_stamp** ∈ ISO-8601 is the wall-clock timestamp when the receipt was generated
@@ -48,8 +48,8 @@ Receipts are serialized as **RDF graphs** using the following vocabulary:
     ) ;
     receipt:outputHash <hash/state-new-sha256-345fed> ;
     receipt:toolchain [
-        receipt:softwareVersion "oxigraph@1.2.3" ;
-        receipt:softwareVersion "policy-engine@2.0.1" ;
+        receipt:softwareVersion "oxigraph@latest" ;
+        receipt:softwareVersion "policy-engine@latest" ;
         receipt:configParam "timeout=5000ms" ;
         receipt:configParam "solver=z3-smt"
     ] ;
@@ -449,7 +449,7 @@ The critical enabler is **bounded constraint complexity** (Chapter 4, Theorem 4.
 
 Receipt chains provide tamper detection, but this assumes receipts are published in a way that prevents retroactive modification. We survey three publication strategies with varying trust assumptions and cost profiles.
 
-### 5.7.1 Append-Only Git Ledger
+### latest Append-Only Git Ledger
 
 **Mechanism:**
 Receipts are committed to a Git repository where each commit adds new receipts and references the previous commit via hash pointer. Git's internal data structure is a Merkle DAG (directed acyclic graph) where each commit hash cryptographically commits to its parents and the entire repository state.
@@ -476,7 +476,7 @@ If the Git repository is **mirrored** to multiple independent servers (e.g., Git
 
 **Recommendation for enterprise:** Use Git with ≥3 independent mirrors (e.g., GitHub, AWS CodeCommit, on-premise GitLab). Publish the commit hashes via multiple channels (e.g., website, press releases, regulatory filings) to create a permanent record.
 
-### 5.7.2 Public Blockchain
+### latest Public Blockchain
 
 **Mechanism:**
 Publish Merkle batch roots (not individual receipts) as transactions on a public blockchain (e.g., Ethereum, Bitcoin). Each batch root H_root(B_τ) is included in a transaction:
@@ -509,7 +509,7 @@ For Bitcoin or Ethereum mainnet, this is economically infeasible for any entity 
 
 **Cost-optimized approach:** Publish daily Merkle batch roots (1 transaction/day) on Ethereum L2 (e.g., Arbitrum, Optimism) where fees are ~$0.01 per transaction. Annual cost: $3.65/year.
 
-### 5.7.3 Certificate Transparency (CT) Logs
+### latest Certificate Transparency (CT) Logs
 
 **Mechanism:**
 Inspired by [RFC 6962](https://tools.ietf.org/html/rfc6962), publish receipts to multiple **independent append-only log servers**. Each server maintains a Merkle tree of all receipts and periodically publishes a **signed tree head** (STH):
@@ -534,7 +534,7 @@ To alter a receipt, an adversary must compromise **all log servers**. If even on
 
 **Recommendation for consortiums:** If Disney partners with other studios (e.g., Universal, Warner Bros) to create a **shared governance framework**, operate a consortium of 5-10 CT log servers, each hosted by a different member. Tampering requires collusion of all members, which is detectable and expensive.
 
-### 5.7.4 Comparison Table
+### latest Comparison Table
 
 | Strategy | Tamper Resistance | Cost (Annual) | Latency | Trust Model |
 |----------|-------------------|---------------|---------|-------------|
@@ -548,7 +548,7 @@ To alter a receipt, an adversary must compromise **all log servers**. If even on
 
 We now trace a concrete example of how receipts enable end-to-end auditability in Disney's content release pipeline.
 
-### 5.8.1 Scenario: Canon Update for New Character Arc
+### latest Scenario: Canon Update for New Character Arc
 
 **Context:**
 The Marvel Studios business unit proposes a new character arc for "Spider-Man" in an upcoming Disney+ series. The update involves:
@@ -561,7 +561,7 @@ The Marvel Studios business unit proposes a new character arc for "Spider-Man" i
 
 Each step generates a receipt.
 
-### 5.8.2 Receipt Sequence
+### latest Receipt Sequence
 
 **Epoch τ₁: Character Edit Proposal**
 
@@ -577,8 +577,8 @@ Each step generates a receipt.
     ) ;
     receipt:outputHash <hash/state-new-o100001> ;
     receipt:toolchain [
-        receipt:softwareVersion "oxigraph@1.2.3" ;
-        receipt:softwareVersion "policy-engine@2.0.1" ;
+        receipt:softwareVersion "oxigraph@latest" ;
+        receipt:softwareVersion "policy-engine@latest" ;
         receipt:configParam "timeout=5000ms"
     ] ;
     prov:generatedAtTime "2025-12-26T09:15:00Z"^^xsd:dateTime ;
@@ -607,8 +607,8 @@ Each step generates a receipt.
     ) ;
     receipt:outputHash <hash/state-new-o100002> ;
     receipt:toolchain [
-        receipt:softwareVersion "oxigraph@1.2.3" ;
-        receipt:softwareVersion "canon-validator@1.0.5"
+        receipt:softwareVersion "oxigraph@latest" ;
+        receipt:softwareVersion "canon-validator@latest"
     ] ;
     prov:generatedAtTime "2025-12-26T09:20:00Z"^^xsd:dateTime ;
     prov:wasGeneratedBy <activity/canon-validation> ;
@@ -668,7 +668,7 @@ Each step generates a receipt.
     ] .
 ```
 
-### 5.8.3 External Verification by Licensor (Sony Pictures)
+### latest External Verification by Licensor (Sony Pictures)
 
 **Context:**
 Sony Pictures owns certain Spider-Man film rights and has a licensing agreement with Disney for streaming use. The contract requires that Disney prove they applied the correct regional restrictions and did not violate canon constraints that could impact Sony's future films.
@@ -702,7 +702,7 @@ Sony Pictures owns certain Spider-Man film rights and has a licensing agreement 
 **Outcome:**
 Sony's auditor concludes that Disney **provably** applied the contracted regional restrictions and canon checks. The receipts provide **non-repudiable evidence** that can be presented in court if a dispute arises (e.g., if Disney later claims they applied different restrictions).
 
-### 5.8.4 Regulatory Audit by FTC (Hypothetical)
+### latest Regulatory Audit by FTC (Hypothetical)
 
 **Context:**
 The FTC investigates whether Disney is applying discriminatory regional pricing based on user demographics (potential antitrust violation). Disney claims pricing is determined solely by regional market conditions, not individual user data.
@@ -741,7 +741,7 @@ Without receipts, Disney would have to provide internal database dumps, executio
 
 We now present three scenarios where an adversary attempts to tamper with receipts or artifacts, and show how external verification detects the attack.
 
-### 5.9.1 Example 1: Attacker Deletes Receipt r₅
+### latest Example 1: Attacker Deletes Receipt r₅
 
 **Scenario:**
 An insider at Disney deletes receipt `<receipt/epoch-100005>` from the published receipt chain, attempting to hide a controversial decision (e.g., approval of content that violated a partner agreement).
@@ -771,7 +771,7 @@ The deletion is **immediately detected**. The auditor can prove to stakeholders 
 **Mitigation by operator:**
 If Disney uses Git with multiple mirrors, deleting r₅ requires compromising all mirrors. If even one mirror (e.g., GitHub) retains the original receipt, the auditor can retrieve it and prove Disney attempted to hide it.
 
-### 5.9.2 Example 2: Attacker Modifies Artifact A₅
+### latest Example 2: Attacker Modifies Artifact A₅
 
 **Scenario:**
 An adversary intercepts the published artifact A₅ (e.g., character metadata on Disney+ API) and modifies it to inject unauthorized content (e.g., change character name, add unapproved backstory).
@@ -822,7 +822,7 @@ publish(artifact);
 
 This prevents accidental or malicious tampering at the API layer.
 
-### 5.9.3 Example 3: Attacker Edits Internal State O_τ
+### latest Example 3: Attacker Edits Internal State O_τ
 
 **Scenario:**
 An adversary with database access modifies the internal knowledge graph O_τ (e.g., alters a character's rights status to allow unauthorized distribution). They do **not** update receipts (assuming auditors won't check).

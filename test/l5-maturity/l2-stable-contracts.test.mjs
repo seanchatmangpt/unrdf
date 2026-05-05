@@ -90,7 +90,7 @@ describe('L2: Stable Contracts', () => {
 
       // v6 should be documented
       assert.ok(
-        changelog.includes('6.0.0') || changelog.includes('v6'),
+        changelog.includes('latest') || changelog.includes('v6'),
         'v6 release documented in CHANGELOG'
       );
 

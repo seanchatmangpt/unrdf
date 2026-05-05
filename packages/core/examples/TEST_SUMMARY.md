@@ -1,8 +1,8 @@
 # UNRDF Core Examples - Test Suite Summary
 
 **Generated**: 2024-12-04T06:52:00Z  
-**Test Framework**: Vitest 2.1.9  
-**Coverage Provider**: @vitest/coverage-v8 2.1.9
+**Test Framework**: Vitest [VERSION]  
+**Coverage Provider**: @vitest/coverage-v8 [VERSION]
 
 ## Overview
 

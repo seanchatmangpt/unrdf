@@ -238,7 +238,7 @@ jobs:
   load-testing:
     runs-on: ubuntu-latest
     steps:
-      - uses: grafana/k6-action@v0.3.0
+      - uses: grafana/k6-action@[VERSION]
         with:
           filename: sidecar/scripts/load-test.mjs
 ```

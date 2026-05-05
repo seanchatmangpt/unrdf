@@ -197,7 +197,7 @@ pnpm add typhonjs-escomplex
 
 #### Task 6: Integrate into Pipeline
 - File: `src/project-engine/initialize.mjs`
-- Add Phase 6.5: Code Complexity Analysis
+- Add Phase latest: Code Complexity Analysis
   - Execute after domain inference phase
   - Pass `projectStore` and `stackProfile` from prior phases
   - Merge returned store into `projectStore`
@@ -270,8 +270,8 @@ Monitor (scan for gaps/types/hotspots)
 
 **Health Metric Formula** (10-dimension weighted):
 ```
-Health = 0.10×(100-GapScore) + 0.10×(100-TypeScore) + 0.10×(100-HotspotScore)
-       + 0.05×(100-RefactorRisk) + 0.05×(100-DocDriftScore) + ...
+Health = latest×(100-GapScore) + latest×(100-TypeScore) + latest×(100-HotspotScore)
+       + latest×(100-RefactorRisk) + latest×(100-DocDriftScore) + ...
 ```
 
 **RDF Store Pattern** (Chicago School):

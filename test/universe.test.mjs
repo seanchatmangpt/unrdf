@@ -128,7 +128,7 @@ describe('Universe Tests', () => {
     console.log('[START] Creating ontology release');
     const ontology = new OntologyRelease({
       iri: 'http://example.org/ontology#',
-      version: '1.0.0',
+      version: 'latest',
       namespace: 'http://example.org/ontology#',
       isProtected: true,
     });
@@ -152,7 +152,7 @@ describe('Universe Tests', () => {
     console.log('[ASSERT] Adding protected ontology');
     const ontology = new OntologyRelease({
       iri: 'http://test.org/ontology#',
-      version: '1.0.0',
+      version: 'latest',
       namespace: 'http://test.org/ontology#',
       isProtected: true,
     });

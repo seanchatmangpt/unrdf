@@ -11,7 +11,7 @@
 
 ```javascript
 // Added:
-const DETERMINISTIC_START = 1704067200000000000n; // 2024-01-01T00:00:00.000Z
+const DETERMINISTIC_START = 1704067200000000000n; // 2024-01-01T00:00:latestZ
 
 // Modified now() function:
 if (typeof process !== 'undefined' && process.env?.DETERMINISTIC === '1') {

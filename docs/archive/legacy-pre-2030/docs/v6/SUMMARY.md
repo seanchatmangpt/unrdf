@@ -407,12 +407,12 @@ npm test
 
 1. Implement breaking changes
 2. Update documentation
-3. Beta release (6.0.0-beta.1)
+3. Beta release (latest-beta.1)
 
 ### Long-term (Month 7-12)
 
 1. Production validation
-2. GA release (6.0.0)
+2. GA release (latest)
 3. LTS support begins
 
 ---

@@ -271,55 +271,55 @@ The UTPM architecture consists of 11 core services deployed via Docker Compose, 
 
 ### 4.3 Service Descriptions
 
-#### 4.3.1 OpenTelemetry Collector (otel/opentelemetry-collector-contrib:0.119.0)
+#### latest OpenTelemetry Collector (otel/opentelemetry-collector-contrib:latest)
 
-The collector is the central telemetry pipeline. It receives OTLP data via gRPC (port 4317) and HTTP (port 4318), applies processing (batching, resource attribution), and exports to multiple backends. The resource processor enforces consistent service naming (`unrdf-daemon`, version `26.5.4`, environment `development`).
+The collector is the central telemetry pipeline. It receives OTLP data via gRPC (port 4317) and HTTP (port 4318), applies processing (batching, resource attribution), and exports to multiple backends. The resource processor enforces consistent service naming (`unrdf-daemon`, version `latest`, environment `development`).
 
-#### 4.3.2 Grafana Tempo (grafana/tempo:2.7.1)
+#### latest Grafana Tempo (grafana/tempo:latest)
 
 Tempo stores distributed traces using the S3-compatible MinIO backend. The Tempo config enables the metrics generator, which automatically produces service graph metrics and span metrics that are remote-written to Prometheus. This eliminates the need for manual metric instrumentation of trace-derived data.
 
-#### 4.3.3 Prometheus (prom/prometheus:v2.55.1)
+#### latest Prometheus (prom/prometheus:latest)
 
 Prometheus scrapes metrics from the OTEL Collector (port 8889), Tempo (port 3200), Loki (port 3100), Alertmanager (port 9093), and Pyroscope (port 4040). It evaluates alerting rules defined in `alert-rules.yml` and forwards alerts to Alertmanager.
 
-#### 4.3.4 Grafana (grafana/grafana:11.4.0)
+#### latest Grafana (grafana/grafana:latest)
 
 Grafana provides the unified visualization layer. The datasource provisioning includes Prometheus, Tempo, Loki, and Pyroscope, with trace-to-log and trace-to-metric correlation configured. The feature flag `pyroscopeIntegration` enables native profile visualization.
 
-#### 4.3.5 Loki (grafana/loki:3.3.2)
+#### latest Loki (grafana/loki:latest)
 
 Loki stores log data using the TSDB storage engine. The OTEL Collector exports logs to Loki, and Promtail collects Docker container stdout/stderr logs. Loki's derived fields configuration enables automatic extraction of trace IDs from log lines, linking logs to traces.
 
-#### 4.3.6 Promtail (grafana/promtail:3.3.2)
+#### latest Promtail (grafana/promtail:latest)
 
 Promtail uses Docker service discovery to automatically tail logs from all containers in the Compose project. It attaches container metadata as labels, enabling filtering by service name.
 
-#### 4.3.7 Pyroscope (grafana/pyroscope:1.10.1)
+#### latest Pyroscope (grafana/pyroscope:latest)
 
 Pyroscope provides continuous profiling (CPU, memory, goroutine) via its own OTLP receiver or the integrated Grafana profiling agent. Profile data is correlated with traces via shared labels.
 
-#### 4.3.8 Alertmanager (prom/alertmanager:v0.28.0)
+#### latest Alertmanager (prom/alertmanager:latest)
 
 Alertmanager routes alerts from Prometheus to appropriate receivers. The configuration includes severity-based routing (critical alerts trigger immediate notification, warnings are batched) and inhibition rules to suppress downstream alerts when a root cause alert is firing.
 
-#### 4.3.9 MinIO (minio/minio:RELEASE.2024-11-07T00-52-20Z)
+#### latest MinIO (minio/minio:RELEASE.2024-11-07T00-52-20Z)
 
 MinIO provides S3-compatible object storage for Tempo's trace backend. Two buckets are provisioned: `tempo-traces` (for complete trace data) and `tempo-blocks` (for compacted trace blocks). This enables production-scale trace retention without local filesystem limitations.
 
-#### 4.3.10 HotROD Demo App (jaegertracing/example-hotrod:1.62.0)
+#### latest HotROD Demo App (jaegertracing/example-hotrod:latest)
 
 The HotROD (Hot Rides On Demand) application is a multi-service demo that generates realistic distributed traces. It sends traces to the OTEL Collector via OTLP/gRPC, providing a continuous stream of trace data for dashboard validation and process mining analysis.
 
-#### 4.3.11 PM4Py (custom build, python:3.12-slim)
+#### latest PM4Py (custom build, python:3.12-slim)
 
 PM4Py runs as a custom Docker image built on Python 3.12-slim, providing process mining analysis. The image includes a critical fix for PID 0 crash handling in Docker containers (pm4py calls `psutil.Process(parent_pid).name()` which fails when parent PID is 0 — patched via sed in the Dockerfile). The analysis script queries Tempo for trace data, transforms it into event logs, and applies process discovery (Inductive Miner), conformance checking (token-based replay), and bottleneck analysis. Environment variable configuration allows flexible service endpoint resolution.
 
-#### 4.3.12 Advanced Observability Extensions
+#### latest Advanced Observability Extensions
 
 The core 11-service architecture is extended with 12 additional capabilities organized into four tiers:
 
-**Loki Ruler** (config extension to Loki 3.3.2): Enables log-based alerting rules evaluated against Loki's LogQL engine. Two rules are defined: `HighErrorRate` (warning, fires when >10% of logs from UNRDF containers contain errors over 5 minutes) and `ServiceDown` (critical, fires when a container produces zero logs over 10 minutes). Alerts route to Alertmanager via the v2 API.
+**Loki Ruler** (config extension to Loki latest): Enables log-based alerting rules evaluated against Loki's LogQL engine. Two rules are defined: `HighErrorRate` (warning, fires when >10% of logs from UNRDF containers contain errors over 5 minutes) and `ServiceDown` (critical, fires when a container produces zero logs over 10 minutes). Alerts route to Alertmanager via the v2 API.
 
 **SLO Burn Rate Alerts** (config extension to Prometheus alert-rules.yml): Implements Google's multi-window multi-burn-rate alerting strategy (SRE Workbook, 2020). Two rules protect error budgets: `HighBurnRate99` (critical, 1-hour burn window at 14.4x budget rate for 99.9% SLO) and `HighBurnRate99Window` (warning, 5-minute burn window at 6x budget rate for 99% SLO).
 
@@ -329,7 +329,7 @@ The core 11-service architecture is extended with 12 additional capabilities org
 
 **Trace-to-Metrics Dashboard** (Grafana provisioning): A 7-panel dashboard using Tempo's `span_metrics` processor output. Shows overview statistics (total calls, error rate, P50/P99 latency), latency by operation (histogram quantiles from `traces_spanmetrics_latency_bucket`), error rate by operation, and throughput by service.
 
-**Grafana Alloy** (grafana/alloy:v1.6.0): A unified telemetry agent that can replace Promtail. In addition to log shipping (feature-equivalent to Promtail with Docker service discovery), Alloy adds OTLP gRPC and HTTP receivers for trace forwarding directly to Tempo. This consolidates log shipping and trace ingestion into a single agent, reducing operational complexity and providing a migration path to Kubernetes-native telemetry collection.
+**Grafana Alloy** (grafana/alloy:latest): A unified telemetry agent that can replace Promtail. In addition to log shipping (feature-equivalent to Promtail with Docker service discovery), Alloy adds OTLP gRPC and HTTP receivers for trace forwarding directly to Tempo. This consolidates log shipping and trace ingestion into a single agent, reducing operational complexity and providing a migration path to Kubernetes-native telemetry collection.
 
 **Synthetic Trace Generator** (Python 3, zero external dependencies): A script that generates deterministic OTLP traces with known latency distributions (Gaussian mean/std) for five operations: `mcp.query`, `mcp.graph_load`, `mcp.hooks_exec`, `daemon.schedule`, and `daemon.health`. Each operation has an `expected_max` latency threshold — spans exceeding it are marked as failures, enabling regression detection without real traffic. Supports scheduled execution via `--interval` for continuous synthetic monitoring.
 
@@ -343,7 +343,7 @@ The core 11-service architecture is extended with 12 additional capabilities org
 
 **OpenLLMetry** (ESM module): OpenTelemetry instrumentation for LLM calls using the GenAI semantic conventions (`gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, etc.). Provides `withLLMSpan()` for wrapping any LLM provider call, `getAISDKTelemetryConfig()` for Vercel AI SDK integration, and `instrumentAIToolCall()` for per-tool-call tracing. Two daemon call sites are instrumented: `autonomous-agent.mjs` (function ID: `autonomous-agent.reason`) and `autonomous-refinement-engine.mjs` (function ID: `refinement-engine.decide`).
 
-#### 4.3.13 Semantic Convention Validation
+#### latest Semantic Convention Validation
 
 All custom OTEL attributes are validated against the OpenTelemetry semantic convention registry. The custom conventions define 7 attribute groups with 34 attributes across the prefixes `knowledge_hook.*`, `policy_pack.*`, `rdf.*`, `effect.*`, `crypto.*`, `transaction.*`, and `sidecar.*`. No custom prefix conflicts with OTel reserved prefixes. The AI SDK's internal `gen_ai.*` attributes are validated against the GenAI semantic conventions specification, with one noted deprecation (`gen_ai.system` → `gen_ai.provider.name`) requiring the environment variable `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
 
@@ -512,7 +512,7 @@ Traditional conformance checking would flag this as a deviation. Ontology-aware 
 
 Beyond the core discovery-conformance-enhancement pipeline, PM4Py provides several advanced techniques that are particularly relevant to observability-driven process mining. We identify twenty-nine features that extend the UTPM architecture's analytical capabilities:
 
-#### 6.5.1 Predictive Monitoring — Remaining Time and Next Activity
+#### latest Predictive Monitoring — Remaining Time and Next Activity
 
 PM4Py's predictive monitoring module enables forecasting of running process instances. For distributed tracing, this translates to predicting the remaining latency of an in-flight request trace based on the sequence of spans observed so far.
 
@@ -543,7 +543,7 @@ results = pred_next.apply(df, parameters={
 
 For observability, this enables proactive alerting: if a trace's predicted remaining time exceeds an SLO threshold, an alert can be raised before the trace completes. Similarly, next activity prediction enables anomaly detection when an observed span sequence deviates from the predicted pattern.
 
-#### 6.5.2 Object-Centric Process Mining (OCEL)
+#### latest Object-Centric Process Mining (OCEL)
 
 Object-centric process mining (OCel) addresses a fundamental limitation of traditional process mining: the assumption that each event belongs to exactly one case. In distributed systems, a single trace may involve multiple interacting entities — services, knowledge graphs, federation endpoints, MCP tools — each of which constitutes a different "object."
 
@@ -568,7 +568,7 @@ pm4py.view_ocpn(ocpn)
 
 This is directly applicable to the UTPM architecture because distributed traces naturally span multiple objects (services). An OCEL representation preserves the multi-object nature of trace data, enabling discovery of interaction patterns between services that traditional case-based mining flattens.
 
-#### 6.5.3 Alignment-Based Conformance Checking
+#### latest Alignment-Based Conformance Checking
 
 While token-based replay provides fitness and precision metrics, alignment-based conformance checking produces precise optimal alignments between observed traces and the process model, identifying exactly which activities deviate and where:
 
@@ -585,7 +585,7 @@ aligned_traces = alignments.apply(df, net, im, fm)
 
 Alignment-based conformance is more computationally expensive (O(n²)) than token-based replay, but provides per-trace deviation diagnosis. For the UTPM architecture, this enables root cause analysis at the individual trace level: rather than reporting aggregate fitness, we can identify exactly which span in a trace deviated from the expected model.
 
-#### 6.5.4 Feature Extraction for ML-Based Anomaly Detection
+#### latest Feature Extraction for ML-Based Anomaly Detection
 
 PM4Py provides automated feature extraction from event logs, producing numerical representations suitable for machine learning classifiers:
 
@@ -601,7 +601,7 @@ data, feature_names = features.apply(df,
 
 Combined with unsupervised anomaly detection (Isolation Forest, One-Class SVM), this enables automatic identification of anomalous traces without a reference process model. For observability, this means detecting "weird" traces — unusual span sequences, unexpected latency patterns — as they occur.
 
-#### 6.5.5 Trace Clustering and Variant Analysis
+#### latest Trace Clustering and Variant Analysis
 
 PM4Py supports grouping traces into clusters based on behavioral similarity:
 
@@ -620,7 +620,7 @@ variants = pm4py.get_variants(df)
 
 Variant analysis is particularly useful for understanding the distribution of operational patterns in a knowledge graph system. If 80% of traces follow one variant and 20% follow another, the minority variant may represent an error path, a retry loop, or an alternate governance workflow.
 
-#### 6.5.6 Stochastic Process Mining
+#### latest Stochastic Process Mining
 
 PM4Py can annotate process models with probabilistic information, producing stochastic Petri nets where transitions have associated probabilities:
 
@@ -634,7 +634,7 @@ snet, sim, sfm = stochastic.apply(df)
 
 Stochastic models enable Monte Carlo simulation of process behavior. For the UTPM architecture, this means we can simulate expected trace patterns under different load conditions, predicting how the process model would behave if a specific service (e.g., the federation endpoint) became slow or unavailable.
 
-#### 6.5.7 Process Tree Operations
+#### latest Process Tree Operations
 
 PM4Py exposes process trees as first-class objects with composition, simplification, and comparison operations:
 
@@ -651,7 +651,7 @@ from pm4py.objects.process_tree.obj import ComparisonResult
 
 Process tree comparison enables drift detection: by discovering process trees from successive time windows and comparing them, we can detect when the operational process has changed. This is directly applicable to detecting configuration changes, deployment rollouts, or performance regressions in the knowledge graph system.
 
-#### 6.5.8 Case Duration and Waiting Time Analysis
+#### latest Case Duration and Waiting Time Analysis
 
 Beyond simple bottleneck analysis, PM4Py provides structured analysis of case-level performance:
 
@@ -666,7 +666,7 @@ case_stats = case_duration.get_case_description(df,
 
 This extends the bottleneck analysis in `pm4py-analyze.py` by identifying outlier cases — traces whose total duration deviates significantly from the expected distribution — which are often the most diagnostically interesting for SRE teams.
 
-#### 6.5.9 Event Stream Processing (Live Process Mining)
+#### latest Event Stream Processing (Live Process Mining)
 
 PM4Py supports incremental processing of event streams, enabling live process mining without batching:
 
@@ -687,7 +687,7 @@ current_tree = stream.get_process_tree()
 
 For the UTPM architecture, this eliminates the batch extraction latency measured in Section 8.2. Rather than periodically querying Tempo for traces and running discovery, the streaming approach maintains an always-up-to-date process model that reflects the latest operational behavior.
 
-#### 6.5.10 Organizational Mining and Resource Analysis
+#### latest Organizational Mining and Resource Analysis
 
 PM4Py can analyze resource (service) behavior patterns, discovering organizational structures and workload distributions:
 
@@ -702,7 +702,7 @@ profiles = resource_profiles.apply(df,
 
 For distributed systems, organizational mining reveals the actual communication patterns between services — which services frequently interact, which are bottlenecks in terms of concurrent load, and whether the observed service topology matches the intended architecture.
 
-#### 6.5.11 AutoML Pipeline Optimization (TPOT2)
+#### latest AutoML Pipeline Optimization (TPOT2)
 
 TPOT2 (Tree-based Pipeline Optimization Tool, version 2) automates the selection of ML classifiers and preprocessing steps for trace anomaly detection. Rather than manually choosing between Isolation Forest, One-Class SVM, or other classifiers, TPOT2 uses genetic programming to evolve optimal scikit-learn pipelines:
 
@@ -730,7 +730,7 @@ tpot.export('best_anomaly_pipeline.py')
 
 TPOT2 searches over hundreds of possible pipeline configurations — including Random Forests, Gradient Boosting, SVMs, XGBoost, LightGBM, and their preprocessing combinations — to find the pipeline that best separates anomalous traces from normal ones. This eliminates the need for manual model selection and hyperparameter tuning, which is particularly valuable when the distribution of trace anomalies changes over time (e.g., after deployments or configuration changes).
 
-#### 6.5.12 Temporal Profile Conformance (SLA Checking)
+#### latest Temporal Profile Conformance (SLA Checking)
 
 Temporal profile conformance checks whether observed inter-activity times deviate from the expected profile learned from historical traces. Unlike simple latency thresholds, temporal profiles capture the statistical distribution of time between _pairs_ of activities:
 
@@ -754,7 +754,7 @@ violations = sum(
 
 The zeta-score normalizes deviations by the learned standard deviation, providing a statistically principled threshold. A zeta > 2.0 corresponds roughly to the 95th percentile of the expected distribution. In our HotROD evaluation, 9.3% of activity pair transitions showed significant temporal deviations, identifying `/route → /route` (std=1.53s) and `GetDriver → GetDriver` (std=0.11-2.84s) as the most variable transitions.
 
-#### 6.5.13 Rework Detection
+#### latest Rework Detection
 
 Rework detection identifies activities that occur multiple times within the same trace, indicating retry loops, compensating transactions, or inefficient process patterns:
 
@@ -771,7 +771,7 @@ rework_df = pm4py.filter_activities_rework(df, '/route', min_occurrences=2)
 
 In distributed tracing, rework often corresponds to retry logic (HTTP GET retries), compensating transactions (rollback + re-dispatch), or batch processing patterns (multiple GetDriver calls per dispatch). Our HotROD evaluation identified 4 activities with rework, totaling 120 rework cases across 30 traces. The `/route` activity showed 100% rework rate (all traces contained repeated routing spans), reflecting the route-simulated concurrent trip matching pattern.
 
-#### 6.5.14 Batch Detection
+#### latest Batch Detection
 
 Batch detection identifies groups of cases that are processed together by the same resource within a time window. In distributed systems, batching explains tail latency spikes — when a resource processes multiple requests simultaneously, the last request experiences queueing delay:
 
@@ -785,7 +785,7 @@ batches = pm4py.discover_batches(df, merge_distance=30, min_batch_size=2)
 
 For distributed traces, classical batch detection requires a generous merge distance (30s+) since traces span multiple services. Our implementation includes a fallback that detects near-concurrent activity starts within time windows, which is more appropriate for microservice architectures where batching occurs at the service level rather than the process level.
 
-#### 6.5.15 Social Network Analysis (SNA)
+#### latest Social Network Analysis (SNA)
 
 Social network analysis maps service interaction patterns from process execution data, revealing the _actual_ communication topology versus the intended architecture:
 
@@ -805,7 +805,7 @@ roles = pm4py.discover_organizational_roles(df)
 
 In our OTEL context, SNA requires the `org:resource` column to be populated with service names (from `service.name` span attributes). When traces originate from a single synthetic workload (e.g., HotROD), all resources map to "unknown" and SNA is skipped. In production deployments with multi-service traces, SNA reveals unexpected service dependencies, communication hotspots, and architectural drift.
 
-#### 6.5.16 Decision Mining
+#### latest Decision Mining
 
 Decision mining identifies the data-driven factors that determine routing decisions at gateway points in the process model. By extracting features from alignment results and training a decision tree classifier, we can explain _why_ traces follow different paths:
 
@@ -832,7 +832,7 @@ print(export_text(clf, feature_names=['cost', 'fitness', 'log_moves', 'model_mov
 
 The resulting decision tree provides human-interpretable rules such as "if alignment cost > 5 and log_moves > 2, the trace is unfit." This enables operators to understand the specific conditions that lead to process deviations, rather than just knowing that deviations exist.
 
-#### 6.5.17 Performance Spectrum Analysis
+#### latest Performance Spectrum Analysis
 
 Performance spectrum analysis examines the statistical distribution of activity latencies to identify bimodal patterns, outliers, and variable activities that require further investigation:
 
@@ -857,7 +857,7 @@ for activity in df['concept:name'].unique():
 
 In our HotROD evaluation, performance spectrum analysis identified 2 bimodal activities: `HTTP GET` (CV=3.268, 30 outliers) and `GetDriver` (CV=0.572, 76 outliers). The high CV for HTTP GET reflects the mix of fast cache hits and slow database lookups, while GetDriver's bimodality stems from the simulated variable driver availability.
 
-#### 6.5.18 Declare (Declarative Process Mining)
+#### latest Declare (Declarative Process Mining)
 
 Traditional process mining discovers imperative models — Petri nets, BPMN diagrams, process trees — that prescribe a specific sequence of activities. Van der Aalst et al. (2009) argue that this imperative paradigm is poorly suited for flexible, concurrent, and event-driven processes: "Don't Use Petri Nets for Process Mining" (van der Aalst, van Dongen, Herbst, et al., 2009). The declarative approach instead specifies _constraints_ that must hold, leaving all behavior not explicitly forbidden as permitted.
 
@@ -898,17 +898,17 @@ Key constraint templates applicable to distributed tracing:
 | Non-coexistence  | `¬(activity_a ∧ activity_b)`             | `onto_validate` and `onto_load` never co-occur in the same trace |
 | Non-succession   | `¬(activity_a ∧ ◇activity_b)`            | `onto_reject` never followed by `onto_apply`                     |
 
-Declarative conformance checking identifies _specific constraint violations_ rather than aggregate fitness scores. This is crucial for automated remediation: each violation maps directly to a remediation action. For example, a violated `chain_response(onto_validate, onto_load)` constraint indicates that the load step was skipped after validation, triggering a compensating action (Section 6.5.23).
+Declarative conformance checking identifies _specific constraint violations_ rather than aggregate fitness scores. This is crucial for automated remediation: each violation maps directly to a remediation action. For example, a violated `chain_response(onto_validate, onto_load)` constraint indicates that the load step was skipped after validation, triggering a compensating action (Section latest).
 
-#### 6.5.19 Event Data Quality Framework
+#### latest Event Data Quality Framework
 
 Process mining results are only as reliable as the input event data. Van der Aalst (2016) dedicates Chapter 3 of _Process Mining: Data Science in Action_ to event data quality, establishing four quality dimensions that apply directly to OpenTelemetry trace data:
 
 **Completeness**: Are all events present? Missing spans — caused by sampling, dropped batches, or failed exports — produce incomplete traces that inflate conformance deviations. The OTel Collector's `ailedsentlogsspanmetrics` metric tracks dropped spans, but span-level completeness also requires checking for missing child spans within a trace (e.g., a parent span for `daemon.schedule` without child spans for the individual MCP tool invocations).
 
-**Validity**: Do events conform to the expected schema? Invalid timestamps (clock skew across services), missing required attributes (`service.name`, `trace_id`), or inconsistent case identifiers (truncated trace IDs) corrupt the event log. The semantic convention validation in Section 4.3.13 addresses attribute-level validity; event-level validity additionally requires timestamp consistency checks.
+**Validity**: Do events conform to the expected schema? Invalid timestamps (clock skew across services), missing required attributes (`service.name`, `trace_id`), or inconsistent case identifiers (truncated trace IDs) corrupt the event log. The semantic convention validation in Section latest addresses attribute-level validity; event-level validity additionally requires timestamp consistency checks.
 
-**Timeliness**: Are events available for analysis within the expected window? Late-arriving spans — common in batch-exported traces or services behind a message queue — produce process models that lag behind the current system state. The streaming discovery module (Section 6.5.9) partially addresses this by maintaining an always-up-to-date model, but late-arriving spans still require historical correction.
+**Timeliness**: Are events available for analysis within the expected window? Late-arriving spans — common in batch-exported traces or services behind a message queue — produce process models that lag behind the current system state. The streaming discovery module (Section latest) partially addresses this by maintaining an always-up-to-date model, but late-arriving spans still require historical correction.
 
 **Coverage**: Does the event log represent the full population of process instances, or is it biased toward a subset? Trace sampling (head-based or tail-based) in the OTel Collector can bias the event log toward fast traces (tail sampling keeps slow traces) or uniform samples (head sampling). For process mining, uniform head-based sampling is preferred because it preserves the distribution of trace variants; tail sampling biases the model toward failure paths.
 
@@ -956,7 +956,7 @@ def check_otel_trace_quality(df):
 
 For the UTPM architecture, data quality checks should run as a preprocessing step before process discovery. The "garbage in = garbage out" principle is particularly acute for conformance checking: incomplete traces produce artificially low fitness scores, leading to false positive deviation reports. We recommend a quality threshold of >95% completeness before running conformance analysis.
 
-#### 6.5.20 Process Simulation (Play Out)
+#### latest Process Simulation (Play Out)
 
 Process simulation enables "what-if" analysis by generating synthetic event logs from a discovered process model. Van der Aalst (2016) describes this as the "play out" operation — replaying a process model forward to predict behavior under hypothetical conditions. PM4Py supports simulation of Petri nets with initial and final markings:
 
@@ -981,13 +981,13 @@ For observability-driven process mining, simulation enables three high-value use
 
 **Capacity Planning**: By simulating the process model with different concurrency levels, operators can predict how the system will behave under increased load. If the model shows that a specific activity (e.g., `onto_reason`) becomes a bottleneck at 2x load, capacity planning can pre-provision additional reasoning engine instances.
 
-**SLO Prediction**: Simulation combined with stochastic process mining (Section 6.5.6) produces confidence intervals for case durations. If the 95th percentile of simulated case durations exceeds the SLO target, the SLO is at risk and preemptive action is warranted.
+**SLO Prediction**: Simulation combined with stochastic process mining (Section latest) produces confidence intervals for case durations. If the 95th percentile of simulated case durations exceeds the SLO target, the SLO is at risk and preemptive action is warranted.
 
-**Deployment Impact Analysis**: Before deploying a new service version, the current process model can be modified to reflect the expected change (e.g., adding a new span for a validation step) and simulated to predict the impact on end-to-end latency. This connects to the PM4Py Conformance CI Gate (Section 4.3.12), which detects drift between the current and expected process model.
+**Deployment Impact Analysis**: Before deploying a new service version, the current process model can be modified to reflect the expected change (e.g., adding a new span for a validation step) and simulated to predict the impact on end-to-end latency. This connects to the PM4Py Conformance CI Gate (Section latest), which detects drift between the current and expected process model.
 
 Simulation also connects directly to predictive SLO monitoring (future work item 10): by maintaining a continuously updated process model via streaming discovery and simulating it at regular intervals, the system can predict SLO violations before they occur.
 
-#### 6.5.21 Process Cube (Multi-Dimensional Analysis)
+#### latest Process Cube (Multi-Dimensional Analysis)
 
 The process cube, introduced by van der Aalst (2013), applies OLAP-style multi-dimensional analysis to process mining data. Just as a data cube enables slicing and dicing of business metrics across dimensions (time, region, product), a process cube enables slicing process data across dimensions relevant to operational analysis:
 
@@ -1029,14 +1029,14 @@ For the UTPM architecture, process cubes enable ad-hoc process analysis without 
 | Service (resource) | `unrdf-daemon`, `kgc-sidecar`, `federation` | Service-specific process models and conformance     |
 | Performance tier   | P50, P95, P99                               | Understand which traces exhibit different behavior  |
 | Trace outcome      | Success, error, timeout                     | Compare happy-path vs failure-path process models   |
-| Ontology version   | `v1.0.0`, `v1.1.0`                          | Evaluate process changes across ontology versions   |
+| Ontology version   | `latest`, `latest`                          | Evaluate process changes across ontology versions   |
 | MCP tool set       | `validate+load`, `validate+load+reason`     | Compare process variants by tool invocation pattern |
 
 The key advantage of process cubes is that they enable _exploratory_ process analysis. An operator investigating a latency spike can slice the process cube by the affected time window and immediately see whether the process model has changed, which activities have shifted, and whether new variants have appeared — all without writing custom SPARQL queries or re-running the full discovery pipeline.
 
-#### 6.5.22 Streaming Process Mining
+#### latest Streaming Process Mining
 
-Section 6.5.9 introduced PM4Py's streaming discovery module as a means of eliminating batch extraction latency. This section expands on the streaming approach, emphasizing its connection to the OTel Collector pipeline and its role in real-time process drift detection.
+Section latest introduced PM4Py's streaming discovery module as a means of eliminating batch extraction latency. This section expands on the streaming approach, emphasizing its connection to the OTel Collector pipeline and its role in real-time process drift detection.
 
 The OTel Collector already processes telemetry in a streaming fashion: receivers ingest data, processors transform it, and exporters ship it to backends. Process mining can be integrated into this pipeline by adding a streaming discovery processor that maintains an always-up-to-date process model:
 
@@ -1078,13 +1078,13 @@ Streaming process mining enables three observability capabilities that batch min
 
 3. **Adaptive alerting thresholds**: The streaming process model provides continuously updated activity duration distributions. These distributions can feed into adaptive alerting thresholds that automatically adjust to normal behavioral shifts (e.g., seasonal load changes) while still detecting genuine anomalies.
 
-#### 6.5.23 The Act Phase — Closing the Loop
+#### latest The Act Phase — Closing the Loop
 
-The Process Mining Manifesto (van der Aalst et al., 2012) defines a four-phase improvement cycle: **Observe** (collect event data), **Detect** (discover process models and check conformance), **Check** (diagnose root causes and evaluate improvement opportunities), and **Act** (implement process changes and monitor their effect). Sections 6.5.1 through 6.5.22 cover the Observe, Detect, and Check phases. This section addresses the Act phase — closing the loop between process mining analysis and automated remediation.
+The Process Mining Manifesto (van der Aalst et al., 2012) defines a four-phase improvement cycle: **Observe** (collect event data), **Detect** (discover process models and check conformance), **Check** (diagnose root causes and evaluate improvement opportunities), and **Act** (implement process changes and monitor their effect). Sections latest through latest cover the Observe, Detect, and Check phases. This section addresses the Act phase — closing the loop between process mining analysis and automated remediation.
 
 The gap between reactive monitoring and proactive process optimization is precisely the gap that van der Aalst identifies: most process mining deployments stop at diagnosis ("here is the problem") without progressing to action ("here is the fix"). For distributed systems observability, this gap is particularly consequential because the remediation actions are often automatable — unlike business processes that require human approval, system processes can be remediated programmatically.
 
-Declarative conformance checking (Section 6.5.18) provides the bridge between detection and action. Each violated constraint maps to a specific remediation action:
+Declarative conformance checking (Section latest) provides the bridge between detection and action. Each violated constraint maps to a specific remediation action:
 
 | Violated Constraint                 | Root Cause                           | Remediation Action                         | Implementation                          |
 | ----------------------------------- | ------------------------------------ | ------------------------------------------ | --------------------------------------- |
@@ -1121,7 +1121,7 @@ This closes the loop: the Observe phase collects telemetry via OTel, the Detect 
 
 This architecture transforms the UTPM stack from a reactive monitoring tool (which tells you what went wrong) into a proactive process optimization platform (which fixes what is going wrong). Future work item 6 (automated remediation) and item 15 (decision mining for auto-remediation) are directly addressed by this approach.
 
-#### 6.5.24 Goal-Oriented Process Mining
+#### latest Goal-Oriented Process Mining
 
 Goal-oriented process mining shifts the discovery perspective from "what did the system do?" to "what was the system trying to do?" (van der Aalst, 2023). For autonomous agents and knowledge graph systems, the expected behavior is often defined by a plan — a sequence of operations that the agent intends to execute to achieve a specific goal. Process mining can measure the gap between the plan and actual execution.
 
@@ -1160,7 +1160,7 @@ deviations = {v: c for v, c in tool_variants.items() if v != expected_tool_plan}
 
 For observability, goal-oriented process mining provides a natural metric for autonomous agent quality: the plan adherence rate directly measures how often the agent follows its prescribed workflow. A declining adherence rate signals drift in agent behavior — potentially caused by prompt changes, model updates, or evolving ontological constraints.
 
-#### 6.5.25 Hierarchical Process Mining
+#### latest Hierarchical Process Mining
 
 Distributed systems exhibit natural hierarchy: services are organized into layers (api-gateway, frontend, sidecar, driver-svc), and each layer has its own internal process model. Hierarchical process mining discovers process models at each level of the hierarchy and relates them through inter-level edges (van der Aalst, 2023; Russell & Norvig, 2021).
 
@@ -1206,9 +1206,9 @@ This maps to O\*'s **kernel → stratum → tactic** architecture: the kernel de
 
 **Service-level process model comparison** enables drift detection at the per-service level. By discovering process trees for each service independently and comparing them across time windows, operators can identify which specific service's process has changed — rather than detecting aggregate drift across the entire system.
 
-#### 6.5.26 Counterfactual Process Analysis
+#### latest Counterfactual Process Analysis
 
-Counterfactual process analysis answers the question: "what would have happened if we had taken a different path?" Building on the process simulation capability (Section 6.5.20), counterfactual analysis simulates alternative execution paths and compares them against observed behavior.
+Counterfactual process analysis answers the question: "what would have happened if we had taken a different path?" Building on the process simulation capability (Section latest), counterfactual analysis simulates alternative execution paths and compares them against observed behavior.
 
 PM4Py's `play_out()` function generates synthetic traces from a discovered model. The key metric is **model coverage**: what fraction of observed behavior can the model reproduce?
 
@@ -1263,9 +1263,9 @@ observed_durations['duration'] = (observed_durations['end'] - observed_durations
 latency_reduction = observed_durations['duration'].mean() - cf_durations['duration'].mean()
 ```
 
-This connects directly to the Act Phase (Section 6.5.23): before implementing a remediation action, counterfactual simulation predicts its impact, enabling data-driven decisions about which actions to pursue.
+This connects directly to the Act Phase (Section latest): before implementing a remediation action, counterfactual simulation predicts its impact, enabling data-driven decisions about which actions to pursue.
 
-#### 6.5.27 Normative Process Mining (Constitutional Constraints)
+#### latest Normative Process Mining (Constitutional Constraints)
 
 Normative process mining treats Declare constraints not merely as discovered patterns but as **enforced norms** — policies that the system is expected to follow. This distinction transforms declarative conformance checking from a descriptive tool ("here is what happened") into a prescriptive one ("here is what should happen and whether it did").
 
@@ -1320,7 +1320,7 @@ compliance_rate = 1 - (violating_traces / len(conformance))
 
 For the UTPM architecture, normative process mining provides a bridge between the descriptive power of process mining and the prescriptive authority of the O\* ontology. Strong norms discovered from operational data can be formalized as SHACL constraints, closing the loop between observed behavior and ontological governance.
 
-#### 6.5.28 Multi-Agent Orchestration Patterns
+#### latest Multi-Agent Orchestration Patterns
 
 In multi-service architectures, process mining reveals the **delegation patterns** between services — the governance protocol by which work is distributed across the system. These patterns are the operational manifestation of the system's architecture: who delegates to whom, in what order, and under what conditions.
 
@@ -1385,9 +1385,9 @@ for window, group in df.groupby('time_window'):
 # Sudden appearance of a new pattern = investigate
 ```
 
-#### 6.5.29 Self-Reflective Process Mining (The Meta-Loop)
+#### latest Self-Reflective Process Mining (The Meta-Loop)
 
-The most advanced application of process mining to autonomous systems is the **self-reflective meta-loop**: using process mining output as input to the agent's own decision-making. This closes the ultimate feedback loop — not just closing the Observe-Detect-Check-Act cycle (Section 6.5.23), but making the process model itself an input to the agent's reasoning process.
+The most advanced application of process mining to autonomous systems is the **self-reflective meta-loop**: using process mining output as input to the agent's own decision-making. This closes the ultimate feedback loop — not just closing the Observe-Detect-Check-Act cycle (Section latest), but making the process model itself an input to the agent's reasoning process.
 
 The mechanism works as follows:
 
@@ -1443,9 +1443,9 @@ The key insight is that **the process model is not just an observation tool but 
 
 This represents the convergence of three themes developed throughout this chapter:
 
-- **Declare constraints** (Section 6.5.18) provide the formal language for specifying behavioral norms
-- **Normative process mining** (Section 6.5.27) distinguishes strong norms from weak patterns
-- **The Act Phase** (Section 6.5.23) closes the loop from detection to remediation
+- **Declare constraints** (Section latest) provide the formal language for specifying behavioral norms
+- **Normative process mining** (Section latest) distinguishes strong norms from weak patterns
+- **The Act Phase** (Section latest) closes the loop from detection to remediation
 
 Self-reflective process mining extends the Act Phase from reactive remediation (fix individual violations) to proactive governance improvement (update the norms themselves). The agent does not merely follow the rules — it helps evolve the rules based on operational evidence.
 
@@ -1460,17 +1460,17 @@ For the UTPM architecture, this capability is realized through the @unrdf/hooks 
 | Component      | Technology        | Version    | Purpose                        |
 | -------------- | ----------------- | ---------- | ------------------------------ |
 | Orchestration  | Docker Compose    | v2.24+     | Service lifecycle management   |
-| Traces         | Grafana Tempo     | 2.7.1      | Distributed trace storage      |
-| Metrics        | Prometheus        | 2.55.1     | Time-series metrics            |
-| Logs           | Grafana Loki      | 3.3.2      | Log aggregation                |
-| Profiles       | Grafana Pyroscope | 1.10.1     | Continuous profiling           |
-| Visualization  | Grafana           | 11.4.0     | Unified dashboards             |
-| Collector      | OTel Contrib      | 0.119.0    | Telemetry pipeline             |
-| Alerting       | Alertmanager      | 0.28.0     | Alert routing                  |
+| Traces         | Grafana Tempo     | latest      | Distributed trace storage      |
+| Metrics        | Prometheus        | latest     | Time-series metrics            |
+| Logs           | Grafana Loki      | latest      | Log aggregation                |
+| Profiles       | Grafana Pyroscope | latest     | Continuous profiling           |
+| Visualization  | Grafana           | latest     | Unified dashboards             |
+| Collector      | OTel Contrib      | latest    | Telemetry pipeline             |
+| Alerting       | Alertmanager      | latest     | Alert routing                  |
 | Storage        | MinIO             | 2024-11-07 | S3-compatible object storage   |
-| Process Mining | PM4Py             | 2.7.11     | Process discovery and analysis |
-| Log Shipping   | Promtail          | 3.3.2      | Docker log collection          |
-| Demo Traces    | HotROD            | 1.62.0     | Reference trace generation     |
+| Process Mining | PM4Py             | latest     | Process discovery and analysis |
+| Log Shipping   | Promtail          | latest      | Docker log collection          |
+| Demo Traces    | HotROD            | latest     | Reference trace generation     |
 
 ### 7.2 Deployment
 
@@ -1596,7 +1596,7 @@ We apply process mining techniques across three tiers — core (currently implem
 | Multi-Agent Orchestration     | Yes         | Delegation patterns, service-level DFG topology, and orchestration stability       |
 | Self-Reflective Mining        | Proposed    | Meta-loop: conformance violations feed back into agent decision-making             |
 
-The Inductive Miner produces the most immediately useful results for KGS telemetry, as it handles noise and incomplete traces gracefully. Among the advanced techniques, predictive monitoring and OCEL object-centric mining offer the highest potential impact for observability: predictive monitoring enables proactive SLO violation alerting before traces complete, and OCEL preserves the multi-service nature of distributed traces that traditional case-based mining flattens. The declarative mining approach (Declare) is particularly well-suited to distributed systems because it captures concurrent and event-driven behavior via LTL constraints rather than imposing an artificial sequential ordering. The Act Phase (Section 6.5.23) closes the process mining improvement cycle by mapping Declare violations to automated remediation actions via @unrdf/hooks, transforming the UTPM stack from reactive monitoring to proactive process optimization. The six AGI-focused extensions — goal-oriented process mining (Section 6.5.24), hierarchical decomposition (Section 6.5.25), counterfactual simulation (Section 6.5.26), normative constraint enforcement (Section 6.5.27), multi-agent orchestration patterns (Section 6.5.28), and self-reflective policy optimization (Section 6.5.29) — address the unique requirements of autonomous agent systems: measuring plan adherence, decomposing multi-service hierarchies, simulating alternative execution paths, enforcing constitutional norms, discovering delegation patterns, and closing the meta-loop where process mining output feeds back into agent behavior.
+The Inductive Miner produces the most immediately useful results for KGS telemetry, as it handles noise and incomplete traces gracefully. Among the advanced techniques, predictive monitoring and OCEL object-centric mining offer the highest potential impact for observability: predictive monitoring enables proactive SLO violation alerting before traces complete, and OCEL preserves the multi-service nature of distributed traces that traditional case-based mining flattens. The declarative mining approach (Declare) is particularly well-suited to distributed systems because it captures concurrent and event-driven behavior via LTL constraints rather than imposing an artificial sequential ordering. The Act Phase (Section latest) closes the process mining improvement cycle by mapping Declare violations to automated remediation actions via @unrdf/hooks, transforming the UTPM stack from reactive monitoring to proactive process optimization. The six AGI-focused extensions — goal-oriented process mining (Section latest), hierarchical decomposition (Section latest), counterfactual simulation (Section latest), normative constraint enforcement (Section latest), multi-agent orchestration patterns (Section latest), and self-reflective policy optimization (Section latest) — address the unique requirements of autonomous agent systems: measuring plan adherence, decomposing multi-service hierarchies, simulating alternative execution paths, enforcing constitutional norms, discovering delegation patterns, and closing the meta-loop where process mining output feeds back into agent behavior.
 
 ### 8.4 RQ3: Ontology-Aware Conformance
 
@@ -1735,11 +1735,11 @@ While each domain has extensive literature, the intersection — using operation
 
 13. **Process drift detection** _(implemented)_: Bose concept drift detection algorithm identifies change points in the event stream, with a variant comparison fallback for insufficient data. Next step: integrate drift detection results into deployment pipelines to flag behavioral regressions automatically.
 
-14. **Temporal profile-based SLA enforcement** _(partially implemented)_: Temporal profile conformance is integrated in the analysis pipeline (Section 6.5.12). The event data quality framework (Section 6.5.19) provides the completeness and timeliness checks needed as prerequisites. Remaining work: integrate temporal profile zeta-score checks into the OTel Collector pipeline for real-time SLA monitoring, with violations routed to Alertmanager as burn-rate alerts.
+14. **Temporal profile-based SLA enforcement** _(partially implemented)_: Temporal profile conformance is integrated in the analysis pipeline (Section latest). The event data quality framework (Section latest) provides the completeness and timeliness checks needed as prerequisites. Remaining work: integrate temporal profile zeta-score checks into the OTel Collector pipeline for real-time SLA monitoring, with violations routed to Alertmanager as burn-rate alerts.
 
-15. **Decision mining for auto-remediation** _(implemented)_: Alignment-based decision mining (Section 6.5.16) explains routing decisions. The Act Phase (Section 6.5.23) closes the loop by mapping Declare constraint violations to remediation actions via `@unrdf/hooks`. The constraint-to-action mapping table provides a configurable remediation policy. Remaining work: extend the remediation map with additional constraint types and validate remediation effectiveness in production.
+15. **Decision mining for auto-remediation** _(implemented)_: Alignment-based decision mining (Section latest) explains routing decisions. The Act Phase (Section latest) closes the loop by mapping Declare constraint violations to remediation actions via `@unrdf/hooks`. The constraint-to-action mapping table provides a configurable remediation policy. Remaining work: extend the remediation map with additional constraint types and validate remediation effectiveness in production.
 
-16. **Social network analysis for architecture validation** _(partially implemented)_: SNA maps service interaction topology from trace data (Section 6.5.15). The process cube (Section 6.5.21) enables slicing SNA results by time window, enabling temporal comparison of service topologies. Remaining work: define the intended architecture as a formal graph in the O\* ontology and automate the comparison between observed and intended topologies.
+16. **Social network analysis for architecture validation** _(partially implemented)_: SNA maps service interaction topology from trace data (Section latest). The process cube (Section latest) enables slicing SNA results by time window, enabling temporal comparison of service topologies. Remaining work: define the intended architecture as a formal graph in the O\* ontology and automate the comparison between observed and intended topologies.
 
 ---
 
@@ -1817,16 +1817,16 @@ The UTPM architecture demonstrates that the gap between observability and proces
 
 | Service        | Image                                        | Port(s)                 | Role               |
 | -------------- | -------------------------------------------- | ----------------------- | ------------------ |
-| otel-collector | otel/opentelemetry-collector-contrib:0.119.0 | 4317, 4318, 8889, 13133 | Telemetry pipeline |
-| tempo          | grafana/tempo:2.7.1                          | 3200, 4319              | Trace storage      |
-| prometheus     | prom/prometheus:v2.55.1                      | 9090                    | Metrics            |
-| grafana        | grafana/grafana:11.4.0                       | 3000                    | Dashboards         |
-| loki           | grafana/loki:3.3.2                           | 3100                    | Log storage        |
-| promtail       | grafana/promtail:3.3.2                       | —                       | Log shipper        |
-| pyroscope      | grafana/pyroscope:1.10.1                     | 4040                    | Profiling          |
-| alertmanager   | prom/alertmanager:v0.28.0                    | 9093                    | Alert routing      |
+| otel-collector | otel/opentelemetry-collector-contrib:latest | 4317, 4318, 8889, 13133 | Telemetry pipeline |
+| tempo          | grafana/tempo:latest                          | 3200, 4319              | Trace storage      |
+| prometheus     | prom/prometheus:latest                      | 9090                    | Metrics            |
+| grafana        | grafana/grafana:latest                       | 3000                    | Dashboards         |
+| loki           | grafana/loki:latest                           | 3100                    | Log storage        |
+| promtail       | grafana/promtail:latest                       | —                       | Log shipper        |
+| pyroscope      | grafana/pyroscope:latest                     | 4040                    | Profiling          |
+| alertmanager   | prom/alertmanager:latest                    | 9093                    | Alert routing      |
 | minio          | minio/minio:RELEASE.2024-11-07T00-52-20Z     | 9000, 9001              | S3 storage         |
-| example-app    | jaegertracing/example-hotrod:1.62.0          | 8080                    | Demo traces        |
+| example-app    | jaegertracing/example-hotrod:latest          | 8080                    | Demo traces        |
 | pm4py          | javert899/pm4py:latest                       | 8888                    | Process mining     |
 
 ### Appendix B: Alert Rules

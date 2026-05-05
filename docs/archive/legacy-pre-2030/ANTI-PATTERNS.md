@@ -1,6 +1,6 @@
 # UNRDF Anti-Patterns
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-28
 **Status**: Production Ready
 
@@ -132,11 +132,11 @@ const store = Core.createStore();
 
 **Evidence**:
 - Observed in [examples/legacy-cli](file:///home/user/unrdf/examples/legacy-cli)
-- Caused 2.5s startup overhead
+- Caused latests startup overhead
 
 **Impact**:
 - **Bundle Size**: +3MB
-- **Startup**: +2.5s
+- **Startup**: +latests
 - **Severity**: 🟡 Medium
 
 **Fix**:
@@ -293,7 +293,7 @@ function findAllNames(store) {
 }
 
 // Complexity: O(k) where k = matching triples
-// Measured: 0.057ms for 1000 triples
+// Measured: latestms for 1000 triples
 ```
 
 ---
@@ -406,7 +406,7 @@ describe('Network operation', () => {
 
 **Evidence**:
 - [CLAUDE.md:356-363](file:///home/user/unrdf/CLAUDE.md#L356)
-- KGC-4D: 443/444 passing (99.8% → target 100%)
+- KGC-4D: 443/444 passing (latest% → target 100%)
 
 **Impact**:
 - **Confidence**: ❌ Can't trust tests
@@ -488,8 +488,8 @@ class QueryCache {
   }
 }
 
-// But query is already 0.057ms...
-// Cache lookup overhead: 0.1ms (slower than raw query!)
+// But query is already latestms...
+// Cache lookup overhead: latestms (slower than raw query!)
 ```
 
 **Why It's Wrong**:
@@ -516,7 +516,7 @@ bench('query baseline', () => {
   store.query('SELECT * WHERE { ?s ?p ?o }');
 });
 
-// Result: 0.057ms
+// Result: latestms
 // Conclusion: Don't optimize (fast enough)
 ```
 

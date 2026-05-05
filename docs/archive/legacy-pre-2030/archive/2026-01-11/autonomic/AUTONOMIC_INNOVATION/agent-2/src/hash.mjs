@@ -3,7 +3,7 @@
  * @module hash
  */
 
-import { blake3 } from '../../../node_modules/.pnpm/hash-wasm@4.12.0/node_modules/hash-wasm/dist/index.esm.js';
+import { blake3 } from '../../../node_modules/.pnpm/hash-wasm@latest/node_modules/hash-wasm/dist/index.esm.js';
 import { canonicalizeCapsule } from './canonicalize.mjs';
 
 /**

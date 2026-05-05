@@ -62,7 +62,7 @@ npm start       # Production server
 
 ## ✅ Build Status
 
-- ✅ Next.js 15.5.7 build: SUCCESS
+- ✅ Next.js [VERSION] build: SUCCESS
 - ✅ 15 static pages generated
 - ✅ Bundle: 101 kB shared JS
 - ✅ Type checking: PASS
@@ -83,4 +83,4 @@ All data from KGC-4D comprehensive thesis:
 
 ---
 
-**Built**: Next.js 15.5.7 | React 19 | Tailwind 3.4
+**Built**: Next.js [VERSION] | React 19 | Tailwind 3.4

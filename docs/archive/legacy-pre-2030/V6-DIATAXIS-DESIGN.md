@@ -1,6 +1,6 @@
 # UNRDF v6 Diataxis Documentation Design
 
-**Version**: 6.0.0-rc.1
+**Version**: latest.1
 **Date**: 2025-12-28
 **Status**: Design Phase - Evidence-Based Only
 **Coverage Analysis**: 130 tests, 112 examples, 57 packages
@@ -242,7 +242,7 @@
 ### R3: Oxigraph API Reference
 **Sections**:
 - Store operations
-- SPARQL 1.1 compliance
+- SPARQL latest compliance
 - Performance characteristics
 **Evidence**: packages/oxigraph/
 **Status**: CODE EXISTS
@@ -414,8 +414,8 @@
 **Total Cruft**: 255 files (59% of current docs)
 
 ### DELETE Immediately:
-1. `/docs/internal/` - 1.8M of internal planning (keep in git history only)
-2. `/docs/archive/` - 1.8M of old v3/v4 docs
+1. `/docs/internal/` - latestM of internal planning (keep in git history only)
+2. `/docs/archive/` - latestM of old v3/v4 docs
 3. `/docs/thesis-publication/` - Academic paper (move to separate repo)
 4. `/docs/video-scripts/` - Not technical documentation
 5. `/docs/architecture-2028/` - Aspirational (not v6 reality)

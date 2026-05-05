@@ -418,7 +418,7 @@ orchestrator.defineWorkflow('deploy', [
 ]);
 
 // Execute
-const results = await orchestrator.executeWorkflow('deploy', { version: '1.0.0' });
+const results = await orchestrator.executeWorkflow('deploy', { version: 'latest' });
 console.log('Workflow results:', results);
 ```
 

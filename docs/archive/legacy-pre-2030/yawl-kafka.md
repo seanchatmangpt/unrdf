@@ -2,7 +2,7 @@
 
 > Apache Kafka event streaming integration for YAWL workflows with Avro serialization
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

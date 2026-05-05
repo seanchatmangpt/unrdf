@@ -68,7 +68,7 @@ This ensures:
   // Identity
   id: "urn:receipt:@unrdf/core:test:tau_2025_01_15_1430_123:abc123",
   type: "test",
-  version: "1.0.0",
+  version: "latest",
 
   // Package context
   package: "@unrdf/core",
@@ -76,7 +76,7 @@ This ensures:
 
   // Temporal
   epoch: "tau_2025_01_15_1430_123",
-  timestamp: "2025-01-15T14:30:00.123Z",
+  timestamp: "2025-01-15T14:30:latestZ",
 
   // Decision
   decision: "ALLOW",
@@ -86,19 +86,19 @@ This ensures:
   provenance: {
     agent: "vitest",
     source: "@unrdf/core",
-    version: "5.0.1",
+    version: "latest",
     sessionId: "session-abc",
     requestId: "req-123"
   },
 
   // Toolchain
   toolchain: {
-    node: "v18.19.0",
+    node: "vlatest",
     platform: "linux",
     arch: "x64",
     packages: {
-      "vitest": "^4.0.15",
-      "zod": "^4.1.13"
+      "vitest": "^latest",
+      "zod": "^latest"
     }
   },
 
@@ -129,8 +129,8 @@ This ensures:
       failed: 0,
       skipped: 0,
       coverage: {
-        lines: 98.5,
-        branches: 92.3
+        lines: latest,
+        branches: latest
       }
     }
   },
@@ -154,7 +154,7 @@ tau_YYYY_MM_DD_HHmm_SSS
      +------------------- Year (YYYY)
 ```
 
-Example: `tau_2025_01_15_1430_123` = January 15, 2025 at 14:30:00.123 UTC
+Example: `tau_2025_01_15_1430_123` = January 15, 2025 at 14:30:latest UTC
 
 ## Usage Examples
 
@@ -173,7 +173,7 @@ const receipt = await createTestReceipt({
   passed: 42,
   failed: 0,
   duration: 1234,
-  coverage: { lines: 98.5, branches: 92.3 }
+  coverage: { lines: latest, branches: latest }
 });
 
 console.log(receipt.decision); // 'ALLOW'
@@ -232,13 +232,13 @@ const receipt = await new ReceiptBuilder('workflow', '@unrdf/yawl')
   .namespace('data-pipeline')
   .decision('ALLOW', 'Workflow completed: 5/5 tasks succeeded')
   .provenance({ agent: 'yawl-engine', sessionId: 'session-xyz' })
-  .toolchain({ packages: { '@unrdf/yawl': '1.0.0' } })
+  .toolchain({ packages: { '@unrdf/yawl': 'latest' } })
   .input({ hashes: { workflow: 'wf-hash' } })
   .output({ hash: 'output-hash', artifacts: ['result.json'] })
   .metrics({
     duration: 12500,
     startTime: '2025-01-15T14:00:00Z',
-    endTime: '2025-01-15T14:00:12.500Z'
+    endTime: '2025-01-15T14:00:latestZ'
   })
   .extension({
     type: 'workflow',

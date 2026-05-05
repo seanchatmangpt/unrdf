@@ -363,7 +363,7 @@ export class DeterministicTestData {
     return {
       project: {
         name: 'KGEN',
-        version: '1.0.0',
+        version: 'latest',
         components: [
           { name: 'Templates', type: 'Core' },
           { name: 'RDF', type: 'Data' },

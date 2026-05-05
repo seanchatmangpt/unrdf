@@ -43,7 +43,7 @@ async function runSmokeTest() {
     metadata: {
       name: 'Example Universe',
       description: 'A simple universe for demonstration',
-      version: '1.0.0',
+      version: '[VERSION]',
     },
   });
   console.log(`   ✅ Universe created: ${universe.id}`);

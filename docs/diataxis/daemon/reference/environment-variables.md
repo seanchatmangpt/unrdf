@@ -44,11 +44,11 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.company.com
 | Variable                   | Default                                            | Description                                     |
 | -------------------------- | -------------------------------------------------- | ----------------------------------------------- |
 | `OTEL_SERVICE_NAME`        | `unrdf-daemon`                                     | Service name attached to all spans and metrics. |
-| `OTEL_SERVICE_VERSION`     | `26.5.4`                                           | Service version attached to all spans.          |
-| `OTEL_RESOURCE_ATTRIBUTES` | `service.name=unrdf-daemon,service.version=26.5.4` | Comma-separated additional resource attributes. |
+| `OTEL_SERVICE_VERSION`     | `latest`                                           | Service version attached to all spans.          |
+| `OTEL_RESOURCE_ATTRIBUTES` | `service.name=unrdf-daemon,service.version=latest` | Comma-separated additional resource attributes. |
 
 ```bash
-export OTEL_RESOURCE_ATTRIBUTES=service.name=unrdf-daemon,service.version=26.5.4,deployment.environment=production
+export OTEL_RESOURCE_ATTRIBUTES=service.name=unrdf-daemon,service.version=latest,deployment.environment=production
 ```
 
 ---

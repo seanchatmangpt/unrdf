@@ -80,7 +80,7 @@ node --check packages/federation/src/federation/metrics.mjs
 # ✅ Pass
 
 cd packages/federation && pnpm test
-# ✅ 67/69 tests pass (97.1%)
+# ✅ 67/69 tests pass (latest%)
 ```
 
 ---
@@ -103,12 +103,12 @@ cd packages/federation && pnpm test
   - Zero CRITICAL/HIGH CVEs
   - OWASP Top 10 compliance
   - Security policy (security@unrdf.dev)
-  - Recent fixes (v5.0.0-beta.1 → v5.0.0-beta.2)
-  - 7 vulnerabilities fixed (CVSS 4.0-9.8)
+  - Recent fixes (vlatest.1 → vlatest.2)
+  - 7 vulnerabilities fixed (CVSS latest.8)
 
 - ✅ Updated "Performance" section
   - Added observability overhead (<5%)
-  - Added validation overhead (~0.1ms)
+  - Added validation overhead (~latestms)
 
 **References Added**: Link to SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md
 
@@ -116,7 +116,7 @@ cd packages/federation && pnpm test
 
 ### 4. MIGRATION.md (NEW FILE)
 **Lines**: 234 lines
-**Purpose**: Guide users from v5.0.0-beta.1 → v5.0.0-beta.2
+**Purpose**: Guide users from vlatest.1 → vlatest.2
 
 **Sections**:
 1. ✅ **Overview** - TL;DR: No breaking changes
@@ -154,7 +154,7 @@ cd packages/federation && pnpm test
 
 **Impact**:
 - **Before**: 0/69 tests pass (all fail on import error)
-- **After**: 67/69 tests pass (97.1% pass rate)
+- **After**: 67/69 tests pass (latest% pass rate)
 
 **Note**: This is a pre-existing issue (file was never implemented), not caused by refactoring
 
@@ -213,7 +213,7 @@ Federation package tests (most impacted by changes):
 cd packages/federation && timeout 15s pnpm test
 # ✅ Test Files: 2 passed (3 total)
 # ✅ Tests: 67 passed (69 total)
-# ✅ Pass Rate: 97.1%
+# ✅ Pass Rate: latest%
 ```
 
 **Failures**: 2 minor assertion failures (unrelated to refactoring)
@@ -253,11 +253,11 @@ grep -r "from './federation/metrics.mjs'" packages/federation/src/
 - ✅ No existing functions modified or removed
 
 ### Dependencies
-- ✅ **One added**: `@opentelemetry/api@^1.9.0` (peer dependency)
+- ✅ **One added**: `@opentelemetry/api@^latest` (peer dependency)
 - ❌ **None removed**
 - ✅ **Three updated** (CVE fixes only):
-  - happy-dom: v16.5.0 → v20.0.11
-  - Next.js: v16.0.7 → v16.1.1
+  - happy-dom: vlatest → vlatest
+  - Next.js: vlatest → vlatest
 
 ### Configuration
 - ❌ **No changes** - All security/validation features automatic
@@ -312,7 +312,7 @@ Users can verify migration success with:
 ### Test Results
 | Package | Before | After | Change |
 |---------|--------|-------|--------|
-| **Federation** | 0/69 pass (import error) | 67/69 pass | ✅ +97.1% |
+| **Federation** | 0/69 pass (import error) | 67/69 pass | ✅ +latest% |
 | **Streaming** | Not tested | Examples run | ✅ Verified |
 | **Syntax Checks** | Not run | 3/3 pass | ✅ +3 modules |
 
@@ -326,7 +326,7 @@ Users can verify migration success with:
 **Answer**: **ALL claims survive** - Every statement is backed by:
 1. ✅ **Execution Evidence**: Commands run, output captured
 2. ✅ **File Verification**: `node --check` confirms syntax
-3. ✅ **Test Results**: 67/69 tests pass (97.1%)
+3. ✅ **Test Results**: 67/69 tests pass (latest%)
 4. ✅ **Import Tests**: All imports resolve correctly
 5. ✅ **Code Examples**: Syntax-checked and valid
 

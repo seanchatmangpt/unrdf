@@ -5,7 +5,7 @@
  * to UNRDF substrate platform.
  *
  * @module enterprise-migration
- * @version 1.0.0
+ * @version latest
  */
 
 // Core orchestration
@@ -45,7 +45,7 @@ export {
  */
 export const metadata = {
   name: 'enterprise-migration',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Enterprise migration system for UNRDF substrate platform',
   agents: {
     'agent-1': 'Control Plane - Orchestration',

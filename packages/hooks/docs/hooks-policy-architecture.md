@@ -75,7 +75,7 @@ Policy packs are defined in `manifest.json`:
   "id": "uuid",
   "meta": {
     "name": "my-policy-pack",
-    "version": "1.0.0",
+    "version": "[VERSION]",
     "description": "Access control policies",
     "author": "Organization",
     "license": "MIT",
@@ -91,7 +91,7 @@ Policy packs are defined in `manifest.json`:
     "retries": 1,
     "conditions": {
       "environment": ["production"],
-      "version": "1.0.0",
+      "version": "[VERSION]",
       "features": ["audit"]
     }
   },

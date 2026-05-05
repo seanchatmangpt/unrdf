@@ -286,7 +286,7 @@ Fields:
     nodeVersion: string
         Type: Semantic version
         Pattern: /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/
-        Example: "20.10.0", "20.10.0-rc1"
+        Example: "latest", "latest-rc1"
         Purpose: Node.js runtime version
 
     jsEngine: string
@@ -430,7 +430,7 @@ Fields:
 
     version: string
         Type: Semantic version (or version-like string)
-        Examples: "8.19.4", "3.11.2"
+        Examples: "latest", "latest"
         Purpose: Tool version
 
 ---
@@ -509,7 +509,7 @@ Fields:
 
     osVersion: string
         Type: Semantic version or version string
-        Examples: "5.10.0", "21.6.0"
+        Examples: "latest", "latest"
         Purpose: OS version
 
     containerized: boolean
@@ -893,7 +893,7 @@ INPUT: {
     method: "runtime.check",
     input: {count: 5},
     output: {
-        nodeVersion: "20.10.0",
+        nodeVersion: "latest",
         jsEngine: "v8",
         wasm: true,
         workers: 4,

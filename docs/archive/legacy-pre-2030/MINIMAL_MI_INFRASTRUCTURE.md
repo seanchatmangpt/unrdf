@@ -107,7 +107,7 @@ getCompletionPercentage(parentTaskId, options)         // Get % complete
 ```bash
 Test Files  1 passed (1)
 Tests       22 passed (22)
-Duration    2.53s (transform 484ms, setup 0ms, import 1.69s, tests 349ms)
+Duration    latests (transform 484ms, setup 0ms, import latests, tests 349ms)
 ```
 
 ---
@@ -304,7 +304,7 @@ const completed = await executeInstances(
     return {
       orderId: instance.inputData.orderId,
       processed: true,
-      fee: amount * 0.02,
+      fee: amount * latest,
     };
   },
   { pool }
@@ -341,7 +341,7 @@ A: Yes. All 22 tests executed. Output:
 ```
 Test Files  1 passed (1)
 Tests       22 passed (22)
-Duration    2.53s (tests 349ms)
+Duration    latests (tests 349ms)
 ```
 
 **Q: Can you PROVE it works?**

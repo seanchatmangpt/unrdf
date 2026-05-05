@@ -5,7 +5,7 @@
  * Emit denial receipts for timed-out or memory-exceeded operations.
  *
  * @module @unrdf/v6-core/grammar/runtime-gate
- * @version 6.0.0-alpha.1
+ * @version [VERSION]-alpha.1
  */
 
 import { z } from 'zod';

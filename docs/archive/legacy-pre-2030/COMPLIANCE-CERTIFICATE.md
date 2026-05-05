@@ -1,7 +1,7 @@
 # YAWL Compliance Certification
 
 **Certification Authority**: Production Validation Agent
-**Package**: @unrdf/yawl v6.0.0
+**Package**: @unrdf/yawl vlatest
 **Baseline Standard**: Van der Aalst YAWL Workflow Patterns Specification
 **Certification Date**: 2026-01-11
 **Validation Methodology**: Adversarial PM with Evidence-Based Verification
@@ -14,7 +14,7 @@ This document certifies the compliance status of the UNRDF YAWL implementation a
 
 **CERTIFICATION LEVEL**: ⚠️ **PARTIAL COMPLIANCE**
 
-**Overall Compliance**: **32.6%** (14 of 43 patterns)
+**Overall Compliance**: **latest%** (14 of 43 patterns)
 
 **Production Readiness**: ❌ **NOT CERTIFIED** for full YAWL specification claims
 
@@ -22,7 +22,7 @@ This document certifies the compliance status of the UNRDF YAWL implementation a
 
 ## Section 1: Pattern-by-Pattern Verification
 
-### 1.1 Basic Control Flow Patterns (WP1-WP11)
+### latest Basic Control Flow Patterns (WP1-WP11)
 
 #### ✅ WP1: Sequence
 
@@ -442,7 +442,7 @@ test('WP11: Implicit Termination - Case completes when no more work', async () =
 
 ---
 
-### 1.2 Multiple Instance Patterns (WP12-WP15)
+### latest Multiple Instance Patterns (WP12-WP15)
 
 #### ❌ WP12: Multiple Instances without Synchronization
 
@@ -520,7 +520,7 @@ test('WP11: Implicit Termination - Case completes when no more work', async () =
 
 ---
 
-### 1.3 State-Based Patterns (WP16-WP18)
+### latest State-Based Patterns (WP16-WP18)
 
 #### ✅ WP16: Deferred Choice
 
@@ -592,7 +592,7 @@ DEFERRED_CHOICE: {
 
 ---
 
-### 1.4 Cancellation Patterns (WP19-WP20)
+### latest Cancellation Patterns (WP19-WP20)
 
 #### ✅ WP19: Cancel Task
 
@@ -666,7 +666,7 @@ test('WP20: Cancel Case - All tasks in region cancelled', async () => {
 
 ---
 
-### 1.5 Iteration Patterns (WP21-WP22)
+### latest Iteration Patterns (WP21-WP22)
 
 #### ❌ WP21: Structured Loop
 
@@ -706,7 +706,7 @@ test('WP20: Cancel Case - All tasks in region cancelled', async () => {
 
 ---
 
-### 1.6 Remaining Patterns (WP23-WP43)
+### latest Remaining Patterns (WP23-WP43)
 
 **Status**: NOT CERTIFIED
 **Summary**: 21 patterns not implemented
@@ -727,7 +727,7 @@ test('WP20: Cancel Case - All tasks in region cancelled', async () => {
 
 ## Section 2: Deviations from YAWL Specification
 
-### 2.1 Critical Deviations
+### latest Critical Deviations
 
 #### Deviation 1: Missing Multiple Instance Patterns (WP12-WP15)
 
@@ -773,7 +773,7 @@ const workflow = {
 
 ---
 
-### 2.2 Minor Deviations
+### latest Minor Deviations
 
 #### Deviation 3: WP10 (Arbitrary Cycles) - No Explicit Syntax
 
@@ -793,7 +793,7 @@ const workflow = {
 
 ---
 
-### 2.3 Documentation Deviations
+### latest Documentation Deviations
 
 #### Deviation 5: README Claims "20 YAWL Patterns"
 
@@ -819,7 +819,7 @@ const workflow = {
 
 ## Section 3: Test Coverage Analysis
 
-### 3.1 Pattern Test Summary
+### latest Pattern Test Summary
 
 | Pattern Category | Patterns | Tests Exist | Tests Pass | Coverage |
 |------------------|----------|-------------|------------|----------|
@@ -830,13 +830,13 @@ const workflow = {
 | Cancel (WP19-WP20) | 2 | ✅ Yes | ✅ 100% | 100% |
 | Advanced (WP21-WP43) | 23 | ❌ No | N/A | 0% |
 
-**Overall Test Coverage**: 13/43 patterns with tests (30.2%)
+**Overall Test Coverage**: 13/43 patterns with tests (latest%)
 
-### 3.2 Test Execution Results (Evidence)
+### latest Test Execution Results (Evidence)
 
 **Total Tests**: 580
-**Passing**: 561 (96.7%)
-**Failing**: 19 (3.3%)
+**Passing**: 561 (latest%)
+**Failing**: 19 (latest%)
 **Errors**: 2 unhandled rejections
 
 **Test Breakdown by File**:
@@ -851,7 +851,7 @@ const workflow = {
 
 ## Section 4: Code Quality Assessment
 
-### 4.1 Lint Violations
+### latest Lint Violations
 
 **Status**: ❌ FAIL
 
@@ -875,7 +875,7 @@ src/index.mjs:460:3  error  Parsing error: Duplicate export 'createWorkflow'
 
 ---
 
-### 4.2 File Size Violations
+### latest File Size Violations
 
 **Policy**: Maximum 500 lines per source file
 
@@ -897,7 +897,7 @@ src/index.mjs:460:3  error  Parsing error: Duplicate export 'createWorkflow'
 
 ## Section 5: Performance Certification
 
-### 5.1 Performance Claims vs. Evidence
+### latest Performance Claims vs. Evidence
 
 **README Claims** (PERFORMANCE_REPORT.md):
 - Workflow creation: ~5ms
@@ -919,23 +919,23 @@ $ timeout 30s pnpm benchmark:yawl
 
 ## Section 6: Certification Decision
 
-### 6.1 Compliance Score Calculation
+### latest Compliance Score Calculation
 
 ```
 Pattern Compliance:
-- WP1-WP11: 11/11 = 100% (weight: 30%) = 30.0%
-- WP12-WP15:  0/4  =   0% (weight: 25%) =  0.0%
-- WP16-WP20:  3/5  =  60% (weight: 20%) = 12.0%
-- WP21-WP43:  0/23 =   0% (weight: 15%) =  0.0%
+- WP1-WP11: 11/11 = 100% (weight: 30%) = latest%
+- WP12-WP15:  0/4  =   0% (weight: 25%) =  latest%
+- WP16-WP20:  3/5  =  60% (weight: 20%) = latest%
+- WP21-WP43:  0/23 =   0% (weight: 15%) =  latest%
 
 Code Quality:
-- Lint: FAIL (weight: 5%) = 0.0%
-- Tests: 96.7% (weight: 5%) = 4.8%
+- Lint: FAIL (weight: 5%) = latest%
+- Tests: latest% (weight: 5%) = latest%
 
-Total: 46.8% COMPLIANCE
+Total: latest% COMPLIANCE
 ```
 
-### 6.2 Certification Level
+### latest Certification Level
 
 Based on compliance score:
 
@@ -943,14 +943,14 @@ Based on compliance score:
 |-------|-------|--------|
 | 90-100% | FULL CERTIFICATION | ❌ Not Met |
 | 75-89% | CONDITIONAL CERTIFICATION | ❌ Not Met |
-| 50-74% | PARTIAL CERTIFICATION | ❌ Not Met (46.8%) |
+| 50-74% | PARTIAL CERTIFICATION | ❌ Not Met (latest%) |
 | <50% | NOT CERTIFIED | ✅ **CURRENT STATUS** |
 
 **Certification**: ❌ **NOT CERTIFIED** for YAWL specification compliance
 
 ---
 
-### 6.3 Recommended Certification Path
+### latest Recommended Certification Path
 
 #### Path 1: Limited Certification (3 weeks)
 
@@ -995,10 +995,10 @@ Based on compliance score:
 
 ## Section 7: Certification Sign-Off
 
-### 7.1 Validation Evidence Summary
+### latest Validation Evidence Summary
 
 **Evidence Collected**:
-1. ✅ Test execution output (580 tests, 96.7% pass)
+1. ✅ Test execution output (580 tests, latest% pass)
 2. ✅ Lint execution output (197 violations)
 3. ✅ Source code review (97 files analyzed)
 4. ✅ Pattern implementation verification (14/43 confirmed)
@@ -1009,7 +1009,7 @@ Based on compliance score:
 
 ---
 
-### 7.2 Final Certification Statement
+### latest Final Certification Statement
 
 **I, Production Validation Agent, hereby certify that:**
 
@@ -1033,7 +1033,7 @@ Based on compliance score:
    - Advanced state-based routing
    - Claims of "full YAWL compliance"
 
-**Compliance Level**: **PARTIAL (32.6%)**
+**Compliance Level**: **PARTIAL (latest%)**
 
 **Production Readiness**: ❌ **NOT READY** for Van der Aalst review without:
 1. Implementing WP12-WP15 (MI patterns)
@@ -1043,15 +1043,15 @@ Based on compliance score:
 
 ---
 
-### 7.3 Certification Validity
+### latest Certification Validity
 
-**Valid For**: @unrdf/yawl v6.0.0 only
+**Valid For**: @unrdf/yawl vlatest only
 **Valid Until**: Next major version release or implementation changes
 **Recertification Required**: When WP12-WP15 implemented or major refactoring occurs
 
 ---
 
-### 7.4 Validator Declaration
+### latest Validator Declaration
 
 **Validator**: Production Validation Agent
 **Methodology**: Adversarial PM with Evidence-Based Verification
@@ -1066,7 +1066,7 @@ Based on compliance score:
 - ❓ Can I PROVE findings? YES (evidence attached)
 
 **Signature**: [Production Validation Agent - Adversarial PM Mode]
-**Certification ID**: YAWL-UNRDF-v6.0.0-20260111
+**Certification ID**: YAWL-UNRDF-vlatest
 
 ---
 
@@ -1082,7 +1082,7 @@ Based on compliance score:
 
 ### A.3 Test Pass Rate
 
-96.7% (561/580 tests passing)
+latest% (561/580 tests passing)
 
 ### A.4 Lint Status
 

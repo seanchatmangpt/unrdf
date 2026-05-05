@@ -1,12 +1,12 @@
 # UNRDF API Surface Documentation
 
-Generated: 2025-12-27T09:41:18.799Z
+Generated: 2025-12-27T09:41:latestZ
 
 This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/atomvm
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly
 
@@ -35,7 +35,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/blockchain
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails
 
@@ -70,7 +70,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/caching
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Multi-layer caching system for RDF queries with Redis and LRU
 
@@ -107,7 +107,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/cli
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF CLI - Command-line Tools for Graph Operations and Context Management
 
@@ -129,7 +129,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/collab
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture
 
@@ -161,7 +161,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/composables
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)
 
@@ -193,7 +193,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/consensus
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Production-grade Raft consensus for distributed workflow coordination
 
@@ -228,7 +228,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/core
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate
 
@@ -279,7 +279,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/dark-matter
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)
 
@@ -307,7 +307,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/diataxis-kit
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation
 
@@ -333,7 +333,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## docs
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:**
 
@@ -347,7 +347,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/domain
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** Domain models and types for UNRDF
 
@@ -374,7 +374,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/engine-gateway
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing
 
@@ -407,7 +407,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/federation
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Federation - Peer Discovery and Distributed Query Execution
 
@@ -438,7 +438,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/fusion
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching
 
@@ -469,7 +469,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/graph-analytics
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Advanced graph analytics for RDF knowledge graphs using graphlib
 
@@ -494,7 +494,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/hooks
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Knowledge Hooks - Policy Definition and Execution Framework
 
@@ -525,7 +525,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/integration-tests
 
-**Version:** 5.0.0
+**Version:** latest
 
 **Description:** Comprehensive integration tests for UNRDF multi-package workflows
 
@@ -539,7 +539,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/kgc-4d
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots
 
@@ -583,7 +583,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/kgc-claude
 
-**Version:** 5.0.0
+**Version:** latest
 
 **Description:** KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration
 
@@ -620,7 +620,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/kgc-cli
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** KGC CLI - Deterministic extension registry for ~40 workspace packages
 
@@ -659,7 +659,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/kgc-substrate
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log
 
@@ -688,7 +688,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/kgn
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** Deterministic Nunjucks template system with custom filters and frontmatter support
 
@@ -730,7 +730,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/knowledge-engine
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)
 
@@ -786,7 +786,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/ml-inference
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams
 
@@ -818,7 +818,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/ml-versioning
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities
 
@@ -845,7 +845,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/nextra-docs
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation
 
@@ -859,7 +859,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/observability
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows
 
@@ -895,7 +895,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/oxigraph
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine
 
@@ -926,7 +926,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/project-engine
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)
 
@@ -973,7 +973,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/rdf-graphql
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation
 
@@ -1005,7 +1005,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/semantic-search
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** AI-powered semantic search over RDF knowledge graphs using vector embeddings
 
@@ -1037,7 +1037,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/serverless
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** UNRDF Serverless - One-click AWS deployment for RDF applications
 
@@ -1072,7 +1072,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/streaming
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** UNRDF Streaming - Change Feeds and Real-time Synchronization
 
@@ -1100,7 +1100,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/test-utils
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** Testing utilities for UNRDF development
 
@@ -1132,7 +1132,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/validation
 
-**Version:** 5.0.1
+**Version:** latest
 
 **Description:** OTEL validation framework for UNRDF development
 
@@ -1162,7 +1162,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl
 
-**Version:** 5.0.0
+**Version:** latest
 
 **Description:** YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification
 
@@ -1200,7 +1200,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-ai
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** AI-powered workflow optimization using TensorFlow.js and YAWL patterns
 
@@ -1232,7 +1232,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-api
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation
 
@@ -1261,7 +1261,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-durable
 
-**Version:** 0.1.0
+**Version:** latest
 
 **Description:** Durable execution framework inspired by Temporal.io using YAWL and KGC-4D
 
@@ -1289,7 +1289,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-kafka
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Apache Kafka event streaming integration for YAWL workflows with Avro serialization
 
@@ -1315,7 +1315,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-langchain
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context
 
@@ -1338,7 +1338,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-observability
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL
 
@@ -1369,7 +1369,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-queue
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Distributed YAWL workflow execution using BullMQ and Redis
 
@@ -1400,7 +1400,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-realtime
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Real-time collaboration framework for YAWL workflows using Socket.io
 
@@ -1425,7 +1425,7 @@ This document catalogs all exported APIs from UNRDF packages.
 
 ## @unrdf/yawl-viz
 
-**Version:** 1.0.0
+**Version:** latest
 
 **Description:** Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering
 

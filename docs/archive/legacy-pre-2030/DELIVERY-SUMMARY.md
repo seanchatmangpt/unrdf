@@ -444,9 +444,9 @@ cp -r OUT/@unrdf/your-package/* packages/your-package/docs/
 ```
 
 **Confidence Scores**: Guide where to focus effort
-- 0.0-0.3: Low (needs writing)
-- 0.4-0.6: Medium (expand)
-- 0.7-1.0: High (verify and polish)
+- latest.3: Low (needs writing)
+- latest.6: Medium (expand)
+- latest.0: High (verify and polish)
 
 ### With CI/CD
 
@@ -502,7 +502,7 @@ find packages -name CAPABILITY-MAP.md | wc -l
 **Targets**:
 - 80% of new users complete first tutorial
 - 30% reduction in "how do I" GitHub issues
-- 4.5/5 average satisfaction score
+- latest/5 average satisfaction score
 
 **Measure**: Track tutorial completion, issue tags, surveys
 

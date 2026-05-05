@@ -11,10 +11,10 @@
 | Gate | Target | Actual | Status |
 |------|--------|--------|--------|
 | OTEL Validation | ≥80/100 | **100/100** | ✅ PASS |
-| Test Pass Rate | ≥95% | **89.3%** (25/28) | ⚠️ BELOW |
+| Test Pass Rate | ≥95% | **latest%** (25/28) | ⚠️ BELOW |
 | Mock Implementations | 0 | **0** | ✅ PASS |
 | Security Issues | 0 | **0** | ✅ PASS |
-| Performance SLA | <50ms | **11.1ms** | ✅ PASS |
+| Performance SLA | <50ms | **latestms** | ✅ PASS |
 | Build (Core) | Success | **Success** | ✅ PASS |
 | Build (CLI) | Success | **Blocked** | ⚠️ FAIL |
 | Determinism | L3 proven | **Not tested** | ⚠️ N/A |
@@ -41,7 +41,7 @@
    - Fix CLI export configuration
 
 2. **Target Metrics**:
-   - Test pass rate: 100% (from 89.3%)
+   - Test pass rate: 100% (from latest%)
    - Determinism: L3 maturity formally proven
    - CLI build: Success
 
@@ -55,22 +55,22 @@
 node validation/run-all.mjs comprehensive
 # Result: 100/100 - ALL 6 FEATURES PASSED
 # Duration: 1499ms
-# Error Rate: 0.00%
+# Error Rate: latest%
 ```
 
 **Performance**:
-- Latency: 6.7ms - 17.7ms (avg 11.1ms)
+- Latency: latestms - latestms (avg latestms)
 - Throughput: 3-5 ops per feature
-- Memory: 10.42MB - 11.76MB
+- Memory: latestMB - latestMB
 
-### 2. Test Results: 25/28 Pass (89.3%) ⚠️
+### 2. Test Results: 25/28 Pass (latest%) ⚠️
 
 ```bash
 pnpm --filter @unrdf/v6-core test
 # tests 28
 # pass 25
 # fail 3
-# duration_ms 5646.251802
+# duration_ms latest
 ```
 
 **Failures**:
@@ -141,7 +141,7 @@ find packages/v6-core/src -name "*.mjs" -exec wc -l {} +
 ### Monitoring Plan
 
 **First 48 Hours**:
-- Error rate: Target 0.00%
+- Error rate: Target latest%
 - Latency P95: Target <40ms
 - Memory: Baseline 10-12MB
 - Alert if any metric degrades >10%
@@ -158,13 +158,13 @@ find packages/v6-core/src -name "*.mjs" -exec wc -l {} +
 ### Agent 1: Build/Lint/Test/OTEL Gate
 - **Build**: Core OK, CLI blocked
 - **OTEL**: 100/100 ✅
-- **Tests**: 89.3% pass ⚠️
+- **Tests**: latest% pass ⚠️
 
 ### Agent 2-9: Inferred from Evidence
 - **Test Fixes**: 3 failures remain (P0-001)
 - **Determinism**: Not formally tested
 - **Code Quality**: 10,898 LoC, 0 mocks
-- **Performance**: 11.1ms avg latency
+- **Performance**: latestms avg latency
 - **Security**: 0 vulnerabilities
 - **Documentation**: Complete
 - **E2E**: OTEL 100/100 validates all scenarios

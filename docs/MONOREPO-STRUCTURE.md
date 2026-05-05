@@ -226,7 +226,7 @@ packages:
 ```json
 {
   "name": "unrdf-workspace",
-  "version": "5.0.0",
+  "version": "latest",
   "private": true,
   "workspaces": ["packages/*"],
   "scripts": {

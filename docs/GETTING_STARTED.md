@@ -39,7 +39,7 @@ Add `"type": "module"` to `package.json`:
   "name": "my-rdf-app",
   "type": "module",
   "dependencies": {
-    "@unrdf/core": "^5.0.0"
+    "@unrdf/core": "^latest"
   }
 }
 ```
@@ -73,8 +73,8 @@ for (const quad of quads) {
 
 // Output:
 // Alice has 2 properties:
-//   http://xmlns.com/foaf/0.1/name -> Alice Smith
-//   http://xmlns.com/foaf/0.1/knows -> http://example.org/Bob
+//   http://xmlns.com/foaf/latest/name -> Alice Smith
+//   http://xmlns.com/foaf/latest/knows -> http://example.org/Bob
 ```
 
 Run it:
@@ -87,8 +87,8 @@ You should see:
 
 ```
 Alice has 2 properties:
-  http://xmlns.com/foaf/0.1/name -> Alice Smith
-  http://xmlns.com/foaf/0.1/knows -> http://example.org/Bob
+  http://xmlns.com/foaf/latest/name -> Alice Smith
+  http://xmlns.com/foaf/latest/knows -> http://example.org/Bob
 ```
 
 ### 3. Start Developing
@@ -135,7 +135,7 @@ const store = createStore();
 // Add a triple: Alice -> knows -> Bob
 store.addQuad(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://xmlns.com/foaf/latest/knows'),
   namedNode('http://example.org/Bob')
 );
 ```
@@ -184,7 +184,7 @@ import { quad, namedNode, literal, defaultGraph } from '@unrdf/core';
 
 const myQuad = quad(
   namedNode('http://example.org/Alice'), // subject
-  namedNode('http://xmlns.com/foaf/0.1/name'), // predicate
+  namedNode('http://xmlns.com/foaf/latest/name'), // predicate
   literal('Alice Smith'), // object
   defaultGraph() // graph
 );
@@ -195,14 +195,14 @@ const myQuad = quad(
 ```javascript
 import { FOAF, RDF, RDFS, XSD, OWL } from '@unrdf/core';
 
-// FOAF = http://xmlns.com/foaf/0.1/
+// FOAF = http://xmlns.com/foaf/latest/
 // RDF = http://www.w3.org/1999/02/22-rdf-syntax-ns#
 // RDFS = http://www.w3.org/2000/01/rdf-schema#
 // XSD = http://www.w3.org/2001/XMLSchema#
 
 store.addQuad(
   namedNode('http://example.org/Alice'),
-  FOAF.name, // Shortcut for http://xmlns.com/foaf/0.1/name
+  FOAF.name, // Shortcut for http://xmlns.com/foaf/latest/name
   literal('Alice Smith')
 );
 ```
@@ -255,7 +255,7 @@ Add to `team-directory.mjs`:
 const teamMembers = executeSelectSync(
   store,
   `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   PREFIX ex: <http://example.org/>
 
   SELECT ?name ?role ?email WHERE {
@@ -324,7 +324,7 @@ Alice knows:
 const foaf = executeSelectSync(
   store,
   `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT DISTINCT ?person ?friendOfFriend WHERE {
     ?person foaf:knows ?friend .
@@ -420,7 +420,7 @@ describe('Team Directory', () => {
     const results = executeSelectSync(
       store,
       `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX foaf: <http://xmlns.com/foaf/latest/>
       SELECT ?name WHERE {
         ?person foaf:name ?name .
       }
@@ -615,7 +615,7 @@ import {
 import {
   RDF, // http://www.w3.org/1999/02/22-rdf-syntax-ns#
   RDFS, // http://www.w3.org/2000/01/rdf-schema#
-  FOAF, // http://xmlns.com/foaf/0.1/
+  FOAF, // http://xmlns.com/foaf/latest/
   XSD, // http://www.w3.org/2001/XMLSchema#
   OWL, // http://www.w3.org/2002/07/owl#
 } from '@unrdf/core';

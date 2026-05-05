@@ -97,8 +97,8 @@ PERMUTATION TEST RESULTS
 
 SUMMARY
 =======
-Passed: 7/15 (46.7%)
-Failed: 8/15 (53.3%)
+Passed: 7/15 (latest%)
+Failed: 8/15 (latest%)
 
 CONSOLIDATION INSIGHT
 =====================

@@ -341,12 +341,12 @@ function buildOtlpRequest(traces) {
           { key: 'service.name', value: { stringValue: spans[0].attributes.find(a => a.key === 'service.name')?.value.stringValue || 'unknown' } },
           { key: 'deployment.environment', value: { stringValue: 'synthetic' } },
           { key: 'telemetry.sdk.name', value: { stringValue: 'synthetic-traces' } },
-          { key: 'telemetry.sdk.version', value: { stringValue: '1.0.0' } },
+          { key: 'telemetry.sdk.version', value: { stringValue: 'latest' } },
         ],
       },
       scopeSpans: [
         {
-          scope: { name: 'synthetic-traces', version: '1.0.0' },
+          scope: { name: 'synthetic-traces', version: 'latest' },
           spans: scopeSpans,
         },
       ],

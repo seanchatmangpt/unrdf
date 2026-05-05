@@ -337,7 +337,7 @@ mcp__claude-flow__memory_usage {
   value: { 
     diff: "pr_diff_content", 
     files_changed: ["file1.js", "file2.py"],
-    complexity_score: 8.5,
+    complexity_score: latest,
     risk_assessment: "medium"
   }
 }
@@ -420,7 +420,7 @@ mcp__claude-flow__memory_usage {
     ready_to_merge: true,
     validation_passed: true,
     agent_consensus: "approved",
-    final_review_score: 9.2
+    final_review_score: latest
   }
 }
 ```

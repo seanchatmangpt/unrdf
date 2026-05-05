@@ -2,7 +2,7 @@
 name: "backend-dev"
 color: "blue"
 type: "development"
-version: "1.0.0"
+version: "latest"
 created: "2025-07-25"
 author: "Claude Code"
 metadata:

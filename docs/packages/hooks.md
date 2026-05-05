@@ -2,7 +2,7 @@
 
 > UNRDF Knowledge Hooks - Policy Definition and Execution Framework
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Essential
 
 ## Overview

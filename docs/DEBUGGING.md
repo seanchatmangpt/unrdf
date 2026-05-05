@@ -28,14 +28,14 @@ import { namedNode, blankNode, literal } from '@unrdf/core';
 // ❌ WRONG - Literal as subject
 const quad = {
   subject: literal('Alice'),  // Invalid!
-  predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+  predicate: namedNode('http://xmlns.com/foaf/latest/name'),
   object: literal('Alice')
 };
 
 // ✅ CORRECT - NamedNode or BlankNode as subject
 const quad = {
   subject: namedNode('http://example.org/alice'),
-  predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+  predicate: namedNode('http://xmlns.com/foaf/latest/name'),
   object: literal('Alice')
 };
 ```
@@ -210,14 +210,14 @@ debug.memory('After query');
 ### Example Debug Output
 
 ```
-[2025-12-25T10:30:45.123Z] [unrdf:store] Adding quad {
+[2025-12-25T10:30:latestZ] [unrdf:store] Adding quad {
   "subject": "http://example.org/alice",
-  "predicate": "http://xmlns.com/foaf/0.1/name",
+  "predicate": "http://xmlns.com/foaf/latest/name",
   "object": "Alice"
 }
-[2025-12-25T10:30:45.125Z] [unrdf:store] Timer started: addQuad
-[2025-12-25T10:30:45.127Z] [unrdf:store] Timer ended: addQuad {
-  "durationMs": "2.34"
+[2025-12-25T10:30:latestZ] [unrdf:store] Timer started: addQuad
+[2025-12-25T10:30:latestZ] [unrdf:store] Timer ended: addQuad {
+  "durationMs": "latest"
 }
 ```
 
@@ -305,9 +305,9 @@ const metrics = perfTracker.end(id);
 console.log(metrics);
 // {
 //   operation: 'bulkImport',
-//   durationMs: '1234.56',
-//   memoryDeltaMB: '45.23',
-//   timestamp: '2025-12-25T10:30:45.123Z'
+//   durationMs: 'latest',
+//   memoryDeltaMB: 'latest',
+//   timestamp: '2025-12-25T10:30:latestZ'
 // }
 ```
 
@@ -337,16 +337,16 @@ dumpDebugSnapshot();
 === UNRDF Debug Snapshot ===
 
 System Info: {
-  "node": "v18.19.0",
+  "node": "vlatest",
   "platform": "linux",
   "arch": "x64",
   "memory": {
-    "rss": "123.45 MB",
-    "heapTotal": "78.90 MB",
-    "heapUsed": "56.78 MB",
-    "external": "12.34 MB"
+    "rss": "latest MB",
+    "heapTotal": "latest MB",
+    "heapUsed": "latest MB",
+    "external": "latest MB"
   },
-  "uptime": "15.23 minutes",
+  "uptime": "latest minutes",
   "env": {
     "DEBUG": "unrdf:*",
     "NODE_ENV": "development"
@@ -359,7 +359,7 @@ Active Performance Metrics: [
     "operation": "bulkImport",
     "startTime": 1735123845123,
     "startMemory": 59234567,
-    "elapsedMs": "567.89"
+    "elapsedMs": "latest"
   }
 ]
 
@@ -396,7 +396,7 @@ const store = createStore();
 // Minimal failing example
 const quad = {
   subject: namedNode('http://example.org/alice'),
-  predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+  predicate: namedNode('http://xmlns.com/foaf/latest/name'),
   object: literal('Alice')
 };
 

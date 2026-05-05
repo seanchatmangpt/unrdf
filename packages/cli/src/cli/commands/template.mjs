@@ -669,7 +669,7 @@ const templateQueryCommand = defineCommand({
         const results = loader.queryToContext(store, ctx.args.sparql);
         if (ctx.args.format === 'json') {
           console.log(JSON.stringify({
-            version: '26.4.23',
+            version: '[VERSION]',
             timestamp: new Date().toISOString(),
             ...results
           }, null, 2));
@@ -736,7 +736,7 @@ const extractCommand = defineCommand({
       if (ctx.args.subject) {
         const context = loader.createInstanceContext(store, ctx.args.subject);
         console.log(JSON.stringify({
-          version: '26.4.23',
+          version: '[VERSION]',
           timestamp: new Date().toISOString(),
           ...context
         }, null, 2));

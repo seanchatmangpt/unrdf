@@ -1,7 +1,7 @@
 # V6 Performance Report
 
 **Generated:** 2025-12-27
-**Version:** 6.0.0-alpha.1
+**Version:** latest-alpha.1
 **Status:** Optimized and Benchmarked
 
 ---
@@ -222,9 +222,9 @@ Optimized (with caching): Estimated
 ### Test Environment
 
 ```
-Node Version: v22.21.1
+Node Version: latest
 Platform: Linux
-OS: Linux 4.4.0
+OS: Linux latest
 GC: Exposed (--expose-gc)
 Warmup: 10-200 iterations per benchmark
 Iterations: 100-10,000 per benchmark

@@ -1,23 +1,23 @@
 # UNRDF v6 Migration Guide
-## Upgrading from v5.x to v6.0
+## Upgrading from v5.x to vlatest
 
 **Target Audience:** Existing UNRDF v5.x users
 **Time to Migrate:** ~1 hour for typical project
 **Difficulty:** ⭐⭐⚠️ Moderate (breaking changes present)
-**Status:** v6.0.0-alpha.1
+**Status:** vlatest.1
 
 ---
 
 ## 🚨 Before You Start
 
-**IMPORTANT:** UNRDF v6.0 is currently in **ALPHA**. This migration guide covers known changes, but the v6 API may still evolve.
+**IMPORTANT:** UNRDF vlatest is currently in **ALPHA**. This migration guide covers known changes, but the v6 API may still evolve.
 
 ### Pre-Migration Checklist
 
 - [ ] **Backup your project** (`git commit` or `git tag v5-backup`)
 - [ ] **Review breaking changes** (see [V6-BREAKING-CHANGES.md](V6-BREAKING-CHANGES.md))
 - [ ] **Test in development** environment first
-- [ ] **Update Node.js** to 18.0.0 or higher (required for v6)
+- [ ] **Update Node.js** to latest or higher (required for v6)
 - [ ] **Read package consolidation guide** ([V6-PACKAGE-CONSOLIDATION.md](V6-PACKAGE-CONSOLIDATION.md))
 
 ---
@@ -147,11 +147,11 @@ console.log('UNRDF packages in use:', [...unrdfImports]);
 {
   "dependencies": {
     // v5 (keep temporarily)
-    "@unrdf/core": "^5.0.1",
+    "@unrdf/core": "^latest",
 
     // v6 (add with alias)
-    "@unrdf/v6-core": "^6.0.0-alpha.1",
-    "@unrdf/v6-compat": "^6.0.0-alpha.1"
+    "@unrdf/v6-core": "^latest.1",
+    "@unrdf/v6-compat": "^latest.1"
   }
 }
 ```
@@ -347,7 +347,7 @@ npm install
 npm uninstall @unrdf/v6-core @unrdf/v6-compat
 
 # Reinstall v5
-npm install @unrdf/core@^5.0.1
+npm install @unrdf/core@^latest
 ```
 
 ---
@@ -409,7 +409,7 @@ After successful migration:
 
 ### Q: Is v6 production-ready?
 
-**A:** v6.0.0-alpha.1 is in ALPHA. Use in production at your own risk. Wait for stable v6.0.0 release for production use.
+**A:** vlatest.1 is in ALPHA. Use in production at your own risk. Wait for stable vlatest release for production use.
 
 ### Q: Will v5 be supported?
 
@@ -501,10 +501,10 @@ Recommended:
 
 ## Document Status
 
-**Version:** 1.0.0-draft
+**Version:** latest
 **Last Updated:** 2025-12-27
 **Status:** ⚠️ DRAFT - v6 API not finalized
-**Next Review:** When v6.0.0-beta.1 released
+**Next Review:** When vlatest.1 released
 
 **⚠️ CRITICAL DISCLAIMER:** This migration guide is based on PRELIMINARY analysis. Actual v6 API and package structure may differ. Verify all migration steps against official v6 documentation when available.
 
@@ -518,5 +518,5 @@ Recommended:
 ---
 
 **Migration Guide Created By:** Agent 9 - Documentation Specialist
-**Based On:** v6.0.0-alpha.1 workspace analysis
+**Based On:** vlatest.1 workspace analysis
 **Confidence Level:** MEDIUM (pending v6 API verification)

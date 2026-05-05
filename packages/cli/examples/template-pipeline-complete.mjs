@@ -69,7 +69,7 @@ async function main() {
   writeFileSync(registryPath, registryNjk);
   
   mkdirSync(join(tmp, 'src'), { recursive: true });
-  writeFileSync(indexPath, '// Manual Exports\nexport const version = "1.0.0";\n\n// AUTO-GENERATED EXPORTS\n');
+  writeFileSync(indexPath, '// Manual Exports\nexport const version = "[VERSION]";\n\n// AUTO-GENERATED EXPORTS\n');
 
   // 3. Batch generate services (One file per Class)
   console.log('\n1. Batch generating services...');

@@ -42,7 +42,7 @@ The Hive Mind collective has completed comprehensive analysis of the UNRDF proje
 **Document**: `research-findings.md` (47KB, 65 pages)
 
 **Key Discoveries**:
-- Current v2.1.1 is production-ready autonomic RDF framework
+- Current latest is production-ready autonomic RDF framework
 - Unique innovations: Knowledge Hooks, policy-as-code, Git-anchored lockchain
 - Sidecar architecture complete, validated at 1000+ RPS
 - CLI v2 infrastructure 40% complete (citty-based)

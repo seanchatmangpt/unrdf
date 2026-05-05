@@ -5,7 +5,7 @@
  * CLI command to show the current active context.
  *
  * @module cli/commands/context/current
- * @version 2.4.0
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -13,7 +13,7 @@ import { defineCommand } from 'citty';
 import { ContextManager } from '../../core/context.mjs';
 import { trace } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('unrdf-cli-context-current', '2.4.0');
+const tracer = trace.getTracer('unrdf-cli-context-current', '[VERSION]');
 
 /**
  * Current context command

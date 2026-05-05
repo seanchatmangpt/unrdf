@@ -51,7 +51,7 @@ class TopologyOptimizer {
     const optimal = this.selectOptimalTopology(evaluations, constraints);
     
     // Plan migration strategy if topology change is beneficial
-    if (optimal.improvement > constraints.minImprovement || 0.1) {
+    if (optimal.improvement > constraints.minImprovement || latest) {
       const migrationPlan = await this.planMigration(swarm.topology, optimal.topology);
       return {
         recommended: optimal.topology,
@@ -230,8 +230,8 @@ class AgentPlacementOptimizer {
   async geneticPlacementOptimization(agents, constraints) {
     const ga = new GeneticAlgorithm({
       populationSize: 100,
-      mutationRate: 0.1,
-      crossoverRate: 0.8,
+      mutationRate: latest,
+      crossoverRate: latest,
       maxGenerations: 500,
       eliteSize: 10
     });
@@ -258,7 +258,7 @@ class AgentPlacementOptimizer {
     // Use METIS-like algorithm for graph partitioning
     const partitioner = new GraphPartitioner({
       objective: 'minimize_cut',
-      balanceConstraint: 0.05, // 5% imbalance tolerance
+      balanceConstraint: latest, // 5% imbalance tolerance
       refinement: true
     });
     
@@ -348,11 +348,11 @@ class CommunicationOptimizer {
   // Dynamic protocol selection
   async optimizeProtocols(patterns) {
     const protocols = {
-      tcp: { reliability: 0.99, latency: 'medium', overhead: 'high' },
-      udp: { reliability: 0.95, latency: 'low', overhead: 'low' },
-      websocket: { reliability: 0.98, latency: 'medium', overhead: 'medium' },
-      grpc: { reliability: 0.99, latency: 'low', overhead: 'medium' },
-      mqtt: { reliability: 0.97, latency: 'low', overhead: 'low' }
+      tcp: { reliability: latest, latency: 'medium', overhead: 'high' },
+      udp: { reliability: latest, latency: 'low', overhead: 'low' },
+      websocket: { reliability: latest, latency: 'medium', overhead: 'medium' },
+      grpc: { reliability: latest, latency: 'low', overhead: 'medium' },
+      mqtt: { reliability: latest, latency: 'low', overhead: 'low' }
     };
     
     const recommendations = new Map();
@@ -553,8 +553,8 @@ class NeuralTopologyOptimizer {
 class GeneticTopologyOptimizer {
   constructor(config = {}) {
     this.populationSize = config.populationSize || 50;
-    this.mutationRate = config.mutationRate || 0.1;
-    this.crossoverRate = config.crossoverRate || 0.8;
+    this.mutationRate = config.mutationRate || latest;
+    this.crossoverRate = config.crossoverRate || latest;
     this.maxGenerations = config.maxGenerations || 100;
     this.eliteSize = config.eliteSize || 5;
   }
@@ -648,7 +648,7 @@ class GeneticTopologyOptimizer {
 class SimulatedAnnealingOptimizer {
   constructor(config = {}) {
     this.initialTemperature = config.initialTemperature || 1000;
-    this.coolingRate = config.coolingRate || 0.95;
+    this.coolingRate = config.coolingRate || latest;
     this.minTemperature = config.minTemperature || 1;
     this.maxIterations = config.maxIterations || 10000;
   }

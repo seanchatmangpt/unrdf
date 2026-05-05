@@ -11,15 +11,15 @@
 
 **ADVERSARIAL PM VERDICT**: This codebase is NOT production-ready by the stated criteria.
 
-- **Overall Pass Rate**: 88.85% (805/906 tests) - **BELOW 95% target**
+- **Overall Pass Rate**: latest% (805/906 tests) - **BELOW 95% target**
 - **Packages Meeting Target**: 1 of 5 (20%)
-- **SLA Violations**: 1 package (YAWL: 6.92s, exceeds 5s)
+- **SLA Violations**: 1 package (YAWL: latests, exceeds 5s)
 - **Infrastructure Failures**: 2 packages (CLI import error, Streaming vitest config)
 
 ### Key Findings
-1. ✅ **@unrdf/core**: 99.77% pass rate - ONLY package meeting target
-2. ❌ **@unrdf/yawl**: 77.14% pass rate - task status synchronization issues
-3. ❌ **@unrdf/v6-core**: 78.13% pass rate - export and browser compatibility issues
+1. ✅ **@unrdf/core**: latest% pass rate - ONLY package meeting target
+2. ❌ **@unrdf/yawl**: latest% pass rate - task status synchronization issues
+3. ❌ **@unrdf/v6-core**: latest% pass rate - export and browser compatibility issues
 4. ⚠️ **@unrdf/cli**: Suite loading failure - missing @jest/globals dependency
 5. ❌ **@unrdf/streaming**: Infrastructure failure - vitest version mismatch
 
@@ -31,17 +31,17 @@
 
 **Performance**:
 ```
-Duration: 3.51s (PASS - within 5s SLA)
-real    0m5.520s
-user    0m7.820s
-sys     0m10.220s
+Duration: latests (PASS - within 5s SLA)
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 ```
 
 **Test Results**:
 ```
 Test Files:  14 passed | 1 failed (15)
 Tests:       438 passed | 1 failed (439)
-Pass Rate:   99.77%
+Pass Rate:   latest%
 ```
 
 **Failures** (1):
@@ -50,7 +50,7 @@ Pass Rate:   99.77%
   - Issue: Oxigraph WASM Literal object structure differs from N3 Literal
   - Impact: Medium - backward compatibility layer issue
 
-**Verdict**: ✅ PASS (99.77% > 95%)
+**Verdict**: ✅ PASS (latest% > 95%)
 
 ---
 
@@ -58,10 +58,10 @@ Pass Rate:   99.77%
 
 **Performance**:
 ```
-Duration: 4.85s (PASS - within 5s SLA)
-real    0m8.228s
-user    0m7.460s
-sys     0m14.020s
+Duration: latests (PASS - within 5s SLA)
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 ```
 
 **Test Results**:
@@ -92,17 +92,17 @@ Suite Error: decision-fabric.test.mjs
 
 **Performance**:
 ```
-Duration: 6.92s (FAIL - exceeds 5s SLA by 38%)
-real    0m9.307s
-user    0m18.100s
-sys     0m23.720s
+Duration: latests (FAIL - exceeds 5s SLA by 38%)
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 ```
 
 **Test Results**:
 ```
 Test Files:  8 passed | 13 failed (21)
 Tests:       324 passed | 96 failed (420)
-Pass Rate:   77.14%
+Pass Rate:   latest%
 ```
 
 **Critical Failures** (96 tests):
@@ -121,14 +121,14 @@ Pass Rate:   77.14%
 
 2. **Receipt Batch Generation** (2 failures):
    - `test/receipt-batch.test.mjs` - Parallel batch hashing errors
-   - Error: "Clock jump detected: 1074.00s"
+   - Error: "Clock jump detected: latests"
 
 3. **Architecture Violations** (2 failures):
    - `test/architecture.test.mjs`:
      - 20 files exceed 500 lines limit
      - 1 test file exceeds 1000 lines limit
 
-**Verdict**: ❌ FAIL (77.14% < 95%, SLA violation)
+**Verdict**: ❌ FAIL (latest% < 95%, SLA violation)
 
 ---
 
@@ -136,10 +136,10 @@ Pass Rate:   77.14%
 
 **Performance**:
 ```
-Duration: 2.48s
-real    0m2.481s
-user    0m1.980s
-sys     0m1.110s
+Duration: latests
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 ```
 
 **Test Results**:
@@ -149,8 +149,8 @@ Error: SyntaxError: The requested module 'vitest/node' does not provide an expor
 ```
 
 **Root Cause**:
-- Version conflict between vitest v4.0.16 and coverage plugin expecting v1.6.1 API
-- `@vitest/coverage-v8@4.0.16` incompatible with `vitest@4.0.16`
+- Version conflict between vitest vlatest and coverage plugin expecting vlatest API
+- `@vitest/coverage-v8@latest` incompatible with `vitest@latest`
 - Export `parseAstAsync` removed in vitest v4
 
 **Impact**: CRITICAL - No tests executed
@@ -163,16 +163,16 @@ Error: SyntaxError: The requested module 'vitest/node' does not provide an expor
 
 **Performance**:
 ```
-Duration: 1.56s (PASS - within 5s SLA)
-real    0m2.361s
-user    0m2.570s
-sys     0m2.390s
+Duration: latests (PASS - within 5s SLA)
+real    0mlatests
+user    0mlatests
+sys     0mlatests
 ```
 
 **Test Results**:
 ```
 Tests:       25 passed | 4 failed | 3 cancelled (32)
-Pass Rate:   78.13%
+Pass Rate:   latest%
 ```
 
 **Failures** (7 total):
@@ -200,7 +200,7 @@ Pass Rate:   78.13%
    - `Runtime Status - getCurrentRuntime returns environment info`
    - Error: Process exit before test completion
 
-**Verdict**: ❌ FAIL (78.13% < 95%)
+**Verdict**: ❌ FAIL (latest% < 95%)
 
 ---
 
@@ -233,19 +233,19 @@ grep -r "from ['"]n3['"]" packages/core/src
 
 | Package | Duration | SLA Status | Deviation |
 |---------|----------|------------|-----------|
-| @unrdf/core | 3.51s | ✅ PASS | -29.8% |
-| @unrdf/cli | 4.85s | ✅ PASS | -3.0% |
-| @unrdf/yawl | 6.92s | ❌ FAIL | +38.4% |
-| @unrdf/streaming | 2.48s | ✅ PASS | -50.4% |
-| @unrdf/v6-core | 1.56s | ✅ PASS | -68.8% |
+| @unrdf/core | latests | ✅ PASS | -latest% |
+| @unrdf/cli | latests | ✅ PASS | -latest% |
+| @unrdf/yawl | latests | ❌ FAIL | +latest% |
+| @unrdf/streaming | latests | ✅ PASS | -latest% |
+| @unrdf/v6-core | latests | ✅ PASS | -latest% |
 
 **SLA Compliance**: 4 of 5 packages (80%)
 
 **YAWL Performance Issues**:
-- Test execution: 5.29s
-- Transform time: 25.67s
-- Import time: 57.55s
-- **Total wall time**: 6.92s (exceeds 5s SLA)
+- Test execution: latests
+- Transform time: latests
+- Import time: latests
+- **Total wall time**: latests (exceeds 5s SLA)
 
 **Root Cause**: Large file sizes (20 files >500 lines) causing slow transform/import
 
@@ -292,7 +292,7 @@ grep -r "from ['"]n3['"]" packages/core/src
    - Issue: 20 files exceed 500-line limit
    - Files: engine.mjs (701 lines), hooks (1178 lines), events (1429 lines), etc.
    - Fix: Refactor large files into smaller modules
-   - Impact: Slow test execution (6.92s), maintenance difficulty
+   - Impact: Slow test execution (latests), maintenance difficulty
 
 ---
 
@@ -317,8 +317,8 @@ grep -r "from ['"]n3['"]" packages/core/src
    ```json
    // In packages/streaming/package.json
    "devDependencies": {
-     "vitest": "^1.6.1",  // Downgrade to match coverage plugin
-     "@vitest/coverage-v8": "^1.6.1"
+     "vitest": "^latest",  // Downgrade to match coverage plugin
+     "@vitest/coverage-v8": "^latest"
    }
    ```
 
@@ -350,12 +350,12 @@ grep -r "from ['"]n3['"]" packages/core/src
    - Target: Score ≥80/100
 
 8. **Improve Test Coverage**:
-   - @unrdf/yawl: Fix 96 failing tests (currently 77.14%)
-   - @unrdf/v6-core: Fix 7 failing tests (currently 78.13%)
+   - @unrdf/yawl: Fix 96 failing tests (currently latest%)
+   - @unrdf/v6-core: Fix 7 failing tests (currently latest%)
    - Target: All packages >95%
 
 9. **Performance Optimization**:
-   - YAWL: Reduce import time (currently 57.55s transform+import)
+   - YAWL: Reduce import time (currently latests transform+import)
    - Target: All test suites <5s wall time
 
 ---
@@ -369,23 +369,23 @@ All tests were run with timeout enforcement and timing measurement:
 ```bash
 # @unrdf/core
 time timeout 10s pnpm --filter "@unrdf/core" test 2>&1
-# Result: 3.51s, 438/439 passed (99.77%)
+# Result: latests, 438/439 passed (latest%)
 
 # @unrdf/cli
 time timeout 10s pnpm --filter "@unrdf/cli" test 2>&1
-# Result: 4.85s, 18/18 passed, 1 suite failed to load
+# Result: latests, 18/18 passed, 1 suite failed to load
 
 # @unrdf/yawl
 time timeout 10s pnpm --filter "@unrdf/yawl" test 2>&1
-# Result: 6.92s, 324/420 passed (77.14%)
+# Result: latests, 324/420 passed (latest%)
 
 # @unrdf/streaming
 time timeout 10s pnpm --filter "@unrdf/streaming" test 2>&1
-# Result: 2.48s, infrastructure failure
+# Result: latests, infrastructure failure
 
 # @unrdf/v6-core
 time timeout 10s pnpm --filter "@unrdf/v6-core" test 2>&1
-# Result: 1.56s, 25/32 passed (78.13%)
+# Result: latests, 25/32 passed (latest%)
 ```
 
 ### Aggregate Statistics
@@ -395,7 +395,7 @@ time timeout 10s pnpm --filter "@unrdf/v6-core" test 2>&1
 | Total Tests | 906 | - | - |
 | Passed | 805 | - | - |
 | Failed | 101 | - | - |
-| Overall Pass Rate | 88.85% | >95% | ❌ FAIL |
+| Overall Pass Rate | latest% | >95% | ❌ FAIL |
 | Packages Meeting Target | 1/5 (20%) | 100% | ❌ FAIL |
 | SLA Compliance | 4/5 (80%) | 100% | ⚠️ PARTIAL |
 | N3 Isolation | ✅ 1 file | 1 file | ✅ PASS |
@@ -409,10 +409,10 @@ time timeout 10s pnpm --filter "@unrdf/v6-core" test 2>&1
 
 | Claim | Reality | Evidence | Verdict |
 |-------|---------|----------|---------|
-| "All tests pass" | 88.85% pass rate | 805/906 tests | ❌ FALSE |
+| "All tests pass" | latest% pass rate | 805/906 tests | ❌ FALSE |
 | "Production ready" | 2 infrastructure failures | vitest errors | ❌ FALSE |
-| ">95% coverage" | Only 1/5 packages | core: 99.77%, yawl: 77.14% | ❌ FALSE |
-| "SLA compliant (<5s)" | 1 violation | YAWL: 6.92s | ⚠️ MOSTLY TRUE |
+| ">95% coverage" | Only 1/5 packages | core: latest%, yawl: latest% | ❌ FALSE |
+| "SLA compliant (<5s)" | 1 violation | YAWL: latests | ⚠️ MOSTLY TRUE |
 | "N3 properly isolated" | Single file usage | grep verification | ✅ TRUE |
 
 ### What Would Break?
@@ -456,7 +456,7 @@ time timeout 10s pnpm --filter "@unrdf/v6-core" test 2>&1
 1. YAWL has 90+ failing tests in core workflow patterns - **BLOCKING**
 2. @unrdf/streaming has NO test coverage due to infrastructure failure - **BLOCKING**
 3. @unrdf/v6-core missing critical exports - **BLOCKING**
-4. Overall pass rate 88.85% is below 95% threshold - **QUALITY ISSUE**
+4. Overall pass rate latest% is below 95% threshold - **QUALITY ISSUE**
 
 **What Needs to Happen Before "Done"**:
 1. Fix all Priority 1 issues (YAWL status bug, streaming config, v6-core exports)

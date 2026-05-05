@@ -311,13 +311,13 @@ All code is syntactically valid and will execute when uncommented.
 **Dependencies Added**:
 ```json
 {
-  "@comunica/query-sparql": "^3.2.4",
-  "@xenova/transformers": "^2.17.2",
-  "d3": "^7.9.0",
-  "@observablehq/plot": "^0.6.16",
-  "@noble/ed25519": "^2.1.0",
-  "graphql": "^16.9.0",
-  "@graphql-tools/schema": "^10.0.6"
+  "@comunica/query-sparql": "^latest",
+  "@xenova/transformers": "^latest",
+  "d3": "^latest",
+  "@observablehq/plot": "^latest",
+  "@noble/ed25519": "^latest",
+  "graphql": "^latest",
+  "@graphql-tools/schema": "^latest"
 }
 ```
 

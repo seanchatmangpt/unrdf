@@ -1,7 +1,7 @@
 # KGC-4D Diataxis Structure Summary
 
 **Created:** 2025-12-27  
-**Evidence Base:** kgc-4d v5.0.1  
+**Evidence Base:** kgc-4d latest  
 **Total Files:** 30 documentation files
 
 ---
@@ -216,4 +216,4 @@ tree /home/user/unrdf/docs/diataxis/kgc-4d -L 2
 
 **Created by:** Diataxis Architect Agent  
 **Date:** 2025-12-27  
-**Evidence:** kgc-4d v5.0.1 (176/176 tests passing)
+**Evidence:** kgc-4d latest (176/176 tests passing)

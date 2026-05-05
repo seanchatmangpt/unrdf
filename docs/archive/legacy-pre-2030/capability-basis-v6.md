@@ -231,7 +231,7 @@ grep -r "import.*DarkMatterCore" packages --include="*.mjs" | wc -l
 # Result: 0
 ```
 
-**Estimated Dead LoC**: ~1,074 lines (7.3% of exported code)
+**Estimated Dead LoC**: ~1,074 lines (latest% of exported code)
 
 ---
 
@@ -543,7 +543,7 @@ Build on **8 atoms + 5 compositions = 13 capability units** instead of 57 packag
 4. Stabilize minimal API (week 5)
 5. Implement missing capabilities M1-M5 (week 6)
 
-**Success Metric**: V6.0.0 release with ≤12 packages, ≤15,000 LoC, 100% deterministic, 80%+ test coverage.
+**Success Metric**: Vlatest release with ≤12 packages, ≤15,000 LoC, 100% deterministic, 80%+ test coverage.
 
 ---
 

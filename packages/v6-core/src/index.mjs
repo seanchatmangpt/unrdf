@@ -12,7 +12,7 @@
  * UNRDF v6 version identifier
  * @constant {string}
  */
-export const V6_VERSION = '6.0.0-alpha.1';
+export const V6_VERSION = '[VERSION]-alpha.1';
 
 /**
  * UNRDF v6 feature flags

@@ -8,7 +8,7 @@
  * configuration, and meta operations.
  *
  * @module playground-cli
- * @version 2.0.0
+ * @version latest
  * @license MIT
  */
 
@@ -68,7 +68,7 @@ export const globalArgs = {
 const main = defineCommand({
   meta: {
     name: 'playground',
-    version: '2.0.0',
+    version: 'latest',
     description: 'Citty + Nunjucks + UNRDF playground CLI demonstrating autonomic knowledge graph systems'
   },
   args: globalArgs,
@@ -86,7 +86,7 @@ const main = defineCommand({
     }
 
     console.log(`
-\x1b[36mPlayground CLI v2.0.0\x1b[0m
+\x1b[36mPlayground CLI latest\x1b[0m
 
 Generate academic papers and theses using templates and RDF knowledge graphs.
 

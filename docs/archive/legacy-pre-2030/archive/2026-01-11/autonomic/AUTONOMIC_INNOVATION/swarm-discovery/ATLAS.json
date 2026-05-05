@@ -12,7 +12,7 @@
       "metrics": {
         "complexity": "moderate",
         "dependencies": 1,
-        "utility": 0.95
+        "utility": latest
       },
       "name": "RDF Store",
       "proof": {
@@ -30,7 +30,7 @@
         "lifecycle": "create-use-dispose",
         "type": "stateful"
       },
-      "utility": 0.95,
+      "utility": latest,
       "validated": true
     },
     {
@@ -42,7 +42,7 @@
       "metrics": {
         "complexity": "high",
         "dependencies": 0,
-        "utility": 0.92
+        "utility": latest
       },
       "name": "SPARQL Executor",
       "proof": {
@@ -59,7 +59,7 @@
       "state": {
         "type": "stateless"
       },
-      "utility": 0.92,
+      "utility": latest,
       "validated": true,
       "variants": [
         "sync",
@@ -80,7 +80,7 @@
       "metrics": {
         "complexity": "high",
         "dependencies": 0,
-        "utility": 0.88
+        "utility": latest
       },
       "name": "Hook System",
       "optimization": "JIT compilation + quad pooling",
@@ -99,7 +99,7 @@
         "registry": "stateful",
         "type": "stateless"
       },
-      "utility": 0.88,
+      "utility": latest,
       "validated": true
     },
     {
@@ -111,7 +111,7 @@
       "metrics": {
         "complexity": "high",
         "dependencies": 0,
-        "utility": 0.85
+        "utility": latest
       },
       "name": "Pattern Matcher",
       "proof": {
@@ -128,7 +128,7 @@
       "state": {
         "type": "stateless"
       },
-      "utility": 0.85,
+      "utility": latest,
       "validated": true
     },
     {
@@ -140,7 +140,7 @@
       "metrics": {
         "complexity": "moderate",
         "dependencies": 0,
-        "utility": 0.82
+        "utility": latest
       },
       "name": "Change Feed Processor",
       "proof": {
@@ -158,7 +158,7 @@
         "lifecycle": "subscribe-unsubscribe",
         "type": "stateful"
       },
-      "utility": 0.82,
+      "utility": latest,
       "validated": true
     },
     {
@@ -170,7 +170,7 @@
       "metrics": {
         "complexity": "very-high",
         "dependencies": 0,
-        "utility": 0.8
+        "utility": latest
       },
       "name": "Federation Coordinator",
       "proof": {
@@ -186,7 +186,7 @@
       "state": {
         "type": "stateful"
       },
-      "utility": 0.8,
+      "utility": latest,
       "validated": true
     },
     {
@@ -203,14 +203,14 @@
       "metrics": {
         "complexity": "very-high",
         "dependencies": 0,
-        "utility": 0.9
+        "utility": latest
       },
       "name": "Event Logger (KGC-4D)",
       "proof": {
         "metrics": {
           "developmentDays": 20,
           "linesOfCode": 6327,
-          "testPassRate": 0.998
+          "testPassRate": latest
         },
         "type": "test+example"
       },
@@ -222,7 +222,7 @@
         "persistence": "git",
         "type": "stateful"
       },
-      "utility": 0.9,
+      "utility": latest,
       "validated": true
     },
     {
@@ -234,7 +234,7 @@
       "metrics": {
         "complexity": "very-high",
         "dependencies": 0,
-        "utility": 0.86
+        "utility": latest
       },
       "name": "Workflow Engine (YAWL)",
       "proof": {
@@ -249,7 +249,7 @@
         "lifecycle": "create-task-complete",
         "type": "stateful"
       },
-      "utility": 0.86,
+      "utility": latest,
       "validated": true
     },
     {
@@ -261,7 +261,7 @@
       "metrics": {
         "complexity": "high",
         "dependencies": 0,
-        "utility": 0.75
+        "utility": latest
       },
       "name": "ML Inference Pipeline",
       "proof": {
@@ -275,7 +275,7 @@
         "lifecycle": "load-infer-unload",
         "type": "stateful"
       },
-      "utility": 0.75,
+      "utility": latest,
       "validated": true
     },
     {
@@ -287,7 +287,7 @@
       "metrics": {
         "complexity": "high",
         "dependencies": 0,
-        "utility": 0.78
+        "utility": latest
       },
       "name": "Graph Analytics",
       "proof": {
@@ -300,14 +300,14 @@
       "state": {
         "type": "stateless"
       },
-      "utility": 0.78,
+      "utility": latest,
       "validated": true
     }
   ],
   "baselines": {
     "atoms": [
       {
-        "baselineUtility": 0.95,
+        "baselineUtility": latest,
         "complexity": "moderate",
         "id": "atom-rdf-store",
         "name": "RDF Store",
@@ -320,7 +320,7 @@
         }
       },
       {
-        "baselineUtility": 0.8700000000000001,
+        "baselineUtility": latest,
         "complexity": "high",
         "id": "atom-sparql-executor",
         "name": "SPARQL Executor",
@@ -333,7 +333,7 @@
         }
       },
       {
-        "baselineUtility": 0.89,
+        "baselineUtility": latest,
         "complexity": "high",
         "id": "atom-hook-system",
         "name": "Hook System",
@@ -346,7 +346,7 @@
         }
       },
       {
-        "baselineUtility": 0.8,
+        "baselineUtility": latest,
         "complexity": "high",
         "id": "atom-pattern-matcher",
         "name": "Pattern Matcher",
@@ -359,7 +359,7 @@
         }
       },
       {
-        "baselineUtility": 0.82,
+        "baselineUtility": latest,
         "complexity": "moderate",
         "id": "atom-change-feed",
         "name": "Change Feed Processor",
@@ -372,7 +372,7 @@
         }
       },
       {
-        "baselineUtility": 0.7000000000000001,
+        "baselineUtility": latest,
         "complexity": "very-high",
         "id": "atom-federation-coordinator",
         "name": "Federation Coordinator",
@@ -384,7 +384,7 @@
         }
       },
       {
-        "baselineUtility": 0.8099999999999999,
+        "baselineUtility": latest,
         "complexity": "very-high",
         "id": "atom-event-logger",
         "name": "Event Logger (KGC-4D)",
@@ -392,13 +392,13 @@
           "metrics": {
             "developmentDays": 20,
             "linesOfCode": 6327,
-            "testPassRate": 0.998
+            "testPassRate": latest
           },
           "type": "test+example"
         }
       },
       {
-        "baselineUtility": 0.71,
+        "baselineUtility": latest,
         "complexity": "very-high",
         "id": "atom-workflow-engine",
         "name": "Workflow Engine (YAWL)",
@@ -407,7 +407,7 @@
         }
       },
       {
-        "baselineUtility": 0.65,
+        "baselineUtility": latest,
         "complexity": "high",
         "id": "atom-ml-inference",
         "name": "ML Inference Pipeline",
@@ -416,7 +416,7 @@
         }
       },
       {
-        "baselineUtility": 0.68,
+        "baselineUtility": latest,
         "complexity": "high",
         "id": "atom-graph-analytics",
         "name": "Graph Analytics",
@@ -426,10 +426,10 @@
       }
     ],
     "statistics": {
-      "averageUtility": 0.788,
-      "maxUtility": 0.95,
-      "medianUtility": 0.8049999999999999,
-      "minUtility": 0.65
+      "averageUtility": latest,
+      "maxUtility": latest,
+      "medianUtility": latest,
+      "minUtility": latest
     }
   },
   "candidates": [
@@ -439,10 +439,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.95,
+      "heuristic": latest,
       "id": "candidate-1",
       "score": null,
-      "synergy": 0.76
+      "synergy": latest
     },
     {
       "atoms": [
@@ -450,10 +450,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.92,
+      "heuristic": latest,
       "id": "candidate-2",
       "score": null,
-      "synergy": 0.92
+      "synergy": latest
     },
     {
       "atoms": [
@@ -461,10 +461,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.9,
+      "heuristic": latest,
       "id": "candidate-3",
       "score": null,
-      "synergy": 1.08
+      "synergy": latest
     },
     {
       "atoms": [
@@ -472,10 +472,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.88,
+      "heuristic": latest,
       "id": "candidate-4",
       "score": null,
-      "synergy": 0.88
+      "synergy": latest
     },
     {
       "atoms": [
@@ -483,10 +483,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.86,
+      "heuristic": latest,
       "id": "candidate-5",
       "score": null,
-      "synergy": 1.032
+      "synergy": latest
     },
     {
       "atoms": [
@@ -494,10 +494,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.85,
+      "heuristic": latest,
       "id": "candidate-6",
       "score": null,
-      "synergy": 0.85
+      "synergy": latest
     },
     {
       "atoms": [
@@ -505,10 +505,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.82,
+      "heuristic": latest,
       "id": "candidate-7",
       "score": null,
-      "synergy": 0.656
+      "synergy": latest
     },
     {
       "atoms": [
@@ -516,10 +516,10 @@
       ],
       "closed": false,
       "depth": 0,
-      "heuristic": 0.8,
+      "heuristic": latest,
       "id": "candidate-8",
       "score": null,
-      "synergy": 0.96
+      "synergy": latest
     },
     {
       "atoms": [
@@ -528,10 +528,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 1.1616000000000002,
+      "heuristic": latest,
       "id": "candidate-9",
       "score": null,
-      "synergy": 1.1616000000000002
+      "synergy": latest
     },
     {
       "atoms": [
@@ -540,10 +540,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9900000000000001,
+      "heuristic": latest,
       "id": "candidate-10",
       "score": null,
-      "synergy": 0.9900000000000001
+      "synergy": latest
     },
     {
       "atoms": [
@@ -552,10 +552,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9801000000000001,
+      "heuristic": latest,
       "id": "candidate-11",
       "score": null,
-      "synergy": 0.9801000000000001
+      "synergy": latest
     },
     {
       "atoms": [
@@ -564,10 +564,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9735000000000001,
+      "heuristic": latest,
       "id": "candidate-12",
       "score": null,
-      "synergy": 0.9735000000000001
+      "synergy": latest
     },
     {
       "atoms": [
@@ -576,10 +576,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9515,
+      "heuristic": latest,
       "id": "candidate-13",
       "score": null,
-      "synergy": 0.9515
+      "synergy": latest
     },
     {
       "atoms": [
@@ -588,10 +588,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9460000000000001,
+      "heuristic": latest,
       "id": "candidate-14",
       "score": null,
-      "synergy": 0.9460000000000001
+      "synergy": latest
     },
     {
       "atoms": [
@@ -600,10 +600,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9350000000000002,
+      "heuristic": latest,
       "id": "candidate-15",
       "score": null,
-      "synergy": 0.9350000000000002
+      "synergy": latest
     },
     {
       "atoms": [
@@ -612,10 +612,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9284000000000001,
+      "heuristic": latest,
       "id": "candidate-16",
       "score": null,
-      "synergy": 0.9284000000000001
+      "synergy": latest
     },
     {
       "atoms": [
@@ -624,10 +624,10 @@
       ],
       "closed": false,
       "depth": 1,
-      "heuristic": 0.9240000000000002,
+      "heuristic": latest,
       "id": "candidate-17",
       "score": null,
-      "synergy": 0.9240000000000002
+      "synergy": latest
     },
     {
       "atoms": [
@@ -637,10 +637,10 @@
       ],
       "closed": false,
       "depth": 2,
-      "heuristic": 1.1448,
+      "heuristic": latest,
       "id": "candidate-18",
       "score": null,
-      "synergy": 1.1448
+      "synergy": latest
     },
     {
       "atoms": [
@@ -650,10 +650,10 @@
       ],
       "closed": true,
       "depth": 2,
-      "heuristic": 1.0599999999999998,
+      "heuristic": latest,
       "id": "candidate-19",
       "score": null,
-      "synergy": 1.0599999999999998
+      "synergy": latest
     },
     {
       "atoms": [
@@ -663,14 +663,14 @@
       ],
       "closed": false,
       "depth": 2,
-      "heuristic": 1.0592,
+      "heuristic": latest,
       "id": "candidate-20",
       "score": null,
-      "synergy": 1.0592
+      "synergy": latest
     }
   ],
   "deterministic": true,
-  "epoch": "2025-12-26T00:00:00.000Z",
+  "epoch": "2025-12-26T00:00:latestZ",
   "graph": {
     "edges": [
       {
@@ -754,63 +754,63 @@
         "from": "atom-event-logger",
         "kind": "feed",
         "reason": "Event Logger (KGC-4D) output → Workflow Engine (YAWL) input",
-        "strength": 0.858,
+        "strength": latest,
         "to": "atom-workflow-engine"
       },
       {
         "from": "atom-hook-system",
         "kind": "govern",
         "reason": "Hook System governs RDF Store",
-        "strength": 0.8,
+        "strength": latest,
         "to": "atom-rdf-store"
       },
       {
         "from": "atom-hook-system",
         "kind": "govern",
         "reason": "Hook System governs SPARQL Executor",
-        "strength": 0.8,
+        "strength": latest,
         "to": "atom-sparql-executor"
       },
       {
         "from": "atom-hook-system",
         "kind": "govern",
         "reason": "Hook System governs Pattern Matcher",
-        "strength": 0.8,
+        "strength": latest,
         "to": "atom-pattern-matcher"
       },
       {
         "from": "atom-event-logger",
         "kind": "govern",
         "reason": "Event Logger (KGC-4D) governs Workflow Engine (YAWL)",
-        "strength": 0.8,
+        "strength": latest,
         "to": "atom-workflow-engine"
       },
       {
         "from": "atom-rdf-store",
         "kind": "host",
         "reason": "RDF Store can host Hook System",
-        "strength": 0.85,
+        "strength": latest,
         "to": "atom-hook-system"
       },
       {
         "from": "atom-rdf-store",
         "kind": "host",
         "reason": "RDF Store can host Pattern Matcher",
-        "strength": 0.85,
+        "strength": latest,
         "to": "atom-pattern-matcher"
       },
       {
         "from": "atom-rdf-store",
         "kind": "host",
         "reason": "RDF Store can host Change Feed Processor",
-        "strength": 0.85,
+        "strength": latest,
         "to": "atom-change-feed"
       },
       {
         "from": "atom-workflow-engine",
         "kind": "host",
         "reason": "Workflow Engine (YAWL) can host ML Inference Pipeline",
-        "strength": 0.85,
+        "strength": latest,
         "to": "atom-ml-inference"
       },
       {
@@ -822,7 +822,7 @@
       }
     ],
     "statistics": {
-      "averageDegree": 4.2,
+      "averageDegree": latest,
       "edgeCount": 21,
       "edgesByKind": {
         "depends": 1,
@@ -839,7 +839,7 @@
         "inDegree": 0,
         "name": "RDF Store",
         "outDegree": 0,
-        "utility": 0.95
+        "utility": latest
       },
       {
         "complexity": "high",
@@ -847,7 +847,7 @@
         "inDegree": 0,
         "name": "SPARQL Executor",
         "outDegree": 0,
-        "utility": 0.92
+        "utility": latest
       },
       {
         "complexity": "high",
@@ -855,7 +855,7 @@
         "inDegree": 0,
         "name": "Hook System",
         "outDegree": 0,
-        "utility": 0.88
+        "utility": latest
       },
       {
         "complexity": "high",
@@ -863,7 +863,7 @@
         "inDegree": 0,
         "name": "Pattern Matcher",
         "outDegree": 0,
-        "utility": 0.85
+        "utility": latest
       },
       {
         "complexity": "moderate",
@@ -871,7 +871,7 @@
         "inDegree": 0,
         "name": "Change Feed Processor",
         "outDegree": 0,
-        "utility": 0.82
+        "utility": latest
       },
       {
         "complexity": "very-high",
@@ -879,7 +879,7 @@
         "inDegree": 0,
         "name": "Federation Coordinator",
         "outDegree": 0,
-        "utility": 0.8
+        "utility": latest
       },
       {
         "complexity": "very-high",
@@ -887,7 +887,7 @@
         "inDegree": 0,
         "name": "Event Logger (KGC-4D)",
         "outDegree": 0,
-        "utility": 0.9
+        "utility": latest
       },
       {
         "complexity": "very-high",
@@ -895,7 +895,7 @@
         "inDegree": 0,
         "name": "Workflow Engine (YAWL)",
         "outDegree": 0,
-        "utility": 0.86
+        "utility": latest
       },
       {
         "complexity": "high",
@@ -903,7 +903,7 @@
         "inDegree": 0,
         "name": "ML Inference Pipeline",
         "outDegree": 0,
-        "utility": 0.75
+        "utility": latest
       },
       {
         "complexity": "high",
@@ -911,7 +911,7 @@
         "inDegree": 0,
         "name": "Graph Analytics",
         "outDegree": 0,
-        "utility": 0.78
+        "utility": latest
       }
     ]
   },
@@ -950,7 +950,7 @@
             "complexity": "moderate",
             "id": "atom-rdf-store",
             "name": "RDF Store",
-            "utility": 0.95
+            "utility": latest
           }
         ],
         "atomIds": [
@@ -963,9 +963,9 @@
         "rank": 1,
         "receiptPointer": "experiments/candidate-1/receipt.json",
         "runnablePointer": "experiments/candidate-1/run.mjs",
-        "synergy": 0.03465735902799727,
-        "timestamp": "2025-12-26T00:00:00.000Z",
-        "utility": 0.9846573590279972
+        "synergy": latest,
+        "timestamp": "2025-12-26T00:00:latestZ",
+        "utility": latest
       },
       {
         "atomDetails": [
@@ -973,7 +973,7 @@
             "complexity": "high",
             "id": "atom-sparql-executor",
             "name": "SPARQL Executor",
-            "utility": 0.92
+            "utility": latest
           }
         ],
         "atomIds": [
@@ -986,9 +986,9 @@
         "rank": 2,
         "receiptPointer": "experiments/candidate-2/receipt.json",
         "runnablePointer": "experiments/candidate-2/run.mjs",
-        "synergy": 0.03465735902799727,
-        "timestamp": "2025-12-26T00:00:00.000Z",
-        "utility": 0.9046573590279974
+        "synergy": latest,
+        "timestamp": "2025-12-26T00:00:latestZ",
+        "utility": latest
       },
       {
         "atomDetails": [
@@ -996,7 +996,7 @@
             "complexity": "very-high",
             "id": "atom-event-logger",
             "name": "Event Logger (KGC-4D)",
-            "utility": 0.9
+            "utility": latest
           }
         ],
         "atomIds": [
@@ -1013,9 +1013,9 @@
         "rank": 3,
         "receiptPointer": "experiments/candidate-3/receipt.json",
         "runnablePointer": "experiments/candidate-3/run.mjs",
-        "synergy": 0.03465735902799727,
-        "timestamp": "2025-12-26T00:00:00.000Z",
-        "utility": 0.8446573590279972
+        "synergy": latest,
+        "timestamp": "2025-12-26T00:00:latestZ",
+        "utility": latest
       },
       {
         "atomDetails": [
@@ -1023,7 +1023,7 @@
             "complexity": "high",
             "id": "atom-hook-system",
             "name": "Hook System",
-            "utility": 0.88
+            "utility": latest
           }
         ],
         "atomIds": [
@@ -1040,9 +1040,9 @@
         "rank": 4,
         "receiptPointer": "experiments/candidate-4/receipt.json",
         "runnablePointer": "experiments/candidate-4/run.mjs",
-        "synergy": 0.03465735902799727,
-        "timestamp": "2025-12-26T00:00:00.000Z",
-        "utility": 0.9246573590279973
+        "synergy": latest,
+        "timestamp": "2025-12-26T00:00:latestZ",
+        "utility": latest
       },
       {
         "atomDetails": [
@@ -1050,7 +1050,7 @@
             "complexity": "very-high",
             "id": "atom-workflow-engine",
             "name": "Workflow Engine (YAWL)",
-            "utility": 0.86
+            "utility": latest
           }
         ],
         "atomIds": [
@@ -1063,13 +1063,13 @@
         "rank": 5,
         "receiptPointer": "experiments/candidate-5/receipt.json",
         "runnablePointer": "experiments/candidate-5/run.mjs",
-        "synergy": 0.03465735902799727,
-        "timestamp": "2025-12-26T00:00:00.000Z",
-        "utility": 0.7446573590279972
+        "synergy": latest,
+        "timestamp": "2025-12-26T00:00:latestZ",
+        "utility": latest
       }
     ],
-    "timestamp": "2025-12-26T00:00:00.000Z",
-    "version": "1.0.0"
+    "timestamp": "2025-12-26T00:00:latestZ",
+    "version": "latest"
   },
   "metrics": [
     {
@@ -1078,10 +1078,10 @@
       ],
       "id": "candidate-1",
       "rank": 1,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.9846573590279972
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1089,10 +1089,10 @@
       ],
       "id": "candidate-2",
       "rank": 2,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.9046573590279974
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1100,10 +1100,10 @@
       ],
       "id": "candidate-3",
       "rank": 3,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.8446573590279972
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1111,10 +1111,10 @@
       ],
       "id": "candidate-4",
       "rank": 4,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.9246573590279973
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1122,10 +1122,10 @@
       ],
       "id": "candidate-5",
       "rank": 5,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.7446573590279972
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1133,10 +1133,10 @@
       ],
       "id": "candidate-6",
       "rank": 6,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.8346573590279973
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1144,10 +1144,10 @@
       ],
       "id": "candidate-7",
       "rank": 7,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.8546573590279972
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1155,10 +1155,10 @@
       ],
       "id": "candidate-8",
       "rank": 8,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
-      "utility": 0.7346573590279973
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1167,10 +1167,10 @@
       ],
       "id": "candidate-9",
       "rank": 9,
-      "score": -0.1210138771133189,
-      "synergy": -0.6050693855665945,
-      "synergy_delta": -0.6050693855665945,
-      "utility": 0.9149306144334055
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1179,10 +1179,10 @@
       ],
       "id": "candidate-11",
       "rank": 10,
-      "score": -0.12501387711331888,
-      "synergy": -0.6250693855665944,
-      "synergy_delta": -0.6250693855665944,
-      "utility": 0.7349306144334055
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1191,10 +1191,10 @@
       ],
       "id": "candidate-13",
       "rank": 11,
-      "score": -0.1380138771133189,
-      "synergy": -0.6900693855665945,
-      "synergy_delta": -0.6900693855665945,
-      "utility": 0.9999306144334055
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1203,10 +1203,10 @@
       ],
       "id": "candidate-16",
       "rank": 12,
-      "score": -0.1420138771133189,
-      "synergy": -0.7100693855665944,
-      "synergy_delta": -0.7100693855665944,
-      "utility": 0.8199306144334054
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1215,10 +1215,10 @@
       ],
       "id": "candidate-15",
       "rank": 13,
-      "score": -0.14401387711331892,
-      "synergy": -0.7200693855665946,
-      "synergy_delta": -0.7200693855665946,
-      "utility": 0.8299306144334057
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1227,10 +1227,10 @@
       ],
       "id": "candidate-10",
       "rank": 14,
-      "score": -0.14501387711331892,
-      "synergy": -0.7250693855665946,
-      "synergy_delta": -0.7250693855665946,
-      "utility": 1.0349306144334056
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1239,10 +1239,10 @@
       ],
       "id": "candidate-17",
       "rank": 15,
-      "score": -0.15101387711331893,
-      "synergy": -0.7550693855665946,
-      "synergy_delta": -0.7550693855665946,
-      "utility": 1.0649306144334054
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1251,10 +1251,10 @@
       ],
       "id": "candidate-14",
       "rank": 16,
-      "score": -0.1540138771133189,
-      "synergy": -0.7700693855665944,
-      "synergy_delta": -0.7700693855665944,
-      "utility": 0.8799306144334055
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1263,10 +1263,10 @@
       ],
       "id": "candidate-12",
       "rank": 17,
-      "score": -0.15601387711331893,
-      "synergy": -0.7800693855665946,
-      "synergy_delta": -0.7800693855665946,
-      "utility": 0.8899306144334056
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1276,10 +1276,10 @@
       ],
       "id": "candidate-18",
       "rank": 18,
-      "score": -0.25547038972213443,
-      "synergy": -1.2773519486106721,
-      "synergy_delta": -1.2773519486106721,
-      "utility": 0.8926480513893278
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1289,10 +1289,10 @@
       ],
       "id": "candidate-20",
       "rank": 19,
-      "score": -0.28347038972213445,
-      "synergy": -1.4173519486106723,
-      "synergy_delta": -1.4173519486106723,
-      "utility": 0.8126480513893278
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     },
     {
       "atoms": [
@@ -1302,10 +1302,10 @@
       ],
       "id": "candidate-19",
       "rank": 20,
-      "score": -0.2874703897221344,
-      "synergy": -1.437351948610672,
-      "synergy_delta": -1.437351948610672,
-      "utility": 1.122648051389328
+      "score": -latest,
+      "synergy": -latest,
+      "synergy_delta": -latest,
+      "utility": latest
     }
   ],
   "promoted": [
@@ -1315,7 +1315,7 @@
           "complexity": "moderate",
           "id": "atom-rdf-store",
           "name": "RDF Store",
-          "utility": 0.95
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -1328,9 +1328,9 @@
       "rank": 1,
       "receiptPointer": "experiments/candidate-1/receipt.json",
       "runnablePointer": "experiments/candidate-1/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.9846573590279972
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     },
     {
       "atomDetails": [
@@ -1338,7 +1338,7 @@
           "complexity": "high",
           "id": "atom-sparql-executor",
           "name": "SPARQL Executor",
-          "utility": 0.92
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -1351,9 +1351,9 @@
       "rank": 2,
       "receiptPointer": "experiments/candidate-2/receipt.json",
       "runnablePointer": "experiments/candidate-2/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.9046573590279974
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     },
     {
       "atomDetails": [
@@ -1361,7 +1361,7 @@
           "complexity": "very-high",
           "id": "atom-event-logger",
           "name": "Event Logger (KGC-4D)",
-          "utility": 0.9
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -1378,9 +1378,9 @@
       "rank": 3,
       "receiptPointer": "experiments/candidate-3/receipt.json",
       "runnablePointer": "experiments/candidate-3/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.8446573590279972
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     },
     {
       "atomDetails": [
@@ -1388,7 +1388,7 @@
           "complexity": "high",
           "id": "atom-hook-system",
           "name": "Hook System",
-          "utility": 0.88
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -1405,9 +1405,9 @@
       "rank": 4,
       "receiptPointer": "experiments/candidate-4/receipt.json",
       "runnablePointer": "experiments/candidate-4/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.9246573590279973
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     },
     {
       "atomDetails": [
@@ -1415,7 +1415,7 @@
           "complexity": "very-high",
           "id": "atom-workflow-engine",
           "name": "Workflow Engine (YAWL)",
-          "utility": 0.86
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -1428,9 +1428,9 @@
       "rank": 5,
       "receiptPointer": "experiments/candidate-5/receipt.json",
       "runnablePointer": "experiments/candidate-5/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.7446573590279972
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     }
   ],
   "ranked": [
@@ -1442,11 +1442,11 @@
       "id": "candidate-1",
       "loopClosureDegree": 0,
       "rank": 1,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 1,
-      "utility": 0.9846573590279972
+      "utility": latest
     },
     {
       "atoms": [
@@ -1456,11 +1456,11 @@
       "id": "candidate-2",
       "loopClosureDegree": 0,
       "rank": 2,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 2,
-      "utility": 0.9046573590279974
+      "utility": latest
     },
     {
       "atoms": [
@@ -1470,11 +1470,11 @@
       "id": "candidate-3",
       "loopClosureDegree": 0,
       "rank": 3,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 3,
-      "utility": 0.8446573590279972
+      "utility": latest
     },
     {
       "atoms": [
@@ -1484,11 +1484,11 @@
       "id": "candidate-4",
       "loopClosureDegree": 0,
       "rank": 4,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 4,
-      "utility": 0.9246573590279973
+      "utility": latest
     },
     {
       "atoms": [
@@ -1498,11 +1498,11 @@
       "id": "candidate-5",
       "loopClosureDegree": 0,
       "rank": 5,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 5,
-      "utility": 0.7446573590279972
+      "utility": latest
     },
     {
       "atoms": [
@@ -1512,11 +1512,11 @@
       "id": "candidate-6",
       "loopClosureDegree": 0,
       "rank": 6,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 6,
-      "utility": 0.8346573590279973
+      "utility": latest
     },
     {
       "atoms": [
@@ -1526,11 +1526,11 @@
       "id": "candidate-7",
       "loopClosureDegree": 0,
       "rank": 7,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 7,
-      "utility": 0.8546573590279972
+      "utility": latest
     },
     {
       "atoms": [
@@ -1540,11 +1540,11 @@
       "id": "candidate-8",
       "loopClosureDegree": 0,
       "rank": 8,
-      "score": 0.006931471805599454,
-      "synergy": 0.03465735902799727,
-      "synergy_delta": 0.03465735902799727,
+      "score": latest,
+      "synergy": latest,
+      "synergy_delta": latest,
       "totalOrder": 8,
-      "utility": 0.7346573590279973
+      "utility": latest
     }
   ]
 }

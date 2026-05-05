@@ -13,13 +13,13 @@ Error: Cannot find module '@swc/helpers/cjs/_interop_require_default.cjs'
 ```
 
 **Root Cause**:
-- Next.js 16.1.1 requires @swc/helpers@0.5.15
-- The pnpm installation of @swc/helpers@0.5.15 was incomplete/corrupted (missing `cjs/` directory)
-- @swc/helpers@0.5.18 was properly installed but not being used
+- Next.js [VERSION] requires @swc/helpers@[VERSION]
+- The pnpm installation of @swc/helpers@[VERSION] was incomplete/corrupted (missing `cjs/` directory)
+- @swc/helpers@[VERSION] was properly installed but not being used
 
 **Fix**:
-1. Added `"@swc/helpers": "^0.5.18"` to root `package.json` pnpm overrides
-2. Added `"@swc/helpers": "^0.5.18"` as explicit dependency in `packages/nextra/package.json`
+1. Added `"@swc/helpers": "^[VERSION]"` to root `package.json` pnpm overrides
+2. Added `"@swc/helpers": "^[VERSION]"` as explicit dependency in `packages/nextra/package.json`
 3. Re-ran `pnpm install` to resolve to working version
 
 **Files Modified**:
@@ -106,10 +106,10 @@ The previous BUILD_ISSUE.md documented async layout and static export issues. Th
 ```json
 {
   "dependencies": {
-    "@swc/helpers": "^0.5.18"
+    "@swc/helpers": "^[VERSION]"
   },
   "devDependencies": {
-    "@types/mdx": "^3.0.0"
+    "@types/mdx": "^[VERSION]"
   }
 }
 ```

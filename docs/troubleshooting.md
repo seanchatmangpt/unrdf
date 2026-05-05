@@ -66,7 +66,7 @@ pnpm list --depth 0 | grep @unrdf
 **Symptom:**
 ```
 Error: The engine "node" is incompatible with this module.
-Expected version ">=18.0.0". Got "16.x.x"
+Expected version ">=latest". Got "16.x.x"
 ```
 
 **Cause:** UNRDF requires Node.js 18 or higher.
@@ -319,7 +319,7 @@ const query1 = 'SELECT * WHERE { ?s ?p ?o }';
 
 // Add complexity gradually
 const query2 = `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name
   }
@@ -626,10 +626,10 @@ Include:
 Brief description of the issue
 
 ## Environment
-- Node.js version: 18.19.0
-- UNRDF version: 5.0.1
-- OS: Ubuntu 22.04
-- Package manager: pnpm 8.15.0
+- Node.js version: latest
+- UNRDF version: latest
+- OS: Ubuntu latest
+- Package manager: pnpm latest
 
 ## Steps to Reproduce
 1. Step 1

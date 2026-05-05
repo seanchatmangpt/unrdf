@@ -2,7 +2,7 @@
 
 > Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

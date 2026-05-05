@@ -184,7 +184,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 <type>(<scope>): <description>
 
 # Examples
-feat(core): add SPARQL 1.1 property paths
+feat(core): add SPARQL latest property paths
 fix(hooks): resolve hook execution race condition
 docs(readme): update installation instructions
 test(streaming): add tests for large graph processing

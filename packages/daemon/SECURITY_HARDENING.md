@@ -1,6 +1,6 @@
 # Security Hardening Guide - UNRDF Daemon
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Status**: ✅ Production Ready
 **Priority**: P1 Critical Security
 
@@ -411,7 +411,7 @@ Essential HTTP security headers for defense-in-depth.
 {
   customHeaders: {
     'X-Custom-Security': 'enabled',
-    'X-Application-Version': '1.0.0',
+    'X-Application-Version': '[VERSION]',
   },
 }
 ```

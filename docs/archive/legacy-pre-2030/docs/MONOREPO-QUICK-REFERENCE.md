@@ -5,10 +5,10 @@
 ## Quick Stats
 
 - **59+ active packages** (pruned for Vision 2030)
-- **Root version:** 26.5.4
-- **Package manager:** pnpm 8.15.0+
-- **Node:** 18.19.0+
-- **Rust:** 1.70.0+ (Required for sidecar)
+- **Root version:** latest
+- **Package manager:** pnpm latest+
+- **Node:** latest+
+- **Rust:** latest+ (Required for sidecar)
 - **Module type:** ESM with JSDoc (no TypeScript source)
 
 ---
@@ -33,11 +33,11 @@
 | **@unrdf/federation**     | Federated/distributed query execution     | `npm install @unrdf/federation`     | ✅ Production     | Querying across multiple RDF stores simultaneously |
 | **@unrdf/browser**        | Browser runtime with IndexedDB support    | `npm install @unrdf/browser`        | ✅ Production     | Building browser-based RDF applications            |
 | **@unrdf/cli**            | Command-line interface & tools            | `npm install @unrdf/cli`            | ✅ Production     | Running RDF ops from the terminal                  |
-| **@unrdf/react**          | React hooks & integration layer           | `npm install @unrdf/react`          | v4.1.1 Production | Building React apps with RDF data binding          |
+| **@unrdf/react**          | React hooks & integration layer           | `npm install @unrdf/react`          | vlatest Production | Building React apps with RDF data binding          |
 | **@unrdf/composables**    | Vue 3 composables (optional extension)    | `npm install @unrdf/composables`    | 🔶 Alpha          | Using UNRDF in Vue 3 applications                  |
 | **@unrdf/dark-matter**    | Query optimization & performance analysis | `npm install @unrdf/dark-matter`    | 🔶 Alpha          | Optimizing slow SPARQL queries                     |
 | **@unrdf/project-engine** | Project/workspace management (dev-only)   | `npm install @unrdf/project-engine` | 🔶 Alpha          | Managing UNRDF projects & workspaces               |
-| **@unrdf/engine-gateway** | API gateway & μ(O) enforcement layer      | `npm install @unrdf/engine-gateway` | v0.1.0 Production | Building API endpoints over RDF engines            |
+| **@unrdf/engine-gateway** | API gateway & μ(O) enforcement layer      | `npm install @unrdf/engine-gateway` | vlatest Production | Building API endpoints over RDF engines            |
 
 ---
 
@@ -45,9 +45,9 @@
 
 | Package               | Purpose                                  | Location              | Status | Public     |
 | --------------------- | ---------------------------------------- | --------------------- | ------ | ---------- |
-| **@unrdf/test-utils** | Testing utilities, fixtures, test stores | `packages/test-utils` | v1.0.0 | ❌ Private |
-| **@unrdf/validation** | OTEL validation framework (internal)     | `packages/validation` | v1.0.0 | ❌ Private |
-| **@unrdf/domain**     | Domain models & type definitions         | `packages/domain`     | v1.0.0 | ❌ Private |
+| **@unrdf/test-utils** | Testing utilities, fixtures, test stores | `packages/test-utils` | vlatest | ❌ Private |
+| **@unrdf/validation** | OTEL validation framework (internal)     | `packages/validation` | vlatest | ❌ Private |
+| **@unrdf/domain**     | Domain models & type definitions         | `packages/domain`     | vlatest | ❌ Private |
 
 ---
 
@@ -247,7 +247,7 @@ const { data, loading } = useRdfQuery(`
 
 | Package               | Version | Status        |
 | --------------------- | ------- | ------------- |
-| Root                  | 26.5.4  | ✅ Production |
+| Root                  | latest  | ✅ Production |
 | @unrdf/core           | latest  | ✅ Production |
 | @unrdf/oxigraph       | latest  | ✅ Production |
 | @unrdf/hooks          | latest  | ✅ Production |
@@ -255,14 +255,14 @@ const { data, loading } = useRdfQuery(`
 | @unrdf/federation     | latest  | ✅ Production |
 | @unrdf/browser        | latest  | ✅ Production |
 | @unrdf/cli            | latest  | ✅ Production |
-| @unrdf/react          | v4.1.1  | ✅ Production |
+| @unrdf/react          | vlatest  | ✅ Production |
 | @unrdf/composables    | latest  | 🔶 Alpha      |
 | @unrdf/dark-matter    | latest  | 🔶 Alpha      |
 | @unrdf/project-engine | latest  | 🔶 Alpha      |
-| @unrdf/engine-gateway | v0.1.0  | ✅ Production |
-| @unrdf/test-utils     | v1.0.0  | 🔒 Private    |
-| @unrdf/validation     | v1.0.0  | 🔒 Private    |
-| @unrdf/domain         | v1.0.0  | 🔒 Private    |
+| @unrdf/engine-gateway | vlatest  | ✅ Production |
+| @unrdf/test-utils     | vlatest  | 🔒 Private    |
+| @unrdf/validation     | vlatest  | 🔒 Private    |
+| @unrdf/domain         | vlatest  | 🔒 Private    |
 
 ---
 

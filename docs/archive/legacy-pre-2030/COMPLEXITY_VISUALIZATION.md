@@ -139,7 +139,7 @@ Good for: n > 1,000 receipts
 
 Example: 1M receipts
 - Depth: 20
-- Proof size: 20 hashes = 1.28 KB
+- Proof size: 20 hashes = latest KB
 - Full chain: 64 MB (too large!)
 ```
 
@@ -353,7 +353,7 @@ Receipt Count │ Linear Chain │ Merkle Tree │ Speedup
       10,000  │       10s    │    13ms     │  769x
      100,000  │      100s    │    17ms     │ 5,882x
    1,000,000  │    1,667s    │    20ms     │83,350x
-                (28 minutes!)  (0.02s)
+                (28 minutes!)  (latests)
 ```
 
 ---
@@ -473,4 +473,4 @@ Legend: ✓ Implemented | ○ Partial | ✗ Not implemented
 
 **Generated**: 2026-01-11
 **Source**: DELTA_CONTRACT_COMBINATORIAL_ANALYSIS.md
-**Version**: 1.0
+**Version**: latest

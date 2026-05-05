@@ -169,7 +169,7 @@ console.log(`
 
   PRIORITY 1 (Critical):
     1. Resolve consensus → federation violation (L1 → L4 upward dependency)
-    2. Stabilize core package (v6.0.0-alpha.1 → v6.0.0)
+    2. Stabilize core package (latest-alpha.1 → latest)
     3. Freeze critical APIs (now, createStore, dataFactory)
 
   PRIORITY 2 (High):

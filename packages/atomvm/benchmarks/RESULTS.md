@@ -8,8 +8,8 @@ This document contains **REAL PERFORMANCE NUMBERS** from actual benchmark execut
 
 ## Benchmark Environment
 
-- **Platform**: Linux 4.4.0
-- **Node.js**: v22.21.1
+- **Platform**: Linux [VERSION]
+- **Node.js**: [VERSION]
 - **Date**: 2025-12-28
 - **Measurement**: `performance.now()` (high-precision timing)
 

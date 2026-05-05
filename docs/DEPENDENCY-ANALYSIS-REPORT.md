@@ -134,7 +134,7 @@ LAYER 5 (CLI - Integration Hub)
 
 ### Leaf Packages (0 internal dependencies)
 
-**Count:** 6 packages (31.6%)
+**Count:** 6 packages (latest%)
 
 - `@unrdf/validation` - Validation utilities
 - `@unrdf/test-utils` - Test helpers
@@ -149,7 +149,7 @@ LAYER 5 (CLI - Integration Hub)
 
 ### Mid-Level Packages (1-3 internal dependencies)
 
-**Count:** 12 packages (63.2%)
+**Count:** 12 packages (latest%)
 
 | Package | Internal Deps | Direct Dependencies |
 |---------|---------------|---------------------|
@@ -172,7 +172,7 @@ LAYER 5 (CLI - Integration Hub)
 
 ### Hub Packages (4+ internal dependencies)
 
-**Count:** 1 package (5.3%)
+**Count:** 1 package (latest%)
 
 | Package | Internal Deps | Direct Dependencies |
 |---------|---------------|---------------------|
@@ -209,10 +209,10 @@ LAYER 5 (CLI - Integration Hub)
 |--------|-------|
 | Total packages | 19 |
 | Total internal dependencies | 42 (deps + devDeps) |
-| Average dependencies per package | 2.21 |
-| Packages with 0 internal deps | 6 (31.6%) |
-| Packages with 1-3 internal deps | 12 (63.2%) |
-| Packages with 4+ internal deps | 1 (5.3%) |
+| Average dependencies per package | latest |
+| Packages with 0 internal deps | 6 (latest%) |
+| Packages with 1-3 internal deps | 12 (latest%) |
+| Packages with 4+ internal deps | 1 (latest%) |
 | Maximum dependency chain length | 5 |
 | Circular dependency clusters | 1 (core ↔ oxigraph) |
 

@@ -9,7 +9,7 @@ import { z } from 'zod';
 /**
  * Current KGC Runtime API version
  */
-export const CURRENT_API_VERSION = '5.0.1';
+export const CURRENT_API_VERSION = '[VERSION]';
 
 /**
  * API version status
@@ -41,7 +41,7 @@ const VersionMetadataSchema = z.object({
  */
 const API_VERSIONS = [
   {
-    version: '5.0.1',
+    version: '[VERSION]',
     status: API_STATUS.BETA,
     releaseDate: '2024-12-27',
     breakingChanges: [
@@ -50,7 +50,7 @@ const API_VERSIONS = [
     ],
   },
   {
-    version: '5.0.0',
+    version: '[VERSION]',
     status: API_STATUS.BETA,
     releaseDate: '2024-12-26',
     breakingChanges: [
@@ -59,7 +59,7 @@ const API_VERSIONS = [
     ],
   },
   {
-    version: '4.0.0',
+    version: '[VERSION]',
     status: API_STATUS.DEPRECATED,
     releaseDate: '2024-11-01',
     deprecationDate: '2024-12-01',
@@ -68,7 +68,7 @@ const API_VERSIONS = [
     migrationGuide: 'See docs/migration/v4-to-v5.md',
   },
   {
-    version: '3.0.0',
+    version: '[VERSION]',
     status: API_STATUS.REMOVED,
     releaseDate: '2024-06-01',
     deprecationDate: '2024-09-01',
@@ -96,7 +96,7 @@ export const DEPRECATION_POLICY = {
  * @example
  * import { APIVersionManager } from '@unrdf/kgc-runtime/api-version';
  * const versionManager = new APIVersionManager();
- * const compatible = versionManager.isCompatible('5.0.0', '5.0.1');
+ * const compatible = versionManager.isCompatible('[VERSION]', '[VERSION]');
  * console.log(compatible); // true
  */
 export class APIVersionManager {
@@ -126,7 +126,7 @@ export class APIVersionManager {
    * @returns {Object|null} Version metadata or null if not found
    *
    * @example
-   * const metadata = versionManager.getVersionMetadata('5.0.1');
+   * const metadata = versionManager.getVersionMetadata('[VERSION]');
    * console.log(metadata.status); // 'beta'
    */
   getVersionMetadata(version) {
@@ -140,7 +140,7 @@ export class APIVersionManager {
    * @returns {boolean} True if deprecated
    *
    * @example
-   * const deprecated = versionManager.isDeprecated('4.0.0');
+   * const deprecated = versionManager.isDeprecated('[VERSION]');
    * console.log(deprecated); // true
    */
   isDeprecated(version) {
@@ -178,7 +178,7 @@ export class APIVersionManager {
    * @returns {boolean} True if compatible
    *
    * @example
-   * const compatible = versionManager.isCompatible('5.0.0', '5.0.1');
+   * const compatible = versionManager.isCompatible('[VERSION]', '[VERSION]');
    * console.log(compatible); // true (patch compatible)
    */
   isCompatible(requiredVersion, actualVersion) {
@@ -206,7 +206,7 @@ export class APIVersionManager {
    * @param {string} alternative - Recommended alternative
    *
    * @example
-   * versionManager.warnDeprecation('oldFunction', '4.0.0', 'Use newFunction instead');
+   * versionManager.warnDeprecation('oldFunction', '[VERSION]', 'Use newFunction instead');
    */
   warnDeprecation(feature, version, alternative) {
     if (!DEPRECATION_POLICY.WARNING_ENABLED) {
@@ -336,7 +336,7 @@ export function getVersionManager() {
  * @returns {boolean} True if compatible
  *
  * @example
- * const compatible = isPluginCompatible('5.0.0');
+ * const compatible = isPluginCompatible('[VERSION]');
  * console.log(compatible); // true
  */
 export function isPluginCompatible(pluginVersion) {

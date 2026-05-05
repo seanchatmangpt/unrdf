@@ -27,7 +27,7 @@ const { quad, namedNode, literal } = dataFactory;
 
 store.add(quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/[VERSION]/name'),
   literal('Alice')
 ));
 ```
@@ -37,7 +37,7 @@ store.add(quad(
 ```javascript
 const results = store.match(
   null,
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/[VERSION]/name'),
   null
 );
 

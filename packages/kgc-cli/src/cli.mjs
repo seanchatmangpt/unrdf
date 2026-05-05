@@ -136,7 +136,7 @@ function buildCittyTree(registry, tree) {
     meta: {
       name: 'kgc',
       description: 'KGC CLI - Deterministic extension registry for UNRDF workspace',
-      version: '5.0.1',
+      version: '[VERSION]',
     },
     subcommands,
   });

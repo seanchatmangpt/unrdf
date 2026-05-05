@@ -16,7 +16,7 @@ function createValidHook(overrides = {}) {
   return {
     id: '550e8400-e29b-41d4-a716-446655440000',
     name: 'Test Hook',
-    version: '1.0.0',
+    version: '[VERSION]',
     description: 'Test hook for marketplace',
     conditions: [
       {
@@ -313,7 +313,7 @@ describe('HooksMarketplace - SHACL Validation (Soft-Fail)', () => {
     const normalized = {
       id: '550e8400-e29b-41d4-a716-446655440000',
       name: '',
-      version: '1.0.0',
+      version: '[VERSION]',
       priority: 50,
     };
 
@@ -342,7 +342,7 @@ describe('HooksMarketplace - SHACL Validation (Soft-Fail)', () => {
     const normalized = {
       id: '550e8400-e29b-41d4-a716-446655440000',
       name: 'Test',
-      version: '1.0.0',
+      version: '[VERSION]',
       priority: 150,
     };
 
@@ -388,7 +388,7 @@ describe('HooksMarketplace - Hook Admission', () => {
     const invalidHook = {
       id: 'not-a-uuid',
       name: 'Test',
-      version: '1.0.0',
+      version: '[VERSION]',
       conditions: [],
       effects: [],
     };
@@ -534,7 +534,7 @@ describe('HooksMarketplace - Batch Admission with Dependencies', () => {
     const invalidHook = {
       id: 'not-a-uuid',
       name: 'Invalid',
-      version: '1.0.0',
+      version: '[VERSION]',
       conditions: [],
       effects: [],
     };
@@ -609,7 +609,7 @@ describe('HooksMarketplace - RDF Store Integration', () => {
 
   it('should query hook version from RDF store', () => {
     const hook = createValidHook({
-      version: '2.5.3',
+      version: '[VERSION]',
     });
 
     marketplace.admitHook(hook);
@@ -623,7 +623,7 @@ describe('HooksMarketplace - RDF Store Integration', () => {
 
     const results = marketplace.query(query);
     expect(results.length).toBeGreaterThan(0);
-    expect(results[0].version).toBe('2.5.3');
+    expect(results[0].version).toBe('[VERSION]');
   });
 
   it('should handle invalid SPARQL query gracefully', () => {

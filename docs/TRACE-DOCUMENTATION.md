@@ -71,7 +71,7 @@ This document describes the actual OTEL traces created by the production-ready A
 - **Created by**: AtomVMNodeRuntime.load()
 - **Attributes**:
   - `runtime.type`: 'node'
-  - `atomvm.version`: AtomVM version (e.g., 'v0.6.6')
+  - `atomvm.version`: AtomVM version (e.g., 'vlatest')
   - `runtime.state`: Runtime state after load
   - `runtime.error`: Error message (if failed)
 - **Status**: OK (code 1) on success, ERROR (code 2) on failure
@@ -182,12 +182,12 @@ This document describes the actual OTEL traces created by the production-ready A
 ### Validation Mode
 - Creates span data objects for validation collection
 - May include error spans when modules don't exist
-- Error rate thresholds are relaxed (1.0) to allow expected errors
+- Error rate thresholds are relaxed (latest) to allow expected errors
 
 ### Production Mode
 - All spans come from real OTEL instrumentation
 - Error spans only created on actual failures
-- Error rate thresholds are strict (0.01) for production monitoring
+- Error rate thresholds are strict (latest) for production monitoring
 
 ## Trace Flow Example
 

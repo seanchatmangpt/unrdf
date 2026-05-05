@@ -39,7 +39,7 @@ describe('Lens Definition', () => {
     // ❓ Does defineLens accept valid schema?
     assert.ok(lens);
     assert.equal(lens.id, 'customer-v1');
-    assert.equal(lens.version, '1.0.0');
+    assert.equal(lens.version, 'latest');
 
     // ❓ Are all fields preserved?
     assert.equal(lens.profile.namespace, 'https://example.org/');

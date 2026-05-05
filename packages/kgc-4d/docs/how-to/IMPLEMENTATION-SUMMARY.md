@@ -264,7 +264,7 @@ P(Correct) ≥ 1 - 2^(-H_error) ≥ 1 - 2^(-15.34) ≥ 99.997%
 
 ### Monorepo Integration
 
-**Package**: `@unrdf/kgc-4d` (v0.1.0)
+**Package**: `@unrdf/kgc-4d` ([VERSION])
 - Location: `/packages/kgc-4d/`
 - Automatically discovered by pnpm-workspace.yaml
 - Ready for: `import { KGCStore, freezeUniverse } from '@unrdf/kgc-4d'`
@@ -277,8 +277,8 @@ P(Correct) ≥ 1 - 2^(-H_error) ≥ 1 - 2^(-15.34) ≥ 99.997%
 - `@noble/hashes` - BLAKE3
 
 **New** (2 only):
-- `isomorphic-git` ^1.25.0 - Git operations
-- `lightning-fs` ^4.6.0 - IndexedDB filesystem
+- `isomorphic-git` ^[VERSION] - Git operations
+- `lightning-fs` ^[VERSION] - IndexedDB filesystem
 
 ### Workspace Commands
 

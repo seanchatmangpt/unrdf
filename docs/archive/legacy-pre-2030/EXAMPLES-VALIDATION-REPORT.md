@@ -501,7 +501,7 @@ $ ls -1 examples/*/Dockerfile | wc -l
 ### Prerequisites
 ```bash
 # Install pnpm
-npm install -g pnpm@8.15.0
+npm install -g pnpm@latest
 
 # From workspace root
 pnpm install

@@ -22,7 +22,7 @@ This research examines how YAWL workflow engines handle concurrent operations ac
 
 ## Part 1: Java YAWL Threading Architecture
 
-### 1.1 Thread Model Overview
+### latest Thread Model Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -63,7 +63,7 @@ This research examines how YAWL workflow engines handle concurrent operations ac
 - **Timer Thread**: Single background thread for `java.util.Timer`
 - **NO explicit work item execution thread pool** - delegated to external Custom Services
 
-### 1.2 Locking Strategy: Coarse-Grained Synchronization
+### latest Locking Strategy: Coarse-Grained Synchronization
 
 Java YAWL uses **method-level synchronization** with a **single global lock** (`_pmgr`):
 
@@ -99,7 +99,7 @@ synchronized(_pmgr) {
 3. **Acceptable for Workflow**: Typical workflow loads don't need fine-grained concurrency
 4. **Correctness over Performance**: Serialization ensures state consistency
 
-### 1.3 Thread-Safe Collections
+### latest Thread-Safe Collections
 
 YAWL uses `ConcurrentHashMap` for collections accessed by multiple threads:
 
@@ -119,7 +119,7 @@ private final ConcurrentHashMap<String, YWorkItem> _itemMap;
 - **Fine-Grained Write Locks**: Write locks only specific hash buckets
 - **No External Synchronization Required**: Thread-safe by design
 
-### 1.4 YNetRunner Synchronization
+### latest YNetRunner Synchronization
 
 Individual workflow instances (YNetRunner) use **method-level synchronization**:
 
@@ -147,7 +147,7 @@ public synchronized boolean completeWorkItemInTask(...) {
 
 **Granularity**: Per-case instance (different cases can run concurrently)
 
-### 1.5 Concurrent Case Execution
+### latest Concurrent Case Execution
 
 **Question**: Can multiple cases run in parallel?
 
@@ -183,7 +183,7 @@ Thread 2 (Case 002): Interface B announcement to Custom Service
 
 **Throughput Limit**: ~50-200 case launches/sec (limited by lock contention)
 
-### 1.6 Timer Threading
+### latest Timer Threading
 
 ```java
 // YTimer.java (org.yawlfoundation.yawl.engine.time)
@@ -230,7 +230,7 @@ TimerTask timeoutTask = new TimerTask() {
 
 ## Part 2: JavaScript YAWL Threading Architecture
 
-### 2.1 Event Loop Concurrency Model
+### latest Event Loop Concurrency Model
 
 JavaScript is **single-threaded** with an **event loop**:
 
@@ -281,7 +281,7 @@ JavaScript is **single-threaded** with an **event loop**:
 3. **No Explicit Locks Needed**: Atomicity guaranteed by event loop
 4. **Concurrency via Async I/O**: Multiple I/O operations can progress simultaneously
 
-### 2.2 No Locks - Event Loop Guarantees Atomicity
+### latest No Locks - Event Loop Guarantees Atomicity
 
 ```javascript
 // engine.mjs
@@ -317,7 +317,7 @@ async createCase(workflowId, initialData = {}, options = {}) {
 - **Yield Point**: `await` keyword hands control back to event loop
 - **Resume Point**: After async operation completes, function resumes
 
-### 2.3 Concurrent Execution via Promise.all
+### latest Concurrent Execution via Promise.all
 
 JavaScript achieves concurrency through **Promise.all** (concurrent I/O):
 
@@ -364,7 +364,7 @@ Total time: 15ms (NOT 10+12+15=37ms sequentially)
 - **CPU-Bound Tasks**: Execute sequentially
 - **Speedup**: O(1) time for N concurrent I/O operations (vs O(N) sequential)
 
-### 2.4 Event Subscription Pattern
+### latest Event Subscription Pattern
 
 ```javascript
 // From: engine-events.mjs
@@ -434,7 +434,7 @@ async completeTask(caseId, workItemId, output = {}, actor) {
 - **No Race Conditions**: Event loop serializes all handler executions
 - **Ordering**: Handlers called in registration order
 
-### 2.5 SyncBarrier for AND-Join Synchronization
+### latest SyncBarrier for AND-Join Synchronization
 
 Multiple instance AND-join synchronization uses `SyncBarrier`:
 
@@ -508,7 +508,7 @@ console.log(aggregated.completedCount); // 100
 3. **No Race Conditions**: Single-threaded execution prevents races
 4. **Timeout Handling**: setTimeout for timeout (macrotask queue)
 
-### 2.6 Concurrent Case Execution
+### latest Concurrent Case Execution
 
 **Question**: Can multiple cases run in parallel?
 
@@ -562,9 +562,9 @@ All cases complete concurrently (total time = max individual time)
 
 ## Part 3: Race Condition Handling
 
-### 3.1 Java YAWL Race Conditions
+### latest Java YAWL Race Conditions
 
-#### 3.1.1 OR-Join Race Handling
+#### latest OR-Join Race Handling
 
 **Problem**: Multiple tokens may arrive at OR-join simultaneously from different threads.
 
@@ -599,7 +599,7 @@ public synchronized boolean continueIfPossible(YPersistenceManager pmgr) {
 - **Per-case isolation**: Different cases use different YNetRunner instances
 - **Token visibility**: All token placements visible due to lock acquisition
 
-#### 3.1.2 Concurrent Task Completion
+#### latest Concurrent Task Completion
 
 **Scenario**: Two Custom Services complete work items simultaneously.
 
@@ -623,7 +623,7 @@ Thread 2 (HTTP-2): completeWorkItem("case-001", "item-B", data)
 
 **Outcome**: Sequential execution via lock prevents state corruption
 
-#### 3.1.3 Timer Expiration vs Manual Completion
+#### latest Timer Expiration vs Manual Completion
 
 **Scenario**: Timer fires at same time user completes work item.
 
@@ -652,9 +652,9 @@ synchronized(_pmgr) {
 - Loser finds status != EXECUTING, skips operation
 - No state corruption
 
-### 3.2 JavaScript YAWL Race Conditions
+### latest JavaScript YAWL Race Conditions
 
-#### 3.2.1 OR-Join Race Handling
+#### latest OR-Join Race Handling
 
 **JavaScript Implementation**:
 
@@ -691,7 +691,7 @@ async completeTask(workItemId, output, actor) {
 - **No interleaving**: Another task cannot modify `_marking` mid-execution
 - **Deterministic order**: Tasks process in event queue order
 
-#### 3.2.2 Concurrent Instance Completion
+#### latest Concurrent Instance Completion
 
 **Scenario**: 100 instances complete via `Promise.all`
 
@@ -725,7 +725,7 @@ NO RACE CONDITIONS:
 
 **Key Insight**: Promise.all provides **concurrent I/O**, not **parallel execution**
 
-#### 3.2.3 Barrier Timeout vs Completion
+#### latest Barrier Timeout vs Completion
 
 **Scenario**: 100th instance arrives at same time barrier times out
 
@@ -765,9 +765,9 @@ _handleTimeout() {
 
 ## Part 4: Performance Characteristics
 
-### 4.1 Java YAWL Performance
+### latest Java YAWL Performance
 
-#### 4.1.1 Throughput Limits
+#### latest Throughput Limits
 
 **Case Launch Throughput**:
 
@@ -795,7 +795,7 @@ With 200 HTTP threads (Tomcat default):
 
 **Scalability Model**: Does NOT scale with thread count (serialization bottleneck)
 
-#### 4.1.2 Work Item Completion
+#### latest Work Item Completion
 
 ```
 Operation: completeWorkItem()
@@ -808,7 +808,7 @@ Custom Service Call:
   Throughput: Limited by Custom Service capacity (not engine)
 ```
 
-#### 4.1.3 Optimization Strategies
+#### latest Optimization Strategies
 
 **What YAWL Does**:
 1. **ConcurrentHashMap**: Lock-free reads for work item repository
@@ -820,9 +820,9 @@ Custom Service Call:
 2. **Lock-free algorithms**: Uses traditional synchronized blocks
 3. **Asynchronous I/O**: Database operations block threads
 
-### 4.2 JavaScript YAWL Performance
+### latest JavaScript YAWL Performance
 
-#### 4.2.1 Throughput Limits
+#### latest Throughput Limits
 
 **From Benchmarks**:
 
@@ -846,7 +846,7 @@ Resource Contention (20 concurrent, 5s duration):
 - **Low Latency Variance**: Event loop provides consistent scheduling
 - **No Lock Contention**: Single-threaded execution avoids lock overhead
 
-#### 4.2.2 Stress Test Results
+#### latest Stress Test Results
 
 **From stress.test.mjs**:
 
@@ -871,7 +871,7 @@ Linear scaling: Verified (within 2x tolerance)
 - ✅ Receipt generation under 500ms
 - ✅ Memory increase <100MB for 1000 instances
 
-#### 4.2.3 Optimization Strategies
+#### latest Optimization Strategies
 
 **What JavaScript YAWL Does**:
 1. **Promise.all**: Concurrent I/O for multiple operations
@@ -910,7 +910,7 @@ Linear scaling: Verified (within 2x tolerance)
 
 ## Part 6: Race Condition Catalog
 
-### 6.1 AND-Join Token Arrival
+### latest AND-Join Token Arrival
 
 **Scenario**: Multiple tasks complete simultaneously, placing tokens in conditions that converge at AND-join.
 
@@ -924,7 +924,7 @@ Linear scaling: Verified (within 2x tolerance)
 - **Prevention**: Atomic state updates before await
 - **Outcome**: Deterministic order, correct token count
 
-### 6.2 OR-Join Activated Set
+### latest OR-Join Activated Set
 
 **Scenario**: Determine which input conditions were "activated" during execution.
 
@@ -938,7 +938,7 @@ Linear scaling: Verified (within 2x tolerance)
 - **Prevention**: Atomic read of activatedTasks Set
 - **Outcome**: Correct activated set
 
-### 6.3 Dynamic MI Instance Addition
+### latest Dynamic MI Instance Addition
 
 **Scenario**: Add instances while others are completing.
 
@@ -968,7 +968,7 @@ await Promise.all(operations);
 expect(remaining.length).toBe(50); // ✅ PASS
 ```
 
-### 6.4 Barrier Timeout vs Last Arrival
+### latest Barrier Timeout vs Last Arrival
 
 **Scenario**: 100th instance arrives at exact moment barrier times out.
 
@@ -982,7 +982,7 @@ expect(remaining.length).toBe(50); // ✅ PASS
 - **Prevention**: Atomic completed flag check
 - **Outcome**: Arrival always wins (timeout sees completed flag)
 
-### 6.5 Cancellation Propagation
+### latest Cancellation Propagation
 
 **Scenario**: Cancel region with 500 MI instances.
 
@@ -1012,7 +1012,7 @@ expect(duration).toBeLessThan(1000); // <1s for 500 cancellations
 
 ## Part 7: Deadlock Analysis
 
-### 7.1 Java YAWL Deadlock Risk
+### latest Java YAWL Deadlock Risk
 
 **Potential Deadlock Scenarios**:
 
@@ -1041,7 +1041,7 @@ expect(duration).toBeLessThan(1000); // <1s for 500 cancellations
 
 **Empirical Evidence**: No reported deadlocks in Java YAWL production use
 
-### 7.2 JavaScript YAWL Deadlock Risk
+### latest JavaScript YAWL Deadlock Risk
 
 **Theoretical Deadlock Scenarios**:
 
@@ -1068,7 +1068,7 @@ expect(duration).toBeLessThan(1000); // <1s for 500 cancellations
 
 ## Part 8: Code Examples - Synchronization Patterns
 
-### 8.1 Java Synchronized Block Pattern
+### latest Java Synchronized Block Pattern
 
 ```java
 // YEngine.java - Case Launch
@@ -1112,7 +1112,7 @@ public String launchCase(String specID, String caseData, ...)
 
 **Lock Scope**: Entire case launch (10-20ms)
 
-### 8.2 JavaScript Async/Await Pattern
+### latest JavaScript Async/Await Pattern
 
 ```javascript
 // engine.mjs - Case Launch
@@ -1161,7 +1161,7 @@ async createCase(workflowId, initialData = {}, options = {}) {
 
 **Atomicity**: Event loop guarantees no interleaving between awaits
 
-### 8.3 SyncBarrier Implementation
+### latest SyncBarrier Implementation
 
 ```javascript
 // sync-barrier.mjs - AND-join Synchronization

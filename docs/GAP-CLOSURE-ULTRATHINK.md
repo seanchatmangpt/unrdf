@@ -315,14 +315,14 @@ new KnowledgeHookManager(config: ManagerConfig)
 ```
 BEFORE (Current State):
 ├─ 17,137 lines of documentation
-├─ 60.75% coverage (gaps identified)
+├─ latest% coverage (gaps identified)
 ├─ 53+ weekly unanswered questions
 ├─ 450+ users blocked by P0 gaps
 └─ Diataxis sections incomplete
 
 AFTER (3 Critical Gaps Closed):
 ├─ 18,087 lines of documentation (+950)
-├─ 72.5% coverage (gap analysis complete)
+├─ latest% coverage (gap analysis complete)
 ├─ 13-15 weekly unanswered questions (-75%)
 ├─ 0 users blocked by P0 gaps (all unblocked)
 └─ All core functionality documented
@@ -446,13 +446,13 @@ Perfect 80/20: Spend 50% time, address 70% friction
 ```
 Before:
 ✅ 17,137 lines
-❌ 60.75% coverage
+❌ latest% coverage
 ❌ 6 P0 gaps (3 outstanding)
 ❌ 3 P1 gaps (3 outstanding)
 
 After:
 ✅ 18,087 lines
-✅ 72.5% coverage
+✅ latest% coverage
 ✅ 0 P0 gaps (3 critical closed!)
 ✅ 3 P1 gaps (remaining)
 ```
@@ -544,7 +544,7 @@ But Should Eventually Fix:
 - All P0-blocked users unblocked
 - 450+ users freed to productive work
 - Remaining gaps can be addressed in Phase 2
-- Documentation coverage improves to 72.5%
+- Documentation coverage improves to latest%
 
 **ROI:**
 - 2-3 hours of work = 450 users unblocked
@@ -603,7 +603,7 @@ Once these 3 gaps are closed:
 | P1 gaps remaining | 3 | 0 | 100% closed |
 | Weekly questions (P1) | 18 | 0 | 100% eliminated |
 | Users blocked (P1) | 170 | 0 | 100% unblocked |
-| Total coverage | 72.5% | 82% | +9.5% |
+| Total coverage | latest% | 82% | +latest% |
 
 ### Combined Results (Phase 1 + Phase 2)
 

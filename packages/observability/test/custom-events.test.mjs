@@ -22,7 +22,7 @@ describe('CustomEvents', () => {
       const event = events.emitAuthFailure({
         userId: 'user@example.com',
         reason: 'invalid_password',
-        ip: '192.168.1.100',
+        ip: '[VERSION].100',
       });
 
       expect(event).toBeDefined();
@@ -36,7 +36,7 @@ describe('CustomEvents', () => {
         attackType: 'SPARQL',
         payload: 'DROP ALL; --',
         userId: 'attacker@evil.com',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       expect(event).toBeDefined();
@@ -49,7 +49,7 @@ describe('CustomEvents', () => {
       const event = events.emitInjectionAttempt({
         attackType: 'SQL',
         payload: 'SELECT * FROM users WHERE password="secret123"',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       expect(event.attributes['injection.payload_hash']).toBeDefined();
@@ -152,13 +152,13 @@ describe('CustomEvents', () => {
       events.emitAuthFailure({
         userId: 'user1',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       events.emitAuthFailure({
         userId: 'user2',
         reason: 'test',
-        ip: '1.2.3.5',
+        ip: '[VERSION].5',
       });
 
       expect(events.events.length).toBe(2);
@@ -180,7 +180,7 @@ describe('CustomEvents', () => {
       events.emitAuthFailure({
         userId: 'user',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       expect(events.events.length).toBeGreaterThan(0);
@@ -197,13 +197,13 @@ describe('CustomEvents', () => {
       events.emitAuthFailure({
         userId: 'user1',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       events.emitInjectionAttempt({
         attackType: 'SPARQL',
         payload: 'test',
-        ip: '1.2.3.5',
+        ip: '[VERSION].5',
       });
 
       events.emitWorkflowComplete({
@@ -265,19 +265,19 @@ describe('CustomEvents', () => {
       events.emitAuthFailure({
         userId: 'user1',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       events.emitAuthFailure({
         userId: 'user2',
         reason: 'test',
-        ip: '1.2.3.5',
+        ip: '[VERSION].5',
       });
 
       events.emitInjectionAttempt({
         attackType: 'SPARQL',
         payload: 'test',
-        ip: '1.2.3.6',
+        ip: '[VERSION].6',
       });
     });
 
@@ -304,7 +304,7 @@ describe('CustomEvents', () => {
       eventsWithHandler.emitAuthFailure({
         userId: 'user',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       expect(handlerCalls.length).toBe(1);
@@ -324,7 +324,7 @@ describe('CustomEvents', () => {
         eventsWithBrokenHandler.emitAuthFailure({
           userId: 'user',
           reason: 'test',
-          ip: '1.2.3.4',
+          ip: '[VERSION].4',
         });
       }).not.toThrow();
     });
@@ -339,7 +339,7 @@ describe('CustomEvents', () => {
       const event = disabledEvents.emitAuthFailure({
         userId: 'user',
         reason: 'test',
-        ip: '1.2.3.4',
+        ip: '[VERSION].4',
       });
 
       expect(event).toBeNull();

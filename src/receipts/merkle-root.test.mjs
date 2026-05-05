@@ -151,19 +151,19 @@ describe('Merkle Root', () => {
           inputHashes: { ontologyReleases: ['h1'], deltaCapsule: 'd1' },
           decision: 'allow',
           outputHash: 'o1',
-          toolchainVersion: { node: '18.19.0', packages: {} },
+          toolchainVersion: { node: '[VERSION]', packages: {} },
         }),
         Receipt.create({
           inputHashes: { ontologyReleases: ['h2'], deltaCapsule: 'd2' },
           decision: 'allow',
           outputHash: 'o2',
-          toolchainVersion: { node: '18.19.0', packages: {} },
+          toolchainVersion: { node: '[VERSION]', packages: {} },
         }),
         Receipt.create({
           inputHashes: { ontologyReleases: ['h3'], deltaCapsule: 'd3' },
           decision: 'deny',
           outputHash: 'o3',
-          toolchainVersion: { node: '18.19.0', packages: {} },
+          toolchainVersion: { node: '[VERSION]', packages: {} },
         }),
       ]);
 
@@ -179,14 +179,14 @@ describe('Merkle Root', () => {
           inputHashes: { ontologyReleases: ['h1'], deltaCapsule: 'd1' },
           decision: 'allow',
           outputHash: 'o1',
-          toolchainVersion: { node: '18.19.0', packages: {} },
+          toolchainVersion: { node: '[VERSION]', packages: {} },
           timestamp: new Date('2025-01-01T00:00:00Z'),
         }),
         Receipt.create({
           inputHashes: { ontologyReleases: ['h2'], deltaCapsule: 'd2' },
           decision: 'allow',
           outputHash: 'o2',
-          toolchainVersion: { node: '18.19.0', packages: {} },
+          toolchainVersion: { node: '[VERSION]', packages: {} },
           timestamp: new Date('2025-01-01T00:00:01Z'),
         }),
       ]);

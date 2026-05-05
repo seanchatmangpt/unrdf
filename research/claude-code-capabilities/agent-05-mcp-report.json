@@ -485,7 +485,7 @@
       "description": "Template for secure MCP server configuration",
       "example": {
         "name": "safe-server",
-        "version": "1.0.0",
+        "version": "latest",
         "tools": "Use tool() DSL with validated parameters",
         "resources": "Use resource() with whitelisted URIs only",
         "transport": "Start with 'stdio', upgrade to HTTP with TLS",

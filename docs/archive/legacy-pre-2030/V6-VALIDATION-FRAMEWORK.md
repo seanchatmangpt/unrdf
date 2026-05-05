@@ -2,7 +2,7 @@
 
 **Status**: ✅ DEPLOYED AND OPERATIONAL
 **Created**: 2025-12-27
-**Version**: v6.0.0-alpha.1
+**Version**: vlatest.1
 **Score**: 64/100 (7/11 checks passed)
 
 ## Executive Summary
@@ -69,7 +69,7 @@ node validation/v6-regression-check.mjs --strict
 ## Validation Checks (10 Core + 1 Checklist)
 
 ### ✅ Check 1: Zod-Validated APIs
-**Status**: PASS (73.6% coverage)
+**Status**: PASS (latest% coverage)
 **Evidence**: 39/53 packages with Zod schemas
 **Target**: ≥70% coverage
 
@@ -100,7 +100,7 @@ node validation/v6-regression-check.mjs --strict
 **Action Required**: Replace with `@unrdf/kgc-4d` time abstraction (44 existing uses found)
 
 ### ✅ Check 4: Timeout Guards on Async I/O
-**Status**: PASS (280.5% coverage!)
+**Status**: PASS (latest% coverage!)
 **Evidence**: 603 timeout guards for 215 async operations
 
 **Findings**:
@@ -164,8 +164,8 @@ node validation/v6-regression-check.mjs --strict
 | 3 | OTEL validation ≥80/100 | SKIP | Requires full OTEL suite |
 | 4 | Zero direct N3 imports | PASS | 2 imports in v6-compat (expected) |
 | 5 | All operations produce receipts | SKIP | See Check 2 |
-| 6 | 100% Zod schema coverage | PASS | 73.6% coverage (≥70% target) |
-| 7 | All async I/O has 5s timeouts | PASS | 280.5% coverage |
+| 6 | 100% Zod schema coverage | PASS | latest% coverage (≥70% target) |
+| 7 | All async I/O has 5s timeouts | PASS | latest% coverage |
 | 8 | No Date.now() in business logic | FAIL | 605 violations (See Check 3) |
 | 9 | Integration tests for L5 composition | PASS | Integration test directory exists |
 | 10 | No >10% performance regression | SKIP | Baseline comparison needed |
@@ -205,7 +205,7 @@ node validation/v6-regression-check.mjs --strict
 
 **Baseline Established**: 2025-12-27
 **Thresholds**:
-- Zod coverage drop: -5% (currently 73.6%)
+- Zod coverage drop: -5% (currently latest%)
 - Receipt coverage drop: -10%
 - Performance regression: +10%
 - New determinism violations: 0
@@ -248,7 +248,7 @@ pnpm install --filter @unrdf/validation
 **Contents**:
 ```json
 {
-  "version": "v6.0.0-alpha.1",
+  "version": "vlatest.1",
   "timestamp": "2025-12-27T...",
   "duration": 10768,
   "summary": {
@@ -276,7 +276,7 @@ pnpm install --filter @unrdf/validation
 ## Performance Metrics
 
 **Current Run** (2025-12-27):
-- **Total Duration**: 10.768 seconds
+- **Total Duration**: latest seconds
 - **Checks Executed**: 11 (10 core + 1 checklist)
 - **Average per Check**: ~980ms
 - **Slowest Check**: 14-point checklist (~3s, includes subprocess spawns)
@@ -289,7 +289,7 @@ pnpm install --filter @unrdf/validation
 
 ## Roadmap
 
-### v6.0.0-beta.1 Targets
+### vlatest.1 Targets
 - [ ] Fix all determinism violations (605 → 0)
 - [ ] Install missing dependencies
 - [ ] Achieve 100% test pass rate
@@ -349,7 +349,7 @@ jobs:
 
 **Run Date**: 2025-12-27
 **Command**: `node validation/v6-validate.mjs --all`
-**Duration**: 10.768s
+**Duration**: latests
 **Exit Code**: 1 (failures present)
 
 **Console Output** (excerpt):
@@ -362,7 +362,7 @@ jobs:
 ════════════════════════════════════════════════════════════════════════════════
 
 📦 Check 1: Verifying all 53 packages export Zod-validated APIs...
-   ✓ Found Zod schemas in 39/53 packages (73.6%)
+   ✓ Found Zod schemas in 39/53 packages (latest%)
    ⚠ 14 packages without Zod schemas
 
 🧾 Check 2: Verifying all operations emit receipts...
@@ -389,8 +389,8 @@ jobs:
 | Claim | Proof | Status |
 |-------|-------|--------|
 | "v6 has deterministic receipts" | 605 Date.now() violations found | ❌ FALSE (needs fixing) |
-| "All packages use Zod validation" | 73.6% coverage (39/53) | ⚠️  MOSTLY TRUE (≥70% threshold met) |
-| "Async I/O has timeouts" | 280.5% coverage measured | ✅ TRUE (exceeds requirement) |
+| "All packages use Zod validation" | latest% coverage (39/53) | ⚠️  MOSTLY TRUE (≥70% threshold met) |
+| "Async I/O has timeouts" | latest% coverage measured | ✅ TRUE (exceeds requirement) |
 | "Receipt chain is cryptographically secure" | Cannot test (missing deps) | ⚠️  UNVERIFIED (deps needed) |
 | "No secrets in receipts" | 0 violations in 6 pattern checks | ✅ TRUE (verified) |
 
@@ -399,7 +399,7 @@ jobs:
 | Assumption | Risk if Wrong | Mitigation |
 |------------|---------------|------------|
 | "Date.now() violations are in test code only" | **CRITICAL** - Receipt hashes non-deterministic, chain breaks | ❌ WRONG - 605 in business logic - **MUST FIX** |
-| "Zod coverage is sufficient" | **MEDIUM** - Runtime errors on malformed input | ⚠️  ACCEPTABLE - 73.6% coverage meets 70% threshold |
+| "Zod coverage is sufficient" | **MEDIUM** - Runtime errors on malformed input | ⚠️  ACCEPTABLE - latest% coverage meets 70% threshold |
 | "hash-wasm is installed in prod" | **HIGH** - Receipt generation fails at runtime | ⚠️  UNVERIFIED - Add to dependency check |
 
 ### Evidence Quality Assessment

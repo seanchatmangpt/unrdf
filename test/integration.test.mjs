@@ -80,7 +80,7 @@ describe('Integration Tests', () => {
 
     // Step 4: Generate receipt
     console.log('[ASSERT] Step 4: Generating receipt');
-    const receiptGenerator = new ReceiptGenerator({ toolchainVersion: '1.0.0' });
+    const receiptGenerator = new ReceiptGenerator({ toolchainVersion: 'latest' });
     const beforeHash = universe.getContentHash() || '0'.repeat(64);
     const receipt = receiptGenerator.generate(admissionResult, delta, beforeHash);
 
@@ -114,7 +114,7 @@ describe('Integration Tests', () => {
       afterHash: beforeHash,
       epoch: 0,
       timestamp: Date.now() - 1000,
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Substrate initialization',
     });
@@ -362,7 +362,7 @@ describe('Integration Tests', () => {
       await universe.loadFromTTL(ttlContent);
 
       const admissionController = new AdmissionController();
-      const receiptGenerator = new ReceiptGenerator({ toolchainVersion: '1.0.0' });
+      const receiptGenerator = new ReceiptGenerator({ toolchainVersion: 'latest' });
 
       const delta = {
         additions: [

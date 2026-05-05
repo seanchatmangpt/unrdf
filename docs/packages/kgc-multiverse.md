@@ -2,7 +2,7 @@
 
 > KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

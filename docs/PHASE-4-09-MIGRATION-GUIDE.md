@@ -1,4 +1,4 @@
-# Phase 4.9: Migration Guide - Adopting the Dual-Runtime Pattern
+# Phase latest: Migration Guide - Adopting the Dual-Runtime Pattern
 
 ## Overview
 
@@ -223,10 +223,10 @@ Update `rebar.config`:
 ```erlang
 {deps, [
     % Shared by all
-    {jsx, "3.1.0"},
+    {jsx, "latest"},
 
     % OTP-specific
-    {cowboy, {git, "https://github.com/ninenines/cowboy", {tag, "2.9.0"}},
+    {cowboy, {git, "https://github.com/ninenines/cowboy", {tag, "latest"}},
              {only, [otp]}},
     {ets, {only, [otp]}},
 

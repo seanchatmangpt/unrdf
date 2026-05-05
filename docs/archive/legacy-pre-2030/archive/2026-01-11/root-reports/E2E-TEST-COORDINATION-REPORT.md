@@ -53,15 +53,15 @@ npm test
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Pass Rate** | 85.7% (18/21 examples) | ✅ EXCEEDS 80% target |
+| **Pass Rate** | latest% (18/21 examples) | ✅ EXCEEDS 80% target |
 | **Total Tests** | 404 tests | ✅ Good coverage |
-| **Verdict** | PRODUCTION READY | ✅ Ship v5.0.0 |
+| **Verdict** | PRODUCTION READY | ✅ Ship vlatest |
 | **Confidence** | 95% | ✅ High confidence |
 
 **Key Findings**:
-- All core packages at 88.9% pass rate
+- All core packages at latest% pass rate
 - Only 3 non-critical failures (browser env, test count threshold, removed example)
-- Exceeds SWE-Bench baseline of 84.8%
+- Exceeds SWE-Bench baseline of latest%
 
 **Evidence Quality**: ✅ High - comprehensive example validation with test counts
 
@@ -93,7 +93,7 @@ npm test
 | Metric | Value | Status |
 |--------|-------|--------|
 | **OTEL Score** | 0/100 | ❌ COMPLETE FAILURE |
-| **Traditional Tests** | 95.3% pass rate (114/119) | ⚠️ Good but 5 failures |
+| **Traditional Tests** | latest% pass rate (114/119) | ⚠️ Good but 5 failures |
 | **Verdict** | DO NOT DEPLOY | ❌ |
 
 **Critical Infrastructure Failures**:
@@ -197,7 +197,7 @@ ls -la /home/user/unrdf/.swarm/memory.db
 
 | Claim | Proof Available | Quality |
 |-------|----------------|---------|
-| Historical 85.7% pass rate | ✅ Corrected validation report (Dec 4) | High |
+| Historical latest% pass rate | ✅ Corrected validation report (Dec 4) | High |
 | Historical 0/100 OTEL score | ✅ Validation report (Oct 2) | High |
 | Current test status | ✅ Cannot execute (deps missing) | High |
 | 9 parallel agents running | ❌ FALSE - 0 agents found | High |
@@ -225,7 +225,7 @@ ls -la /home/user/unrdf/.swarm/memory.db
 **Evidence Provided**:
 
 1. **Historical Reports** (3 files):
-   - CORRECTED-FINAL-VALIDATION-REPORT.md (85.7% pass, Dec 4)
+   - CORRECTED-FINAL-VALIDATION-REPORT.md (latest% pass, Dec 4)
    - ADVERSARIAL_TEST_RESULTS.md (50% pass, older)
    - test/VALIDATION-REPORT.md (0/100 OTEL, Oct 2)
 
@@ -260,12 +260,12 @@ ls -la /home/user/unrdf/.swarm/memory.db
 | @unrdf/hooks | 2 | 27 | 100% | ✅ |
 | @unrdf/federation | 2 | 34 | 100% | ✅ |
 | @unrdf/streaming | 2 | 20 | 100% | ✅ |
-| @unrdf/browser | 2 | 34 | 87.5% | ⚠️ |
+| @unrdf/browser | 2 | 34 | latest% | ⚠️ |
 | @unrdf/cli | 2 | 45 | 100% | ✅ |
 | @unrdf/knowledge-engine | 2 | 22 | 100% | ✅ |
 | @unrdf/dark-matter | 2 | 49 | 100% | ✅ |
 | @unrdf/composables | 2 | 46 | 100% | ✅ |
-| **TOTAL** | **19** | **339** | **90.0%** | ✅ |
+| **TOTAL** | **19** | **339** | **latest%** | ✅ |
 
 **Source**: CORRECTED-FINAL-VALIDATION-REPORT.md (Dec 4, 2025)
 **Confidence**: High - comprehensive example validation
@@ -364,7 +364,7 @@ npm run lint                  # Error: Missing package dependencies
 ### Priority 3: Test Isolation Issues (Historical)
 
 **Issue**: Context management tests failing due to shared state
-**Impact**: MEDIUM - 5/119 tests failing (4.7% failure rate)
+**Impact**: MEDIUM - 5/119 tests failing (latest% failure rate)
 **Evidence**: test/VALIDATION-REPORT.md (Oct 2)
 
 **Failures**:
@@ -566,7 +566,7 @@ export async function collectEvidence() {
 ### What CAN Be Provided (Evidence-Based)
 
 ✅ **Historical test evidence synthesis**:
-- Dec 4, 2025: 85.7% pass rate, production ready
+- Dec 4, 2025: latest% pass rate, production ready
 - Oct 2, 2025: 0/100 OTEL score, validation broken
 - Older: 50% pass rate, many packages broken
 
@@ -606,7 +606,7 @@ export async function collectEvidence() {
 ### Historical Evidence Quality: HIGH ✅
 
 **Most Recent Validation** (Dec 4, 2025):
-- **Pass Rate**: 85.7% (18/21 examples)
+- **Pass Rate**: latest% (18/21 examples)
 - **Total Tests**: 404
 - **Verdict**: PRODUCTION READY
 - **Confidence**: 95%
@@ -694,7 +694,7 @@ export async function collectEvidence() {
 
 1. **NO parallel test agents exist** - request based on false assumption
 2. **Cannot execute current tests** - dependencies incomplete
-3. **Historical evidence shows good quality** - 85.7% pass rate (Dec 4)
+3. **Historical evidence shows good quality** - latest% pass rate (Dec 4)
 4. **OTEL validation was broken** - 0/100 score (Oct 2)
 5. **Substantial test infrastructure exists** - 331 test files, cannot run
 

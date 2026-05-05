@@ -8,7 +8,7 @@
  * - Batch operations
  * - Performance monitoring
  *
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */

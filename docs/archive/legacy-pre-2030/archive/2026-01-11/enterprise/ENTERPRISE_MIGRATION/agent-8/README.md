@@ -39,7 +39,7 @@ Each generated kit contains:
 ```javascript
 {
   domain: 'oxigraph',
-  version: '1.0.0',
+  version: 'latest',
   facade: '/* facade module code */',
   adapters: [
     {
@@ -59,7 +59,7 @@ Each generated kit contains:
     }
   ],
   metadata: {
-    generatedAt: '2025-12-26T07:57:28.453Z',
+    generatedAt: '2025-12-26T07:57:latestZ',
     generator: 'agent-8',
     status: 'scaffold'
   }
@@ -187,7 +187,7 @@ Test Results:
   Passed: 6
   Failed: 0
   Total: 6
-  Success rate: 100.0%
+  Success rate: latest%
 ```
 
 ### Test Coverage
@@ -211,14 +211,14 @@ Same contracts = Same kits (bit-for-bit)
 ## Files Generated
 
 ### Oxigraph Kit (17KB)
-- `/agent-8/kits/oxigraph/facade.mjs` (2.0KB)
-- `/agent-8/kits/oxigraph/adapters.mjs` (5.3KB)
+- `/agent-8/kits/oxigraph/facade.mjs` (latestKB)
+- `/agent-8/kits/oxigraph/adapters.mjs` (latestKB)
 - `/agent-8/kits/oxigraph/scenarios.mjs` (17KB)
 - `/agent-8/kits/oxigraph/metadata.json` (143B)
 
 ### Hooks Kit (27KB)
-- `/agent-8/kits/hooks/facade.mjs` (2.1KB)
-- `/agent-8/kits/hooks/adapters.mjs` (5.4KB)
+- `/agent-8/kits/hooks/facade.mjs` (latestKB)
+- `/agent-8/kits/hooks/adapters.mjs` (latestKB)
 - `/agent-8/kits/hooks/scenarios.mjs` (27KB)
 - `/agent-8/kits/hooks/metadata.json` (143B)
 
@@ -270,10 +270,10 @@ Each kit includes metadata:
 
 ```json
 {
-  "generatedAt": "2025-12-26T07:57:28.453Z",
+  "generatedAt": "2025-12-26T07:57:latestZ",
   "generator": "agent-8",
   "status": "scaffold",
-  "lastModified": "2025-12-26T07:57:28.455Z"
+  "lastModified": "2025-12-26T07:57:latestZ"
 }
 ```
 

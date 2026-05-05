@@ -26,16 +26,16 @@ yarn add @unrdf/core
 
 ## Requirements
 
-- **Node.js:** 18.0.0 or higher
-- **NPM:** 8.0.0 or higher
-- **PNPM:** 7.0.0 or higher (optional, but recommended)
+- **Node.js:** latest or higher
+- **NPM:** latest or higher
+- **PNPM:** latest or higher (optional, but recommended)
 - **Module Type:** ESM (ES Modules)
 
 ### Verify Installation
 
 ```bash
-node --version  # Should be 18.0.0 or higher
-npm --version   # Should be 8.0.0 or higher
+node --version  # Should be latest or higher
+npm --version   # Should be latest or higher
 ```
 
 ---

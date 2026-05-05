@@ -1,7 +1,7 @@
 # UNRDF Contract Inventory
 
 **Generated**: 2025-12-27
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Total Packages**: 49
 
 ## Executive Summary
@@ -35,7 +35,7 @@ This document provides a comprehensive inventory of all public contracts across 
 
 ### Core Infrastructure (8 packages)
 
-#### @unrdf/core (v5.0.1)
+#### @unrdf/core (vlatest)
 
 - **Exports**: 14 entry points
 - **Schemas**: 22 (QuadSchema, StoreSchema, DiffTripleSchema, Security schemas, etc.)
@@ -47,7 +47,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - Canonicalization and diff operations
   - Security validation schemas
 
-#### @unrdf/oxigraph (v5.0.1)
+#### @unrdf/oxigraph (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 1 (QueryCacheConfigSchema)
@@ -57,7 +57,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - Oxigraph store wrapper
   - Query caching
 
-#### @unrdf/kgc-4d (v5.0.1)
+#### @unrdf/kgc-4d (vlatest)
 
 - **Exports**: 3 entry points (main, client, hdit)
 - **Schemas**: 0 (uses internal types)
@@ -69,7 +69,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - freezeUniverse, reconstructState, verifyReceipt
   - HDIT (Hyperdimensional Information Theory) coordinates
 
-#### @unrdf/hooks (v5.0.1)
+#### @unrdf/hooks (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 2 (HookDefinitionSchema, PolicySchema)
@@ -79,7 +79,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - Hook definition and execution
   - Policy-based validation
 
-#### @unrdf/streaming (v5.0.1)
+#### @unrdf/streaming (vlatest)
 
 - **Exports**: 2 entry points
 - **Schemas**: 5 (SyncMessageSchema, ChangeEventSchema, ValidationOptionsSchema, etc.)
@@ -90,7 +90,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - Real-time synchronization
   - SHACL validation
 
-#### @unrdf/federation (v5.0.1)
+#### @unrdf/federation (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 2 (FederationConfigSchema, PeerNodeSchema)
@@ -100,7 +100,7 @@ This document provides a comprehensive inventory of all public contracts across 
   - Distributed query coordination
   - Peer management
 
-#### @unrdf/validation (v5.0.1)
+#### @unrdf/validation (vlatest)
 
 - **Exports**: 1 entry point
 - **Schemas**: 0
@@ -109,7 +109,7 @@ This document provides a comprehensive inventory of all public contracts across 
 - **Key Contracts**:
   - OTEL-based validation
 
-#### @unrdf/test-utils (v5.0.1)
+#### @unrdf/test-utils (vlatest)
 
 - **Exports**: 1 entry point
 - **Schemas**: 1 (TestFixtureSchema)
@@ -120,7 +120,7 @@ This document provides a comprehensive inventory of all public contracts across 
 
 ### YAWL Workflow Engine (10 packages)
 
-#### @unrdf/yawl (v5.0.0)
+#### @unrdf/yawl (vlatest)
 
 - **Exports**: 13 entry points
 - **Schemas**: 24 (CaseStatusSchema, WorkItemStatusSchema, TaskDefSchema, ReceiptSchema, etc.)
@@ -140,63 +140,63 @@ This document provides a comprehensive inventory of all public contracts across 
 - `JoinTypeSchema` defined in 3 files
 - `TaskDefSchema` vs `TaskDefinitionSchema` inconsistency
 
-#### @unrdf/yawl-ai (v1.0.0)
+#### @unrdf/yawl-ai (vlatest)
 
 - **Exports**: 4 entry points
 - **Schemas**: 7 (WorkflowExecutionSchema, AnomalySchema, OptimizationReportSchema, etc.)
 - **Dependencies**: None
 - **Receipt Integration**: No
 
-#### @unrdf/yawl-api (v1.0.0)
+#### @unrdf/yawl-api (vlatest)
 
 - **Exports**: 2 entry points
 - **Schemas**: 2 (APIRequestSchema, APIResponseSchema)
 - **Dependencies**: @unrdf/yawl, @unrdf/kgc-4d
 - **Receipt Integration**: Yes
 
-#### @unrdf/yawl-durable (v0.1.0)
+#### @unrdf/yawl-durable (vlatest)
 
 - **Exports**: 4 entry points
 - **Schemas**: 2 (SagaDefinitionSchema, ActivitySchema)
 - **Dependencies**: @unrdf/yawl, @unrdf/kgc-4d
 - **Receipt Integration**: Yes
 
-#### @unrdf/yawl-kafka (v1.0.0)
+#### @unrdf/yawl-kafka (vlatest)
 
 - **Exports**: 4 entry points
 - **Schemas**: 2 (KafkaMessageSchema, TopicConfigSchema)
 - **Dependencies**: @unrdf/core
 - **Receipt Integration**: No
 
-#### @unrdf/yawl-langchain (v1.0.0)
+#### @unrdf/yawl-langchain (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 1 (ChainConfigSchema)
 - **Dependencies**: @unrdf/kgc-4d, @unrdf/oxigraph, @unrdf/yawl
 - **Receipt Integration**: Yes
 
-#### @unrdf/yawl-observability (v1.0.0)
+#### @unrdf/yawl-observability (vlatest)
 
 - **Exports**: 4 entry points
 - **Schemas**: 2 (WorkflowMetricSchema, SLIConfigSchema)
 - **Dependencies**: @unrdf/yawl
 - **Receipt Integration**: No
 
-#### @unrdf/yawl-queue (v1.0.0)
+#### @unrdf/yawl-queue (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 1 (QueueConfigSchema)
 - **Dependencies**: @unrdf/yawl, @unrdf/kgc-4d
 - **Receipt Integration**: Yes
 
-#### @unrdf/yawl-realtime (v1.0.0)
+#### @unrdf/yawl-realtime (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 1 (RealtimeEventSchema)
 - **Dependencies**: @unrdf/yawl
 - **Receipt Integration**: No
 
-#### @unrdf/yawl-viz (v1.0.0)
+#### @unrdf/yawl-viz (vlatest)
 
 - **Exports**: 1 entry point
 - **Schemas**: 0
@@ -205,7 +205,7 @@ This document provides a comprehensive inventory of all public contracts across 
 
 ### KGC Ecosystem (5 packages)
 
-#### @unrdf/kgc-cli (v5.0.1)
+#### @unrdf/kgc-cli (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 2 (ExtensionSchema, RegistrySchema)
@@ -214,28 +214,28 @@ This document provides a comprehensive inventory of all public contracts across 
 - **Dependencies**: None
 - **Receipt Integration**: No
 
-#### @unrdf/kgc-claude (v5.0.0)
+#### @unrdf/kgc-claude (vlatest)
 
 - **Exports**: 7 entry points
 - **Schemas**: 14 (RunCapsuleSchema, CheckpointReceiptSchema, WorkItemSchema, etc.)
 - **Dependencies**: @unrdf/core, @unrdf/oxigraph, @unrdf/kgc-4d, @unrdf/yawl, @unrdf/hooks
 - **Receipt Integration**: Yes
 
-#### @unrdf/kgc-substrate (v1.0.0)
+#### @unrdf/kgc-substrate (vlatest)
 
 - **Exports**: 3 entry points
 - **Schemas**: 9 (StorageSnapshotSchema, AgentCapacitySchema, AllocationResultSchema, etc.)
 - **Dependencies**: @unrdf/kgc-4d, @unrdf/oxigraph, @unrdf/core
 - **Receipt Integration**: Yes
 
-#### @unrdf/fusion (v1.0.0)
+#### @unrdf/fusion (vlatest)
 
 - **Exports**: 1 entry point
 - **Schemas**: 2 (PolicyRuleSchema, ResourceAllocationSchema)
 - **Dependencies**: @unrdf/oxigraph, @unrdf/kgc-4d, @unrdf/blockchain, @unrdf/hooks, @unrdf/caching, @unrdf/yawl
 - **Receipt Integration**: Yes
 
-#### @unrdf/v6-core (v6.0.0-alpha.1)
+#### @unrdf/v6-core (vlatest.1)
 
 - **Exports**: 6 entry points
 - **Schemas**: 2 (V6ReceiptSchema, DeltaOperationSchema)
@@ -244,7 +244,7 @@ This document provides a comprehensive inventory of all public contracts across 
 
 ### CLI & Tooling (4 packages)
 
-#### @unrdf/cli (v5.0.1)
+#### @unrdf/cli (vlatest)
 
 - **Exports**: 2 entry points
 - **CLI**: `unrdf` command
@@ -252,7 +252,7 @@ This document provides a comprehensive inventory of all public contracts across 
 - **Dependencies**: @unrdf/core, @unrdf/federation, @unrdf/hooks, @unrdf/knowledge-engine, @unrdf/oxigraph, @unrdf/project-engine, @unrdf/streaming
 - **Receipt Integration**: No
 
-#### @unrdf/diataxis-kit (v1.0.0)
+#### @unrdf/diataxis-kit (vlatest)
 
 - **Exports**: 7 entry points
 - **Schemas**: 2 (DiataxisSchema, EvidenceSchema)
@@ -260,14 +260,14 @@ This document provides a comprehensive inventory of all public contracts across 
 - **Dependencies**: None
 - **Receipt Integration**: Yes
 
-#### @unrdf/project-engine (v5.0.1)
+#### @unrdf/project-engine (vlatest)
 
 - **Exports**: 1 entry point
 - **Schemas**: 2 (ProjectConfigSchema, DriftSnapshotSchema)
 - **Dependencies**: @unrdf/core, @unrdf/knowledge-engine
 - **Receipt Integration**: No
 
-#### @unrdf/kgn (v5.0.1)
+#### @unrdf/kgn (vlatest)
 
 - **Exports**: 5+ entry points
 - **Schemas**: 0
@@ -276,69 +276,69 @@ This document provides a comprehensive inventory of all public contracts across 
 
 ### Advanced Features (10 packages)
 
-#### @unrdf/knowledge-engine (v5.0.1)
+#### @unrdf/knowledge-engine (vlatest)
 
 - **Schemas**: 2 (RuleSchema, InferenceResultSchema)
 - **Key Features**: Inference, canonicalization, AI search
 
-#### @unrdf/blockchain (v1.0.0)
+#### @unrdf/blockchain (vlatest)
 
 - **Schemas**: 2 (ReceiptAnchorSchema, MerkleProofSchema)
 - **Key Features**: Receipt anchoring, Merkle proofs
 - **Receipt Integration**: Yes
 
-#### @unrdf/caching (v1.0.0)
+#### @unrdf/caching (vlatest)
 
 - **Schemas**: 2 (CacheConfigSchema, InvalidationRuleSchema)
 - **Key Features**: Multi-layer caching, dependency tracking
 
-#### @unrdf/collab (v1.0.0)
+#### @unrdf/collab (vlatest)
 
 - **Schemas**: 2 (CRDTStateSchema, SyncMessageSchema)
 - **Key Features**: CRDT-based collaboration, WebSocket sync
 
-#### @unrdf/consensus (v1.0.0)
+#### @unrdf/consensus (vlatest)
 
 - **Schemas**: 8 (NodeMetadataSchema, RaftConfigSchema, etc.)
 - **Key Features**: Raft consensus, distributed state machine
 
-#### @unrdf/semantic-search (v1.0.0)
+#### @unrdf/semantic-search (vlatest)
 
 - **Schemas**: 2 (EmbeddingConfigSchema, SearchQuerySchema)
 - **Key Features**: Embeddings, semantic query
 
-#### @unrdf/ml-inference (v5.0.1)
+#### @unrdf/ml-inference (vlatest)
 
 - **Schemas**: 2 (ModelMetadataSchema, InferencePipelineSchema)
 - **Key Features**: ONNX runtime, streaming inference
 
-#### @unrdf/ml-versioning (v1.0.0)
+#### @unrdf/ml-versioning (vlatest)
 
 - **Schemas**: 2 (ModelVersionSchema, ExperimentSchema)
 - **Receipt Integration**: Yes
 
-#### @unrdf/serverless (v1.0.0)
+#### @unrdf/serverless (vlatest)
 
 - **Schemas**: 2 (LambdaConfigSchema, APIGatewayConfigSchema)
 - **Key Features**: AWS CDK, Lambda bundling
 
-#### @unrdf/rdf-graphql (v1.0.0)
+#### @unrdf/rdf-graphql (vlatest)
 
 - **Schemas**: 1 (GraphQLMappingSchema)
 - **Key Features**: RDF to GraphQL mapping
 
 ### Supporting Packages (12 packages)
 
-- @unrdf/atomvm (v5.0.1) - AtomVM integration
-- @unrdf/composables (v5.0.1) - Vue composables
-- @unrdf/dark-matter (v5.0.1) - Query optimization
-- @unrdf/domain (v5.0.1) - Domain types
-- @unrdf/engine-gateway (v5.0.1) - Gateway routing
-- @unrdf/graph-analytics (v1.0.0) - PageRank, clustering
-- @unrdf/observability (v1.0.0) - Metrics, alerts
-- @unrdf/nextra-docs (v5.0.1) - Documentation site
-- @unrdf/integration-tests (v5.0.0) - E2E tests
-- docs (v5.0.1) - Legacy docs
+- @unrdf/atomvm (vlatest) - AtomVM integration
+- @unrdf/composables (vlatest) - Vue composables
+- @unrdf/dark-matter (vlatest) - Query optimization
+- @unrdf/domain (vlatest) - Domain types
+- @unrdf/engine-gateway (vlatest) - Gateway routing
+- @unrdf/graph-analytics (vlatest) - PageRank, clustering
+- @unrdf/observability (vlatest) - Metrics, alerts
+- @unrdf/nextra-docs (vlatest) - Documentation site
+- @unrdf/integration-tests (vlatest) - E2E tests
+- docs (vlatest) - Legacy docs
 
 ## Schema Coverage Analysis
 

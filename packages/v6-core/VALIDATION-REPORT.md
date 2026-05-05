@@ -1,6 +1,6 @@
 # V6-Core Production Validation Report
 **Date**: 2025-12-28
-**Package**: @unrdf/v6-core v6.0.0-rc.1
+**Package**: @unrdf/v6-core [VERSION]-rc.1
 **Validator**: Production Validation Agent
 
 ---
@@ -395,7 +395,7 @@ Total exports: 129
 3. **Verify**: Re-run full test suite (5 min)
 4. **Iterate**: Fix any remaining issues (1-2 hours)
 5. **Final**: Run full validation suite + coverage (30 min)
-6. **Release**: If all gates pass, proceed to v6.0.0-rc.2
+6. **Release**: If all gates pass, proceed to [VERSION]-rc.2
 
 ---
 

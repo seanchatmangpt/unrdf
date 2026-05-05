@@ -1,6 +1,6 @@
 # UNRDF Papers Policy
 
-**Version**: 1.0
+**Version**: latest
 **Last Updated**: 2024-12-06
 **Status**: Active
 
@@ -197,7 +197,7 @@ citation: |
 
 ## 5. Workflow
 
-### 5.1 New Paper (LaTeX Source)
+### latest New Paper (LaTeX Source)
 
 **Typical academic workflow**: Write in LaTeX, convert to MDX for web.
 
@@ -226,7 +226,7 @@ git push origin claude/setup-mdx-nextra-01CfrPWT4YzhTucMUz3cyPVJ
 # 7. Deploy (automatic via GitHub Actions)
 ```
 
-### 5.2 New Paper (Direct MDX)
+### latest New Paper (Direct MDX)
 
 **For web-native papers** (no LaTeX source needed):
 
@@ -244,10 +244,10 @@ code packages/nextra/app/papers/2024-my-paper-title/page.mdx
 # 4. Update _meta.ts
 code packages/nextra/app/papers/_meta.ts
 
-# 5. Preview, commit, push (same as 5.1 steps 5-7)
+# 5. Preview, commit, push (same as latest steps 5-7)
 ```
 
-### 5.3 Updating Existing Paper
+### latest Updating Existing Paper
 
 ```bash
 # 1. Edit MDX directly
@@ -257,7 +257,7 @@ code packages/nextra/app/papers/2024-existing-paper/page.mdx
 # 3. Preview, commit, push
 ```
 
-### 5.4 Paper Status Lifecycle
+### latest Paper Status Lifecycle
 
 ```
 draft → review → published → [archived]
@@ -281,7 +281,7 @@ draft → review → published → [archived]
 
 ## 6. LaTeX→MDX Conversion
 
-### 6.1 Automated Conversion
+### latest Automated Conversion
 
 **Tool**: `/scripts/convert-paper.mjs`
 
@@ -306,7 +306,7 @@ pnpm convert-paper packages/kgc-4d/docs/4d-blue-ocean/thesis.tex \
   --status review
 ```
 
-### 6.2 Conversion Mapping
+### latest Conversion Mapping
 
 | LaTeX | MDX (KaTeX) | Notes |
 |-------|-------------|-------|
@@ -320,16 +320,16 @@ pnpm convert-paper packages/kgc-4d/docs/4d-blue-ocean/thesis.tex \
 | `\[...\]` | ` ```math\n...\n``` ` | Display math (KaTeX) |
 | `$$...$$` | ` ```math\n...\n``` ` | Display math (alternative) |
 | `\begin{equation}` | ` ```math\n...\n``` ` | Numbered equations → unnumbered |
-| `\cite{key}` | `[Author (Year)](#references)` | Manual for now (see 7.2) |
+| `\cite{key}` | `[Author (Year)](#references)` | Manual for now (see latest) |
 | `\ref{label}` | `[Section X](#heading)` | Convert to anchor links |
 | `\label{sec:intro}` | (Remove) | MDX uses heading anchors |
 | `\begin{itemize}` | `- item` | Unordered list |
 | `\begin{enumerate}` | `1. item` | Ordered list |
 | `\begin{figure}` | `![caption](./figures/image.svg)` | Extract figures |
 | `\begin{table}` | MDX table | Convert to markdown table |
-| `\begin{theorem}` | Callout component | See 6.3 |
+| `\begin{theorem}` | Callout component | See latest |
 
-### 6.3 Custom Environments
+### latest Custom Environments
 
 For complex LaTeX environments not directly supported by KaTeX:
 
@@ -384,13 +384,13 @@ Algorithm steps
 ```
 ```
 
-### 6.4 Figure Handling
+### latest Figure Handling
 
 **LaTeX**:
 ```latex
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\textwidth]{diagrams/state-machine.pdf}
+  \includegraphics[width=latest\textwidth]{diagrams/state-machine.pdf}
   \caption{State machine architecture}
   \label{fig:state-machine}
 \end{figure}
@@ -414,7 +414,7 @@ Algorithm steps
 
 ## 7. Citation Management
 
-### 7.1 Short-Term (Manual)
+### latest Short-Term (Manual)
 
 **For immediate use** (working now, no tooling needed):
 
@@ -429,7 +429,7 @@ Algorithm steps
 As shown in [1](#references), the μ(O) calculus provides...
 ```
 
-### 7.2 Long-Term (Automated)
+### latest Long-Term (Automated)
 
 **When 5+ papers need cross-citations** (implement when needed):
 
@@ -483,7 +483,7 @@ export function Bibliography() {
 
 Before merging a paper, ensure:
 
-### 8.1 Automated Checks
+### latest Automated Checks
 
 ```bash
 # 1. MDX syntax valid
@@ -500,7 +500,7 @@ pnpm -C packages/nextra lint   # 0 errors
 pnpm check-links packages/nextra/app/papers/[slug]/page.mdx
 ```
 
-### 8.2 Manual Review
+### latest Manual Review
 
 - [ ] Front matter complete (all required fields)
 - [ ] Abstract is 150-250 words
@@ -512,18 +512,18 @@ pnpm check-links packages/nextra/app/papers/[slug]/page.mdx
 - [ ] Dark mode readable
 - [ ] No orphaned files in `/figures/`
 
-### 8.3 Accessibility
+### latest Accessibility
 
 - [ ] Alt text for all figures
 - [ ] Heading hierarchy (no skipped levels: H1→H2→H3, not H1→H3)
-- [ ] Color contrast ≥4.5:1 (WCAG AA)
+- [ ] Color contrast ≥latest:1 (WCAG AA)
 - [ ] Math has text alternative in context
 
 ---
 
 ## 9. Deployment
 
-### 9.1 Build Process
+### latest Build Process
 
 **Local Preview**:
 ```bash
@@ -548,7 +548,7 @@ pnpm -C packages/nextra export
 # → Upload packages/nextra/out/ to gh-pages branch
 ```
 
-### 9.2 URL Structure
+### latest URL Structure
 
 **Production URLs**:
 ```
@@ -562,12 +562,12 @@ https://seanchatmangpt.github.io/unrdf/papers/2024-hooks-architecture/
 - Include in `citation` front matter field
 - Stable (never change slugs after publication)
 
-### 9.3 Performance
+### latest Performance
 
 **Target Metrics**:
-- First Contentful Paint: <1.5s
-- Largest Contentful Paint: <2.5s
-- Time to Interactive: <3.5s
+- First Contentful Paint: <latests
+- Largest Contentful Paint: <latests
+- Time to Interactive: <latests
 - Lighthouse Score: ≥90
 
 **Optimization**:
@@ -580,7 +580,7 @@ https://seanchatmangpt.github.io/unrdf/papers/2024-hooks-architecture/
 
 ## 10. Migration Plan (Existing Papers)
 
-### 10.1 Priority Order
+### latest Priority Order
 
 **Phase 1** (Week 1): Core papers (3-5 papers)
 - `2024-mu-calculus-foundations` (from `/packages/kgc-4d/docs/chapters/25-mu-calculus-theory.tex`)
@@ -598,7 +598,7 @@ https://seanchatmangpt.github.io/unrdf/papers/2024-hooks-architecture/
 - Appendices from `/packages/kgc-4d/docs/appendices/*.tex`
 - Technical documentation elevated to paper status
 
-### 10.2 Verification
+### latest Verification
 
 After each phase:
 ```bash
@@ -620,7 +620,7 @@ pnpm -C packages/nextra dev
 
 ## 11. Maintenance
 
-### 11.1 Regular Tasks
+### latest Regular Tasks
 
 **Monthly**:
 - [ ] Update `updated:` field if paper revised
@@ -633,7 +633,7 @@ pnpm -C packages/nextra dev
 - [ ] Archive superseded papers
 - [ ] Update citations (if new publications reference your work)
 
-### 11.2 Version Control
+### latest Version Control
 
 **Git Workflow**:
 - Each paper is a commit (atomic)
@@ -652,7 +652,7 @@ docs(papers): Archive 2023-deprecated-approach
 
 ## 12. Tools Inventory
 
-### 12.1 Required
+### latest Required
 
 | Tool | Purpose | Command |
 |------|---------|---------|
@@ -660,7 +660,7 @@ docs(papers): Archive 2023-deprecated-approach
 | `check-links.mjs` | Validate internal/external links | `pnpm check-links <file.mdx>` |
 | `paper-template.mdx` | Template for new papers | (copy file) |
 
-### 12.2 Optional (Future)
+### latest Optional (Future)
 
 | Tool | Purpose | Implementation Status |
 |------|---------|----------------------|
@@ -702,7 +702,7 @@ import { InteractiveDemo } from '@/components/InteractiveDemo'
 ### Q: How do I version papers?
 
 **A**: Use git history. Optionally:
-- Add version in front matter: `version: "1.2"`
+- Add version in front matter: `version: "latest"`
 - Create versioned slugs: `2024-paper-v1/`, `2024-paper-v2/` (not recommended, breaks URLs)
 - Use `updated:` field to track revisions
 
@@ -786,7 +786,7 @@ citation: |
 
 This paper introduces $\mu(O)$ calculus.
 
-### 1.1 Motivation
+### latest Motivation
 
 The equation is:
 

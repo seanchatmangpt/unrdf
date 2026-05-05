@@ -3,14 +3,14 @@ PRODUCTION VALIDATION SUMMARY - 2026-01-11 03:28 UTC
 ================================================================================
 
 OVERALL STATUS: ⛔ NOT APPROVED FOR PRODUCTION
-QUALITY SCORE: 58.4/100 (Threshold: 70/100)
+QUALITY SCORE: latest/100 (Threshold: 70/100)
 
 ================================================================================
 VALIDATION RESULTS BY CATEGORY
 ================================================================================
 
 1. Dependencies ................... ⚠️  PARTIAL (50/100)
-2. Tests .......................... ❌ FAIL (95.2% pass rate)
+2. Tests .......................... ❌ FAIL (latest% pass rate)
 3. Lint ........................... ❌ FAIL (4 warnings)
 4. Code Quality ................... ❌ FAIL (12 TODOs, 14 skipped tests)
 5. Build .......................... ❌ FAIL (nextra failure)
@@ -21,7 +21,7 @@ VALIDATION RESULTS BY CATEGORY
 CRITICAL BLOCKERS (7)
 ================================================================================
 
-P0-1: Test Failures .............. 28 of 578 tests failing (95.2% pass)
+P0-1: Test Failures .............. 28 of 578 tests failing (latest% pass)
 P0-2: Lint Violations ............ 4 missing JSDoc comments
 P0-3: TODO Comments .............. 12 in production code
 P0-4: Skipped Tests .............. 14 disabled tests
@@ -57,7 +57,7 @@ TOTAL ESTIMATED TIME: 12-20 hours
 KEY METRICS
 ================================================================================
 
-Test Pass Rate:     95.2% (550/578) - BELOW 100% REQUIREMENT
+Test Pass Rate:     latest% (550/578) - BELOW 100% REQUIREMENT
 Lint Violations:    4 warnings - ABOVE 0 REQUIREMENT
 TODOs in Code:      12 - ABOVE 0 REQUIREMENT
 Skipped Tests:      14 - ABOVE 0 REQUIREMENT

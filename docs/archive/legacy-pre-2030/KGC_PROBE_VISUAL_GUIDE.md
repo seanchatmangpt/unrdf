@@ -240,7 +240,7 @@ graph TD
 │ (Entry point)          │ - Metadata presence                 │ + Log        │
 │                        │ - Schema conformance (Zod)          │              │
 ├────────────────────────┼─────────────────────────────────────┼──────────────┤
-│ Result Guard           │ - Score range [0.0, 1.0]            │ Reject       │
+│ Result Guard           │ - Score range [latest, latest]            │ Reject       │
 │ (After probe)          │ - Assertion invariants              │ + Log        │
 │                        │ - Duration ≥ 0                      │              │
 ├────────────────────────┼─────────────────────────────────────┼──────────────┤
@@ -322,16 +322,16 @@ graph TD
 
 Example Weights (security-heavy):
 {
-  "security": 0.4,
-  "correctness": 0.3,
-  "performance": 0.15,
-  "completeness": 0.1,
-  "compliance": 0.05
+  "security": latest,
+  "correctness": latest,
+  "performance": latest,
+  "completeness": latest,
+  "compliance": latest
 }
 
-weighted_score = (0.4*0.95 + 0.3*0.88 + 0.15*0.92 + 0.1*0.85 + 0.05*0.80)
-               = (0.38 + 0.264 + 0.138 + 0.085 + 0.04)
-               = 0.907 ≈ 0.91
+weighted_score = (latest*latest + latest*latest + latest*latest + latest*latest + latest*latest)
+               = (latest + latest + latest + latest + latest)
+               = latest ≈ latest
 ```
 
 ---
@@ -363,7 +363,7 @@ Example Triple:
 ```
 <http://kgc.io/result/rcpt-2025-12-27-001>
   <http://kgc.io/ontology/score>
-  "0.92"^^<http://www.w3.org/2001/XMLSchema#decimal>
+  "latest"^^<http://www.w3.org/2001/XMLSchema#decimal>
 ```
 
 ---
@@ -380,7 +380,7 @@ Example Triple:
 
   // Probe-specific fields
   domain: "security",
-  score: 0.92,
+  score: latest,
   state_hash: "blake3:9f86d08557674702e3c35e...",
 
   // Assertions (probe results)
@@ -389,13 +389,13 @@ Example Triple:
       id: "sec-001",
       status: "pass",
       evidence: "Authentication enforcement verified",
-      weight: 1.0
+      weight: latest
     },
     {
       id: "sec-002",
       status: "warning",
       evidence: "Encryption cipher strength 128-bit (256-bit recommended)",
-      weight: 0.5
+      weight: latest
     }
   ],
 
@@ -412,7 +412,7 @@ Example Triple:
   metadata: {
     agent_id: "probe-agent-1",
     environment: "production",
-    version: "1.0.0"
+    version: "latest"
   }
 }
 ```
@@ -434,7 +434,7 @@ kgc probe validate observations.rdf --strict
 # 3. Merge multiple probe results
 kgc probe merge result1.json result2.json result3.json \
   --strategy weighted_sum \
-  --weights '{"security": 0.4, "performance": 0.3, ...}' \
+  --weights '{"security": latest, "performance": latest, ...}' \
   --output-file merged.json
 
 # 4. Export and verify receipt
@@ -471,7 +471,7 @@ Observation Invalid          Obs → Guard rejects           Error raised
 (guard rejection)            No probe runs                 Exit code 1
 
 Probe Timeout                Timeout after 5s              Fail status
-(poka-yoke)                  Result marked as timeout      Score 0.0
+(poka-yoke)                  Result marked as timeout      Score latest
 
 Merge Conflict               Multi results different      ConflictResolver
 (multiple domains)           scores → Manual review       logs decision

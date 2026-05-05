@@ -29,7 +29,7 @@ async function createTestWorkspace(testDir, config) {
   const inventory = {
     packages: config.packages.map(pkg => ({
       name: pkg.name,
-      version: pkg.version || '1.0.0'
+      version: pkg.version || '[VERSION]'
     }))
   };
 
@@ -61,7 +61,7 @@ async function createTestWorkspace(testDir, config) {
 function createDiataxisEntry(packageName, overrides = {}) {
   return {
     packageName,
-    version: '1.0.0',
+    version: '[VERSION]',
     generatedAt: '2000-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.8,
@@ -584,7 +584,7 @@ describe('Diátaxis Verification Gate', () => {
       await writeFile(
         join(artifactsDir, 'inventory.json'),
         stableStringify({
-          packages: [{ name: '@unrdf/package-a', version: '1.0.0' }]
+          packages: [{ name: '@unrdf/package-a', version: '[VERSION]' }]
         })
       );
 
@@ -611,7 +611,7 @@ describe('Diátaxis Verification Gate', () => {
       await writeFile(
         join(artifactsDir, 'inventory.json'),
         stableStringify({
-          packages: [{ name: '@unrdf/package-a', version: '1.0.0' }]
+          packages: [{ name: '@unrdf/package-a', version: '[VERSION]' }]
         })
       );
 

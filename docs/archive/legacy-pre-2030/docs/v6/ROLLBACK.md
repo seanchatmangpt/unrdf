@@ -1,6 +1,6 @@
 # Deployment Rollback & Contingency Plan
 
-**Version:** 1.0.0
+**Version:** latest
 **Last Updated:** 2025-12-27
 **Status:** PRODUCTION-READY
 
@@ -344,8 +344,8 @@ node scripts/rollback.mjs
 
    ```json
    "dependencies": {
-     "zod": "3.25.76",
-     "rdf-canonize": "2.0.1"
+     "zod": "latest",
+     "rdf-canonize": "latest"
    }
    ```
 
@@ -496,7 +496,7 @@ _Detection:_
 ```json
 {
   "status": "healthy",
-  "version": "6.0.0",
+  "version": "latest",
   "uptime": 12345,
   "dependencies": {
     "database": "connected",
@@ -952,6 +952,6 @@ After any rollback, conduct a post-mortem:
 
 ---
 
-**Document Version:** 1.0.0
+**Document Version:** latest
 **Last Reviewed:** 2025-12-27
 **Next Review:** Before production deployment

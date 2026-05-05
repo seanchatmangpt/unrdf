@@ -145,7 +145,7 @@ export function createGuardDenial({ guardName, reason, agentId, context = {} }) 
     },
     metadata: {
       agentId,
-      probeVersion: '0.1.0',
+      probeVersion: '[VERSION]',
       budgetMs: 1, // Guards have minimal overhead
       actualMs: 0,
       timestamp: new Date().toISOString(),

@@ -56,13 +56,13 @@ print_success "Operating System: $OS_TYPE"
 
 # Check Node.js
 if ! command -v node &> /dev/null; then
-    print_error "Node.js not found. Please install Node.js >= 18.0.0"
+    print_error "Node.js not found. Please install Node.js >= latest"
     FAILURES+=("Node.js not installed")
 else
     NODE_VERSION=$(node --version)
     NODE_MAJOR=$(echo "$NODE_VERSION" | cut -d'.' -f1 | sed 's/v//')
     if [ "$NODE_MAJOR" -lt 18 ]; then
-        print_error "Node.js version $NODE_VERSION is too old. Required: >= 18.0.0"
+        print_error "Node.js version $NODE_VERSION is too old. Required: >= latest"
         FAILURES+=("Node.js version too old")
     else
         print_success "Node.js: $NODE_VERSION"

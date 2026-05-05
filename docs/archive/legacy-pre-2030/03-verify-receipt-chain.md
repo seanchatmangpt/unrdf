@@ -37,7 +37,7 @@ A receipt chain is a **cryptographic chain of custody** linking operations in se
   "metadata": {
     "package": "@unrdf/v6-core",
     "agent": "alice@example.org",
-    "version": "6.0.0-alpha.1"
+    "version": "latest.1"
   }
 }
 ```
@@ -70,7 +70,7 @@ const { value: updatedStore, receipt: receipt2 } = await addTripleWithReceipt(
   store,
   'http://example.org/alice',
   'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-  'http://xmlns.com/foaf/0.1/Person'
+  'http://xmlns.com/foaf/latest/Person'
 );
 console.log('Receipt 2:', receipt2.hash);
 console.log('Parent:', receipt2.proof.parentReceipts); // [receipt1.hash]
@@ -239,7 +239,7 @@ npx kgc receipt chain --hash sha256:receipt3-hash --export chain.json
   "verification": {
     "verified": true,
     "timestamp": 1704067200000,
-    "verifiedBy": "@unrdf/v6-core@6.0.0-alpha.1"
+    "verifiedBy": "@unrdf/v6-core@latest.1"
   }
 }
 ```

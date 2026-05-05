@@ -16,7 +16,7 @@ This chapter establishes the problem space through five sections. Section 1.2 an
 
 ### 1.2 The Coordination Problem at Scale: Why Social Processes Fail
 
-#### 1.2.1 The Curse of Conway's Law
+#### latest The Curse of Conway's Law
 
 Organizations inevitably structure their information systems to mirror their communication patterns (Conway, 1968). At small scale—teams of 5-50 people sharing a physical office—this creates beneficial locality: the engineering team's database reflects their mental model, the legal team's document repository reflects theirs, and periodic meetings synchronize them. But this model breaks catastrophically beyond **Dunbar's number** (approximately 150 stable relationships; Dunbar, 1992). When enterprises reach 10,000+ employees, the number of potential coordination edges scales quadratically: $\binom{10000}{2} \approx 50$ million dyadic relationships. No amount of meeting hygiene can maintain semantic coherence across this graph.
 
@@ -24,7 +24,7 @@ Consider Boeing's 737 MAX development. The Flight Control Computer team maintain
 
 The traditional mitigation—**process-based coordination**—scales logarithmically at best. Boeing's "Systems Integration Review" meetings occurred monthly, involved 30+ stakeholders, and produced 200-page slide decks (U.S. House Committee, 2020, p. 89). The latency between a truth divergence (e.g., MCAS activation threshold changed from 0.5° to 2.5° angle of attack) and its detection in review could exceed **six months**. By the time the conflict surfaced, correcting it required rework across five teams and three contract manufacturers, costing $50+ million in engineering hours. The fundamental issue: **human processes cannot provide real-time invariant enforcement** across distributed teams.
 
-#### 1.2.2 The Hidden Cost of Inconsistent Truth
+#### latest The Hidden Cost of Inconsistent Truth
 
 Quantifying the economic cost of semantic incoherence is methodologically challenging because failures manifest as "execution problems" rather than "data problems." The FDA's 2019 audit of pharmaceutical manufacturing found that 68% of compliance violations traced to **data integrity issues**: batch records contradicting laboratory results, training databases conflicting with personnel certifications, or supply chain logs inconsistent with inventory systems (FDA, 2019, p. 34). The direct cost of these violations—consent decrees, manufacturing halts, product recalls—exceeded $500 million. But the indirect cost dwarfed this: companies spent an estimated $2.1 billion on "remediation" (manual audits, process redesign, consultant fees) attempting to retrospectively reconstruct coherent truth from inconsistent sources (PwC, 2020).
 
@@ -36,7 +36,7 @@ The canonical example is the **Disney Legends** crisis of 2015. The *Star Wars* 
 
 The root cause was **epistemological**: no mechanical system enforced that every new story preserved the invariants of prior stories. Authors relied on wikis (incomplete), editor memory (inconsistent), and fan corrections (post-hoc). The franchise operated like a distributed database with **no ACID guarantees**: every write could corrupt the global state.
 
-#### 1.2.3 Why Meetings, Escalations, and Governance Fail
+#### latest Why Meetings, Escalations, and Governance Fail
 
 The standard enterprise response to coordination failures is **more process**: bi-weekly alignment meetings, cross-functional working groups, executive steering committees, and governance boards. We argue these approaches fail because they operate at the wrong **semantic layer**. Meetings coordinate **intent** ("Engineering plans to change the API schema"), but they cannot enforce **invariants** ("this schema change must not break Client X's parser"). Governance bodies approve **changes**, but they cannot verify **correctness** ("this change preserves referential integrity across 47 dependent systems").
 
@@ -46,7 +46,7 @@ Escalations suffer from **temporal mismatch**. When a junior engineer discovers 
 
 Local conventions create **semantic islands**. At Amazon's AWS, different service teams developed incompatible interpretations of "region" (geographic datacenter cluster), "availability zone" (fault-isolated datacenter), and "partition" (logical isolation boundary). For years, EC2's definition of "availability zone" was **syntactically identical** but **semantically incompatible** with S3's definition: EC2 AZs guaranteed independent power and cooling, while S3 AZs only guaranteed independent network switches (Brooker, 2020). This divergence caused cascading failures during the 2017 us-east-1 outage, because services made incompatible assumptions about failure domain boundaries. The failure was invisible to governance because both teams used the same **vocabulary** ("availability zone") to describe different **concepts**.
 
-#### 1.2.4 The Fundamental Theorem of Coordination Failure
+#### latest The Fundamental Theorem of Coordination Failure
 
 We formalize the impossibility result as follows. Let $\mathcal{O}$ be the organization's intended universe of discourse (the set of true propositions about its operational reality). Let $\mathcal{O}_i$ be team $i$'s **local model** of this universe, maintained in their databases, documents, and tribal knowledge. Let $n$ be the number of teams and $k$ be the rate of new propositions added per team per day.
 
@@ -66,7 +66,7 @@ The implication is stark: **social processes cannot provide coherence guarantees
 
 We now survey the technical approaches that enterprises have deployed to address semantic coherence, and demonstrate why each fails to provide correctness guarantees.
 
-#### 1.3.1 Semantic Web and RDF Systems: The Update Problem
+#### latest Semantic Web and RDF Systems: The Update Problem
 
 The Semantic Web vision (Berners-Lee et al., 2001) proposed representing organizational knowledge as RDF triples $(s, p, o)$ with shared ontologies (OWL, RDFS) enforcing schema constraints. The promise was **global interoperability**: if every team published their data as RDF and shared vocabularies, semantic coherence would emerge naturally through schema alignment.
 
@@ -85,7 +85,7 @@ The result: RDF systems provide **schema documentation** (ontologies describe in
 
 **Empirical evidence**: A 2018 study of 127 enterprise RDF deployments found that 89% disabled reasoning for performance reasons, 76% lacked provenance tracking, and 92% required periodic "reconciliation" jobs to detect constraint violations post-hoc (Auer et al., 2018). The semantic web became a **data warehouse** (centralizing heterogeneous data) rather than a **correctness substrate** (enforcing invariants).
 
-#### 1.3.2 Graph Databases: Scale Without Semantics
+#### latest Graph Databases: Scale Without Semantics
 
 Graph databases (Neo4j, TigerGraph, Amazon Neptune) address RDF's scalability limitations by abandoning global schemas. Instead, they provide **property graphs**: nodes and edges with arbitrary key-value pairs, queryable via traversal languages (Cypher, Gremlin). This approach scales to billions of edges and supports real-time queries (Robinson et al., 2015).
 
@@ -99,7 +99,7 @@ But graph databases sacrifice **semantic rigor** for performance:
 
 **Empirical failure mode**: A Fortune 500 retailer deployed Neo4j to manage product catalogs across 15 countries. Within 18 months, they discovered **47,000+ constraint violations**: products with negative prices, categories referencing non-existent parent categories, and tax rates inconsistent with jurisdiction rules (anonymized client report, 2019). The violations accumulated because the database **admitted writes without validation**, and the nightly constraint-checking job was disabled due to 6-hour runtime on their 80M-node graph. The resolution required a 9-month manual remediation costing $14M.
 
-#### 1.3.3 Blockchain Approaches: Proof Without Semantics
+#### latest Blockchain Approaches: Proof Without Semantics
 
 Blockchain systems (Bitcoin, Ethereum, Hyperledger) solve the **audit problem**: every state transition is recorded in an immutable ledger, cryptographically signed by the author, and merkle-hashed into a chain. External auditors can verify the **integrity** of the history (no tampering) and the **authorization** of each change (valid signatures).
 
@@ -113,7 +113,7 @@ But blockchains fail to enforce **semantic correctness**:
 
 **Empirical case**: Walmart's Food Traceability Initiative deployed Hyperledger Fabric to track produce from farm to store. The blockchain recorded **provenance** (which farm grew the lettuce, which truck transported it, which store received it), but it could not enforce **coherence**: a shipment could be recorded as "delivered" to Store A while simultaneously recorded as "in transit" to Store B, because the two records came from different ERP systems with no shared ontology (Kamath, 2018). The blockchain proved **who wrote what**, but not **whether what they wrote was true**.
 
-#### 1.3.4 API-Gated Systems: The Boundary Leakage Problem
+#### latest API-Gated Systems: The Boundary Leakage Problem
 
 Modern enterprises increasingly adopt **API-first** architectures: internal teams expose their data through REST/GraphQL APIs, and a central gateway enforces authorization, rate limits, and schema validation (Richardson & Smith, 2016). This provides:
 
@@ -131,7 +131,7 @@ But API gateways fail to prevent **semantic divergence**:
 
 **Empirical failure**: A healthcare provider deployed an API gateway to mediate between 12 clinical systems (EHR, lab, pharmacy, billing). The gateway enforced that medication orders had valid drug codes and dosages (syntactic validation). But it did not enforce that a medication order was **compatible** with the patient's allergy records (semantic validation), because allergies lived in a different service. Over 8 months, this gap admitted 340 orders for drugs to which patients were allergic, causing 19 adverse events before the issue was detected (anonymized incident report, 2020). The gateway validated **schemas** but not **invariants**.
 
-#### 1.3.5 The Common Failure Mode: Insider Verification
+#### latest The Common Failure Mode: Insider Verification
 
 All four approaches share a fatal flaw: they rely on **insider verification**. RDF systems assume that teams **voluntarily** publish correct data. Graph databases assume that applications **defensively** validate before writes. Blockchains assume that oracles **honestly** report reality. API gateways assume that client code **correctly** implements business logic.
 
@@ -147,7 +147,7 @@ What is needed is **external verifiability**: a mechanism by which auditors can 
 
 ### 1.4 The Central Claim: External Verifiability
 
-#### 1.4.1 "Close the Door and Listen from the Outside"
+#### latest "Close the Door and Listen from the Outside"
 
 We propose a design doctrine borrowed from cryptographic systems: **the correctness of an organization's reality claims must be verifiable using only publicly observable artifacts**. Concretely:
 
@@ -160,7 +160,7 @@ This is the doctrine of **"closing the door and listening from the outside"**: t
 
 The analogy to cryptographic protocols is precise. In zero-knowledge proofs, a prover convinces a verifier of a statement's truth **without revealing** the witness (Goldwasser et al., 1985). In our system, an organization proves that its state transitions preserved invariants **without revealing** the internal databases, decision processes, or access logs. The proof is a **cryptographic commitment**: the organization publishes a Merkle root of $\mathcal{O}_t$, and for each transition, it publishes a proof $\pi$ that the new root corresponds to $\mathcal{O}_{t+1}$ where all invariants were checked.
 
-#### 1.4.2 Contrast with Insider Verification
+#### latest Contrast with Insider Verification
 
 Traditional systems rely on **insider verification**: correctness is checked by internal processes that have access to the full state. Examples:
 
@@ -183,7 +183,7 @@ This approach suffers from the **trusted insider problem**: the verifier must tr
 
 The key insight is **accountability**: with insider verification, failures are **deniable** ("the trigger had a bug, but we fixed it"). With external verification, failures are **provable** ("here is the published receipt with an invalid proof").
 
-#### 1.4.3 The Receipts Model
+#### latest The Receipts Model
 
 We formalize external verification using a **receipts model** inspired by certificate transparency (Laurie et al., 2013):
 
@@ -207,7 +207,7 @@ We formalize external verification using a **receipts model** inspired by certif
 
 **Proof sketch:** The auditor recomputes each commitment by hashing the canonical quads, verifies each proof $\pi$ using the published verification key, and checks each signature $\sigma$ against the PKI. No access to internal state is required. $\square$
 
-#### 1.4.4 Why This Matters for Distributed Enterprises
+#### latest Why This Matters for Distributed Enterprises
 
 The receipts model addresses the fundamental coordination problem (§1.2) by **mechanizing invariant enforcement**. Instead of relying on meetings to detect divergence, the system **rejects writes** that violate invariants, and publishes a proof that the rejection was correct. Instead of trusting governance reviews, auditors **verify proofs** using only public receipts.
 
@@ -226,7 +226,7 @@ This is not a theoretical curiosity. The FDA's 2019 guidance on "Data Integrity 
 
 We now formalize the research questions that this dissertation addresses.
 
-#### 1.5.1 RQ1: Closed Universe Representation
+#### latest RQ1: Closed Universe Representation
 
 **Research Question 1:** Can enterprise operational reality be faithfully represented as a **closed universe** $\mathcal{O}$ such that all business-relevant facts are expressible as RDF quads, and the system produces **deterministic artifacts** $A = \mu(\mathcal{O})$ where $\mu$ is a pure function?
 
@@ -240,7 +240,7 @@ We now formalize the research questions that this dissertation addresses.
 
 **Validation criteria:** Demonstrate that a representative enterprise domain (e.g., pharmaceutical supply chain) can be modeled as $\mathcal{O}$ such that 95%+ of auditor queries can be answered from $\mathcal{O}$ alone, without consulting tribal knowledge or external systems.
 
-#### 1.5.2 RQ2: Proof-Gated Invariant Preservation
+#### latest RQ2: Proof-Gated Invariant Preservation
 
 **Research Question 2:** Can all state changes be gated through **$\Delta$ capsules** that carry cryptographic proofs $\pi$ demonstrating that the change preserves the invariant set $\mathcal{Q}$, such that invalid changes are **mechanically rejected** before admission?
 
@@ -254,7 +254,7 @@ We now formalize the research questions that this dissertation addresses.
 
 **Validation criteria:** Demonstrate that a proof gate can process 1,000+ change requests per second with <100ms latency on commodity hardware, while enforcing 200+ invariants across a 10M-quad ontology.
 
-#### 1.5.3 RQ3: Non-Representability of Forbidden Operations
+#### latest RQ3: Non-Representability of Forbidden Operations
 
 **Research Question 3:** Can the system be designed such that **forbidden operations** $H$ (operations that violate core invariants or security policies) are **non-representable**—they cannot be expressed as valid $\Delta$ capsules, even by malicious insiders?
 
@@ -270,7 +270,7 @@ We now formalize the research questions that this dissertation addresses.
 
 **Validation criteria:** Demonstrate that even with root access to the database, an attacker cannot produce a valid receipt $R$ for a forbidden operation (e.g., backdating an audit record) without detection.
 
-#### 1.5.4 RQ4: Receipt-Based External Audit
+#### latest RQ4: Receipt-Based External Audit
 
 **Research Question 4:** Can external auditors (regulators, customers, partners) verify the **integrity and correctness** of the organization's state using only the published receipts $\{R_0, R_1, \ldots, R_n\}$, without requiring access to internal databases, source code, or employee testimony?
 
@@ -288,7 +288,7 @@ We now formalize the research questions that this dissertation addresses.
 
 ### 1.6 Thesis Statement and Chapter Roadmap
 
-#### 1.6.1 Thesis Statement
+#### latest Thesis Statement
 
 **This dissertation claims that enterprise operational reality can be represented as a proof-gated ontology substrate where:**
 
@@ -299,7 +299,7 @@ We now formalize the research questions that this dissertation addresses.
 
 **This matters because** it transforms enterprise coordination from a social problem (meetings, governance, trust) into a cryptographic problem (commitments, proofs, verification), enabling organizations to **prove their correctness claims** rather than **assert** them, thereby reducing coordination costs, preventing catastrophic failures, and satisfying increasingly stringent regulatory requirements for third-party auditability.
 
-#### 1.6.2 Chapter Roadmap
+#### latest Chapter Roadmap
 
 The dissertation proceeds as follows:
 

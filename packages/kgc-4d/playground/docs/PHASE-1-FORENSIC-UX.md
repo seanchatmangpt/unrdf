@@ -293,10 +293,10 @@ ctx.scale(2, 2);  // Auto-scale all drawing
 ### Dependencies Added (4 packages)
 ```json
 {
-  "@xyflow/react": "^12.10.0",  // DAG visualization
-  "elkjs": "^0.11.0",            // Auto-layout
-  "d3-scale": "^4.0.2",          // BigInt domain mapping
-  "@monaco-editor/react": "^4.7.0" // (Future: code inspector)
+  "@xyflow/react": "^[VERSION]",  // DAG visualization
+  "elkjs": "^[VERSION]",            // Auto-layout
+  "d3-scale": "^[VERSION]",          // BigInt domain mapping
+  "@monaco-editor/react": "^[VERSION]" // (Future: code inspector)
 }
 ```
 

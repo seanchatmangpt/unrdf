@@ -33,7 +33,7 @@ export const process_payment = {
 
   // WvdA Soundness: Timeout-protected async handler
   async handler(input, context) {
-    const tracer = trace.getTracer('codemanufactory-revops', '1.0.0');
+    const tracer = trace.getTracer('codemanufactory-revops', 'latest');
     const span = tracer.startSpan('mcp.process_payment.execute', {
       attributes: {
         'mcp.tool.name': 'process_payment',

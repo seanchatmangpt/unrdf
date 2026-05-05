@@ -31,14 +31,14 @@ export class PrometheusExporter {
    * @param {object} metricsCollector - MetricsCollector instance
    * @param {object} options - Configuration options
    * @param {number} options.port - HTTP port (default: 9090)
-   * @param {string} options.host - HTTP host (default: '0.0.0.0')
+   * @param {string} options.host - HTTP host (default: '[VERSION].0')
    * @param {string} options.path - Metrics path (default: '/metrics')
    * @param {string} options.namespace - Metric namespace (default: 'unrdf')
    */
   constructor(metricsCollector, options = {}) {
     this.metrics = metricsCollector;
     this.port = options.port || 9090;
-    this.host = options.host || '0.0.0.0';
+    this.host = options.host || '[VERSION].0';
     this.path = options.path || '/metrics';
     this.namespace = options.namespace || 'unrdf';
 
@@ -60,7 +60,7 @@ export class PrometheusExporter {
         const output = this.generatePrometheusOutput();
 
         res.writeHead(200, {
-          'Content-Type': 'text/plain; version=0.0.4',
+          'Content-Type': 'text/plain; version=[VERSION]',
         });
         res.end(output);
       } else {

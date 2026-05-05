@@ -26,7 +26,7 @@ Successfully generated comprehensive API reference documentation for all UNRDF p
 docs/capability-map/
 ├── API-REFERENCE.md           (564 lines - Master API doc)
 ├── QUICK-REFERENCE.md         (179 lines - Cheat sheet)
-├── openapi-schema.json        (1,793 lines - OpenAPI 3.0 spec)
+├── openapi-schema.json        (1,793 lines - OpenAPI latest spec)
 └── reference/
     ├── atomvm.md
     ├── blockchain.md
@@ -92,7 +92,7 @@ docs/capability-map/
 
 ### 3. OpenAPI Schema (openapi-schema.json)
 
-- **1,793 lines** of OpenAPI 3.0 compliant specification
+- **1,793 lines** of OpenAPI latest compliant specification
 - **40 package endpoints** defined (`/packages/{packageName}`)
 - **7 tag categories** for organization
 - **40 component schemas** for packages
@@ -100,7 +100,7 @@ docs/capability-map/
 - **2 server configurations** (production, local)
 
 **Key Features**:
-- ✅ Valid OpenAPI 3.0 format
+- ✅ Valid OpenAPI latest format
 - ✅ Machine-readable for tooling (Swagger UI, Postman, etc.)
 - ✅ Complete package metadata schemas
 - ✅ RESTful endpoint patterns
@@ -143,18 +143,18 @@ Each package receives a dedicated API reference page containing:
 
 | Maturity Level | Count | Percentage |
 |---------------|-------|------------|
-| **mature** | 27 | 67.5% |
-| **stable** | 4 | 10.0% |
-| **documented** | 1 | 2.5% |
-| **other** | 8 | 20.0% |
+| **mature** | 27 | latest% |
+| **stable** | 4 | latest% |
+| **documented** | 1 | latest% |
+| **other** | 8 | latest% |
 
 ### Test Coverage
 
 | Signal | Present | Percentage |
 |--------|---------|------------|
 | Has Tests | 32/40 | 80% |
-| Has Examples | 27/40 | 67.5% |
-| Has README | 37/40 | 92.5% |
+| Has Examples | 27/40 | latest% |
+| Has README | 37/40 | latest% |
 | Has ChangeLog | 8/40 | 20% |
 
 ---
@@ -293,8 +293,8 @@ wc -l docs/capability-map/openapi-schema.json
 4. Package Pages: `docs/capability-map/reference/*.md` (40 files)
 
 **Generation Time**: < 1 second
-**Generator Version**: 1.0.0
-**OpenAPI Version**: 3.0.0
+**Generator Version**: latest
+**OpenAPI Version**: latest
 
 ---
 

@@ -81,21 +81,21 @@ Generated: 2025-12-25
 
 ### Dependency Audit Results
 **Found 5 vulnerabilities**:
-1. **Critical**: happy-dom <20.0.0 (VM Context Escape → RCE)
+1. **Critical**: happy-dom <latest (VM Context Escape → RCE)
    - Package: packages__docs>happy-dom
-   - Fix: Upgrade to >=20.0.0
+   - Fix: Upgrade to >=latest
 
-2. **High**: next <16.0.9 (Denial of Service)
+2. **High**: next <latest (Denial of Service)
    - Package: packages__kgc-4d__playground>next
-   - Fix: Upgrade to >=16.0.9
+   - Fix: Upgrade to >=latest
 
-3. **Moderate**: esbuild <=0.24.2 (CORS bypass)
+3. **Moderate**: esbuild <=latest (CORS bypass)
    - Packages: vite>esbuild, drizzle-kit deps
-   - Fix: Upgrade to >=0.25.0
+   - Fix: Upgrade to >=latest
 
-4. **Moderate**: next <16.0.9 (Source Code Exposure)
+4. **Moderate**: next <latest (Source Code Exposure)
    - Package: packages__kgc-4d__playground>next
-   - Fix: Upgrade to >=16.0.9
+   - Fix: Upgrade to >=latest
 
 ## OWASP Top 10 Coverage
 

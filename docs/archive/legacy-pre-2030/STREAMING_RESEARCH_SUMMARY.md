@@ -17,10 +17,10 @@ This research has successfully identified, documented, and prototyped **10+ inno
 
 ✅ **4 Working Code Examples** (Total 31KB)
    `/home/user/unrdf/examples/streaming-innovation/`
-   - `01-multi-source-fusion.mjs` (9.2KB)
-   - `02-time-travel-replay.mjs` (8.5KB)
-   - `03-stream-workflows.mjs` (7.8KB)
-   - `04-receipt-backed-stream.mjs` (5.5KB)
+   - `01-multi-source-fusion.mjs` (latestKB)
+   - `02-time-travel-replay.mjs` (latestKB)
+   - `03-stream-workflows.mjs` (latestKB)
+   - `04-receipt-backed-stream.mjs` (latestKB)
    - `README.md` (detailed usage guide)
 
 ✅ **Performance Analysis**
@@ -30,10 +30,10 @@ This research has successfully identified, documented, and prototyped **10+ inno
    - Scalability projections
 
 ✅ **Scalability Roadmap**
-   - Phase 1: Current State (v6.0)
-   - Phase 2: Enhanced Streaming (v6.1)
-   - Phase 3: Distributed Streaming (v6.2)
-   - Phase 4: Advanced Features (v6.3+)
+   - Phase 1: Current State (vlatest)
+   - Phase 2: Enhanced Streaming (vlatest)
+   - Phase 3: Distributed Streaming (vlatest)
+   - Phase 4: Advanced Features (vlatest+)
 
 ---
 
@@ -84,7 +84,7 @@ This research has successfully identified, documented, and prototyped **10+ inno
 ### 3. Distributed Streaming ⭐⭐⭐
 **Status:** Needs testing
 **Complexity:** Very High
-**Performance:** 6.2K events/sec across 3 nodes
+**Performance:** latestK events/sec across 3 nodes
 
 **Innovation:**
 - RAFT consensus for global event ordering
@@ -105,7 +105,7 @@ This research has successfully identified, documented, and prototyped **10+ inno
 ### 4. Stream-Driven Workflows ⭐⭐⭐⭐⭐
 **Status:** Production-ready
 **Complexity:** Medium
-**Performance:** 62K events/sec, P95 2.8ms
+**Performance:** 62K events/sec, P95 latestms
 
 **Innovation:**
 - Complex Event Processing (CEP) patterns
@@ -192,8 +192,8 @@ This research has successfully identified, documented, and prototyped **10+ inno
 | Fusion | 2ms | 8ms | 15ms | Includes correlation |
 | Time-Travel | 0ms | 0ms | 0ms | Replay from storage* |
 | Distributed | 25ms | 38ms | 65ms | Includes consensus |
-| Workflows | 1ms | 2.8ms | 5ms | Pattern matching only |
-| Receipts | 0.2ms | 0.8ms | 1.5ms | Per-event overhead |
+| Workflows | 1ms | latestms | 5ms | Pattern matching only |
+| Receipts | latestms | latestms | latestms | Per-event overhead |
 
 *Time-travel latency depends on playback speed setting
 
@@ -201,9 +201,9 @@ This research has successfully identified, documented, and prototyped **10+ inno
 
 | Pattern | Overhead | Context |
 |---------|----------|---------|
-| Fusion | 3.2MB | Per 1,000 cached events |
+| Fusion | latestMB | Per 1,000 cached events |
 | Time-Travel | 85MB | Per 1M delta history |
-| Workflows | 6.4MB | Per active pattern |
+| Workflows | latestMB | Per active pattern |
 | Receipts | 156 bytes | Per event |
 
 ---
@@ -239,13 +239,13 @@ This research has successfully identified, documented, and prototyped **10+ inno
 
 ## Scalability Roadmap
 
-### Phase 1: Current State (v6.0) ✅
+### Phase 1: Current State (vlatest) ✅
 - Single-node streaming with change feeds
 - Basic daemon integration
 - KGC-4D delta history
 - Receipt infrastructure
 
-### Phase 2: Enhanced Streaming (v6.1) 🚧
+### Phase 2: Enhanced Streaming (vlatest) 🚧
 **Target: Q1 2026**
 - Multi-source fusion coordinator
 - Time-travel streaming engine
@@ -254,7 +254,7 @@ This research has successfully identified, documented, and prototyped **10+ inno
 
 **Estimated Effort:** 4-6 weeks
 
-### Phase 3: Distributed Streaming (v6.2) ⏳
+### Phase 3: Distributed Streaming (vlatest) ⏳
 **Target: Q2 2026**
 - Distributed stream coordinator
 - Cross-node consensus for ordering
@@ -263,7 +263,7 @@ This research has successfully identified, documented, and prototyped **10+ inno
 
 **Estimated Effort:** 6-8 weeks
 
-### Phase 4: Advanced Features (v6.3+) ⏳
+### Phase 4: Advanced Features (vlatest+) ⏳
 **Target: Q3-Q4 2026**
 - Adaptive auto-scaling
 - ML-based pattern detection
@@ -462,7 +462,7 @@ This research has successfully delivered:
 ✅ **Scalability roadmap** for next 12 months
 ✅ **Production readiness assessment** for each pattern
 
-**Recommendation:** Proceed with Phase 2 implementation (v6.1) focusing on production-ready patterns 1, 2, 4, and 5.
+**Recommendation:** Proceed with Phase 2 implementation (vlatest) focusing on production-ready patterns 1, 2, 4, and 5.
 
 **Expected Impact:**
 - **Observability:** Unified view across all UNRDF packages

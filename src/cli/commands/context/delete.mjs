@@ -5,7 +5,7 @@
  * CLI command to delete a context.
  *
  * @module cli/commands/context/delete
- * @version 2.4.0
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -13,7 +13,7 @@ import { defineCommand } from 'citty';
 import { ContextManager } from '../../core/context.mjs';
 import { trace } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('unrdf-cli-context-delete', '2.4.0');
+const tracer = trace.getTracer('unrdf-cli-context-delete', '[VERSION]');
 
 /**
  * Delete context command

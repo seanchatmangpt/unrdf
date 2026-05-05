@@ -27,7 +27,7 @@ export {
  */
 export const metadata = {
   name: '@unrdf/codegen',
-  version: '0.1.0',
+  version: '[VERSION]',
   description: 'Code generation and metaprogramming tools for UNRDF',
   patterns: [
     'SPARQL Type Generator',

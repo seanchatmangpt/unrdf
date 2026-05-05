@@ -125,7 +125,7 @@ The dashboard reads from `benchmarks/results/benchmark-results.json`:
 
 ```json
 {
-  "timestamp": "2025-12-04T20:33:13.601Z",
+  "timestamp": "2025-12-04T20:33:latestZ",
   "summary": {
     "totalBenchmarks": 5,
     "totalTests": 15,
@@ -139,12 +139,12 @@ The dashboard reads from `benchmarks/results/benchmark-results.json`:
         {
           "scale": "small",
           "latency": {
-            "mean": 0.37,
-            "p50": 0.19,
-            "p95": 1.62,
-            "p99": 1.62
+            "mean": latest,
+            "p50": latest,
+            "p95": latest,
+            "p99": latest
           },
-          "throughputHooksPerSec": 2119.46,
+          "throughputHooksPerSec": latest,
           "passed": false
         }
       ]
@@ -201,8 +201,8 @@ Click "📥 Export to CSV" button to download all results in CSV format:
 
 ```csv
 Benchmark,Scenario,Mean Latency (ms),P95 Latency (ms),P99 Latency (ms),Throughput (ops/sec),Overhead %,Status
-hook-registration,small,0.38,1.62,1.62,2119.46,426.32,FAIL
-hook-execution-latency,simple,0.07,0.08,0.16,13168.19,149.95,PASS
+hook-registration,small,latest,latest,latest,latest,latest,FAIL
+hook-execution-latency,simple,latest,latest,latest,latest,latest,PASS
 ```
 
 ### Spreadsheet Analysis
@@ -288,4 +288,4 @@ For issues with:
 ---
 
 **Last Updated**: 2025-12-04
-**Dashboard Version**: 1.0.0 (80/20 Integration)
+**Dashboard Version**: latest (80/20 Integration)

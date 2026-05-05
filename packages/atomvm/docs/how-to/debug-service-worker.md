@@ -155,7 +155,7 @@ If `coi-serviceworker` isn't working:
    cd packages/atomvm
    pnpm list coi-serviceworker
    ```
-   Should show version `^0.1.7` or similar.
+   Should show version `^[VERSION]` or similar.
 
 2. **Check import:**
    ```javascript

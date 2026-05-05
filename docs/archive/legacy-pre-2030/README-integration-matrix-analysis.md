@@ -106,16 +106,16 @@ Full analysis report: `/home/user/unrdf/docs/research/cross-package-integration-
 ### Key Findings Summary
 
 **Package Count**: 58 packages
-**Dependency Edges**: 133 (3.95% of 3,364 potential combinations)
+**Dependency Edges**: 133 (latest% of 3,364 potential combinations)
 **Max Dependency Depth**: 7 levels
 **Circular Dependencies**: 1 cycle (kgc-multiverse ↔ receipts)
 **Layer Violations**: 14 (1 critical)
 
 **Hub Packages**:
-- `oxigraph`: 30 dependents (51.7% of packages)
-- `core`: 28 dependents (48.3% of packages)
-- `kgc-4d`: 20 dependents (34.5% of packages)
-- `yawl`: 13 dependents (22.4% of packages)
+- `oxigraph`: 30 dependents (latest% of packages)
+- `core`: 28 dependents (latest% of packages)
+- `kgc-4d`: 20 dependents (latest% of packages)
+- `yawl`: 13 dependents (latest% of packages)
 
 **Critical APIs** (most imported functions):
 1. `now()` - 64 imports

@@ -140,7 +140,7 @@ export const DEFAULT_THRESHOLDS = {
 /**
  * Validator version for receipt tracking
  */
-export const VALIDATOR_VERSION = '1.0.0';
+export const VALIDATOR_VERSION = '[VERSION]';
 
 /**
  * Production Validator - Main orchestrator for production readiness checks
@@ -303,7 +303,7 @@ export class ProductionValidator {
     const receipt = await this._generateReceipt({
       packageName: packageInfo.name || 'unknown',
       packagePath,
-      version: packageInfo.version || '0.0.0',
+      version: packageInfo.version || '[VERSION]',
       timestamp,
       overallScore,
       productionReady,
@@ -570,7 +570,7 @@ export class ProductionValidator {
       const content = await readFile(packageJsonPath, 'utf-8');
       return JSON.parse(content);
     } catch (error) {
-      return { name: 'unknown', version: '0.0.0' };
+      return { name: 'unknown', version: '[VERSION]' };
     }
   }
 

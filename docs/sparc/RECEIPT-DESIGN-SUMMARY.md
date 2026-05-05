@@ -193,7 +193,7 @@ checks = [
 
   mergeAlgorithm: {
     algorithm: "merkle-tree-deterministic",
-    version: "1.0.0",
+    version: "latest",
     parameters: {
       leafOrder: "sorted-by-agentId",
       hashFunction: "blake3"

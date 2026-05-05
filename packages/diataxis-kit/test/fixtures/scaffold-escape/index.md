@@ -1,7 +1,7 @@
 ---
 title: "escape-test Documentation"
 packageName: "escape-test"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.202Z"
 ---
 

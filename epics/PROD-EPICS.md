@@ -1,6 +1,6 @@
 # UNRDF v6 Production Readiness EPICs
 
-**Document Version**: 1.0.0
+**Document Version**: [VERSION]
 **Created**: 2025-12-28
 **Owner**: Production Validation Agent
 **Current State**: 3/10 gates passing ❌

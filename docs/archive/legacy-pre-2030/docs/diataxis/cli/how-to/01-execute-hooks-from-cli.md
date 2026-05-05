@@ -27,7 +27,7 @@ Open `my-hooks.json` and replace the generated IDs and queries with your own. A 
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "meta": {
       "name": "check-persons-exist",
-      "version": "1.0.0",
+      "version": "latest",
       "description": "Fires when the graph contains at least one foaf:Person"
     },
     "condition": {

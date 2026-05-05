@@ -2,7 +2,7 @@
 
 **System Architecture Design Document**
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Author**: System Architecture Designer
 **Status**: DESIGN PHASE
@@ -42,7 +42,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF, escalat
 
 ## 1. Phase 4 Migration Pattern
 
-### 1.1 L1→L5 Escalation Path
+### latest L1→L5 Escalation Path
 
 **Overview**: Progressive maturity escalation with automated gates and verification at each level.
 
@@ -82,7 +82,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF, escalat
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 10 Core Packages Priority Ranking
+### latest 10 Core Packages Priority Ranking
 
 **Selection Criteria**:
 
@@ -113,7 +113,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF, escalat
 - `@unrdf/ml-*`: ML packages less critical for core
 - `@unrdf/yawl-*`: Extensions can follow main yawl package
 
-### 1.3 Essential Checkpoints Before L5 Promotion
+### latest Essential Checkpoints Before L5 Promotion
 
 **Gate System**: Package cannot advance to Ln+1 until ALL criteria for Ln are met.
 
@@ -230,7 +230,7 @@ timeout 5s pnpm -r exec madge --circular src/ | grep "✓ No circular dependency
 timeout 10s pnpm test:receipt-chaining  # Workflow: Δ(pkg1) → Δ(pkg2) → verify chain
 
 # 4. Performance benchmarks pass regression
-timeout 20s pnpm benchmark:compare --baseline v5.0.1  # No >10% regressions
+timeout 20s pnpm benchmark:compare --baseline vlatest  # No >10% regressions
 
 # 5. OTEL validation ≥80/100
 timeout 15s node validation/run-all.mjs comprehensive | grep "Score: [8-9][0-9]\|Score: 100"
@@ -246,7 +246,7 @@ timeout 15s node validation/run-all.mjs comprehensive | grep "Score: [8-9][0-9]\
 
 ---
 
-### 1.4 Regression Detection & Prevention
+### latest Regression Detection & Prevention
 
 **Strategy**: Multi-layered verification to catch regressions early.
 
@@ -395,7 +395,7 @@ describe('Integration: core × kgc-4d', () => {
 
 ---
 
-### 1.5 Escalation Timeline (Per Package)
+### latest Escalation Timeline (Per Package)
 
 **Typical package**: 8-12 days from L1→L5 (assuming no blockers)
 
@@ -434,7 +434,7 @@ Week 4 (L4→L5): Days 11-12
 
 ## 2. L5 Maturity Architecture
 
-### 2.1 Compositional Closure Definition
+### latest Compositional Closure Definition
 
 **L5 = Compositional Closure**: A package at L5 guarantees that:
 
@@ -474,7 +474,7 @@ Composition op₂ ∘ op₁ is L5-compliant iff:
 
 ---
 
-### 2.2 L5 Invariants (MUST Hold)
+### latest L5 Invariants (MUST Hold)
 
 **Invariant 1: Determinism**
 
@@ -764,7 +764,7 @@ module.exports = {
 
 ---
 
-### 2.3 Cross-Package Receipt Chaining
+### latest Cross-Package Receipt Chaining
 
 **Architecture**: Receipt chains span package boundaries via `previousReceiptHash`.
 
@@ -901,7 +901,7 @@ export async function verifyWorkflowProvenance(store, workflowReceiptId) {
 
 ---
 
-### 2.4 Poka-Yoke Guards (Impossible States)
+### latest Poka-Yoke Guards (Impossible States)
 
 **Poka-Yoke = Mistake-Proofing**: Design system so invalid states are impossible.
 
@@ -1181,7 +1181,7 @@ echo "✅ No circular dependencies found"
 
 ## 3. Dependency Graph Analysis
 
-### 3.1 Complete Package Inventory
+### latest Complete Package Inventory
 
 **Total Packages**: 53 (confirmed via `ls packages | wc -l`)
 
@@ -1213,7 +1213,7 @@ fusion, integration-tests, composables, cli
 
 ---
 
-### 3.2 Criticality Ranking (Top 10 Foundation Packages)
+### latest Criticality Ranking (Top 10 Foundation Packages)
 
 **Ranking Methodology**:
 
@@ -1243,7 +1243,7 @@ Score = (Dependents × 5) + (5 - InternalDeps) × 3 + CurrentLevel × 10 + Recei
 
 ---
 
-### 3.3 Coupling Analysis
+### latest Coupling Analysis
 
 **Tight Coupling** (requires coordinated migration):
 
@@ -1294,7 +1294,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 
 ---
 
-### 3.4 Migration Sequence (Topological Sort)
+### latest Migration Sequence (Topological Sort)
 
 **Principle**: Migrate dependencies before dependents (bottom-up)
 
@@ -1351,7 +1351,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 
 ## 4. Fast-Track Optimization
 
-### 4.1 12-Week Detailed Schedule
+### latest 12-Week Detailed Schedule
 
 **Constraints**:
 
@@ -1612,11 +1612,11 @@ $ timeout 10s pnpm -r exec madge --circular src/
 | 5   | Documentation: Migration guide, API reference        | 24    |
 | ALL | Production deployment dry-run                        | 8     |
 
-**Final Checkpoint**: Production sign-off, 6.0.0-rc.1 tagged
+**Final Checkpoint**: Production sign-off, latest.1 tagged
 
 ---
 
-### 4.2 Parallelization Matrix
+### latest Parallelization Matrix
 
 **Goal**: Maximize parallel work, minimize blocking dependencies
 
@@ -1690,7 +1690,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 
 ---
 
-### 4.3 Rollback Strategy Per Package
+### latest Rollback Strategy Per Package
 
 **Principle**: Each package has independent rollback, minimal blast radius
 
@@ -1736,7 +1736,7 @@ git cherry-pick <urgent-fixes>  # If needed
 ```bash
 cd packages/core
 # Revert package.json version
-jq '.version = "5.0.1"' package.json > package.json.tmp && mv package.json.tmp package.json
+jq '.version = "latest"' package.json > package.json.tmp && mv package.json.tmp package.json
 
 # Revert src/ to last good state
 git checkout a1b2c3d4 -- src/
@@ -1758,7 +1758,7 @@ git commit -m "rollback(@unrdf/core): Revert to legacy version due to <reason>"
 git push origin rollback/core-l5-failure
 
 # Create PR, auto-merge with override
-gh pr create --title "ROLLBACK: @unrdf/core to v5.0.1" --body "Reason: <explain>"
+gh pr create --title "ROLLBACK: @unrdf/core to vlatest" --body "Reason: <explain>"
 ```
 
 **Step 6: Notify Dependents**
@@ -1799,7 +1799,7 @@ sed -i 's/L5_CHECKPOINT/L4_CHECKPOINT/' .github/workflows/maturity-gate.yml
 
 ## 5. Risk Mitigation
 
-### 5.1 Risk Register
+### latest Risk Register
 
 | ID  | Risk                                  | Impact   | Probability | Mitigation                                             | Owner         |
 | --- | ------------------------------------- | -------- | ----------- | ------------------------------------------------------ | ------------- |
@@ -1814,7 +1814,7 @@ sed -i 's/L5_CHECKPOINT/L4_CHECKPOINT/' .github/workflows/maturity-gate.yml
 
 ---
 
-### 5.2 What Breaks if L5 Verification Fails?
+### latest What Breaks if L5 Verification Fails?
 
 **Failure Mode**: Package promoted to L5 but integration tests reveal issues
 
@@ -1932,7 +1932,7 @@ pnpm test:receipt-chain --packages='yawl,v6-core,kgc-4d'
 
 ---
 
-### 5.3 Rollback Mid-Phase Strategy
+### latest Rollback Mid-Phase Strategy
 
 **Scenario**: Week 6, 4 packages at L5, discover fundamental ΔGate design flaw
 
@@ -1982,7 +1982,7 @@ git cherry-pick <critical-bug-fix>
 # 4. Update all package versions to legacy
 for pkg in packages/*; do
   cd $pkg
-  jq '.version = "5.0.1"' package.json > package.json.tmp && mv package.json.tmp package.json
+  jq '.version = "latest"' package.json > package.json.tmp && mv package.json.tmp package.json
   cd ../..
 done
 
@@ -1997,14 +1997,14 @@ git commit -m "EMERGENCY ROLLBACK: Abort migration, return to legacy baseline"
 git push origin rollback/abort --force-with-lease
 
 # 7. Tag rollback point
-git tag -a v5.0.2-rollback -m "Emergency rollback from migration attempt"
-git push origin v5.0.2-rollback
+git tag -a vlatest -m "Emergency rollback from migration attempt"
+git push origin vlatest
 
 # 8. Publish to npm
 pnpm -r publish --tag=latest --access=public
 
 # 9. Post-mortem
-# Write incident report, identify root cause, plan 6.1 approach
+# Write incident report, identify root cause, plan latest approach
 ```
 
 **Cost**: 6 weeks of work lost, team morale impact, delayed migration by 3+ months
@@ -2013,7 +2013,7 @@ pnpm -r publish --tag=latest --access=public
 
 ---
 
-### 5.4 Line-in-the-Sand Decisions (Cannot Change)
+### latest Line-in-the-Sand Decisions (Cannot Change)
 
 **Immutable Constraints** (locked for this migration):
 
@@ -2098,7 +2098,7 @@ pnpm -r publish --tag=latest --access=public
 **Can Change**:
 
 - Threshold percentages (95% JSDoc → 90% if justified)
-- Add sub-levels (L3.5) for packages in transition
+- Add sub-levels (Llatest) for packages in transition
 
 ---
 
@@ -2183,7 +2183,7 @@ pnpm test:matrix --packages='oxigraph,core,kgc-4d,v6-core,hooks,yawl,kgc-substra
 pnpm test:otel --comprehensive
 
 # Run performance benchmarks
-pnpm benchmark:regression --baseline=v5.0.1 --threshold=10
+pnpm benchmark:regression --baseline=vlatest --threshold=10
 ```
 
 ### Appendix D: Contact Information
@@ -2204,7 +2204,7 @@ pnpm benchmark:regression --baseline=v5.0.1 --threshold=10
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Next Review**: Week 6 (mid-sprint check-in), Week 12 (final review)
 **Status**: AWAITING APPROVAL

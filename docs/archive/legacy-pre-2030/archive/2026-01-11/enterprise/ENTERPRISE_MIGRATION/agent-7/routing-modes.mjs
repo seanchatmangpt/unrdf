@@ -150,7 +150,7 @@ export function getModeStats() {
  */
 export function exportConfig() {
   const config = {
-    version: '1.0.0',
+    version: 'latest',
     defaultMode: DEFAULT_MODE,
     timestamp: Date.now(),
     modes: listModes(),

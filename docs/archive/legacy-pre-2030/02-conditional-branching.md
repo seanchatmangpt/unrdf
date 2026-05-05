@@ -36,7 +36,7 @@ import { WorkflowEngine, createWorkflow, sequence } from '@unrdf/yawl';
 const expenseApproval = createWorkflow({
   id: 'expense-approval',
   name: 'Expense Approval',
-  version: '1.0.0',
+  version: 'latest',
 
   tasks: [
     { id: 'submit', name: 'Submit Expense' },

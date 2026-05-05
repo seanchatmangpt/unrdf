@@ -1,4 +1,4 @@
-# Phase 4.8: Protocol Reference - Complete Message Types
+# Phase latest: Protocol Reference - Complete Message Types
 
 ## Message Structure
 
@@ -9,7 +9,7 @@ All messages follow this envelope:
   "type": "command|response|event|error",
   "id": "identifier",
   "timestamp": "ISO-8601",
-  "version": "1.0.0",
+  "version": "latest",
   "payload": {},
   "meta": {}
 }
@@ -248,10 +248,10 @@ All messages follow this envelope:
 ### Supported Versions
 
 ```
-Client v1.0.0 ↔ Server v1.0.0   ✓ Exact match
-Client v1.0.0 ↔ Server v1.1.0   ✓ Minor upgrade (ignore unknown fields)
-Client v1.0.0 ↔ Server v1.2.5   ✓ Patch upgrade (fully compatible)
-Client v1.0.0 ↔ Server v2.0.0   ✗ Major version (reject)
+Client vlatest ↔ Server vlatest   ✓ Exact match
+Client vlatest ↔ Server vlatest   ✓ Minor upgrade (ignore unknown fields)
+Client vlatest ↔ Server vlatest   ✓ Patch upgrade (fully compatible)
+Client vlatest ↔ Server vlatest   ✗ Major version (reject)
 ```
 
 ### Version Negotiation
@@ -262,11 +262,11 @@ On first message, send protocol version:
 {
   "type": "command",
   "id": "handshake",
-  "version": "1.0.0",
+  "version": "latest",
   "payload": {
     "action": "handshake",
     "params": {
-      "protocol_version": "1.0.0",
+      "protocol_version": "latest",
       "client_type": "javascript|erlang"
     }
   }
@@ -279,10 +279,10 @@ Server responds:
 {
   "type": "response",
   "id": "handshake",
-  "version": "1.0.0",
+  "version": "latest",
   "payload": {
     "success": true,
-    "protocol_version": "1.0.0",
+    "protocol_version": "latest",
     "server_type": "erlang|atomvm"
   }
 }

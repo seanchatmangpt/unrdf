@@ -5,7 +5,7 @@
 **Status**: ✅ COMPLETE - All demos pass, patterns documented, no speculation
 
 **Date**: 2025-12-27  
-**Runtime Tested**: Node.js 22.21.1  
+**Runtime Tested**: Node.js latest  
 **Proof Location**: `/tmp/runtime-proof-output.txt`
 
 ---
@@ -37,7 +37,7 @@
 import { detectRuntime, isNode, isBrowser, getCrypto } from '@unrdf/core/runtime/detect';
 
 const runtime = detectRuntime();
-// { type: 'node', version: '22.21.1', features: {...} }
+// { type: 'node', version: 'latest', features: {...} }
 
 if (runtime.features.webCrypto) {
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -62,7 +62,7 @@ if (runtime.features.webCrypto) {
 **Output**:
 
 ```
-Runtime: node 22.21.1
+Runtime: node latest
 SHA256: c68fb0cf317789bba87b13f24e95faf1f25170117358204e56b8ee8d2adbc1c9
 Empty string hash matches known value: ✅
 UUID generation unique: ✅
@@ -281,7 +281,7 @@ const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 1. **Demo 1**: `timeout 5s node packages/core/src/runtime/proofs/demo-1-isomorphic-crypto.mjs`
    - ✅ SHA-256 hash of empty string matches known value
    - ✅ UUID generation produces unique IDs
-   - ✅ Runtime detection identifies Node.js 22.21.1
+   - ✅ Runtime detection identifies Node.js latest
 
 2. **Demo 2**: `timeout 5s node packages/core/src/runtime/proofs/demo-2-universal-store.mjs`
    - ✅ In-memory store creates 4 triples
@@ -375,7 +375,7 @@ docs/
 
 ✅ Yes. Output in `/tmp/runtime-proof-output.txt` shows:
 
-- Runtime detection: "node 22.21.1"
+- Runtime detection: "node latest"
 - SHA-256 hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 - Store size: "4 triples"
 - RPC calls: All 5 tests pass
@@ -513,7 +513,7 @@ If patterns don't work:
 
 ### Runtime Detection Overhead
 
-**Measured**: `detectRuntime()` takes ~0.1ms (Node.js 22.21.1)
+**Measured**: `detectRuntime()` takes ~latestms (Node.js latest)
 
 **Method**: Run 1000 iterations, measure total time
 
@@ -521,7 +521,7 @@ If patterns don't work:
 const start = Date.now();
 for (let i = 0; i < 1000; i++) detectRuntime();
 const end = Date.now();
-// Result: ~100ms for 1000 calls = 0.1ms per call
+// Result: ~100ms for 1000 calls = latestms per call
 ```
 
 **Conclusion**: Negligible overhead, safe to call at module load time
@@ -530,12 +530,12 @@ const end = Date.now();
 
 ### Web Crypto API Performance
 
-**Measured**: SHA-256 of 1KB data takes ~0.5ms
+**Measured**: SHA-256 of 1KB data takes ~latestms
 
 **Comparison**:
 
-- Web Crypto API: 0.5ms
-- node:crypto: 0.3ms
+- Web Crypto API: latestms
+- node:crypto: latestms
 - Overhead: +67% (acceptable for cross-runtime)
 
 **Conclusion**: Web Crypto slower but still fast enough for most use cases
@@ -598,7 +598,7 @@ UNRDF already has **6 proven cross-runtime patterns** in production code:
 1. ✅ **SHA-256 hashing** works identically in Node.js and (hypothetically) browser
 2. ✅ **In-memory RDF store** works without native dependencies
 3. ✅ **JSON-RPC** enables cross-runtime message passing
-4. ✅ **Runtime detection** correctly identifies Node.js 22.21.1
+4. ✅ **Runtime detection** correctly identifies Node.js latest
 5. ✅ **All demos deterministic** (same input = same output)
 
 **Evidence**: 130 lines of captured output in `/tmp/runtime-proof-output.txt`

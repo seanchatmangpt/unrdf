@@ -1,8 +1,8 @@
 # @unrdf/knowledge-engine Capability Map
 
-**Version**: 5.0.1
+**Version**: latest
 **Status**: Production Ready
-**Runtime**: Node.js ≥18.0.0
+**Runtime**: Node.js ≥latest
 **Last Updated**: 2025-12-28
 
 ---
@@ -32,8 +32,8 @@ import {
 ```
 
 **Dependencies**:
-- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `@unrdf/streaming` (workspace), `eyereasoner` (^18.23.0)
-- Optional: `@xenova/transformers` (^2.17.2) for AI search
+- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `@unrdf/streaming` (workspace), `eyereasoner` (^latest)
+- Optional: `@xenova/transformers` (^latest) for AI search
 
 **Evidence**:
 - Test Coverage: Not specified
@@ -272,7 +272,7 @@ timeout 5s pnpm --filter @unrdf/knowledge-engine test
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: 2025-12-28
 - **Maintainer**: @unrdf/core-team
 - **Last Review**: 2025-12-28

@@ -414,8 +414,8 @@ describe('Executor Detection', () => {
   });
 
   describe('Future: Isolated-VM Detection', () => {
-    it('should prefer isolated-vm when available (v3.1.0)', async () => {
-      // This test will pass in v3.1.0 when isolated-vm is implemented
+    it('should prefer isolated-vm when available (latest)', async () => {
+      // This test will pass in latest when isolated-vm is implemented
 
       // For now, we expect worker or vm2
       const adapter = createSandboxAdapter();
@@ -423,8 +423,8 @@ describe('Executor Detection', () => {
       expect(['worker', 'vm2', 'browser', 'isolated-vm']).toContain(adapter.getEngine());
     });
 
-    it('should detect isolated-vm version (v3.1.0)', () => {
-      // In v3.1.0, should detect isolated-vm version
+    it('should detect isolated-vm version (latest)', () => {
+      // In latest, should detect isolated-vm version
       // const version = getIsolatedVmVersion();
       // expect(version).toMatch(/^\d+\.\d+\.\d+$/);
 
@@ -432,8 +432,8 @@ describe('Executor Detection', () => {
       expect(true).toBe(true);
     });
 
-    it('should support isolated-vm specific features (v3.1.0)', () => {
-      // In v3.1.0, should support isolated-vm specific features
+    it('should support isolated-vm specific features (latest)', () => {
+      // In latest, should support isolated-vm specific features
       // - Memory snapshots
       // - CPU time limits
       // - Synchronous execution

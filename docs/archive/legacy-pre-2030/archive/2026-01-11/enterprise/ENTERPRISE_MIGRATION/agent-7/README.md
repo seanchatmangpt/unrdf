@@ -193,7 +193,7 @@ const drift = detectDrift('GET_USER', {
 });
 // Returns: {
 //   hasDrift: true,
-//   score: 65.3,
+//   score: latest,
 //   severity: 'MODERATE',
 //   samples: 42,
 //   patterns: { byDiffType: {...}, affectedFields: {...} },
@@ -201,7 +201,7 @@ const drift = detectDrift('GET_USER', {
 // }
 
 // Check if drift acceptable
-const acceptable = isAcceptableDrift(65.3, 75); // true (below threshold)
+const acceptable = isAcceptableDrift(latest, 75); // true (below threshold)
 ```
 
 **Drift Severity Levels:**

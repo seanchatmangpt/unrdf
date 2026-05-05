@@ -161,7 +161,7 @@ export function defineLens(id, profile, mappings, metadata = {}) {
   // Construct lens object
   const lens = {
     id,
-    version: '1.0.0',
+    version: 'latest',
     profile,
     mappings,
     metadata,

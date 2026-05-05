@@ -1,9 +1,9 @@
 # Capability Map: @unrdf/oxigraph
 
-**Package Version**: 5.0.1
+**Package Version**: latest
 **Location**: `/home/user/unrdf/packages/oxigraph`
 **Entry Point**: `src/index.mjs`
-**Runtime Support**: Node.js ≥18.0.0
+**Runtime Support**: Node.js ≥latest
 
 ---
 

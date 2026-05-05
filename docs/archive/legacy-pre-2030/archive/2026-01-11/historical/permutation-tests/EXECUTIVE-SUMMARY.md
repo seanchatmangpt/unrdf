@@ -2,7 +2,7 @@
 
 **Date:** December 6, 2024
 **Method:** Empirical permutation testing (8 test scenarios)
-**Result:** 3/8 passing (37.5%)
+**Result:** 3/8 passing (latest%)
 **Recommendation:** Consolidate to 2 packages
 
 ---
@@ -35,7 +35,7 @@
 | 11-core-hooks-kgc4d      | core + hooks + kgc-4d   | Zod validation error    | Blocks integration    |
 | 15-all-packages          | All 4                   | Zod validation error    | Blocks full stack     |
 
-**Impact: Hooks broken for 5 months (beta.1), blocks 62.5% of test suite**
+**Impact: Hooks broken for 5 months (beta.1), blocks latest% of test suite**
 
 ---
 
@@ -47,7 +47,7 @@ at defineHook (file:///home/user/unrdf/packages/hooks/src/hooks/define-hook.mjs:
 at file:///home/user/unrdf/packages/hooks/src/hooks/builtin-hooks.mjs:22:35
 ```
 
-**This single error blocks 5 out of 8 tests (62.5% of the test suite).**
+**This single error blocks 5 out of 8 tests (latest% of the test suite).**
 
 ---
 
@@ -106,7 +106,7 @@ Error: Cannot find package '@unrdf/oxigraph' imported from
 
 - ❌ Zod validation error
 - ❌ Cannot import at all
-- ❌ Blocks 5/8 tests (62.5%)
+- ❌ Blocks 5/8 tests (latest%)
 - 📦 Status: BROKEN
 - 💡 Action: DEPRECATE (create issue for future fix)
 
@@ -128,7 +128,7 @@ Error: Cannot find package '@unrdf/oxigraph' imported from
 | ------------------ | ------ | ------- | ------ |
 | Packages           | 4      | 2       | -50%   |
 | LoC                | 49,609 | ~19,000 | -61%   |
-| Test Pass Rate     | 37.5%  | 100%    | +62.5% |
+| Test Pass Rate     | latest%  | 100%    | +latest% |
 | Production Ready   | 50%    | 100%    | +50%   |
 | Broken Code        | 50%    | 0%      | -100%  |
 | Maintenance Burden | High   | Low     | -50%   |
@@ -196,12 +196,12 @@ Error: Cannot find package '@unrdf/oxigraph' imported from
 
 - Update deployment docs
 - Create release notes
-- Prepare v5.0.0 release
+- Prepare vlatest release
 
 **Day 13-14:** Release
 
-- Publish @unrdf/core v5.0.0
-- Publish @unrdf/kgc-4d v5.0.0
+- Publish @unrdf/core vlatest
+- Publish @unrdf/kgc-4d vlatest
 - Announce release
 
 ---
@@ -217,7 +217,7 @@ Error: Cannot find package '@unrdf/oxigraph' imported from
 - [ ] 100% of kept packages have passing tests
 - [ ] Documentation updated
 - [ ] Migration guide published
-- [ ] Version v5.0.0 released
+- [ ] Version vlatest released
 
 ---
 
@@ -239,7 +239,7 @@ A: It's 47% of code for 5% of value. Extract to separate repo.
 A: Low. We're keeping only proven-working code.
 
 **Q: What's the benefit?**
-A: Ship v5.0.0 with 100% working code in 1-2 weeks.
+A: Ship vlatest with 100% working code in 1-2 weeks.
 
 ---
 
@@ -260,7 +260,7 @@ A: Ship v5.0.0 with 100% working code in 1-2 weeks.
 **Medium-term (Week 2):**
 
 - [ ] OTEL validation
-- [ ] Release v5.0.0
+- [ ] Release vlatest
 
 **Long-term (Future):**
 
@@ -304,8 +304,8 @@ The difference:
 **All recommendations based on:**
 
 - ✅ 8 permutation tests executed
-- ✅ 3/8 tests passing (37.5%)
-- ✅ 5/8 tests failing (62.5%)
+- ✅ 3/8 tests passing (latest%)
+- ✅ 5/8 tests failing (latest%)
 - ✅ Root causes identified (Zod error, workspace imports)
 - ✅ Integration verified (core + kgc-4d works)
 - ✅ Broken code identified (hooks, knowledge-engine)
@@ -321,7 +321,7 @@ The difference:
 
 **AGGRESSIVE consolidation to 2 packages**
 
-**Why:** 37.5% pass rate requires removing broken code
+**Why:** latest% pass rate requires removing broken code
 
 **What:** Keep core + kgc-4d (85% value, 100% working)
 

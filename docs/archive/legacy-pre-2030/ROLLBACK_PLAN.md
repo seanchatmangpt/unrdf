@@ -1,6 +1,6 @@
-# UNRDF v6.0.0 Production Rollback Plan
+# UNRDF vlatest Production Rollback Plan
 
-**Version:** 6.0.0  
+**Version:** latest  
 **Last Updated:** 2026-04-03  
 **Status:** Production-Ready  
 **Incident Response SLA:** 15 minutes decision → 45 minutes full rollback
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document defines the complete incident response and rollback procedure for UNRDF v6.0.0 production deployments. It addresses decision criteria, technical procedures, data compatibility, and communication protocols for rapid recovery to v5.x if critical issues occur.
+This document defines the complete incident response and rollback procedure for UNRDF vlatest production deployments. It addresses decision criteria, technical procedures, data compatibility, and communication protocols for rapid recovery to v5.x if critical issues occur.
 
 **Key Contacts:**
 
@@ -21,7 +21,7 @@ This document defines the complete incident response and rollback procedure for 
 
 ## 1. Rollback Decision Tree
 
-### 1.1 Detection Criteria (Auto-Trigger Alerts)
+### latest Detection Criteria (Auto-Trigger Alerts)
 
 ```
 CRITICAL (Immediate Rollback):
@@ -45,7 +45,7 @@ MEDIUM (Monitor, Consider Rollback):
 └─ P2: CLI command regression (backward compatibility)
 ```
 
-### 1.2 Decision Authority & Timeline
+### latest Decision Authority & Timeline
 
 **Incident Commander Decision Matrix:**
 
@@ -70,7 +70,7 @@ if (criticalityScore >= 8/10 AND timeToMitigation > 30min) {
 }
 ```
 
-### 1.3 Time Estimates (SLA)
+### latest Time Estimates (SLA)
 
 | Phase                      | Duration   | Target                  | Notes                   |
 | -------------------------- | ---------- | ----------------------- | ----------------------- |
@@ -81,7 +81,7 @@ if (criticalityScore >= 8/10 AND timeToMitigation > 30min) {
 | Post-Rollback Validation   | 10 min     | Health checks pass      | Services stable         |
 | **Total Recovery SLA**     | **45 min** | **Restore service**     | From P0 detection       |
 
-### 1.4 Data Loss Assessment
+### latest Data Loss Assessment
 
 **v6 → v5 Rollback Data Safety:**
 
@@ -109,7 +109,7 @@ RECOVERY PROCEDURES:
 
 ## 2. Quick Revert Procedure
 
-### 2.1 Pre-Rollback Validation (5 minutes)
+### latest Pre-Rollback Validation (5 minutes)
 
 **BEFORE executing rollback, verify:**
 
@@ -127,8 +127,8 @@ curl -s http://localhost:3000/consensus/status | jq '.cluster.healthy'
 # Expected: false or error (confirms breakdown)
 
 # 4. Verify v5.x container images are in registry
-docker pull unrdf-registry/unrdf-core:5.5.0
-docker pull unrdf-registry/unrdf-gateway:5.5.0
+docker pull unrdf-registry/unrdf-core:latest
+docker pull unrdf-registry/unrdf-gateway:latest
 # Expected: Pull succeeds (images available for immediate deployment)
 
 # 5. Backup v6 state for post-incident analysis
@@ -136,14 +136,14 @@ aws s3 cp /var/lib/unrdf/rdf-store s3://unrdf-backups/incident/ --recursive
 # Preserve state for debugging (< 2 min)
 ```
 
-### 2.2 Step-by-Step Revert (20-30 minutes)
+### latest Step-by-Step Revert (20-30 minutes)
 
 **Phase 1: Notification & Lock (2 minutes)**
 
 ```bash
 # 1. Notify all services of rollback intent
 # Send to #incident-response channel
-echo "🚨 ROLLBACK INITIATED: v6.0.0 → v5.5.0
+echo "🚨 ROLLBACK INITIATED: vlatest → vlatest
   Issue: [INCIDENT_DESCRIPTION]
   ETA: 30 min to full recovery
   Maintenance window: 15:30-16:30 UTC" | send_slack_notification
@@ -163,8 +163,8 @@ sleep 30  # Allow graceful shutdown
 
 # 2. Update image versions in deployment manifests
 # File: k8s/production/deployment.yaml
-sed -i 's|unrdf-core:6.0.0|unrdf-core:5.5.0|g' k8s/production/deployment.yaml
-sed -i 's|unrdf-gateway:6.0.0|unrdf-gateway:5.5.0|g' k8s/production/deployment.yaml
+sed -i 's|unrdf-core:latest|unrdf-core:latest|g' k8s/production/deployment.yaml
+sed -i 's|unrdf-gateway:latest|unrdf-gateway:latest|g' k8s/production/deployment.yaml
 
 # 3. Scale up v5 services (3-5 replicas)
 kubectl scale deployment unrdf-core --replicas=3 -n production
@@ -182,7 +182,7 @@ kubectl rollout status deployment/unrdf-gateway -n production --timeout=5m
 cp /etc/unrdf/config.v5.backup.toml /etc/unrdf/config.toml
 
 # 2. Reload environment variables
-export UNRDF_VERSION=5.5.0
+export UNRDF_VERSION=latest
 export UNRDF_RDF_ENGINE=n3  # v5 default (not oxigraph)
 export UNRDF_FEATURE_V6_COMPAT=false  # Disable v6 features
 
@@ -224,7 +224,7 @@ kubectl set env deployment/unrdf-core READ_ONLY=false -n production
 ```bash
 # 1. Verify services are healthy
 curl -s https://api.unrdf.example/health | jq '.'
-# Expected: {"status": "healthy", "version": "5.5.0"}
+# Expected: {"status": "healthy", "version": "latest"}
 
 # 2. Check RDF store connectivity
 curl -s https://api.unrdf.example/query -d '{query: "SELECT * WHERE { ?s ?p ?o } LIMIT 1"}' | jq '.results.bindings | length'
@@ -235,19 +235,19 @@ curl -s https://api.unrdf.example/receipts/status | jq '.chainValid'
 # Expected: true (chain intact)
 
 # 4. Enable traffic to services (remove maintenance mode)
-kubectl patch service unrdf-gateway -n production -p '{"spec":{"selector":{"version":"5.5.0"}}}'
+kubectl patch service unrdf-gateway -n production -p '{"spec":{"selector":{"version":"latest"}}}'
 
 # 5. Remove rollback lock
 rm /var/lib/unrdf/.rollback-in-progress
 
 # 6. Notify completion
-echo "✅ ROLLBACK COMPLETE: Service restored to v5.5.0
+echo "✅ ROLLBACK COMPLETE: Service restored to vlatest
   Completed: 16:00 UTC
   Data restored from: 15:00 UTC backup
   Next steps: Post-incident review" | send_slack_notification
 ```
 
-### 2.3 Service Restart Procedure
+### latest Service Restart Procedure
 
 **If container-level restart is insufficient:**
 
@@ -281,12 +281,12 @@ curl -s http://localhost:3000/health
 
 ## 3. unrdf.toml Downgrade Path
 
-### 3.1 Configuration Schema Changes (v6 → v5)
+### latest Configuration Schema Changes (v6 → v5)
 
 **Breaking changes in unrdf.toml:**
 
 ```toml
-# v6.0.0 Configuration (REMOVE/MODIFY for v5)
+# vlatest Configuration (REMOVE/MODIFY for v5)
 [rdf]
 engine = "oxigraph"  # v6 default (v5: "n3")
 store_format = "binary"  # v6 (v5: "ntriples")
@@ -301,7 +301,7 @@ enabled = true  # v6 feature (v5: false)
 cluster_mode = "distributed"  # v6 (v5: "standalone")
 ```
 
-### 3.2 v6 Config → v5 Config Conversion Script
+### latest v6 Config → v5 Config Conversion Script
 
 **Automated downgrade script (60 seconds):**
 
@@ -347,7 +347,7 @@ echo "  - Consensus: raft → simple"
 echo "  - Federation: disabled"
 ```
 
-### 3.3 Field-by-Field Downgrade Mapping
+### latest Field-by-Field Downgrade Mapping
 
 | v6 Field                  | v5 Equivalent | Action                   | Notes                      |
 | ------------------------- | ------------- | ------------------------ | -------------------------- |
@@ -361,13 +361,13 @@ echo "  - Federation: disabled"
 | `query.timeout_ms`        | (unchanged)   | Keep as-is               | Backward compatible        |
 | `security.tls_enabled`    | (unchanged)   | Keep as-is               | Backward compatible        |
 
-### 3.4 Example: v6 Config → v5 Config
+### latest Example: v6 Config → v5 Config
 
-**Before (v6.0.0):**
+**Before (vlatest):**
 
 ```toml
 [app]
-version = "6.0.0"
+version = "latest"
 name = "UNRDF"
 
 [rdf]
@@ -396,11 +396,11 @@ tls_enabled = true
 tls_cert_path = "/etc/unrdf/cert.pem"
 ```
 
-**After (v5.5.0):**
+**After (vlatest):**
 
 ```toml
 [app]
-version = "5.5.0"
+version = "latest"
 name = "UNRDF"
 
 [rdf]
@@ -425,7 +425,7 @@ tls_cert_path = "/etc/unrdf/cert.pem"
 
 ## 4. Data Format Compatibility
 
-### 4.1 RDF Store Format Compatibility Matrix
+### latest RDF Store Format Compatibility Matrix
 
 | Aspect                 | v6 (Oxigraph)              | v5 (N3)          | Compatibility                 | Action                    |
 | ---------------------- | -------------------------- | ---------------- | ----------------------------- | ------------------------- |
@@ -436,7 +436,7 @@ tls_cert_path = "/etc/unrdf/cert.pem"
 | **Query Indices**      | SPARQL indices (optimized) | Sequential scan  | No indices in v5              | Query slower, but correct |
 | **Streaming Support**  | Native changesets          | N-Triples append | Streaming format differs      | Convert to N-Triples      |
 
-### 4.2 Triple Format Compatibility
+### latest Triple Format Compatibility
 
 **v6 to v5 format conversion (example):**
 
@@ -469,7 +469,7 @@ head -n 5 /tmp/triples.ntriples
 unrdf-cli load --format ntriples --file /tmp/triples.ntriples
 ```
 
-### 4.3 Query Result Format Changes
+### latest Query Result Format Changes
 
 **v6 query results:**
 
@@ -482,7 +482,7 @@ unrdf-cli load --format ntriples --file /tmp/triples.ntriples
     ]
   },
   "_metadata": {
-    "execution_time_ms": 1.2,
+    "execution_time_ms": latest,
     "receipt_id": "rcpt-uuid",
     "verified": true
   }
@@ -504,7 +504,7 @@ unrdf-cli load --format ntriples --file /tmp/triples.ntriples
 
 **Compatibility:** v6 results are SUPERSET of v5 (v5 queries work in v6, but v6 features missing in v5).
 
-### 4.4 Data Corruption Recovery Procedures
+### latest Data Corruption Recovery Procedures
 
 **If data becomes corrupted after rollback:**
 
@@ -514,7 +514,7 @@ unrdf-cli validate --checksum
 # Output:
 #   ✗ Triple s1:p1:o1 - checksum mismatch
 #   ✗ Triple s2:p2:o2 - invalid format
-#   Corruption detected in 234 triples (0.02%)
+#   Corruption detected in 234 triples (latest%)
 
 # 2. Backup corrupted store
 mv /var/lib/unrdf/rdf-store /var/lib/unrdf/rdf-store.corrupted
@@ -535,7 +535,7 @@ unrdf-cli validate --checksum
 unrdf-cli repair --source /var/log/unrdf/mutations.ntriples --output /var/lib/unrdf/rdf-store
 ```
 
-### 4.5 Backup & Restore Procedure
+### latest Backup & Restore Procedure
 
 **Automated hourly backups (v6 compatible):**
 
@@ -625,7 +625,7 @@ echo "✅ Restore complete"
 
 ## 5. CLI Command Differences (v5 vs v6)
 
-### 5.1 Command Changes Summary
+### latest Command Changes Summary
 
 | Command    | v5 Syntax            | v6 Syntax                     | Status     | Migration               |
 | ---------- | -------------------- | ----------------------------- | ---------- | ----------------------- |
@@ -637,7 +637,7 @@ echo "✅ Restore complete"
 | Receipts   | (N/A)                | `unrdf receipts list`         | NEW        | v6-only                 |
 | Health     | `unrdf health`       | `unrdf health`                | COMPATIBLE | Same in both            |
 
-### 5.2 Before/After Command Examples
+### latest Before/After Command Examples
 
 **Loading an RDF file:**
 
@@ -683,7 +683,7 @@ unrdf health
 # Output: {"status": "healthy", "version": "..."}
 ```
 
-### 5.3 Argument/Option Changes
+### latest Argument/Option Changes
 
 ```bash
 # v5 → v6 breaking changes
@@ -705,20 +705,20 @@ v6: unrdf query --engine oxigraph
 v5: (N/A - always uses n3)
 ```
 
-### 5.4 Output Format Differences
+### latest Output Format Differences
 
 **Health endpoint output:**
 
 ```bash
 # v5 health
 curl http://localhost:3000/health
-# {"status": "healthy", "version": "5.5.0"}
+# {"status": "healthy", "version": "latest"}
 
 # v6 health
 curl http://localhost:3000/health
 # {
 #   "status": "healthy",
-#   "version": "6.0.0",
+#   "version": "latest",
 #   "deltagate": {"enabled": true, "receipts": 1234},
 #   "consensus": {"healthy": true, "nodes": 3},
 #   "timestamp": "2026-04-03T15:30:00Z"
@@ -727,7 +727,7 @@ curl http://localhost:3000/health
 # Migration: Parse v5 format only (ignore v6 extras)
 ```
 
-### 5.5 Script Update Examples
+### latest Script Update Examples
 
 **Update shell scripts for v5 compatibility:**
 
@@ -768,12 +768,12 @@ if (version.startsWith('5')) {
 
 ## 6. Communication Plan
 
-### 6.1 Incident Notification (Immediate)
+### latest Incident Notification (Immediate)
 
 **Slack notification template (send to #incident-response):**
 
 ```
-🚨 PRODUCTION INCIDENT: UNRDF v6.0.0 Rollback
+🚨 PRODUCTION INCIDENT: UNRDF vlatest Rollback
 
 Issue: [SHORT DESCRIPTION - 1 sentence]
 Severity: [P0/P1/P2]
@@ -795,12 +795,12 @@ Impact:
   - [Specific impact 2]
   - Data integrity: [SAFE/AT RISK]
 
-Action: Downgrading from v6.0.0 → v5.5.0
+Action: Downgrading from vlatest → vlatest
 
 More: [LINK TO INCIDENT LOG]
 ```
 
-### 6.2 External Customer Communication
+### latest External Customer Communication
 
 **Email template (send to customers if >30 min impact):**
 
@@ -821,7 +821,7 @@ WHAT HAPPENED:
   [Technical summary for non-technical audience, 1-2 paragraphs]
 
 RESOLUTION:
-  We rolled back from v6.0.0 to v5.5.0, restoring full service at 16:15 UTC.
+  We rolled back from vlatest to vlatest, restoring full service at 16:15 UTC.
   Data integrity verified ✅
   All queries functioning normally ✅
 
@@ -842,12 +842,12 @@ UNRDF Operations Team
 status.unrdf.io | support@unrdf.io
 ```
 
-### 6.3 Internal Incident Report Format
+### latest Internal Incident Report Format
 
 **Incident report (file to /incidents/[TIMESTAMP].md):**
 
 ```markdown
-# Incident Report: UNRDF v6.0.0 Production Rollback
+# Incident Report: UNRDF vlatest Production Rollback
 
 **Date:** April 3, 2026
 **Duration:** 45 minutes (15:30 - 16:15 UTC)
@@ -879,7 +879,7 @@ status.unrdf.io | support@unrdf.io
 
 ## Resolution
 
-Rolled back from v6.0.0 → v5.5.0 successfully.
+Rolled back from vlatest → vlatest successfully.
 
 ## Preventive Actions
 
@@ -896,7 +896,7 @@ Rolled back from v6.0.0 → v5.5.0 successfully.
 
 ## 7. Validation After Rollback
 
-### 7.1 Immediate Post-Rollback Checks (5 minutes)
+### latest Immediate Post-Rollback Checks (5 minutes)
 
 **Run these checks in sequence:**
 
@@ -904,7 +904,7 @@ Rolled back from v6.0.0 → v5.5.0 successfully.
 # 1. Service health (API endpoint)
 echo "1. Checking service health..."
 curl -s http://localhost:3000/health | jq '.'
-# Expected: {"status": "healthy", "version": "5.5.0"}
+# Expected: {"status": "healthy", "version": "latest"}
 
 # 2. RDF store connectivity
 echo "2. Checking RDF store..."
@@ -926,10 +926,10 @@ unrdf config validate
 # 5. Version confirmation
 echo "5. Checking version..."
 unrdf --version
-# Expected: 5.5.0 or 5.x.x
+# Expected: latest or 5.x.x
 ```
 
-### 7.2 Data Integrity Validation (10 minutes)
+### latest Data Integrity Validation (10 minutes)
 
 **Verify no data loss occurred:**
 
@@ -966,7 +966,7 @@ unrdf-cli export --format ntriples --limit 10 | \
   done
 ```
 
-### 7.3 Performance Baseline Verification
+### latest Performance Baseline Verification
 
 **Ensure performance meets v5 standards:**
 
@@ -1005,7 +1005,7 @@ else
 fi
 ```
 
-### 7.4 Functional Testing Suite (15 minutes)
+### latest Functional Testing Suite (15 minutes)
 
 **Run automated test suite to verify functionality:**
 
@@ -1080,7 +1080,7 @@ else
 fi
 ```
 
-### 7.5 Health Dashboard Verification
+### latest Health Dashboard Verification
 
 **Check monitoring dashboards:**
 
@@ -1126,7 +1126,7 @@ kubectl logs -n production deployment/unrdf-core --tail=100 | grep -i error
 
 ---
 
-**Document Version:** 1.0  
+**Document Version:** latest  
 **Last Updated:** 2026-04-03  
 **Next Review:** 2026-06-03 (quarterly)  
 **Owner:** Infrastructure / SRE Team

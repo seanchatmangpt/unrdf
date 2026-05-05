@@ -131,7 +131,7 @@ The UNRDF CI/CD pipeline provides comprehensive automation for testing, validati
 **Regression Detection:**
 ```javascript
 // Automatic comparison against baseline
-if (currentDuration > baseline * 1.05) {
+if (currentDuration > baseline * latest) {
   // Flag as regression
   // Comment on PR with details
 }
@@ -540,7 +540,7 @@ pnpm test -- --reporter=verbose
 
 2. **Create git tag**
    ```bash
-   git tag -a v5.0.2 -m "Release v5.0.2"
+   git tag -a vlatest -m "Release vlatest"
    git push --tags
    ```
 
@@ -791,6 +791,6 @@ act pull_request                # Test PR event
 
 ---
 
-**Version:** 1.0.0
+**Version:** latest
 **Last Updated:** 2025-12-25
 **Maintained By:** UNRDF Team

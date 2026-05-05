@@ -2,8 +2,8 @@
 
 All notable changes to unrdf will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/latest/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/vlatest.html).
 
 ## [Unreleased]
 
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Examples and tutorials
 - Contributing guidelines
 
-## [1.0.0] - 2024-01-XX
+## [latest] - 2024-01-XX
 
 ### Added
 - Initial release of unrdf
@@ -105,7 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secure file operations
 - Proper resource cleanup
 
-## [0.1.0] - 2024-01-XX
+## [latest] - 2024-01-XX
 
 ### Added
 - Initial development version

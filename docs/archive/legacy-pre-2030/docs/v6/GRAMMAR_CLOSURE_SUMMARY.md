@@ -2,7 +2,7 @@
 
 **Date**: 2025-12-27
 **Status**: Alpha Implementation Complete
-**Version**: 6.0.0-alpha.1
+**Version**: latest-alpha.1
 
 ---
 

@@ -341,7 +341,7 @@ The final proof artifact includes:
 ```json
 {
   "demo": "kgc-multi-agent-e2e",
-  "version": "1.0.0",
+  "version": "latest",
   "timestamp": "2025-12-27T00:XX:XX.XXXZ",
   "proof": {
     "agents_run": 3,

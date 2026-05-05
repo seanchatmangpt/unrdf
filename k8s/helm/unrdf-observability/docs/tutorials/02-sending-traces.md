@@ -62,8 +62,8 @@ The Helm chart includes an UNRDF deployment (disabled by default). To enable it:
 
 1. Build and load the image into kind:
 ```bash
-docker build -t unrdf:6.0.0-rc.1 .
-kind load docker-image unrdf:6.0.0-rc.1 --name unrdf
+docker build -t unrdf:latest-rc.1 .
+kind load docker-image unrdf:latest-rc.1 --name unrdf
 ```
 
 2. Upgrade the release with the app enabled:

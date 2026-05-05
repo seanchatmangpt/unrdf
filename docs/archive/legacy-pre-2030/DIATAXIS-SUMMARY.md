@@ -120,8 +120,8 @@ Status: **2/10 EXIST**
 ## Kill List: 255 Files to Delete/Archive
 
 ### DELETE (move to git history):
-1. `/docs/internal/` - 1.8M internal planning
-2. `/docs/archive/` - 1.8M old v3/v4 docs
+1. `/docs/internal/` - latestM internal planning
+2. `/docs/archive/` - latestM old v3/v4 docs
 3. `/docs/thesis-publication/` - Academic paper
 4. `/docs/video-scripts/` - Not technical docs
 5. `/docs/architecture-2028/` - Aspirational

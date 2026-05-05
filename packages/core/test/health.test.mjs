@@ -11,7 +11,7 @@ describe('Health Check System', () => {
     it('should create health check system', () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
 
       expect(health).toHaveProperty('liveness');
@@ -23,7 +23,7 @@ describe('Health Check System', () => {
     it('should perform liveness check', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
 
       const result = await health.liveness();
@@ -31,7 +31,7 @@ describe('Health Check System', () => {
       expect(result).toMatchObject({
         status: HealthStatus.HEALTHY,
         service: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
       expect(result).toHaveProperty('timestamp');
       expect(result).toHaveProperty('uptime');
@@ -41,7 +41,7 @@ describe('Health Check System', () => {
     it('should perform readiness check with no dependencies', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
 
       const result = await health.readiness();
@@ -49,7 +49,7 @@ describe('Health Check System', () => {
       expect(result).toMatchObject({
         status: HealthStatus.HEALTHY,
         service: 'test-service',
-        version: '1.0.0',
+        version: '[VERSION]',
         environment: 'production'
       });
       expect(result).toHaveProperty('dependencies');
@@ -59,7 +59,7 @@ describe('Health Check System', () => {
     it('should check dependencies in readiness', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0',
+        version: '[VERSION]',
         dependencies: {
           database: async () => true,
           cache: async () => true
@@ -78,7 +78,7 @@ describe('Health Check System', () => {
     it('should detect unhealthy dependencies', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0',
+        version: '[VERSION]',
         dependencies: {
           database: async () => false,
           cache: async () => true
@@ -94,7 +94,7 @@ describe('Health Check System', () => {
     it('should handle dependency errors', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0',
+        version: '[VERSION]',
         dependencies: {
           database: async () => {
             throw new Error('Connection refused');
@@ -112,14 +112,14 @@ describe('Health Check System', () => {
     it('should return metrics', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
 
       const result = await health.metrics();
 
       expect(result).toHaveProperty('timestamp');
       expect(result).toHaveProperty('service', 'test-service');
-      expect(result).toHaveProperty('version', '1.0.0');
+      expect(result).toHaveProperty('version', '[VERSION]');
       expect(result).toHaveProperty('uptime');
       expect(result).toHaveProperty('requests');
       expect(result).toHaveProperty('process');
@@ -130,7 +130,7 @@ describe('Health Check System', () => {
     it('should return Prometheus format metrics', async () => {
       const health = createHealthChecks({
         serviceName: 'test-service',
-        version: '1.0.0'
+        version: '[VERSION]'
       });
 
       const result = await health.prometheus();
@@ -151,7 +151,7 @@ describe('Health Check System', () => {
       expect(result).toMatchObject({
         status: HealthStatus.HEALTHY,
         service: 'unrdf',
-        version: '5.0.1'
+        version: '[VERSION]'
       });
     });
 

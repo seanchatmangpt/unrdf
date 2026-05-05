@@ -1,10 +1,10 @@
-# Security Configuration Guide - UNRDF v6.0.0
+# Security Configuration Guide - UNRDF latest
 
 **Complete security configuration guide for production deployments**
 
 ## Overview
 
-This guide provides detailed security configuration for UNRDF v6.0.0 daemon operations, covering authentication, authorization, encryption, and monitoring.
+This guide provides detailed security configuration for UNRDF latest daemon operations, covering authentication, authorization, encryption, and monitoring.
 
 **Security Level**: Enterprise-grade
 **Compliance**: OWASP Top 10, CWE Top 25, SOC 2, GDPR
@@ -431,7 +431,7 @@ server {
   # OCSP stapling
   ssl_stapling on;
   ssl_stapling_verify on;
-  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver latest.8 latest.4 valid=300s;
   resolver_timeout 5s;
 
   # HSTS (31536000 seconds = 1 year)
@@ -526,7 +526,7 @@ sudo ufw enable
 ```hcl
 # terraform/vpc.tf
 resource "aws_vpc" "unrdf" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "latest.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true
 
@@ -538,7 +538,7 @@ resource "aws_vpc" "unrdf" {
 # Public subnet (nginx reverse proxy)
 resource "aws_subnet" "public" {
   vpc_id = aws_vpc.unrdf.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "latest.0/24"
   map_public_ip_on_launch = true
 
   tags = {
@@ -549,7 +549,7 @@ resource "aws_subnet" "public" {
 # Private subnet (daemon application)
 resource "aws_subnet" "private" {
   vpc_id = aws_vpc.unrdf.id
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "latest.0/24"
 
   tags = {
     Name = "unrdf-private"
@@ -564,14 +564,14 @@ resource "aws_security_group" "daemon" {
     from_port = 8080
     to_port = 8080
     protocol = "tcp"
-    cidr_blocks = ["10.0.1.0/24"]  # Only from public subnet
+    cidr_blocks = ["latest.0/24"]  # Only from public subnet
   }
 
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["latest.0/0"]
   }
 }
 ```

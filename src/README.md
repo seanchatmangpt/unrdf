@@ -321,7 +321,7 @@ const receipt = await Receipt.create({
   inputHashes: { ontologyReleases: [], deltaCapsule: '' },
   decision: 'allow',
   outputHash: '',
-  toolchainVersion: { node: 'v18.0.0', packages: {} }
+  toolchainVersion: { node: '[VERSION]', packages: {} }
 });
 
 // Chain receipts
@@ -431,6 +431,6 @@ For issues, questions, or contributions:
 
 ---
 
-**Status**: Production-ready (v1.0.0)
+**Status**: Production-ready ([VERSION])
 **Last Updated**: 2025-12-26
 **Maintained By**: UNRDF Contributors

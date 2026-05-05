@@ -618,7 +618,7 @@ describe('CertificateGenerator', () => {
       const cert = await generator.generateCertificate(measurements);
 
       expect(cert).toBeDefined();
-      expect(cert.version).toBe('1.0.0');
+      expect(cert.version).toBe('[VERSION]');
       expect(cert.epoch).toMatch(/^tau_/);
       expect(cert.certificateHash).toBeDefined();
       expect(cert.health.status).toBeDefined();

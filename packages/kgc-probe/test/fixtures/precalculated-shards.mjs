@@ -70,7 +70,7 @@ export const SHARD_RUNTIME = {
     createObservation('runtime', 'runtime_check', 0, {
       subject: 'node:version',
       predicate: 'sys:version',
-      object: 'v22.12.0',
+      object: '[VERSION]',
       confidence: 0.99
     }),
     createObservation('runtime', 'runtime_check', 1, {
@@ -186,7 +186,7 @@ export const SHARD_NET = {
     createObservation('network', 'net_check', 1, {
       subject: 'net:dns',
       predicate: 'sys:resolver',
-      object: '127.0.0.1'
+      object: '[VERSION].1'
     })
   ],
   hash: 'e'.repeat(64),
@@ -204,12 +204,12 @@ export const SHARD_TOOLING = {
     createObservation('tooling', 'tool_check', 0, {
       subject: 'tool:pnpm',
       predicate: 'sys:version',
-      object: '9.15.0'
+      object: '[VERSION]'
     }),
     createObservation('tooling', 'tool_check', 1, {
       subject: 'tool:vitest',
       predicate: 'sys:version',
-      object: '4.0.15'
+      object: '[VERSION]'
     }),
     createObservation('tooling', 'tool_check', 2, {
       subject: 'tool:eslint',

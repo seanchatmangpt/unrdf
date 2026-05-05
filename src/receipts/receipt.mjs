@@ -65,8 +65,8 @@ const ReceiptSchema = z.object({
  *   decision: 'allow',
  *   outputHash: 'hash4',
  *   toolchainVersion: {
- *     node: '18.19.0',
- *     packages: { '@unrdf/core': '5.0.1' }
+ *     node: '[VERSION]',
+ *     packages: { '@unrdf/core': '[VERSION]' }
  *   },
  *   beforeHash: 'hash0'
  * });

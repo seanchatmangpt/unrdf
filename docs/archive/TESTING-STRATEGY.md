@@ -245,7 +245,7 @@ pnpm test:coverage
 ### E2E Test Prerequisites
 
 **System Requirements**:
-- Docker Desktop 4.0+ (or Docker Engine + Docker Compose)
+- Docker Desktop latest+ (or Docker Engine + Docker Compose)
 - Node.js 20+ with pnpm
 - Available ports: 3000, 4317, 4318, 8888, 9090, 16686, 3001, 3002
 - Memory: 4GB RAM for Docker
@@ -254,11 +254,11 @@ pnpm test:coverage
 **Setup**:
 ```bash
 # Pull Docker images (optional, speeds up first run)
-docker pull otel/opentelemetry-collector:0.91.0
-docker pull jaegertracing/all-in-one:1.52
-docker pull prom/prometheus:v2.48.1
-docker pull grafana/grafana:10.2.3
-docker pull gitea/gitea:1.21-rootless
+docker pull otel/opentelemetry-collector:latest
+docker pull jaegertracing/all-in-one:latest
+docker pull prom/prometheus:vlatest
+docker pull grafana/grafana:latest
+docker pull gitea/gitea:latest
 docker pull node:20-alpine
 
 # Start infrastructure manually (optional)

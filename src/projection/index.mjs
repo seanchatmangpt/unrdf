@@ -15,7 +15,7 @@
  *
  * const pipeline = new ProjectionPipeline({
  *   projectName: 'MyProject',
- *   version: '1.0.0'
+ *   version: '[VERSION]'
  * });
  *
  * const result = await pipeline.run({
@@ -49,7 +49,7 @@ export { ProjectionPipeline as default } from './projection-pipeline.mjs';
  * @returns {ProjectionPipeline} Configured pipeline
  *
  * @example
- * const pipeline = createPipeline('MyProject', '1.0.0');
+ * const pipeline = createPipeline('MyProject', '[VERSION]');
  * const result = await pipeline.run({ sources: [...] });
  */
 export function createPipeline(projectName, version) {

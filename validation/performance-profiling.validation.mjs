@@ -6,7 +6,7 @@
  * OTEL span-based validation for performance profiling features.
  * Tests profiler initialization, metric collection, and bottleneck detection.
  *
- * v3.1.0 Feature: Add performance profiling tools
+ * [VERSION] Feature: Add performance profiling tools
  */
 
 import {

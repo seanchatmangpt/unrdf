@@ -11,7 +11,7 @@ Step 1: Creating RDF data in universe...
 Step 2: Freezing universe (computing BLAKE3 hash)...
   ✅ Receipt generated
      Receipt ID: frozen-001
-     Timestamp: 2025-12-26T23:08:00.385Z
+     Timestamp: 2025-12-26T23:08:latestZ
      Universe Hash: 4a4a7bc8fef9520d2f07e5c0e62cb905c330ac8ba7c0099352508bf88c73d03d
      Git Ref: abc123def456
      Quad Count: 2

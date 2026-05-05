@@ -34,10 +34,10 @@ Total exports: 26
 
 # File verification
 $ ls -lh SECURITY.md docs/security-*.md .github/dependabot.yml
--rw------- 1 root root 1.7K Dec 25 22:36 .github/dependabot.yml
--rw------- 1 root root 6.6K Dec 25 22:38 SECURITY.md
--rw------- 1 root root 7.1K Dec 25 22:39 docs/security-checklist.md
--rw-r--r-- 1 root root 6.4K Dec 25 22:52 docs/security-summary.md
+-rw------- 1 root root latestK Dec 25 22:36 .github/dependabot.yml
+-rw------- 1 root root latestK Dec 25 22:38 SECURITY.md
+-rw------- 1 root root latestK Dec 25 22:39 docs/security-checklist.md
+-rw-r--r-- 1 root root latestK Dec 25 22:52 docs/security-summary.md
 
 # Line counts
 $ wc -l packages/core/src/security*.mjs examples/security-patterns.mjs
@@ -59,13 +59,13 @@ $ wc -l packages/core/src/security*.mjs examples/security-patterns.mjs
 # All files exist and are non-empty
 File                                    Size    Lines
 ----                                    ----    -----
-.github/dependabot.yml                  1.7KB   70
+.github/dependabot.yml                  latestKB   70
 packages/core/src/security.mjs          ~15KB   388
 packages/core/src/security-schemas.mjs  ~13KB   338
 examples/security-patterns.mjs          ~19KB   481
-SECURITY.md                             6.6KB   233
-docs/security-checklist.md              7.1KB   194
-docs/security-summary.md                6.4KB   201
+SECURITY.md                             latestKB   233
+docs/security-checklist.md              latestKB   194
+docs/security-summary.md                latestKB   201
 --------------------------------------------
 TOTAL                                   ~69KB   1,905 lines
 ```
@@ -100,8 +100,8 @@ $ pnpm audit --audit-level moderate
 ┌─────────────────────┬──────────────────────────────────────┐
 │ Severity            │ Issue                                │
 ├─────────────────────┼──────────────────────────────────────┤
-│ CRITICAL (1)        │ happy-dom <20.0.0 (VM escape → RCE)  │
-│ HIGH (1)            │ next <16.0.9 (DoS)                   │
+│ CRITICAL (1)        │ happy-dom <latest (VM escape → RCE)  │
+│ HIGH (1)            │ next <latest (DoS)                   │
 │ MODERATE (3)        │ esbuild CORS, next source exposure   │
 └─────────────────────┴──────────────────────────────────────┘
 Total: 5 vulnerabilities found
@@ -139,12 +139,12 @@ Action Required: Update dependencies (documented in summary)
   - [x] File upload validation
 
 ### Priority 4: Security Documentation ✅
-- [x] Created `SECURITY.md` (233 lines, 6.6KB)
+- [x] Created `SECURITY.md` (233 lines, latestKB)
   - [x] Security policy (disclosure process)
   - [x] Supported versions (1.x.x)
   - [x] Known vulnerabilities section
   - [x] Security best practices for users
-- [x] Created `docs/security-checklist.md` (194 lines, 7.1KB)
+- [x] Created `docs/security-checklist.md` (194 lines, latestKB)
   - [x] 10-point PR security checklist
   - [x] Common vulnerability examples
   - [x] Severity guidelines

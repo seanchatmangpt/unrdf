@@ -368,5 +368,5 @@ MIT - See LICENSE file
 
 **Status**: ⚠️ Memory leak detected - Fix in progress
 **Last Updated**: 2025-12-20
-**Node Version**: v24.11.1
+**Node Version**: latest
 **Platform**: macOS (darwin)

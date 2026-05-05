@@ -16,8 +16,8 @@ Comprehensive performance benchmark suite delivered for the 45-package KGC CLI e
 | ----------------- | -------- | -------- | ------- | ------------------- |
 | Registry Init     | < 500ms  | 43-61ms  | ✅ PASS | **10x faster**      |
 | Extension Load    | < 100ms  | 47ms     | ✅ PASS | **2x faster**       |
-| Command Routing   | < 50ms   | 0.0005ms | ✅ PASS | **95,600x faster**  |
-| Handler Execution | < 1000ms | 0.005ms  | ✅ PASS | **200,000x faster** |
+| Command Routing   | < 50ms   | latestms | ✅ PASS | **95,600x faster**  |
+| Handler Execution | < 1000ms | latestms  | ✅ PASS | **200,000x faster** |
 | Memory Peak       | < 100MB  | 53MB     | ✅ PASS | **47% under limit** |
 
 **Performance Grade: A+**
@@ -108,70 +108,70 @@ Comprehensive performance benchmark suite delivered for the 45-package KGC CLI e
 ```
 Date: 2025-12-27
 Command: pnpm run benchmark
-Node: v22.21.1
-Environment: Linux 4.4.0
+Node: vlatest
+Environment: Linux latest
 Extensions: 45 (mock)
 ```
 
 ### Performance Measurements
 
-**1. Registry Initialization: 43.12ms ✅**
+**1. Registry Initialization: latestms ✅**
 
 ```
-create():        0.08 ms
-loadManifest():  42.35 ms  (45 extensions)
-build():         0.69 ms
+create():        latest ms
+loadManifest():  latest ms  (45 extensions)
+build():         latest ms
 ────────────────────────────
-Total:           43.12 ms  (target: < 500 ms)
+Total:           latest ms  (target: < 500 ms)
 Status:          ✅ PASS
 ```
 
-**2. Extension Loading: 46.97ms ✅**
+**2. Extension Loading: latestms ✅**
 
 ```
 Per Extension:
-  Average:  1.04 ms
-  Min:      0.45 ms
-  Max:      10.91 ms
+  Average:  latest ms
+  Min:      latest ms
+  Max:      latest ms
 ────────────────────────────
-Total:    46.97 ms  (target: < 100 ms)
+Total:    latest ms  (target: < 100 ms)
 Status:   ✅ PASS
 ```
 
-**3. Command Routing: 0.000523ms (p99) ✅**
+**3. Command Routing: latestms (p99) ✅**
 
 ```
 1M Iterations:
-  Average:   0.555 µs
-  p50:       0.263 µs
-  p95:       0.445 µs
-  p99:       0.523 µs  ← 95,600x FASTER than target
-  p99.9:     2.182 µs
+  Average:   latest µs
+  p50:       latest µs
+  p95:       latest µs
+  p99:       latest µs  ← 95,600x FASTER than target
+  platest:     latest µs
 ────────────────────────────
 Target:    < 50 ms (50,000 µs)
 Status:    ✅ PASS
 Complexity: O(1) - Map lookup
 ```
 
-**4. Handler Execution: 0.005ms ✅**
+**4. Handler Execution: latestms ✅**
 
 ```
 1000 Invocations:
-  Zod validation:  0.004 ms
-  Handler exec:    0.001 ms
-  Total:           0.005 ms
-  Max observed:    1.067 ms
+  Zod validation:  latest ms
+  Handler exec:    latest ms
+  Total:           latest ms
+  Max observed:    latest ms
 ────────────────────────────
 Target:  < 1000 ms
 Status:  ✅ PASS
 ```
 
-**5. Memory Profile: 52.99MB peak ✅**
+**5. Memory Profile: latestMB peak ✅**
 
 ```
-Baseline:  6.21 MB   (after init)
-Peak:      52.99 MB  (during benchmarks)
-Final:     66.02 MB  (end of run)
+Baseline:  latest MB   (after init)
+Peak:      latest MB  (during benchmarks)
+Final:     latest MB  (end of run)
 ────────────────────────────
 Target:    < 100 MB
 Status:    ✅ PASS
@@ -209,10 +209,10 @@ pnpm run benchmark
 
 ### Verification Runs
 
-**Run 1:** 53.38ms init, 5/5 PASS ✅
-**Run 2:** 60.94ms init, 5/5 PASS ✅
-**Run 3:** 48.54ms init, 5/5 PASS ✅
-**Run 4:** 43.12ms init, 5/5 PASS ✅
+**Run 1:** latestms init, 5/5 PASS ✅
+**Run 2:** latestms init, 5/5 PASS ✅
+**Run 3:** latestms init, 5/5 PASS ✅
+**Run 4:** latestms init, 5/5 PASS ✅
 
 **Consistency:** ±18ms variance (~30%), all runs pass all targets
 
@@ -224,11 +224,11 @@ pnpm run benchmark
 
 **Analysis:**
 
-1. Registry init (43.12ms) - Excellent, 10x faster than target
-2. Extension loading (46.97ms) - Could be parallelized (optional)
-3. Command routing (0.000523ms) - O(1), perfect
-4. Handler overhead (0.005ms) - Negligible
-5. Memory (52.99MB peak) - Stable, no leaks
+1. Registry init (latestms) - Excellent, 10x faster than target
+2. Extension loading (latestms) - Could be parallelized (optional)
+3. Command routing (latestms) - O(1), perfect
+4. Handler overhead (latestms) - Negligible
+5. Memory (latestMB peak) - Stable, no leaks
 
 ### Identified Opportunities (Optional)
 
@@ -260,17 +260,17 @@ pnpm run benchmark
 
 | Extensions   | Init Time | Memory | Commands | Routing p99 |
 | ------------ | --------- | ------ | -------- | ----------- |
-| 45 (current) | 43ms      | 6.21MB | 270      | 0.523µs     |
-| 100          | ~95ms     | ~14MB  | 600      | 0.530µs     |
-| 500          | ~475ms    | ~70MB  | 3000     | 0.550µs     |
-| 1000         | ~950ms    | ~140MB | 6000     | 0.600µs     |
+| 45 (current) | 43ms      | latestMB | 270      | latestµs     |
+| 100          | ~95ms     | ~14MB  | 600      | latestµs     |
+| 500          | ~475ms    | ~70MB  | 3000     | latestµs     |
+| 1000         | ~950ms    | ~140MB | 6000     | latestµs     |
 
 **Conclusions:**
 
 - Registry scales linearly with extension count
 - Can support **500+ extensions** while meeting all targets
 - Command routing remains O(1) regardless of scale
-- Memory grows linearly (~0.14MB per extension)
+- Memory grows linearly (~latestMB per extension)
 
 **Recommended Limits:**
 
@@ -352,10 +352,10 @@ node --expose-gc benchmark/performance-mock.mjs
 
 ### Key Achievements
 
-✅ **Sub-100ms initialization** for 45 extensions (43.12ms)
-✅ **Sub-microsecond routing** (0.523µs p99, O(1) algorithm)
-✅ **Minimal handler overhead** (<0.005ms, negligible)
-✅ **Low memory footprint** (6.21MB baseline)
+✅ **Sub-100ms initialization** for 45 extensions (latestms)
+✅ **Sub-microsecond routing** (latestµs p99, O(1) algorithm)
+✅ **Minimal handler overhead** (<latestms, negligible)
+✅ **Low memory footprint** (latestMB baseline)
 ✅ **No performance degradation** under load (1M operations)
 ✅ **Linear scalability** to 500+ extensions
 
@@ -410,8 +410,8 @@ node --expose-gc benchmark/performance-mock.mjs
 | -------------- | ------------ | ------------------- | -------------------------- |
 | Init time      | 43ms         | 50-80ms             | +10-40ms (real imports)    |
 | Extension load | 1ms avg      | 2-5ms avg           | +1-4ms (real deps)         |
-| Routing        | 0.523µs      | 0.530µs             | No change (algorithm same) |
-| Handler exec   | 0.005ms      | 10-1000ms           | +varies (I/O bound)        |
+| Routing        | latestµs      | latestµs             | No change (algorithm same) |
+| Handler exec   | latestms      | 10-1000ms           | +varies (I/O bound)        |
 | Memory         | 53MB peak    | 70-100MB peak       | +20-50MB (real deps)       |
 
 **Note:** Registry core performance (routing, overhead) will remain identical. Handler execution depends on business logic.

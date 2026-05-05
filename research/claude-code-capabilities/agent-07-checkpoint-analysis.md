@@ -52,7 +52,7 @@ Each line in the JSONL file represents one message in the conversation:
   "userType": "external",
   "cwd": "/home/user/unrdf",
   "sessionId": "81bcf4db-206d-4c3c-8c3e-efa0db398327",
-  "version": "2.0.59",
+  "version": "latest",
   "gitBranch": "claude/kgc-swarm-agents-2GQk5",
   "agentId": "7fee859e",
   "slug": "warm-skipping-wreath",

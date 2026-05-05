@@ -86,7 +86,7 @@ output_file = "services/{{ label | pascalCase }}Service.ts"
   it('JTBD 2: should register services in index.ts without overwriting or duplicating', async () => {
     const indexPath = join(outputDir, 'services/index.ts');
     await mkdir(join(outputDir, 'services'), { recursive: true });
-    await writeFile(indexPath, `// Manual exports\nexport const version = '1.0.0';\n\n// AUTO-GENERATED EXPORTS`);
+    await writeFile(indexPath, `// Manual exports\nexport const version = '[VERSION]';\n\n// AUTO-GENERATED EXPORTS`);
 
     const templatePath = join(testDir, 'register.njk');
     await writeFile(templatePath, `---

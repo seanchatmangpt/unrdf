@@ -52,7 +52,7 @@ export function sortObjectKeys(obj) {
  */
 export function transformToLockfileFormat(inventory) {
   const lockfile = {
-    version: '1.0.0',
+    version: 'latest',
     generatedAt: inventory.scannedAt,
     generator: 'agent-2/contract-scanner.mjs',
     packages: {},

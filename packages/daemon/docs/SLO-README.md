@@ -2,7 +2,7 @@
 
 Complete Service Level Objectives specification for production daemon operations.
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Last Updated**: 2026-01-10
 **Audience**: DevOps, SRE, Engineering Leadership
 
@@ -329,7 +329,7 @@ You will know you've successfully implemented these SLOs when:
 
 | Version | Date | Changes |
 |---|---|---|
-| 1.0.0 | 2026-01-10 | Initial specification |
+| [VERSION] | 2026-01-10 | Initial specification |
 | TBD | TBD | Q1 2026 review + adjustments |
 
 ---

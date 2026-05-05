@@ -1,4 +1,4 @@
-# UNRDF v3.1.0 Comprehensive Test Suite
+# UNRDF vlatest Comprehensive Test Suite
 
 ## Summary
 
@@ -53,12 +53,12 @@
   - Compatibility scores
 
 ### 3. OTEL Validation Tests (490 lines)
-- **`test/validation/otel-validation-v3.1.test.mjs`** (490 lines)
+- **`test/validation/otel-validation-vlatest.test.mjs`** (490 lines)
   - Isolated-VM execution spans
   - Browser feature spans
   - Policy pack spans
   - Knowledge hooks spans
-  - v3.1.0 feature validation (target: 90/100 score)
+  - vlatest feature validation (target: 90/100 score)
   - Performance metrics validation
   - Error spans
   - Required span attributes
@@ -71,7 +71,7 @@
   - IndexedDB storage performance
   - Memory usage tracking
   - Profiler accuracy
-  - v3.1.0 performance improvements
+  - vlatest performance improvements
 
 ### 5. Browser Playwright Tests (60 lines)
 - **`test/browser/playwright.spec.mjs`** (60 lines)
@@ -84,7 +84,7 @@
   - **Note**: Full Playwright tests skipped by default (require setup)
 
 ### 6. End-to-End Integration Tests (400 lines)
-- **`test/e2e/v3.1-features.test.mjs`** (400 lines)
+- **`test/e2e/vlatest.test.mjs`** (400 lines)
   - Isolated-VM + Knowledge Hooks integration
   - Browser + IndexedDB integration
   - Policy Packs + Validation integration
@@ -114,7 +114,7 @@
   - Metrics schema validation
   - Span tree building
   - Statistics calculation
-  - v3.1.0 feature validation
+  - vlatest feature validation
 
 ## Test Coverage Breakdown
 
@@ -142,7 +142,7 @@
 - ✅ File system shims
 
 #### OTEL Validation
-- ✅ v3.1.0 feature spans
+- ✅ vlatest feature spans
 - ✅ Performance metrics
 - ✅ Error handling
 - ✅ Validation score ≥ 90/100
@@ -247,7 +247,7 @@ test/
 2. **Generate Coverage Report**: `pnpm test --coverage`
 3. **Run OTEL Validation**: `node validation/run-all.mjs comprehensive`
 4. **Review Coverage Gaps**: Check coverage report for any missing areas
-5. **Performance Baseline**: Establish v3.1.0 performance baseline
+5. **Performance Baseline**: Establish vlatest performance baseline
 6. **Browser Testing**: Optional Playwright setup for real browser tests
 
 ## Notes
@@ -260,4 +260,4 @@ test/
 
 ---
 
-**Test Suite Ready for v3.1.0 Release**
+**Test Suite Ready for vlatest Release**

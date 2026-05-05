@@ -19,7 +19,7 @@ This thesis interrogates the empirical meaning of benchmark results obtained fro
 
 ## Declaration
 
-This thesis is the original work of the author. All benchmark data was collected on the author's hardware (macOS Darwin 25.2.0, Apple Silicon) using the pictl WASM engine version 26.4.10. The Closed Claw Benchmarking Constitution and all benchmark implementations are open source under the pictl repository.
+This thesis is the original work of the author. All benchmark data was collected on the author's hardware (macOS Darwin latest, Apple Silicon) using the pictl WASM engine version latest. The Closed Claw Benchmarking Constitution and all benchmark implementations are open source under the pictl repository.
 
 ---
 
@@ -244,10 +244,10 @@ The 81% binary size reduction for the mobile profile means that the complete pro
 ### 4.1 Hardware and Software Environment
 
 - **Processor:** Apple Silicon (aarch64)
-- **Operating System:** macOS Darwin 25.2.0
+- **Operating System:** macOS Darwin latest
 - **Compiler:** rustc 1.84 with opt-level=3
 - **Benchmark Framework:** Criterion 0.5
-- **WASM Engine:** pictl v26.4.10
+- **WASM Engine:** pictl latest
 - **Hash Function:** BLAKE3 (for receipt chains)
 - **Memory Measurement:** Platform-specific (RSS on Linux, estimated on macOS)
 
@@ -299,7 +299,7 @@ The Closed Claw gates add:
 
 ### 5.1 Discovery Core Results (Pipeline A)
 
-#### 5.1.1 Throughput Rankings at Scale
+#### latest Throughput Rankings at Scale
 
 The discovery algorithms form a clear performance hierarchy at 50,000 cases:
 
@@ -315,7 +315,7 @@ The discovery algorithms form a clear performance hierarchy at 50,000 cases:
 
 The 17x throughput gap between DFG (142.7 Melem/s) and Inductive Miner (7.1 Melem/s) represents the cost of moving from frequency counting (DFG) to structured model discovery (Inductive Miner). This gap is the price of soundness: the Inductive Miner guarantees a sound (deadlock-free) Petri net, while the DFG is merely a graph of observed transitions.
 
-#### 5.1.2 Scaling Behavior
+#### latest Scaling Behavior
 
 The DFG shows near-perfect linear scaling:
 
@@ -328,7 +328,7 @@ The DFG shows near-perfect linear scaling:
 
 The throughput *increases* with dataset size. This is a cache effect: larger datasets have better cache locality for the activity vocabulary, which fits entirely in L1/L2 cache after the first few hundred events. The 3.4x throughput improvement from 100 to 50K cases means that DFG discovery is actually *more efficient* at scale---the opposite of what one would expect from an O(n) algorithm with constant overhead.
 
-#### 5.1.3 The Metaheuristic Landscape
+#### latest The Metaheuristic Landscape
 
 The Tier 2-3 metaheuristic algorithms reveal a different performance profile:
 
@@ -348,7 +348,7 @@ The ACO advantage over other metaheuristics (25.64 vs 4.76 Melem/s for Genetic A
 
 ### 5.2 Conformance Core Results (Pipeline B)
 
-#### 5.2.1 The SIMD Revolution
+#### latest The SIMD Revolution
 
 The single most important empirical finding in this thesis is the SIMD token replay performance:
 
@@ -365,7 +365,7 @@ A 42x speedup is not an incremental improvement; it is a qualitative shift in wh
 
 3. **Browser-viable conformance.** At 56.7 µs, SIMD token replay is well within the 100ms interactivity threshold for perceived instantaneity. Conformance checking can be performed client-side in response to user actions (e.g., "check this case against the process model") without server round-trips.
 
-#### 5.2.2 DECLARE: The Fastest Conformance Algorithm
+#### latest DECLARE: The Fastest Conformance Algorithm
 
 DECLARE constraint checking achieves 148-153 Melem/s, making it the fastest conformance algorithm:
 
@@ -378,7 +378,7 @@ DECLARE constraint checking achieves 148-153 Melem/s, making it the fastest conf
 
 **What this means:** DECLARE conformance is within 40% of SIMD token replay speed, despite using a fundamentally different approach. DECLARE checks templates (Response, Existence, Absence, Init, Precedence) against traces, while token replay simulates Petri net execution. The fact that they achieve comparable throughput means that for rule-based compliance checking (the most common use case in practice), DECLARE is the preferred algorithm: it requires no model construction, operates on raw event data, and provides human-readable constraint definitions.
 
-#### 5.2.3 ETConformance: The Precision Cost
+#### latest ETConformance: The Precision Cost
 
 ETConformance precision computation achieves 8.2-8.6 Melem/s, making it the most expensive conformance operation per unit of throughput:
 
@@ -392,7 +392,7 @@ ETConformance precision computation achieves 8.2-8.6 Melem/s, making it the most
 
 ### 5.3 Object-Centric Core Results (Pipeline C)
 
-#### 5.3.1 OCEL Processing Performance
+#### latest OCEL Processing Performance
 
 | Stage | 10 objects | 50 objects | 100 objects | 200 objects |
 |---|---|---|---|---|
@@ -412,7 +412,7 @@ The PNML roundtrip benchmark tests semantic preservation across format conversio
 
 ### 5.5 Manufacturing Truth Loop Results (Pipeline E)
 
-#### 5.5.1 Monte Carlo Simulation
+#### latest Monte Carlo Simulation
 
 | Cases | Time | Per-Case Time |
 |---|---|---|---|
@@ -425,7 +425,7 @@ The remarkably stable per-case time (~1.6 µs) demonstrates linear scaling with 
 
 **What this means:** Monte Carlo simulation of 10,000 process cases completes in approximately 16 milliseconds. This enables rapid "what-if" analysis: "What would happen if we added 3 more resources?" or "What if service time for activity X increased by 20%?" These questions can be answered interactively in a browser without server computation.
 
-#### 5.5.2 Temporal Conformance
+#### latest Temporal Conformance
 
 The temporal profile checking benchmark achieves 79.9 Melem/s, approximately 6x faster than temporal profile discovery (13.7 Melem/s). This asymmetry is expected: discovery requires statistical aggregation (sum, sum-of-squares, count per pair), while checking requires only HashMap lookups and z-score computation.
 
@@ -433,7 +433,7 @@ The temporal profile checking benchmark achieves 79.9 Melem/s, approximately 6x 
 
 ### 5.6 ML-Augmented Runtime Results (Pipeline F)
 
-#### 5.6.1 Sub-Microsecond Predictions
+#### latest Sub-Microsecond Predictions
 
 | Operation | 50 cases | 500 cases | Throughput |
 |---|---|---|---|
@@ -445,7 +445,7 @@ The temporal profile checking benchmark achieves 79.9 Melem/s, approximately 6x 
 
 The next activity prediction throughput of 17.8 Gelem/s (giga-events per second) at 500 cases demonstrates that n-gram Markov chain models scale efficiently. The model building cost (669.44 ns for 500 cases) is amortized over millions of subsequent predictions, making the effective per-prediction cost negligible.
 
-#### 5.6.2 Streaming DFG at Scale
+#### latest Streaming DFG at Scale
 
 | Events | Latency | Throughput |
 |---|---|---|---|

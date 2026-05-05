@@ -19,14 +19,14 @@
 ### Generated Kits (8 files)
 
 #### Oxigraph Domain Kit
-- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/facade.mjs` (2.0KB)
-- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/adapters.mjs` (5.3KB)
+- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/facade.mjs` (latestKB)
+- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/adapters.mjs` (latestKB)
 - `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/scenarios.mjs` (17KB)
 - `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/oxigraph/metadata.json` (143B)
 
 #### Hooks Domain Kit
-- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/facade.mjs` (2.1KB)
-- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/adapters.mjs` (5.4KB)
+- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/facade.mjs` (latestKB)
+- `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/adapters.mjs` (latestKB)
 - `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/scenarios.mjs` (27KB)
 - `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-8/kits/hooks/metadata.json` (143B)
 
@@ -48,7 +48,7 @@ Running Agent 8 tests...
 
 Test 1: Generate domain kit
   Domain: test
-  Version: 1.0.0
+  Version: latest
   Adapters: 1
   Scenarios: 5
   ✅ PASS
@@ -85,7 +85,7 @@ Test Results:
   Passed: 6
   Failed: 0
   Total: 6
-  Success rate: 100.0%
+  Success rate: latest%
 ==================================================
 
 ✅ All tests passed!
@@ -108,7 +108,7 @@ Generating domain kits...
 Generating oxigraph kit...
 Oxigraph kit: {
   "domain": "oxigraph",
-  "version": "1.0.0",
+  "version": "latest",
   "components": {
     "facade": true,
     "adapters": 3,
@@ -124,7 +124,7 @@ Oxigraph kit: {
 Generating hooks kit...
 Hooks kit: {
   "domain": "hooks",
-  "version": "1.0.0",
+  "version": "latest",
   "components": {
     "facade": true,
     "adapters": 3,
@@ -154,7 +154,7 @@ Hooks kit: {
   - Happy path: 3
   - Error cases: 6
   - Edge cases: 6
-- **Total size**: 24.4KB
+- **Total size**: latestKB
 
 ### Hooks Kit
 - **Operations**: 3 (registerHook, executeHook, applyPolicyPack)
@@ -163,7 +163,7 @@ Hooks kit: {
   - Happy path: 3
   - Error cases: 6
   - Edge cases: 6
-- **Total size**: 34.6KB
+- **Total size**: latestKB
 
 ## Adversarial PM Verification
 
@@ -194,7 +194,7 @@ find agent-8/kits -type f | wc -l
 
 # Test execution
 timeout 5s node agent-8/test-kit-generator.mjs
-# Output: ✅ All tests passed! (100.0%)
+# Output: ✅ All tests passed! (latest%)
 
 # Kit generation
 timeout 5s node agent-8/generate-sample-kits.mjs

@@ -2,7 +2,7 @@
 
 > YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification
 
-**Version**: `6.0.0`
+**Version**: `latest`
 **Tier**: Essential
 
 ## Overview

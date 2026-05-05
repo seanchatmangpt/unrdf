@@ -543,7 +543,7 @@ export async function createRESTEndpoints(engine) {
  */
 export async function createIntrospection(engine) {
   const schema = {
-    version: '1.0.0',
+    version: 'latest',
     description: 'Unified Fusion Engine API',
     timestamp: new Date().toISOString(),
 

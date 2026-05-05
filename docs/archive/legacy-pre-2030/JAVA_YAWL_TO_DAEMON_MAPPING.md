@@ -2,7 +2,7 @@
 
 **Analysis Date**: 2026-01-11
 **Analyzer**: Research Agent (Architecture Mapping Specialist)
-**UNRDF Package**: @unrdf/daemon v6.0.0
+**UNRDF Package**: @unrdf/daemon vlatest
 **Reference**: Van der Aalst YAWL 4.x (Java Implementation)
 **Methodology**: Source code analysis, architectural comparison, integration pattern identification
 

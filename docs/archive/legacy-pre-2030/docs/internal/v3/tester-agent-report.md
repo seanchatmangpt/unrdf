@@ -306,7 +306,7 @@ cat src/knowledge-engine/dark-matter-core.mjs
 ### Business Readiness
 
 **Release Artifacts:**
-- [ ] npm package published (v3.0.0)
+- [ ] npm package published (latest)
 - [ ] GitHub release created
 - [ ] Docker images tagged
 - [ ] Documentation website updated

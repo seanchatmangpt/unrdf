@@ -259,7 +259,7 @@ done
 
 ## BEAM Integration
 
-### Claim: AtomVM v0.6.6 operational in browser + Node.js
+### Claim: AtomVM vlatest operational in browser + Node.js
 **Evidence**: packages/atomvm/beam-wasm-integration-status.md:26-60
 **Verification**: packages/atomvm/playground/index.html (browser), packages/atomvm/src/cli.mjs (Node.js)
 **Expected Output**: WASM module loads and executes
@@ -434,7 +434,7 @@ ls -d docs/diataxis/{tutorials,how-to,reference,explanation}
 ### BEAM-WASM Specialist
 **Output**: packages/atomvm/beam-wasm-integration-status.md
 **Claims Verified**:
-- AtomVM v0.6.6 operational ✅
+- AtomVM vlatest operational ✅
 - RDF integration 0% complete ✅
 - Erlang toolchain missing ✅
 

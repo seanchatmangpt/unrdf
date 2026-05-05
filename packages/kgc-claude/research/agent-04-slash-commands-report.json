@@ -25,7 +25,7 @@
       "example": {
         "name": "research-explore",
         "description": "Systematically explore a capability area",
-        "version": "1.0.0",
+        "version": "latest",
         "arguments": [
           {
             "name": "topic",

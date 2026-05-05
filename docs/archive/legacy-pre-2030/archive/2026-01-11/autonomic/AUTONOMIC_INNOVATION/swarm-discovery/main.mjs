@@ -315,7 +315,7 @@ async function main() {
     const timestamp = DETERMINISTIC ? '2025-12-26T00:00:00.000Z' : new Date().toISOString()
 
     const ledger = {
-      version: '1.0.0',
+      version: 'latest',
       hash: atlasHash,
       deterministic: DETERMINISTIC,
       timestamp: timestamp,

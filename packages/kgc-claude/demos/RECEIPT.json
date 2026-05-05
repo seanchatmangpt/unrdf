@@ -1,6 +1,6 @@
 {
   "demo": "kgc-multi-agent-e2e",
-  "version": "1.0.0",
+  "version": "latest",
   "timestamp": "2025-12-27T00:41:00.000Z",
   "status": "ready",
   "description": "Multi-agent end-to-end demo proving KGC substrate with 3 agents, deterministic merge, and conflict-free execution",

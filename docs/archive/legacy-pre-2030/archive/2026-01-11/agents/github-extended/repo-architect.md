@@ -107,7 +107,7 @@ mcp__github__push_files {
     {
       path: ".claude/config.json",
       content: JSON.stringify({
-        version: "1.0",
+        version: "latest",
         mcp_servers: {
           "ruv-swarm": {
             command: "npx",
@@ -130,11 +130,11 @@ mcp__github__push_files {
       path: "package.json",
       content: JSON.stringify({
         name: "claude-project-template",
-        version: "1.0.0",
+        version: "latest",
         description: "Claude Code project with ruv-swarm integration",
-        engines: { node: ">=20.0.0" },
+        engines: { node: ">=latest" },
         dependencies: {
-          "ruv-swarm": "^1.0.11"
+          "ruv-swarm": "^latest"
         }
       }, null, 2)
     },

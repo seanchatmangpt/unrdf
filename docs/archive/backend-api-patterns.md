@@ -58,7 +58,7 @@ Middleware executes in numerical order (00, 01, 02, ...):
   "success": true,
   "data": { ... },
   "requestId": "uuid-v4",
-  "timestamp": "2025-10-02T01:00:00.000Z"
+  "timestamp": "2025-10-02T01:00:latestZ"
 }
 ```
 
@@ -72,7 +72,7 @@ Middleware executes in numerical order (00, 01, 02, ...):
     "requestId": "uuid-v4",
     "traceId": "otel-trace-id-32-chars",
     "spanId": "otel-span-id-16-chars",
-    "timestamp": "2025-10-02T01:00:00.000Z",
+    "timestamp": "2025-10-02T01:00:latestZ",
     "path": "/api/hooks/evaluate",
     "issues": [
       {
@@ -125,7 +125,7 @@ All responses include trace correlation:
 ### Metrics Endpoint
 ```bash
 GET /api/metrics
-Content-Type: text/plain; version=0.0.4
+Content-Type: text/plain; version=latest
 
 # HELP unrdf_circuit_breaker_state Circuit breaker state (0=CLOSED, 1=HALF_OPEN, 2=OPEN)
 # TYPE unrdf_circuit_breaker_state gauge
@@ -257,7 +257,7 @@ curl -X POST http://localhost:3000/api/hooks/evaluate \
 - **P50 latency**: &lt; 200ms (hook evaluation)
 - **P99 latency**: &lt; 1000ms (all endpoints)
 - **Error rate**: &lt; 1% (excluding validation errors)
-- **Availability**: &gt; 99.5% (with circuit breakers)
+- **Availability**: &gt; latest% (with circuit breakers)
 
 ## Security Considerations
 

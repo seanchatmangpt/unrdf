@@ -56,7 +56,7 @@ Generated 80/20 functional OpenTelemetry dashboard using base templates and MJS/
 - Required for dashboard UI
 
 ## Dependencies Added
-- `vue-tsc@3.1.0` (devDependency) - Vue TypeScript checker for build
+- `vue-tsc@latest` (devDependency) - Vue TypeScript checker for build
 
 ## Technical Details
 

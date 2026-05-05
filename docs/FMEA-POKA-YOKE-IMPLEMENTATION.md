@@ -36,7 +36,7 @@ This document outlines the FMEA (Failure Mode and Effects Analysis) and poka-yok
 
 ### Guard Modules
 
-#### 2.1 Quad Guards (`src/poka-yoke/quad-guards.mjs`)
+#### latest Quad Guards (`src/poka-yoke/quad-guards.mjs`)
 
 **Purpose**: Validate RDF quad structure and prevent malformed quads
 
@@ -49,7 +49,7 @@ This document outlines the FMEA (Failure Mode and Effects Analysis) and poka-yok
 
 **Prevents**: FM-001 (Quad missing .value property)
 
-#### 2.2 Store Guards (`src/poka-yoke/store-guards.mjs`)
+#### latest Store Guards (`src/poka-yoke/store-guards.mjs`)
 
 **Purpose**: Validate store operations before mutation
 
@@ -61,7 +61,7 @@ This document outlines the FMEA (Failure Mode and Effects Analysis) and poka-yok
 
 **Prevents**: FM-001, FM-004 (Store mutations with invalid quads)
 
-#### 2.3 Hook Guards (`src/poka-yoke/hook-guards.mjs`)
+#### latest Hook Guards (`src/poka-yoke/hook-guards.mjs`)
 
 **Purpose**: Prevent hook-related data corruption
 
@@ -73,7 +73,7 @@ This document outlines the FMEA (Failure Mode and Effects Analysis) and poka-yok
 
 **Prevents**: FM-002 (undefined returns), FM-004 (quad mutation)
 
-#### 2.4 Query Guards (`src/poka-yoke/query-guards.mjs`)
+#### latest Query Guards (`src/poka-yoke/query-guards.mjs`)
 
 **Purpose**: Timeout protection and result validation
 
@@ -85,7 +85,7 @@ This document outlines the FMEA (Failure Mode and Effects Analysis) and poka-yok
 
 **Prevents**: FM-003 (query timeouts), FM-006 (undefined variables)
 
-#### 2.5 File Guards (`src/poka-yoke/file-guards.mjs`)
+#### latest File Guards (`src/poka-yoke/file-guards.mjs`)
 
 **Purpose**: RDF file validation and format detection
 
@@ -224,8 +224,8 @@ describe('Guard Name', () => {
 
 | Guard | Operation | Overhead | Notes |
 |-------|-----------|----------|-------|
-| Quad validation | Per quad | < 0.1ms | Direct property checks |
-| Store wrapper | Per operation | < 0.5ms | Minimal validation |
+| Quad validation | Per quad | < latestms | Direct property checks |
+| Store wrapper | Per operation | < latestms | Minimal validation |
 | Hook cloning | Per hook | < 1ms | structuredClone overhead |
 | Query timeout | Per query | 0ms | AbortSignal is native |
 | File validation | Per file | < 5ms | Content parsing cached |

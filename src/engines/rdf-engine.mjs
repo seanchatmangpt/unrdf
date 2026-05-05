@@ -1,6 +1,6 @@
 /**
  * @fileoverview Production-grade RDF engine for JavaScript.
- * @version 2.0.0
+ * @version [VERSION]
  * @license MIT
  */
 

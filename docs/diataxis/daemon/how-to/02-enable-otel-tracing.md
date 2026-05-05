@@ -15,7 +15,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 
 # Service identity
 export OTEL_SERVICE_NAME=unrdf-daemon
-export OTEL_SERVICE_VERSION=26.5.4
+export OTEL_SERVICE_VERSION=latest
 
 # Then start the daemon
 node src/daemon.mjs
@@ -60,7 +60,7 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: latest.0:4317
 
 exporters:
   logging:

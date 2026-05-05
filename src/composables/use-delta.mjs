@@ -4,7 +4,7 @@
  * This composable provides a simple interface for graph difference and patch operations.
  * It abstracts away store management and provides intuitive methods for change tracking.
  *
- * @version 2.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

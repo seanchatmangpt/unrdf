@@ -4,7 +4,7 @@
 
 **Audience:** All developers using receipts
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -77,7 +77,7 @@ interface Receipt {
 - **Type:** `string`
 - **Format:** Semver
 - **Required:** Yes
-- **Example:** `"1.0.0"`
+- **Example:** `"latest"`
 - **Validation:** Must be valid semver
 
 #### `operation`
@@ -133,7 +133,7 @@ interface Receipt {
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "version": "1.0.0",
+  "version": "latest",
   "operation": "freeze",
   "timestamp": "2025-12-26T12:34:56.789Z",
   "hash": {
