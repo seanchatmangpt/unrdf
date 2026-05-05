@@ -192,6 +192,40 @@ function checkGitDirty(pkgPath) {
   return { status: 'pass', actual: 'Clean', expected: 'Clean working tree' };
 }
 
+function checkNPMTokenPermissions(pkg) {
+  try {
+    // Check if we are authenticated
+    const whoami = execSync('npm whoami', { stdio: 'pipe', encoding: 'utf8' }).trim();
+    
+    // For scoped packages, ensure the token isn't blindly failing 404s due to Granular Access Token bugs
+    if (pkg.name && pkg.name.startsWith('@')) {
+      const scope = pkg.name.split('/')[0];
+      try {
+        // Ping the registry for the specific package or scope to see if we get a 401/403/404 that indicates a permission issue
+        // This is a heuristic: if we are authenticated but the registry rejects an info request for our own scope
+        execSync(`npm access ls-packages ${scope} --json`, { stdio: 'pipe', encoding: 'utf8' });
+      } catch (e) {
+        // If npm access fails, it might be a Granular Token bug or missing org
+        return {
+          status: 'warn',
+          actual: `Authenticated as ${whoami}, but scope access check failed`,
+          expected: `Write access to ${scope}`,
+          fix: `If you are using a Granular Access Token and receive 404s on publish, recreate it as a Classic Automation Token, or ensure the scope '${scope}' is explicitly granted.`
+        };
+      }
+    }
+
+    return { status: 'pass', actual: `Authenticated (${whoami})`, expected: 'Authenticated' };
+  } catch (e) {
+    return {
+      status: 'warn',
+      actual: 'Not authenticated or invalid token',
+      expected: 'Valid NPM_TOKEN or npm login',
+      fix: 'Run `npm login` or set a valid NPM_TOKEN environment variable.'
+    };
+  }
+}
+
 /**
  * Validates package metadata and readiness for publication
  * @param {string} pkgPath - Path to package directory
@@ -216,6 +250,7 @@ export async function checkPublishReadiness(pkgPath = process.cwd()) {
       checks.push({ name: 'Scoped Package Access', ...checkPublishConfig(pkg) });
       checks.push({ name: 'Engine Consistency', ...checkEngines(pkg) });
       checks.push({ name: 'Package Metadata', ...checkMetadata(pkg) });
+      checks.push({ name: 'NPM Registry Authentication', ...checkNPMTokenPermissions(pkg) });
     } catch (e) {
       checks.push({
         name: 'Manifest Parsing',
