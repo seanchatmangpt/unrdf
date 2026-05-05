@@ -23,9 +23,9 @@ export const dataFactory = {
 };
 
 /**
- * Re-export types for documentation
+ * Re-export types for documentation and compatibility
  */
-export { OxigraphStore };
+export { OxigraphStore, OxigraphStore as Store };
 
 /**
  * Export SPARQL-star query utilities

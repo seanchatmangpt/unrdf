@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { HardenedAtomVM } from '../src/vm/facade.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 describe('Smart Law E2E Verification', () => {
   let store;
@@ -44,23 +44,23 @@ describe('Smart Law E2E Verification', () => {
     // d. Verify that an 'UnlawfulTransaction' is correctly blocked
     
     // Add a Lawful Transaction
-    store.add({
-      subject: `${EX}tx_ok`,
-      predicate: `${RDF}type`,
-      object: `${EX}LawfulTransaction`
-    });
-    store.add({
-      subject: `${EX}tx_ok`,
-      predicate: `${EX}amount`,
-      object: { value: '100', datatype: `${XSD}integer` }
-    });
+    store.add(dataFactory.quad(
+      dataFactory.namedNode(`${EX}tx_ok`),
+      dataFactory.namedNode(`${RDF}type`),
+      dataFactory.namedNode(`${EX}LawfulTransaction`)
+    ));
+    store.add(dataFactory.quad(
+      dataFactory.namedNode(`${EX}tx_ok`),
+      dataFactory.namedNode(`${EX}amount`),
+      dataFactory.literal('100', dataFactory.namedNode(`${XSD}integer`))
+    ));
 
     // Add an Unlawful Transaction (missing amount)
-    store.add({
-      subject: `${EX}tx_bad`,
-      predicate: `${RDF}type`,
-      object: `${EX}LawfulTransaction`
-    });
+    store.add(dataFactory.quad(
+      dataFactory.namedNode(`${EX}tx_bad`),
+      dataFactory.namedNode(`${RDF}type`),
+      dataFactory.namedNode(`${EX}LawfulTransaction`)
+    ));
     // Missing amount property!
 
     // In a Smart Law context, "blocked" means the hooks engine 
@@ -68,7 +68,8 @@ describe('Smart Law E2E Verification', () => {
     const hookResult = await vm.bridge.executeHooks({
       store: store,
       t_ns: BigInt(Date.now() * 1000000),
-      nodeId: 'test-node'
+      nodeId: 'test-node',
+      previousReceiptHash: null
     });
 
     // Verify hook execution

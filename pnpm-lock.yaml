@@ -38,10 +38,10 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:packages/core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:packages/oxigraph
       clownface:
         specifier: ^2.0.3
@@ -199,25 +199,25 @@ importers:
   benchmarks:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../packages/oxigraph
 
   examples:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../packages/core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../packages/hooks
 
   exploration/agents/agent-4:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../../packages/core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../../packages/oxigraph
       rdf-ext:
         specifier: ^2.6.0
@@ -232,25 +232,25 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/knowledge-engine':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../knowledge-engine
       '@unrdf/ml-inference':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../ml-inference
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/semantic-search':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../semantic-search
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       zod:
         specifier: ^4.1.13
@@ -269,22 +269,22 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/receipts':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../receipts
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       coi-serviceworker:
         specifier: ^0.1.7
@@ -312,7 +312,7 @@ importers:
         specifier: ^1.3.3
         version: 1.8.0
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       ethers:
         specifier: ^6.10.0
@@ -331,7 +331,7 @@ importers:
   packages/caching:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       ioredis:
         specifier: ^5.4.1
@@ -356,10 +356,10 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgn':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgn
       glob:
         specifier: ^10.3.10
@@ -381,19 +381,19 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/daemon':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../daemon
       '@unrdf/federation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../federation
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       citty:
         specifier: ^0.1.6
@@ -427,7 +427,7 @@ importers:
   packages/codegen:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       zod:
         specifier: ^4.1.13
@@ -440,7 +440,7 @@ importers:
   packages/collab:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       lib0:
         specifier: ^0.2.97
@@ -474,10 +474,10 @@ importers:
   packages/composables:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       vue:
         specifier: ^3.5.25
@@ -496,7 +496,7 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/federation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../federation
       msgpackr:
         specifier: ^1.11.8
@@ -542,7 +542,7 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       async-mutex:
         specifier: ^0.5.0
@@ -576,7 +576,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -621,13 +621,13 @@ importers:
         specifier: workspace:^
         version: link:../wasm4pm/packages/kernel
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/otel':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../otel
       ai:
         specifier: ^6.0.146
@@ -649,10 +649,10 @@ importers:
   packages/dark-matter:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       typhonjs-escomplex:
         specifier: ^0.1.0
@@ -668,25 +668,25 @@ importers:
   packages/decision-fabric:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/knowledge-engine':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../knowledge-engine
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       '@unrdf/validation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../validation
     devDependencies:
       '@types/node':
@@ -812,10 +812,10 @@ importers:
   packages/engine-gateway:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
     devDependencies:
       vitest:
@@ -828,16 +828,16 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/daemon':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../daemon
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/receipts':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../receipts
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       hash-wasm:
         specifier: ^4.12.0
@@ -862,10 +862,10 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       prom-client:
         specifier: ^15.0.0
@@ -878,7 +878,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -887,19 +887,19 @@ importers:
   packages/fusion:
     dependencies:
       '@unrdf/blockchain':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../blockchain
       '@unrdf/caching':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../caching
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       graphql:
         specifier: ^16.8.1
@@ -921,7 +921,7 @@ importers:
         specifier: ^7.1.0
         version: 7.3.5
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       rbush:
         specifier: ^4.0.1
@@ -965,13 +965,13 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/otel':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../otel
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       citty:
         specifier: ^0.1.6
@@ -990,7 +990,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -999,10 +999,10 @@ importers:
   packages/hooks/examples/hook-chains:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../..
       n3:
         specifier: ^1.26.0
@@ -1018,10 +1018,10 @@ importers:
   packages/hooks/examples/policy-hooks:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../..
       n3:
         specifier: ^1.26.0
@@ -1037,28 +1037,28 @@ importers:
   packages/integration-tests:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/federation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../federation
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-multiverse':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-multiverse
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/receipts':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../receipts
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       hash-wasm:
         specifier: ^4.12.0
@@ -1077,10 +1077,10 @@ importers:
   packages/kgc-4d:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
@@ -1108,19 +1108,19 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:..
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../oxigraph
       '@unrdf/validation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../../validation
       '@xyflow/react':
         specifier: ^12.10.0
@@ -1199,16 +1199,16 @@ importers:
   packages/kgc-claude:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
@@ -1250,16 +1250,16 @@ importers:
   packages/kgc-multiverse:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/receipts':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../receipts
       hash-wasm:
         specifier: ^4.12.0
@@ -1287,19 +1287,19 @@ importers:
   packages/kgc-probe:
     dependencies:
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-substrate':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-substrate
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       hash-wasm:
         specifier: ^4.12.0
@@ -1321,7 +1321,7 @@ importers:
   packages/kgc-runtime:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.11.0
@@ -1337,13 +1337,13 @@ importers:
   packages/kgc-substrate:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
@@ -1365,22 +1365,22 @@ importers:
   packages/kgc-swarm:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-substrate':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-substrate
       '@unrdf/kgn':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgn
       '@unrdf/knowledge-engine':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../knowledge-engine
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.11.0
@@ -1405,13 +1405,13 @@ importers:
   packages/kgc-tools:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-runtime':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-runtime
       hash-wasm:
         specifier: ^4.12.0
@@ -1427,7 +1427,7 @@ importers:
   packages/kgn:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       fs-extra:
         specifier: ^11.3.1
@@ -1476,13 +1476,13 @@ importers:
         specifier: ^1.5.0
         version: 1.8.0
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       '@xenova/transformers':
         specifier: ^2.17.2
@@ -1504,7 +1504,7 @@ importers:
   packages/manufacturing:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       zod:
         specifier: ^4.1.13
@@ -1520,13 +1520,13 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../streaming
       onnxruntime-node:
         specifier: ^1.20.1
@@ -1554,13 +1554,13 @@ importers:
         specifier: ^4.22.0
         version: 4.22.0(encoding@0.1.12)(seedrandom@3.0.5)
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
@@ -1653,7 +1653,7 @@ importers:
         specifier: ^1.28.0
         version: 1.40.0
       '@unrdf/manufacturing':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../manufacturing
       pm4py:
         specifier: npm:noop-package@1.0.0
@@ -1662,7 +1662,7 @@ importers:
   packages/oxigraph:
     dependencies:
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       oxigraph:
         specifier: ^0.5.2
@@ -1675,7 +1675,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -1687,17 +1687,17 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/pictl-semantics':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../pictl-semantics
       zod:
         specifier: ^4.1.13
         version: 4.3.6
     devDependencies:
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -1715,10 +1715,10 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/federation':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../federation
       hash-wasm:
         specifier: ^4.11.0
@@ -1737,7 +1737,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -1746,10 +1746,10 @@ importers:
   packages/project-engine:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/knowledge-engine':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../knowledge-engine
     devDependencies:
       '@types/node':
@@ -1765,7 +1765,7 @@ importers:
         specifier: ^10.0.2
         version: 10.0.31(graphql@16.13.2)
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       graphql:
         specifier: ^16.8.1
@@ -1780,10 +1780,10 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       lru-cache:
         specifier: ^11.1.0
@@ -1811,16 +1811,16 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-multiverse':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-multiverse
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       dilithium-crystals:
         specifier: ^1.0.6
@@ -1851,10 +1851,10 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/daemon':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../daemon
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       zod:
         specifier: ^4.1.13
@@ -1867,7 +1867,7 @@ importers:
   packages/semantic-search:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@xenova/transformers':
         specifier: ^2.17.2
@@ -1892,10 +1892,10 @@ importers:
   packages/serverless:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       aws-cdk-lib:
         specifier: ^2.165.0
@@ -1932,7 +1932,7 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       d3-force-3d:
         specifier: ^3.0.5
@@ -1960,13 +1960,13 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       citty:
         specifier: ^0.1.6
@@ -1988,7 +1988,7 @@ importers:
         specifier: ^24.10.1
         version: 24.12.2
       '@unrdf/test-utils':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../test-utils
       vitest:
         specifier: ^4.0.15
@@ -2000,13 +2000,13 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/graph-analytics':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../graph-analytics
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/semantic-search':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../semantic-search
       zod:
         specifier: ^4.1.13
@@ -2022,7 +2022,7 @@ importers:
   packages/test-utils:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
     devDependencies:
       vitest:
@@ -2032,16 +2032,16 @@ importers:
   packages/v6-compat:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       zod:
         specifier: ^4.1.13
@@ -2060,25 +2060,25 @@ importers:
   packages/v6-core:
     dependencies:
       '@unrdf/blockchain':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../blockchain
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-4d
       '@unrdf/kgc-cli':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-cli
       '@unrdf/kgc-substrate':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../kgc-substrate
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       citty:
         specifier: ^0.1.5
@@ -2106,7 +2106,7 @@ importers:
   packages/validation:
     dependencies:
       '@unrdf/knowledge-engine':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../knowledge-engine
 
   packages/wasm4pm:
@@ -2168,7 +2168,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/agents:
     dependencies:
@@ -2187,7 +2187,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.0
-        version: 3.2.4(@types/debug@4.1.13)(@types/node@25.5.2)(@vitest/browser@4.1.3(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3))(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
+        version: 3.2.4(@types/debug@4.1.13)(@types/node@25.5.2)(@vitest/browser@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
 
   packages/wasm4pm/packages/config:
     dependencies:
@@ -2218,7 +2218,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/contracts:
     dependencies:
@@ -2243,7 +2243,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/engine:
     dependencies:
@@ -2308,7 +2308,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/observability:
     devDependencies:
@@ -2323,7 +2323,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.0.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/planner:
     dependencies:
@@ -2351,7 +2351,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/swarm:
     dependencies:
@@ -2397,7 +2397,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/packages/testing:
     dependencies:
@@ -2416,7 +2416,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/wasm4pm/wasm4pm:
     devDependencies:
@@ -2449,7 +2449,7 @@ importers:
         version: 3.6.0(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/zkp:
     dependencies:
@@ -2457,13 +2457,13 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.23
+        specifier: 26.5.4
         version: link:../v6-core
       circomlibjs:
         specifier: ^0.1.7
@@ -35773,24 +35773,6 @@ snapshots:
     optionalDependencies:
       playwright: 1.59.1
 
-  '@vitest/browser@4.1.3(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3)':
-    dependencies:
-      '@blazediff/core': 1.9.1
-      '@vitest/mocker': 4.1.3(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      '@vitest/utils': 4.1.3
-      magic-string: 0.30.21
-      pngjs: 7.0.0
-      sirv: 3.0.2
-      tinyrainbow: 3.1.0
-      vitest: 4.1.3(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      ws: 8.20.0
-    transitivePeerDependencies:
-      - bufferutil
-      - msw
-      - utf-8-validate
-      - vite
-    optional: true
-
   '@vitest/browser@4.1.3(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3)':
     dependencies:
       '@blazediff/core': 1.9.1
@@ -35823,7 +35805,7 @@ snapshots:
       std-env: 3.10.0
       strip-literal: 2.1.1
       test-exclude: 6.0.0
-      vitest: 1.6.1(@types/node@25.5.2)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vitest: 1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -35839,9 +35821,9 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.3(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.3(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@vitest/coverage-v8@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
-      '@vitest/browser': 4.1.3(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3)
+      '@vitest/browser': 4.1.3(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3)
 
   '@vitest/expect@1.6.1':
     dependencies:
@@ -35956,7 +35938,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.1.3(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(msw@2.13.1(@types/node@24.12.2)(typescript@5.9.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.3(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@vitest/coverage-v8@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   '@vitest/utils@1.6.1':
     dependencies:
@@ -48617,7 +48599,7 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitest@1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1):
+  vitest@1.6.1(@types/node@20.19.39)(@vitest/browser@1.6.1)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jsdom@25.0.1)(lightningcss@1.32.0)(terser@5.46.1):
     dependencies:
       '@vitest/expect': 1.6.1
       '@vitest/runner': 1.6.1
@@ -48693,7 +48675,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@3.2.4(@types/debug@4.1.13)(@types/node@25.5.2)(@vitest/browser@4.1.3(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(vite@7.3.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.3))(@vitest/ui@4.1.3(vitest@4.1.3))(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3):
+  vitest@3.2.4(@types/debug@4.1.13)(@types/node@25.5.2)(@vitest/browser@4.1.3)(@vitest/ui@4.1.3)(happy-dom@20.8.9)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(msw@2.13.1(@types/node@25.5.2)(typescript@5.9.3))(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.4

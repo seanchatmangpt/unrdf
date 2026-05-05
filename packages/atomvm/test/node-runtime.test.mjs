@@ -14,11 +14,6 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import { AtomVMNodeRuntime } from '../src/node-runtime.mjs';
-import { existsSync } from 'fs';
-import { resolve } from 'path';
-
 describe('AtomVMNodeRuntime', () => {
   let runtime;
 

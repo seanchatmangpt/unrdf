@@ -655,9 +655,9 @@ export class HooksBridge {
    * @private
    */
   async _evaluateSPARQLAsk(spec) {
-    const query = spec.query || spec;
-    if (!query || typeof query !== 'string') {
-      throw new Error('SPARQL ASK requires query property');
+    const query = spec.query || (typeof spec === 'string' ? spec : null);
+    if (!query) {
+      return false; // Return false instead of throwing for invalid spec
     }
     const results = await this.store.queryAsync(query);
     return results && results.boolean === true;

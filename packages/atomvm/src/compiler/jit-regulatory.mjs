@@ -12,7 +12,9 @@ import { createSPARQLPatternMatcher } from '../sparql-pattern-matcher.mjs';
 export class JITRegulatoryCompiler {
   constructor(options = {}) {
     this.shaclCompiler = new SHACLToSPARQLCompiler(options.prefixes);
-    this.sparqlMatcher = createSPARQLPatternMatcher(null, options.prefixes);
+    // Pass mock store for compilation-only use
+    const mockStore = { match: () => [] };
+    this.sparqlMatcher = createSPARQLPatternMatcher(mockStore, options.prefixes);
   }
 
   /**

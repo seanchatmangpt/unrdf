@@ -12,6 +12,7 @@ import { ReceiptGenerator } from './receipt-generator.mjs';
 import { HooksBridge } from '../hooks-bridge.mjs';
 import { AtomVMNodeRuntime } from '../node-runtime.mjs';
 import { JITRegulatoryCompiler } from '../compiler/jit-regulatory.mjs';
+import { registerPowl8Opcodes } from './opcodes.mjs';
 
 export class HardenedAtomVM {
   /**
@@ -30,6 +31,11 @@ export class HardenedAtomVM {
     this.receiptGenerator = new ReceiptGenerator();
     this.jitCompiler = new JITRegulatoryCompiler(options);
     
+    // Register custom opcodes if store has registration capability
+    if (typeof store.registerOpcode === 'function') {
+      registerPowl8Opcodes(store);
+    }
+    
     // Create the real JS->Erlang bidirectional bridge
     this.bridge = new HooksBridge(this.store, {
       nodeId: options.nodeId || 'hardened-vm-node',
@@ -40,7 +46,7 @@ export class HardenedAtomVM {
     const defaultLog = options.log || console.log;
 
     // Initialize the Node runtime for Erlang bytecode
-    this.runtime = new AtomVMNodeRuntime({
+    this.runtime = options.runtime || new AtomVMNodeRuntime({
       log: (msg) => {
         // Intercept bridge messages directly from the VM's stdout wrapper
         if (typeof msg === 'string' && msg.includes('KGC4D_BRIDGE:')) {

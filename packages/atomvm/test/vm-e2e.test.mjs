@@ -3,6 +3,20 @@ import { HardenedAtomVM } from '../src/vm/facade.mjs';
 import { Powl8Builder } from '../src/vm/builder.mjs';
 import { Store } from '@unrdf/oxigraph';
 
+// Mock @unrdf/core for SHACL validation testing
+vi.mock('@unrdf/core', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    validateGraph: vi.fn().mockImplementation((data, shape) => {
+      if (shape === 'invalid-shape') {
+        return { conforms: false };
+      }
+      return { conforms: true };
+    })
+  };
+});
+
 // Mock @unrdf/receipts for unit testing
 vi.mock('@unrdf/receipts', () => ({
   verifyPQReceipt: vi.fn().mockResolvedValue(true),
@@ -28,7 +42,7 @@ describe('AtomVM L4 Hardening (Chicago-Style TDD)', () => {
       load: vi.fn().mockResolvedValue('loaded'),
       registerOpcode: vi.fn(),
       intercept: vi.fn(),
-      execute: vi.fn().mockResolvedValue({ state: 'finished_normal' }),
+      execute: vi.fn().mockResolvedValue({ exitCode: 0, state: 'finished_powl8' }),
       getState: vi.fn().mockReturnValue({ state: 'finished_powl8' }),
       getOpcodeCount: vi.fn().mockReturnValue(150),
       executeMicrotask: vi.fn().mockResolvedValue(true),
@@ -64,7 +78,7 @@ describe('AtomVM L4 Hardening (Chicago-Style TDD)', () => {
     const agentId = 'agent:test-runner';
 
     // 4. Execute through the facade (The "Admission and Execution" phase)
-    const result = await hardenedVm.execute(bytecode, mockReceipt, agentId, inputContext);
+    const result = await hardenedVm.execute('dummy.avm', mockReceipt, agentId, inputContext);
 
     // 5. Behavioral Assertions (Verify the outcome, not just the call)
     expect(result.success).toBe(true);
@@ -79,20 +93,19 @@ describe('AtomVM L4 Hardening (Chicago-Style TDD)', () => {
   });
 
   it('should throw ConstitutionalViolationError on invalid receipt', async () => {
-    const hardenedVm = new HardenedAtomVM(store, policyGraph);
+    const mockRawVm = { load: vi.fn(), execute: vi.fn().mockResolvedValue({ exitCode: 0 }) };
+    const hardenedVm = new HardenedAtomVM(store, policyGraph, { runtime: mockRawVm });
     const bytecode = new Uint8Array([]);
     
     await expect(
-      hardenedVm.execute(bytecode, null, 'agent', {})
+      hardenedVm.execute('dummy.avm', null, 'agent', {})
     ).rejects.toThrow(/ConstitutionalViolationError/i);
   });
 
   it('should fail if SHACL validation fails', async () => {
      // Force validation failure (mocking the internal validate function indirectly)
-     // Since we updated loader.mjs to use Oxigraph's validate, 
-     // we could provide an invalid bytecode/shape combo if we used real components.
-     
-     const hardenedVm = new HardenedAtomVM(store, policyGraph);
+     const mockRawVm = { load: vi.fn(), execute: vi.fn().mockResolvedValue({ exitCode: 0 }) };
+     const hardenedVm = new HardenedAtomVM(store, policyGraph, { runtime: mockRawVm });
      const bytecode = new Uint8Array([0x99]);
      const invalidReceipt = {
        schema: 'shacl:conforms',
@@ -101,7 +114,7 @@ describe('AtomVM L4 Hardening (Chicago-Style TDD)', () => {
      };
 
      await expect(
-       hardenedVm.execute(bytecode, invalidReceipt, 'agent', {})
+       hardenedVm.execute('dummy.avm', invalidReceipt, 'agent', {})
      ).rejects.toThrow(/SHACL header validation failed/i);
   });
 });
