@@ -30,7 +30,7 @@
   "author": "UNRDF Team",
   "license": "MIT",
   "dependencies": {
-    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/oxigraph": "workspace:*",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

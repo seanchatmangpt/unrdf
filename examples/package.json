@@ -5,8 +5,8 @@
   "type": "module",
   "description": "UNRDF usage examples",
   "dependencies": {
-    "@unrdf/core": "26.5.4",
-    "@unrdf/hooks": "26.5.4"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*"
   },
   "scripts": {
     "test": "echo 'Examples are executable scripts, not tests'"

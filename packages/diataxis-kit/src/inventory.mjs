@@ -28,7 +28,7 @@ import { existsSync } from 'node:fs';
  */
 export async function discoverPackages(workspaceRoot, options = {}) {
   const {
-    skipDirs = ['node_modules', '.git', 'dist', 'build'],
+    skipDirs = ['node_modules', '.git', 'dist', 'build', 'archive', 'legacy-pre-2030'],
     includeNested = true
   } = options;
 
@@ -42,15 +42,46 @@ export async function discoverPackages(workspaceRoot, options = {}) {
   }
 
   // Find all package.json files
-  const packagePaths = await findPackageJsonFiles(rootPath, skipDirs, includeNested);
+  let packagePaths = [];
+  if (workspacePatterns.length > 0) {
+    // If we have patterns, use them to find package.json files
+    // Simplified pattern matching for common monorepo structures
+    for (const pattern of workspacePatterns) {
+      if (pattern.endsWith('/*')) {
+        const baseDir = pattern.slice(0, -2);
+        const fullBaseDir = join(rootPath, baseDir);
+        if (existsSync(fullBaseDir)) {
+          const subdirs = await readdir(fullBaseDir, { withFileTypes: true });
+          for (const subdir of subdirs) {
+            if (subdir.isDirectory() && !skipDirs.includes(subdir.name)) {
+              const pkgJsonPath = join(fullBaseDir, subdir.name, 'package.json');
+              if (existsSync(pkgJsonPath)) {
+                packagePaths.push(pkgJsonPath);
+              }
+            }
+          }
+        }
+      } else {
+        const pkgJsonPath = join(rootPath, pattern, 'package.json');
+        if (existsSync(pkgJsonPath)) {
+          packagePaths.push(pkgJsonPath);
+        }
+      }
+    }
+  } else {
+    // Fallback to recursive search if no patterns found
+    packagePaths = await findPackageJsonFiles(rootPath, skipDirs, includeNested);
+  }
 
   // Process each package
   const packages = [];
+  const seenNames = new Set();
   for (const pkgPath of packagePaths) {
     try {
       const entry = await processPackage(pkgPath);
-      if (entry) {
+      if (entry && !seenNames.has(entry.name)) {
         packages.push(entry);
+        seenNames.add(entry.name);
       }
     } catch (error) {
       console.warn(`Skipping package at ${pkgPath}: ${error.message}`);

@@ -7,5 +7,6 @@ export default defineBuildConfig({
   rollup: {
     emitCJS: false,
     inlineDependencies: false
-  }
+  },
+  failOnWarn: false
 });

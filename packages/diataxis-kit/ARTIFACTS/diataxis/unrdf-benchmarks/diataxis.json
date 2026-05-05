@@ -112,5 +112,5 @@
       "title": "Getting Started with unrdf-benchmarks"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

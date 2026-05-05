@@ -1,9 +1,9 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.5,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.4,
+    "howtos": 0.25,
+    "reference": 0.5,
+    "tutorials": 0.4
   },
   "evidence": {
     "docsFiles": [],
@@ -11,22 +11,11 @@
       "cache-demo.mjs",
       "standalone-demo.mjs"
     ],
-    "fingerprint": "2b49f46a92952a9b0acd63deb32c1411c3cfd98c209a8f1943bc9c46bae637ff",
-    "readmeHeadings": [
-      "Features",
-      "Installation",
-      "Quick Start",
-      "Architecture",
-      "Performance Benchmarks",
-      "Configuration",
-      "Integration Patterns",
-      "API Reference",
-      "License",
-      "Author"
-    ]
+    "fingerprint": "b70beac3d927612c5c3ce7d68a285ebed90c41ea3287fc0fa81a3b1918313666",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Multi-layer caching system for RDF queries with high-performance distributed caching.",
+    "architecture": "@unrdf/caching is a package in the UNRDF ecosystem",
     "concepts": [
       "cache",
       "redis",
@@ -34,11 +23,10 @@
       "rdf",
       "sparql"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-caching-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/caching",
@@ -50,21 +38,6 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
-    {
-      "confidenceScore": 1,
-      "context": "When you need to customize package behavior",
-      "id": "howto-configure-unrdf-caching",
-      "source": [
-        "readme"
-      ],
-      "steps": [
-        "Create configuration file",
-        "Define configuration options",
-        "Apply configuration to package"
-      ],
-      "task": "Set up custom configuration for @unrdf/caching",
-      "title": "Configure @unrdf/caching"
-    },
     {
       "confidenceScore": 0.7,
       "context": "When working with cache in your project",
@@ -80,6 +53,21 @@
       ],
       "task": "Connect @unrdf/caching with cache",
       "title": "Integrate with cache"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/caching",
@@ -119,7 +107,7 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/caching in your project",
       "id": "tutorial-getting-started-with-unrdf-caching",
       "prerequisites": [
@@ -128,7 +116,6 @@
       ],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
@@ -140,5 +127,5 @@
       "title": "Getting Started with @unrdf/caching"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

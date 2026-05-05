@@ -1,22 +1,17 @@
 {
   "confidence": {
-    "explanation": 1,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.4
   },
   "evidence": {
     "docsFiles": [
       "AUTONOMOUS_SELF_PLAY_GUIDE.md",
-      "ECOSYSTEM-COMPOSITION-REPORT.md",
       "INDEX.md",
-      "INTEGRATION-QUALITY-REPORT.md",
       "INTEGRATION_COVERAGE_MATRIX.md",
       "README.md",
-      "SECURITY_INTEGRATION_COMPLETE.md",
-      "SECURITY_VALIDATION_EXAMPLES.md",
       "SLO-README.md",
-      "benchmarking.md",
       "consensus-guide.md",
       "dashboard-guide.md",
       "e2e-jtbd-guide.md",
@@ -26,11 +21,9 @@
       "federation-query-guide.md",
       "hooks-policy-integration.md",
       "how-to.md",
-      "integration-topology.md",
       "kgc-4d-sourcing.md",
       "knowledge-rules-guide.md",
       "nitro-tasks-integration.md",
-      "observability-metrics.md",
       "operational-runbooks.md",
       "performance-tuning.md",
       "production-deployment.md",
@@ -42,13 +35,7 @@
       "slo-definitions.md",
       "slo-monitoring-guide.md",
       "slo-tracking-sheet.csv",
-      "tutorial.md",
-      "v6-deltagate-integration.md",
-      "yawl-error-handling.md",
-      "yawl-integration-coverage-matrix.md",
-      "yawl-integration-guide.md",
-      "yawl-patterns-cookbook.md",
-      "yawl-slo-definitions.md"
+      "tutorial.md"
     ],
     "examplesFiles": [
       "01-basic-daemon.mjs",
@@ -65,28 +52,11 @@
       "07-security-hardening.mjs",
       "nitro-app-integration.mjs"
     ],
-    "fingerprint": "bbe49d4bf6afa75e516e06eb5bdf537f5b103fefb7150cadac138c12f01e1ef4",
-    "readmeHeadings": [
-      "Features",
-      "Installation",
-      "Quick Start",
-      "Core Components",
-      "Configuration",
-      "Events",
-      "Health & Metrics",
-      "Testing",
-      "Security",
-      "Integration Examples",
-      "Examples",
-      "Documentation",
-      "Package Exports",
-      "Performance",
-      "Quality Metrics",
-      "License"
-    ]
+    "fingerprint": "d5c352011181b26696431cc15bde2dab1b80572cb2ef6a7a173b521f6a31f20b",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Background daemon for managing scheduled tasks and event-driven operations in UNRDF with enterprise-grade security and comprehensive RDF integration.",
+    "architecture": "@unrdf/daemon is a package in the UNRDF ecosystem",
     "concepts": [
       "daemon",
       "background-tasks",
@@ -94,11 +64,10 @@
       "scheduling",
       "task-queue"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-daemon-explanation",
     "source": [
       "keywords",
-      "readme",
       "docs",
       "inferred"
     ],
@@ -111,21 +80,6 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
-    {
-      "confidenceScore": 1,
-      "context": "When you need to customize package behavior",
-      "id": "howto-configure-unrdf-daemon",
-      "source": [
-        "readme"
-      ],
-      "steps": [
-        "Create configuration file",
-        "Define configuration options",
-        "Apply configuration to package"
-      ],
-      "task": "Set up custom configuration for @unrdf/daemon",
-      "title": "Configure @unrdf/daemon"
-    },
     {
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
@@ -244,22 +198,22 @@
       "title": "First Steps"
     },
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/daemon in your project",
       "id": "tutorial-getting-started-with-unrdf-daemon",
       "prerequisites": [],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
-        "Installation",
-        "Integration Examples",
-        "Examples"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/daemon"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

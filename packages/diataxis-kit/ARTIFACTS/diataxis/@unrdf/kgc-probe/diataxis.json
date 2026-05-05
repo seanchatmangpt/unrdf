@@ -1,9 +1,9 @@
 {
   "confidence": {
-    "explanation": 1,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.4
   },
   "evidence": {
     "docsFiles": [
@@ -22,29 +22,11 @@
       "runtime-demo.mjs",
       "runtime-probe-demo.mjs"
     ],
-    "fingerprint": "1eafca40f8ade33372c639b8116d7c89a5e7364655f51548de0d8d7fc449c85f",
-    "readmeHeadings": [
-      "Overview",
-      "Installation",
-      "Quick Start",
-      "CLI Usage",
-      "Architecture",
-      "Storage Backends",
-      "Operations",
-      "Complexity Analysis",
-      "Configuration",
-      "Examples",
-      "Design Patterns",
-      "Performance Characteristics",
-      "Testing",
-      "Dependencies",
-      "License",
-      "Contributing",
-      "References"
-    ]
+    "fingerprint": "91c3d5d32f3ee47a7c0daaa132d863c47bf94c88526b09940a18967d6bb427dc",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Automated knowledge graph integrity scanning with 10 specialized agents and deterministic artifact validation.",
+    "architecture": "@unrdf/kgc-probe is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "knowledge-graph",
@@ -52,11 +34,10 @@
       "integrity",
       "agents"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.7,
     "id": "explanation-unrdf-kgc-probe-explanation",
     "source": [
       "keywords",
-      "readme",
       "docs",
       "inferred"
     ],
@@ -69,21 +50,6 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
-    {
-      "confidenceScore": 1,
-      "context": "When you need to customize package behavior",
-      "id": "howto-configure-unrdf-kgc-probe",
-      "source": [
-        "readme"
-      ],
-      "steps": [
-        "Create configuration file",
-        "Define configuration options",
-        "Apply configuration to package"
-      ],
-      "task": "Set up custom configuration for @unrdf/kgc-probe",
-      "title": "Configure @unrdf/kgc-probe"
-    },
     {
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
@@ -214,7 +180,7 @@
       "title": "First Steps"
     },
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/kgc-probe in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-probe",
       "prerequisites": [
@@ -223,16 +189,16 @@
       ],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
-        "Installation",
-        "CLI Usage",
-        "Examples"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/kgc-probe"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

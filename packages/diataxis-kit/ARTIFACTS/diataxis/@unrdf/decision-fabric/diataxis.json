@@ -143,5 +143,5 @@
       "title": "Getting Started with @unrdf/decision-fabric"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

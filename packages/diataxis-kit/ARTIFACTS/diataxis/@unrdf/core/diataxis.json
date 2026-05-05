@@ -7,7 +7,6 @@
   },
   "evidence": {
     "docsFiles": [
-      ".DS_Store",
       "API.md",
       "CONTRIBUTING.md",
       "KNOWLEDGE-HOOKS-PERFORMANCE.md",
@@ -18,7 +17,7 @@
       "basic-operations.mjs",
       "production-rdf-pipeline.mjs"
     ],
-    "fingerprint": "9932ad6a2ddf6b25b401da1d43ac2908f6fed1f2c0290772237a9084c9ac56cf",
+    "fingerprint": "103507db04add3a2f2268213313dab2a5bd257f92102258dc46c45b3754feb06",
     "readmeHeadings": [
       "Features",
       "Installation",
@@ -278,5 +277,5 @@
       "title": "Getting Started with @unrdf/core"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

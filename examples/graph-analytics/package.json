@@ -18,8 +18,8 @@
     "real-time"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "26.5.4",
-    "@unrdf/streaming": "26.5.4",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "ws": "^8.18.3",
     "zod": "^4.1.13"

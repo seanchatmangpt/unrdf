@@ -30,8 +30,9 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@unrdf/core": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "async-mutex": "^0.5.0",
     "hash-wasm": "^4.12.0",
     "isomorphic-git": "^1.36.1"
   },

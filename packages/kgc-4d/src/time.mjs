@@ -162,16 +162,20 @@ export function fromISO(iso) {
   const nanoFrac = frac.padEnd(9, '0').slice(0, 9);
 
   // Build date from components (avoids locale issues)
-  const date = new Date(Date.UTC(
-    parseInt(year, 10),
-    m - 1, // Month is 0-indexed
-    d,
-    h,
-    min,
-    s
-  ));
+  const date = new Date(Date.UTC(y, m - 1, d, h, min, s));
 
-  // Check if Date constructor normalized the values (e.g., month 13 -> next year)
+  // GAP-T1 FIX: Check if Date constructor normalized the values (detect Feb 30, etc.)
+  if (
+    date.getUTCFullYear() !== y ||
+    date.getUTCMonth() !== m - 1 ||
+    date.getUTCDate() !== d ||
+    date.getUTCHours() !== h ||
+    date.getUTCMinutes() !== min ||
+    date.getUTCSeconds() !== s
+  ) {
+    throw new Error('Invalid ISO date: component normalization detected (out of range): ' + iso);
+  }
+
   const ms = BigInt(date.getTime());
   if (isNaN(Number(ms))) {
     throw new Error('Invalid ISO date: ' + iso);

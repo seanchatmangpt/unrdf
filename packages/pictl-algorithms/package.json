@@ -44,12 +44,12 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/core": "26.5.4",
-    "@unrdf/pictl-semantics": "26.5.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/pictl-semantics": "workspace:*",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@unrdf/test-utils": "26.5.4",
+    "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

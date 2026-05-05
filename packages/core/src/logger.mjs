@@ -57,7 +57,7 @@ const LoggerConfigSchema = z.object({
   level: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
   context: z.record(z.string(), z.any()).default({}),
   pretty: z.boolean().default(false),
-  destination: z.any(),
+  destination: z.any().optional(),
 });
 
 /**

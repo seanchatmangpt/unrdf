@@ -7,7 +7,6 @@
   },
   "evidence": {
     "docsFiles": [
-      ".DS_Store",
       "API.md",
       "CONTRIBUTING.md",
       "GUIDE.md",
@@ -28,7 +27,7 @@
       "validate-hooks.mjs",
       "window-condition-example.mjs"
     ],
-    "fingerprint": "f5007814c951593d2c85405ec2e790ea356d62b88ce1e1203025833078d3e8e8",
+    "fingerprint": "5e68e79f9ff9d8f69c1610c6d8c26ebb2a60e07dffa9df1087a81f26e252df21",
     "readmeHeadings": [
       "Overview",
       "Quick Start",
@@ -219,5 +218,5 @@
       "title": "Getting Started with @unrdf/hooks"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

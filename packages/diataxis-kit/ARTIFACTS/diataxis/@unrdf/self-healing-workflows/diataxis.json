@@ -1,9 +1,9 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.4,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.4
   },
   "evidence": {
     "docsFiles": [],
@@ -11,26 +11,11 @@
       "basic-usage.mjs",
       "recovery-strategies.mjs"
     ],
-    "fingerprint": "c1bd721ae1b6964bb6bcf1693f420b86e0dbbe0cfca27e2f5be0fe5446c43f9d",
-    "readmeHeadings": [
-      "Features",
-      "Installation",
-      "Quick Start",
-      "Recovery Strategies",
-      "Error Classification",
-      "Health Monitoring",
-      "Statistics",
-      "Custom Error Patterns",
-      "Custom Recovery Actions",
-      "Performance Targets",
-      "Recovery Success Rate",
-      "API Reference",
-      "Examples",
-      "License"
-    ]
+    "fingerprint": "9d9e68ee7d5dea8153902eb43c3bae5648582b9364bae94c03f5fe70d1df0d6d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "See [examples/](.",
+    "architecture": "@unrdf/self-healing-workflows is a package in the UNRDF ecosystem",
     "concepts": [
       "self-healing",
       "error-recovery",
@@ -38,11 +23,10 @@
       "retry",
       "workflow"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-self-healing-workflows-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/self-healing-workflows",
@@ -147,13 +131,12 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/self-healing-workflows in your project",
       "id": "tutorial-getting-started-with-unrdf-self-healing-workflows",
       "prerequisites": [],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
@@ -165,5 +148,5 @@
       "title": "Getting Started with @unrdf/self-healing-workflows"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

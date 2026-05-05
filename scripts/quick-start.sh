@@ -86,8 +86,32 @@ fi
 
 echo ""
 
-# 2. Install Dependencies
-print_step "Step 2/5: Installing dependencies..."
+# 2. Environment Setup (Open Ontologies)
+print_step "Step 2/6: Setting up Open Ontologies sidecar..."
+if [ ! -d "open-ontologies" ]; then
+    print_step "Cloning Open Ontologies..."
+    git clone https://github.com/seanchatmangpt/open-ontologies.git
+fi
+
+if [ ! -f "open-ontologies/target/release/open-ontologies" ]; then
+    print_step "Building Open Ontologies Rust binary (this may take a few minutes)..."
+    cd open-ontologies
+    if cargo build --release; then
+        print_success "Open Ontologies built successfully"
+        cd ..
+    else
+        print_error "Failed to build Open Ontologies. Ensure Rust is installed."
+        FAILURES+=("Open Ontologies build failed")
+        cd ..
+    fi
+else
+    print_success "Open Ontologies binary found"
+fi
+
+echo ""
+
+# 3. Install Dependencies
+print_step "Step 3/6: Installing dependencies..."
 START_TIME=$(date +%s)
 
 if timeout 60s pnpm install --frozen-lockfile 2>&1 | tee /tmp/pnpm-install.log; then
@@ -101,8 +125,8 @@ fi
 
 echo ""
 
-# 3. Build All Packages
-print_step "Step 3/5: Building all packages..."
+# 4. Build All Packages
+print_step "Step 4/6: Building all packages..."
 START_TIME=$(date +%s)
 
 if timeout 120s pnpm build 2>&1 | tee /tmp/pnpm-build.log; then
@@ -116,8 +140,8 @@ fi
 
 echo ""
 
-# 4. Run Quick Validation
-print_step "Step 4/5: Running quick validation..."
+# 5. Run Quick Validation
+print_step "Step 5/6: Running quick validation..."
 START_TIME=$(date +%s)
 
 # Lint check
@@ -139,8 +163,8 @@ fi
 
 echo ""
 
-# 5. Health Checks
-print_step "Step 5/5: Running health checks..."
+# 6. Health Checks
+print_step "Step 6/6: Running health checks..."
 
 # Check package count
 PACKAGE_COUNT=$(ls -1 packages | wc -l | tr -d ' ')

@@ -108,5 +108,5 @@
       "title": "Getting Started with @unrdf/kgc-4d-playground"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

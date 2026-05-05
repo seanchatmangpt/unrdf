@@ -52,9 +52,9 @@
   "dependencies": {
     "@noble/hashes": "^1.4.0",
     "@opentelemetry/api": "^1.7.0",
-    "@unrdf/core": "26.5.4",
-    "@unrdf/otel": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/otel": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "citty": "^0.1.6",
     "eyereasoner": "^10",
     "sparqljs": "^3.7.3",
@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@unrdf/test-utils": "26.5.4",
+    "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

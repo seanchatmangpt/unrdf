@@ -141,5 +141,5 @@
       "title": "Getting Started with @unrdf/graph-analytics"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

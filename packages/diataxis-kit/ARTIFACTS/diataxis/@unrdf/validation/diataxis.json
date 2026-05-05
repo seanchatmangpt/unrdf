@@ -134,5 +134,5 @@
       "title": "Getting Started with @unrdf/validation"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

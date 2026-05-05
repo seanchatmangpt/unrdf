@@ -17,7 +17,7 @@
     "subscriptions"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/oxigraph": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "ws": "^8.18.3",
     "zod": "^4.1.13"

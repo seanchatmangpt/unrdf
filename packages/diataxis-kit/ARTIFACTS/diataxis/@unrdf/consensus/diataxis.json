@@ -158,5 +158,5 @@
       "title": "Getting Started with @unrdf/consensus"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

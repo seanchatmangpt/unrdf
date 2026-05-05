@@ -41,7 +41,7 @@
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/semantic-conventions": "^1.28.0",
-    "@unrdf/manufacturing": "26.5.4"
+    "@unrdf/manufacturing": "workspace:*"
   },
   "peerDependencies": {
     "pm4py": ">=2.7.0"

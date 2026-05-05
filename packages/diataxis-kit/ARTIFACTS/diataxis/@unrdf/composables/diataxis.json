@@ -116,5 +116,5 @@
       "title": "Getting Started with @unrdf/composables"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

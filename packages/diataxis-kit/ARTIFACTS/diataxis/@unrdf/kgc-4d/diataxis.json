@@ -7,7 +7,6 @@
   },
   "evidence": {
     "docsFiles": [
-      ".DS_Store",
       "ARCHITECTURE-DEEP-DIVE.md",
       "BENCHMARKS.md",
       "BEST-PRACTICES-PATTERNS.md",
@@ -25,8 +24,7 @@
       "README.md",
       "SUCCESS-METRICS.md",
       "TROUBLESHOOTING.md",
-      "index.md",
-      "kgc-4d-comprehensive.log"
+      "index.md"
     ],
     "examplesFiles": [
       "ATOMVM-PATTERN.md",
@@ -39,7 +37,7 @@
       "temporal-sparql-demo.mjs",
       "worker-performance-demo.mjs"
     ],
-    "fingerprint": "fd035ff8e125668e4caf7215d81e50ef955317205e0cb208ff7cac921abbce6a",
+    "fingerprint": "2c9be06862b6968c980468fe0e8e10464a30c1828e6ecab50b0bc156d74a921f",
     "readmeHeadings": [
       "What is KGC 4D?",
       "5-Minute Quick Start",
@@ -185,5 +183,5 @@
       "title": "Getting Started with @unrdf/kgc-4d"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

@@ -149,5 +149,5 @@
       "title": "Getting Started with @unrdf/federation"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

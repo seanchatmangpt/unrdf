@@ -103,5 +103,5 @@
       "title": "Getting Started with @unrdf/domain"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

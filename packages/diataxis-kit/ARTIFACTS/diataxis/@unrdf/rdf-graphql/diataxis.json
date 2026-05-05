@@ -1,37 +1,18 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 0.7
+    "explanation": 0.4,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "8db141dc9f8015d52e8bc86da8186373858b6314697caadc057cee120807db60",
-    "readmeHeadings": [
-      "Overview",
-      "Features",
-      "Installation",
-      "Quick Start",
-      "Ontology to GraphQL Mapping Rules",
-      "YAWL Workflow Example",
-      "API Reference",
-      "Advanced Usage",
-      "Architecture",
-      "Performance Considerations",
-      "Federation (Future)",
-      "Testing",
-      "Use Cases",
-      "Limitations",
-      "Roadmap",
-      "License",
-      "Contributing",
-      "References"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation from ontologies.",
+    "architecture": "@unrdf/rdf-graphql is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "graphql",
@@ -39,11 +20,10 @@
       "ontology",
       "knowledge-graph"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-rdf-graphql-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/rdf-graphql",
@@ -118,14 +98,13 @@
       }
     ],
     "source": [
-      "exports",
-      "readme"
+      "exports"
     ],
     "title": "@unrdf/rdf-graphql Reference"
   },
   "tutorials": [
     {
-      "confidenceScore": 0.4,
+      "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/rdf-graphql in your project",
       "id": "tutorial-getting-started-with-unrdf-rdf-graphql",
       "prerequisites": [
@@ -133,16 +112,16 @@
         "Understanding of graph databases"
       ],
       "source": [
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
-        "Installation",
-        "YAWL Workflow Example",
-        "Advanced Usage"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/rdf-graphql"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

@@ -34,7 +34,6 @@
       "poka-yoke-kgc4d-invariants.md",
       "poka-yoke-measurement.md",
       "thesis-README.md",
-      "thesis-beyond-human-perception.tex",
       "wasm-integration.md"
     ],
     "examplesFiles": [
@@ -48,7 +47,7 @@
       "sparql-beam-compilation-demo.mjs",
       "sparql-to-beam-demo.mjs"
     ],
-    "fingerprint": "b58bd72af8bd038e6ac1ae51f542f8bf7fb8759906ef7694c12fb34d8d89bf5c",
+    "fingerprint": "e1ea88dbb39592d842218abd6f91241128476f70dedc8f86ac32e6241a855931",
     "readmeHeadings": [
       "Quick Start",
       "Features",
@@ -183,5 +182,5 @@
       "title": "Getting Started with @unrdf/atomvm"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

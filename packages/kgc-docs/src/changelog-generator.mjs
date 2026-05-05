@@ -15,6 +15,11 @@ import { parseFrontmatter } from './parser.mjs';
  * @returns {number} -1 if v1 < v2, 0 if equal, 1 if v1 > v2
  */
 export function compareVersions(v1, v2) {
+  // Agnostic versions are always equal
+  if (v1 === '[VERSION]' && v2 === '[VERSION]') return 0;
+  if (v1 === '[VERSION]') return 1; // [VERSION] is always newer
+  if (v2 === '[VERSION]') return -1;
+
   const parts1 = v1.split('.').map(Number);
   const parts2 = v2.split('.').map(Number);
 
@@ -57,6 +62,8 @@ export function parseVersionInfo(filePath) {
  * @returns {string} Change type: 'major', 'minor', 'patch', or 'none'
  */
 export function getChangeType(oldVersion, newVersion) {
+  if (oldVersion === '[VERSION]' || newVersion === '[VERSION]') return 'none';
+
   const oldParts = oldVersion.split('.').map(Number);
   const newParts = newVersion.split('.').map(Number);
 

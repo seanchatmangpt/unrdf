@@ -1,18 +1,49 @@
 {
   "confidence": {
-    "explanation": 0.7,
+    "explanation": 1,
     "howtos": 0.25,
-    "reference": 0,
-    "tutorials": 0.7
+    "reference": 0.5,
+    "tutorials": 1
   },
   "evidence": {
-    "docsFiles": [],
-    "examplesFiles": [],
-    "fingerprint": "80e171c8050c6c10b7ebac8ce7c28559a80a7863173e9f47cc9a68f978d6726d",
+    "docsFiles": [
+      "AGENTIC.md",
+      "PLAN-e2e-autonomics-remediation.md",
+      "bench_conformance_results.md",
+      "bench_ml_streaming_sim_results.md",
+      "bench_tier1_results.md",
+      "bench_tier2_metaheuristic_results.md",
+      "performance_thesis.md"
+    ],
+    "examplesFiles": [
+      "README.md",
+      "browser-full.html",
+      "browser.html",
+      "gpu_wgsl_benchmark.rs",
+      "interactive-demo.html",
+      "nodejs.d.ts",
+      "nodejs.d.ts.map",
+      "nodejs.js",
+      "react-component.d.ts",
+      "react-component.d.ts.map",
+      "react-component.js",
+      "react-component.js.map",
+      "react-component.tsx",
+      "react-example.d.ts",
+      "react-example.d.ts.map",
+      "react-example.js",
+      "react-example.js.map",
+      "react-example.tsx",
+      "scalability_report.rs",
+      "webpack.config.d.ts",
+      "webpack.config.d.ts.map",
+      "webpack.config.js"
+    ],
+    "fingerprint": "f0b8688a943cae124d71d1ed3e14f79c3986cb8fda29ca772d25adc874a6f4f4",
     "readmeHeadings": [
       "Overview",
       "Features",
-      "Performance Benchmarks ([VERSION] — 2026-04-04)",
+      "Performance Benchmarks (latest — 2026-04-04)",
       "Installation",
       "Quick Start",
       "Documentation",
@@ -27,14 +58,15 @@
       "process-mining",
       "wasm",
       "webassembly",
-      "petri-net",
-      "bpm"
+      "javascript",
+      "typescript"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 1,
     "id": "explanation-wasm4pm-explanation",
     "source": [
       "keywords",
       "readme",
+      "docs",
       "inferred"
     ],
     "title": "Understanding wasm4pm",
@@ -80,28 +112,50 @@
   ],
   "packageName": "wasm4pm",
   "reference": {
-    "confidenceScore": 0.5,
+    "confidenceScore": 1,
     "id": "reference-wasm4pm-reference",
     "items": [
       {
-        "description": "Reference documentation to be added",
+        "description": "Export: .",
         "example": null,
-        "name": "unknown",
-        "type": "unknown"
+        "name": "wasm4pm",
+        "type": "export"
       }
     ],
     "source": [
-      "inferred"
+      "exports"
     ],
     "title": "wasm4pm Reference"
   },
   "tutorials": [
     {
-      "confidenceScore": 0.4,
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with wasm4pm\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through README.md",
+        "Work through browser-full.html",
+        "Work through browser.html",
+        "Work through gpu_wgsl_benchmark.rs",
+        "Work through interactive-demo.html"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use wasm4pm in your project",
       "id": "tutorial-getting-started-with-wasm4pm",
-      "prerequisites": [],
+      "prerequisites": [
+        "Node.js environment"
+      ],
       "source": [
+        "examples",
         "readme",
         "keywords"
       ],
@@ -114,5 +168,5 @@
       "title": "Getting Started with wasm4pm"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

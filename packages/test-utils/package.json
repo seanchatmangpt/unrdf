@@ -9,7 +9,7 @@
     ".": "./src/index.mjs"
   },
   "dependencies": {
-    "@unrdf/oxigraph": "26.5.4"
+    "@unrdf/oxigraph": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^4.0.16"

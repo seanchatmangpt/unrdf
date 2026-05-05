@@ -37,10 +37,10 @@
     "eslint"
   ],
   "dependencies": {
-    "@unrdf/core": "26.5.4",
-    "@unrdf/kgc-4d": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4",
-    "@unrdf/v6-core": "26.5.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
     "zod": "^4.1.13"
   },
   "devDependencies": {

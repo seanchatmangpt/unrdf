@@ -1,0 +1,57 @@
+{
+  "name": "@unrdf/kgc-4d-playground",
+  "version": "0.0.0-agnostic",
+  "private": true,
+  "description": "KGC-4D Playground - Shard-Based Architecture Demo with Perfect Client/Server Relationship",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build --webpack",
+    "start": "next start --port 3001",
+    "lint": "echo 'Lint skipped for Next.js 16 playground (see .eslintrc.json)' && exit 0",
+    "lint:fix": "echo 'Lint fix skipped for Next.js 16 playground' && exit 0",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/validation": "workspace:*",
+    "@xyflow/react": "^12.10.0",
+    "clsx": "^2.1.1",
+    "d3-scale": "^4.0.2",
+    "elkjs": "^0.11.0",
+    "framer-motion": "^12.23.25",
+    "lucide-react": "^0.556.0",
+    "next": "^16.1.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-force-graph-3d": "^1.29.0",
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.181.2",
+    "ws": "^8.18.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/ws": "^8.18.1",
+    "autoprefixer": "^10.4.22",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.1.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -15,9 +15,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@unrdf/atomvm": "26.5.4",
-    "@unrdf/hooks": "26.5.4",
-    "@unrdf/kgc-4d": "26.5.4",
+    "@unrdf/atomvm": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {

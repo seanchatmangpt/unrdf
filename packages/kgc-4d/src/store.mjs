@@ -145,6 +145,16 @@ export class KGCStore extends UnrdfStore {
       throw new TypeError('appendEvent: deltas must be an array');
     }
 
+    // GAP-S1 FIX: Unbounded payload size limits
+    const MAX_EVENT_DATA_SIZE = 1_000_000; // 1MB
+    const eventDataSize = JSON.stringify(eventData).length;
+    if (eventDataSize > MAX_EVENT_DATA_SIZE) {
+      throw new Error(`ConstitutionalViolationError: Event data exceeds maximum size limit (${eventDataSize} > ${MAX_EVENT_DATA_SIZE})`);
+    }
+    if (deltas.length > 10_000) {
+      throw new Error(`ConstitutionalViolationError: Delta count exceeds maximum limit (${deltas.length} > 10000)`);
+    }
+
     // 0. Validation (Mistake-Proofing)
     const validationMode = options.validationMode || (this.harden ? ValidationMode.DELTA : null);
     if (validationMode === ValidationMode.DELTA && this.validator) {

@@ -29,14 +29,14 @@
     "rdf"
   ],
   "dependencies": {
-    "@unrdf/hooks": "26.5.4",
-    "@unrdf/kgc-4d": "26.5.4",
-    "@unrdf/kgc-multiverse": "26.5.4",
-    "@unrdf/federation": "26.5.4",
-    "@unrdf/streaming": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4",
-    "@unrdf/receipts": "26.5.4",
-    "@unrdf/core": "26.5.4",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/kgc-multiverse": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/receipts": "workspace:*",
+    "@unrdf/core": "workspace:*",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

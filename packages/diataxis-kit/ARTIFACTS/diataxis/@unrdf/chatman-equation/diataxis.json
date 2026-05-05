@@ -163,5 +163,5 @@
       "title": "Getting Started with @unrdf/chatman-equation"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

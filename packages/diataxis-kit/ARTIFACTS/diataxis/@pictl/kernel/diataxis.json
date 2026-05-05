@@ -8,7 +8,7 @@
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "3b097629db1de5317cb38c90c40af6052753eb191d1a455f19090494f3bc394e",
+    "fingerprint": "8d7860717e96f02635670cbf43b1f07c9e9a8bba65776a0b9a57bceda3b87625",
     "readmeHeadings": [
       "Overview",
       "Deployment Profiles (NEW in [VERSION])",
@@ -113,5 +113,5 @@
       "title": "Getting Started with @pictl/kernel"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

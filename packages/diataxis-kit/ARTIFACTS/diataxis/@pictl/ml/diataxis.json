@@ -108,5 +108,5 @@
       "title": "Getting Started with @pictl/ml"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

@@ -1,6 +1,6 @@
 {
   "confidence": {
-    "explanation": 0.7,
+    "explanation": 0.4,
     "howtos": 0.25,
     "reference": 0,
     "tutorials": 0.1
@@ -8,23 +8,11 @@
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "8d4ea2ce88d5acaf68a6cef2bf92212385e12856eeb6cbe6db242581ba01e704",
-    "readmeHeadings": [
-      "Overview",
-      "Test Scenarios",
-      "Running Tests",
-      "Success Criteria",
-      "Test Architecture",
-      "CI/CD Integration",
-      "Troubleshooting",
-      "Contributing",
-      "Metrics",
-      "License",
-      "Questions?"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Comprehensive integration tests for multi-package workflows across the UNRDF ecosystem.",
+    "architecture": "@unrdf/integration-tests is a package in the UNRDF ecosystem",
     "concepts": [
       "integration-tests",
       "adversarial-tests",
@@ -32,11 +20,10 @@
       "workflow",
       "federation"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-integration-tests-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/integration-tests",
@@ -117,5 +104,5 @@
       "title": "Getting Started with @unrdf/integration-tests"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

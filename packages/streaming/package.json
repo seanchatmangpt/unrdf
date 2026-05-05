@@ -40,9 +40,9 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/core": "26.5.4",
-    "@unrdf/hooks": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "citty": "^0.1.6",
     "lru-cache": "^10.0.0",
     "ws": "^8.18.3",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@rdfjs/data-model": "^2.0.2",
     "@types/node": "^24.10.1",
-    "@unrdf/test-utils": "26.5.4",
+    "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

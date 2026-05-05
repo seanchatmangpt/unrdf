@@ -181,5 +181,5 @@
       "title": "Getting Started with @unrdf/kgc-swarm"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

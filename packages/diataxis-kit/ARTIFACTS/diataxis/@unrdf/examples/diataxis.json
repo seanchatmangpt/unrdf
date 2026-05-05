@@ -113,5 +113,5 @@
       "title": "Getting Started with @unrdf/examples"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

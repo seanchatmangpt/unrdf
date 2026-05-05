@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {},
   "peerDependencies": {
-    "@unrdf/core": "*",
-    "@unrdf/oxigraph": "*",
-    "@unrdf/kgc-4d": "*"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*"
   }
 }

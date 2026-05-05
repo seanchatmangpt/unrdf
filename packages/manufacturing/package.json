@@ -20,7 +20,7 @@
     "build": "echo 'ESM — no build step required'"
   },
   "dependencies": {
-    "@unrdf/core": "26.5.4",
+    "@unrdf/core": "workspace:*",
     "zod": "^3.25.67"
   },
   "devDependencies": {

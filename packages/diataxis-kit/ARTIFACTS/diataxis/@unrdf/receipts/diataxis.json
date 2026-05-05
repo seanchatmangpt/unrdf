@@ -1,74 +1,70 @@
 {
   "confidence": {
-    "explanation": 0.3,
-    "howtos": 0,
+    "explanation": 0.4,
+    "howtos": 0.5,
     "reference": 0.5,
-    "tutorials": 0
+    "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "8bcba236d5c0f474658f16d0daf4885ec290c9509cf960c052b1374f0969b473",
-    "readmeHeadings": [
-      "Overview",
-      "Modules",
-      "Data Model",
-      "Determinism Guarantee",
-      "Serialization",
-      "Testing",
-      "Use Cases",
-      "Security Properties",
-      "Performance",
-      "Dependencies",
-      "License"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Cryptographic audit trails for admissibility decisions, validation runs, and projection operations.",
+    "architecture": "@unrdf/receipts is a package in the UNRDF ecosystem",
     "concepts": [
-      "core functionality"
+      "rdf",
+      "knowledge-graph",
+      "receipts",
+      "merkle-tree",
+      "verification"
     ],
-    "confidenceScore": 0.3,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-receipts-explanation",
     "source": [
-      "readme"
+      "keywords",
+      "inferred"
     ],
     "title": "Understanding @unrdf/receipts",
     "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
     ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
     {
-      "confidenceScore": 0.4,
-      "context": "When encountering issues during usage",
-      "id": "howto-troubleshoot-common-issues",
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
       "source": [
-        "inferred"
+        "tests"
       ],
       "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
       ],
-      "task": "Resolve common problems and errors",
-      "title": "Troubleshoot Common Issues"
+      "task": "Implement error handling for @unrdf/receipts",
+      "title": "Handle Errors"
     },
     {
-      "confidenceScore": 0.4,
-      "context": "When you need to accomplish common tasks",
-      "id": "howto-use-unrdf-receipts",
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
       "source": [
+        "keywords",
         "inferred"
       ],
       "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
       ],
-      "task": "Perform basic operations with @unrdf/receipts",
-      "title": "Use @unrdf/receipts"
+      "task": "Connect @unrdf/receipts with rdf",
+      "title": "Integrate with rdf"
     }
   ],
   "packageName": "@unrdf/receipts",
@@ -77,32 +73,44 @@
     "id": "reference-unrdf-receipts-reference",
     "items": [
       {
-        "description": "Export: ./merkle-root",
-        "example": "import from \"./merkle-root.mjs\"",
-        "name": "./merkle-root",
+        "description": "Export: ./batch-receipt-generator",
+        "example": "import from \"./src/batch-receipt-generator.mjs\"",
+        "name": "./batch-receipt-generator",
         "type": "export"
       },
       {
-        "description": "Export: ./receipt",
-        "example": "import from \"./receipt.mjs\"",
-        "name": "./receipt",
+        "description": "Export: ./dilithium3",
+        "example": "import from \"./src/dilithium3.mjs\"",
+        "name": "./dilithium3",
         "type": "export"
       },
       {
-        "description": "Export: ./receipt-chain",
-        "example": "import from \"./receipt-chain.mjs\"",
-        "name": "./receipt-chain",
+        "description": "Export: ./hybrid-signature",
+        "example": "import from \"./src/hybrid-signature.mjs\"",
+        "name": "./hybrid-signature",
         "type": "export"
       },
       {
-        "description": "Export: ./receipt-generator",
-        "example": "import from \"./receipt-generator.mjs\"",
-        "name": "./receipt-generator",
+        "description": "Export: ./merkle-batcher",
+        "example": "import from \"./src/merkle-batcher.mjs\"",
+        "name": "./merkle-batcher",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./pq-merkle",
+        "example": "import from \"./src/pq-merkle.mjs\"",
+        "name": "./pq-merkle",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./pq-signer",
+        "example": "import from \"./src/pq-signer.mjs\"",
+        "name": "./pq-signer",
         "type": "export"
       },
       {
         "description": "Export: .",
-        "example": "import from \"./receipt.mjs\"",
+        "example": "import from \"./src/index.mjs\"",
         "name": "@unrdf/receipts",
         "type": "export"
       }
@@ -114,12 +122,15 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0,
+      "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/receipts in your project",
       "id": "tutorial-getting-started-with-unrdf-receipts",
-      "prerequisites": [],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
       "source": [
-        "inferred"
+        "keywords"
       ],
       "stepsOutline": [
         "Install the package",
@@ -130,5 +141,5 @@
       "title": "Getting Started with @unrdf/receipts"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

@@ -1,9 +1,9 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.4,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.4
   },
   "evidence": {
     "docsFiles": [],
@@ -11,27 +11,11 @@
       "blockchain-demo.mjs",
       "gas-analyzer.mjs"
     ],
-    "fingerprint": "05c8d8fc6cf36bbf2887da9d709efdfc3195216e59f1ba1c0481ecceb6eb7b69",
-    "readmeHeadings": [
-      "Features",
-      "Architecture",
-      "Installation",
-      "Quick Start",
-      "Gas Cost Analysis",
-      "Smart Contract",
-      "Advanced Usage",
-      "Demo",
-      "Testing",
-      "Security Considerations",
-      "Integration with YAWL",
-      "API Reference",
-      "License",
-      "Contributing",
-      "Related Packages"
-    ]
+    "fingerprint": "5142d4ff472d19c633b75157c2bb2ff1e40bf7eb3ba7b4c7b8fcf68d51c1bbf9",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and immutable audit trails using Ethereum smart contracts.",
+    "architecture": "@unrdf/blockchain is a package in the UNRDF ecosystem",
     "concepts": [
       "blockchain",
       "ethereum",
@@ -39,11 +23,10 @@
       "merkle-tree",
       "audit-trail"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-blockchain-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/blockchain",
@@ -124,7 +107,7 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/blockchain in your project",
       "id": "tutorial-getting-started-with-unrdf-blockchain",
       "prerequisites": [
@@ -132,7 +115,6 @@
       ],
       "source": [
         "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
@@ -144,5 +126,5 @@
       "title": "Getting Started with @unrdf/blockchain"
     }
   ],
-  "version": "[VERSION]"
+  "version": "0.0.0-agnostic"
 }

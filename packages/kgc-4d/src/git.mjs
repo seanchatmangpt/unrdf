@@ -10,6 +10,7 @@
 
 import git from 'isomorphic-git';
 import { join } from 'path';
+import { Mutex } from 'async-mutex';
 
 // Dynamic fs import for Node.js only (browser will inject fs)
 let nodeFs = null;
@@ -33,6 +34,7 @@ export class GitBackbone {
    */
   constructor(dir = '.', fs = null) {
     this.dir = dir;
+    this._mutex = new Mutex();
 
     // Use injected fs, or fall back to Node.js fs
     if (fs) {
@@ -82,57 +84,59 @@ export class GitBackbone {
    * console.assert(typeof sha === 'string' && sha.length > 0, 'Returns commit hash');
    */
   async commitSnapshot(nquads, message) {
-    await this._ensureInit();
+    return this._mutex.runExclusive(async () => {
+      await this._ensureInit();
 
-    console.log('nquads inside commitSnapshot:', nquads);
+      console.log('nquads inside commitSnapshot:', nquads);
 
-    // GAP-G2 fix: Validate message length (Git convention: first line max 72 chars, total max 100KB)
-    if (typeof message !== 'string' || message.length === 0) {
-      throw new Error('Commit message must be non-empty string');
-    }
-    if (message.length > 100_000) {
-      throw new Error(`Commit message exceeds size limit: ${message.length} > 100KB`);
-    }
+      // GAP-G2 fix: Validate message length (Git convention: first line max 72 chars, total max 100KB)
+      if (typeof message !== 'string' || message.length === 0) {
+        throw new Error('Commit message must be non-empty string');
+      }
+      if (message.length > 100_000) {
+        throw new Error(`Commit message exceeds size limit: ${message.length} > 100KB`);
+      }
 
-    // Write snapshot to file
-    const filepath = 'snapshot.nq';
-    const fullPath = join(this.dir, filepath);
-    this.fs.writeFileSync(fullPath, nquads, 'utf8');
+      // Write snapshot to file
+      const filepath = 'snapshot.nq';
+      const fullPath = join(this.dir, filepath);
+      this.fs.writeFileSync(fullPath, nquads, 'utf8');
 
-    // Stage file
-    await git.add({ fs: this.fs, dir: this.dir, filepath });
+      // Stage file
+      await git.add({ fs: this.fs, dir: this.dir, filepath });
 
-    // Create timestamp for commit message
-    const timestamp = new Date().toISOString();
-    const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
+      // Create timestamp for commit message
+      const timestamp = new Date().toISOString();
+      const commitMsg = `${message}\n\nSnapshot generated at ${timestamp}`;
 
-    // Validate final message size
-    if (commitMsg.length > 100_000) {
-      throw new Error(`Final commit message exceeds size limit after timestamp addition`);
-    }
+      // Validate final message size
+      if (commitMsg.length > 100_000) {
+        throw new Error(`Final commit message exceeds size limit after timestamp addition`);
+      }
 
-    try {
-      // Commit with author info
-      // GAP-G3 fix: Add timeout for git operations (20 second SLA)
-      const commitPromise = git.commit({
-        fs: this.fs,
-        dir: this.dir,
-        message: commitMsg,
-        author: {
-          name: 'KGC System',
-          email: 'kgc@system.local',
-        },
-      });
+      try {
+        // Commit with author info
+        // GAP-G3 fix: Add timeout for git operations (20 second SLA)
+        const commitPromise = git.commit({
+          fs: this.fs,
+          dir: this.dir,
+          message: commitMsg,
+          author: {
+            name: 'KGC System',
+            email: 'kgc@system.local',
+          },
+        });
 
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Git commit operation timed out after 20s')), 20000)
-      );
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Git commit operation timed out after 20s')), 20000)
+        );
 
-      const sha = await Promise.race([commitPromise, timeoutPromise]);
-      return sha;
-    } catch (err) {
-      throw new Error(`Git commit failed: ${err.message}`);
-    }
+        const sha = await Promise.race([commitPromise, timeoutPromise]);
+        return sha;
+      } catch (err) {
+        throw new Error(`Git commit failed: ${err.message}`);
+      }
+    });
   }
 
   /**
@@ -142,40 +146,42 @@ export class GitBackbone {
    * GAP-G3 fix: Add timeout for git operations
    */
   async readSnapshot(sha) {
-    await this._ensureInit();
+    return this._mutex.runExclusive(async () => {
+      await this._ensureInit();
 
-    try {
-      // Read the blob content at the given commit
-      // GAP-G3 fix: Add timeout (10 second SLA for read)
-      const readPromise = git.readBlob({
-        fs: this.fs,
-        dir: this.dir,
-        oid: sha,
-        filepath: 'snapshot.nq',
-      });
-
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Git read operation timed out after 10s')), 10000)
-      );
-
-      const { blob } = await Promise.race([readPromise, timeoutPromise]);
-
-      // GAP-G1 fix: Validate UTF-8 encoding before use
-      // TextDecoder silently produces invalid strings for bad UTF-8
-      // We validate by attempting to encode/decode round-trip
       try {
-        const decoded = new TextDecoder('utf-8', { fatal: true }).decode(blob);
-        // Verify round-trip: encode back and compare
-        const reencoded = new TextEncoder().encode(decoded);
-        if (reencoded.length !== blob.length) {
-          throw new Error('UTF-8 validation failed: round-trip size mismatch');
+        // Read the blob content at the given commit
+        // GAP-G3 fix: Add timeout (10 second SLA for read)
+        const readPromise = git.readBlob({
+          fs: this.fs,
+          dir: this.dir,
+          oid: sha,
+          filepath: 'snapshot.nq',
+        });
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Git read operation timed out after 10s')), 10000)
+        );
+
+        const { blob } = await Promise.race([readPromise, timeoutPromise]);
+
+        // GAP-G1 fix: Validate UTF-8 encoding before use
+        // TextDecoder silently produces invalid strings for bad UTF-8
+        // We validate by attempting to encode/decode round-trip
+        try {
+          const decoded = new TextDecoder('utf-8', { fatal: true }).decode(blob);
+          // Verify round-trip: encode back and compare
+          const reencoded = new TextEncoder().encode(decoded);
+          if (reencoded.length !== blob.length) {
+            throw new Error('UTF-8 validation failed: round-trip size mismatch');
+          }
+          return decoded;
+        } catch (err) {
+          throw new Error(`Invalid UTF-8 encoding in snapshot: ${err.message}`);
         }
-        return decoded;
       } catch (err) {
-        throw new Error(`Invalid UTF-8 encoding in snapshot: ${err.message}`);
+        throw new Error(`Git read failed: ${err.message}`);
       }
-    } catch (err) {
-      throw new Error(`Git read failed: ${err.message}`);
-    }
+    });
   }
 }

@@ -12,6 +12,6 @@
     "open-dashboard": "node generate-dashboard.mjs && open dashboard.html || xdg-open dashboard.html || echo 'Open dashboard.html manually: file://$(pwd)/dashboard.html'"
   },
   "dependencies": {
-    "@unrdf/oxigraph": "26.5.4"
+    "@unrdf/oxigraph": "workspace:*"
   }
 }

@@ -16,8 +16,8 @@
     "README.md"
   ],
   "dependencies": {
-    "@unrdf/core": "26.5.4",
-    "@unrdf/oxigraph": "26.5.4"
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^4.0.15"
