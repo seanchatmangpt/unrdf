@@ -32,7 +32,7 @@ Successfully discovered **28 hook and governance patterns** in the existing UNRD
 |---------|----------|-------------|
 | defineHook() with 33+ triggers | `/packages/hooks/src/hooks/define-hook.mjs` | Sub-1μs via Zod-free hot paths |
 | executeHook() chain execution | `/packages/hooks/src/hooks/hook-executor.mjs` | < 1μs per hook |
-| Batch validation (Uint8Array) | `/packages/hooks/src/hooks/hook-executor.mjs` | ~0.5μs per quad (1000 quads) |
+| Batch validation (Uint8Array) | `/packages/hooks/src/hooks/hook-executor.mjs` | ~latestμs per quad (1000 quads) |
 | Dependency-based batching | `/packages/hooks/src/hooks/hook-executor-batching.mjs` | 30-50% latency reduction |
 
 ### Policy Patterns

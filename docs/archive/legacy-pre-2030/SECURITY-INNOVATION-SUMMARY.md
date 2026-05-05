@@ -65,9 +65,9 @@ const valid = await prover.verify(proof, publicSignals);
 ```javascript
 import { DifferentialPrivacySPARQL } from '@unrdf/privacy/differential-privacy-sparql';
 
-const engine = new DifferentialPrivacySPARQL({ totalBudget: 10.0 });
-const result = await engine.executeCOUNT(store, '?s a Patient', 1.0);
-console.log(`Private count: ${result.noisyValue} (ε=1.0)`);
+const engine = new DifferentialPrivacySPARQL({ totalBudget: latest });
+const result = await engine.executeCOUNT(store, '?s a Patient', latest);
+console.log(`Private count: ${result.noisyValue} (ε=latest)`);
 ```
 
 ---
@@ -123,8 +123,8 @@ console.log(`Private count: ${result.noisyValue} (ε=1.0)`);
 
 | Operation | Baseline | Pattern 1 (ZK) | Pattern 2 (PQ) | Pattern 5 (DP) |
 |-----------|----------|----------------|----------------|----------------|
-| Receipt Creation | **0.017ms** | 1-10s (prove) | **2ms** | **0.02ms** |
-| Receipt Verification | **0.005ms** | **1-2ms** | **2ms** | **0.005ms** |
+| Receipt Creation | **latestms** | 1-10s (prove) | **2ms** | **latestms** |
+| Receipt Verification | **latestms** | **1-2ms** | **2ms** | **latestms** |
 | SPARQL Query (10k) | **50ms** | 5s (prove) | **50ms** | **52ms** |
 | Proof Size | 64 bytes | **192 bytes** | 3293 bytes | N/A |
 
@@ -133,10 +133,10 @@ console.log(`Private count: ${result.noisyValue} (ε=1.0)`);
 | Pattern | Receipt Size | Multiplier | Notes |
 |---------|--------------|------------|-------|
 | Baseline (Ed25519) | 500 bytes | 1x | Current implementation |
-| Pattern 1 (zk-SNARK) | 692 bytes | **1.4x** | +192 bytes Groth16 proof |
+| Pattern 1 (zk-SNARK) | 692 bytes | **latestx** | +192 bytes Groth16 proof |
 | Pattern 2 (Dilithium3) | 4500 bytes | **9x** | +4000 bytes quantum signature |
 | Pattern 3 (Threshold) | 500 bytes | **1x** | Same as Ed25519 |
-| Pattern 7 (Temporal) | 800 bytes | **1.6x** | +300 bytes blockchain anchor |
+| Pattern 7 (Temporal) | 800 bytes | **latestx** | +300 bytes blockchain anchor |
 
 **Recommendation**: Use hybrid mode - Ed25519 for most receipts, Dilithium3 for high-value only.
 
@@ -150,10 +150,10 @@ console.log(`Private count: ${result.noisyValue} (ε=1.0)`);
 |--------|------------|---------|----------------|
 | Quantum computer breaks Ed25519 | Dilithium3 hybrid mode | Pattern 2 | NIST Level 3 |
 | Cloud reads encrypted data | Homomorphic encryption | Pattern 4 | IND-CPA |
-| Aggregate queries leak info | Differential privacy | Pattern 5 | ε=1.0, δ=10⁻⁵ |
+| Aggregate queries leak info | Differential privacy | Pattern 5 | ε=latest, δ=10⁻⁵ |
 | Server returns wrong results | Verifiable computation | Pattern 6 | Soundness 2⁻¹²⁸ |
 | Single key compromise | Threshold signatures | Pattern 3 | Byzantine (t=2n/3+1) |
-| Federated learning poisoning | Secure aggregation + DP | Pattern 8 | Client ε=1.0 |
+| Federated learning poisoning | Secure aggregation + DP | Pattern 8 | Client ε=latest |
 | Blockchain reorg | Temporal anchoring | Pattern 7 | 6+ confirmations |
 
 ### Compliance Coverage
@@ -201,27 +201,27 @@ console.log(`Patient IDs: HIDDEN`); // Zero-knowledge!
 Proof valid: true
 Result count: 10
 Proof size: 192 bytes
-Verification time: 1.2ms
+Verification time: latestms
 ```
 
 ### Demo 2: Private Statistics (Differential Privacy)
 
-**Scenario**: Public health database allows aggregate queries with ε=10.0 total budget.
+**Scenario**: Public health database allows aggregate queries with ε=latest total budget.
 
 ```javascript
-const engine = new DifferentialPrivacySPARQL({ totalBudget: 10.0 });
+const engine = new DifferentialPrivacySPARQL({ totalBudget: latest });
 
-// Query 1: Count patients (ε=1.0)
-const q1 = await engine.executeCOUNT(store, '?s a Patient', 1.0);
+// Query 1: Count patients (ε=latest)
+const q1 = await engine.executeCOUNT(store, '?s a Patient', latest);
 console.log(`Total patients: ${q1.noisyValue} (true: ${q1.trueValue})`);
 console.log(`Remaining budget: ${q1.budgetRemaining}`);
 
-// Query 2: Count diabetic patients (ε=1.0)
-const q2 = await engine.executeCOUNT(store, '?s hasCondition Diabetes', 1.0);
+// Query 2: Count diabetic patients (ε=latest)
+const q2 = await engine.executeCOUNT(store, '?s hasCondition Diabetes', latest);
 console.log(`Diabetic patients: ${q2.noisyValue}`);
 
-// Query 3: Sum of ages (ε=2.0, higher sensitivity)
-const q3 = await engine.executeSUM(store, '?p hasAge ?age', 'age', 2.0, 0, 120);
+// Query 3: Sum of ages (ε=latest, higher sensitivity)
+const q3 = await engine.executeSUM(store, '?p hasAge ?age', 'age', latest, 0, 120);
 console.log(`Total age sum: ${q3.noisyValue}`);
 
 // Budget receipt (cryptographic proof)
@@ -233,12 +233,12 @@ console.log(`Receipt hash: ${receipt.receiptHash}`);
 **Output**:
 ```
 Total patients: 523 (true: 520)
-Remaining budget: 9.0
+Remaining budget: latest
 Diabetic patients: 87 (true: 85)
-Remaining budget: 8.0
+Remaining budget: latest
 Total age sum: 23145 (true: 23000)
-Remaining budget: 6.0
-Budget spent: 4.0/10.0
+Remaining budget: latest
+Budget spent: latest/latest
 Receipt hash: abc123...def456 (BLAKE3)
 ```
 
@@ -299,8 +299,8 @@ const proof = await temporalTree.proveStateAt(timestamp_ns, triple);
 
 **Innovation**: Automatic ε tracking prevents privacy leakage across query sequences
 ```javascript
-const budgetManager = new PrivacyBudgetManager(10.0);
-// After 10 queries at ε=1.0 each, budget exhausted → no more queries
+const budgetManager = new PrivacyBudgetManager(latest);
+// After 10 queries at ε=latest each, budget exhausted → no more queries
 ```
 
 ### 3. Threshold Receipts for Federation
@@ -351,7 +351,7 @@ const signature = await thresholdSign(merkleRoot, [org1, org3, org4]);
 **Recommendation**: Hybrid approach
 - **Baseline (Ed25519)**: Most receipts (99% volume)
 - **Pattern 1 (zk-SNARK)**: Private queries (1% volume, high value)
-- **Pattern 2 (Dilithium3)**: Critical receipts (0.1% volume, long-term storage)
+- **Pattern 2 (Dilithium3)**: Critical receipts (latest% volume, long-term storage)
 
 ---
 
@@ -390,7 +390,7 @@ const signature = await thresholdSign(merkleRoot, [org1, org3, org4]);
 ### Impact Assessment
 
 **Security**: Post-quantum future-proofing + privacy preservation + Byzantine fault tolerance
-**Performance**: 1-10s overhead acceptable for high-value queries (0.1% volume)
+**Performance**: 1-10s overhead acceptable for high-value queries (latest% volume)
 **Compliance**: GDPR, HIPAA, CCPA, EU AI Act coverage
 **Innovation**: Academic publication potential (12 novel patterns)
 

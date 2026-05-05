@@ -2,12 +2,12 @@
 
 ## What Just Happened
 
-UNRDF has been transformed from a **monolithic single-package framework** (v4.x) into a **modular monorepo platform** (v5.0). This is a foundational restructuring based on Voice of the Customer (VOC) analysis of 7 different user personas.
+UNRDF has been transformed from a **monolithic single-package framework** (v4.x) into a **modular monorepo platform** (vlatest). This is a foundational restructuring based on Voice of the Customer (VOC) analysis of 7 different user personas.
 
 ## The Problem We Solved
 
 **v4.x Issues**:
-- ❌ 2.5 MB package size (many users don't need all features)
+- ❌ latest MB package size (many users don't need all features)
 - ❌ Monolithic codebase (hard to navigate)
 - ❌ Forced dependencies (can't opt out of features)
 - ❌ Unclear boundaries (what's core vs optional?)
@@ -16,7 +16,7 @@ UNRDF has been transformed from a **monolithic single-package framework** (v4.x)
 
 ## The Solution: Monorepo with Clear Boundaries
 
-**v5.0 Structure**:
+**vlatest Structure**:
 ```
 ✅ 10 focused packages (each <250KB)
 ✅ Clear dependency graph (substrate → extensions)
@@ -112,11 +112,11 @@ For contributing to UNRDF itself, not for users.
 
 ```
 v4.x (Single Package):
-├── Package: 2.5 MB
+├── Package: latest MB
 ├── Essential: ~750 KB (30% useful)
-└── Bloat: ~1.75 MB (70% unused)
+└── Bloat: ~latest MB (70% unused)
 
-v5.0 (Monorepo):
+vlatest (Monorepo):
 ├── Minimal Install (@unrdf/core only): 150 KB
 ├── Typical Install (core + hooks + federation + streaming): 340 KB
 ├── Full Install (all packages): 880 KB
@@ -234,7 +234,7 @@ Installing @unrdf/knowledge-engine doesn't require dark-matter, composables, etc
 Impossible to blur lines between core and extensions. Each package has single responsibility.
 
 ### 4. **Independent Versions**
-@unrdf/core stays stable (5.0.x). Knowledge engine can be 2.x, dark-matter 1.x. Users don't wait for core to innovate features.
+@unrdf/core stays stable (latest.x). Knowledge engine can be 2.x, dark-matter 1.x. Users don't wait for core to innovate features.
 
 ### 5. **Community Extensible**
 Easy for community to create @unrdf/my-feature packages built on @unrdf/core.
@@ -349,7 +349,7 @@ cd packages/federation && npm publish &
 ## Success Metrics
 
 ✅ **Package Size**: 68-69% reduction
-- v4.x: 2.5 MB → v5.0: 0.8 MB (core)
+- v4.x: latest MB → vlatest: latest MB (core)
 
 ✅ **User Choice**: 7 VOCs covered by substrate alone
 - No knowledge engine needed for any VOC
@@ -369,7 +369,7 @@ cd packages/federation && npm publish &
 
 1. **Review**: [MONOREPO-STRUCTURE.md](./MONOREPO-STRUCTURE.md) - Architecture details
 2. **Setup**: [MONOREPO-SETUP.md](./MONOREPO-SETUP.md) - Development environment
-3. **Migrate**: [MONOREPO-MIGRATION.md](./MONOREPO-MIGRATION.md) - From v4.x to v5.0
+3. **Migrate**: [MONOREPO-MIGRATION.md](./MONOREPO-MIGRATION.md) - From v4.x to vlatest
 4. **Understand**: [v5-voc-to-implementation.md](./v5-voc-to-implementation.md) - Why these changes
 
 ## FAQ
