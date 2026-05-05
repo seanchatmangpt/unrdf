@@ -27,6 +27,7 @@ import { hooksCommand } from './commands/hooks.mjs';
 import { mcpCommand } from './commands/mcp.mjs';
 import { doctor } from './commands/doctor/index.mjs';
 import { atomvmCommand } from './commands/atomvm.mjs';
+import { telcoCommand } from './commands/telco.mjs';
 import { validateCommand } from './commands/validate.mjs';
 import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
@@ -57,6 +58,7 @@ export const main = defineCommand({
     // Background Operations
     daemon: daemonCommand,
     mcp: mcpCommand,
+    telco: telcoCommand,
 
     // Code Generation
     sync: syncCommand,
