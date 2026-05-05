@@ -3,7 +3,7 @@
 ## A Dissertation Presented to the Faculty of the Graduate School
 
 **Author:** Sean Chatman  
-**Date:** April 7, 2026  
+**Date:** May 4, 2026  
 **Institution:** ChatmanGPT Research Laboratories  
 **Degree:** Doctor of Philosophy in Computer Science  
 **Field:** Knowledge Graph Systems & Autonomous Agents
@@ -447,9 +447,9 @@ OUTPUT: receipt
 
 ```json
 {
-  "@unrdf/core": "^26.4.23",
-  "@unrdf/hooks": "^26.4.23",
-  "@unrdf/daemon": "^26.4.23"
+  "@unrdf/core": "^26.5.4",
+  "@unrdf/hooks": "^26.5.4",
+  "@unrdf/daemon": "^26.5.4"
 }
 ```
 
@@ -1142,7 +1142,7 @@ $\blacksquare$
 
 I hereby declare that this dissertation represents my original work and has not been submitted elsewhere for the award of a degree.
 
----Sean Chatman, April 7, 2026
+---Sean Chatman, May 4, 2026
 
 ---
 
@@ -1150,7 +1150,7 @@ I hereby declare that this dissertation represents my original work and has not 
 
 The author acknowledges the support of the ChatmanGPT research community and the open-source contributors to the UNRDF project. Special thanks to the MIOSA collaboration (Roberto, Straughter) for their work on BusinessOS, Canopy, and OSA systems that enabled this research.
 
-The 10-hour autonomous execution experiment was conducted on UNRDF v26.4.23, a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
+The 10-hour autonomous execution experiment was conducted on UNRDF v26.5.4, a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
 
 This dissertation is dedicated to advancing the state of the art in autonomous knowledge systems.
 

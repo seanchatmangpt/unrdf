@@ -1,6 +1,6 @@
 {
   "name": "scripts",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "**80/20 automation: 20% of scripts that deliver 80% of developer productivity.**",
   "main": "generate-phase2-docs.js",
   "scripts": {

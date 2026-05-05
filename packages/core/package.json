@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/core",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
   "type": "module",
   "main": "src/index.mjs",
@@ -61,7 +61,7 @@
     "@rdfjs/serializer-jsonld": "^2.0.1",
     "@rdfjs/serializer-turtle": "^1.1.5",
     "@rdfjs/to-ntriples": "^3.0.1",
-    "@unrdf/oxigraph": "26.4.23",
+    "@unrdf/oxigraph": "26.5.4",
     "async-mutex": "^0.5.0",
     "hnswlib-node": "^3.0.0",
     "jsonld": "^9.0.0",
@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@unrdf/test-utils": "26.4.23",
+    "@unrdf/test-utils": "26.5.4",
     "vitest": "^4.0.15"
   },
   "engines": {

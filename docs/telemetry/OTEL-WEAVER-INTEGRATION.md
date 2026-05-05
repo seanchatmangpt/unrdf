@@ -1,7 +1,7 @@
 # OTEL Weaver Integration
 
 **Status**: ✅ **FULLY IMPLEMENTED**
-**Version**: 26.4.23
+**Version**: 26.5.4
 **Last Updated**: 2026-04-04
 
 ---

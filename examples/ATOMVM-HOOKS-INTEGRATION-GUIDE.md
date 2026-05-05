@@ -1,6 +1,6 @@
 # AtomVM + Hooks Integration Guide
 
-**Version**: 26.4.23  
+**Version**: 26.5.4  
 **Last Updated**: 2026-04-03  
 **Target Audience**: UNRDF developers, knowledge graph engineers, FIBO ontology users
 

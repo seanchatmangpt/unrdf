@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-probe",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
   "type": "module",
   "main": "./src/index.mjs",
@@ -46,11 +46,11 @@
     "artifact-verification"
   ],
   "dependencies": {
-    "@unrdf/kgc-substrate": "26.4.23",
-    "@unrdf/kgc-4d": "26.4.23",
-    "@unrdf/v6-core": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
-    "@unrdf/hooks": "26.4.23",
+    "@unrdf/kgc-substrate": "26.5.4",
+    "@unrdf/kgc-4d": "26.5.4",
+    "@unrdf/v6-core": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/hooks": "26.5.4",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

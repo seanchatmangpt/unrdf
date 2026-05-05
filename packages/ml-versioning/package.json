@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/ml-versioning",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
   "type": "module",
   "main": "./src/index.mjs",
@@ -40,9 +40,9 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-backend-cpu": "^4.22.0",
     "@tensorflow/tfjs-node": "^4.22.0",
-    "@unrdf/core": "26.4.23",
-    "@unrdf/kgc-4d": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/kgc-4d": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

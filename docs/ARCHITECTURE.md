@@ -233,4 +233,4 @@ Proof: Each decision links to the previous one
 
 ---
 
-**Version**: 26.4.23 | **Date**: April 3, 2026
+**Version**: 26.5.4 | **Date**: May 4, 2026

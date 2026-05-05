@@ -1,6 +1,6 @@
 # @unrdf/daemon — Quick Start Guide
 
-> **Status**: Beta | **Version**: 26.4.23 | **Node**: >= 18.0.0
+> **Status**: Beta | **Version**: 26.5.4 | **Node**: >= 18.0.0
 
 The daemon is UNRDF's background task scheduler. It handles scheduled operations, event-driven execution, enterprise security (BLAKE3 auth), multi-node clustering, and YAWL workflow orchestration.
 

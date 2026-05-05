@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/oxigraph",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
   "type": "module",
   "main": "src/index.mjs",
@@ -44,11 +44,11 @@
   "dependencies": {
     "oxigraph": "^0.5.2",
     "zod": "^4.3.6",
-    "@unrdf/v6-core": "26.4.23"
+    "@unrdf/v6-core": "26.5.4"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@unrdf/test-utils": "26.4.23",
+    "@unrdf/test-utils": "26.5.4",
     "vitest": "^4.0.15"
   },
   "engines": {

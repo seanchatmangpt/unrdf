@@ -118,7 +118,7 @@ Key settings:
 - Receivers: OTLP gRPC (4317), OTLP HTTP (4318)
 - Exporters: Jaeger (14250), Prometheus (9090)
 - Service name: `unrdf`
-- Service version: `26.4.23`
+- Service version: `26.5.4`
 
 ### Sync with pm4py
 

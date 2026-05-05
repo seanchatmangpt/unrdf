@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/manufacturing",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "μ(O) Manufacturing Operator Runtime — composable operators for deterministic artifact manufacturing",
   "type": "module",
   "private": true,
@@ -20,7 +20,7 @@
     "build": "echo 'ESM — no build step required'"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.23",
+    "@unrdf/core": "26.5.4",
     "zod": "^3.25.67"
   },
   "devDependencies": {

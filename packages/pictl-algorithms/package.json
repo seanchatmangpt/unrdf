@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/pictl-algorithms",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "PICTL Process Mining Algorithms for UNRDF Federation - OCEL discovery, conformance, and prediction via WASM",
   "type": "module",
   "main": "src/index.mjs",
@@ -44,12 +44,12 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/core": "26.4.23",
-    "@unrdf/pictl-semantics": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/pictl-semantics": "26.5.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@unrdf/test-utils": "26.4.23",
+    "@unrdf/test-utils": "26.5.4",
     "vitest": "^4.0.15"
   },
   "engines": {

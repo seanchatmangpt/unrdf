@@ -1,6 +1,6 @@
 # UNRDF — Claude Code Configuration
 
-## UNRDF v26.4.23 - RDF Knowledge Graph Platform
+## UNRDF v26.5.4 - RDF Knowledge Graph Platform
 
 **REQUIRED READING:**
 
@@ -11,7 +11,7 @@
 
 | Fact           | Value                                                  |
 | -------------- | ------------------------------------------------------ |
-| Version        | workspace 26.4.23                                       |
+| Version        | workspace 26.5.4                                       |
 | Packages       | 20 (YAWL/KGC moved to separate repos)                  |
 | Node.js / pnpm | >=18.0.0 / >=7.0.0 (.tool-versions: 24.11.1 / 10.33.0) |
 
@@ -61,7 +61,7 @@ Backends (Memory, Oxigraph, Remote)
 - **Innovation 5** — Hooks Marketplace: SPARQL CONSTRUCT, N3 forward-chaining, SHACL soft-fail → `packages/hooks/`
 - **Innovation 6** — Streaming Admission: Delta receipts with chaining, I/O BLAKE3 hashes → `packages/streaming/`
 
-### MCP & Self-Play Autonomics (v26.4.23+)
+### MCP & Self-Play Autonomics (v26.5.4+)
 
 - 15 tools for ontology operations (`onto_validate`, `onto_query`, `onto_reason`, etc.)
 - Key files: `packages/daemon/src/mcp/`, `docs/MCP_INTEGRATION.md`, `packages/daemon/GROQ-INTEGRATION.md`

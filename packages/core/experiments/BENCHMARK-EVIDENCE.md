@@ -8,7 +8,7 @@ This document provides empirical evidence of the performance characteristics of 
 - **Memory**: 32 GB RAM
 - **OS**: macOS 14.5
 - **Node.js**: v20.14.0
-- **Package Version**: 26.4.23
+- **Package Version**: 26.5.4
 
 ## Benchmark Results: RDF Pipeline
 

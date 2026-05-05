@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.4.25",
+  "version": "26.5.4",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "vision2030": {
     "status": "integrated",
@@ -192,8 +192,8 @@
     "@noble/hashes": "^2.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@rdfjs/dataset": "^2.0.2",
-    "@unrdf/core": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
     "clownface": "^2.0.3",
     "fetch": "^1.1.0",
     "hash-wasm": "^4.12.0",

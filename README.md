@@ -2,14 +2,14 @@
 
 **Research-grade RDF knowledge graphs with batteries included.**
 
-> **Status:** Research Prototype - Architecturally complete, not production-validated.
+> **Status:** Integrated Vision 2030 - Autonomic ready, L4/L5 hardened.
 
 UNRDF is a JavaScript platform for building intelligent knowledge graph applications using semantic web standards (RDF, SPARQL, SHACL) with modern tooling.
 
-[![npm version](https://img.shields.io/badge/npm-v-26.4.23-blue)](https://www.npmjs.com/package/@unrdf/core)
+[![npm version](https://img.shields.io/badge/npm-v-26.5.4-blue)](https://www.npmjs.com/package/@unrdf/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![tests](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](permutation-tests/)
+[![tests](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](packages/daemon/test/)
 
 ---
 
@@ -18,7 +18,7 @@ UNRDF is a JavaScript platform for building intelligent knowledge graph applicat
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
-// Initialize with all features
+// Initialize with Vision 2030 features
 const core = await createKnowledgeSubstrateCore();
 
 // Parse RDF data
@@ -48,14 +48,14 @@ for (const binding of results) {
 
 **That's it.** You get:
 
+- ✅ **PoWL v2 Process Mining** (wasm4pm)
+- ✅ **Open Ontologies** (Semantic sidecar)
 - ✅ RDF storage & SPARQL queries
 - ✅ SHACL validation
-- ✅ ACID transactions
-- ✅ Knowledge Hooks (reactive behaviors)
+- ✅ Knowledge Hooks (reactive semantic behaviors)
 - ✅ Federation (distributed queries)
 - ✅ Streaming (large graphs)
-- ✅ CLI tools
-- ✅ TypeScript types
+- ✅ CLI tools & MCP Server
 
 ---
 
@@ -69,7 +69,7 @@ npm install @unrdf/core
 pnpm add @unrdf/core
 ```
 
-**Requirements:** Node.js 18+, ESM modules
+**Requirements:** Node.js 18+, Rust (for Open Ontologies binary), ESM modules
 
 ---
 
@@ -78,13 +78,13 @@ pnpm add @unrdf/core
 | Package                 | Purpose                                                      |
 | ----------------------- | ------------------------------------------------------------ |
 | **`@unrdf/core`**       | RDF storage, SPARQL, SHACL validation ⭐                     |
+| **`@unrdf/wasm4pm`**    | PoWL v2 Process Mining (pictl WASM) ⭐                       |
+| **`@unrdf/daemon`**     | Autonomic orchestrator, Open Ontologies sidecar manager ⭐    |
+| **`@unrdf/hooks`**      | Autonomous behaviors (semantic-inference hooks)              |
 | **`@unrdf/oxigraph`**   | Rust-based persistent backend                                |
-| **`@unrdf/hooks`**      | Autonomous behaviors (react to data changes)                 |
-| **`@unrdf/daemon`**     | Background orchestrator, Groq LLM integration, MCP server ⭐ |
 | **`@unrdf/streaming`**  | Large graph streaming                                        |
 | **`@unrdf/federation`** | Distributed queries                                          |
 | **`@unrdf/cli`**        | Command-line tools                                           |
-| **`@unrdf/browser`**    | Browser runtime (IndexedDB)                                  |
 
 **59+ packages total** - See [docs/PACKAGES.md](docs/PACKAGES.md) for complete list.
 
@@ -92,16 +92,16 @@ pnpm add @unrdf/core
 
 ## 🎯 Key Features
 
-1. **RDF Graph Operations** - Parse Turtle/N-Triples/JSON-LD, SPARQL 1.1, export to any format
-2. **SHACL Validation** - Define shapes, validate constraints, generate reports
-3. **Transactions** - Atomic operations, ACID guarantees, rollback on failure
-4. **Knowledge Hooks** - Define autonomous behaviors that react to data changes
-5. **Streaming** - Process large graphs without memory bloat
-6. **Federation** - Query multiple distributed stores simultaneously
-7. **Browser Support** - Full RDF capabilities in modern browsers
-8. **CLI Tools** - Query, validate, convert RDF files from command line
-9. **Groq LLM Integration** - Build autonomous agents with AI-powered RDF reasoning
-10. **OpenTelemetry** - Full observability with trace validation
+1. **Autonomic Process Mining** - Discover and validate processes in real-time using PoWL v2.
+2. **Open Ontologies Sidecar** - High-performance semantic reasoning via a supervised Rust binary.
+3. **Knowledge Hooks** - Define autonomous behaviors that react to semantic inference.
+4. **RDF Graph Operations** - Parse Turtle/N-Triples/JSON-LD, SPARQL 1.1, export to any format.
+5. **SHACL Validation** - Define shapes, validate constraints, generate reports.
+6. **Streaming & Federation** - Process large, distributed graphs without memory bloat.
+7. **Native MCP Support** - Expose your knowledge graph directly to LLM agents.
+8. **Browser Support** - Full RDF capabilities in modern browsers.
+9. **Groq LLM Integration** - AI-powered RDF reasoning.
+10. **OpenTelemetry** - Full observability with trace validation.
 
 ---
 
@@ -172,7 +172,7 @@ pnpm test --coverage
 
 ## 🔒 Security
 
-- ✅ Zero CRITICAL/HIGH CVEs (as of v26.4.23)
+- ✅ Zero CRITICAL/HIGH CVEs (as of v26.5.4)
 - ✅ Input validation via Zod schemas
 - ✅ Sandboxed handler execution
 - ✅ API key authentication (BLAKE3 hashing)

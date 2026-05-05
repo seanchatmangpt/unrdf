@@ -9,7 +9,7 @@ Commands that support `--format json` (e.g., `template query`, `template extract
 ### Query Result Schema
 ```typescript
 interface QueryResponse {
-  version: string;        // Package version (e.g. "26.4.23")
+  version: string;        // Package version (e.g. "26.5.4")
   timestamp: string;      // ISO 8601 timestamp of execution
   sparql_results: Array<Record<string, RdfTerm>>; // Array of result rows
   $rdf: {

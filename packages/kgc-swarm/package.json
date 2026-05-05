@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-swarm",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
   "type": "module",
   "main": "src/index.mjs",
@@ -22,12 +22,12 @@
     "example": "node examples/template-integration.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
-    "@unrdf/kgc-substrate": "26.4.23",
-    "@unrdf/kgn": "26.4.23",
-    "@unrdf/knowledge-engine": "26.4.23",
-    "@unrdf/kgc-4d": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/kgc-substrate": "26.5.4",
+    "@unrdf/kgn": "26.5.4",
+    "@unrdf/knowledge-engine": "26.5.4",
+    "@unrdf/kgc-4d": "26.5.4",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

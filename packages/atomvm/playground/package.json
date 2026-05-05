@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/atomvm-playground",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Production validation playground for AtomVM - validates processes, supervision, KGC-4D integration",
   "type": "module",
   "scripts": {
@@ -15,9 +15,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@unrdf/atomvm": "26.4.23",
-    "@unrdf/hooks": "26.4.23",
-    "@unrdf/kgc-4d": "26.4.23",
+    "@unrdf/atomvm": "26.5.4",
+    "@unrdf/hooks": "26.5.4",
+    "@unrdf/kgc-4d": "26.5.4",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {

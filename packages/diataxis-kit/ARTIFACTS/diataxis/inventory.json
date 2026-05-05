@@ -100,7 +100,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/kernel",
       "name": "@pictl/kernel",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/ml",
@@ -110,7 +110,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/observability",
       "name": "@pictl/observability",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/planner",
@@ -135,7 +135,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/apps/pictl",
       "name": "@seanchatmangpt/pictl",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/blockchain-audit",
@@ -145,7 +145,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples/blockchain-audit",
       "name": "@unrdf-examples/blockchain-audit",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/distributed-orchestration",
@@ -155,7 +155,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples/distributed-orchestration",
       "name": "@unrdf-examples/distributed-orchestration",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/graph-analytics",
@@ -165,7 +165,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples/graph-analytics",
       "name": "@unrdf-examples/graph-analytics",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/graphql-gateway",
@@ -175,7 +175,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples/graphql-gateway",
       "name": "@unrdf-examples/graphql-gateway",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/knowledge-rag",
@@ -185,7 +185,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples/knowledge-rag",
       "name": "@unrdf-examples/knowledge-rag",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/exploration/agents/agent-4",
@@ -195,7 +195,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/exploration/agents/agent-4",
       "name": "@unrdf-exploration/agent-4",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ai-ml-innovations",
@@ -205,7 +205,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/ai-ml-innovations",
       "name": "@unrdf/ai-ml-innovations",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm",
@@ -215,7 +215,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm",
       "name": "@unrdf/atomvm",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/playground",
@@ -225,7 +225,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/playground",
       "name": "@unrdf/atomvm-playground",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION",
@@ -245,7 +245,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/blockchain",
       "name": "@unrdf/blockchain",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/caching",
@@ -255,7 +255,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/caching",
       "name": "@unrdf/caching",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation",
@@ -265,7 +265,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/chatman-equation",
       "name": "@unrdf/chatman-equation",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli",
@@ -275,7 +275,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/cli",
       "name": "@unrdf/cli",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/codegen",
@@ -285,7 +285,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/codegen",
       "name": "@unrdf/codegen",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/collab",
@@ -295,7 +295,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/collab",
       "name": "@unrdf/collab",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/composables",
@@ -305,7 +305,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/composables",
       "name": "@unrdf/composables",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/consensus",
@@ -315,7 +315,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/consensus",
       "name": "@unrdf/consensus",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/core",
@@ -375,7 +375,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/core",
       "name": "@unrdf/core",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/daemon",
@@ -385,7 +385,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/daemon",
       "name": "@unrdf/daemon",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/dark-matter",
@@ -395,7 +395,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/dark-matter",
       "name": "@unrdf/dark-matter",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/decision-fabric",
@@ -405,7 +405,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/decision-fabric",
       "name": "@unrdf/decision-fabric",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/diataxis-kit",
@@ -415,7 +415,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/diataxis-kit",
       "name": "@unrdf/diataxis-kit",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/apps/docs-site",
@@ -425,7 +425,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/apps/docs-site",
       "name": "@unrdf/docs-site",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/domain",
@@ -435,7 +435,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/domain",
       "name": "@unrdf/domain",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/engine-gateway",
@@ -445,7 +445,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/engine-gateway",
       "name": "@unrdf/engine-gateway",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/event-automation",
@@ -455,7 +455,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/event-automation",
       "name": "@unrdf/event-automation",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/basic-store",
@@ -465,7 +465,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/basic-store",
       "name": "@unrdf/example-basic-store",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/rdf-parsing",
@@ -475,7 +475,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/rdf-parsing",
       "name": "@unrdf/example-rdf-parsing",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/sparql-queries",
@@ -485,7 +485,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/sparql-queries",
       "name": "@unrdf/example-sparql-queries",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples",
@@ -495,7 +495,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/examples",
       "name": "@unrdf/examples",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/federation",
@@ -555,7 +555,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/federation",
       "name": "@unrdf/federation",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/fusion",
@@ -565,7 +565,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/fusion",
       "name": "@unrdf/fusion",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/codegen/generated",
@@ -575,7 +575,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/codegen/generated",
       "name": "@unrdf/generated",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/geosparql",
@@ -585,7 +585,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/geosparql",
       "name": "@unrdf/geosparql",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src",
@@ -595,7 +595,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/src",
       "name": "@unrdf/governed-substrate",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/graph-analytics",
@@ -605,7 +605,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/graph-analytics",
       "name": "@unrdf/graph-analytics",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/hooks",
@@ -665,7 +665,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks",
       "name": "@unrdf/hooks",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/hooks/examples/hook-chains",
@@ -675,7 +675,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/hook-chains",
       "name": "@unrdf/hooks-example-chains",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/hooks/examples/policy-hooks",
@@ -685,7 +685,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/policy-hooks",
       "name": "@unrdf/hooks-example-policy",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/integration-tests",
@@ -695,7 +695,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/integration-tests",
       "name": "@unrdf/integration-tests",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-4d",
@@ -705,7 +705,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d",
       "name": "@unrdf/kgc-4d",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-4d/playground",
@@ -715,7 +715,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d/playground",
       "name": "@unrdf/kgc-4d-playground",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-claude",
@@ -725,7 +725,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-claude",
       "name": "@unrdf/kgc-claude",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-cli",
@@ -735,7 +735,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-cli",
       "name": "@unrdf/kgc-cli",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-docs",
@@ -745,7 +745,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-docs",
       "name": "@unrdf/kgc-docs",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-multiverse",
@@ -755,7 +755,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-multiverse",
       "name": "@unrdf/kgc-multiverse",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe",
@@ -765,7 +765,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-probe",
       "name": "@unrdf/kgc-probe",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-runtime",
@@ -775,7 +775,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-runtime",
       "name": "@unrdf/kgc-runtime",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-substrate",
@@ -785,7 +785,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-substrate",
       "name": "@unrdf/kgc-substrate",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-swarm",
@@ -795,7 +795,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-swarm",
       "name": "@unrdf/kgc-swarm",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-tools",
@@ -805,7 +805,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-tools",
       "name": "@unrdf/kgc-tools",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgn",
@@ -815,7 +815,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/kgn",
       "name": "@unrdf/kgn",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/knowledge-engine",
@@ -825,7 +825,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/knowledge-engine",
       "name": "@unrdf/knowledge-engine",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-3",
@@ -840,7 +840,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/manufacturing",
       "name": "@unrdf/manufacturing",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ml-inference",
@@ -850,7 +850,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-inference",
       "name": "@unrdf/ml-inference",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ml-versioning",
@@ -860,7 +860,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-versioning",
       "name": "@unrdf/ml-versioning",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test/narrative-state-chain",
@@ -870,7 +870,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/test/narrative-state-chain",
       "name": "@unrdf/narrative-state-chain-tests",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/nextra",
@@ -880,7 +880,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/nextra",
       "name": "@unrdf/nextra-docs",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/observability",
@@ -890,12 +890,12 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/observability",
       "name": "@unrdf/observability",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/otel",
       "name": "@unrdf/otel",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/oxigraph",
@@ -955,7 +955,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/oxigraph",
       "name": "@unrdf/oxigraph",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/templates/package-template",
@@ -965,17 +965,17 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/docs/templates/package-template",
       "name": "@unrdf/package-name",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-algorithms",
       "name": "@unrdf/pictl-algorithms",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-semantics",
       "name": "@unrdf/pictl-semantics",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/project-engine",
@@ -985,7 +985,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/project-engine",
       "name": "@unrdf/project-engine",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src/projection",
@@ -995,7 +995,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/src/projection",
       "name": "@unrdf/projection",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/rdf-graphql",
@@ -1005,7 +1005,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/rdf-graphql",
       "name": "@unrdf/rdf-graphql",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/react",
@@ -1015,7 +1015,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/react",
       "name": "@unrdf/react",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/receipts",
@@ -1030,12 +1030,12 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/receipts",
       "name": "@unrdf/receipts",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/src/receipts",
       "name": "@unrdf/receipts",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/self-healing-workflows",
@@ -1045,7 +1045,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/self-healing-workflows",
       "name": "@unrdf/self-healing-workflows",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/semantic-search",
@@ -1055,7 +1055,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/semantic-search",
       "name": "@unrdf/semantic-search",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/serverless",
@@ -1065,7 +1065,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/serverless",
       "name": "@unrdf/serverless",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/sidecar",
@@ -1075,7 +1075,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/sidecar",
       "name": "@unrdf/sidecar",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/spatial-kg",
@@ -1085,7 +1085,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/spatial-kg",
       "name": "@unrdf/spatial-kg",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/streaming",
@@ -1095,7 +1095,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/streaming",
       "name": "@unrdf/streaming",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/temporal-discovery",
@@ -1105,7 +1105,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/temporal-discovery",
       "name": "@unrdf/temporal-discovery",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/test-utils",
@@ -1115,7 +1115,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/test-utils",
       "name": "@unrdf/test-utils",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/v6-compat",
@@ -1125,7 +1125,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-compat",
       "name": "@unrdf/v6-compat",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/v6-core",
@@ -1135,7 +1135,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-core",
       "name": "@unrdf/v6-core",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/validation",
@@ -1145,7 +1145,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/validation",
       "name": "@unrdf/validation",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl",
@@ -1205,12 +1205,12 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/zkp",
       "name": "@unrdf/zkp",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/lab",
       "name": "@wasm4pm/lab-cli-tests",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/playground",
@@ -1225,7 +1225,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/docker-cluster",
       "name": "atomvm-docker-cluster-experiments",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/experiments/chaos-cluster",
@@ -1235,7 +1235,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/chaos-cluster",
       "name": "chaos-cluster",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/experiments/docker-swarm-messaging",
@@ -1245,7 +1245,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/docker-swarm-messaging",
       "name": "docker-swarm-messaging",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/docs",
@@ -1255,7 +1255,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/docs",
       "name": "docs",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/docs",
@@ -1335,12 +1335,12 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm",
       "name": "pictl-monorepo",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/scripts",
       "name": "scripts",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/examples/swr-site",
@@ -1355,7 +1355,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/benchmarks",
       "name": "unrdf-benchmarks",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/hooks-showcase",
@@ -1365,7 +1365,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/playground/hooks-showcase",
       "name": "unrdf-hooks-showcase",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground",
@@ -1375,7 +1375,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/playground",
       "name": "unrdf-playground",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/smoke-test",
@@ -1385,7 +1385,7 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf/playground/smoke-test",
       "name": "unrdf-smoke-test",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953",
@@ -1445,12 +1445,12 @@
     {
       "dir": "/Users/sac/chatmangpt/unrdf",
       "name": "unrdf-workspace",
-      "version": "26.4.25"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm",
       "name": "wasm4pm",
-      "version": "26.4.23"
+      "version": "26.5.4"
     },
     {
       "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm/pkg",

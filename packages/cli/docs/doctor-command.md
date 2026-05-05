@@ -633,7 +633,7 @@ wait
 
 ## Version History
 
-- **v26.4.23** - Initial doctor command implementation
+- **v26.5.4** - Initial doctor command implementation
   - Environment, system, quality, integration checks
   - Auto-fix capability for safe operations
   - Watch mode for continuous monitoring

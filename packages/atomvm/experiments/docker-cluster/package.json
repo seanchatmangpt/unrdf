@@ -1,6 +1,6 @@
 {
   "name": "atomvm-docker-cluster-experiments",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "type": "module",
   "description": "Real Docker container tests for AtomVM cluster",
   "dependencies": {

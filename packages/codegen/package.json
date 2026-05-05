@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/codegen",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Code generation and metaprogramming tools for UNRDF",
   "type": "module",
   "main": "./src/index.mjs",
@@ -33,6 +33,6 @@
     "vitest": "^4.0.16"
   },
   "peerDependencies": {
-    "@unrdf/core": "26.4.23"
+    "@unrdf/core": "26.5.4"
   }
 }

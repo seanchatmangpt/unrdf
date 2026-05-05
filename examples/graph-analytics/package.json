@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/graph-analytics",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Real-time graph analytics with pattern detection and visualization",
   "type": "module",
   "main": "src/index.mjs",
@@ -18,8 +18,8 @@
     "real-time"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.23",
-    "@unrdf/streaming": "26.4.23",
+    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/streaming": "26.5.4",
     "@opentelemetry/api": "^1.9.0",
     "ws": "^8.18.3",
     "zod": "^4.1.13"

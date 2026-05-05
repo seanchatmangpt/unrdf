@@ -4,7 +4,7 @@
 >
 > **Status**: ✅ Complete — 98 tests passing, ~1,300 LoC, 88% avg coverage
 >
-> **Version**: 26.4.23 | **Date**: April 3, 2026
+> **Version**: 26.5.4 | **Date**: May 4, 2026
 
 ---
 
@@ -149,4 +149,4 @@ examples/
 
 ---
 
-**Status**: ✅ Complete | **Version**: 26.4.23 | **Date**: April 3, 2026
+**Status**: ✅ Complete | **Version**: 26.5.4 | **Date**: May 4, 2026

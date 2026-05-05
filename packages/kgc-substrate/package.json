@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-substrate",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
   "type": "module",
   "main": "./src/index.mjs",
@@ -31,9 +31,9 @@
     "deterministic"
   ],
   "dependencies": {
-    "@unrdf/kgc-4d": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
-    "@unrdf/core": "26.4.23",
+    "@unrdf/kgc-4d": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
+    "@unrdf/core": "26.5.4",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

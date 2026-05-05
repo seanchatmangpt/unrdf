@@ -1,6 +1,6 @@
 {
   "name": "unrdf-playground",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Citty + Nunjucks + UNRDF playground CLI demonstrating autonomic knowledge graph systems",
   "type": "module",
   "private": true,

@@ -4,18 +4,24 @@
 
 ## Quick Start (First Time Setup)
 
+**Requirements**:
+- Node.js >= 18
+- pnpm >= 8
+- **Rust toolchain** (for Open Ontologies & Oxigraph builds)
+- Git
+
 **One command to set up everything:**
 
 ```bash
 ./scripts/quick-start.sh
 ```
 
-This script (saves 10-15 minutes per developer):
-- ✓ Detects your environment (OS, Node, pnpm)
-- ✓ Installs dependencies with frozen lockfile
-- ✓ Builds all packages
-- ✓ Runs validation tests
-- ✓ Performs health checks
+This script:
+- ✓ Detects your environment
+- ✓ Clones and builds **Open Ontologies** Rust binary
+- ✓ Installs dependencies
+- ✓ Builds all monorepo packages
+- ✓ Runs autonomic health checks
 
 **Expected output:**
 ```

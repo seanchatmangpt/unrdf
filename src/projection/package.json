@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/projection",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "Documentation as Projection - Deterministic documentation generation from RDF universe",
   "type": "module",
   "main": "index.mjs",

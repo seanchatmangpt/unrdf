@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-exploration/agent-4",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "description": "SHACL Validation Explorer - Agent 4",
   "type": "module",
   "main": "./index.mjs",
@@ -9,8 +9,8 @@
     "dev": "node index.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.23",
-    "@unrdf/oxigraph": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/oxigraph": "26.5.4",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5"
   },

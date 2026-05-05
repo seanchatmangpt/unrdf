@@ -1,12 +1,12 @@
 {
   "name": "@unrdf/examples",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "private": true,
   "type": "module",
   "description": "UNRDF usage examples",
   "dependencies": {
-    "@unrdf/core": "26.4.23",
-    "@unrdf/hooks": "26.4.23"
+    "@unrdf/core": "26.5.4",
+    "@unrdf/hooks": "26.5.4"
   },
   "scripts": {
     "test": "echo 'Examples are executable scripts, not tests'"

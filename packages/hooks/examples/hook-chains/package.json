@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks-example-chains",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "type": "module",
   "description": "Hook Chains Example - Sequential hook execution and composition",
   "private": true,
@@ -11,8 +11,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.23",
-    "@unrdf/hooks": "26.4.23",
+    "@unrdf/core": "26.5.4",
+    "@unrdf/hooks": "26.5.4",
     "n3": "^1.26.0",
     "zod": "^4.1.13"
   },

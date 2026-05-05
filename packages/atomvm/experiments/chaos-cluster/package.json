@@ -1,6 +1,6 @@
 {
   "name": "chaos-cluster",
-  "version": "26.4.23",
+  "version": "26.5.4",
   "type": "module",
   "scripts": {
     "test": "vitest run",

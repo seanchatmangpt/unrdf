@@ -1456,7 +1456,7 @@ See examples/ directory for more working examples.
 
 ## Breaking Changes & Migration
 
-### v26.4.23 - Documentation Updates
+### v26.5.4 - Documentation Updates
 
 **What Changed:**
 
