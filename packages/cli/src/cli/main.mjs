@@ -22,7 +22,6 @@ import {
 } from './commands/convert.mjs';
 import { daemonCommand } from './commands/daemon.mjs';
 import { syncCommand } from './commands/sync.mjs';
-import { initCommand } from './commands/init.mjs';
 import { templateCommand } from './commands/template.mjs';
 import { hooksCommand } from './commands/hooks.mjs';
 import { mcpCommand } from './commands/mcp.mjs';
@@ -42,9 +41,6 @@ export const main = defineCommand({
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {
-    // Project Initialization
-    init: initCommand,
-
     // RDF Graph Operations
     graph: graphCommand,
     query: queryCommand,

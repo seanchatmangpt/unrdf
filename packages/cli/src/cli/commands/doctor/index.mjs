@@ -212,17 +212,26 @@ export const doctor = defineCommand({
     publish: defineCommand({
       name: 'publish',
       args: {
-        'dry-run': { type: 'boolean', default: true }
+        'dry-run': { type: 'boolean', default: true },
+        format: { type: 'string', default: 'human', description: 'Output format: human, json, yaml', alias: 'f' }
       },
       async run({ args }) {
-        console.log('Running publication readiness diagnostics...');
-        const result = await checkPublishReadiness(process.cwd());
-        if (result.success) {
-            console.log(`✅ Package ${result.package} is ready for publication.`);
-        } else {
-            console.error(`❌ Package ${result.package} has issues:`, result.issues);
-            process.exit(1);
+        const categoryResult = await checkPublishReadiness(process.cwd());
+        const results = {
+          categories: [categoryResult],
+          failedChecks: 0,
+          warnings: 0
+        };
+
+        for (const check of categoryResult.checks) {
+          if (check.status === 'fail') results.failedChecks++;
+          if (check.status === 'warn') results.warnings++;
         }
+
+        const formatted = formatOutput(results, args.format);
+        console.log(formatted);
+
+        process.exit(results.failedChecks > 0 ? 1 : 0);
       }
     }),
   },
