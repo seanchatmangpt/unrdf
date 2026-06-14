@@ -21,14 +21,18 @@ export function ErrorRecoveryDemo() {
     { type: "permission", message: "Unauthorized access to graph", severity: "critical" }
   ];
 
+  // Round-robin through real error types (no Math.random — deterministic)
+  const [errorIndex, setErrorIndex] = useState(0);
+
   const simulateError = () => {
-    const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+    const errorType = errorTypes[errorIndex % errorTypes.length];
     const error = {
-      ...randomError,
+      ...errorType,
       timestamp: new Date().toISOString(),
-      id: Date.now()
+      id: Date.now(),
     };
-    setErrors(prev => [error, ...prev].slice(0, 5));
+    setErrors((prev) => [error, ...prev].slice(0, 5));
+    setErrorIndex((prev) => prev + 1);
   };
 
   const attemptRecovery = (errorId) => {
