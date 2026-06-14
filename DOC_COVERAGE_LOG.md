@@ -811,3 +811,80 @@ _(Note: 7 items closed — gap map correction revealed StreamingAdmission cluste
 3. Cross-product: Federation + Consensus
 4. Cross-product: Core diff + streaming delta
 5. Cross-product: Hooks + QualityMetrics + OTel
+
+---
+
+## Iteration 12
+
+**Date:** 2026-06-14
+
+**Triples closed:** 3 cross-product examples
+
+---
+
+### Triple 1 Closed: Cross-Product — Graph Diff + Query Optimizer
+
+**APIs composed:** `diffGraphFromStores`, `diffGraphFromDelta`, `diffOntologyFromGraphDiff` (core/diff.mjs) × `createQueryOptimizer` (hooks/query-optimizer.mjs)
+
+**Pattern:** "Change-Aware Cache Invalidation" — diff detects changed predicates; optimizer cache is selectively evicted for affected SPARQL queries only.
+
+**Example:** `examples/cross-product-diff-optimizer.mjs`
+
+**Contract discoveries:**
+
+- `diffOntologyFromGraphDiff(graphDiff, lens)` — `lens` is a FUNCTION `(triple, direction) => OntologyChange | null`, NOT an object with `classPredicates`/`propertyPredicates` arrays
+- `diffGraphFromStores` requires `store.getQuads()` (N3.js interface), while `checkSchemaConformance` uses `store.match()` (RDF/JS Streams spec) — two different conventions in the same codebase
+- Identical stores produce empty diff (forgery witness confirmed)
+
+**Real exit code: EXIT:0**
+
+---
+
+### Triple 2 Closed: Cross-Product — Streaming Receipts + QualityMetrics
+
+**APIs composed:** `processChunk`, `generateStreamMerkleProof` (streaming/streaming-receipts.mjs) × `QualityMetricsCollector` (hooks/quality-metrics.mjs) × `createContext` (v6-core/receipt-pattern.mjs)
+
+**Pattern:** "Receipted Stream Quality Audit" — each chunk gets an L5 receipt, receipts are aggregated into a Merkle proof, and quality metrics record per-chunk latency and defects.
+
+**Example:** `examples/cross-product-streaming-receipts.mjs`
+
+**Contract discoveries:**
+
+- `processChunk` requires a `DeterministicContext` as first argument (produced by `createContext({nodeId, previousReceiptHash})`)
+- `generateStreamMerkleProof` is a **sync** function but `blake3Hash` is async — for multi-chunk proofs, `proof.root` is a `Promise<string>` (source bug). Single-receipt case works correctly (no hashing needed).
+- Receipt chain: each `createContext` call should receive the previous receipt's `receiptHash` as `previousReceiptHash` to form a chain
+
+**Real exit code: EXIT:0**
+
+---
+
+### Triple 3 Closed: Cross-Product — ConsensusManager + DataReplicationManager
+
+**APIs composed:** `ConsensusManager`, `NodeState` (federation/consensus-manager.mjs) × `DataReplicationManager`, `ReplicationTopology`, `ReplicationMode` (federation/data-replication.mjs)
+
+**Pattern:** "Consensus-Gated Replication" — demonstrates that consensus state (RAFT term, peer count) is independent of replication operations, and HLC timestamps are monotonically non-decreasing.
+
+**Example:** `examples/cross-product-federation-consensus.mjs`
+
+**Contract discoveries:**
+
+- Consensus and replication managers are fully independent — replication operations do not change consensus term or peer count
+- HLC physical time `stats.hlc.physical` is non-decreasing across `replicate()` calls
+- New `ConsensusManager` always starts as `NodeState.FOLLOWER` with `currentTerm=0` — cannot self-promote
+
+**Real exit code: EXIT:0**
+
+**Remaining documented-but-unwitnessed after Iteration 12:**
+
+- N3 forward-chaining (`evaluateN3` in condition-evaluator.mjs) — EXISTS in source, requires Oxigraph + eyereasoner; documenting limitation
+- Datalog (`'datalog'` in VALID_KINDS) — listed but has NO implementation (`case 'datalog'` missing from evaluator); doc claim is ASPIRATIONAL
+
+---
+
+## Queue (updated after Iteration 12)
+
+1. **DISCREPANCY REPORT** — `@unrdf/hooks` Datalog: README claims "Datalog Logic Programming" as capability #9, but `case 'datalog'` is absent from condition-evaluator.mjs. The kind is registered in VALID_KINDS (line 887) but never dispatched. This is a documented-but-unimplemented capability — NOT a coverage gap, but a source/doc mismatch that must be reported.
+
+2. **LIMITATION NOTE** — N3 forward-chaining (`evaluateN3`): implementation exists and is dispatched via `case 'n3'`, but requires a real Oxigraph store with `.dump({format:'application/n-quads'})` method. Cannot be demonstrated with a duck-typed mock. Witness-blocking dependency.
+
+3. Cross-product: Hooks + QualityMetrics + OTel (requires OTel SDK wiring)

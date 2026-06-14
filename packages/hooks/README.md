@@ -196,28 +196,24 @@ Evaluates N3 rules via EYE reasoner for declarative inference.
 
 **Use Case**: Declarative rule application without imperative code.
 
-### 9. Datalog Logic Programming ⭐
+**Implementation note**: Requires a real Oxigraph store with `.dump({format: 'application/n-quads'})` — cannot be used with a duck-typed mock. Source: `packages/hooks/src/hooks/condition-evaluator.mjs`, `evaluateN3()`.
 
-Evaluates Datalog goals via bottom-up fixpoint for constraint solving.
+### 9. Datalog Logic Programming
+
+> ⚠️ **Status**: This condition kind (`kind: 'datalog'`) is registered in `VALID_KINDS` but has no dispatch case in `condition-evaluator.mjs`. The implementation is not present. Do not use in production.
+
+The planned API was:
 
 ```javascript
 {
   kind: 'datalog',
-  facts: [
-    'user(alice)',
-    'admin(alice)',
-    'group(admins)',
-    'member(alice, admins)'
-  ],
-  rules: [
-    'allowed(X) :- admin(X)',
-    'allowed(X) :- member(X, admins)'
-  ],
+  facts: ['user(alice)', 'admin(alice)'],
+  rules: ['allowed(X) :- admin(X)'],
   goal: 'allowed(alice)'
 }
 ```
 
-**Use Case**: Access control, permission evaluation via logical rules.
+**Use Case (planned)**: Access control, permission evaluation via logical rules.
 
 ## Effects (Transformations)
 
