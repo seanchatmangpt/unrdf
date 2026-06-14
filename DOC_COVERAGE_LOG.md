@@ -682,3 +682,132 @@ _(Note: 7 items closed — gap map correction revealed StreamingAdmission cluste
 6. Cross-product: Federation + Consensus
 7. Cross-product: Core diff + streaming delta
 8. Cross-product: Hooks + QualityMetrics + OTel
+
+---
+
+## Iteration 11
+
+**Date:** 2026-06-14
+
+**Triples closed:** 3
+
+---
+
+### Triple 1 Closed: @unrdf/core — Analysis Functions
+
+**APIs covered:** `explainQuery` (viz/query-explainer.mjs); `getGraphStatistics`, `checkSchemaConformance` (debug/rdf-inspector.mjs)
+
+**Doc:** `packages/core/README.md` — Added "Analysis" section with explainQuery plan shape, getGraphStatistics return fields, checkSchemaConformance schema and violation types.
+
+**Example:** `examples/analysis.mjs`
+
+**Implementation notes discovered:**
+
+- `explainQuery()` returns `{queryType, steps, estimatedCost, optimizations}` — NOT an array. The `steps` field is the array.
+- `checkSchemaConformance` calls `store.match(subject, predicate, null, null)` with argument filtering — a mock store must filter by subject/predicate, not return all quads unconditionally.
+- `getGraphStatistics` throws `TypeError` when store lacks `.match()`.
+
+**Captured run output:**
+
+```
+[explainQuery] ✅ queryType=UNKNOWN, estimatedCost=51, 5 step(s)
+  step 1: RESOLVE_PREFIXES — Resolve 1 namespace prefix(es) (cost=1)
+  step 2: TRIPLE_PATTERN — Match triple pattern: ?person a foaf:Person (cost=10)
+  step 3: TRIPLE_PATTERN — Match triple pattern: ?person foaf:name ?name (cost=15)
+  step 4: TRIPLE_PATTERN — Match triple pattern: FILTER (STRLEN(?name) > 2) (cost=20)
+  step 5: FILTER — Apply filter: STRLEN(?name (cost=5)
+[explainQuery] ✅ throws TypeError for empty string and non-string input
+[getGraphStatistics] ✅ tripleCount=5, subjectCount=2, predicateCount=3
+[getGraphStatistics] ✅ throws TypeError when store lacks .match()
+[checkSchemaConformance] ✅ conforms=true, violations=0
+[checkSchemaConformance] ✅ detected 2 violations for missing required predicate
+  first violation: Subject https://example.org/Alice missing required predicate https://example.org/requiredProp
+[checkSchemaConformance] ✅ detected MIN_TRIPLES_VIOLATION when graph has fewer than minTriples
+
+✅ All analysis function assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+---
+
+### Triple 2 Closed: @unrdf/federation — ConsensusManager (RAFT)
+
+**APIs covered:** `ConsensusManager`, `createConsensusManager`, `NodeState` (federation/consensus-manager.mjs)
+
+**Doc:** `packages/federation/README.md` — Added "Consensus (RAFT)" section with constructor config, addPeer/removePeer, initialize(), getState() shape, NodeState enum, and destroy().
+
+**Example:** `examples/federation-consensus.mjs`
+
+**Implementation notes discovered:**
+
+- `NodeState.FOLLOWER === 'follower'` (lowercase string), similarly CANDIDATE='candidate', LEADER='leader'
+- `getState()` returns full RAFT state: `{nodeId, state, currentTerm, leaderId, logLength, commitIndex, lastApplied, peerCount, stats}`
+- `stats` inside getState: `{electionsStarted, electionsWon, heartbeatsSent, heartbeatsReceived, logEntriesReplicated}`
+- `destroy()` is synchronous (not async); double-calling it does not throw
+
+**Captured run output:**
+
+```
+[ConsensusManager] ✅ initial state: nodeId=node-1, state=follower, term=0
+[addPeer] ✅ peerCount=2 after adding 2 peers
+[removePeer] ✅ peerCount=1 after removing 1 peer
+[initialize] ✅ emitted 'initialized' with nodeId=node-1
+[getState] ✅ all RAFT state fields present: nodeId, state, currentTerm, leaderId, logLength, commitIndex, lastApplied, peerCount, stats
+[getState] ✅ stats fields: electionsStarted, electionsWon, heartbeatsSent, heartbeatsReceived, logEntriesReplicated
+[NodeState] ✅ FOLLOWER=follower, CANDIDATE=candidate, LEADER=leader
+[createConsensusManager] ✅ factory returns ConsensusManager, nodeId=factory-node
+[destroy] ✅ destroy() completes without error; double-destroy safe
+
+✅ All ConsensusManager assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+---
+
+### Triple 3 Closed: @unrdf/federation — DataReplicationManager
+
+**APIs covered:** `DataReplicationManager`, `createDataReplicationManager`, `ReplicationTopology`, `ReplicationMode` (federation/data-replication.mjs)
+
+**Doc:** `packages/federation/README.md` — Added "Data Replication" section with topology/mode enums, coordinator duck-type, replicate() change schema, getStats() shape (including HLC fields), and shutdown().
+
+**Example:** `examples/federation-replication.mjs`
+
+**Implementation notes discovered:**
+
+- `ReplicationMode` has `PUSH`, `PULL`, `BIDIRECTIONAL` — NOT `UNIDIRECTIONAL` (aspirational doc error)
+- `ChangeOperationSchema` uses flat strings for quad components (`subject: z.string()`), not `{termType, value}` objects
+- Coordinator duck-type requires BOTH `getStores()` (called in `initialize()`) AND `getHealthyStores()` (called in `processReplication()`)
+- `getStats().hlc` exposes `{physical, logical, nodeId}` — physical is millisecond timestamp, logical is HLC counter
+
+**Captured run output:**
+
+```
+[DataReplicationManager] ✅ initial stats: changeLogSize=0, queueSize=0
+[DataReplicationManager] ✅ HLC: physical=1781458769850, logical=0, nodeId=70ac502e...
+[DataReplicationManager] ✅ config: topology=full-mesh, mode=bidirectional, batchSize=10
+[ReplicationTopology] ✅ FULL_MESH=full-mesh, STAR=star, RING=ring
+[ReplicationMode] ✅ BIDIRECTIONAL=bidirectional, PUSH=push, PULL=pull
+[initialize] ✅ emitted 'initialized'
+[replicate] ✅ replicate() enqueued: changeLogSize=1, queueSize=1
+[getStats] ✅ queueUtilization=0.000 (ratio ≤ 1)
+[shutdown] ✅ emitted 'shutdown'
+[createDataReplicationManager] ✅ factory returns DataReplicationManager, topology=star
+
+✅ All DataReplicationManager assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+**Remaining documented-but-unwitnessed after Iteration 11:** ~1–2 items (N3 forward-chaining prose claim needs source verification)
+
+---
+
+## Queue (updated after Iteration 11)
+
+1. `@unrdf/hooks` — N3 forward-chaining and Datalog (README prose says "supported" — verify source exists first)
+2. Cross-product: Streaming + Hooks + Receipts
+3. Cross-product: Federation + Consensus
+4. Cross-product: Core diff + streaming delta
+5. Cross-product: Hooks + QualityMetrics + OTel

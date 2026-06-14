@@ -675,6 +675,57 @@ const robustQuery = withRecovery(async sparql => store.query(sparql), {
 
 **Example**: [`examples/error-handling.mjs`](../../examples/error-handling.mjs)
 
+## Analysis
+
+`@unrdf/core` provides query explanation, graph statistics, and schema conformance checking.
+
+### explainQuery
+
+Parses a SPARQL query and returns an execution plan with step-by-step cost estimates.
+
+```javascript
+import { explainQuery } from '@unrdf/core/viz/query-explainer';
+
+const plan = explainQuery(`
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name WHERE { ?person a foaf:Person ; foaf:name ?name }
+`);
+// {queryType, steps: [{step, operation, description, cost}], estimatedCost, optimizations}
+```
+
+Throws `TypeError` for empty or non-string input.
+
+### getGraphStatistics
+
+Counts triples, subjects, predicates, objects, literals, blank nodes, and graphs in an RDF store.
+
+```javascript
+import { getGraphStatistics } from '@unrdf/core/debug/rdf-inspector';
+
+const stats = getGraphStatistics(store);
+// {tripleCount, subjectCount, predicateCount, objectCount,
+//  literalCount, blankNodeCount, graphCount, averageDegree}
+```
+
+Store must have a `.match()` method — throws `TypeError` otherwise.
+
+### checkSchemaConformance
+
+Validates that an RDF store conforms to a lightweight schema (required predicates, minimum triple count).
+
+```javascript
+import { checkSchemaConformance } from '@unrdf/core/debug/rdf-inspector';
+
+const result = checkSchemaConformance(store, {
+  requiredPredicates: ['http://xmlns.com/foaf/0.1/name'],
+  minTriples: 3,
+});
+// {conforms: boolean, violationCount: number, violations: [...]}
+// violation types: 'MISSING_REQUIRED_PREDICATE', 'MIN_TRIPLES_VIOLATION'
+```
+
+**Example**: [`examples/analysis.mjs`](../../examples/analysis.mjs)
+
 ## RDF-star
 
 `@unrdf/core` implements W3C RDF 1.2 quoted triples and annotation helpers for provenance, temporal validity, and confidence.

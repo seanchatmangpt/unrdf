@@ -11,6 +11,7 @@ Federate RDF graphs across multiple peers. Discover peers, route queries, and ex
 See [QUICKSTART-FEDERATION.md](./QUICKSTART-FEDERATION.md) for a 5-minute guide to production federated queries.
 
 **One-command demo:**
+
 ```bash
 node examples/production-federation.mjs
 ```
@@ -18,6 +19,7 @@ node examples/production-federation.mjs
 ## Features
 
 ### Peer Management
+
 - ✅ Peer discovery (DNS-SD, mDNS)
 - ✅ Dynamic peer registration/removal
 - ✅ Peer metadata and configuration
@@ -25,6 +27,7 @@ node examples/production-federation.mjs
 - ✅ Automatic reconnection
 
 ### Query Execution
+
 - ✅ Remote SPARQL execution
 - ✅ Multiple query strategies (broadcast, selective, failover)
 - ✅ Query routing and optimization
@@ -33,6 +36,7 @@ node examples/production-federation.mjs
 - ✅ Retry logic
 
 ### Health Monitoring
+
 - ✅ Peer health monitoring
 - ✅ Automatic health checks
 - ✅ Health scores (0-100)
@@ -40,6 +44,7 @@ node examples/production-federation.mjs
 - ✅ Degraded peer handling
 
 ### Statistics & Monitoring
+
 - ✅ Query statistics tracking
 - ✅ Error rate monitoring
 - ✅ Performance metrics
@@ -58,7 +63,7 @@ pnpm add @unrdf/federation
 ### Basic Federation
 
 ```javascript
-import { createCoordinator } from '@unrdf/federation'
+import { createCoordinator } from '@unrdf/federation';
 
 // Create a federation coordinator with initial peers
 const coordinator = createCoordinator({
@@ -66,96 +71,100 @@ const coordinator = createCoordinator({
     {
       id: 'dbpedia',
       endpoint: 'https://dbpedia.org/sparql',
-      metadata: { description: 'DBpedia SPARQL endpoint' }
+      metadata: { description: 'DBpedia SPARQL endpoint' },
     },
     {
       id: 'wikidata',
       endpoint: 'https://query.wikidata.org/sparql',
-      metadata: { description: 'Wikidata Query Service' }
-    }
+      metadata: { description: 'Wikidata Query Service' },
+    },
   ],
   strategy: 'broadcast', // Query all peers
-  timeout: 10000 // 10 second timeout
-})
+  timeout: 10000, // 10 second timeout
+});
 
 // Execute federated query
 const result = await coordinator.query(`
   SELECT DISTINCT ?type WHERE {
     ?s a ?type .
   } LIMIT 10
-`)
+`);
 
-console.log(`Results: ${result.results.length}`)
-console.log(`Success: ${result.successCount}/${result.totalPeers}`)
+console.log(`Results: ${result.results.length}`);
+console.log(`Success: ${result.successCount}/${result.totalPeers}`);
 ```
 
 ### Dynamic Peer Management
 
 ```javascript
 // Add peer dynamically
-await coordinator.addPeer(
-  'local',
-  'http://localhost:3030/dataset/sparql',
-  { description: 'Local Fuseki instance' }
-)
+await coordinator.addPeer('local', 'http://localhost:3030/dataset/sparql', {
+  description: 'Local Fuseki instance',
+});
 
 // List registered peers
-const peers = coordinator.listPeers()
+const peers = coordinator.listPeers();
 peers.forEach(peer => {
-  console.log(`${peer.id}: ${peer.endpoint} (${peer.status})`)
-})
+  console.log(`${peer.id}: ${peer.endpoint} (${peer.status})`);
+});
 
 // Remove peer
-const removed = coordinator.removePeer('local')
-console.log(`Removed: ${removed}`)
+const removed = coordinator.removePeer('local');
+console.log(`Removed: ${removed}`);
 ```
 
 ### Query Strategies
 
 #### Broadcast Strategy
+
 Query ALL peers, aggregate results:
 
 ```javascript
 const result = await coordinator.query(sparqlQuery, {
   strategy: 'broadcast',
-  timeout: 10000
-})
+  timeout: 10000,
+});
 
 // result.peerResults contains results from each peer
 // result.results contains aggregated/merged results
 ```
 
 **Use when:**
+
 - Need comprehensive results from all sources
 - Want to compare data across peers
 - High availability is critical
 
 #### Selective Strategy
+
 Query HEALTHY peers only, skip degraded/unreachable:
 
 ```javascript
 const result = await coordinator.query(sparqlQuery, {
   strategy: 'selective',
-  timeout: 5000
-})
+  timeout: 5000,
+});
 ```
 
 **Use when:**
+
 - Want optimal performance
 - Can tolerate partial results
 - Network conditions vary
 
 #### Failover Strategy
+
 Query ONE peer, try next on failure:
 
 ```javascript
 const result = await coordinator.query(sparqlQuery, {
   strategy: 'failover',
-  timeout: 3000
-})
+  timeout: 3000,
+});
 ```
 
 **Use when:**
+
 - Need single authoritative source
 - Want minimal network usage
 - Peers have redundant data
@@ -164,25 +173,25 @@ const result = await coordinator.query(sparqlQuery, {
 
 ```javascript
 // Run health check
-const health = await coordinator.healthCheck()
-console.log(`Healthy: ${health.healthyPeers}/${health.totalPeers}`)
-console.log(`Degraded: ${health.degradedPeers}`)
-console.log(`Unreachable: ${health.unreachablePeers}`)
+const health = await coordinator.healthCheck();
+console.log(`Healthy: ${health.healthyPeers}/${health.totalPeers}`);
+console.log(`Degraded: ${health.degradedPeers}`);
+console.log(`Unreachable: ${health.unreachablePeers}`);
 
 // Query specific peer
-const peerResult = await coordinator.queryPeer('dbpedia', sparqlQuery)
-console.log(`Success: ${peerResult.success}`)
-console.log(`Duration: ${peerResult.duration}ms`)
+const peerResult = await coordinator.queryPeer('dbpedia', sparqlQuery);
+console.log(`Success: ${peerResult.success}`);
+console.log(`Duration: ${peerResult.duration}ms`);
 ```
 
 ### Statistics
 
 ```javascript
 // Get federation statistics
-const stats = coordinator.getStats()
-console.log(`Total queries: ${stats.totalQueries}`)
-console.log(`Total errors: ${stats.totalErrors}`)
-console.log(`Error rate: ${(stats.errorRate * 100).toFixed(2)}%`)
+const stats = coordinator.getStats();
+console.log(`Total queries: ${stats.totalQueries}`);
+console.log(`Total errors: ${stats.totalErrors}`);
+console.log(`Error rate: ${(stats.errorRate * 100).toFixed(2)}%`);
 ```
 
 ## Architecture
@@ -194,23 +203,23 @@ The @unrdf/federation package provides a robust distributed systems substrate fo
 ```mermaid
 graph TD
     Client[SPARQL Client] --> Coord[Federation Coordinator]
-    
+
     subgraph "Core Coordination"
         Coord --> PM[Peer Manager]
         Coord --> DQE[Distributed Query Engine]
         Coord --> HM[Health Monitor]
     }
-    
+
     subgraph "Advanced V6 Features"
         Coord --> CM[Consensus Manager / RAFT]
         Coord --> DRM[Data Replication Manager]
         Coord --> AE[Advanced Federation Engine]
     }
-    
+
     PM --> P1[Peer A]
     PM --> P2[Peer B]
     PM --> P3[Peer C]
-    
+
     DQE --> Strategy{Strategy}
     Strategy --> Broadcast
     Strategy --> Selective
@@ -242,6 +251,7 @@ graph TD
 Creates a federation coordinator.
 
 **Parameters:**
+
 - `config.peers` (Array): Initial peers
   - `id` (string): Unique peer identifier
   - `endpoint` (string): SPARQL endpoint URL
@@ -257,22 +267,28 @@ Creates a federation coordinator.
 ### Coordinator Methods
 
 #### `addPeer(id, endpoint, metadata?)`
+
 Adds a new peer to the federation.
 
 #### `removePeer(id)`
+
 Removes a peer from the federation.
 
 #### `listPeers()`
+
 Returns array of all registered peers.
 
 #### `query(sparqlQuery, options?)`
+
 Executes a federated SPARQL query.
 
 **Options:**
+
 - `strategy`: Query strategy ('broadcast', 'selective', 'failover')
 - `timeout`: Query timeout in milliseconds
 
 **Returns:** Query result object with:
+
 - `success`: boolean
 - `results`: Array of bindings
 - `successCount`: Number of successful peers
@@ -281,21 +297,26 @@ Executes a federated SPARQL query.
 - `peerResults`: Per-peer result details
 
 #### `queryPeer(peerId, sparqlQuery)`
+
 Queries a specific peer.
 
 #### `healthCheck()`
+
 Runs health checks on all peers.
 
 **Returns:** Health status object with:
+
 - `totalPeers`: Total number of peers
 - `healthyPeers`: Number of healthy peers
 - `degradedPeers`: Number of degraded peers
 - `unreachablePeers`: Number of unreachable peers
 
 #### `getStats()`
+
 Returns federation statistics.
 
 **Returns:** Statistics object with:
+
 - `totalQueries`: Total queries executed
 - `totalErrors`: Total errors encountered
 - `errorRate`: Error rate (0-1)
@@ -304,71 +325,167 @@ Returns federation statistics.
 ## Use Cases
 
 ### Multi-graph Queries
+
 Query across multiple RDF sources:
 
 ```javascript
-const result = await coordinator.query(`
+const result = await coordinator.query(
+  `
   SELECT ?person ?name ?birthPlace WHERE {
     ?person foaf:name ?name .
     ?person dbo:birthPlace ?birthPlace .
   } LIMIT 100
-`, { strategy: 'broadcast' })
+`,
+  { strategy: 'broadcast' }
+);
 ```
 
 ### Distributed Systems
+
 Coordinate RDF operations across distributed nodes:
 
 ```javascript
 // Add organizational peers
-await coordinator.addPeer('hr', 'http://hr.example.com/sparql')
-await coordinator.addPeer('finance', 'http://finance.example.com/sparql')
+await coordinator.addPeer('hr', 'http://hr.example.com/sparql');
+await coordinator.addPeer('finance', 'http://finance.example.com/sparql');
 
 // Query across departments
-const employees = await coordinator.query(`
+const employees = await coordinator.query(
+  `
   SELECT ?emp ?dept ?salary WHERE {
     ?emp org:department ?dept .
     ?emp org:salary ?salary .
   }
-`, { strategy: 'selective' })
+`,
+  { strategy: 'selective' }
+);
 ```
 
 ### Data Federation
+
 Combine datasets from multiple sources:
 
 ```javascript
 // Public knowledge bases
-await coordinator.addPeer('dbpedia', 'https://dbpedia.org/sparql')
-await coordinator.addPeer('wikidata', 'https://query.wikidata.org/sparql')
+await coordinator.addPeer('dbpedia', 'https://dbpedia.org/sparql');
+await coordinator.addPeer('wikidata', 'https://query.wikidata.org/sparql');
 
 // Federated query across public + private data
-const combined = await coordinator.query(`
+const combined = await coordinator.query(
+  `
   SELECT ?entity ?label ?description WHERE {
     ?entity rdfs:label ?label .
     OPTIONAL { ?entity schema:description ?description }
   }
-`, { strategy: 'broadcast' })
+`,
+  { strategy: 'broadcast' }
+);
 ```
 
 ### High Availability
+
 Route to healthy peers automatically:
 
 ```javascript
 // Failover automatically if primary is down
 const result = await coordinator.query(sparqlQuery, {
-  strategy: 'failover'
-})
+  strategy: 'failover',
+});
 ```
+
+## Consensus (RAFT)
+
+`ConsensusManager` implements the RAFT protocol for electing a leader and replicating a log across a cluster of nodes.
+
+```javascript
+import {
+  ConsensusManager,
+  createConsensusManager,
+  NodeState,
+} from '@unrdf/federation/federation/consensus-manager';
+
+// Create a node
+const node = createConsensusManager({
+  nodeId: 'node-1',
+  electionTimeoutMin: 150,
+  electionTimeoutMax: 300,
+  heartbeatInterval: 50,
+});
+
+// Register peers
+node.addPeer('node-2', 'http://node2:8080');
+node.addPeer('node-3', 'http://node3:8080');
+
+// Start the consensus protocol
+await node.initialize();
+
+// Inspect RAFT state
+const state = node.getState();
+// {nodeId, state, currentTerm, leaderId, logLength, commitIndex,
+//  lastApplied, peerCount, stats: {electionsStarted, ...}}
+console.log(state.state); // NodeState.FOLLOWER | CANDIDATE | LEADER
+
+// Tear down
+node.destroy();
+```
+
+**NodeState enum**: `NodeState.FOLLOWER`, `NodeState.CANDIDATE`, `NodeState.LEADER`
+
+**Source**: [`examples/federation-consensus.mjs`](../../examples/federation-consensus.mjs)
+
+## Data Replication
+
+`DataReplicationManager` handles eventual-consistency replication across a federation with configurable topology and a Hybrid Logical Clock (HLC) for drift prevention.
+
+```javascript
+import {
+  DataReplicationManager,
+  createDataReplicationManager,
+  ReplicationTopology,
+  ReplicationMode,
+} from '@unrdf/federation/federation/data-replication';
+
+const coordinator = { getStores: () => [], getHealthyStores: () => [] };
+
+const replication = createDataReplicationManager(coordinator, {
+  topology: ReplicationTopology.FULL_MESH, // or STAR, RING
+  mode: ReplicationMode.BIDIRECTIONAL, // or PUSH, PULL
+  batchSize: 100,
+});
+
+await replication.initialize();
+
+// Replicate a change — quad fields are flat strings (serialization schema)
+await replication.replicate({
+  storeId: 'store-a',
+  operation: 'INSERT', // 'INSERT' | 'DELETE' | 'UPDATE'
+  quad: {
+    subject: 'https://example.org/Alice',
+    predicate: 'http://xmlns.com/foaf/0.1/name',
+    object: 'Alice',
+  },
+});
+
+// Inspect stats
+const stats = replication.getStats();
+// {changeLogSize, queueSize, maxQueueSize, queueUtilization,
+//  conflictCount, versionVectors, hlc: {physical, logical, nodeId}, config}
+
+await replication.shutdown();
+```
+
+**Source**: [`examples/federation-replication.mjs`](../../examples/federation-replication.mjs)
 
 ## Performance Characteristics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| **Query Latency** | <100ms overhead | Federation coordination |
-| **Peer Timeout** | 10s default | Configurable per query |
-| **Health Check** | 60s interval | Background monitoring |
-| **Failover Time** | <1s | Automatic on failure |
-| **Max Peers** | Unlimited | Limited by resources |
-| **Parallel Queries** | N peers | Concurrent execution |
+| Metric               | Value           | Notes                   |
+| -------------------- | --------------- | ----------------------- |
+| **Query Latency**    | <100ms overhead | Federation coordination |
+| **Peer Timeout**     | 10s default     | Configurable per query  |
+| **Health Check**     | 60s interval    | Background monitoring   |
+| **Failover Time**    | <1s             | Automatic on failure    |
+| **Max Peers**        | Unlimited       | Limited by resources    |
+| **Parallel Queries** | N peers         | Concurrent execution    |
 
 ## Troubleshooting
 
@@ -377,6 +494,7 @@ const result = await coordinator.query(sparqlQuery, {
 **Symptom**: `ECONNREFUSED` or timeout errors
 
 **Solution**:
+
 1. Check peer endpoint URL is correct
 2. Verify network connectivity: `curl <endpoint>`
 3. Check firewall/CORS settings
@@ -387,6 +505,7 @@ const result = await coordinator.query(sparqlQuery, {
 **Symptom**: `results.length === 0` but no errors
 
 **Solution**:
+
 1. Test query on individual peer: `coordinator.queryPeer('peer-id', query)`
 2. Check SPARQL syntax
 3. Verify peer has data
@@ -397,6 +516,7 @@ const result = await coordinator.query(sparqlQuery, {
 **Symptom**: Queries taking >10 seconds
 
 **Solution**:
+
 1. Use `strategy: 'selective'` to skip unhealthy peers
 2. Reduce query complexity
 3. Add LIMIT clause
@@ -407,6 +527,7 @@ const result = await coordinator.query(sparqlQuery, {
 **Symptom**: `health.unreachablePeers > health.healthyPeers`
 
 **Solution**:
+
 1. Run health check: `await coordinator.healthCheck()`
 2. Remove unreachable peers
 3. Check peer endpoints are accessible
@@ -420,8 +541,73 @@ Complete examples are available in the [examples/](./examples/) directory:
 - **[production-federation.mjs](./examples/production-federation.mjs)** - Production-ready example with all features (20 min)
 - **[distributed-queries/](./examples/distributed-queries/)** - Advanced distributed query patterns
 - **[peer-discovery/](./examples/peer-discovery/)** - Peer discovery and management
+- **[federation-peer-query.mjs](../../examples/federation-peer-query.mjs)** - Self-contained: peer lifecycle, query routing, result aggregation, failure path
 
 **New to federation?** Start with [QUICKSTART-FEDERATION.md](./QUICKSTART-FEDERATION.md).
+
+## API Reference
+
+### `createPeerManager()` — peer registration and health tracking
+
+See **[examples/federation-peer-query.mjs](../../examples/federation-peer-query.mjs)** for a runnable demonstration.
+
+```javascript
+import { createPeerManager, PeerConfigSchema } from '@unrdf/federation';
+
+const manager = createPeerManager();
+
+// Register a peer (validates endpoint URL)
+const peer = manager.registerPeer('node-A', 'https://sparql.node-a.example.org', {
+  region: 'us-east',
+});
+// → { id, endpoint, metadata, registeredAt, lastSeen, status: 'healthy' }
+
+// Re-registering the same id updates endpoint but preserves registeredAt
+const updated = manager.registerPeer('node-A', 'https://new-endpoint.example.org');
+// updated.registeredAt === peer.registeredAt
+
+const peers = manager.listPeers(); // PeerInfo[]
+manager.unregisterPeer('node-A'); // removes from registry
+```
+
+**`PeerConfigSchema`** — validates `{ id: string, endpoint: URL, metadata? }` before registration.
+Invalid endpoint URLs or empty IDs produce Zod validation errors (use `safeParse` to inspect issues).
+
+### `routeQuery(peers, sparqlQuery, strategy?)` — peer selection
+
+```javascript
+import { routeQuery } from '@unrdf/federation';
+
+const allPeers = manager.listPeers();
+routeQuery(allPeers, query, 'broadcast'); // all peers
+routeQuery(allPeers, query, 'selective'); // peers matching metadata filter
+routeQuery(allPeers, query, 'first-available'); // single peer [0]
+```
+
+### `aggregateResults(peerResults[])` — deduplicate across peers
+
+```javascript
+import { aggregateResults } from '@unrdf/federation';
+
+// peerResults: QueryResult[] from executeFederatedQuery or executeDistributedQuery
+const combined = aggregateResults(peerResults);
+// Ignores failed peers (success: false). Deduplicates by JSON identity.
+// Handles SPARQL JSON format (result.data.results.bindings), arrays, or single objects.
+```
+
+### `executeFederatedQuery(peerId, endpoint, sparql, options?)` — single peer query
+
+```javascript
+import { executeFederatedQuery } from '@unrdf/federation';
+
+const result = await executeFederatedQuery('node-A', 'https://sparql.example.org', sparqlQuery, {
+  timeout: 5000, // ms (default 30000)
+  format: 'json', // 'json' | 'xml' | 'turtle' | 'ntriples'
+});
+// On success: { success: true, data, duration, peerId }
+// On failure (network, timeout, HTTP error): { success: false, error: string, duration, peerId }
+// Never throws — all errors become { success: false }
+```
 
 ## Observability
 
@@ -457,12 +643,14 @@ const coordinator = createCoordinator({
 ## SLA Requirements
 
 **Strict SLA for Federated Queries**:
+
 - **Coordination Latency**: <100ms overhead per query (excluding network)
 - **Health Detection**: <1s to detect and route around a failed peer
 - **Success Rate**: >99% success rate for healthy peer sets
 - **Error Rate**: <0.1% internal coordinator error rate
 
 **Enforcement**:
+
 - Automatic failover when latency exceeds 1.5x average
 - Circuit breaking for repeatedly failing endpoints
 - Real-time SLA monitoring via OpenTelemetry metrics
