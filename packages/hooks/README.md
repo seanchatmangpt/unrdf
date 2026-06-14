@@ -608,6 +608,43 @@ const trail = collector.exportAuditTrail({ type: 'defect-recorded' });
 
 **Example**: [`examples/quality-metrics.mjs`](../../examples/quality-metrics.mjs)
 
+## Query Optimizer
+
+`createQueryOptimizer` produces an optimizer object that normalizes SPARQL whitespace, builds predicate indexes over RDF graphs, and caches query results with TTL eviction.
+
+```javascript
+import { createQueryOptimizer } from '@unrdf/hooks';
+
+const optimizer = createQueryOptimizer({
+  enableIndexing: true,
+  enableCaching: true,
+  cacheMaxSize: 1000,
+});
+
+// Normalize whitespace in SPARQL strings
+const normalized = optimizer.optimize('SELECT  *  WHERE { ?s  a  ?type }');
+
+// Build predicate index over any iterable of quads
+const indexes = await optimizer.createIndexes(graph); // → ['predicate']
+
+// Update index with delta after insertions/deletions
+await optimizer.updateIndexes({ additions: [quad1], deletions: [quad2] });
+
+// LRU cache with TTL
+optimizer.cacheResult(sparql, result);
+const cached = optimizer.getCachedResult(sparql, 60000); // null if stale
+
+// Statistics
+const stats = optimizer.getStats();
+// → { queriesOptimized, cacheHits, cacheMisses, cacheHitRate, cacheSize, indexCount, indexesCreated }
+
+optimizer.clear(); // reset cache and indexes
+```
+
+**Note**: `defaultShouldRetry` in the recovery module only retries `NetworkError` and `TimeoutError` — plain `Error` instances are not retried unless you provide a custom `shouldRetry` function.
+
+**Example**: [`examples/query-optimizer.mjs`](../../examples/query-optimizer.mjs)
+
 ## Source Examples
 
 Learn by example following the 80/20 principle:
@@ -617,6 +654,7 @@ Learn by example following the 80/20 principle:
 - **[validate-hooks.mjs](./examples/validate-hooks.mjs)** - Hook validation and debugging (15 min)
 - **[../../examples/hook-scheduler.mjs](../../examples/hook-scheduler.mjs)** - HookScheduler: interval, startup, cron, idle schedules
 - **[../../examples/quality-metrics.mjs](../../examples/quality-metrics.mjs)** - QualityMetricsCollector: DPMO, Kaizen, audit trail
+- **[../../examples/query-optimizer.mjs](../../examples/query-optimizer.mjs)** - createQueryOptimizer: normalize, index, cache, stats
 
 ## Testing
 

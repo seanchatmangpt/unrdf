@@ -573,3 +573,112 @@ _(Note: 7 items closed — gap map correction revealed StreamingAdmission cluste
 10. Cross-product: Federation + Consensus
 11. Cross-product: Core diff + streaming delta
 12. Cross-product: Hooks + QualityMetrics + OTel
+
+---
+
+## Iteration 10 — 2026-06-14
+
+**Commit:** `db9dcbe3`
+
+### Triple 1 Closed: @unrdf/hooks — createQueryOptimizer
+
+**APIs covered:** `createQueryOptimizer` — `optimize()`, `createIndexes()`, `updateIndexes()`, `cacheResult()`, `getCachedResult()`, `getStats()`, `clear()`
+
+**Doc:** `packages/hooks/README.md` — Added "Query Optimizer" section with full API, code example, and note about defaultShouldRetry behavior.
+
+**Example:** `examples/query-optimizer.mjs`
+
+**Captured run output:**
+
+```
+[optimize] ✅ raw 48 chars → optimized 31 chars
+[optimize] ✅ queriesOptimized=1
+[createIndexes] ✅ created: [predicate], indexCount=1
+[updateIndexes] ✅ delta applied without error
+[cache] ✅ getCachedResult returned 1 result(s)
+[cache] ✅ maxAge=0 → stale entry returns null
+[stats] ✅ hits=2, misses=2, hitRate=0.50
+[clear] ✅ cache and indexes reset: cacheSize=0, indexCount=0
+[forgery witness] ✅ cacheMaxSize=3 enforced: cacheSize=3 (≤3)
+
+✅ All createQueryOptimizer assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+### Triple 2 Closed: @unrdf/core — Error Handling & Recovery
+
+**APIs covered:** `UnrdfError`, `ValidationError`, `QueryError`, `StoreError`, `NetworkError`, `TimeoutError`, `ParserError` (errors.mjs); `retry`, `CircuitBreaker`, `RateLimiter`, `withRecovery` (recovery.mjs)
+
+**Doc:** `packages/core/README.md` — Added "Error Handling" section with error hierarchy, recovery utilities, and note about defaultShouldRetry only retrying NetworkError/TimeoutError.
+
+**Example:** `examples/error-handling.mjs`
+
+**Implementation note:** `defaultShouldRetry` only retries `NetworkError` and `TimeoutError`. Plain `Error` instances are NOT retried. Examples use `NetworkError` to demonstrate retry behavior.
+
+**Captured run output:**
+
+```
+[UnrdfError] ✅ hierarchy: QueryError, StoreError, NetworkError, TimeoutError, ParserError all extend UnrdfError
+[UnrdfError] ✅ code=ERR_TEST, context={"detail":"test"}
+[retry] ✅ succeeded on attempt 3: "success on attempt 3"
+[retry] ✅ throws after maxAttempts=2 exhausted
+[CircuitBreaker] ✅ opened after 2 failures, rejected while open
+[CircuitBreaker] ✅ state transitions: closed→open
+[CircuitBreaker] ✅ recovered after timeout: state=closed
+[RateLimiter] ✅ executed 3 ops, current=3, max=3
+[RateLimiter] ✅ reset() → current=0
+[withRecovery] ✅ succeeded after 2 attempt(s): "recovered"
+[withRecovery] ✅ fallback fires when all retries exhausted: "fallback-value"
+
+✅ All error handling assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+### Triple 3 Closed: @unrdf/core — RDF-star
+
+**APIs covered:** `RDFStarFactory`, `isQuotedTriple` (rdf-star.mjs); `AnnotationBuilder`, `createAnnotationBuilder`, `createProvenance`, `createTemporal`, `createConfidence` (annotation.mjs)
+
+**Doc:** `packages/core/README.md` — Added "RDF-star" section with factory, isQuotedTriple, and all annotation helpers. Noted that Oxigraph JS bindings don't support quoted triples as graph subjects — factory returns wrapper object.
+
+**Example:** `examples/rdf-star.mjs`
+
+**Implementation notes discovered:**
+
+- `validUntil()` does NOT exist — correct method is `validTo()`
+- `createProvenance()` returns schema-validated flat object `{source, creator, license}`, not nested
+- `createConfidence(1.5, 'x')` throws ZodError (score must be 0–1) — correct behavior verified
+
+**Captured run output:**
+
+```
+[AnnotationBuilder] ✅ provenance.source=https://example.org/dataset/v2, confidence=0.97
+[createAnnotationBuilder] ✅ factory returns builder with .build() method
+[createProvenance] ✅ source=https://example.org/dataset, creator=Alice
+[createTemporal] ✅ validFrom=2026-01-01T00:00:00Z, validTo=2027-01-01T00:00:00Z
+[createConfidence] ✅ confidence=0.95, method=ml-model-v2
+[isQuotedTriple] ✅ true for QuotedTriple, false for NamedNode/BlankNode/null
+[RDFStarFactory] ✅ quotedTriple termType=QuotedTriple
+[RDFStarFactory] ✅ isQuotedTriple(quoted)=true
+[forgery witness] ✅ createConfidence(1.5) throws — invalid score rejected
+
+✅ All RDF-star assertions passed.
+```
+
+**Real exit code: EXIT:0**
+
+**Remaining documented-but-unwitnessed after Iteration 10: ~4 items**
+
+---
+
+## Queue (ordered by priority)
+
+1. `@unrdf/core` — Analysis: `explainQuery`, `getGraphStatistics`, `checkSchemaConformance`
+2. `@unrdf/federation` — `ConsensusManager`, `createConsensusManager`
+3. `@unrdf/federation` — `DataReplicationManager`, `createDataReplicationManager`
+4. `@unrdf/hooks` — N3 forward-chaining and Datalog (README prose says "supported" — verify source exists)
+5. Cross-product: Streaming + Hooks + Receipts
+6. Cross-product: Federation + Consensus
+7. Cross-product: Core diff + streaming delta
+8. Cross-product: Hooks + QualityMetrics + OTel
