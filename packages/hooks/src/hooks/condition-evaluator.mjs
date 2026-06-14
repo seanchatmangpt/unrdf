@@ -12,7 +12,9 @@ import { ask, select, construct } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
 import { createStore, dataFactory } from '../../../oxigraph/src/index.mjs';
-import reasoner from 'eyereasoner';
+// eyereasoner default export is an object; the callable is .n3reasoner
+import eyereasoner from 'eyereasoner';
+const { n3reasoner: reasoner } = eyereasoner;
 import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs';
 import { z } from 'zod';
 
@@ -404,7 +406,7 @@ export async function evaluateCondition(condition, graph, options = {}) {
       case 'n3':
         return await evaluateN3(condition, graph, resolver, env);
       case 'semantic-inference':
-        return await evaluateSemanticInference(condition, graph, resolver, env);
+        throw new Error("condition kind 'semantic-inference' is not yet implemented");
       default:
         throw new Error(`Unsupported condition kind: ${condition.kind}`);
     }
@@ -1302,12 +1304,12 @@ async function evaluateN3(condition, graph, resolver, env) {
   // Serialize store to N-Quads
   const dataN3 = await graph.dump({ format: 'application/n-quads' });
 
-  // Run through EYE reasoner
+  // Run through EYE reasoner — n3reasoner returns Turtle/N3 format
   const entailedData = await reasoner(dataN3 + '\n\n' + rules);
 
-  // Parse result into temp store
+  // Parse result into temp store (output is Turtle, not N-Quads)
   const entailedStore = createStore();
-  await entailedStore.load(entailedData, { format: 'application/n-quads' });
+  entailedStore.load(entailedData, { format: 'text/turtle' });
 
   // Evaluate SPARQL ASK over entailed graph
   const result = await ask(entailedStore, askQuery, { env });

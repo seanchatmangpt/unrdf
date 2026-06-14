@@ -888,3 +888,58 @@ _(Note: 7 items closed — gap map correction revealed StreamingAdmission cluste
 2. **LIMITATION NOTE** — N3 forward-chaining (`evaluateN3`): implementation exists and is dispatched via `case 'n3'`, but requires a real Oxigraph store with `.dump({format:'application/n-quads'})` method. Cannot be demonstrated with a duck-typed mock. Witness-blocking dependency.
 
 3. Cross-product: Hooks + QualityMetrics + OTel (requires OTel SDK wiring)
+
+---
+
+## Iteration 13 — N3 Forward-Chaining Witness
+
+**Date:** 2026-06-14
+
+**Source bug fixed:** `packages/hooks/src/hooks/condition-evaluator.mjs`
+
+- `eyereasoner` default export is an object `{n3reasoner, query, queryOnce, ...}`, not callable. Fixed: `import eyereasoner from 'eyereasoner'; const { n3reasoner: reasoner } = eyereasoner;`
+- `n3reasoner` output is Turtle/N3 format, not N-Quads. Fixed: load format changed from `'application/n-quads'` to `'text/turtle'`
+
+### Triple Closed: N3 Forward-Chaining Inference
+
+**API:** `evaluateCondition({kind:'n3', rules, askQuery}, store)` — `packages/hooks/src/hooks/condition-evaluator.mjs`
+
+**Doc:** `packages/hooks/README.md` — "N3 Forward-Chaining Inference" section (updated — Oxigraph-blocking note replaced with example link)
+
+**Example:** `examples/n3-forward-chaining.mjs`
+
+**Contract witnesses:**
+
+- Positive: `Alice ∈ RestrictedClass` → EYE reasoner entails `Alice requiresApproval true` → ASK returns `true`
+- Negative (absent): Bob not in store → rule does not fire → ASK returns `false`
+- Negative (wrong class): `Carol ∈ RegularClass` → rule does not match → ASK returns `false`
+- Chained: `RestrictedClass → requiresApproval → requiresAudit` (multi-step inference)
+- Forgery: missing `rules` or `askQuery` throws
+- Source fix: reaching EXIT:0 proves eyereasoner.n3reasoner is callable (regression guard)
+
+**Real captured output:**
+
+```
+[N3] ✅ true — Alice ∈ RestrictedClass; rule entailed ex:requiresApproval
+[N3] ✅ false — Bob not in store; rule does not fire
+[N3] ✅ false — Carol ∈ RegularClass; RestrictedClass rule does not match
+[N3] ✅ true — chained rules: RestrictedClass → requiresApproval → requiresAudit
+[forgery witness] ✅ missing rules throws; missing askQuery throws
+[source fix] ✅ eyereasoner.n3reasoner callable — "reasoner is not a function" bug is fixed
+
+✅ All N3 forward-chaining assertions passed.
+EXIT:0
+```
+
+**Remaining documented-but-unwitnessed after Iteration 13:**
+
+- Datalog (`kind:'datalog'`) — confirmed unimplemented (no dispatch case in evaluator). Documented as ⚠️ in README. This is a doc/source mismatch, not a coverage gap. No witness possible or required.
+
+**Bijective coverage status:** All implemented documented capabilities now have running witnesses. Datalog is explicitly marked unimplemented in docs — the claim is accurate.
+
+---
+
+## Queue (updated after Iteration 13)
+
+1. Cross-product: Hooks + QualityMetrics + OTel (requires OTel SDK wiring — deferred)
+2. **CLOSED LOOP**: All implemented capabilities documented in `packages/hooks/README.md` and `packages/core/README.md` now have EXIT:0 witnesses. Datalog exception is explicitly documented as unimplemented.

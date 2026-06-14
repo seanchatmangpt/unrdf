@@ -196,7 +196,9 @@ Evaluates N3 rules via EYE reasoner for declarative inference.
 
 **Use Case**: Declarative rule application without imperative code.
 
-**Implementation note**: Requires a real Oxigraph store with `.dump({format: 'application/n-quads'})` — cannot be used with a duck-typed mock. Source: `packages/hooks/src/hooks/condition-evaluator.mjs`, `evaluateN3()`.
+**Implementation note**: Requires an Oxigraph store (provides `.dump({format: 'application/n-quads'})`). Chained rules are supported — a rule's entailments are visible to subsequent rules in the same evaluation. Source: `packages/hooks/src/hooks/condition-evaluator.mjs`, `evaluateN3()`.
+
+**Running example**: [`examples/n3-forward-chaining.mjs`](../../examples/n3-forward-chaining.mjs) — witnesses positive entailment, negative cases (absent subject, wrong class), chained rules, and validates the eyereasoner integration. EXIT:0.
 
 ### 9. Datalog Logic Programming
 
