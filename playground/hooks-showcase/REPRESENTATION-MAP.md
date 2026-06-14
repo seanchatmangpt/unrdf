@@ -96,3 +96,40 @@ Removing it is the prerequisite for all server-side features.
 **Fabrication status after iteration 1:** 19/24 gaps remaining
 
 **Real exit witness:** `curl http://localhost:3000/api/project-stats` returns JSON with real counts
+
+---
+
+## Iteration 2 — 2026-06-14
+
+### Gaps Closed
+
+| Location                            | Fabricated Claim                                                     | Fix Applied                                                                                      |
+| ----------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `app/page.jsx` header               | "40 Hooks" / "Interactive demo of 40 production-ready hooks"         | RSC reads real hook count from bridge at request time                                            |
+| `app/page.jsx` stats bar            | "7 Tier 1 (80% usage)" / "9 Tier 2-3" / "19 Tier 4" / "5 Innovation" | Real tier counts computed from TIER_MAP grounded in REPRESENTATION-MAP ground truth              |
+| `app/page.jsx` HOOK_CATEGORIES      | 32 fabricated hook names across 10 categories                        | Replaced with real 8-hook inventory card grid + HooksClient with only real demo tabs             |
+| `components/demos/form-ui-demo.jsx` | `mockResults` (fabricated Alice/Bob/Charlie triples)                 | `executeQuery` now fetches `/api/project-stats` and renders real project metadata as RDF triples |
+
+### Architecture Change
+
+`app/page.jsx` is now an **async Server Component** (no `"use client"`). Client interactivity
+is delegated to `components/client/HooksClient.jsx`. This enables:
+
+- RSC reads bridge file at request time (no stale data)
+- Streaming Suspense for the `<ProjectStats />` island
+- Hook inventory grid is server-rendered from real source
+
+### Remaining Fabricated Items
+
+| Location                                     | Issue                                                         |
+| -------------------------------------------- | ------------------------------------------------------------- |
+| `components/demos/advanced-utility-demo.jsx` | Still uses `Math.random()` for isomorphism and OTel span data |
+| `components/demos/error-recovery-demo.jsx`   | Still generates random error types                            |
+
+### Remaining Exposed-But-Unrepresented
+
+| Capability                                      | Status                               |
+| ----------------------------------------------- | ------------------------------------ |
+| 66 running examples in `examples/`              | ❌ No UI surface                     |
+| Real package versions from package.json files   | ❌ Only workspace root version shown |
+| `HookScheduler` / `QualityMetricsCollector` API | ❌ Not represented                   |

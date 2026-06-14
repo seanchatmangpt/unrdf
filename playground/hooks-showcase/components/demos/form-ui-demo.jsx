@@ -21,7 +21,7 @@ LIMIT 10`);
   const [visualizationMode, setVisualizationMode] = useState("table");
   const [validationErrors, setValidationErrors] = useState([]);
 
-  const executeQuery = () => {
+  const executeQuery = async () => {
     // Validate SPARQL syntax
     if (!sparqlQuery.trim()) {
       setValidationErrors(["Query cannot be empty"]);
@@ -30,17 +30,46 @@ LIMIT 10`);
 
     setValidationErrors([]);
 
-    // Simulate query results
-    const mockResults = [
-      { subject: "ex:Alice", predicate: "foaf:name", object: '"Alice Smith"' },
-      { subject: "ex:Alice", predicate: "foaf:age", object: "28" },
-      { subject: "ex:Bob", predicate: "foaf:name", object: '"Bob Johnson"' },
-      { subject: "ex:Bob", predicate: "foaf:knows", object: "ex:Alice" },
-      { subject: "ex:Charlie", predicate: "foaf:name", object: '"Charlie Brown"' }
-    ];
+    // Real data: fetch project metadata from the route handler and represent it
+    // as RDF triples so the UI shows actual project facts, not fabricated rows.
+    try {
+      const res = await fetch("/api/project-stats");
+      const stats = await res.json();
 
-    setQueryResults(mockResults);
-    setCurrentPage(1);
+      // Represent project metadata as RDF triples (faithful representation)
+      const rows = [
+        {
+          subject: "unrdf:project",
+          predicate: "unrdf:packageCount",
+          object: `"${stats.packages}"^^xsd:integer`,
+        },
+        {
+          subject: "unrdf:project",
+          predicate: "unrdf:exampleCount",
+          object: `"${stats.examples}"^^xsd:integer`,
+        },
+        {
+          subject: "unrdf:project",
+          predicate: "unrdf:hookCount",
+          object: `"${stats.hooks}"^^xsd:integer`,
+        },
+        {
+          subject: "unrdf:project",
+          predicate: "schema:version",
+          object: `"${stats.version}"`,
+        },
+        ...(stats.hookNames || []).map((name) => ({
+          subject: `unrdf:hook/${name}`,
+          predicate: "rdf:type",
+          object: "unrdf:ReactHook",
+        })),
+      ];
+
+      setQueryResults(rows);
+      setCurrentPage(1);
+    } catch (err) {
+      setValidationErrors([`Failed to fetch real data: ${err.message}`]);
+    }
   };
 
   const formatQueryWithHighlight = (query) => {
