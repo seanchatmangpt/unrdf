@@ -133,3 +133,33 @@ is delegated to `components/client/HooksClient.jsx`. This enables:
 | 66 running examples in `examples/`              | ❌ No UI surface                     |
 | Real package versions from package.json files   | ❌ Only workspace root version shown |
 | `HookScheduler` / `QualityMetricsCollector` API | ❌ Not represented                   |
+
+---
+
+## Iteration 3 — 2026-06-14
+
+### Gaps Closed
+
+| Location                                | Was                                         | Fix                                                                           |
+| --------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| `advanced-utility-demo.jsx` Graph Diff  | Hardcoded Alice/Bob/Dave triples            | Real `diffGraphFromStores()` on UNRDF metadata quads                          |
+| `advanced-utility-demo.jsx` Isomorphism | `Math.random() > 0.5`                       | Removed; replaced by real diff results                                        |
+| `advanced-utility-demo.jsx` Quality     | Hardcoded 87%/92%/95% percentages           | Fetches `/api/project-stats`, computes hookCoverage and exampleDensity ratios |
+| `advanced-utility-demo.jsx` OTel spans  | `Math.random()` for duration and span count | Removed entirely                                                              |
+| `error-recovery-demo.jsx` Error types   | `Math.random()` picks error type            | Round-robin over the 4 real UNRDF error types deterministically               |
+
+### Current State After Iteration 3
+
+**Rendered-But-Fabricated: 0 items remaining**
+
+All `Math.random()` calls and hardcoded fabrications removed from the playground.
+
+**Exposed-But-Unrepresented (remaining)**
+
+| Capability                                              | Status                                                    |
+| ------------------------------------------------------- | --------------------------------------------------------- |
+| 66+ running examples in `examples/`                     | ❌ No UI surface — would require a file-listing API route |
+| Real package versions per-package                       | ❌ Only workspace root version shown                      |
+| `HookScheduler` / `QualityMetricsCollector` API surface | ❌ Not surfaced in any demo                               |
+
+These are features not yet implemented, not fabrications — they don't generate incorrect claims.
