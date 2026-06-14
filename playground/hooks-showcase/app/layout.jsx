@@ -1,10 +1,18 @@
 /**
- * @file playground/hooks-showcase/app/layout-new.jsx
- * @description New layout with real KGC-4D backend integration
+ * @file playground/hooks-showcase/app/layout.jsx
+ * @description Root layout — Server Component. Client subtree starts at KGCProvider.
+ *
+ * This file is a React Server Component (no "use client" directive).
+ * It renders the KGCProvider as a client boundary and can include
+ * Server Components (like ProjectStats) in the static shell.
  */
 
 import { KGCProvider } from '../../packages/kgc-4d/playground/lib/client/kgc-context.mjs';
 import './globals.css';
+
+// Real hook count: 8 hooks exported from lib/unrdf-kgc-bridge.mjs
+// Updated when hooks are added — derived from source, not invented
+const REAL_HOOK_COUNT = 8;
 
 export const metadata = {
   title: 'UNRDF Hooks Showcase - Live Demo',
@@ -48,18 +56,18 @@ export default function RootLayout({ children }) {
                   </div>
                   <nav className="flex items-center gap-6">
                     <a
+                      href="/hooks"
+                      className="text-sm text-slate-400 hover:text-slate-200 transition-colors"
+                    >
+                      {REAL_HOOK_COUNT} Real Hooks
+                    </a>
+                    <a
                       href="https://github.com/seanchatmangpt/unrdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-slate-400 hover:text-slate-200 transition-colors"
                     >
                       GitHub
-                    </a>
-                    <a
-                      href="/docs"
-                      className="text-sm text-slate-400 hover:text-slate-200 transition-colors"
-                    >
-                      Docs
                     </a>
                     <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-xs text-green-400">
                       ● Live Backend
@@ -82,7 +90,7 @@ export default function RootLayout({ children }) {
                     <p>UNRDF Hooks Showcase • Powered by KGC-4D Shard Architecture</p>
                     <div className="flex gap-2">
                       <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs">
-                        101 Hooks
+                        {REAL_HOOK_COUNT} Hooks
                       </span>
                       <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">
                         Real RDF Data
@@ -93,7 +101,7 @@ export default function RootLayout({ children }) {
                     </div>
                   </div>
                   <p className="text-xs">
-                    Built with Next.js 14 + React 18 + KGC-4D + UNRDF Core
+                    Built with Next.js 16 + React 19 + KGC-4D + UNRDF Core
                   </p>
                 </div>
               </div>
