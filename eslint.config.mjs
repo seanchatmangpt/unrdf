@@ -1,0 +1,280 @@
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import globals from 'globals';
+import prettierConfig from 'eslint-config-prettier';
+
+export default [
+  {
+    // Enable caching for faster incremental linting
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+  },
+  {
+    ignores: [
+      'dist/**',
+      'coverage/**',
+      'node_modules/**',
+      '.nyc_output/**',
+      '.eslintcache',
+      '*.config.mjs',
+      'build.*.mjs',
+      'packages/kgn/src/core/index.js',
+      'packages/kgn/src/base/index.js',
+      'packages/kgn/src/engine/index.js'
+    ]
+  },
+  // Base configuration for all files
+  {
+    files: ['**/*.mjs', '**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      globals: {
+        // Node.js core globals
+        ...globals.node,
+        // Additional Node globals
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        // Vitest test globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly'
+      }
+    },
+    plugins: {
+      jsdoc: jsdocPlugin
+    },
+    rules: {
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
+      // JSDoc enforcement rules
+      'jsdoc/require-jsdoc': ['warn', {
+        publicOnly: true,
+        require: {
+          FunctionDeclaration: true,
+          MethodDefinition: true,
+          ClassDeclaration: true,
+          ArrowFunctionExpression: false,
+          FunctionExpression: false
+        }
+      }],
+      'jsdoc/require-param-type': 'off',
+      'jsdoc/require-returns-type': 'off',
+      'jsdoc/check-types': 'off',
+      'jsdoc/valid-types': 'off',
+
+      // Basic code quality rules
+      'no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none' // Allow unused error parameters in catch blocks
+      }],
+      'no-console': 'off',
+      'no-debugger': 'warn',
+      'no-undef': 'error',
+      // Catch N3 quad spread bug: {...quad} silently loses prototype getter properties.
+      // Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, ... } instead.
+      'no-restricted-syntax': [
+        'warn', 
+        {
+          selector: 'SpreadElement[argument.name=/^(quad|q|triple|t)$/]',
+          message: 'Spreading RDF quad variables loses N3 prototype getters. Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, predicate: q.predicate, object: q.object, graph: q.graph }.'
+        },
+        {
+          selector: 'Comment[value=/\\b(TODO|FIXME|HACK)\\b/i]',
+          message: 'Production technical debt markers (TODO/FIXME/HACK) are prohibited. Use DEFERRED_ACTION(issue_id) for planned work.'
+        }
+      ]
+    }
+  },
+  // Browser-specific files
+  {
+    files: [
+      'src/browser/**/*.mjs',
+      'src/react-hooks/**/*.mjs',
+      'src/knowledge-engine/browser-shims.mjs',
+      'src/knowledge-engine/browser.mjs',
+      'src/knowledge-engine/streaming/**/*.mjs',
+      'src/security/sandbox/browser-executor.mjs',
+      'test/browser/**/*.mjs',
+      'packages/atomvm/src/**/*.mjs',
+      'packages/atomvm/test/**/*.mjs',
+      'packages/kgc-4d/src/core/patterns/sse-client.mjs',
+      'packages/kgc-4d/src/hdit/vector-engine-client.mjs',
+      'packages/kgc-4d/src/hdit/vector-engine.worker.mjs'
+    ],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        // Worker API
+        Worker: 'readonly',
+        // Worker threads (Node.js)
+        isMainThread: 'readonly',
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        crossOriginIsolated: 'readonly',
+        EventSource: 'readonly',
+        HTMLElement: 'readonly',
+        // Worker global scope
+        self: 'readonly',
+        // Vitest globals for browser tests
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly'
+      }
+    }
+  },
+  // Test files that simulate browser environment
+  {
+    files: [
+      'test/**/*.test.mjs',
+      'test/**/*.spec.mjs',
+      'test/**/*.mjs'
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+        // Browser globals for tests
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly'
+      }
+    },
+    rules: {
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
+      // Be more lenient with unused vars in tests (demo code, examples)
+      'no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none'
+      }],
+      // Disable no-undef for test files - helper functions defined in same file
+      // Also handles false positives from ESLint parser issues
+      'no-undef': 'off'
+    }
+  },
+  // Streaming module index that imports/re-exports
+  {
+    files: ['src/knowledge-engine/streaming/index.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        // Re-exported functions from submodules
+        createSubscriptionManager: 'readonly',
+        createChangeFeed: 'readonly',
+        createStreamProcessor: 'readonly',
+        createRealTimeValidator: 'readonly'
+      }
+    }
+  },
+  // KGN package - legacy code with re-exports
+  {
+    files: ['packages/kgn/src/**/*.js', 'packages/kgn/src/**/*.mjs'],
+    rules: {
+      'no-undef': 'off' // Disable for re-export barrel files
+    }
+  },
+  // Daemon - infrastructure utilities with file-level JSDoc
+  {
+    files: ['packages/daemon/src/**/*.mjs'],
+    rules: {
+      'jsdoc/require-jsdoc': 'off' // Covered by file-level @file JSDoc
+    }
+  },
+  // Hooks - infrastructure utilities with file-level JSDoc
+  {
+    files: ['packages/hooks/src/**/*.mjs'],
+    rules: {
+      'jsdoc/require-jsdoc': 'off' // Covered by file-level @file JSDoc
+    }
+  },
+  // Receipts package - needs TextEncoder global (Node.js 11+)
+  {
+    files: ['packages/receipts/src/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly'
+      }
+    }
+  },
+  // KGC Multiverse package - needs global/setTimeout/performance globals
+  {
+    files: ['packages/kgc-multiverse/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        global: 'readonly',
+        setTimeout: 'readonly',
+        performance: 'readonly'
+      }
+    }
+  },
+  // Example files that may use browser APIs
+  {
+    files: ['examples/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        // Additional globals used in examples
+        engine: 'readonly',
+        rdfCanonize: 'readonly',
+        namedNode: 'readonly',
+        manager: 'readonly',
+        createSubscriptionManager: 'readonly',
+        createChangeFeed: 'readonly',
+        createStreamProcessor: 'readonly',
+        createRealTimeValidator: 'readonly'
+      }
+    },
+    rules: {
+      // Prettier config - disables ESLint rules that conflict with Prettier
+      ...prettierConfig.rules,
+      // Be very lenient with examples - they're demo code
+      'no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrors: 'none'
+      }],
+      'no-undef': 'warn' // Be more lenient with examples
+    }
+  }
+];

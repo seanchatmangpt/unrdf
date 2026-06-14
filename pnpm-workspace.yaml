@@ -14,3 +14,45 @@ packages:
   - 'AUTONOMIC_INNOVATION/agent-*'
   - 'exploration/agents/agent-*'
   - 'benchmarks'
+overrides:
+  jsdom: 25.0.1
+  html-encoding-sniffer: 4.0.0
+  sharp: ^0.34.5
+  '@opentelemetry/api': ^1.7.0
+  zod: ^4.1.13
+  'esbuild@<=0.24.2': '>=0.25.0'
+  '@rdfjs/types': ^2.0.1
+  '@swc/helpers': ^0.5.18
+  pm4py: 'npm:noop-package@1.0.0'
+
+onlyBuiltDependencies:
+  - '@tensorflow/tfjs-node'
+  - blake-hash
+  - blake3
+  - core-js
+  - cpu-features
+  - esbuild
+  - hnswlib-node
+  - leveldown
+  - msgpackr-extract
+  - onnxruntime-node
+  - protobufjs
+  - sharp
+  - ssh2
+  - unrs-resolver
+
+allowBuilds:
+  '@tensorflow/tfjs-node': true
+  blake-hash: true
+  blake3: true
+  core-js: true
+  cpu-features: true
+  esbuild: true
+  hnswlib-node: true
+  leveldown: true
+  msgpackr-extract: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true
+  ssh2: true
+  unrs-resolver: true

@@ -497,6 +497,117 @@ const receipt = await bridge.executeHooks(context, [hook]);
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Design decisions and data flows
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production checklist and monitoring
 
+## HookScheduler
+
+`HookScheduler` triggers hooks on time-based schedules without coupling to the hook execution logic.
+
+```javascript
+import { HookScheduler, ScheduleConfigSchema } from '@unrdf/hooks';
+
+const scheduler = new HookScheduler({
+  tickInterval: 1000, // ms between schedule checks
+  executeHook: async hook => {
+    /* ... */
+  },
+});
+
+// Register a startup hook — runs once immediately on start()
+scheduler.register(hook, {
+  id: 'init-schedule',
+  hookId: hook.id,
+  type: 'startup',
+  enabled: true,
+});
+
+// Register an interval hook — runs every N ms
+scheduler.register(hook2, {
+  id: 'poll-schedule',
+  hookId: hook2.id,
+  type: 'interval',
+  intervalMs: 30000,
+  maxRuns: 10, // optional: stop after N executions
+  enabled: true,
+});
+
+// Register a cron hook — custom */n expression (every N minutes)
+scheduler.register(hook3, {
+  id: 'hourly-schedule',
+  hookId: hook3.id,
+  type: 'cron',
+  expression: '*/60', // every 60 minutes (NOT standard 5-field cron)
+  enabled: true,
+});
+
+// Register an idle hook — runs when no activity for N ms
+scheduler.register(hook4, {
+  id: 'idle-schedule',
+  hookId: hook4.id,
+  type: 'idle',
+  idleTimeoutMs: 5000,
+  enabled: true,
+});
+
+scheduler.start();
+scheduler.notifyActivity(); // reset idle timer
+scheduler.unregister('poll-schedule'); // remove a schedule
+
+const stats = scheduler.getStats();
+// → { totalSchedules, enabledSchedules, totalRuns, running,
+//     byType: { cron, interval, idle, startup }, idleSince }
+
+scheduler.stop();
+```
+
+**Note**: The cron expression parser only supports `*/n` format (e.g. `*/5` for every 5 minutes). Standard 5-field cron expressions (`* * * * *`) will throw a runtime error.
+
+**Example**: [`examples/hook-scheduler.mjs`](../../examples/hook-scheduler.mjs)
+
+## QualityMetricsCollector
+
+Lean Six Sigma quality tracking for RDF operations — records measurements, defects, DPMO, and improvement events.
+
+```javascript
+import { QualityMetricsCollector } from '@unrdf/hooks';
+
+const collector = new QualityMetricsCollector({ maxDataPoints: 1000 });
+
+// Record numeric measurements
+collector.record('sparql.latency', 42, { operation: 'SELECT' });
+collector.record('cache.hitRate', 0.95);
+
+// Record defects for DPMO calculation
+collector.recordDefect({
+  description: 'Query returned empty result for known entity',
+  severity: 'major',
+  context: { entityUri: 'https://example.org/Alice' },
+});
+
+// Get Lean Six Sigma summary
+const summary = collector.getSummary();
+// → {
+//     totalMeasurements: number,
+//     totalDefects: number,
+//     dpmo: number,               // Defects Per Million Opportunities
+//     sigmaLevel: number,         // 1.0–6.0 sigma
+//     dataPointsStored: number,
+//     metricsTracked: number,     // via registerMetric() only
+//     recentDefects: DefectRecord[],
+//     auditLogEntries: number,
+//   }
+
+// Log a Kaizen (continuous improvement) event
+collector.registerKaizenEvent({
+  action: 'Add SPARQL result caching layer',
+  expectedImprovement: 'Reduce empty-result defects by 80%',
+  owner: 'platform-team',
+});
+
+// Export structured audit trail (filterable by type and time range)
+const trail = collector.exportAuditTrail({ type: 'defect-recorded' });
+```
+
+**Example**: [`examples/quality-metrics.mjs`](../../examples/quality-metrics.mjs)
+
 ## Source Examples
 
 Learn by example following the 80/20 principle:
@@ -504,6 +615,8 @@ Learn by example following the 80/20 principle:
 - **[basic.mjs](./examples/basic.mjs)** - Minimal hook definition and execution (5 min)
 - **[knowledge-hook-manager-usage.mjs](./examples/knowledge-hook-manager-usage.mjs)** - Manager API (10 min)
 - **[validate-hooks.mjs](./examples/validate-hooks.mjs)** - Hook validation and debugging (15 min)
+- **[../../examples/hook-scheduler.mjs](../../examples/hook-scheduler.mjs)** - HookScheduler: interval, startup, cron, idle schedules
+- **[../../examples/quality-metrics.mjs](../../examples/quality-metrics.mjs)** - QualityMetricsCollector: DPMO, Kaizen, audit trail
 
 ## Testing
 
