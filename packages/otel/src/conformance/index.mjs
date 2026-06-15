@@ -24,10 +24,10 @@ export { DEVIATION_TYPES, verifyProcessConformance };
  * 1. Converts OTel spans to an OCEL 2.0 object-centric event log
  * 2. Verifies the log against the intended manufacturing process model
  * 3. Returns fitness, precision, deviations, and diagnostics
- *
  * @param {Array<{spanId, traceId, name, startTimeUnixNano, attributes, status}>} otelSpans
- * @param {{ stages?: string[], expectedVariants?: object }} [intendedModel={}]
+ * @param {{ stages?: string[], expectedVariants?: object }} [intendedModel]
  * @returns {Promise<{
+ * @example
  *   conformant: boolean,
  *   fitness: number,
  *   precision: number,

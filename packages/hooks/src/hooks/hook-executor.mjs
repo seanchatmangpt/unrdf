@@ -87,58 +87,70 @@ export function executeHook(hook, quad, options = {}) {
     hookName: validatedHook.name,
   };
 
-  // Execute validation if present - let errors propagate
+  // Execute validation if present
   if (hasValidation(validatedHook)) {
-    const validationResult = validatedHook.validate(quad);
+    try {
+      const validationResult = validatedHook.validate(quad);
 
-    // POKA-YOKE: Non-boolean validation return guard (RPN 280 → 28)
-    if (typeof validationResult !== 'boolean') {
-      console.warn(
-        `[POKA-YOKE] Hook "${validatedHook.name}": validate() returned ${typeof validationResult}, expected boolean. Coercing to boolean.`
-      );
-      result.warning = `Non-boolean validation return (${typeof validationResult}) coerced to boolean`;
-    }
+      // POKA-YOKE: Non-boolean validation return guard (RPN 280 → 28)
+      if (typeof validationResult !== 'boolean') {
+        console.warn(
+          `[POKA-YOKE] Hook "${validatedHook.name}": validate() returned ${typeof validationResult}, expected boolean. Coercing to boolean.`
+        );
+        result.warning = `Non-boolean validation return (${typeof validationResult}) coerced to boolean`;
+      }
 
-    if (!validationResult) {
+      if (!validationResult) {
+        result.valid = false;
+        result.error = `Validation failed for hook: ${validatedHook.name}`;
+        return result;
+      }
+    } catch (error) {
       result.valid = false;
-      result.error = `Validation failed for hook: ${validatedHook.name}`;
+      result.error = `Validation error in hook "${validatedHook.name}": ${error.message}`;
       return result;
     }
   }
 
-  // Execute transformation if present - let errors propagate
+  // Execute transformation if present
   if (hasTransformation(validatedHook)) {
-    const transformed = validatedHook.transform(quad);
+    try {
+      const transformed = validatedHook.transform(quad);
 
-    // POKA-YOKE: Transform return type validation (RPN 280 → 28)
-    if (transformed === null || transformed === undefined) {
-      result.valid = false;
+      // POKA-YOKE: Transform return type validation (RPN 280 → 28)
+      if (transformed === null || transformed === undefined) {
+        result.valid = false;
+        result.quad = transformed;
+        return result;
+      }
+
+      if (typeof transformed !== 'object') {
+        throw new TypeError(
+          `Hook "${validatedHook.name}": transform() must return a Quad object, got ${typeof transformed}`
+        );
+      }
+
+      // POKA-YOKE: Check for required Quad properties
+      if (!transformed.subject || !transformed.predicate || !transformed.object) {
+        throw new TypeError(
+          `Hook "${validatedHook.name}": transform() returned object missing subject/predicate/object`
+        );
+      }
+
+      // POKA-YOKE: Pooled quad leak detection (warn if returning pooled quad)
+      if (transformed._pooled && options.warnPooledQuads !== false) {
+        console.warn(
+          `[POKA-YOKE] Hook "${validatedHook.name}": returned pooled quad. Clone before storing to prevent memory issues.`
+        );
+        result.warning = 'Pooled quad returned - consider cloning';
+      }
+
       result.quad = transformed;
+    } catch (error) {
+      result.valid = false;
+      result.error = `Transformation error in hook "${validatedHook.name}": ${error.message}`;
       return result;
     }
-
-    if (typeof transformed !== 'object') {
-      throw new TypeError(
-        `Hook "${validatedHook.name}": transform() must return a Quad object, got ${typeof transformed}`
-      );
-    }
-
-    // POKA-YOKE: Check for required Quad properties
-    if (!transformed.subject || !transformed.predicate || !transformed.object) {
-      throw new TypeError(
-        `Hook "${validatedHook.name}": transform() returned object missing subject/predicate/object`
-      );
-    }
-
-    // POKA-YOKE: Pooled quad leak detection (warn if returning pooled quad)
-    if (transformed._pooled && options.warnPooledQuads !== false) {
-      console.warn(
-        `[POKA-YOKE] Hook "${validatedHook.name}": returned pooled quad. Clone before storing to prevent memory issues.`
-      );
-      result.warning = 'Pooled quad returned - consider cloning';
-    }
-
-    result.quad = transformed;
   }
 
   return result;

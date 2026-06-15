@@ -202,7 +202,7 @@ cli:hooks_execute a cli:Command ;
   cli:hasArgument [ a cli:Argument ; cli:argName "store" ; cli:argType "string" ; cli:required true ; cli:argDescription "Store file (NQ/Turtle/N-Triples)" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required true ; cli:argDescription "Hooks config file (JSON)" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file for results (JSON)" ] ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "show-receipts" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Show receipt chain with hashes" ; cli:defaultValue "false" ] .
+  cli:hasArgument [ a cli:Argument ; cli:argName "show-effects" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Show effect execution details per hook" ; cli:defaultValue "false" ] .
 
 
 cli:hooks_define a cli:Command ;
@@ -236,6 +236,14 @@ cli:hooks_receipts a cli:Command ;
   cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Execution result file (JSON)" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format (json, table)" ; cli:defaultValue "table" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "verify" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Verify receipt chain integrity" ; cli:defaultValue "false" ] .
+
+
+cli:hooks_template a cli:Command ;
+  cli:toolName "hooks_template" ;
+  cli:description "Generate hook templates from predefined templates" ;
+  cli:cliPath "hooks template" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "type" ; cli:argType "string" ; cli:required false ; cli:argDescription "Template type (fibo, security, compliance, generic)" ; cli:defaultValue "generic" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file for generated hooks (JSON)" ] .
 
 
 cli:daemon_list a cli:Command ;
@@ -332,13 +340,15 @@ cli:sync a cli:Command ;
   cli:toolName "sync" ;
   cli:description "Generate synchronized code artifacts from RDF ontology" ;
   cli:cliPath "sync" ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required false ; cli:argDescription "Path to `.unrdf.toml` configuration file" ; cli:defaultValue ".unrdf.toml" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required false ; cli:argDescription "Path to `unrdf.toml` configuration file" ; cli:defaultValue "unrdf.toml" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "dry-run" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Preview changes without writing files" ; cli:defaultValue "false" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "verbose" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Enable verbose output" ; cli:defaultValue "false" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "force" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Overwrite existing files without prompting" ; cli:defaultValue "false" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "rule" ; cli:argType "string" ; cli:required false ; cli:argDescription "Run only the specified rule by name" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format: text or json" ; cli:defaultValue "text" ] ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "watch" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Watch ontology and template files for changes" ; cli:defaultValue "false" ] .
+  cli:hasArgument [ a cli:Argument ; cli:argName "watch" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Watch ontology and template files for changes" ; cli:defaultValue "false" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "harden" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Enforce L4/L5 hardening protocols during code generation" ; cli:defaultValue "false" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "breed" ; cli:argType "string" ; cli:required false ; cli:argDescription "Cognitive Breed morphology (dachshund|shepherd)" ] .
 
 
 cli:template_generate a cli:Command ;
@@ -347,18 +357,19 @@ cli:template_generate a cli:Command ;
   cli:cliPath "template generate" ;
   cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required false ; cli:argDescription "RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter." ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "template" ; cli:argType "string" ; cli:required true ; cli:argDescription "Template .njk path" ] ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "outputDir" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output directory for generated files" ; cli:defaultValue "./generated" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "outputDir" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output directory for generated files" ; cli:defaultValue "./src" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "subject" ; cli:argType "string" ; cli:required false ; cli:argDescription "Focus subject URI; replaces ?subject in SPARQL when present" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "batch" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "One output per instance of `--class-uri`; SPARQL must use ?subject" ; cli:defaultValue "false" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "classUri" ; cli:argType "string" ; cli:required false ; cli:argDescription "RDFS/OWL class IRI for batch mode (with `--batch`)" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "sparql" ; cli:argType "string" ; cli:required false ; cli:argDescription "SPARQL SELECT (overrides frontmatter `sparql:`)" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "dryRun" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Print paths without writing" ; cli:defaultValue "false" ] ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "force" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Overwrite existing files" ; cli:defaultValue "false" ] .
+  cli:hasArgument [ a cli:Argument ; cli:argName "force" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Overwrite existing files" ; cli:defaultValue "false" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "harden" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Enforce L4/L5 hardening protocols during code generation" ; cli:defaultValue "false" ] .
 
 
 cli:template_list a cli:Command ;
   cli:toolName "template_list" ;
-  cli:description "List discovered .njk templates (default: bundled sync templates)" ;
+  cli:description "List templates from catalog or discover .njk files in directory" ;
   cli:cliPath "template list" .
 
 
@@ -380,5 +391,34 @@ cli:template_extract a cli:Command ;
   cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "RDF data file" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "subject" ; cli:argType "string" ; cli:required false ; cli:argDescription "Subject URI" ] ;
   cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format (json|yaml|table)" ; cli:defaultValue "json" ] .
+
+
+cli:template_validate a cli:Command ;
+  cli:toolName "template_validate" ;
+  cli:description "Validate template frontmatter against catalog schema" ;
+  cli:cliPath "template validate" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "template" ; cli:argType "string" ; cli:required true ; cli:argDescription "Template file path to validate" ] .
+
+
+cli:template_catalog a cli:Command ;
+  cli:toolName "template_catalog" ;
+  cli:description "Show template catalog information" ;
+  cli:cliPath "template catalog" .
+
+
+cli:virtual_map a cli:Command ;
+  cli:toolName "virtual_map" ;
+  cli:description "Map external relational/JSON sources to a virtual RDF substrate" ;
+  cli:cliPath "virtual map" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "source" ; cli:argType "string" ; cli:required true ; cli:argDescription "Source path or connection string" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "ontology" ; cli:argType "string" ; cli:required true ; cli:argDescription "Ontology for mapping logic" ] .
+
+
+cli:virtual_simulate a cli:Command ;
+  cli:toolName "virtual_simulate" ;
+  cli:description "Run counterfactual simulation on the substrate" ;
+  cli:cliPath "virtual simulate" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "intervention" ; cli:argType "string" ; cli:required true ; cli:argDescription "Path to intervention JSON spec" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output path for simulated events" ] .
 
 

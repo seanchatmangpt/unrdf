@@ -19,6 +19,8 @@ import { pack, unpack } from 'msgpackr';
 import { EventEmitter } from 'events';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import https from 'https';
+import fs from 'fs';
 
 const tracer = trace.getTracer('unrdf-consensus');
 
@@ -26,7 +28,7 @@ const tracer = trace.getTracer('unrdf-consensus');
  * Message schema
  */
 const MessageSchema = z.object({
-  type: z.enum(['request_vote', 'append_entries', 'heartbeat', 'command', 'response']),
+  type: z.enum(['request_vote', 'append_entries', 'heartbeat', 'command', 'response', 'auth']),
   from: z.string(),
   to: z.string(),
   term: z.number().int().nonnegative(),
@@ -45,6 +47,17 @@ const TransportConfigSchema = z.object({
   reconnectInterval: z.number().positive().default(1000),
   reconnectMaxRetries: z.number().int().positive().default(10),
   messageTimeout: z.number().positive().default(5000),
+  tls: z.object({
+    enabled: z.boolean().default(false),
+    cert: z.string().optional(),
+    key: z.string().optional(),
+    ca: z.string().optional(),
+    rejectUnauthorized: z.boolean().default(true),
+  }).default({ enabled: false }),
+  auth: z.object({
+    enabled: z.boolean().default(false),
+    sharedSecret: z.string().optional(),
+  }).default({ enabled: false }),
 });
 
 /**
@@ -55,24 +68,6 @@ const TransportConfigSchema = z.object({
  *
  * @class WebSocketTransport
  * @extends EventEmitter
- *
- * @example
- * const transport = new WebSocketTransport({
- *   nodeId: 'node-1',
- *   port: 8080
- * });
- *
- * await transport.start();
- *
- * transport.on('message', (message) => {
- *   console.log('Received:', message);
- * });
- *
- * await transport.send('node-2', {
- *   type: 'request_vote',
- *   term: 1,
- *   data: { candidateId: 'node-1' }
- * });
  */
 export class WebSocketTransport extends EventEmitter {
   /**
@@ -84,7 +79,9 @@ export class WebSocketTransport extends EventEmitter {
     this.config = TransportConfigSchema.parse(config);
 
     this.server = null;
+    this.httpsServer = null;
     this.connections = new Map(); // nodeId -> WebSocket
+    this.authenticatedConnections = new Set(); // WebSocket instances that passed auth
     this.pendingMessages = new Map(); // messageId -> { resolve, reject, timeout }
     this.peers = new Map(); // nodeId -> { host, port }
     this.reconnectAttempts = new Map(); // nodeId -> attempts
@@ -99,11 +96,29 @@ export class WebSocketTransport extends EventEmitter {
       try {
         span.setAttribute('node.id', this.config.nodeId);
         span.setAttribute('transport.port', this.config.port);
+        span.setAttribute('transport.tls', this.config.tls.enabled);
 
-        this.server = new WebSocketServer({
+        const serverOptions = {
           host: this.config.host,
           port: this.config.port,
-        });
+        };
+
+        if (this.config.tls.enabled) {
+          const httpsOptions = {
+            cert: this.config.tls.cert ? fs.readFileSync(this.config.tls.cert) : undefined,
+            key: this.config.tls.key ? fs.readFileSync(this.config.tls.key) : undefined,
+            ca: this.config.tls.ca ? fs.readFileSync(this.config.tls.ca) : undefined,
+          };
+
+          this.httpsServer = https.createServer(httpsOptions);
+          this.httpsServer.listen(this.config.port, this.config.host);
+          
+          this.server = new WebSocketServer({
+            server: this.httpsServer,
+          });
+        } else {
+          this.server = new WebSocketServer(serverOptions);
+        }
 
         this.server.on('connection', (ws, req) => {
           this.handleConnection(ws, req);
@@ -138,6 +153,35 @@ export class WebSocketTransport extends EventEmitter {
         const message = unpack(data);
         nodeId = message.from;
 
+        // Authentication check
+        if (this.config.auth.enabled && !this.authenticatedConnections.has(ws)) {
+          if (message.type === 'auth') {
+            if (message.data?.sharedSecret === this.config.auth.sharedSecret) {
+              this.authenticatedConnections.add(ws);
+              
+              // Send auth success response
+              const responseMessage = {
+                type: 'response',
+                from: this.config.nodeId,
+                to: message.from,
+                messageId: message.messageId,
+                term: 0,
+                data: { success: true },
+                timestamp: Date.now(),
+              };
+              ws.send(pack(responseMessage));
+              return;
+            } else {
+              this.emit('error', { error: 'Authentication failed', nodeId });
+              ws.close(4001, 'Authentication failed');
+              return;
+            }
+          } else {
+            // Drop any message before authentication
+            return;
+          }
+        }
+
         // Register connection
         if (!this.connections.has(nodeId)) {
           this.connections.set(nodeId, ws);
@@ -157,6 +201,7 @@ export class WebSocketTransport extends EventEmitter {
     });
 
     ws.on('close', () => {
+      this.authenticatedConnections.delete(ws);
       if (nodeId) {
         this.connections.delete(nodeId);
         this.emit('peer_disconnected', { nodeId });
@@ -195,6 +240,51 @@ export class WebSocketTransport extends EventEmitter {
   }
 
   /**
+   * Authenticate with a peer
+   * @param {WebSocket} ws - WebSocket connection
+   * @param {string} nodeId - Target node ID
+   * @private
+   */
+  async authenticate(ws, nodeId) {
+    return new Promise((resolve, reject) => {
+      const messageId = `auth-${this.config.nodeId}-${Date.now()}`;
+      const authMessage = {
+        type: 'auth',
+        from: this.config.nodeId,
+        to: nodeId,
+        term: 0,
+        data: { sharedSecret: this.config.auth.sharedSecret },
+        messageId,
+        timestamp: Date.now(),
+      };
+
+      const timeout = setTimeout(() => {
+        reject(new Error('Authentication timeout'));
+      }, this.config.messageTimeout);
+
+      const handleAuthResponse = (data) => {
+        try {
+          const message = unpack(data);
+          if (message.type === 'response' && message.messageId === messageId) {
+            clearTimeout(timeout);
+            ws.removeListener('message', handleAuthResponse);
+            if (message.data?.success) {
+              resolve();
+            } else {
+              reject(new Error('Authentication failed'));
+            }
+          }
+        } catch (error) {
+          // Ignore parse errors during handshake
+        }
+      };
+
+      ws.on('message', handleAuthResponse);
+      ws.send(pack(authMessage));
+    });
+  }
+
+  /**
    * Connect to a peer node
    * @param {string} nodeId - Peer node ID
    * @returns {Promise<void>}
@@ -207,12 +297,30 @@ export class WebSocketTransport extends EventEmitter {
     if (this.connections.has(nodeId)) return;
 
     try {
-      const ws = new WebSocket(`ws://${peer.host}:${peer.port}`);
+      const protocol = this.config.tls.enabled ? 'wss' : 'ws';
+      const wsOptions = {
+        rejectUnauthorized: this.config.tls.rejectUnauthorized,
+      };
 
-      ws.on('open', () => {
-        this.connections.set(nodeId, ws);
-        this.reconnectAttempts.delete(nodeId);
-        this.emit('peer_connected', { nodeId });
+      if (this.config.tls.cert) wsOptions.cert = fs.readFileSync(this.config.tls.cert);
+      if (this.config.tls.key) wsOptions.key = fs.readFileSync(this.config.tls.key);
+      if (this.config.tls.ca) wsOptions.ca = fs.readFileSync(this.config.tls.ca);
+
+      const ws = new WebSocket(`${protocol}://${peer.host}:${peer.port}`, wsOptions);
+
+      ws.on('open', async () => {
+        try {
+          if (this.config.auth.enabled) {
+            await this.authenticate(ws, nodeId);
+            this.authenticatedConnections.add(ws);
+          }
+          this.connections.set(nodeId, ws);
+          this.reconnectAttempts.delete(nodeId);
+          this.emit('peer_connected', { nodeId });
+        } catch (error) {
+          this.emit('error', { error, nodeId, source: 'auth' });
+          ws.close();
+        }
       });
 
       ws.on('message', data => {
@@ -229,6 +337,7 @@ export class WebSocketTransport extends EventEmitter {
       });
 
       ws.on('close', () => {
+        this.authenticatedConnections.delete(ws);
         this.connections.delete(nodeId);
         this.emit('peer_disconnected', { nodeId });
         this.scheduleReconnect(nodeId);
@@ -389,11 +498,19 @@ export class WebSocketTransport extends EventEmitter {
       ws.close();
     }
     this.connections.clear();
+    this.authenticatedConnections.clear();
 
     // Close server
     if (this.server) {
       await new Promise(resolve => {
         this.server.close(resolve);
+      });
+    }
+
+    // Close HTTPS server if any
+    if (this.httpsServer) {
+      await new Promise(resolve => {
+        this.httpsServer.close(resolve);
       });
     }
 

@@ -10,7 +10,7 @@ import crypto from 'crypto';
 
 /**
  * Generate a secure random API key
- * @param {number} [length=32] - Byte length of the random key (default 32 bytes = 64 hex chars)
+ * @param {number} [length] - Byte length of the random key (default 32 bytes = 64 hex chars)
  * @returns {string} Hex-encoded random API key
  * @throws {RangeError} If length is not between 16 and 64 bytes
  * @example
@@ -71,7 +71,7 @@ export async function verifyApiKey(providedKey, storedHash) {
 
 /**
  * Generate API key and its hash together
- * @param {number} [length=32] - Byte length of the random key
+ * @param {number} [length] - Byte length of the random key
  * @returns {Promise<{key: string, hash: string}>} Object with key and hash
  * @example
  * const { key, hash } = await generateApiKeyPair();

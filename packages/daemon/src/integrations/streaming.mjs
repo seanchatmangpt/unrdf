@@ -89,7 +89,7 @@ export class ReactiveSubscriptionManager {
   /**
    * Creates a new reactive subscription manager
    * @param {UnrdfDaemon} daemon - The daemon instance to execute operations on
-   * @param {Object} config - Configuration options
+   * @param {object} config - Configuration options
    */
   constructor(daemon, config = {}) {
     const validated = StreamingConfigSchema.parse(config);
@@ -109,9 +109,9 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Register a reactive trigger pattern
-   * @param {string | Object} pattern - SPARQL query or event pattern
+   * @param {string | object} pattern - SPARQL query or event pattern
    * @param {string} operationId - Operation to execute on pattern match
-   * @param {Object} [metadata] - Optional trigger metadata with debounce/throttle
+   * @param {object} [metadata] - Optional trigger metadata with debounce/throttle
    * @returns {string} Trigger ID
    */
   registerTrigger(pattern, operationId, metadata = {}) {
@@ -150,8 +150,8 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Check if a change event matches a pattern
-   * @param {Object} change - Change event from feed
-   * @param {string | Object} pattern - Pattern to match against
+   * @param {object} change - Change event from feed
+   * @param {string | object} pattern - Pattern to match against
    * @returns {boolean} Whether change matches pattern
    * @private
    */
@@ -187,7 +187,7 @@ export class ReactiveSubscriptionManager {
   /**
    * Check if trigger should execute based on debounce/throttle settings
    * @param {string} triggerId - Trigger ID
-   * @param {Object} trigger - Trigger configuration
+   * @param {object} trigger - Trigger configuration
    * @returns {boolean} Whether trigger should execute now
    * @private
    */
@@ -209,7 +209,7 @@ export class ReactiveSubscriptionManager {
    * Schedule debounced trigger execution
    * @param {string} triggerId - Trigger ID
    * @param {Array} operationIds - Operations to execute
-   * @param {Object} trigger - Trigger configuration
+   * @param {object} trigger - Trigger configuration
    * @private
    */
   scheduleDebouncedExecution(triggerId, operationIds, trigger) {
@@ -248,7 +248,7 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Handle a change event and execute matching operations
-   * @param {Object} change - Change event from feed
+   * @param {object} change - Change event from feed
    * @returns {Promise<Array>} Results from executed operations
    * @private
    */
@@ -320,7 +320,7 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Subscribe to a change feed with automatic cleanup tracking
-   * @param {Object} feed - Change feed to subscribe to
+   * @param {object} feed - Change feed to subscribe to
    * @returns {Function} Unsubscribe function
    */
   subscribe(feed) {
@@ -386,7 +386,7 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Get memory usage statistics
-   * @returns {Object} Memory usage information
+   * @returns {object} Memory usage information
    */
   getMemoryStats() {
     const estimatedMemory = JSON.stringify({
@@ -407,7 +407,7 @@ export class ReactiveSubscriptionManager {
 
   /**
    * Get statistics about trigger execution
-   * @returns {Object} Trigger statistics
+   * @returns {object} Trigger statistics
    */
   getStats() {
     return {
@@ -439,8 +439,8 @@ export class ReactiveSubscriptionManager {
 /**
  * Subscribe daemon to change feeds with reactive execution
  * @param {UnrdfDaemon} daemon - The daemon instance
- * @param {Array | Object} feeds - Change feed(s) to subscribe to
- * @param {Object} [config] - Configuration options
+ * @param {Array | object} feeds - Change feed(s) to subscribe to
+ * @param {object} [config] - Configuration options
  * @returns {ReactiveSubscriptionManager} Subscription manager instance
  * @example
  * const daemon = new Daemon({ daemonId: uuid(), name: 'worker-1' });
@@ -464,9 +464,9 @@ export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
 /**
  * Register a reactive trigger that executes daemon operations on pattern match
  * @param {UnrdfDaemon} daemon - The daemon instance
- * @param {string | Object} pattern - SPARQL query or event pattern to match
+ * @param {string | object} pattern - SPARQL query or event pattern to match
  * @param {string} operationId - Daemon operation to execute on match
- * @param {Object} [metadata] - Optional metadata about the trigger
+ * @param {object} [metadata] - Optional metadata about the trigger
  * @returns {string} Trigger ID for future removal
  * @example
  * const triggerId = registerReactiveTrigger(
@@ -490,8 +490,8 @@ export function registerReactiveTrigger(daemon, pattern, operationId, metadata =
 /**
  * Create a daemon with streaming integration pre-configured
  * @param {UnrdfDaemon} daemon - Daemon instance to integrate with feeds
- * @param {Array | Object} feeds - Change feed(s) to subscribe to
- * @param {Object} [config] - Configuration options
+ * @param {Array | object} feeds - Change feed(s) to subscribe to
+ * @param {object} [config] - Configuration options
  * @returns {ReactiveSubscriptionManager} Subscription manager instance
  * @example
  * import { Daemon } from '../daemon.mjs';

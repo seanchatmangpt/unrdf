@@ -33,6 +33,8 @@ const InferenceOptionsSchema = z.object({
   executionMode: z.enum(['sequential', 'parallel']).default('parallel'),
   logSeverityLevel: z.number().min(0).max(4).default(2),
   logVerbosityLevel: z.number().min(0).max(4).default(0),
+  loadTimeoutMs: z.number().positive().default(30000), // 30s default timeout
+  maxBatchSize: z.number().positive().default(1024), // Max batch size for allocation safety
 });
 
 /**
@@ -72,10 +74,17 @@ export class ONNXRunner {
    */
   async loadModel(modelPathOrBuffer) {
     return tracer.startActiveSpan('onnx.loadModel', async span => {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error(`Model load timed out after ${this.options.loadTimeoutMs}ms`)),
+          this.options.loadTimeoutMs
+        )
+      );
+
       try {
         const startTime = performance.now();
 
-        this.session = await ort.InferenceSession.create(modelPathOrBuffer, {
+        const loadPromise = ort.InferenceSession.create(modelPathOrBuffer, {
           executionProviders: this.options.executionProviders,
           graphOptimizationLevel: this.options.graphOptimizationLevel,
           enableCpuMemArena: this.options.enableCpuMemArena,
@@ -84,6 +93,8 @@ export class ONNXRunner {
           logSeverityLevel: this.options.logSeverityLevel,
           logVerbosityLevel: this.options.logVerbosityLevel,
         });
+
+        this.session = await Promise.race([loadPromise, timeoutPromise]);
 
         // Extract model metadata
         this.inputNames = this.session.inputNames;

@@ -25,6 +25,11 @@ export const powlRegistryMetadata = [
   }
 ];
 
+/**
+ *
+ * @param toolName
+ * @example
+ */
 export function getPowlMetadata(toolName) {
   return powlRegistryMetadata.find(meta => meta.name === toolName) || null;
 }

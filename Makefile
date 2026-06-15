@@ -9,7 +9,7 @@
 # VARIABLES
 # ============================================================================
 
-VERSION ?= 26.4.23
+VERSION ?= $(shell node -p "JSON.parse(require('fs').readFileSync('./package.json', 'utf8')).version")
 NPM_TAG ?= latest
 NPM_TOKEN ?=
 DRY_RUN ?= false
@@ -106,10 +106,8 @@ list-private-packages:
 
 version-bump:
 	@echo "$(BLUE)Bumping all packages to v$(VERSION)...$(NC)"
-	@find packages -maxdepth 2 -name "package.json" ! -path "*/node_modules/*" \
-		-exec sed -i '' 's/"version": "[^"]*"/"version": "$(VERSION)"/g' {} \;
+	@node scripts/update-versions.mjs $(VERSION)
 	@echo "$(GREEN)✓ Version bumped to $(VERSION)$(NC)"
-	@git diff packages/*/package.json | head -20
 
 # ============================================================================
 # VALIDATION & QUALITY GATES
@@ -153,18 +151,7 @@ publish-check: lint format-check check-workspace-deps
 	@echo "$(GREEN)✓ Package validation complete$(NC)"
 
 check-workspace-deps:
-	@echo "$(BLUE)Checking for workspace:* dependencies...$(NC)"
-	@workspace_count=$$(grep -r '"workspace:' packages/*/package.json --include="package.json" 2>/dev/null | wc -l || echo 0); \
-	if [ $$workspace_count -gt 0 ]; then \
-		echo "$(RED)ERROR: Found $$workspace_count package(s) with workspace:* dependencies$(NC)"; \
-		echo ""; \
-		echo "$(YELLOW)This will cause npm publish failures. Use 'pnpm pack' instead of 'pnpm publish' for source-only packages.$(NC)"; \
-		echo ""; \
-		grep -r '"workspace:' packages/*/package.json --include="package.json" | sed 's/^/  /'; \
-		exit 1; \
-	else \
-		echo "$(GREEN)✓ No workspace:* dependencies found$(NC)"; \
-	fi
+	@echo "$(GREEN)✓ Workspace dependencies are managed by pnpm and resolved dynamically on publish$(NC)"
 
 # ============================================================================
 # PUBLISHING
@@ -181,24 +168,10 @@ publish-packages: validate-npm-auth
 	@echo "$(BLUE)Publishing all public packages...$(NC)"
 	@if [ "$(DRY_RUN)" = "true" ]; then \
 		echo "$(YELLOW)DRY RUN MODE - no actual publish$(NC)"; \
+		pnpm -r publish --access public --no-git-checks --dry-run --tag $(NPM_TAG); \
+	else \
+		pnpm -r publish --access public --no-git-checks --tag $(NPM_TAG); \
 	fi
-	@cd $(WORKSPACE_ROOT) && timeout $(PUBLISH_TIMEOUT)s bash -c ' \
-		count=0; \
-		for dir in packages/*/; do \
-			pkg=$$(basename "$$dir"); \
-			if grep -q "\"private\"" "$$dir/package.json" 2>/dev/null; then \
-				echo "$(YELLOW)⏭️  $$pkg (private)$(NC)"; \
-				continue; \
-			fi; \
-			echo "$(BLUE)Publishing $$pkg...$(NC)"; \
-			if [ "$(DRY_RUN)" = "true" ]; then \
-				(cd "$$dir" && npm publish --access public --dry-run 2>&1 | grep -q "^+") && { count=$$((count+1)); echo "$(GREEN)✅ $$pkg$(NC)"; } || echo "$(YELLOW)⚠️  $$pkg$(NC)"; \
-			else \
-				(cd "$$dir" && npm publish --access public 2>&1) | grep -q "^+" && { count=$$((count+1)); echo "$(GREEN)✅ $$pkg$(NC)"; } || echo "$(YELLOW)⚠️  $$pkg$(NC)"; \
-			fi; \
-		done; \
-		echo "$(GREEN)✓ Published: $$count packages$(NC)" \
-	'
 
 publish-single: validate-npm-auth
 	@if [ -z "$(PKG)" ]; then \
@@ -211,7 +184,7 @@ publish-single: validate-npm-auth
 		exit 1; \
 	fi
 	@echo "$(BLUE)Publishing $(PKG)...$(NC)"
-	@cd packages/$(PKG) && npm publish --access public --tag $(NPM_TAG)
+	@cd packages/$(PKG) && pnpm publish --access public --tag $(NPM_TAG) --no-git-checks
 	@echo "$(GREEN)✓ Published $(PKG)@$(VERSION)$(NC)"
 
 # ============================================================================

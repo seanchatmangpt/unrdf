@@ -11,7 +11,7 @@ groups:
       - id: chatman.validation.source_system
         type: string
         brief: 'System performing validation.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
+        examples: ['businessos', 'canopy', 'osa']
       - id: chatman.validation.validation_type
         type: string
         brief: 'Type of validation (shacl, business_rule, compliance, schema).'
@@ -35,7 +35,8 @@ groups:
       - id: chatman.validation.violation_details
         type: string
         brief: 'JSON-encoded violation details (path, constraint, message).'
-        examples: ['[{"path": "amount", "constraint": "maxInclusive", "message": "Exceeds maximum"}]']
+        examples:
+          ['[{"path": "amount", "constraint": "maxInclusive", "message": "Exceeds maximum"}]']
       - id: chatman.validation.severity
         type: string
         brief: 'Violation severity (critical, high, medium, low, info).'

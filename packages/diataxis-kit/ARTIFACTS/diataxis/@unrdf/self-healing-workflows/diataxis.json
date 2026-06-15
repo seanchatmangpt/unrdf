@@ -7,28 +7,16 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": [
-      "basic-usage.mjs",
-      "recovery-strategies.mjs"
-    ],
+    "examplesFiles": ["basic-usage.mjs", "recovery-strategies.mjs"],
     "fingerprint": "9d9e68ee7d5dea8153902eb43c3bae5648582b9364bae94c03f5fe70d1df0d6d",
     "readmeHeadings": []
   },
   "explanation": {
     "architecture": "@unrdf/self-healing-workflows is a package in the UNRDF ecosystem",
-    "concepts": [
-      "self-healing",
-      "error-recovery",
-      "circuit-breaker",
-      "retry",
-      "workflow"
-    ],
+    "concepts": ["self-healing", "error-recovery", "circuit-breaker", "retry", "workflow"],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-self-healing-workflows-explanation",
-    "source": [
-      "keywords",
-      "inferred"
-    ],
+    "source": ["keywords", "inferred"],
     "title": "Understanding @unrdf/self-healing-workflows",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -42,14 +30,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/self-healing-workflows",
       "title": "Handle Errors"
     },
@@ -57,15 +39,8 @@
       "confidenceScore": 0.7,
       "context": "When working with self-healing in your project",
       "id": "howto-integrate-with-self-healing",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/self-healing-workflows with self-healing",
       "title": "Integrate with self-healing"
     }
@@ -124,9 +99,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/self-healing-workflows Reference"
   },
   "tutorials": [
@@ -135,10 +108,7 @@
       "goal": "Learn how to set up and use @unrdf/self-healing-workflows in your project",
       "id": "tutorial-getting-started-with-unrdf-self-healing-workflows",
       "prerequisites": [],
-      "source": [
-        "examples",
-        "keywords"
-      ],
+      "source": ["examples", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -148,5 +118,5 @@
       "title": "Getting Started with @unrdf/self-healing-workflows"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

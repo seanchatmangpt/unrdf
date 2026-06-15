@@ -51,8 +51,8 @@ function getISOTimestamp() {
 
 /**
  * Create a simple delta for testing
- * @param {Object} options
- * @returns {Object}
+ * @param {object} options
+ * @returns {object}
  */
 function createDelta(options = {}) {
   return {

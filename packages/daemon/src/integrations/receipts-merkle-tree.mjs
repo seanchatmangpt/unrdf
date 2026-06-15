@@ -6,6 +6,11 @@
 
 import { blake3 } from 'hash-wasm';
 
+/**
+ *
+ * @param receipts
+ * @example
+ */
 export async function buildMerkleTree(receipts) {
   if (receipts.length === 0) {
     throw new Error('Cannot build tree: empty receipts array');
@@ -55,6 +60,12 @@ export async function buildMerkleTree(receipts) {
   };
 }
 
+/**
+ *
+ * @param tree
+ * @param index
+ * @example
+ */
 export async function generateInclusionProof(tree, index) {
   const proof = [];
   let currentIndex = index;
@@ -79,6 +90,11 @@ export async function generateInclusionProof(tree, index) {
   return proof;
 }
 
+/**
+ *
+ * @param proof
+ * @example
+ */
 export async function verifyInclusionProof(proof) {
   try {
     if (!proof || !proof.leafHash || !proof.proofPath || !proof.merkleRoot) {

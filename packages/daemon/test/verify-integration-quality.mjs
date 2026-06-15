@@ -17,7 +17,7 @@ const daemonRoot = path.join(__dirname, '..');
  * Run a command and capture output
  * @param {string} command - Command to run
  * @param {string[]} args - Command arguments
- * @param {Object} options - Spawn options
+ * @param {object} options - Spawn options
  * @returns {Promise<{stdout: string, stderr: string, code: number}>}
  */
 async function runCommand(command, args = [], options = {}) {
@@ -51,7 +51,7 @@ async function runCommand(command, args = [], options = {}) {
 /**
  * Parse test output to extract results
  * @param {string} output - Test output
- * @returns {Object} Parsed test results
+ * @returns {object} Parsed test results
  */
 function parseTestOutput(output) {
   const passedMatch = output.match(/(\d+)\s+passed/);
@@ -65,7 +65,7 @@ function parseTestOutput(output) {
 
 /**
  * Check for DEFERRED_ACTION(#gap-closure)s and stubs in source files
- * @returns {Promise<Object>} DEFERRED_ACTION(#gap-closure) check results
+ * @returns {Promise<object>} DEFERRED_ACTION(#gap-closure) check results
  */
 async function checkForTodos() {
   const results = {
@@ -110,7 +110,7 @@ async function checkForTodos() {
 
 /**
  * Check code quality metrics
- * @returns {Promise<Object>} Quality metrics
+ * @returns {Promise<object>} Quality metrics
  */
 async function checkQualityMetrics() {
   const results = {
@@ -139,7 +139,7 @@ async function checkQualityMetrics() {
 
 /**
  * Calculate quality score
- * @param {Object} results - All test results
+ * @param {object} results - All test results
  * @returns {number} Quality score (0-100)
  */
 function calculateQualityScore(results) {
@@ -180,7 +180,7 @@ function calculateQualityScore(results) {
 
 /**
  * Generate integration quality report
- * @param {Object} results - All test results
+ * @param {object} results - All test results
  * @returns {string} Formatted report
  */
 function generateReport(results) {

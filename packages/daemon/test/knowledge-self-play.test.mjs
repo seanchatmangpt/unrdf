@@ -25,6 +25,7 @@ function createMockStore() {
 
 /**
  * Mock engine that returns customizable receipts
+ * @param options
  */
 function createMockEngine(options = {}) {
   const { hashes = [] } = options;

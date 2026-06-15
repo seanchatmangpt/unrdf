@@ -6,6 +6,11 @@
 
 import { blake3 } from 'hash-wasm';
 
+/**
+ *
+ * @param leaves
+ * @example
+ */
 export async function buildMerkleTree(leaves) {
   if (leaves.length === 0) {
     return await blake3('');
@@ -33,6 +38,12 @@ export async function buildMerkleTree(leaves) {
   return await blake3(`${leaves.length}:${rawRoot}`);
 }
 
+/**
+ *
+ * @param leaves
+ * @param index
+ * @example
+ */
 export async function getMerkleProofPath(leaves, index) {
   if (leaves.length === 0 || index >= leaves.length) {
     return [];

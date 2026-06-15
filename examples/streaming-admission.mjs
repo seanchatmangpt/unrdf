@@ -2,15 +2,24 @@
  * @file Streaming Admission Example
  * @description Demonstrates streaming RDF delta validation with receipt chaining
  *
+ * API demonstrated: packages/streaming/src/stream-admit.mjs
+ * Docs: packages/streaming/README.md — "Streaming Admission" section
+ *
  * This example shows:
  * 1. Creating a streaming admission handler
  * 2. Admitting deltas with automatic receipt generation
  * 3. Verifying receipt chain integrity
  * 4. Using delta conditions to validate changes
+ * 5. Validating receipts directly with ReceiptSchema
+ * 6. Validating conditions with DeltaConditionSchema
  */
 
 import { createStore, dataFactory } from '../packages/oxigraph/src/index.mjs';
-import { createStreamingAdmission } from '../packages/streaming/src/stream-admit.mjs';
+import {
+  createStreamingAdmission,
+  DeltaConditionSchema,
+  ReceiptSchema,
+} from '../packages/streaming/src/stream-admit.mjs';
 
 const { namedNode, literal } = dataFactory;
 
@@ -293,6 +302,40 @@ async function example5StreamProcessing() {
 }
 
 /**
+ * Demonstrates direct schema validation — DeltaConditionSchema and ReceiptSchema
+ * are exported for callers who need to validate raw inputs before passing them in.
+ */
+async function example6SchemaValidation() {
+  console.log('=== Example 6: Schema Validation ===\n');
+
+  // DeltaConditionSchema — validate a condition object before use
+  const condResult = DeltaConditionSchema.safeParse({ kind: 'delta', checksum: 'blake3' });
+  if (!condResult.success) throw new Error(`Valid condition rejected: ${condResult.error}`);
+  console.log('✓ DeltaConditionSchema accepts valid condition:', JSON.stringify(condResult.data));
+
+  const badCond = DeltaConditionSchema.safeParse({ kind: 'wrong-kind' });
+  if (badCond.success) throw new Error('Expected rejection of invalid kind');
+  console.log('✓ DeltaConditionSchema rejects invalid kind (kind must be "delta")');
+
+  // ReceiptSchema — validate a receipt that arrived from another node
+  const store = createStore();
+  const admin = createStreamingAdmission(store, { nodeId: 'schema-example' });
+  const { receipt } = await admin.admit({ additions: [], removals: [] });
+
+  const receiptResult = ReceiptSchema.safeParse(receipt);
+  if (!receiptResult.success) {
+    throw new Error(`Receipt from admit() should satisfy ReceiptSchema: ${receiptResult.error}`);
+  }
+  console.log(`✓ ReceiptSchema validates receipt from admit(): status=${receiptResult.data.status}`);
+
+  // ReceiptSchema — reject a receipt with wrong hash length
+  const badReceipt = { ...receipt, inputHash: 'too-short' };
+  const badResult = ReceiptSchema.safeParse(badReceipt);
+  if (badResult.success) throw new Error('Expected rejection of receipt with short hash');
+  console.log('✓ ReceiptSchema rejects receipt with malformed inputHash (must be 64 chars)');
+}
+
+/**
  * Main execution
  */
 async function main() {
@@ -302,6 +345,7 @@ async function main() {
     await example3ReceiptChaining();
     await example4ConditionalAdmission();
     await example5StreamProcessing();
+    await example6SchemaValidation();
 
     console.log('\n=== All examples completed successfully ===\n');
   } catch (error) {

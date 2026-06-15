@@ -13,8 +13,8 @@
 export class OptimizedLRUCache {
   /**
    * @param {number} maxSize - Maximum cache size
-   * @param {Object} [options] - Cache options
-   * @param {boolean} [options.compactMetadata=true] - Store minimal metadata
+   * @param {object} [options] - Cache options
+   * @param {boolean} [options.compactMetadata] - Store minimal metadata
    */
   constructor(maxSize = 1000, options = {}) {
     this.maxSize = maxSize;
@@ -93,7 +93,7 @@ export class OptimizedLRUCache {
 
   /**
    * Get cache statistics
-   * @returns {Object} Hit/miss/eviction stats
+   * @returns {object} Hit/miss/eviction stats
    */
   getStats() {
     return {

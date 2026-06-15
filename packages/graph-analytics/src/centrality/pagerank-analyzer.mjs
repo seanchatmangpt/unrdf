@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
 /**
+ * @typedef {import('@dagrejs/graphlib').Graph} Graph
+ */
+
+/**
  * PageRank Centrality Analyzer
  *
  * Computes PageRank and other centrality metrics for RDF knowledge graphs

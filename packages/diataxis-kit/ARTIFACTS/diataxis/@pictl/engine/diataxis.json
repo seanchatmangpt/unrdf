@@ -24,15 +24,10 @@
   },
   "explanation": {
     "architecture": "High-level engine lifecycle and state machine for pictl. Manages bootstrap, planning, execution, and error recovery with a well-defined state machine and comprehensive error handling.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-pictl-engine-explanation",
-    "source": [
-      "readme",
-      "inferred"
-    ],
+    "source": ["readme", "inferred"],
     "title": "Understanding @pictl/engine",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,14 +41,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -61,14 +50,8 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-pictl-engine",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
-      ],
+      "source": ["inferred"],
+      "steps": ["Import the package", "Initialize with options", "Execute operations"],
       "task": "Perform basic operations with @pictl/engine",
       "title": "Use @pictl/engine"
     }
@@ -85,10 +68,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports",
-      "readme"
-    ],
+    "source": ["exports", "readme"],
     "title": "@pictl/engine Reference"
   },
   "tutorials": [
@@ -97,9 +77,7 @@
       "goal": "Learn how to set up and use @pictl/engine in your project",
       "id": "tutorial-getting-started-with-pictl-engine",
       "prerequisites": [],
-      "source": [
-        "inferred"
-      ],
+      "source": ["inferred"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -109,5 +87,5 @@
       "title": "Getting Started with @pictl/engine"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

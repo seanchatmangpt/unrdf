@@ -102,16 +102,16 @@ class LRUCache {
  */
 export class TokenBucketRateLimiter {
   /**
-   * @param {Object} config - Rate limiter configuration
-   * @param {number} [config.windowMs=60000] - Time window in milliseconds (default: 1 minute)
-   * @param {number} [config.maxRequests=100] - Maximum requests per window
-   * @param {number} [config.burstSize=10] - Maximum burst requests
-   * @param {number} [config.burstWindowMs=1000] - Burst window in milliseconds (default: 1 second)
-   * @param {string} [config.keyPrefix='ratelimit'] - Prefix for storage keys
-   * @param {boolean} [config.enablePerIp=true] - Enable per-IP rate limiting
-   * @param {boolean} [config.enablePerApiKey=true] - Enable per-API-key rate limiting
-   * @param {number} [config.storageMaxSize=10000] - Maximum LRU cache size
-   * @param {Object} [config.logger=console] - Logger instance
+   * @param {object} config - Rate limiter configuration
+   * @param {number} [config.windowMs] - Time window in milliseconds (default: 1 minute)
+   * @param {number} [config.maxRequests] - Maximum requests per window
+   * @param {number} [config.burstSize] - Maximum burst requests
+   * @param {number} [config.burstWindowMs] - Burst window in milliseconds (default: 1 second)
+   * @param {string} [config.keyPrefix] - Prefix for storage keys
+   * @param {boolean} [config.enablePerIp] - Enable per-IP rate limiting
+   * @param {boolean} [config.enablePerApiKey] - Enable per-API-key rate limiting
+   * @param {number} [config.storageMaxSize] - Maximum LRU cache size
+   * @param {object} [config.logger=console] - Logger instance
    */
   constructor(config = {}) {
     const validated = RateLimitConfigSchema.parse(config);
@@ -143,7 +143,7 @@ export class TokenBucketRateLimiter {
   /**
    * Extract identifier from request context
    * Prioritizes API key over IP for better tracking
-   * @param {Object} context - Request context
+   * @param {object} context - Request context
    * @param {string} [context.ip] - Client IP address
    * @param {string} [context.apiKey] - API key
    * @returns {string|null} Identifier or null
@@ -165,7 +165,7 @@ export class TokenBucketRateLimiter {
   /**
    * Get or create token bucket for identifier
    * @param {string} identifier - Rate limit identifier
-   * @returns {Object} Bucket state
+   * @returns {object} Bucket state
    */
   getBucket(identifier) {
     let bucket = this.buckets.get(identifier);
@@ -187,8 +187,8 @@ export class TokenBucketRateLimiter {
   /**
    * Refill tokens based on elapsed time
    * Implements continuous token bucket algorithm
-   * @param {Object} bucket - Bucket state
-   * @returns {Object} Updated bucket
+   * @param {object} bucket - Bucket state
+   * @returns {object} Updated bucket
    */
   refillBucket(bucket) {
     const now = Date.now();
@@ -206,7 +206,7 @@ export class TokenBucketRateLimiter {
   /**
    * Check burst limit
    * Prevents rapid-fire requests within burst window
-   * @param {Object} bucket - Bucket state
+   * @param {object} bucket - Bucket state
    * @returns {boolean} True if burst limit exceeded
    */
   isBurstLimitExceeded(bucket) {
@@ -225,7 +225,7 @@ export class TokenBucketRateLimiter {
   /**
    * Attempt to consume a token from bucket
    * @param {string} identifier - Rate limit identifier
-   * @returns {Object} Rate limit result
+   * @returns {object} Rate limit result
    */
   consume(identifier) {
     this.stats.totalRequests++;
@@ -282,8 +282,8 @@ export class TokenBucketRateLimiter {
 
   /**
    * Check rate limit without consuming token
-   * @param {Object} context - Request context
-   * @returns {Object} Rate limit result
+   * @param {object} context - Request context
+   * @returns {object} Rate limit result
    */
   check(context) {
     const identifier = this.extractIdentifier(context);
@@ -303,7 +303,7 @@ export class TokenBucketRateLimiter {
 
   /**
    * Get statistics
-   * @returns {Object} Rate limiter statistics
+   * @returns {object} Rate limiter statistics
    */
   getStats() {
     return RateLimitStatsSchema.parse({
@@ -342,7 +342,7 @@ export class TokenBucketRateLimiter {
 
 /**
  * Create rate limiting middleware
- * @param {Object} config - Rate limiter configuration
+ * @param {object} config - Rate limiter configuration
  * @returns {Function} Middleware function
  * @example
  * const rateLimitMiddleware = createRateLimitMiddleware({
@@ -377,7 +377,7 @@ export function createRateLimitMiddleware(config = {}) {
 
 /**
  * Create rate limiter with default configuration
- * @param {Object} config - Optional configuration overrides
+ * @param {object} config - Optional configuration overrides
  * @returns {TokenBucketRateLimiter} Configured rate limiter
  * @example
  * const limiter = createRateLimiter({
@@ -396,7 +396,7 @@ export function createRateLimiter(config = {}) {
 
 /**
  * Parse environment variables for rate limit configuration
- * @returns {Object} Configuration from environment
+ * @returns {object} Configuration from environment
  * @example
  * // Set env vars:
  * // RATE_LIMIT_MAX_REQUESTS=200

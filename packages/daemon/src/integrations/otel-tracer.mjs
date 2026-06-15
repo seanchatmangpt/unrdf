@@ -1,7 +1,6 @@
 /**
  * @file OpenTelemetry Tracer Utilities
  * @module @unrdf/daemon/integrations/otel-tracer
- *
  * @description
  * Wrapper utilities for OpenTelemetry trace API
  */
@@ -12,6 +11,7 @@ import { trace, context as _context, SpanStatusCode } from '@opentelemetry/api';
  * Create a tracer instance
  * @param {string} name - Tracer name
  * @returns {import('@opentelemetry/api').Tracer} Tracer instance
+ * @example
  */
 export function createTracer(name = 'unrdf-daemon') {
   return trace.getTracer(name);
@@ -22,8 +22,9 @@ export function createTracer(name = 'unrdf-daemon') {
  * @param {import('@opentelemetry/api').Tracer} tracer - Tracer instance
  * @param {string} name - Span name
  * @param {Function} fn - Function to execute
- * @param {Object} [attributes] - Initial span attributes
+ * @param {object} [attributes] - Initial span attributes
  * @returns {Promise<any>} Function result
+ * @example
  */
 export function withSpan(tracer, name, fn, attributes = {}) {
   return tracer.startActiveSpan(name, { attributes }, async (span) => {
@@ -47,7 +48,8 @@ export function withSpan(tracer, name, fn, attributes = {}) {
 /**
  * Set attributes on a span
  * @param {import('@opentelemetry/api').Span} span - Span instance
- * @param {Object} attributes - Attributes to set
+ * @param {object} attributes - Attributes to set
+ * @example
  */
 export function setSpanAttributes(span, attributes) {
   if (span) {
@@ -59,7 +61,8 @@ export function setSpanAttributes(span, attributes) {
  * Add an event to a span
  * @param {import('@opentelemetry/api').Span} span - Span instance
  * @param {string} name - Event name
- * @param {Object} [attributes] - Event attributes
+ * @param {object} [attributes] - Event attributes
+ * @example
  */
 export function addSpanEvent(span, name, attributes = {}) {
   if (span) {

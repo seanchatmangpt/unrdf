@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/fusion",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
   "type": "module",
   "exports": {
@@ -38,5 +38,8 @@
     "prove": "DETERMINISTIC=1 node ../../tools/prove.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

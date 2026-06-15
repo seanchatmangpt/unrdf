@@ -32,7 +32,6 @@ const NodeHealthStatusSchema = z.object({
  * Distributed Task Distributor
  * Manages task assignment across cluster members with load tracking,
  * status monitoring, and heartbeat health integration.
- *
  * @class DistributedTaskDistributor
  * @example
  * const distributor = new DistributedTaskDistributor({ membershipManager });
@@ -42,10 +41,10 @@ const NodeHealthStatusSchema = z.object({
 export class DistributedTaskDistributor {
   /**
    * Create a task distributor
-   * @param {Object} options - Configuration options
-   * @param {Object} options.membershipManager - ClusterManager instance
-   * @param {Object} [options.logger] - Logger instance
-   * @param {number} [options.heartbeatInterval=5000] - Health check interval
+   * @param {object} options - Configuration options
+   * @param {object} options.membershipManager - ClusterManager instance
+   * @param {object} [options.logger] - Logger instance
+   * @param {number} [options.heartbeatInterval] - Health check interval
    * @throws {TypeError} If membershipManager is invalid
    */
   constructor(options = {}) {
@@ -63,9 +62,8 @@ export class DistributedTaskDistributor {
 
   /**
    * Distribute operations across nodes with specified strategy
-   *
    * @param {Array} operations - Operations to distribute
-   * @param {string} [strategy='round-robin'] - Distribution strategy
+   * @param {string} [strategy] - Distribution strategy
    * @returns {Map<string, Array>} Distribution map (nodeId -> operations[])
    * @throws {Error} If distribution fails validation
    */
@@ -117,7 +115,6 @@ export class DistributedTaskDistributor {
 
   /**
    * Assign operation to specific node
-   *
    * @param {string} operationId - Operation identifier
    * @param {string} nodeId - Target node identifier
    * @throws {Error} If assignment validation fails
@@ -138,9 +135,8 @@ export class DistributedTaskDistributor {
 
   /**
    * Get all assignments for a specific node
-   *
    * @param {string} nodeId - Node identifier
-   * @returns {Array<Object>} Array of assignment objects
+   * @returns {Array<object>} Array of assignment objects
    */
   getAssignments(nodeId) {
     return Array.from(this.assignments.values()).filter((a) => a.nodeId === nodeId);
@@ -148,7 +144,6 @@ export class DistributedTaskDistributor {
 
   /**
    * Update operation status
-   *
    * @param {string} operationId - Operation identifier
    * @param {string} status - New status (pending, executing, completed, failed)
    * @throws {Error} If operation not found or status invalid
@@ -168,7 +163,6 @@ export class DistributedTaskDistributor {
   /**
    * Start heartbeat health monitoring
    * Synchronizes daemon heartbeat with node health tracking
-   *
    * @returns {void}
    */
   startHeartbeat() {
@@ -194,7 +188,6 @@ export class DistributedTaskDistributor {
 
   /**
    * Stop heartbeat health monitoring
-   *
    * @returns {void}
    */
   stopHeartbeat() {
@@ -206,9 +199,8 @@ export class DistributedTaskDistributor {
 
   /**
    * Get node health status
-   *
    * @param {string} nodeId - Node identifier
-   * @returns {Object|null} Health status or null if not found
+   * @returns {object | null} Health status or null if not found
    */
   getNodeHealth(nodeId) {
     return this.nodeHealthMap.get(nodeId) || null;
@@ -216,7 +208,6 @@ export class DistributedTaskDistributor {
 
   /**
    * Hash operation ID for consistent distribution
-   *
    * @param {string} operationId - Operation identifier
    * @returns {number} Hash value
    * @private
@@ -232,7 +223,6 @@ export class DistributedTaskDistributor {
 
   /**
    * Select least loaded node from healthy nodes
-   *
    * @param {Array<string>} healthyNodes - Array of healthy node IDs
    * @param {Map<string, Array>} distribution - Current distribution map
    * @returns {string} Selected node ID

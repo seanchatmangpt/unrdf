@@ -58,7 +58,7 @@ grafana:
   imageRepo: grafana/grafana
   imageTag: 11.4.0
   replicas: 1
-  adminPassword: admin
+  adminPassword: ${GRAFANA_ADMIN_PASSWORD}
   resources:
     requests:
       cpu: 100m
@@ -123,8 +123,8 @@ minio:
   imageRepo: minio/minio
   imageTag: RELEASE.2024-11-07T00-52-20Z
   replicas: 1
-  rootUser: minioadmin
-  rootPassword: minioadmin
+  rootUser: ${MINIO_ROOT_USER}
+  rootPassword: ${MINIO_ROOT_PASSWORD}
   securityContext:
     readOnlyRootFilesystem: false  # writes objects
   resources:

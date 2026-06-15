@@ -1,14 +1,17 @@
 /**
  * @file OpenTelemetry SDK Initialization
  * @module @unrdf/daemon/integrations/otel-sdk
- *
  * @description
  * Initializes OpenTelemetry SDK with Node SDK and configures OTLP exporter for distributed tracing and metrics
  */
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import Resource from '@opentelemetry/resources';
-import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
+import { Resource } from '@opentelemetry/resources';
+import { 
+  ATTR_SERVICE_NAME, 
+  ATTR_SERVICE_VERSION, 
+  ATTR_DEPLOYMENT_ENVIRONMENT 
+} from '@opentelemetry/semantic-conventions';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { trace, metrics } from '@opentelemetry/api';
@@ -21,12 +24,13 @@ let meter = null;
 
 /**
  * Initialize OpenTelemetry SDK
- * @param {Object} config - Configuration options
+ * @param {object} config - Configuration options
  * @param {string} [config.serviceName] - Service name for telemetry
  * @param {string} [config.version] - Service version
  * @param {string} [config.environment] - Deployment environment
  * @param {string} [config.otlpEndpoint] - OTLP gRPC endpoint URL
  * @returns {Promise<NodeSDK>} Initialized NodeSDK instance
+ * @example
  */
 export async function initializeOTelSDK(config = {}) {
   if (sdk) {
@@ -93,6 +97,7 @@ export async function initializeOTelSDK(config = {}) {
 /**
  * Shutdown OpenTelemetry SDK
  * @returns {Promise<void>}
+ * @example
  */
 export async function shutdownOTelSDK() {
   if (sdk) {
@@ -109,6 +114,7 @@ export async function shutdownOTelSDK() {
  * Get the tracer instance
  * @returns {Tracer} OpenTelemetry tracer
  * @throws {Error} If SDK has not been initialized
+ * @example
  */
 export function getTracer() {
   if (!tracer) {
@@ -121,6 +127,7 @@ export function getTracer() {
  * Get the meter instance
  * @returns {Meter} OpenTelemetry meter
  * @throws {Error} If SDK has not been initialized
+ * @example
  */
 export function getMeter() {
   if (!meter) {
@@ -132,6 +139,7 @@ export function getMeter() {
 /**
  * Check if SDK has been initialized
  * @returns {boolean} True if SDK is initialized
+ * @example
  */
 export function isSDKInitialized() {
   return sdk !== null;

@@ -40,6 +40,7 @@ export const MessageType = {
   PRE_PREPARE: 'pre-prepare',
   PREPARE: 'prepare',
   COMMIT: 'commit',
+  CHECKPOINT: 'checkpoint',
   VIEW_CHANGE: 'view-change',
   NEW_VIEW: 'new-view',
 };
@@ -57,6 +58,7 @@ const ByzantineConfigSchema = z.object({
   peers: z.array(z.string()),
   f: z.number().int().nonnegative(),
   viewChangeTimeout: z.number().positive().default(5000),
+  checkpointInterval: z.number().int().positive().default(100),
 });
 
 /**
@@ -210,6 +212,16 @@ export class ByzantineNode extends EventEmitter {
 
     /** @type {Map<number, ConsensusPhase>} - Current phase for each sequence */
     this.phaseState = new Map();
+
+    // Checkpoint state
+    /** @type {number} - Last stable checkpoint sequence */
+    this.lastStableCheckpoint = 0;
+
+    /** @type {Map<number, Set<string>>} - Checkpoint messages received: sequence -> nodeIds */
+    this.checkpointMessages = new Map();
+
+    /** @type {Map<number, string>} - Checkpoints: sequence -> state digest */
+    this.checkpoints = new Map();
 
     /** @type {boolean} */
     this.running = false;
@@ -463,9 +475,111 @@ export class ByzantineNode extends EventEmitter {
       const request = this.pendingRequests.get(sequence);
       this.emit('committed', sequence, request);
 
+      // Check if we should create a checkpoint
+      if (sequence % this.config.checkpointInterval === 0) {
+        this._createCheckpoint(sequence);
+      }
+
       // Reset view change timer
       this._resetViewChangeTimer();
     }
+  }
+
+  /**
+   * Create a checkpoint
+   * @private
+   * @param {number} sequence - Sequence number
+   */
+  _createCheckpoint(sequence) {
+    const stateDigest = this._computeStateDigest(sequence);
+    
+    const checkpoint = {
+      type: MessageType.CHECKPOINT,
+      sequence,
+      digest: stateDigest,
+      nodeId: this.nodeId,
+    };
+
+    this._broadcast(checkpoint);
+    this._handleCheckpoint(checkpoint);
+  }
+
+  /**
+   * Handle Checkpoint message
+   * @private
+   * @param {Object} checkpoint - Checkpoint message
+   */
+  _handleCheckpoint(checkpoint) {
+    const { sequence, digest, nodeId } = checkpoint;
+
+    if (sequence <= this.lastStableCheckpoint) return;
+
+    if (!this.checkpointMessages.has(sequence)) {
+      this.checkpointMessages.set(sequence, new Set());
+    }
+    
+    const nodes = this.checkpointMessages.get(sequence);
+    nodes.add(nodeId);
+
+    const quorum = 2 * this.f + 1;
+    if (nodes.size >= quorum && !this.checkpoints.has(sequence)) {
+      // Checkpoint is now stable
+      this.checkpoints.set(sequence, digest);
+      this.lastStableCheckpoint = sequence;
+      
+      // Prune old state
+      this._pruneState(sequence);
+      
+      this.emit('checkpoint', sequence, digest);
+    }
+  }
+
+  /**
+   * Prune state older than stable checkpoint
+   * @private
+   * @param {number} sequence - Stable checkpoint sequence
+   */
+  _pruneState(sequence) {
+    for (const seq of this.pendingRequests.keys()) {
+      if (seq <= sequence) {
+        this.pendingRequests.delete(seq);
+        this.prepareMessages.delete(seq);
+        this.commitMessages.delete(seq);
+        this.committedRequests.delete(seq);
+        this.phaseState.delete(seq);
+      }
+    }
+    
+    for (const seq of this.checkpointMessages.keys()) {
+      if (seq < sequence) {
+        this.checkpointMessages.delete(seq);
+      }
+    }
+    
+    for (const seq of this.checkpoints.keys()) {
+      if (seq < sequence) {
+        this.checkpoints.delete(seq);
+      }
+    }
+  }
+
+  /**
+   * Compute digest of current state up to sequence
+   * @private
+   * @param {number} sequence - Sequence number
+   * @returns {string} State digest
+   */
+  _computeStateDigest(sequence) {
+    // In production, digest the actual application state
+    // For now, digest the committed requests up to this sequence
+    const relevantRequests = Array.from(this.committedRequests.entries())
+      .filter(([seq]) => seq <= sequence)
+      .sort(([a], [b]) => a - b);
+      
+    const json = JSON.stringify(relevantRequests);
+    const hash = createSign('sha256');
+    hash.update(json);
+    return hash.sign(this.privateKey, 'hex');
   }
 
   /**
@@ -589,6 +703,10 @@ export class ByzantineNode extends EventEmitter {
 
       case MessageType.COMMIT:
         this._handleCommit(message);
+        break;
+
+      case MessageType.CHECKPOINT:
+        this._handleCheckpoint(message);
         break;
 
       case MessageType.VIEW_CHANGE:

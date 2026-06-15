@@ -26,9 +26,8 @@ const DistributedOperationSchema = z.object({
  * Integrate Raft node leadership tracking with daemon
  * Listens to Raft leader election events and updates daemon leadership state.
  * Only executes 'leader' scoped operations on the elected leader.
- *
- * @param {Object} daemon - UnrdfDaemon instance
- * @param {Object} raftNode - RaftCoordinator instance with leader events
+ * @param {object} daemon - UnrdfDaemon instance
+ * @param {object} raftNode - RaftCoordinator instance with leader events
  * @throws {TypeError} If daemon or raftNode are invalid
  * @example
  * integrateRaftNode(daemon, raftCoordinator);
@@ -64,11 +63,10 @@ export function integrateRaftNode(daemon, raftNode) {
 /**
  * Distribute operations across cluster nodes based on scope and strategy
  * Routes 'local' operations to current node, 'leader' to leader, 'global' via strategy.
- *
- * @param {Object} daemon - Daemon instance with isLeader flag
- * @param {Object} membershipManager - ClusterManager instance with node list
+ * @param {object} daemon - Daemon instance with isLeader flag
+ * @param {object} membershipManager - ClusterManager instance with node list
  * @param {Array} operations - Array of DistributedOperation objects
- * @param {string} [strategy='round-robin'] - Strategy: 'round-robin', 'least-loaded', 'hash'
+ * @param {string} [strategy] - Strategy: 'round-robin', 'least-loaded', 'hash'
  * @returns {Map<string, Array>} Map of nodeId to operations array
  * @throws {Error} If validation or distribution fails
  * @example
@@ -143,7 +141,6 @@ export function distributeWork(daemon, membershipManager, operations, strategy =
 
 /**
  * Hash operation ID for consistent distribution
- *
  * @param {string} operationId - Operation identifier
  * @returns {number} Hash value
  * @private
@@ -159,7 +156,6 @@ function hashOperation(operationId) {
 
 /**
  * Select least loaded node from healthy nodes
- *
  * @param {Array<string>} healthyNodes - Array of healthy node IDs
  * @param {Map<string, Array>} distribution - Current distribution map
  * @returns {string} Selected node ID

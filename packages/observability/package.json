@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/observability",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
   "type": "module",
   "main": "./src/index.mjs",
@@ -39,5 +39,8 @@
     "distributed-systems"
   ],
   "author": "UNRDF Team",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

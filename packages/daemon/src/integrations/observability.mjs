@@ -14,9 +14,9 @@ import { ConfigSchema } from './observability.schema.mjs';
 export class PrometheusMetricsExporter {
   /**
    * Create Prometheus metrics exporter
-   * @param {Object} config - Exporter configuration
+   * @param {object} config - Exporter configuration
    * @param {string} config.serviceName - Service name for metrics
-   * @param {number} [config.metricsHistorySize=10000] - Max history size
+   * @param {number} [config.metricsHistorySize] - Max history size
    */
   constructor(config = {}) {
     this.config = ConfigSchema.parse(config);
@@ -30,7 +30,7 @@ export class PrometheusMetricsExporter {
    * Register a counter metric
    * @param {string} name - Metric name
    * @param {string} help - Help text
-   * @param {Object} labels - Label names
+   * @param {object} labels - Label names
    */
   registerCounter(name, help, labels = []) {
     const metric = {
@@ -50,7 +50,7 @@ export class PrometheusMetricsExporter {
    * Register a gauge metric
    * @param {string} name - Metric name
    * @param {string} help - Help text
-   * @param {Object} labels - Label names
+   * @param {object} labels - Label names
    */
   registerGauge(name, help, labels = []) {
     const metric = {
@@ -70,8 +70,8 @@ export class PrometheusMetricsExporter {
    * Register a histogram metric
    * @param {string} name - Metric name
    * @param {string} help - Help text
-   * @param {Object} buckets - Bucket boundaries
-   * @param {Object} labels - Label names
+   * @param {object} buckets - Bucket boundaries
+   * @param {object} labels - Label names
    */
   registerHistogram(name, help, buckets = [0.001, 0.01, 0.1, 1, 10], labels = []) {
     const metric = {
@@ -92,7 +92,7 @@ export class PrometheusMetricsExporter {
    * Increment counter value
    * @param {string} name - Counter name
    * @param {number} value - Increment value
-   * @param {Object} labelValues - Label values
+   * @param {object} labelValues - Label values
    */
   incrementCounter(name, value = 1, labelValues = {}) {
     const metric = this.counters.get(name);
@@ -107,7 +107,7 @@ export class PrometheusMetricsExporter {
    * Set gauge value
    * @param {string} name - Gauge name
    * @param {number} value - Gauge value
-   * @param {Object} labelValues - Label values
+   * @param {object} labelValues - Label values
    */
   setGauge(name, value, labelValues = {}) {
     const metric = this.gauges.get(name);
@@ -122,7 +122,7 @@ export class PrometheusMetricsExporter {
    * Record histogram observation
    * @param {string} name - Histogram name
    * @param {number} value - Observation value
-   * @param {Object} labelValues - Label values
+   * @param {object} labelValues - Label values
    */
   recordHistogram(name, value, labelValues = {}) {
     const metric = this.histograms.get(name);
@@ -188,7 +188,7 @@ export class PrometheusMetricsExporter {
 
   /**
    * Get current metrics as JSON object
-   * @returns {Object} Metrics snapshot
+   * @returns {object} Metrics snapshot
    */
   getMetricsSnapshot() {
     const snapshot = {};
@@ -226,7 +226,7 @@ export class PrometheusMetricsExporter {
 export class OtelSpanTracer {
   /**
    * Create OTEL span tracer
-   * @param {Object} config - Tracer configuration
+   * @param {object} config - Tracer configuration
    * @param {string} config.serviceName - Service name
    */
   constructor(config = {}) {
@@ -238,7 +238,7 @@ export class OtelSpanTracer {
   /**
    * Start a new span
    * @param {string} name - Span name
-   * @param {Object} attributes - Span attributes
+   * @param {object} attributes - Span attributes
    * @returns {string} Span ID
    */
   startSpan(name, attributes = {}) {
@@ -260,7 +260,7 @@ export class OtelSpanTracer {
    * Add event to span
    * @param {string} spanId - Span ID
    * @param {string} eventName - Event name
-   * @param {Object} attributes - Event attributes
+   * @param {object} attributes - Event attributes
    */
   addSpanEvent(spanId, eventName, attributes = {}) {
     const span = this.activeSpans.get(spanId);
@@ -300,7 +300,7 @@ export class OtelSpanTracer {
 
   /**
    * Export spans as traces
-   * @returns {Object} Trace data
+   * @returns {object} Trace data
    */
   exportTraces() {
     const traces = {};
@@ -325,9 +325,10 @@ export class OtelSpanTracer {
 
 /**
  * Integrate OpenTelemetry metrics with daemon
- * @param {Object} daemon - Daemon instance
- * @param {Object} meter - OpenTelemetry meter
- * @returns {Object} Metrics accessor
+ * @param {object} daemon - Daemon instance
+ * @param {object} meter - OpenTelemetry meter
+ * @returns {object} Metrics accessor
+ * @example
  */
 export function integrateOTelMetrics(daemon, meter) {
   if (!meter) {

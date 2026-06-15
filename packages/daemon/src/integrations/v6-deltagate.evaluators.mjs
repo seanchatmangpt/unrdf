@@ -8,11 +8,12 @@ import { getNs } from './v6-deltagate.helpers.mjs';
 
 /**
  * Check delta admissibility
- * @param {Object} delta - Delta to check
- * @param {Object} context - Evaluation context
+ * @param {object} delta - Delta to check
+ * @param {object} context - Evaluation context
  * @param {Function} evaluateCondition - Condition evaluator
  * @param {Function} evaluateConstraint - Constraint evaluator
- * @returns {Promise<Object>} Admissibility result
+ * @returns {Promise<object>} Admissibility result
+ * @example
  */
 export async function checkAdmissibility(delta, context, evaluateCondition, evaluateConstraint) {
   if (!delta.admissibility) {
@@ -48,7 +49,8 @@ export async function checkAdmissibility(delta, context, evaluateCondition, eval
  * Apply operations atomically
  * @param {Array} operations - Operations to apply
  * @param {Map} store - State store
- * @returns {Object} Application result
+ * @returns {object} Application result
+ * @example
  */
 export function applyOperations(operations, store) {
   try {
@@ -81,8 +83,9 @@ export function applyOperations(operations, store) {
 
 /**
  * Reverse an operation
- * @param {Object} op - Operation to reverse
- * @returns {Object} Reversed operation
+ * @param {object} op - Operation to reverse
+ * @returns {object} Reversed operation
+ * @example
  */
 export function reverseOperation(op) {
   const reversed = { ...op, timestamp_ns: getNs() };
@@ -129,10 +132,11 @@ export function reverseOperation(op) {
 /**
  * Evaluate condition
  * @param {string} condition - Condition to evaluate
- * @param {Object} context - Evaluation context
+ * @param {object} context - Evaluation context
  * @param {Map} store - State store
- * @param {Object} [logger] - Logger instance
+ * @param {object} [logger] - Logger instance
  * @returns {boolean} Evaluation result
+ * @example
  */
 export function evaluateCondition(condition, context, store, logger = console) {
   if (condition === 'always') return true;
@@ -149,9 +153,10 @@ export function evaluateCondition(condition, context, store, logger = console) {
 /**
  * Evaluate constraint
  * @param {string} constraint - Constraint to evaluate
- * @param {Object} context - Evaluation context
- * @param {Object} [logger] - Logger instance
+ * @param {object} context - Evaluation context
+ * @param {object} [logger] - Logger instance
  * @returns {boolean} Evaluation result
+ * @example
  */
 export function evaluateConstraint(constraint, context, logger = console) {
   if (constraint === 'none') return true;
@@ -165,6 +170,7 @@ export function evaluateConstraint(constraint, context, logger = console) {
  * @param {Array} receiptHistory - Receipt history
  * @param {number} index - Index to validate
  * @returns {boolean} Whether chain is valid
+ * @example
  */
 export function validateChain(receiptHistory, index) {
   if (index === 0) {

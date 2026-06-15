@@ -9,7 +9,6 @@
  * 5. Closed-Loop Completion — BusinessOS→Canopy→OSA→BusinessOS
  * 6. Minimality — no redundant paths or duplicate events
  * 7. Semantic Validity — schema/constraint compliance
- *
  * @example
  * import { validateSemanticInvariants } from '@unrdf/otel/validation';
  *

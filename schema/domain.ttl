@@ -195,6 +195,29 @@ unrdf:V6CorePackage a unrdf:Package ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
+# Virtual Substrate Capability
+
+unrdf:VirtualSubstrate a rdfs:Class ;
+    rdfs:label "Virtual Substrate" ;
+    rdfs:comment "A virtualized knowledge graph substrate for relational-to-RDF mapping and counterfactual simulation" ;
+    rdfs:isDefinedBy <https://unrdf.io/> .
+
+# Autonomic Laws (Ostar Governor)
+
+<urn:ostar:law:VirtualSubstrateMapping> a unrdf:Law ;
+    unrdf:lawId "VirtualSubstrateMapping" ;
+    unrdf:hasTransition [
+        unrdf:inputValue "0" ;
+        unrdf:selectCondition "Mapped" ;
+    ] .
+
+<urn:ostar:law:VirtualCounterfactualSimulation> a unrdf:Law ;
+    unrdf:lawId "VirtualCounterfactualSimulation" ;
+    unrdf:hasTransition [
+        unrdf:inputValue "1" ;
+        unrdf:selectCondition "Simulated" ;
+    ] .
+
 # Extended Tier Packages
 
 unrdf:FederationPackage a unrdf:Package ;

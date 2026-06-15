@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/ai-ml-innovations",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Novel AI/ML integration patterns for UNRDF knowledge graphs",
   "type": "module",
   "main": "src/index.mjs",
@@ -45,5 +45,8 @@
     "eslint": "^9.0.0"
   },
   "author": "UNRDF Contributors",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -1,391 +1,386 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 77,
+  "packageCount": 76,
   "packages": [
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/agents",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/agents",
       "name": "@pictl/agents",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/config",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/config",
       "name": "@pictl/config",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/contracts",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/contracts",
       "name": "@pictl/contracts",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/engine",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/engine",
       "name": "@pictl/engine",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/kernel",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/kernel",
       "name": "@pictl/kernel",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/ml",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/ml",
       "name": "@pictl/ml",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/observability",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/observability",
       "name": "@pictl/observability",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/planner",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/planner",
       "name": "@pictl/planner",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/swarm",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/swarm",
       "name": "@pictl/swarm",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/testing",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/packages/testing",
       "name": "@pictl/testing",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/apps/pictl",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/apps/pictl",
       "name": "@seanchatmangpt/pictl",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/ai-ml-innovations",
+      "dir": "/Users/sac/unrdf/packages/ai-ml-innovations",
       "name": "@unrdf/ai-ml-innovations",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm",
+      "dir": "/Users/sac/unrdf/packages/atomvm",
       "name": "@unrdf/atomvm",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/blockchain",
+      "dir": "/Users/sac/unrdf/packages/blockchain",
       "name": "@unrdf/blockchain",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/caching",
+      "dir": "/Users/sac/unrdf/packages/caching",
       "name": "@unrdf/caching",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/chatman-equation",
+      "dir": "/Users/sac/unrdf/packages/chatman-equation",
       "name": "@unrdf/chatman-equation",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/cli",
+      "dir": "/Users/sac/unrdf/packages/cli",
       "name": "@unrdf/cli",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/codegen",
+      "dir": "/Users/sac/unrdf/packages/codegen",
       "name": "@unrdf/codegen",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/collab",
+      "dir": "/Users/sac/unrdf/packages/collab",
       "name": "@unrdf/collab",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/composables",
+      "dir": "/Users/sac/unrdf/packages/composables",
       "name": "@unrdf/composables",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/consensus",
+      "dir": "/Users/sac/unrdf/packages/consensus",
       "name": "@unrdf/consensus",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/core",
+      "dir": "/Users/sac/unrdf/packages/core",
       "name": "@unrdf/core",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/daemon",
+      "dir": "/Users/sac/unrdf/packages/daemon",
       "name": "@unrdf/daemon",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/dark-matter",
+      "dir": "/Users/sac/unrdf/packages/dark-matter",
       "name": "@unrdf/dark-matter",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/decision-fabric",
+      "dir": "/Users/sac/unrdf/packages/decision-fabric",
       "name": "@unrdf/decision-fabric",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/diataxis-kit",
+      "dir": "/Users/sac/unrdf/packages/diataxis-kit",
       "name": "@unrdf/diataxis-kit",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/domain",
+      "dir": "/Users/sac/unrdf/packages/domain",
       "name": "@unrdf/domain",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/engine-gateway",
+      "dir": "/Users/sac/unrdf/packages/engine-gateway",
       "name": "@unrdf/engine-gateway",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/event-automation",
+      "dir": "/Users/sac/unrdf/packages/event-automation",
       "name": "@unrdf/event-automation",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/examples",
+      "dir": "/Users/sac/unrdf/examples",
       "name": "@unrdf/examples",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/federation",
+      "dir": "/Users/sac/unrdf/packages/federation",
       "name": "@unrdf/federation",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/fusion",
+      "dir": "/Users/sac/unrdf/packages/fusion",
       "name": "@unrdf/fusion",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/geosparql",
+      "dir": "/Users/sac/unrdf/packages/geosparql",
       "name": "@unrdf/geosparql",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/graph-analytics",
+      "dir": "/Users/sac/unrdf/packages/graph-analytics",
       "name": "@unrdf/graph-analytics",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks",
+      "dir": "/Users/sac/unrdf/packages/hooks",
       "name": "@unrdf/hooks",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/hook-chains",
+      "dir": "/Users/sac/unrdf/packages/hooks/examples/hook-chains",
       "name": "@unrdf/hooks-example-chains",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/policy-hooks",
+      "dir": "/Users/sac/unrdf/packages/hooks/examples/policy-hooks",
       "name": "@unrdf/hooks-example-policy",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/integration-tests",
+      "dir": "/Users/sac/unrdf/packages/integration-tests",
       "name": "@unrdf/integration-tests",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d",
+      "dir": "/Users/sac/unrdf/packages/kgc-4d",
       "name": "@unrdf/kgc-4d",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d-playground",
+      "dir": "/Users/sac/unrdf/packages/kgc-4d-playground",
       "name": "@unrdf/kgc-4d-playground",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-claude",
-      "name": "@unrdf/kgc-claude",
-      "version": "0.0.0-agnostic"
-    },
-    {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-cli",
+      "dir": "/Users/sac/unrdf/packages/kgc-cli",
       "name": "@unrdf/kgc-cli",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-docs",
+      "dir": "/Users/sac/unrdf/packages/kgc-docs",
       "name": "@unrdf/kgc-docs",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-multiverse",
+      "dir": "/Users/sac/unrdf/packages/kgc-multiverse",
       "name": "@unrdf/kgc-multiverse",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-probe",
+      "dir": "/Users/sac/unrdf/packages/kgc-probe",
       "name": "@unrdf/kgc-probe",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-runtime",
+      "dir": "/Users/sac/unrdf/packages/kgc-runtime",
       "name": "@unrdf/kgc-runtime",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-substrate",
+      "dir": "/Users/sac/unrdf/packages/kgc-substrate",
       "name": "@unrdf/kgc-substrate",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-swarm",
+      "dir": "/Users/sac/unrdf/packages/kgc-swarm",
       "name": "@unrdf/kgc-swarm",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-tools",
+      "dir": "/Users/sac/unrdf/packages/kgc-tools",
       "name": "@unrdf/kgc-tools",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgn",
+      "dir": "/Users/sac/unrdf/packages/kgn",
       "name": "@unrdf/kgn",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/knowledge-engine",
+      "dir": "/Users/sac/unrdf/packages/knowledge-engine",
       "name": "@unrdf/knowledge-engine",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/manufacturing",
+      "dir": "/Users/sac/unrdf/packages/manufacturing",
       "name": "@unrdf/manufacturing",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-inference",
+      "dir": "/Users/sac/unrdf/packages/ml-inference",
       "name": "@unrdf/ml-inference",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-versioning",
+      "dir": "/Users/sac/unrdf/packages/ml-versioning",
       "name": "@unrdf/ml-versioning",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/observability",
+      "dir": "/Users/sac/unrdf/packages/observability",
       "name": "@unrdf/observability",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/otel",
+      "dir": "/Users/sac/unrdf/packages/otel",
       "name": "@unrdf/otel",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/oxigraph",
+      "dir": "/Users/sac/unrdf/packages/oxigraph",
       "name": "@unrdf/oxigraph",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-algorithms",
+      "dir": "/Users/sac/unrdf/packages/pictl-algorithms",
       "name": "@unrdf/pictl-algorithms",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-semantics",
+      "dir": "/Users/sac/unrdf/packages/pictl-semantics",
       "name": "@unrdf/pictl-semantics",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/project-engine",
+      "dir": "/Users/sac/unrdf/packages/project-engine",
       "name": "@unrdf/project-engine",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/rdf-graphql",
+      "dir": "/Users/sac/unrdf/packages/rdf-graphql",
       "name": "@unrdf/rdf-graphql",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/react",
+      "dir": "/Users/sac/unrdf/packages/react",
       "name": "@unrdf/react",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/receipts",
+      "dir": "/Users/sac/unrdf/packages/receipts",
       "name": "@unrdf/receipts",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/self-healing-workflows",
+      "dir": "/Users/sac/unrdf/packages/self-healing-workflows",
       "name": "@unrdf/self-healing-workflows",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/semantic-search",
+      "dir": "/Users/sac/unrdf/packages/semantic-search",
       "name": "@unrdf/semantic-search",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/serverless",
+      "dir": "/Users/sac/unrdf/packages/serverless",
       "name": "@unrdf/serverless",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/spatial-kg",
+      "dir": "/Users/sac/unrdf/packages/spatial-kg",
       "name": "@unrdf/spatial-kg",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/streaming",
+      "dir": "/Users/sac/unrdf/packages/streaming",
       "name": "@unrdf/streaming",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/temporal-discovery",
+      "dir": "/Users/sac/unrdf/packages/temporal-discovery",
       "name": "@unrdf/temporal-discovery",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/test-utils",
+      "dir": "/Users/sac/unrdf/packages/test-utils",
       "name": "@unrdf/test-utils",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-compat",
+      "dir": "/Users/sac/unrdf/packages/v6-compat",
       "name": "@unrdf/v6-compat",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-core",
+      "dir": "/Users/sac/unrdf/packages/v6-core",
       "name": "@unrdf/v6-core",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/validation",
+      "dir": "/Users/sac/unrdf/packages/validation",
       "name": "@unrdf/validation",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/zkp",
+      "dir": "/Users/sac/unrdf/packages/zkp",
       "name": "@unrdf/zkp",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm",
       "name": "pictl-monorepo",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/benchmarks",
+      "dir": "/Users/sac/unrdf/benchmarks",
       "name": "unrdf-benchmarks",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     },
     {
-      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm",
+      "dir": "/Users/sac/unrdf/packages/wasm4pm/wasm4pm",
       "name": "wasm4pm",
-      "version": "0.0.0-agnostic"
+      "version": "26.6.12"
     }
   ]
 }

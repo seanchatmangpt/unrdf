@@ -11,10 +11,11 @@ import {
 
 /**
  * Evaluate a condition (SPARQL pattern or composite)
- * @param {Object} condition - Condition definition
- * @param {Object} operationMetadata - Operation metadata
- * @param {Object} context - Evaluation context
- * @returns {Promise<Object>} Condition evaluation result
+ * @param {object} condition - Condition definition
+ * @param {object} operationMetadata - Operation metadata
+ * @param {object} context - Evaluation context
+ * @returns {Promise<object>} Condition evaluation result
+ * @example
  */
 export async function evaluateCondition(condition, operationMetadata, context) {
   if (condition.type === 'sparql') {
@@ -34,10 +35,11 @@ export async function evaluateCondition(condition, operationMetadata, context) {
 
 /**
  * Evaluate SPARQL pattern condition
- * @param {Object} pattern - SPARQL pattern definition
- * @param {Object} operationMetadata - Operation metadata
- * @param {Object} _context - Evaluation context
- * @returns {Promise<Object>} Pattern evaluation result
+ * @param {object} pattern - SPARQL pattern definition
+ * @param {object} operationMetadata - Operation metadata
+ * @param {object} _context - Evaluation context
+ * @returns {Promise<object>} Pattern evaluation result
+ * @example
  */
 export async function evaluateSparqlPattern(pattern, operationMetadata, _context) {
   try {
@@ -67,9 +69,10 @@ export async function evaluateSparqlPattern(pattern, operationMetadata, _context
 
 /**
  * Evaluate business logic condition
- * @param {Object} condition - Business logic condition
- * @param {Object} operationMetadata - Operation metadata
- * @returns {Object} Condition evaluation result
+ * @param {object} condition - Business logic condition
+ * @param {object} operationMetadata - Operation metadata
+ * @returns {object} Condition evaluation result
+ * @example
  */
 export function evaluateBusinessLogic(condition, operationMetadata) {
   try {
@@ -90,10 +93,11 @@ export function evaluateBusinessLogic(condition, operationMetadata) {
 
 /**
  * Evaluate composite condition (AND/OR/NOT operators)
- * @param {Object} condition - Composite condition
- * @param {Object} operationMetadata - Operation metadata
- * @param {Object} context - Evaluation context
- * @returns {Promise<Object>} Composite condition result
+ * @param {object} condition - Composite condition
+ * @param {object} operationMetadata - Operation metadata
+ * @param {object} context - Evaluation context
+ * @returns {Promise<object>} Composite condition result
+ * @example
  */
 export async function evaluateCompositeCondition(condition, operationMetadata, context) {
   const results = await Promise.all(

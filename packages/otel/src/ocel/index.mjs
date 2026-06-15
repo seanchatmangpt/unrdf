@@ -104,9 +104,9 @@ function nanoToIso(nanoStr) {
  *   objects: { [id]: { id, type, kind? } },
  *   events:  [{ object, type, activity, timestamp, traceId, attributes }]
  * }
- *
  * @param {Array<{spanId, traceId, name, startTimeUnixNano, attributes, status}>} spans
  * @returns {{ objects: object, events: Array }}
+ * @example
  */
 export function otelSpansToOcel(spans) {
   const objects = {};
@@ -172,10 +172,10 @@ export function otelSpansToOcel(spans) {
 /**
  * Generate an impossible OCEL log for a named scenario.
  * Used in negative tests — the conformance checker must reject these logs.
- *
  * @param {string} scenario - One of IMPOSSIBLE_LOG_SCENARIOS
  * @returns {{ objects: object, events: Array }}
  * @throws {Error} for unknown scenario names
+ * @example
  */
 export function generateImpossibleLog(scenario) {
   const generators = {
@@ -280,7 +280,10 @@ export function generateImpossibleLog(scenario) {
   return generators[scenario]();
 }
 
-/** Helper: produce a deterministic ISO timestamp at offset T seconds */
+/**
+ * Helper: produce a deterministic ISO timestamp at offset T seconds
+ * @param offsetSeconds
+ */
 function iso(offsetSeconds) {
   return new Date(1_700_000_000_000 + offsetSeconds * 1000).toISOString();
 }

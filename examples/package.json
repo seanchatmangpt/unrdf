@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/examples",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "private": true,
   "type": "module",
   "description": "UNRDF usage examples",

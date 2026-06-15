@@ -29,7 +29,10 @@ spec:
             {{- toYaml (index .Values "grafana" "securityContext" | default .Values.security.containerSecurityContext) | nindent 12 }}
           env:
             - name: GF_SECURITY_ADMIN_PASSWORD
-              value: {{ .Values.grafana.adminPassword | default "admin" | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-grafana" (include "unrdf-observability.fullname" .) }}
+                  key: GF_SECURITY_ADMIN_PASSWORD
             - name: GF_USERS_ALLOW_SIGN_UP
               value: "false"
           ports:

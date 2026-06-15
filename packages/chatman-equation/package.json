@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/chatman-equation",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Chatman Equation documentation generation using Tera-compatible templates",
   "type": "module",
   "main": "src/index.mjs",
@@ -43,5 +43,8 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

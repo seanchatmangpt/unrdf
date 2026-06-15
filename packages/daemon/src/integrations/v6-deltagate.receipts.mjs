@@ -9,7 +9,7 @@ import { DeltaReceiptSchema } from './v6-deltagate.schema.mjs';
 
 /**
  * Generate receipt with proof chain
- * @param {Object} receiptData - Receipt data
+ * @param {object} receiptData - Receipt data
  * @param {string} receiptData.deltaId - Delta ID
  * @param {boolean} receiptData.applied - Whether delta was applied
  * @param {string} [receiptData.reason] - Rejection reason
@@ -17,7 +17,8 @@ import { DeltaReceiptSchema } from './v6-deltagate.schema.mjs';
  * @param {number} receiptData.operationsApplied - Number of operations applied
  * @param {number} [receiptData.operationsFailed] - Number of operations failed
  * @param {string|null} lastReceiptHash - Previous receipt hash for chain
- * @returns {Promise<Object>} Generated receipt
+ * @returns {Promise<object>} Generated receipt
+ * @example
  */
 export async function generateReceipt(receiptData, lastReceiptHash) {
   const receiptId = generateUUID();

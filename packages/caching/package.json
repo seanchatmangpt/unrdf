@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/caching",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Multi-layer caching system for RDF queries with Redis and LRU",
   "type": "module",
   "main": "src/index.mjs",
@@ -15,7 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "build": "unbuild",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "demo": "node examples/cache-demo.mjs",
     "benchmark": "node examples/cache-demo.mjs"
   },

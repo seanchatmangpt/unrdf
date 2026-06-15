@@ -29,20 +29,10 @@
   },
   "explanation": {
     "architecture": "- **`src/index.",
-    "concepts": [
-      "rdf",
-      "pictl",
-      "process-mining",
-      "federation",
-      "quorum"
-    ],
+    "concepts": ["rdf", "pictl", "process-mining", "federation", "quorum"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-pictl-semantics-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/pictl-semantics",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -56,14 +46,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/pictl-semantics",
       "title": "Handle Errors"
     },
@@ -71,15 +55,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/pictl-semantics with rdf",
       "title": "Integrate with rdf"
     }
@@ -114,9 +91,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/pictl-semantics Reference"
   },
   "tutorials": [
@@ -124,13 +99,8 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/pictl-semantics in your project",
       "id": "tutorial-getting-started-with-unrdf-pictl-semantics",
-      "prerequisites": [
-        "Basic RDF knowledge"
-      ],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge"],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -140,5 +110,5 @@
       "title": "Getting Started with @unrdf/pictl-semantics"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

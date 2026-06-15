@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/otel",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "OpenTelemetry integration for UNRDF using pm4py-rust telemetry infrastructure",
   "type": "module",
   "main": "./src/index.mjs",
@@ -43,12 +43,7 @@
     "@opentelemetry/semantic-conventions": "^1.28.0",
     "@unrdf/manufacturing": "workspace:*"
   },
-  "peerDependencies": {
-    "pm4py": ">=2.7.0"
-  },
-  "peerDependenciesMeta": {
-    "pm4py": {
-      "optional": true
-    }
+  "publishConfig": {
+    "access": "public"
   }
 }

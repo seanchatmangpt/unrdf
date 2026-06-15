@@ -6,6 +6,231 @@
 // Import these instead of using raw strings to catch typos at lint time.
 
 
+// ── Chatman Cross-System Communication Attributes ──
+
+/** True if communication bounded (WvdA compliance). */
+export const ATTR_CHATMAN_COMM_BOUNDED = 'chatman.comm.bounded';
+
+/** Type of communication act (sync, async, broadcast, multicast). */
+export const ATTR_CHATMAN_COMM_COMMUNICATION_TYPE = 'chatman.comm.communication_type';
+
+/** True if communication verified deadlock-free (WvdA compliance). */
+export const ATTR_CHATMAN_COMM_DEADLOCK_FREE = 'chatman.comm.deadlock_free';
+
+/** Communication direction (request or response). */
+export const ATTR_CHATMAN_COMM_DIRECTION = 'chatman.comm.direction';
+
+/** End-to-end latency in milliseconds. */
+export const ATTR_CHATMAN_COMM_LATENCY_MS = 'chatman.comm.latency_ms';
+
+/** True if communication guarantees liveness (WvdA compliance). */
+export const ATTR_CHATMAN_COMM_LIVE = 'chatman.comm.live';
+
+/** Maximum retry attempts allowed. */
+export const ATTR_CHATMAN_COMM_MAX_RETRIES = 'chatman.comm.max_retries';
+
+/** OCEL activity name for event log. */
+export const ATTR_CHATMAN_COMM_OCEL_ACTIVITY = 'chatman.comm.ocel_activity';
+
+/** OCEL lifecycle transition (create, assign, complete, terminate). */
+export const ATTR_CHATMAN_COMM_OCEL_LIFECYCLE_TRANSITION = 'chatman.comm.ocel_lifecycle_transition';
+
+/** OCEL object type being communicated. */
+export const ATTR_CHATMAN_COMM_OCEL_OBJECT_TYPE = 'chatman.comm.ocel_object_type';
+
+/** Operation being performed (e.g., create_deal, healing_diagnosis). */
+export const ATTR_CHATMAN_COMM_OPERATION_NAME = 'chatman.comm.operation_name';
+
+/** Parent span ID for distributed trace correlation. */
+export const ATTR_CHATMAN_COMM_PARENT_SPAN_ID = 'chatman.comm.parent_span_id';
+
+/** Size of payload in bytes. */
+export const ATTR_CHATMAN_COMM_PAYLOAD_SIZE_BYTES = 'chatman.comm.payload_size_bytes';
+
+/** Type of payload being communicated. */
+export const ATTR_CHATMAN_COMM_PAYLOAD_TYPE = 'chatman.comm.payload_type';
+
+/** BLAKE3 hash chain for provenance tracking (receipt chaining). */
+export const ATTR_CHATMAN_COMM_PROVENANCE_CHAIN = 'chatman.comm.provenance_chain';
+
+/** Unique request identifier for correlation. */
+export const ATTR_CHATMAN_COMM_REQUEST_ID = 'chatman.comm.request_id';
+
+/** Number of retry attempts. */
+export const ATTR_CHATMAN_COMM_RETRY_COUNT = 'chatman.comm.retry_count';
+
+/** Originating system identifier. */
+export const ATTR_CHATMAN_COMM_SOURCE_SYSTEM = 'chatman.comm.source_system';
+
+/** Communication status (ok, error, timeout, rejected). */
+export const ATTR_CHATMAN_COMM_STATUS = 'chatman.comm.status';
+
+/** HTTP-style status code (200, 400, 500, etc.). */
+export const ATTR_CHATMAN_COMM_STATUS_CODE = 'chatman.comm.status_code';
+
+/** Human-readable status message or error description. */
+export const ATTR_CHATMAN_COMM_STATUS_MESSAGE = 'chatman.comm.status_message';
+
+/** Destination system identifier. */
+export const ATTR_CHATMAN_COMM_TARGET_SYSTEM = 'chatman.comm.target_system';
+
+/** Timeout in milliseconds for this communication. */
+export const ATTR_CHATMAN_COMM_TIMEOUT_MS = 'chatman.comm.timeout_ms';
+
+/** Layer in 7-layer architecture (network, signal, composition, interface, data, feedback, governance). */
+export const ATTR_CHATMAN_COMM_TOPOLOGY_LAYER = 'chatman.comm.topology_layer';
+
+/** Role in communication topology (producer, consumer, proxy, aggregator). */
+export const ATTR_CHATMAN_COMM_TOPOLOGY_ROLE = 'chatman.comm.topology_role';
+
+/** Correlated trace ID across all systems (W3C Trace Context). */
+export const ATTR_CHATMAN_COMM_TRACE_ID = 'chatman.comm.trace_id';
+
+/** Trust/confidence score [0.0-1.0]. */
+export const ATTR_CHATMAN_COMM_TRUST_SCORE = 'chatman.comm.trust_score';
+
+/** Validation result (passed, failed, soft_failed). */
+export const ATTR_CHATMAN_COMM_VALIDATION_RESULT = 'chatman.comm.validation_result';
+
+
+
+// ── Chatman Semantic Invariants — Laws for Lawful Cross-System Communication ──
+
+/** Stable case identifier (OCEL object reference) preserved across trace. */
+export const ATTR_CHATMAN_INVARIANT_CASE_ID = 'chatman.invariant.case_id';
+
+/** Constraint identifier that was validated (SHACL shape, business rule). */
+export const ATTR_CHATMAN_INVARIANT_CONSTRAINT_ID = 'chatman.invariant.constraint_id';
+
+/** Original trace_id at loop start (for correlation check). */
+export const ATTR_CHATMAN_INVARIANT_INITIAL_TRACE_ID = 'chatman.invariant.initial_trace_id';
+
+/** BLAKE3 hash of (OTel_span_attributes + OCEL_event_attributes) proving 1:1 mapping. */
+export const ATTR_CHATMAN_INVARIANT_ISOMORPHISM_HASH = 'chatman.invariant.isomorphism_hash';
+
+/** Ordered list of systems in closed loop (e.g., businessos→canopy→osa→businessos). */
+export const ATTR_CHATMAN_INVARIANT_LOOP_CHAIN = 'chatman.invariant.loop_chain';
+
+/** Time window for temporal invariant validation (default: 300000ms = 5 minutes). */
+export const ATTR_CHATMAN_INVARIANT_OBSERVATION_WINDOW_MS = 'chatman.invariant.observation_window_ms';
+
+/** OCEL event ID corresponding to OTel span (bijection key). */
+export const ATTR_CHATMAN_INVARIANT_OCEL_MAPPING_ID = 'chatman.invariant.ocel_mapping_id';
+
+/** Hash of (operation + inputs) for redundant path detection. */
+export const ATTR_CHATMAN_INVARIANT_OPERATION_HASH = 'chatman.invariant.operation_hash';
+
+/** BLAKE3 hash of execution output (for determinism verification). */
+export const ATTR_CHATMAN_INVARIANT_OUTPUT_HASH = 'chatman.invariant.output_hash';
+
+/** Unique replay execution identifier (links original execution to replay). */
+export const ATTR_CHATMAN_INVARIANT_REPLAY_ID = 'chatman.invariant.replay_id';
+
+/** Schema/ontology identifier for validation. */
+export const ATTR_CHATMAN_INVARIANT_SCHEMA_ID = 'chatman.invariant.schema_id';
+
+/** Hash of semantic result (for duplicate detection). */
+export const ATTR_CHATMAN_INVARIANT_SEMANTIC_HASH = 'chatman.invariant.semantic_hash';
+
+/** Process state after transition (for state machine validation). */
+export const ATTR_CHATMAN_INVARIANT_STATE_AFTER = 'chatman.invariant.state_after';
+
+/** Process state before transition (for state machine validation). */
+export const ATTR_CHATMAN_INVARIANT_STATE_BEFORE = 'chatman.invariant.state_before';
+
+/** Stable task identifier preserved across all systems in trace. */
+export const ATTR_CHATMAN_INVARIANT_TASK_ID = 'chatman.invariant.task_id';
+
+/** Result of semantic validity check (valid, invalid, error). */
+export const ATTR_CHATMAN_INVARIANT_VALIDATION_STATUS = 'chatman.invariant.validation_status';
+
+/** Stable workflow identifier preserved across all systems in trace. */
+export const ATTR_CHATMAN_INVARIANT_WORKFLOW_ID = 'chatman.invariant.workflow_id';
+
+
+
+// ── Chatman Cross-System Validation Attributes ──
+
+/** Action taken on validation failure (escalate, create_gap, notify, audit). */
+export const ATTR_CHATMAN_VALIDATION_ACTION = 'chatman.validation.action';
+
+/** Business rule condition expression. */
+export const ATTR_CHATMAN_VALIDATION_BUSINESS_RULE_CONDITION = 'chatman.validation.business_rule_condition';
+
+/** Rule evaluation result (true, false, error). */
+export const ATTR_CHATMAN_VALIDATION_BUSINESS_RULE_EVALUATION = 'chatman.validation.business_rule_evaluation';
+
+/** Compliance check name. */
+export const ATTR_CHATMAN_VALIDATION_COMPLIANCE_CHECK = 'chatman.validation.compliance_check';
+
+/** Compliance status (compliant, non_compliant, partial). */
+export const ATTR_CHATMAN_VALIDATION_COMPLIANCE_STATUS = 'chatman.validation.compliance_status';
+
+/** URL to evidence (audit log, screenshot, report). */
+export const ATTR_CHATMAN_VALIDATION_EVIDENCE_URL = 'chatman.validation.evidence_url';
+
+/** Compliance framework (SOC2, HIPAA, GDPR, SOX, CUSTOM). */
+export const ATTR_CHATMAN_VALIDATION_FRAMEWORK = 'chatman.validation.framework';
+
+/** Validation latency in milliseconds. */
+export const ATTR_CHATMAN_VALIDATION_LATENCY_MS = 'chatman.validation.latency_ms';
+
+/** OCEL activity name for validation event log. */
+export const ATTR_CHATMAN_VALIDATION_OCEL_ACTIVITY = 'chatman.validation.ocel_activity';
+
+/** OCEL object type being validated. */
+export const ATTR_CHATMAN_VALIDATION_OCEL_OBJECT_TYPE = 'chatman.validation.ocel_object_type';
+
+/** Compliance rule identifier (e.g., soc2.cc6.1). */
+export const ATTR_CHATMAN_VALIDATION_RULE_ID = 'chatman.validation.rule_id';
+
+/** Violation severity (critical, high, medium, low, info). */
+export const ATTR_CHATMAN_VALIDATION_SEVERITY = 'chatman.validation.severity';
+
+/** SHACL focus node (subject being validated). */
+export const ATTR_CHATMAN_VALIDATION_SHACL_FOCUS_NODE = 'chatman.validation.shacl_focus_node';
+
+/** SHACL validation result message. */
+export const ATTR_CHATMAN_VALIDATION_SHACL_RESULT_MESSAGE = 'chatman.validation.shacl_result_message';
+
+/** SHACL shape IRI being validated. */
+export const ATTR_CHATMAN_VALIDATION_SHACL_SHAPE = 'chatman.validation.shacl_shape';
+
+/** True if validation soft-fails (logs but does not block). */
+export const ATTR_CHATMAN_VALIDATION_SOFT_FAIL = 'chatman.validation.soft_fail';
+
+/** System performing validation. */
+export const ATTR_CHATMAN_VALIDATION_SOURCE_SYSTEM = 'chatman.validation.source_system';
+
+/** Resource being validated (RDF subject IRI, entity ID). */
+export const ATTR_CHATMAN_VALIDATION_TARGET_RESOURCE = 'chatman.validation.target_resource';
+
+/** Correlated trace ID across validation systems. */
+export const ATTR_CHATMAN_VALIDATION_TRACE_ID = 'chatman.validation.trace_id';
+
+/** Unique validation identifier (e.g., SHACL shape URI, rule ID). */
+export const ATTR_CHATMAN_VALIDATION_VALIDATION_ID = 'chatman.validation.validation_id';
+
+/** Validation result (conforms, violates, error). */
+export const ATTR_CHATMAN_VALIDATION_VALIDATION_RESULT = 'chatman.validation.validation_result';
+
+/** Type of validation (shacl, business_rule, compliance, schema). */
+export const ATTR_CHATMAN_VALIDATION_VALIDATION_TYPE = 'chatman.validation.validation_type';
+
+/** Validator component identifier. */
+export const ATTR_CHATMAN_VALIDATION_VALIDATOR_ID = 'chatman.validation.validator_id';
+
+/** Number of constraint violations found. */
+export const ATTR_CHATMAN_VALIDATION_VIOLATION_COUNT = 'chatman.validation.violation_count';
+
+/** JSON-encoded violation details (path, constraint, message). */
+export const ATTR_CHATMAN_VALIDATION_VIOLATION_DETAILS = 'chatman.validation.violation_details';
+
+/** True if validation is WvdA-compliant (deadlock-free, bounded, live). */
+export const ATTR_CHATMAN_VALIDATION_WVDA_COMPLIANT = 'chatman.validation.wvda_compliant';
+
+
+
 // ── Groq LLM Attributes ──
 
 /** The API endpoint URL being called. */
@@ -271,175 +496,5 @@ export const ATTR_UNRDF_TRANSACTION_OPERATION_COUNT = 'unrdf.transaction.operati
 
 /** The outcome of the transaction. */
 export const ATTR_UNRDF_TRANSACTION_RESULT = 'unrdf.transaction.result';
-
-
-
-// ── Chatman Cross-System Communication Attributes ──
-
-/** Correlated trace ID across all systems (W3C Trace Context). */
-export const ATTR_CHATMAN_COMM_TRACE_ID = 'chatman.comm.trace_id';
-
-/** Originating system identifier. */
-export const ATTR_CHATMAN_COMM_SOURCE_SYSTEM = 'chatman.comm.source_system';
-
-/** Destination system identifier. */
-export const ATTR_CHATMAN_COMM_TARGET_SYSTEM = 'chatman.comm.target_system';
-
-/** Communication direction (request or response). */
-export const ATTR_CHATMAN_COMM_DIRECTION = 'chatman.comm.direction';
-
-/** Type of communication act (sync, async, broadcast, multicast). */
-export const ATTR_CHATMAN_COMM_COMMUNICATION_TYPE = 'chatman.comm.communication_type';
-
-/** Operation being performed (e.g., create_deal, healing_diagnosis). */
-export const ATTR_CHATMAN_COMM_OPERATION_NAME = 'chatman.comm.operation_name';
-
-/** Unique request identifier for correlation. */
-export const ATTR_CHATMAN_COMM_REQUEST_ID = 'chatman.comm.request_id';
-
-/** Parent span ID for distributed trace correlation. */
-export const ATTR_CHATMAN_COMM_PARENT_SPAN_ID = 'chatman.comm.parent_span_id';
-
-/** Type of payload being communicated. */
-export const ATTR_CHATMAN_COMM_PAYLOAD_TYPE = 'chatman.comm.payload_type';
-
-/** Size of payload in bytes. */
-export const ATTR_CHATMAN_COMM_PAYLOAD_SIZE_BYTES = 'chatman.comm.payload_size_bytes';
-
-/** End-to-end latency in milliseconds. */
-export const ATTR_CHATMAN_COMM_LATENCY_MS = 'chatman.comm.latency_ms';
-
-/** Communication status (ok, error, timeout, rejected). */
-export const ATTR_CHATMAN_COMM_STATUS = 'chatman.comm.status';
-
-/** HTTP-style status code (200, 400, 500, etc.). */
-export const ATTR_CHATMAN_COMM_STATUS_CODE = 'chatman.comm.status_code';
-
-/** Human-readable status message or error description. */
-export const ATTR_CHATMAN_COMM_STATUS_MESSAGE = 'chatman.comm.status_message';
-
-/** Role in communication topology (producer, consumer, proxy, aggregator). */
-export const ATTR_CHATMAN_COMM_TOPOLOGY_ROLE = 'chatman.comm.topology_role';
-
-/** Layer in 7-layer architecture (network, signal, composition, interface, data, feedback, governance). */
-export const ATTR_CHATMAN_COMM_TOPOLOGY_LAYER = 'chatman.comm.topology_layer';
-
-/** BLAKE3 hash chain for provenance tracking (receipt chaining). */
-export const ATTR_CHATMAN_COMM_PROVENANCE_CHAIN = 'chatman.comm.provenance_chain';
-
-/** Trust/confidence score [0.0-1.0]. */
-export const ATTR_CHATMAN_COMM_TRUST_SCORE = 'chatman.comm.trust_score';
-
-/** Validation result (passed, failed, soft_failed). */
-export const ATTR_CHATMAN_COMM_VALIDATION_RESULT = 'chatman.comm.validation_result';
-
-/** Number of retry attempts. */
-export const ATTR_CHATMAN_COMM_RETRY_COUNT = 'chatman.comm.retry_count';
-
-/** Maximum retry attempts allowed. */
-export const ATTR_CHATMAN_COMM_MAX_RETRIES = 'chatman.comm.max_retries';
-
-/** Timeout in milliseconds for this communication. */
-export const ATTR_CHATMAN_COMM_TIMEOUT_MS = 'chatman.comm.timeout_ms';
-
-/** True if communication verified deadlock-free (WvdA compliance). */
-export const ATTR_CHATMAN_COMM_DEADLOCK_FREE = 'chatman.comm.deadlock_free';
-
-/** True if communication bounded (WvdA compliance). */
-export const ATTR_CHATMAN_COMM_BOUNDED = 'chatman.comm.bounded';
-
-/** True if communication guarantees liveness (WvdA compliance). */
-export const ATTR_CHATMAN_COMM_LIVE = 'chatman.comm.live';
-
-/** OCEL activity name for event log. */
-export const ATTR_CHATMAN_COMM_OCEL_ACTIVITY = 'chatman.comm.ocel_activity';
-
-/** OCEL object type being communicated. */
-export const ATTR_CHATMAN_COMM_OCEL_OBJECT_TYPE = 'chatman.comm.ocel_object_type';
-
-/** OCEL lifecycle transition (create, assign, complete, terminate). */
-export const ATTR_CHATMAN_COMM_OCEL_LIFECYCLE_TRANSITION = 'chatman.comm.ocel_lifecycle_transition';
-
-
-
-// ── Chatman Cross-System Validation Attributes ──
-
-/** Correlated trace ID across validation systems. */
-export const ATTR_CHATMAN_VALIDATION_TRACE_ID = 'chatman.validation.trace_id';
-
-/** System performing validation. */
-export const ATTR_CHATMAN_VALIDATION_SOURCE_SYSTEM = 'chatman.validation.source_system';
-
-/** Type of validation (shacl, business_rule, compliance, schema). */
-export const ATTR_CHATMAN_VALIDATION_VALIDATION_TYPE = 'chatman.validation.validation_type';
-
-/** Unique validation identifier (e.g., SHACL shape URI, rule ID). */
-export const ATTR_CHATMAN_VALIDATION_VALIDATION_ID = 'chatman.validation.validation_id';
-
-/** Resource being validated (RDF subject IRI, entity ID). */
-export const ATTR_CHATMAN_VALIDATION_TARGET_RESOURCE = 'chatman.validation.target_resource';
-
-/** Validation result (conforms, violates, error). */
-export const ATTR_CHATMAN_VALIDATION_VALIDATION_RESULT = 'chatman.validation.validation_result';
-
-/** Number of constraint violations found. */
-export const ATTR_CHATMAN_VALIDATION_VIOLATION_COUNT = 'chatman.validation.violation_count';
-
-/** JSON-encoded violation details (path, constraint, message). */
-export const ATTR_CHATMAN_VALIDATION_VIOLATION_DETAILS = 'chatman.validation.violation_details';
-
-/** Violation severity (critical, high, medium, low, info). */
-export const ATTR_CHATMAN_VALIDATION_SEVERITY = 'chatman.validation.severity';
-
-/** Compliance framework (SOC2, HIPAA, GDPR, SOX, CUSTOM). */
-export const ATTR_CHATMAN_VALIDATION_FRAMEWORK = 'chatman.validation.framework';
-
-/** Compliance rule identifier (e.g., soc2.cc6.1). */
-export const ATTR_CHATMAN_VALIDATION_RULE_ID = 'chatman.validation.rule_id';
-
-/** Action taken on validation failure (escalate, create_gap, notify, audit). */
-export const ATTR_CHATMAN_VALIDATION_ACTION = 'chatman.validation.action';
-
-/** True if validation soft-fails (logs but does not block). */
-export const ATTR_CHATMAN_VALIDATION_SOFT_FAIL = 'chatman.validation.soft_fail';
-
-/** Validation latency in milliseconds. */
-export const ATTR_CHATMAN_VALIDATION_LATENCY_MS = 'chatman.validation.latency_ms';
-
-/** SHACL shape IRI being validated. */
-export const ATTR_CHATMAN_VALIDATION_SHACL_SHAPE = 'chatman.validation.shacl_shape';
-
-/** SHACL focus node (subject being validated). */
-export const ATTR_CHATMAN_VALIDATION_SHACL_FOCUS_NODE = 'chatman.validation.shacl_focus_node';
-
-/** SHACL validation result message. */
-export const ATTR_CHATMAN_VALIDATION_SHACL_RESULT_MESSAGE = 'chatman.validation.shacl_result_message';
-
-/** Business rule condition expression. */
-export const ATTR_CHATMAN_VALIDATION_BUSINESS_RULE_CONDITION = 'chatman.validation.business_rule_condition';
-
-/** Rule evaluation result (true, false, error). */
-export const ATTR_CHATMAN_VALIDATION_BUSINESS_RULE_EVALUATION = 'chatman.validation.business_rule_evaluation';
-
-/** Compliance check name. */
-export const ATTR_CHATMAN_VALIDATION_COMPLIANCE_CHECK = 'chatman.validation.compliance_check';
-
-/** Compliance status (compliant, non_compliant, partial). */
-export const ATTR_CHATMAN_VALIDATION_COMPLIANCE_STATUS = 'chatman.validation.compliance_status';
-
-/** URL to evidence (audit log, screenshot, report). */
-export const ATTR_CHATMAN_VALIDATION_EVIDENCE_URL = 'chatman.validation.evidence_url';
-
-/** Validator component identifier. */
-export const ATTR_CHATMAN_VALIDATION_VALIDATOR_ID = 'chatman.validation.validator_id';
-
-/** True if validation is WvdA-compliant (deadlock-free, bounded, live). */
-export const ATTR_CHATMAN_VALIDATION_WVDA_COMPLIANT = 'chatman.validation.wvda_compliant';
-
-/** OCEL activity name for validation event log. */
-export const ATTR_CHATMAN_VALIDATION_OCEL_ACTIVITY = 'chatman.validation.ocel_activity';
-
-/** OCEL object type being validated. */
-export const ATTR_CHATMAN_VALIDATION_OCEL_OBJECT_TYPE = 'chatman.validation.ocel_object_type';
 
 

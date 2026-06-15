@@ -1,7 +1,0 @@
-mcp[cli]>=latest
-pm4py>=latest
-tpot2
-requests
-pandas
-numpy
-scikit-learn

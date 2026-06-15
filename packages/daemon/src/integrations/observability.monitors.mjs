@@ -14,7 +14,7 @@ import { ConfigSchema } from './observability.schema.mjs';
 export class Wasm4pmMetricsCollector {
   /**
    * Create WASM4PM metrics collector
-   * @param {Object} config - Collector configuration
+   * @param {object} config - Collector configuration
    */
   constructor(config = {}) {
     this.config = ConfigSchema.parse(config);
@@ -28,7 +28,7 @@ export class Wasm4pmMetricsCollector {
    * Record case creation
    * @param {string} caseId - Case ID
    * @param {string} specId - Specification ID
-   * @param {Object} metadata - Case metadata
+   * @param {object} metadata - Case metadata
    */
   recordCaseCreation(caseId, specId, metadata = {}) {
     const caseMetric = {
@@ -49,7 +49,7 @@ export class Wasm4pmMetricsCollector {
    * Record task execution
    * @param {string} caseId - Case ID
    * @param {string} taskId - Task ID
-   * @param {Object} metadata - Task metadata
+   * @param {object} metadata - Task metadata
    */
   recordTaskExecution(caseId, taskId, metadata = {}) {
     const caseMetric = this.caseMetrics.get(caseId);
@@ -73,7 +73,7 @@ export class Wasm4pmMetricsCollector {
    * Record task completion
    * @param {string} taskId - Task ID
    * @param {string} result - Task result (success, failure, timeout)
-   * @param {Object} metadata - Completion metadata
+   * @param {object} metadata - Completion metadata
    */
   recordTaskCompletion(taskId, result, metadata = {}) {
     const taskMetric = this.taskMetrics.get(taskId);
@@ -90,7 +90,7 @@ export class Wasm4pmMetricsCollector {
   /**
    * Record task retry
    * @param {string} taskId - Task ID
-   * @param {Object} _metadata - Retry metadata (reserved for future use)
+   * @param {object} _metadata - Retry metadata (reserved for future use)
    */
   recordTaskRetry(taskId, _metadata = {}) {
     const taskMetric = this.taskMetrics.get(taskId);
@@ -104,7 +104,7 @@ export class Wasm4pmMetricsCollector {
    * Record case completion
    * @param {string} caseId - Case ID
    * @param {string} result - Case result (success, failure)
-   * @param {Object} metadata - Completion metadata
+   * @param {object} metadata - Completion metadata
    */
   recordCaseCompletion(caseId, result, metadata = {}) {
     const caseMetric = this.caseMetrics.get(caseId);
@@ -121,7 +121,7 @@ export class Wasm4pmMetricsCollector {
   /**
    * Get workflow metrics
    * @param {string} specId - Specification ID
-   * @returns {Object} Workflow metrics
+   * @returns {object} Workflow metrics
    */
   getWorkflowMetrics(specId) {
     const casesForSpec = Array.from(this.caseMetrics.values()).filter((c) => c.specId === specId);
@@ -148,7 +148,10 @@ export class Wasm4pmMetricsCollector {
     };
   }
 
-  /** Get case metrics */
+  /**
+   * Get case metrics
+   * @param caseId
+   */
   getCaseMetrics(caseId) {
     return this.caseMetrics.get(caseId);
   }
@@ -171,7 +174,7 @@ export class Wasm4pmMetricsCollector {
 export class AlertManager {
   /**
    * Create alert manager
-   * @param {Object} config - Alert configuration
+   * @param {object} config - Alert configuration
    * @param {number} [config.queueBacklogThreshold=100] - Queue backlog alert threshold
    * @param {number} [config.errorRateThreshold=0.1] - Error rate alert threshold (0-1)
    * @param {number} [config.responseTimeThreshold=5000] - Response time threshold (ms)
@@ -190,7 +193,7 @@ export class AlertManager {
 
   /**
    * Add alert rule
-   * @param {Object} rule - Alert rule
+   * @param {object} rule - Alert rule
    * @param {string} rule.name - Rule name
    * @param {string} rule.condition - Condition to evaluate
    * @param {string} rule.severity - Alert severity (info, warning, error, critical)
@@ -213,7 +216,7 @@ export class AlertManager {
    * Evaluate metric against rules
    * @param {string} metric - Metric name
    * @param {number} value - Metric value
-   * @param {Object} context - Evaluation context
+   * @param {object} context - Evaluation context
    * @returns {Array} Triggered alerts
    */
   evaluateMetric(metric, value, context = {}) {
@@ -253,7 +256,10 @@ export class AlertManager {
     return this.alerts.filter((a) => a.timestamp > oneMinuteAgo);
   }
 
-  /** Clear resolved alerts */
+  /**
+   * Clear resolved alerts
+   * @param resolvedAlertIds
+   */
   clearAlerts(resolvedAlertIds = []) {
     this.alerts = this.alerts.filter((a) => !resolvedAlertIds.includes(a.ruleId));
   }
@@ -264,6 +270,7 @@ export class AlertManager {
  * @param {Object} daemon - Daemon instance
  * @param {Object} alertManager - Alert manager instance
  * @returns {Object} Alert handler
+ * @example
  */
 export function integrateAlertManager(daemon, alertManager) {
   const noop = { evaluate: () => {}, onOperationFailure: () => {}, onQueueBacklogHigh: () => {}, onHealthDegraded: () => {} };
@@ -294,7 +301,7 @@ export function integrateAlertManager(daemon, alertManager) {
 export class DaemonHealthMonitor {
   /**
    * Create health monitor
-   * @param {Object} config - Health monitor configuration
+   * @param {object} config - Health monitor configuration
    * @param {string} [config.serviceName='unrdf-daemon'] - Service name
    * @param {number} [config.queueBacklogThreshold=100] - Queue backlog threshold
    * @param {number} [config.healthCheckInterval=10000] - Health check interval (ms)
@@ -314,7 +321,10 @@ export class DaemonHealthMonitor {
     this.timer = setInterval(() => this._check(), this.config.healthCheckInterval);
   }
 
-  /** Record successful operation */
+  /**
+   * Record successful operation
+   * @param duration
+   */
   recordSuccess(duration) {
     this.successCount++;
     this.durations.push(duration);
@@ -326,7 +336,10 @@ export class DaemonHealthMonitor {
     this.failureCount++;
   }
 
-  /** Update queue backlog size */
+  /**
+   * Update queue backlog size
+   * @param backlog
+   */
   updateQueueBacklog(backlog) {
     this.queueBacklog = backlog;
   }
@@ -363,7 +376,7 @@ export class DaemonHealthMonitor {
     };
   }
 
-  /** @private Perform health check and update status */
+  /** @private */
   _check() {
     const newStatus = this.getHealthStatus();
     if (newStatus !== this.status) {

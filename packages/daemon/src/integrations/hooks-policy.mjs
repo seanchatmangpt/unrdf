@@ -25,7 +25,7 @@ import {
 
 /**
  * Policy history entry
- * @typedef {Object} PolicyHistoryEntry
+ * @typedef {object} PolicyHistoryEntry
  * @property {string} id - Policy ID
  * @property {number} version - Policy version
  * @property {Object} policy - Policy definition
@@ -34,7 +34,7 @@ import {
 
 /**
  * Policy evaluation context
- * @typedef {Object} PolicyEvaluationContext
+ * @typedef {object} PolicyEvaluationContext
  * @property {string} operationId - Operation being evaluated
  * @property {string} operationType - Type of operation
  * @property {Object} payload - Operation payload
@@ -54,7 +54,6 @@ import {
 export class DaemonHookPolicyAdapter extends EventEmitter {
   /**
    * Create daemon hook policy adapter
-   *
    * @param {import('../daemon.mjs').UnrdfDaemon} daemon - Daemon instance
    * @param {import('@unrdf/hooks').HookScheduler} hookScheduler - Hook scheduler instance
    * @param {object} options - Configuration options
@@ -71,16 +70,16 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     this.daemon = daemon;
     this.hookScheduler = hookScheduler;
 
-    /** @type {Map<string, Object>} */
+    /** @type {Map<string, object>} */
     this.policies = new Map();
 
     /** @type {Map<string, Array<PolicyHistoryEntry>>} */
     this.policyHistory = new Map();
 
-    /** @type {Array<Object>} */
+    /** @type {Array<object>} */
     this.auditLog = [];
 
-    /** @type {Array<Object>} */
+    /** @type {Array<object>} */
     this.decisionLog = [];
 
     /** @type {string} */
@@ -103,7 +102,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Register a policy for operation control
-   *
    * @param {Object} policyConfig - Policy configuration
    * @returns {Object} Registered policy
    * @throws {Error} If policy configuration is invalid
@@ -164,7 +162,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Unregister a policy
-   *
    * @param {string} policyId - Policy ID to remove
    * @returns {boolean} Whether policy was found and removed
    */
@@ -208,6 +205,8 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Toggle policy enabled state
+   * @param policyId
+   * @param enabled
    * @private
    */
   _togglePolicy(policyId, enabled) {
@@ -231,7 +230,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Rollback a policy to a previous version
-   *
    * @param {string} policyId - Policy ID to rollback
    * @param {number} version - Version to rollback to
    * @returns {Object|null} Rolled-back policy or null if not found
@@ -269,7 +267,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Evaluate policies for an operation
-   *
    * @param {string} operationId - Operation ID
    * @param {PolicyEvaluationContext} context - Evaluation context
    * @returns {Promise<Object>} Decision object with allow/deny/defer
@@ -312,7 +309,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Execute operation with policy validation
-   *
    * @param {string} operationId - Operation ID
    * @param {PolicyEvaluationContext} context - Evaluation context
    * @returns {Promise<Object>} Operation result
@@ -355,7 +351,10 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     }
   }
 
-  /** Get policy by ID */
+  /**
+   * Get policy by ID
+   * @param policyId
+   */
   getPolicy(policyId) {
     return this.policies.get(policyId);
   }
@@ -365,24 +364,32 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     return Array.from(this.policies.values());
   }
 
-  /** Get policy history */
+  /**
+   * Get policy history
+   * @param policyId
+   */
   getPolicyHistory(policyId) {
     return this.policyHistory.get(policyId) || [];
   }
 
-  /** Get audit trail for a policy (filtered by policyId if provided) */
+  /**
+   * Get audit trail for a policy (filtered by policyId if provided)
+   * @param policyId
+   */
   getAuditTrail(policyId) {
     return policyId ? this.auditLog.filter(e => e.policyId === policyId) : this.auditLog;
   }
 
-  /** Get decision log for an operation (filtered by operationId if provided) */
+  /**
+   * Get decision log for an operation (filtered by operationId if provided)
+   * @param operationId
+   */
   getDecisionLog(operationId) {
     return operationId ? this.decisionLog.filter(e => e.operationId === operationId) : this.decisionLog;
   }
 
   /**
    * Get adapter statistics
-   *
    * @returns {Object} Statistics
    */
   getStats() {
@@ -400,7 +407,9 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     };
   }
 
-  /** @private Evaluate a single policy */
+  /**
+   * @private
+   */
   async _evaluatePolicy(policy, context) {
     switch (policy.type) {
       case 'approval':
@@ -418,7 +427,7 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     }
   }
 
-  /** @private Record policy decision in log */
+  /** @private */
   _recordDecision(operationId, decision, reason, policiesEvaluated, conflictResolved = false) {
     const shouldIncludeStrategy = policiesEvaluated.length > 1 || conflictResolved;
 
@@ -442,7 +451,7 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     return decisionEntry;
   }
 
-  /** @private Record audit entry */
+  /** @private */
   _recordAudit(entry) {
     const auditEntry = PolicyAuditSchema.parse({
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -458,7 +467,7 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     this.emit('policy:audit', { adapterId: this.id, audit: auditEntry });
   }
 
-  /** @private Setup hook interception for policy enforcement */
+  /** @private */
   _setupHookInterception() {
     const originalExecuteHook = this.hookScheduler.executeHook;
 
@@ -492,6 +501,7 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
  * @param {import('@unrdf/hooks').HookScheduler} hookScheduler - Hook scheduler instance
  * @param {object} options - Configuration options
  * @returns {DaemonHookPolicyAdapter} Configured adapter
+ * @example
  */
 export function integrateHooksPolicy(daemon, hookScheduler, options = {}) {
   return new DaemonHookPolicyAdapter(daemon, hookScheduler, options);

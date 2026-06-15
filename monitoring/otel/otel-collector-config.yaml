@@ -50,24 +50,21 @@ processors:
     sampling_percentage: 10
 
 exporters:
-  # Prometheus exporter
-  prometheus:
-    endpoint: "0.0.0.0:8888"
-    namespace: unrdf
-    const_labels:
-      environment: production
+  # Prometheus Remote Write exporter
+  prometheusremotewrite:
+    endpoint: 'http://prometheus:9090/api/v1/write'
+    resource_to_telemetry_conversion:
+      enabled: true
 
-  # OTLP exporter (for external observability platforms)
-  otlp:
-    endpoint: "otel-backend:4317"
+  # OTLP exporter for Tempo
+  otlp/tempo:
+    endpoint: 'tempo:4317'
     tls:
       insecure: true
 
   # Logging exporter for debugging
   logging:
-    loglevel: info
-    sampling_initial: 5
-    sampling_thereafter: 200
+    verbosity: normal
 
   # File exporter for local storage
   file:
@@ -87,12 +84,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resourcedetection, attributes, probabilistic_sampler, batch]
-      exporters: [logging, otlp, file]
+      exporters: [logging, otlp/tempo, file]
 
     metrics:
       receivers: [otlp, prometheus]
       processors: [memory_limiter, resourcedetection, attributes, batch]
-      exporters: [prometheus, logging]
+      exporters: [prometheusremotewrite, logging]
 
     logs:
       receivers: [otlp]

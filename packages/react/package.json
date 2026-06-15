@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/react",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -72,5 +72,8 @@
     "url": "https://github.com/unrdf/unrdf/issues"
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

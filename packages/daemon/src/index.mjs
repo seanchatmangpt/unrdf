@@ -5,26 +5,32 @@
  */
 
 export { Daemon, Daemon as UnrdfDaemon } from './daemon.mjs';
-export { TriggerEvaluator } from './trigger-evaluator.mjs';
+export { evaluateTrigger } from './trigger-evaluator.mjs';
+export * as TriggerEvaluator from './trigger-evaluator.mjs';
+
+// Configuration exports
+export { loadConfig, loadConfigFromEnv, loadConfigFromToml } from './config.mjs';
+
+// Provider exports
+export { getGroqProvider } from './providers/groq.mjs';
 
 // MCP exports
 export { createMCPServer, startMCPServer } from './mcp/index.mjs';
 
 export {
-  TaskConfigSchema,
-  ScheduleConfigSchema,
-  TriggerEventSchema,
+  ApiKeySchema,
+  ApiKeyHashSchema,
+  AuthConfigSchema,
+  RetryPolicySchema,
+  TriggerSchema,
+  ScheduledOperationSchema,
   DaemonConfigSchema,
-  TaskResultSchema,
-  DaemonStateSchema,
-  DaemonEventSchema,
-  HookExecutionSchema,
-  RateLimitSchema,
-  TaskPrioritySchema,
-  validateDaemonConfig,
-  validateTaskConfigSafe,
-  validateTaskResult,
+  OperationReceiptSchema,
+  DaemonHealthSchema,
+  DaemonMetricsSchema,
 } from './schemas.mjs';
+
+export { SemanticSidecarManager } from './mcp/semantic-sidecar.mjs';
 
 export {
   integrateRaftNode,

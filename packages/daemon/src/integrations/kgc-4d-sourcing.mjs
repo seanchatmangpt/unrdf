@@ -20,6 +20,10 @@ import { buildMerkleTree, getMerkleProofPath } from './kgc-4d-merkle.mjs';
  * @class
  */
 export class DaemonEventStore {
+  /**
+   *
+   * @param options
+   */
   constructor(options = {}) {
     if (options && typeof options !== 'object') {
       throw new TypeError('options must be object or undefined');
@@ -40,10 +44,17 @@ export class DaemonEventStore {
     }
   }
 
+  /**
+   *
+   */
   _getNs() {
     return now();
   }
 
+  /**
+   *
+   * @param data
+   */
   async _hash(data) {
     const serialized = JSON.stringify(data, (k, v) => {
       if (typeof v === 'bigint') return v.toString();
@@ -52,6 +63,12 @@ export class DaemonEventStore {
     return blake3(serialized);
   }
 
+  /**
+   *
+   * @param operationType
+   * @param payload
+   * @param metadata
+   */
   async appendEvent(operationType, payload = {}, metadata = {}) {
     if (typeof operationType !== 'string' || !operationType.trim()) {
       throw new TypeError('operationType must be non-empty string');
@@ -97,6 +114,12 @@ export class DaemonEventStore {
     return entry;
   }
 
+  /**
+   *
+   * @param operationId
+   * @param status
+   * @param result
+   */
   async updateEventStatus(operationId, status, result = null) {
     if (typeof operationId !== 'string' || !operationId.trim()) {
       throw new TypeError('operationId must be non-empty string');
@@ -134,6 +157,9 @@ export class DaemonEventStore {
     return entry;
   }
 
+  /**
+   *
+   */
   async freezeUniverse() {
     const freezeId = generateUUID();
     const timestamp = this._getNs();
@@ -175,6 +201,10 @@ export class DaemonEventStore {
     return snapshot;
   }
 
+  /**
+   *
+   * @param targetTimestamp
+   */
   async reconstructState(targetTimestamp) {
     if (typeof targetTimestamp !== 'bigint') {
       throw new TypeError('targetTimestamp must be BigInt');
@@ -198,6 +228,10 @@ export class DaemonEventStore {
     };
   }
 
+  /**
+   *
+   * @param query
+   */
   async queryEvents(query = {}) {
     validateTemporalQuery(query);
 
@@ -225,6 +259,10 @@ export class DaemonEventStore {
     });
   }
 
+  /**
+   *
+   * @param eventIndex
+   */
   async generateMerkleProof(eventIndex) {
     if (typeof eventIndex !== 'number' || eventIndex < 0 || !Number.isInteger(eventIndex)) {
       throw new TypeError('eventIndex must be non-negative integer');
@@ -249,6 +287,10 @@ export class DaemonEventStore {
     return proof;
   }
 
+  /**
+   *
+   * @param proof
+   */
   async verifyProof(proof) {
     validateMerkleProof(proof);
 
@@ -263,6 +305,9 @@ export class DaemonEventStore {
     return currentHash === proof.merkleRoot;
   }
 
+  /**
+   *
+   */
   getStats() {
     return {
       eventCount: this.eventLog.length,
@@ -273,6 +318,9 @@ export class DaemonEventStore {
     };
   }
 
+  /**
+   *
+   */
   getFreezeHistory() {
     return [...this.freezeHistory];
   }

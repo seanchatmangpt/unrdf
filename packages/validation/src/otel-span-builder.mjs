@@ -52,14 +52,12 @@ export async function executeKnowledgeEngine(validator, parentSpan, validationId
 
   spans.push(
     createSpanData('parse.turtle', 'ok', parseDuration, {
-      'parse.format': 'turtle',
-      'parse.base_iri': 'http://example.org/',
-      'parse.input_length': testTurtle.length,
-      'parse.quads_count': store.size,
+      'unrdf.rdf.format': 'text/turtle',
+      'unrdf.rdf.operation': 'load',
+      'unrdf.rdf.quad_count': store.size,
+      'unrdf.rdf.store_backend': 'oxigraph',
       'service.name': 'unrdf',
-      'operation.type': 'parse',
       'input.size': testTurtle.length,
-      'output.size': store.size,
     })
   );
 
@@ -71,14 +69,11 @@ export async function executeKnowledgeEngine(validator, parentSpan, validationId
 
   spans.push(
     createSpanData('query.sparql', 'ok', queryDuration, {
-      'query.type': 'SELECT',
-      'query.length': sparqlQuery.length,
-      'query.store_size': store.size,
-      'query.result_count': results.length,
+      'unrdf.rdf.operation': 'query-select',
+      'unrdf.rdf.sparql_query_length': sparqlQuery.length,
+      'unrdf.rdf.quad_count': results.length,
+      'unrdf.rdf.store_backend': 'oxigraph',
       'service.name': 'unrdf',
-      'operation.type': 'query',
-      'input.size': sparqlQuery.length,
-      'output.size': results.length,
     })
   );
 
@@ -96,26 +91,21 @@ export async function executeKnowledgeEngine(validator, parentSpan, validationId
 
   spans.push(
     createSpanData('validate.shacl', 'ok', validateDuration, {
-      'validate.shapes_type': 'store',
-      'validate.data_size': store.size,
-      'validate.include_details': false,
-      'validate.shapes_size': shapesStore.size,
-      'validate.conforms': validationResult.conforms,
-      'validate.total_results': validationResult.results?.length || 0,
+      'unrdf.rdf.operation': 'validate',
+      'unrdf.rdf.quad_count': store.size,
+      'chatman.validation.validation_type': 'shacl',
+      'chatman.validation.validation_result': validationResult.conforms ? 'conforms' : 'violates',
+      'chatman.validation.violation_count': validationResult.results?.length || 0,
       'service.name': 'unrdf',
-      'operation.type': 'validate',
-      'input.size': store.size,
-      'output.size': validationResult.results?.length || 0,
     })
   );
 
   // Canonicalize span
   spans.push(
     createSpanData('canonicalize', 'ok', 5, {
+      'unrdf.rdf.operation': 'canonicalize',
+      'unrdf.rdf.quad_count': store.size,
       'service.name': 'unrdf',
-      'operation.type': 'canonicalize',
-      'input.size': store.size,
-      'output.size': store.size,
       algorithm: 'RDFC-1.0',
     })
   );
@@ -123,10 +113,9 @@ export async function executeKnowledgeEngine(validator, parentSpan, validationId
   // Reason span
   spans.push(
     createSpanData('reason.n3', 'ok', 8, {
+      'unrdf.rdf.operation': 'reason',
+      'unrdf.rdf.quad_count': store.size,
       'service.name': 'unrdf',
-      'operation.type': 'reason',
-      'input.size': store.size,
-      'output.size': store.size + 1,
       rules: 0,
     })
   );
@@ -168,24 +157,17 @@ export async function executeCLIParse(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.parse', 'ok', parseDuration, {
-      'input.file': 'test.ttl',
-      'output.file': 'result.ttl',
-      format: 'turtle',
-      triples,
-      'parse.format': 'turtle',
+      'unrdf.rdf.operation': 'load',
+      'unrdf.rdf.format': 'text/turtle',
+      'unrdf.rdf.quad_count': triples,
     })
   );
 
   spans.push(
     createSpanData('parse.turtle', 'ok', Math.max(1, parseDuration - 2), {
-      'parse.format': 'turtle',
-      'parse.base_iri': 'http://example.org/',
-      'parse.input_length': testTurtle.length,
-      'parse.quads_count': triples,
-      'input.file': 'test.ttl',
-      'output.file': 'result.ttl',
-      format: 'turtle',
-      triples,
+      'unrdf.rdf.operation': 'load',
+      'unrdf.rdf.format': 'text/turtle',
+      'unrdf.rdf.quad_count': triples,
     })
   );
 
@@ -195,8 +177,8 @@ export async function executeCLIParse(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.output', 'ok', outputDuration, {
-      'output.file': 'result.ttl',
-      triples,
+      'unrdf.rdf.operation': 'dump',
+      'unrdf.rdf.quad_count': triples,
     })
   );
 
@@ -234,24 +216,17 @@ export async function executeCLIQuery(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.query', 'ok', queryDuration, {
-      query: sparqlQuery,
-      results: results.length,
-      'query.type': 'SELECT',
-      format: 'json',
-      size: JSON.stringify(results).length,
+      'unrdf.rdf.operation': 'query-select',
+      'unrdf.rdf.sparql_query_length': sparqlQuery.length,
+      'unrdf.rdf.quad_count': results.length,
     })
   );
 
   spans.push(
     createSpanData('query.sparql', 'ok', Math.max(1, queryDuration - 2), {
-      'query.type': 'SELECT',
-      'query.length': sparqlQuery.length,
-      'query.store_size': store.size,
-      'query.result_count': results.length,
-      query: sparqlQuery,
-      results: results.length,
-      format: 'json',
-      size: JSON.stringify(results).length,
+      'unrdf.rdf.operation': 'query-select',
+      'unrdf.rdf.sparql_query_length': sparqlQuery.length,
+      'unrdf.rdf.quad_count': results.length,
     })
   );
 
@@ -261,8 +236,8 @@ export async function executeCLIQuery(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.format', 'ok', formatDuration, {
-      format: 'json',
-      size: formattedResult.length,
+      'unrdf.rdf.format': 'application/sparql-results+json',
+      'output.size': formattedResult.length,
     })
   );
 
@@ -302,23 +277,25 @@ export async function executeCLIValidate(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.validate', 'ok', validateDuration, {
-      'input.file': 'test.ttl',
-      'shapes.file': 'shapes.ttl',
-      conforms: result.conforms,
-      violations: result.violations ? result.violations.length : 0,
+      'unrdf.rdf.operation': 'validate',
+      'chatman.validation.validation_type': 'shacl',
+      'chatman.validation.validation_result': result.conforms ? 'conforms' : 'violates',
+      'chatman.validation.violation_count': result.violations ? result.violations.length : 0,
     })
   );
 
   spans.push(
     createSpanData('validate.shacl', 'ok', validateDuration * 0.8, {
-      conforms: result.conforms,
-      violations: result.violations ? result.violations.length : 0,
+      'unrdf.rdf.operation': 'validate',
+      'chatman.validation.validation_type': 'shacl',
+      'chatman.validation.validation_result': result.conforms ? 'conforms' : 'violates',
+      'chatman.validation.violation_count': result.violations ? result.violations.length : 0,
     })
   );
 
   spans.push(
     createSpanData('cli.report', 'ok', 5, {
-      conforms: result.conforms,
+      'chatman.validation.validation_result': result.conforms ? 'conforms' : 'violates',
     })
   );
 
@@ -358,29 +335,23 @@ export async function executeCLIHook(validator, parentSpan, validationId) {
 
   spans.push(
     createSpanData('cli.hook', 'ok', hookDuration, {
+      'unrdf.rdf.operation': 'query-ask',
       'hook.name': 'test-hook',
-      'hook.kind': 'sparql-ask',
       'hook.fired': askResult,
-      'execution.time': hookDuration,
     })
   );
 
   spans.push(
     createSpanData('hook.evaluate', 'ok', Math.max(1, hookDuration - 5), {
-      'hook.kind': 'sparql-ask',
-      'hook.fired': askResult,
-      'query.type': 'ASK',
+      'unrdf.rdf.operation': 'query-ask',
       'hook.name': 'test-hook',
-      'execution.time': Math.max(1, hookDuration - 5),
+      'hook.fired': askResult,
     })
   );
 
   spans.push(
     createSpanData('hook.result', 'ok', 2, {
-      'execution.time': hookDuration,
-      result: askResult,
       'hook.name': 'test-hook',
-      'hook.kind': 'sparql-ask',
       'hook.fired': askResult,
     })
   );
@@ -414,50 +385,44 @@ export async function executeTransactionManager(validator, parentSpan, validatio
 
     spans.push(
       createSpanData('transaction.start', 'ok', txDuration * 0.3, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': true,
       })
     );
 
     spans.push(
       createSpanData('transaction.commit', 'ok', txDuration * 0.5, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': true,
       })
     );
 
     spans.push(
       createSpanData('transaction.rollback', 'ok', txDuration * 0.2, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': false,
       })
     );
   } catch (error) {
     // If import fails, create mock spans for validation purposes
     spans.push(
       createSpanData('transaction.start', 'ok', 6, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': true,
       })
     );
 
     spans.push(
       createSpanData('transaction.commit', 'ok', 9, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': true,
       })
     );
 
     spans.push(
       createSpanData('transaction.rollback', 'ok', 5, {
+        'unrdf.rdf.operation': 'update',
         'transaction.id': txId,
-        'transaction.type': 'rdf',
-        'transaction.success': false,
       })
     );
   }

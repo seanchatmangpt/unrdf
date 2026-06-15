@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/test-utils",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Shared test utilities and fixtures for unrdf packages",
   "type": "module",
   "private": true,

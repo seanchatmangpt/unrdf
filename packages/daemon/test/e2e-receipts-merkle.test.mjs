@@ -25,6 +25,7 @@ function generateUUID() {
 
 /**
  * Create a test operation
+ * @param overrides
  */
 function createTestOperation(overrides = {}) {
   return {
@@ -40,6 +41,8 @@ function createTestOperation(overrides = {}) {
 
 /**
  * Create multiple test operations
+ * @param count
+ * @param overrides
  */
 function createTestOperations(count, overrides = {}) {
   return Array.from({ length: count }, (_, i) =>

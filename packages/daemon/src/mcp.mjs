@@ -231,6 +231,13 @@ let _startTime = null;
 // Public API (used by `unrdf mcp start/status/inspect/stop`)
 // ---------------------------------------------------------------------------
 
+/**
+ *
+ * @param root0
+ * @param root0.transport
+ * @param root0.port
+ * @example
+ */
 export async function startMCPServer({ transport = 'stdio', port = 3001 } = {}) {
   // Create SDK server
   const server = new McpServer({
@@ -283,6 +290,10 @@ export async function startMCPServer({ transport = 'stdio', port = 3001 } = {}) 
   throw new Error(`Unknown transport: ${transport}`);
 }
 
+/**
+ *
+ * @example
+ */
 export async function getMCPServerStatus() {
   if (!_server) return { running: false };
   const uptime = Math.round((Date.now() - _startTime) / 1000);
@@ -295,6 +306,10 @@ export async function getMCPServerStatus() {
   };
 }
 
+/**
+ *
+ * @example
+ */
 export async function inspectMCPServer() {
   return {
     tools: TOOLS.map(t => ({ name: t.name, description: t.description })),
@@ -303,6 +318,10 @@ export async function inspectMCPServer() {
   };
 }
 
+/**
+ *
+ * @example
+ */
 export async function stopMCPServer() {
   if (!_server) return { stopped: false };
 
@@ -324,6 +343,10 @@ export async function stopMCPServer() {
   return { stopped: true };
 }
 
+/**
+ *
+ * @example
+ */
 export function buildMCPToolRegistry() {
   return Object.fromEntries(
     TOOLS.map(t => [t.name, {

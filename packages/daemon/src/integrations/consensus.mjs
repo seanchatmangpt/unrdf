@@ -36,9 +36,16 @@ const ConsensusConfigSchema = z.object({
 /**
  * Consensus manager for Raft-based distributed operation coordination
  * @class ConsensusManager
- * @extends EventEmitter
+ * @augments EventEmitter
  */
 export class ConsensusManager extends EventEmitter {
+  /**
+   *
+   * @param daemon
+   * @param raftCoordinator
+   * @param clusterManager
+   * @param config
+   */
   constructor(daemon, raftCoordinator, clusterManager, config = {}) {
     super();
 
@@ -104,6 +111,10 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param operation
+   */
   async replicateOperation(operation) {
     try {
       const payloadValidation = validatePayload(operation, { type: 'rdf' });
@@ -150,6 +161,11 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param operationId
+   * @param timeoutMs
+   */
   async waitForCommit(operationId, timeoutMs) {
     return new Promise(resolve => {
       const startTime = Date.now();
@@ -188,6 +204,10 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param nodeId
+   */
   async removeNodeGracefully(nodeId) {
     try {
       const injection = detectInjection(nodeId, 'command');
@@ -216,6 +236,11 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param excludeNodeId
+   * @param timeoutMs
+   */
   async waitForReplication(excludeNodeId, timeoutMs) {
     return new Promise(resolve => {
       const startTime = Date.now();
@@ -233,6 +258,9 @@ export class ConsensusManager extends EventEmitter {
     });
   }
 
+  /**
+   *
+   */
   getConsensusState() {
     return {
       nodeId: this.nodeId,
@@ -258,6 +286,14 @@ export class ConsensusManager extends EventEmitter {
   }
 }
 
+/**
+ *
+ * @param daemon
+ * @param raftCoordinator
+ * @param clusterManager
+ * @param config
+ * @example
+ */
 export function createConsensusManager(daemon, raftCoordinator, clusterManager, config = {}) {
   return new ConsensusManager(daemon, raftCoordinator, clusterManager, config);
 }

@@ -151,8 +151,8 @@ class MetricsCollector extends EventEmitter {
 class ReceiptGenerator {
   /**
    * Generate JTBD receipt with proof
-   * @param {Object} data Test execution data
-   * @returns {Object} Validated receipt
+   * @param {object} data Test execution data
+   * @returns {object} Validated receipt
    */
   static generateReceipt(data) {
     const receiptTimestamp = data.timestamp instanceof Date ? data.timestamp : new Date();
@@ -206,7 +206,7 @@ class ReceiptGenerator {
 
   /**
    * Verify receipt integrity
-   * @param {Object} receipt Receipt to verify
+   * @param {object} receipt Receipt to verify
    * @returns {boolean} Whether receipt is valid
    */
   static verifyReceipt(receipt) {
@@ -221,8 +221,8 @@ class ReceiptGenerator {
 
 /**
  * Test helper to run JTBD scenario and collect receipt
- * @param {Object} config Test configuration
- * @returns {Object} Test result with receipt
+ * @param {object} config Test configuration
+ * @returns {object} Test result with receipt
  */
 async function runJTBDScenario(config) {
   const {
@@ -243,7 +243,7 @@ async function runJTBDScenario(config) {
 
   metrics.start();
 
-  let result = {
+  const result = {
     success: false,
     receipt: null,
     error: null,

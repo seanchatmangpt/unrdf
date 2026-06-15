@@ -5,6 +5,12 @@
 
 import { OxigraphStore } from '@unrdf/oxigraph';
 import { z } from 'zod';
+import {
+  withReceipt,
+  createContext,
+  canonicalize,
+  blake3Hash,
+} from '@unrdf/v6-core/receipt-pattern';
 
 /**
  * @typedef {Object} QueryOptions
@@ -421,6 +427,73 @@ export class UnrdfStore {
   }
 
   /**
+   * Execute a SPARQL query with a deterministic L5 receipt
+   * @param {Object} context - Deterministic context
+   * @param {string} sparql - SPARQL query string
+   * @param {QueryOptions} [options] - Query options
+   * @returns {Promise<{result: any, receipt: Object}>} Query result and receipt
+   */
+  async queryWithReceipt(context, sparql, options = {}) {
+    const wrapped = withReceipt(
+      async (q, opts) => this.query(q, opts),
+      {
+        operation: 'sparql-query',
+        profile: 'query',
+        inputSchema: z.tuple([z.string(), z.any().optional()]),
+        outputSchema: z.any(),
+      }
+    );
+    return wrapped(context, sparql, options);
+  }
+
+  /**
+   * Add a quad with a deterministic L5 receipt
+   * @param {Object} context - Deterministic context
+   * @param {Object} quad - RDF quad
+   * @returns {Promise<{result: void, receipt: Object}>} Receipt
+   */
+  async addWithReceipt(context, quad) {
+    const wrapped = withReceipt(
+      async (q) => this.add(q),
+      {
+        operation: 'addQuad',
+        profile: 'delta',
+        inputSchema: z.tuple([z.any()]),
+        outputSchema: z.any(),
+      }
+    );
+    return wrapped(context, quad);
+  }
+
+  /**
+   * Get store state hash (for determinism verification)
+   * @returns {Promise<string>} BLAKE3 hash of all quads in canonical order
+   */
+  async getStoreStateHash() {
+    const allQuads = this.match();
+
+    // Canonicalize all quads (sorted by subject, predicate, object)
+    const canonicalQuads = allQuads
+      .map(quad => ({
+        s: quad.subject.value,
+        p: quad.predicate.value,
+        o: quad.object.value,
+        g: quad.graph?.value || '',
+      }))
+      .sort((a, b) => {
+        const cmpS = a.s.localeCompare(b.s);
+        if (cmpS !== 0) return cmpS;
+        const cmpP = a.p.localeCompare(b.p);
+        if (cmpP !== 0) return cmpP;
+        const cmpO = a.o.localeCompare(b.o);
+        if (cmpO !== 0) return cmpO;
+        return a.g.localeCompare(b.g);
+      });
+
+    return blake3Hash(canonicalize(canonicalQuads));
+  }
+
+  /**
    * Get the current version (for reactivity tracking)
    * @returns {number} Version number
    *
@@ -553,6 +626,13 @@ export class UnrdfStore {
    * @returns {Object} Formatted term
    */
   _formatTerm(term) {
+    if (!term) return null;
+
+    // Handle already normalized objects from OxigraphStore
+    if (term.type && term.value) {
+      return term;
+    }
+
     // Handle Oxigraph Term objects
     if (term && typeof term === 'object') {
       const type = term.termType || 'Literal';

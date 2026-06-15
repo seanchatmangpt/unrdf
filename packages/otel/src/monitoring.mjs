@@ -25,6 +25,10 @@ export const UNRDFOperation = {
 
 /**
  * Monitor UNRDF operation with automatic metric recording
+ * @param operation
+ * @param fn
+ * @param metadata
+ * @example
  */
 export async function monitorOperation(operation, fn, metadata = {}) {
   const startTime = Date.now();
@@ -64,6 +68,7 @@ export async function monitorOperation(operation, fn, metadata = {}) {
 
 /**
  * Get monitoring dashboard URL
+ * @example
  */
 export function getDashboardURL() {
   return process.env.PROMETHEUS_URL || 'http://localhost:3001';
@@ -71,6 +76,7 @@ export function getDashboardURL() {
 
 /**
  * Get Jaeger tracing URL
+ * @example
  */
 export function getTracingURL() {
   return process.env.JAEGER_URL || 'http://localhost:16686';
@@ -78,6 +84,7 @@ export function getTracingURL() {
 
 /**
  * Get OTLP endpoint for traces
+ * @example
  */
 export function getOTLPEndpoint() {
   return process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:14317';
@@ -85,6 +92,7 @@ export function getOTLPEndpoint() {
 
 /**
  * Check monitoring stack health
+ * @example
  */
 export async function checkMonitoringHealth() {
   const health = {
@@ -126,6 +134,9 @@ export async function checkMonitoringHealth() {
 
 /**
  * Create monitoring context for UNRDF operations
+ * @param service
+ * @param operation
+ * @example
  */
 export function createMonitoringContext(service, operation) {
   return {
@@ -138,6 +149,11 @@ export function createMonitoringContext(service, operation) {
 
 /**
  * Record custom metric in pm4py
+ * @param name
+ * @param value
+ * @param type
+ * @param labels
+ * @example
  */
 export async function recordMetric(name, value, type = 'gauge', labels = {}) {
   const pm4py = getPM4Py();
@@ -151,6 +167,7 @@ export async function recordMetric(name, value, type = 'gauge', labels = {}) {
 
 /**
  * Get current system metrics from pm4py
+ * @example
  */
 export async function getSystemMetrics() {
   const pm4py = getPM4Py();
@@ -159,6 +176,7 @@ export async function getSystemMetrics() {
 
 /**
  * Get Prometheus metrics from pm4py
+ * @example
  */
 export async function getPrometheusMetrics() {
   const pm4py = getPM4Py();
@@ -167,6 +185,7 @@ export async function getPrometheusMetrics() {
 
 /**
  * Initialize UNRDF monitoring stack
+ * @example
  */
 export async function initializeMonitoring() {
   const pm4py = getPM4Py();
@@ -200,6 +219,9 @@ print('OK')
 
 /**
  * Decorator for monitoring UNRDF class methods
+ * @param operation
+ * @param metadata
+ * @example
  */
 export function monitor(operation, metadata = {}) {
   return function(target, propertyKey, descriptor) {

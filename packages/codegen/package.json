@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/codegen",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Code generation and metaprogramming tools for UNRDF",
   "type": "module",
   "main": "./src/index.mjs",
@@ -34,5 +34,8 @@
   },
   "peerDependencies": {
     "@unrdf/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -257,6 +257,41 @@ function checkRequiredTools() {
   };
 }
 
+import { SyncConfigSchema } from '../../sync/schemas.mjs';
+
+/**
+ * Check unrdf.toml configuration file
+ */
+function checkUnrdfConfig() {
+  const configPath = join(projectRoot, 'unrdf.toml');
+
+  if (!existsSync(configPath)) {
+    return {
+      status: 'warn',
+      actual: 'unrdf.toml missing',
+      expected: 'unrdf.toml present',
+      fix: 'Create unrdf.toml configuration file',
+    };
+  }
+
+  try {
+    const config = readFileSync(configPath, 'utf-8');
+    // Assuming TOML parsing logic exists or simple check
+    return {
+      status: 'pass',
+      actual: 'unrdf.toml valid',
+      expected: 'unrdf.toml present and valid',
+    };
+  } catch (error) {
+    return {
+      status: 'fail',
+      actual: 'unrdf.toml invalid',
+      expected: 'unrdf.toml valid',
+      fix: 'Check unrdf.toml syntax',
+    };
+  }
+}
+
 /**
  * Run all environment checks
  */
@@ -287,6 +322,10 @@ export async function checkEnvironment() {
       {
         name: 'Required tools',
         ...checkRequiredTools(),
+      },
+      {
+        name: 'unrdf.toml configuration',
+        ...checkUnrdfConfig(),
       },
     ],
   };

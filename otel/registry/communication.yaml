@@ -11,11 +11,11 @@ groups:
       - id: chatman.comm.source_system
         type: string
         brief: 'Originating system identifier.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
+        examples: ['businessos', 'canopy', 'osa']
       - id: chatman.comm.target_system
         type: string
         brief: 'Destination system identifier.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
+        examples: ['businessos', 'canopy', 'osa']
       - id: chatman.comm.direction
         type: string
         brief: 'Communication direction (request or response).'
@@ -67,7 +67,8 @@ groups:
       - id: chatman.comm.topology_layer
         type: string
         brief: 'Layer in 7-layer architecture (network, signal, composition, interface, data, feedback, governance).'
-        examples: ['network', 'signal', 'composition', 'interface', 'data', 'feedback', 'governance']
+        examples:
+          ['network', 'signal', 'composition', 'interface', 'data', 'feedback', 'governance']
       - id: chatman.comm.provenance_chain
         type: string
         brief: 'BLAKE3 hash chain for provenance tracking (receipt chaining).'

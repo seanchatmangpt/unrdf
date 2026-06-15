@@ -57,20 +57,10 @@
   },
   "explanation": {
     "architecture": "@unrdf/daemon is a package in the UNRDF ecosystem",
-    "concepts": [
-      "daemon",
-      "background-tasks",
-      "event-emitter",
-      "scheduling",
-      "task-queue"
-    ],
+    "concepts": ["daemon", "background-tasks", "event-emitter", "scheduling", "task-queue"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-daemon-explanation",
-    "source": [
-      "keywords",
-      "docs",
-      "inferred"
-    ],
+    "source": ["keywords", "docs", "inferred"],
     "title": "Understanding @unrdf/daemon",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -84,14 +74,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/daemon",
       "title": "Handle Errors"
     },
@@ -99,15 +83,8 @@
       "confidenceScore": 0.7,
       "context": "When working with daemon in your project",
       "id": "howto-integrate-with-daemon",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/daemon with daemon",
       "title": "Integrate with daemon"
     }
@@ -172,9 +149,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/daemon Reference"
   },
   "tutorials": [
@@ -182,12 +157,8 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with @unrdf/daemon\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with @unrdf/daemon\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through 01-basic-daemon.mjs",
         "Work through 01-basic-scheduled-workflow.mjs",
@@ -202,10 +173,7 @@
       "goal": "Learn how to set up and use @unrdf/daemon in your project",
       "id": "tutorial-getting-started-with-unrdf-daemon",
       "prerequisites": [],
-      "source": [
-        "examples",
-        "keywords"
-      ],
+      "source": ["examples", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -215,5 +183,5 @@
       "title": "Getting Started with @unrdf/daemon"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

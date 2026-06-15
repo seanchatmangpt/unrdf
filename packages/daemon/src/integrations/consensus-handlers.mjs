@@ -8,8 +8,9 @@ import { PartitionState, ConsensusOperationState } from './consensus-state.mjs';
 
 /**
  * Handle leader elected event from Raft coordinator
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Leader elected event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Leader elected event
+ * @example
  */
 export function handleLeaderElected(manager, event) {
   try {
@@ -41,7 +42,8 @@ export function handleLeaderElected(manager, event) {
 
 /**
  * Handle leader lost event
- * @param {Object} manager - ConsensusManager instance
+ * @param {object} manager - ConsensusManager instance
+ * @example
  */
 export function handleLeaderLost(manager) {
   try {
@@ -58,8 +60,9 @@ export function handleLeaderLost(manager) {
 
 /**
  * Handle term update event
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Term updated event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Term updated event
+ * @example
  */
 export function handleTermUpdated(manager, event) {
   const { term } = event || {};
@@ -71,8 +74,9 @@ export function handleTermUpdated(manager, event) {
 
 /**
  * Handle node joined event
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Node joined event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Node joined event
+ * @example
  */
 export function handleNodeJoined(manager, event) {
   try {
@@ -92,8 +96,9 @@ export function handleNodeJoined(manager, event) {
 
 /**
  * Handle node left event
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Node left event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Node left event
+ * @example
  */
 export function handleNodeLeft(manager, event) {
   try {
@@ -113,8 +118,9 @@ export function handleNodeLeft(manager, event) {
 
 /**
  * Handle health degraded event
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Health degraded event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Health degraded event
+ * @example
  */
 export function handleHealthDegraded(manager, event) {
   try {
@@ -137,8 +143,9 @@ export function handleHealthDegraded(manager, event) {
 
 /**
  * Handle successful operation execution
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Operation success event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Operation success event
+ * @example
  */
 export function handleOperationSuccess(manager, event) {
   const { operationId } = event || {};
@@ -153,8 +160,9 @@ export function handleOperationSuccess(manager, event) {
 
 /**
  * Handle operation failure
- * @param {Object} manager - ConsensusManager instance
- * @param {Object} event - Operation failure event
+ * @param {object} manager - ConsensusManager instance
+ * @param {object} event - Operation failure event
+ * @example
  */
 export function handleOperationFailure(manager, event) {
   const { operationId, error } = event || {};
@@ -171,7 +179,8 @@ export function handleOperationFailure(manager, event) {
 
 /**
  * Start partition detection timer
- * @param {Object} manager - ConsensusManager instance
+ * @param {object} manager - ConsensusManager instance
+ * @example
  */
 export function startPartitionDetection(manager) {
   manager.partitionTimer = setInterval(() => {
@@ -202,7 +211,8 @@ export function startPartitionDetection(manager) {
 
 /**
  * Stop partition detection
- * @param {Object} manager - ConsensusManager instance
+ * @param {object} manager - ConsensusManager instance
+ * @example
  */
 export function stopPartitionDetection(manager) {
   if (manager.partitionTimer) {

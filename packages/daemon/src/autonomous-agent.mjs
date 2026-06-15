@@ -13,6 +13,11 @@ import { getGroqProvider } from './providers/groq.mjs';
  * Autonomous agent with persistent knowledge graph
  */
 export class AutonomousKnowledgeAgent extends EventEmitter {
+  /**
+   *
+   * @param name
+   * @param config
+   */
   constructor(name, config = {}) {
     super();
     this.name = name;
@@ -28,6 +33,8 @@ export class AutonomousKnowledgeAgent extends EventEmitter {
 
   /**
    * Reason about a task using KG context
+   * @param task
+   * @param context
    */
   async reason(task, context = {}) {
     const startTime = Date.now();
@@ -90,6 +97,8 @@ What should you do? Be specific and actionable.`,
 
   /**
    * Execute a decision
+   * @param decision
+   * @param _context
    */
   async execute(decision, _context = {}) {
     try {
@@ -111,6 +120,7 @@ What should you do? Be specific and actionable.`,
 
   /**
    * Parse LLM decision to extract action
+   * @param text
    */
   parseAction(text) {
     // Simple heuristic: if mentions "query", "search", "find" → query

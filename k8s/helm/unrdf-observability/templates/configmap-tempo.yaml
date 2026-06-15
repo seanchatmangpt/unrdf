@@ -29,8 +29,8 @@ data:
         s3:
           bucket: tempo-traces
           endpoint: {{ $minio }}:9000
-          access_key: minioadmin
-          secret_key: minioadmin
+          access_key: {{ .Values.minio.rootUser }}
+          secret_key: {{ .Values.minio.rootPassword }}
           insecure: true
         local:
           path: /var/tempo/traces

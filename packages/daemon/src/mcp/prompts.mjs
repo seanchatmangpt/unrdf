@@ -50,6 +50,7 @@ const promptHandlers = {
 /**
  * SPARQL query builder prompt
  * @returns {object} Prompt definition
+ * @example
  */
 export function sparqlBuilderPrompt() {
   return {
@@ -73,6 +74,7 @@ export function sparqlBuilderPrompt() {
 /**
  * Graph analysis prompt
  * @returns {object} Prompt definition
+ * @example
  */
 export function graphAnalysisPrompt() {
   return {
@@ -96,6 +98,7 @@ export function graphAnalysisPrompt() {
 /**
  * Data transformation prompt
  * @returns {object} Prompt definition
+ * @example
  */
 export function dataTransformPrompt() {
   return {
@@ -124,6 +127,7 @@ export function dataTransformPrompt() {
 /**
  * Ontology documentation prompt
  * @returns {object} Prompt definition
+ * @example
  */
 export function ontologyDocPrompt() {
   return {
@@ -158,6 +162,7 @@ export const mcpPrompts = [
  * Register all prompts with the MCP server
  * @param {McpServer} server - MCP server instance
  * @param {object} _options - Configuration options
+ * @example
  */
 export function registerPrompts(server, _options = {}) {
   for (const prompt of mcpPrompts) {

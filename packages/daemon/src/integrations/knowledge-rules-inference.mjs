@@ -7,9 +7,10 @@
 /**
  * Build inference chains between matched rules
  * @param {Array} matchedRules - Array of matched rule results
- * @param {Object} engine - Rule engine instance for rule lookup
+ * @param {object} engine - Rule engine instance for rule lookup
  * @param {number} maxChainDepth - Maximum chain depth
  * @returns {Array} Inference chains
+ * @example
  */
 export function buildInferenceChains(matchedRules, engine, maxChainDepth) {
   const chains = [];
@@ -28,11 +29,12 @@ export function buildInferenceChains(matchedRules, engine, maxChainDepth) {
  * Build inference chain for a specific rule
  * @param {string} ruleId - Rule identifier
  * @param {Array} matchedRules - Matched rules
- * @param {Object} engine - Rule engine instance for rule lookup
+ * @param {object} engine - Rule engine instance for rule lookup
  * @param {Set} visited - Visited rule IDs
  * @param {number} depth - Current chain depth
  * @param {number} maxDepth - Maximum chain depth
  * @returns {Array} Chain of rule IDs
+ * @example
  */
 export function buildChainForRule(ruleId, matchedRules, engine, visited, depth, maxDepth) {
   if (depth > maxDepth || visited.has(ruleId)) {
@@ -71,6 +73,7 @@ export function buildChainForRule(ruleId, matchedRules, engine, visited, depth, 
  * @param {string} evaluationId - Evaluation identifier
  * @param {Array} executionHistory - Execution history array
  * @returns {Array} Inference chain
+ * @example
  */
 export function getInferenceChain(ruleId, evaluationId, executionHistory) {
   // Find related rules from execution history

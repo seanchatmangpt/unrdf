@@ -1,7 +1,6 @@
 /**
  * @file MCP Tool OTEL Instrumentation
  * @module @unrdf/daemon/mcp/otel-instrumentation
- *
  * @description
  * OTEL instrumentation wrapper for all MCP tools
  */
@@ -16,6 +15,7 @@ const tracer = createTracer('unrdf-daemon-mcp');
  * @param {string} toolName - Name of the MCP tool
  * @param {Function} handler - Handler function
  * @returns {Function} Instrumented handler
+ * @example
  */
 export function withMcpSpan(toolName, handler) {
   return async (args) => {
@@ -51,7 +51,8 @@ export function withMcpSpan(toolName, handler) {
 
 /**
  * Get trace context for logging
- * @returns {Object|null} Current trace context
+ * @returns {object | null} Current trace context
+ * @example
  */
 export function getTraceContext() {
   return getCurrentTraceContext();

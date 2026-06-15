@@ -148,6 +148,7 @@ export const ontoRegistryMetadata = [
  * Get CLI command path for tool name
  * @param {string} toolName - MCP tool name
  * @returns {string[]} CLI command arguments
+ * @example
  */
 export function getOntoCommand(toolName) {
   return ontoRegistry[toolName] || null;
@@ -157,6 +158,7 @@ export function getOntoCommand(toolName) {
  * Get tool metadata by name
  * @param {string} toolName - MCP tool name
  * @returns {object|null} Tool metadata or null
+ * @example
  */
 export function getOntoMetadata(toolName) {
   return ontoRegistryMetadata.find(meta => meta.name === toolName) || null;
@@ -166,6 +168,7 @@ export function getOntoMetadata(toolName) {
  * Get tools by implementation phase
  * @param {string} phase - 'core' | 'advanced' | 'expert'
  * @returns {string[]} Tool names for phase
+ * @example
  */
 export function getToolsByPhase(phase) {
   return ontoRegistryMetadata

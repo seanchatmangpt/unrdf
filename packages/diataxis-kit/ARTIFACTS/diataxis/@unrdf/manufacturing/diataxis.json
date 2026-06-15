@@ -6,24 +6,17 @@
     "tutorials": 0
   },
   "evidence": {
-    "docsFiles": [
-      "ocel-schema.md"
-    ],
+    "docsFiles": ["ocel-schema.md"],
     "examplesFiles": [],
     "fingerprint": "64b0e583f2dd2a77799c6e20f91b7220327ebf1b806e2ab96425356af64b4cc0",
     "readmeHeadings": []
   },
   "explanation": {
     "architecture": "@unrdf/manufacturing is a package in the UNRDF ecosystem",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-unrdf-manufacturing-explanation",
-    "source": [
-      "docs",
-      "inferred"
-    ],
+    "source": ["docs", "inferred"],
     "title": "Understanding @unrdf/manufacturing",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -37,14 +30,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -52,14 +39,8 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-unrdf-manufacturing",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
-      ],
+      "source": ["inferred"],
+      "steps": ["Import the package", "Initialize with options", "Execute operations"],
       "task": "Perform basic operations with @unrdf/manufacturing",
       "title": "Use @unrdf/manufacturing"
     }
@@ -106,9 +87,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/manufacturing Reference"
   },
   "tutorials": [
@@ -117,9 +96,7 @@
       "goal": "Learn how to set up and use @unrdf/manufacturing in your project",
       "id": "tutorial-getting-started-with-unrdf-manufacturing",
       "prerequisites": [],
-      "source": [
-        "inferred"
-      ],
+      "source": ["inferred"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -129,5 +106,5 @@
       "title": "Getting Started with @unrdf/manufacturing"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

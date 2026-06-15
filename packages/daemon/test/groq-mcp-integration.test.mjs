@@ -198,7 +198,7 @@ Which one and why?`,
       );
 
       const model = provider.getDefaultModel();
-      let storeContent = Array.from(store)
+      const storeContent = Array.from(store)
         .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value}.`)
         .join('\n');
 

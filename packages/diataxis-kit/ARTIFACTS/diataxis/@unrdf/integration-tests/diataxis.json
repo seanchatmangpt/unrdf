@@ -13,19 +13,10 @@
   },
   "explanation": {
     "architecture": "@unrdf/integration-tests is a package in the UNRDF ecosystem",
-    "concepts": [
-      "integration-tests",
-      "adversarial-tests",
-      "unrdf",
-      "workflow",
-      "federation"
-    ],
+    "concepts": ["integration-tests", "adversarial-tests", "unrdf", "workflow", "federation"],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-integration-tests-explanation",
-    "source": [
-      "keywords",
-      "inferred"
-    ],
+    "source": ["keywords", "inferred"],
     "title": "Understanding @unrdf/integration-tests",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -39,15 +30,8 @@
       "confidenceScore": 0.7,
       "context": "When working with integration-tests in your project",
       "id": "howto-integrate-with-integration-tests",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/integration-tests with integration-tests",
       "title": "Integrate with integration-tests"
     },
@@ -55,14 +39,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -79,9 +57,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "@unrdf/integration-tests Reference"
   },
   "tutorials": [
@@ -89,12 +65,8 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/integration-tests in your project",
       "id": "tutorial-getting-started-with-unrdf-integration-tests",
-      "prerequisites": [
-        "Basic RDF knowledge"
-      ],
-      "source": [
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge"],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -104,5 +76,5 @@
       "title": "Getting Started with @unrdf/integration-tests"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

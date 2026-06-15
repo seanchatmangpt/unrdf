@@ -1,4 +1,4 @@
-import oxigraph from 'oxigraph';
+import * as oxigraph from 'oxigraph';
 
 /**
  * OxigraphStore - Wrapper around Oxigraph SPARQL engine
@@ -105,7 +105,7 @@ class OxigraphStore {
   match(subject, predicate, object, graph) {
     try {
       const result = this.store.match(subject, predicate, object, graph);
-      return Array.from(result || []);
+      return Array.from(result || []).map(quad => this._normalizeQuad(quad));
     } catch (error) {
       throw new Error(`Match operation failed: ${error.message}`);
     }
@@ -135,10 +135,74 @@ class OxigraphStore {
     }
 
     try {
-      return this.store.query(query, options);
+      const result = this.store.query(query, options);
+      return this._normalizeResult(result);
     } catch (error) {
       throw new Error(`Query execution failed: ${error.message}`);
     }
+  }
+
+  /**
+   * Normalize query results to plain JS objects
+   * @private
+   * @param {*} result - Raw Oxigraph result
+   * @returns {*} Normalized result
+   */
+  _normalizeResult(result) {
+    if (typeof result === 'boolean') {
+      return result;
+    }
+
+    if (Array.isArray(result)) {
+      return result.map(item => {
+        if (item instanceof Map) {
+          const normalized = {};
+          for (const [key, value] of item.entries()) {
+            normalized[key] = this._normalizeTerm(value);
+          }
+          return normalized;
+        }
+        if (item && item.subject && item.predicate && item.object) {
+          return this._normalizeQuad(item);
+        }
+        return item;
+      });
+    }
+
+    return result;
+  }
+
+  /**
+   * Normalize an RDF term
+   * @private
+   * @param {Object} term - Oxigraph term
+   * @returns {Object} Normalized term
+   */
+  _normalizeTerm(term) {
+    if (!term) return null;
+    const normalized = {
+      type: term.termType,
+      value: term.value,
+    };
+    if (term.language) normalized.language = term.language;
+    if (term.datatype) normalized.datatype = this._normalizeTerm(term.datatype);
+    return normalized;
+  }
+
+  /**
+   * Normalize an RDF quad
+   * @private
+   * @param {Object} quad - Oxigraph quad
+   * @returns {Object} Normalized quad
+   */
+  _normalizeQuad(quad) {
+    if (!quad) return null;
+    return {
+      subject: this._normalizeTerm(quad.subject),
+      predicate: this._normalizeTerm(quad.predicate),
+      object: this._normalizeTerm(quad.object),
+      graph: this._normalizeTerm(quad.graph),
+    };
   }
 
   /**

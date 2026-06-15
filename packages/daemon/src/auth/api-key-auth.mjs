@@ -34,11 +34,11 @@ export const AuthContextSchema = z.object({
  */
 export class ApiKeyAuthenticator {
   /**
-   * @param {Object} options - Authentication configuration
+   * @param {object} options - Authentication configuration
    * @param {string} [options.storedKeyHash] - Pre-computed BLAKE3 hash of valid API key
-   * @param {string} [options.environment='development'] - Runtime environment
-   * @param {boolean} [options.requireInDev=false] - Require API key in development
-   * @param {Function} [options.logger=console] - Logger instance
+   * @param {string} [options.environment] - Runtime environment
+   * @param {boolean} [options.requireInDev] - Require API key in development
+   * @param {Function} [options.logger] - Logger instance
    */
   constructor(options = {}) {
     this.storedKeyHash = options.storedKeyHash || null;
@@ -76,10 +76,10 @@ export class ApiKeyAuthenticator {
 
   /**
    * Validate API key from request context
-   * @param {Object} context - Request context
-   * @param {Object} [context.headers={}] - Request headers
-   * @param {Object} [context.env=process.env] - Environment variables
-   * @returns {Promise<Object>} Authentication result with context
+   * @param {object} context - Request context
+   * @param {object} [context.headers] - Request headers
+   * @param {object} [context.env] - Environment variables
+   * @returns {Promise<object>} Authentication result with context
    * @throws {Error} If authentication fails in production
    * @example
    * const result = await authenticator.authenticate({
@@ -143,8 +143,8 @@ export class ApiKeyAuthenticator {
   /**
    * Extract API key from headers or environment
    * @private
-   * @param {Object} headers - Request headers
-   * @param {Object} env - Environment variables
+   * @param {object} headers - Request headers
+   * @param {object} env - Environment variables
    * @returns {string|null} Extracted API key or null
    */
   extractApiKey(headers, env) {
@@ -160,6 +160,8 @@ export class ApiKeyAuthenticator {
 
   /**
    * Determine the source of the API key
+   * @param headers
+   * @param env
    * @private
    */
   determineSource(headers, env) {
@@ -171,8 +173,8 @@ export class ApiKeyAuthenticator {
   /**
    * Handle missing API key based on environment
    * @private
-   * @param {Object} authContext - Current auth context
-   * @returns {Object} Auth context (may throw in production)
+   * @param {object} authContext - Current auth context
+   * @returns {object} Auth context (may throw in production)
    * @throws {Error} If in production or requireInDev is true
    */
   handleMissingKey(authContext) {
@@ -199,6 +201,9 @@ export class ApiKeyAuthenticator {
 
   /**
    * Log authentication attempt for audit trail
+   * @param context
+   * @param success
+   * @param reason
    * @private
    */
   logAuthAttempt(context, success, reason) {
@@ -259,7 +264,7 @@ export function createAuthMiddleware(authenticator) {
 
 /**
  * Convenience function to create and initialize authenticator
- * @param {Object} options - Authenticator options
+ * @param {object} options - Authenticator options
  * @returns {Promise<{authenticator: ApiKeyAuthenticator, key: string}>}
  * @example
  * const { authenticator, key } = await createAuthenticator({

@@ -24,20 +24,10 @@
   },
   "explanation": {
     "architecture": "Non-blocking three-layer observability system with optional OpenTelemetry support.",
-    "concepts": [
-      "observability",
-      "otel",
-      "opentelemetry",
-      "tracing",
-      "process-mining"
-    ],
+    "concepts": ["observability", "otel", "opentelemetry", "tracing", "process-mining"],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-observability-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @pictl/observability",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -51,15 +41,8 @@
       "confidenceScore": 0.7,
       "context": "When working with observability in your project",
       "id": "howto-integrate-with-observability",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/observability with observability",
       "title": "Integrate with observability"
     },
@@ -67,14 +50,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -91,10 +68,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports",
-      "readme"
-    ],
+    "source": ["exports", "readme"],
     "title": "@pictl/observability Reference"
   },
   "tutorials": [
@@ -103,9 +77,7 @@
       "goal": "Learn how to set up and use @pictl/observability in your project",
       "id": "tutorial-getting-started-with-pictl-observability",
       "prerequisites": [],
-      "source": [
-        "keywords"
-      ],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -115,5 +87,5 @@
       "title": "Getting Started with @pictl/observability"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

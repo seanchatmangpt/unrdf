@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/manufacturing",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "μ(O) Manufacturing Operator Runtime — composable operators for deterministic artifact manufacturing",
   "type": "module",
   "private": true,

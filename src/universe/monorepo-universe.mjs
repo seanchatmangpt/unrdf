@@ -100,7 +100,6 @@ export const PARTITION_DEFINITIONS = [
       '@unrdf/federation',
       '@unrdf/consensus',
       '@unrdf/blockchain',
-      '@unrdf/engine-gateway',
     ],
   },
   {

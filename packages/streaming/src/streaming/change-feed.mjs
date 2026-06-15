@@ -8,6 +8,7 @@
  */
 
 import { trace } from '@opentelemetry/api';
+import { RingBuffer } from '@unrdf/core';
 import { z } from 'zod';
 
 const tracer = trace.getTracer('@unrdf/streaming');
@@ -18,7 +19,8 @@ const tracer = trace.getTracer('@unrdf/streaming');
 /**
  * Maximum number of changes to keep in history (ring buffer)
  */
-const MAX_HISTORY_SIZE = 10000;
+const DEFAULT_MAX_HISTORY_SIZE = 10000;
+const HARD_MAX_HISTORY_SIZE = 1000000; // 1M events limit to prevent OOM
 
 const ChangeEventSchema = z.object({
   type: z.enum(['add', 'remove', 'update']),
@@ -41,7 +43,7 @@ const ChangeFeedConfigSchema = z
     maxHistorySize: z
       .union([z.number().nonnegative(), z.literal(Infinity)])
       .optional()
-      .default(MAX_HISTORY_SIZE),
+      .default(DEFAULT_MAX_HISTORY_SIZE),
   })
   .optional()
   .default({});
@@ -68,17 +70,29 @@ const ChangeFeedConfigSchema = z
 export function createChangeFeed(store, config = {}) {
   const validatedConfig = ChangeFeedConfigSchema.parse(config);
   let target = new EventTarget();
-  const changes = [];
   const subscribers = new Set();
+  
+  // Enforce hard limit on history size
+  let maxSize = validatedConfig.maxHistorySize;
+  if (maxSize === Infinity || maxSize > HARD_MAX_HISTORY_SIZE) {
+    maxSize = HARD_MAX_HISTORY_SIZE;
+  }
+
+  // Ring buffer state using @unrdf/core RingBuffer
+  const history = new RingBuffer(maxSize > 0 ? maxSize : 1); // Minimum size of 1 if history enabled
+  const hasHistory = maxSize > 0;
+
+  // Original store methods for restoration on destroy
+  let originalAddQuad, originalRemoveQuad, originalRemoveQuads;
 
   // Hook into store if provided
-  if (store && typeof store.addQuad === 'function' && typeof store.removeQuad === 'function') {
-    const originalAddQuad = store.addQuad.bind(store);
-    const originalRemoveQuad = store.removeQuad?.bind(store);
-    const originalRemoveQuads = store.removeQuads?.bind(store);
+  if (store && typeof store.addQuad === 'function') {
+    originalAddQuad = store.addQuad;
+    originalRemoveQuad = store.removeQuad;
+    originalRemoveQuads = store.removeQuads;
 
     store.addQuad = function (quad) {
-      const result = originalAddQuad(quad);
+      const result = originalAddQuad.call(store, quad);
       feed.emitChange({
         type: 'add',
         quad: {
@@ -92,9 +106,9 @@ export function createChangeFeed(store, config = {}) {
     };
 
     // Support both N3 Store (removeQuad) and Oxigraph (removeQuads)
-    if (originalRemoveQuad) {
+    if (typeof originalRemoveQuad === 'function') {
       store.removeQuad = function (quad) {
-        const result = originalRemoveQuad(quad);
+        const result = originalRemoveQuad.call(store, quad);
         feed.emitChange({
           type: 'remove',
           quad: {
@@ -108,9 +122,9 @@ export function createChangeFeed(store, config = {}) {
       };
     }
 
-    if (originalRemoveQuads) {
+    if (typeof originalRemoveQuads === 'function') {
       store.removeQuads = function (quads) {
-        const result = originalRemoveQuads(quads);
+        const result = originalRemoveQuads.call(store, quads);
         for (const quad of quads) {
           feed.emitChange({
             type: 'remove',
@@ -151,33 +165,18 @@ export function createChangeFeed(store, config = {}) {
           'subscribers.count': subscribers.size,
         });
 
-        // Implement ring buffer: remove oldest change if exceeding max size
-        // Handle edge cases: maxHistorySize = 0 (no history), Infinity (unbounded)
-        const maxSize = validatedConfig.maxHistorySize;
-
-        if (maxSize === 0) {
-          // Don't store any history
+        // Implement ring buffer using @unrdf/core RingBuffer
+        if (hasHistory) {
+          const wasFull = history.isFull();
+          history.push(validated);
+          span.setAttributes({
+            'history.size': history.length,
+            'history.trimmed': wasFull,
+          });
+        } else {
           span.setAttributes({
             'history.size': 0,
             'history.trimmed': false,
-          });
-        } else if (maxSize === Infinity) {
-          // Unbounded - store everything
-          changes.push(validated);
-          span.setAttributes({
-            'history.size': changes.length,
-            'history.trimmed': false,
-          });
-        } else {
-          // Normal ring buffer with size limit
-          changes.push(validated);
-          const trimmed = changes.length > maxSize;
-          if (trimmed) {
-            changes.shift();
-          }
-          span.setAttributes({
-            'history.size': changes.length,
-            'history.trimmed': trimmed,
           });
         }
 
@@ -241,13 +240,14 @@ export function createChangeFeed(store, config = {}) {
     getHistory(options = {}) {
       const span = tracer.startSpan('change-feed.getHistory');
       try {
+        const allChanges = this.getChanges();
         span.setAttributes({
-          'history.totalSize': changes.length,
+          'history.totalSize': allChanges.length,
           'history.hasSinceFilter': options.since !== undefined,
           'history.hasLimitFilter': options.limit !== undefined,
         });
 
-        let result = [...changes];
+        let result = allChanges;
 
         if (options.since !== undefined) {
           result = result.filter(change => change.timestamp >= options.since);
@@ -299,19 +299,24 @@ export function createChangeFeed(store, config = {}) {
     },
 
     /**
-     * Get all changes
+     * Get all changes in order
      *
      * @returns {Array} All changes
      */
     getChanges() {
-      return [...changes];
+      if (!hasHistory) {
+        return [];
+      }
+      return history.toArray();
     },
 
     /**
      * Clear all changes
      */
     clearChanges() {
-      changes.length = 0;
+      if (hasHistory) {
+        history.clear();
+      }
     },
 
     /**
@@ -320,8 +325,8 @@ export function createChangeFeed(store, config = {}) {
      * @param {Function} callback - Callback to receive each change
      */
     replay(callback) {
-      for (const change of changes) {
-        callback(change);
+      if (hasHistory) {
+        history.forEach(callback);
       }
     },
 
@@ -331,7 +336,7 @@ export function createChangeFeed(store, config = {}) {
      */
     destroy() {
       // Clear change history
-      changes.length = 0;
+      this.clearChanges();
 
       // Clear all subscribers
       subscribers.clear();
@@ -339,6 +344,19 @@ export function createChangeFeed(store, config = {}) {
       // Remove all event listeners by creating a new EventTarget
       // This is the most reliable way to remove all listeners
       target = new EventTarget();
+
+      // Restore store methods if they were patched
+      if (store) {
+        if (originalAddQuad) {
+          store.addQuad = originalAddQuad;
+        }
+        if (originalRemoveQuad) {
+          store.removeQuad = originalRemoveQuad;
+        }
+        if (originalRemoveQuads) {
+          store.removeQuads = originalRemoveQuads;
+        }
+      }
     },
   };
 

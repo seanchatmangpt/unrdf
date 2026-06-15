@@ -123,7 +123,6 @@ export const PACKAGE_CATEGORY_MAP = {
   '@unrdf/federation': PartitionCategory.INFRASTRUCTURE,
   '@unrdf/blockchain': PartitionCategory.INFRASTRUCTURE,
   '@unrdf/collab': PartitionCategory.INFRASTRUCTURE,
-  '@unrdf/engine-gateway': PartitionCategory.INFRASTRUCTURE,
 
   // O_observability - Monitoring
   '@unrdf/observability': PartitionCategory.OBSERVABILITY,
@@ -448,6 +447,9 @@ export const PackageChangeSchema = z.object({
  * PackageChange class
  */
 export class PackageChange {
+  /**
+   *
+   */
   constructor(config) {
     const validated = PackageChangeSchema.parse(config);
     Object.assign(this, validated);
@@ -490,6 +492,9 @@ export const PackageDeltaSchema = z.object({
  * PackageDelta class - Represents a batch of package changes
  */
 export class PackageDelta {
+  /**
+   *
+   */
   constructor(config) {
     const validated = PackageDeltaSchema.parse({
       id: config.id || crypto.randomUUID(),

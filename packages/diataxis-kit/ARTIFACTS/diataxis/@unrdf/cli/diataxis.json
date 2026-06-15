@@ -34,24 +34,12 @@
   },
   "explanation": {
     "architecture": "RDF ontology to code generation. Transform your RDF knowledge graphs into typed code artifacts—Zod schemas, OpenAPI specs, JSDoc types, GraphQL schemas—using SPARQL queries and Nunjucks templates.",
-    "concepts": [
-      "rdf",
-      "cli",
-      "command-line",
-      "graph",
-      "sparql"
-    ],
+    "concepts": ["rdf", "cli", "command-line", "graph", "sparql"],
     "confidenceScore": 1,
     "id": "explanation-unrdf-cli-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "docs"
-    ],
+    "source": ["keywords", "readme", "docs"],
     "title": "Understanding @unrdf/cli",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -59,14 +47,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/cli",
       "title": "Handle Errors"
     },
@@ -74,15 +56,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/cli with rdf",
       "title": "Integrate with rdf"
     },
@@ -90,9 +65,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -126,10 +99,7 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@unrdf/cli Reference"
   },
   "tutorials": [
@@ -137,12 +107,8 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with @unrdf/cli\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with @unrdf/cli\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through production-automation.mjs",
         "Work through template-pipeline-complete.mjs",
@@ -155,15 +121,8 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/cli in your project",
       "id": "tutorial-getting-started-with-unrdf-cli",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "examples",
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["examples", "readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -173,5 +132,5 @@
       "title": "Getting Started with @unrdf/cli"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

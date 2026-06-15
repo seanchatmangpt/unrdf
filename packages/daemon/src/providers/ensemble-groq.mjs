@@ -8,6 +8,11 @@
  * Ensemble Groq provider - parallel reasoning with multiple specialists
  */
 export class EnsembleGroqProvider {
+  /**
+   *
+   * @param baseProvider
+   * @param config
+   */
   constructor(baseProvider, config = {}) {
     this.baseProvider = baseProvider;
     this.specialists = config.specialists || [
@@ -28,6 +33,7 @@ export class EnsembleGroqProvider {
 
   /**
    * Generate text using ensemble of specialists
+   * @param input
    */
   async generateText(input) {
     // Run all specialists in parallel
@@ -56,6 +62,7 @@ export class EnsembleGroqProvider {
 
   /**
    * Aggregate specialist responses
+   * @param results
    */
   aggregate(results) {
     // Combine all responses with separators
@@ -66,6 +73,7 @@ export class EnsembleGroqProvider {
 
   /**
    * Compute confidence from specialist agreement
+   * @param results
    */
   computeConfidence(results) {
     if (results.length < 2) return 1.0;
@@ -91,6 +99,7 @@ export class EnsembleGroqProvider {
 
   /**
    * Set custom specialists
+   * @param specialists
    */
   setSpecialists(specialists) {
     this.specialists = specialists;

@@ -7,7 +7,8 @@
 /**
  * Capture current state from store
  * @param {Map} store - State store
- * @returns {Object} Captured state
+ * @returns {object} Captured state
+ * @example
  */
 export function captureState(store) {
   const state = {};
@@ -22,12 +23,13 @@ export function captureState(store) {
  * @param {Array} deltaHistory - Delta history array
  * @param {Array} receiptHistory - Receipt history array
  * @param {Map} stateHistory - State history map
- * @param {Object} delta - Delta to store
- * @param {Object} receipt - Receipt to store
- * @param {Object} oldState - State before delta
- * @param {Object} newState - State after delta
+ * @param {object} delta - Delta to store
+ * @param {object} receipt - Receipt to store
+ * @param {object} oldState - State before delta
+ * @param {object} newState - State after delta
  * @param {number} maxHistorySize - Maximum history size
  * @returns {void}
+ * @example
  */
 export function storeHistory(
   deltaHistory,

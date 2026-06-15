@@ -10,6 +10,7 @@ import { createHash, randomUUID } from 'node:crypto';
  * Generate SHA256 hash of data
  * @param {*} data - Data to hash
  * @returns {string} 64-character hex hash
+ * @example
  */
 export function hashData(data) {
   let str;
@@ -27,6 +28,7 @@ export function hashData(data) {
 /**
  * Generate UUID v4
  * @returns {string} Valid UUID v4
+ * @example
  */
 export function generateUUID() {
   return randomUUID();
@@ -35,6 +37,7 @@ export function generateUUID() {
 /**
  * Get nanosecond timestamp
  * @returns {bigint} Nanosecond timestamp
+ * @example
  */
 export function getNs() {
   return BigInt(Date.now()) * 1_000_000n;
@@ -43,6 +46,7 @@ export function getNs() {
 /**
  * Get ISO timestamp
  * @returns {string} ISO 8601 timestamp
+ * @example
  */
 export function getISOTimestamp() {
   return new Date().toISOString();

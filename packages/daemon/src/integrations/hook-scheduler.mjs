@@ -21,7 +21,7 @@ export const DaemonHookIntegrationConfigSchema = z.object({
 /**
  * Adapter between Daemon and HookScheduler
  * Manages bidirectional event flow: hook schedules ↔ daemon operations
- * @extends EventEmitter
+ * @augments EventEmitter
  */
 export class DaemonHookAdapter extends EventEmitter {
   /**
@@ -177,6 +177,7 @@ export class DaemonHookAdapter extends EventEmitter {
 
   /**
    *
+   * @param taskId
    */
   _findHookIdByTaskId(taskId) {
     for (const [hid, tid] of this.hookToDaemonMap.entries()) {
@@ -209,6 +210,7 @@ export class DaemonHookAdapter extends EventEmitter {
  * @param {import('@unrdf/hooks').HookScheduler} hookScheduler
  * @param {object} options
  * @returns {DaemonHookAdapter}
+ * @example
  */
 export function integrateHookScheduler(daemon, hookScheduler, options = {}) {
   return new DaemonHookAdapter(daemon, hookScheduler, options);
@@ -220,6 +222,7 @@ export function integrateHookScheduler(daemon, hookScheduler, options = {}) {
  * @param {import('@unrdf/hooks').HookScheduler} hookScheduler
  * @param {object} config - {daemon?: {}, integration?: {}}
  * @returns {Promise<DaemonHookAdapter>}
+ * @example
  */
 export async function createDaemonFromHookScheduler(hookScheduler, config = {}) {
   const { UnrdfDaemon } = await import('../daemon.mjs');

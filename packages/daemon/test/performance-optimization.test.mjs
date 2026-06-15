@@ -33,6 +33,7 @@ function getHeapUsage() {
 
 /**
  * Create a no-op operation handler
+ * @param delayMs
  * @private
  */
 function createHandler(delayMs = 0) {

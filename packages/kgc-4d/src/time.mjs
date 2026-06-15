@@ -8,6 +8,12 @@ let lastTime = 0n;
 let clockJumpDetected = false;  // Track if monotonic clock had to auto-increment
 const CLOCK_JUMP_THRESHOLD = 1_000_000_000_000n;  // 1 second in nanoseconds
 
+// GAP-T1 FIX: Absolute time calculation using epoch offset
+const hrtimeAvailable = typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function';
+const EPOCH_NS_OFFSET = hrtimeAvailable
+  ? BigInt(Date.now()) * 1_000_000n - process.hrtime.bigint()
+  : 0n;
+
 // Deterministic mode: Fixed start time (2024-01-01T00:00:00.000Z)
 const DETERMINISTIC_START = 1704067200000000000n; // Nanoseconds
 
@@ -30,9 +36,9 @@ export function now() {
   if (typeof process !== 'undefined' && process.env?.DETERMINISTIC === '1') {
     // Deterministic: monotonic increment from fixed start time
     current = lastTime === 0n ? DETERMINISTIC_START : lastTime + 1n;
-  } else if (typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function') {
-    // Node.js: Use nanosecond-precision hrtime
-    current = process.hrtime.bigint();
+  } else if (hrtimeAvailable) {
+    // Node.js: Use nanosecond-precision hrtime + epoch offset for absolute time
+    current = process.hrtime.bigint() + EPOCH_NS_OFFSET;
   } else {
     // Browser: Convert milliseconds to nanoseconds
     current = BigInt(Math.floor(performance.now() * 1_000_000));
@@ -104,6 +110,9 @@ export function toISO(t_ns) {
   return result;
 }
 
+/**
+ *
+ */
 export function fromISO(iso) {
   if (typeof iso !== 'string') {
     throw new TypeError('Expected string, got ' + typeof iso);

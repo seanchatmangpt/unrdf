@@ -6,8 +6,9 @@
 
 /**
  * Convert metadata to SPARQL bindings
- * @param {Object} metadata - Operation metadata
- * @returns {Object} SPARQL bindings
+ * @param {object} metadata - Operation metadata
+ * @returns {object} SPARQL bindings
+ * @example
  */
 export function metadataToBindings(metadata) {
   const bindings = {};
@@ -20,8 +21,9 @@ export function metadataToBindings(metadata) {
 /**
  * Match pattern bindings (simple substring matching)
  * @param {string} query - SPARQL query pattern
- * @param {Object} bindings - Bindings to match
+ * @param {object} bindings - Bindings to match
  * @returns {boolean} Whether pattern matches
+ * @example
  */
 export function matchPatternBindings(query, bindings) {
   for (const [var_] of Object.entries(bindings)) {
@@ -34,10 +36,11 @@ export function matchPatternBindings(query, bindings) {
 
 /**
  * Calculate confidence score for rule match
- * @param {Object} conditionResult - Condition evaluation result
- * @param {Object} rule - Rule definition
- * @param {Object} operationMetadata - Operation metadata
+ * @param {object} conditionResult - Condition evaluation result
+ * @param {object} rule - Rule definition
+ * @param {object} operationMetadata - Operation metadata
  * @returns {number} Confidence score [0-1]
+ * @example
  */
 export function calculateConfidence(conditionResult, rule, operationMetadata) {
   const baseConfidence = conditionResult.confidence || 0;
@@ -51,10 +54,11 @@ export function calculateConfidence(conditionResult, rule, operationMetadata) {
 
 /**
  * Generate explanation for rule evaluation
- * @param {Object} rule - Rule definition
- * @param {Object} conditionResult - Condition evaluation result
+ * @param {object} rule - Rule definition
+ * @param {object} conditionResult - Condition evaluation result
  * @param {number} confidence - Confidence score
- * @returns {Object} Explanation object
+ * @returns {object} Explanation object
+ * @example
  */
 export function generateExplanation(rule, conditionResult, confidence) {
   return {
@@ -68,9 +72,10 @@ export function generateExplanation(rule, conditionResult, confidence) {
 
 /**
  * Check if two rules conflict
- * @param {Object} rule1 - First rule
- * @param {Object} rule2 - Second rule
- * @returns {Object|null} Conflict object or null if no conflict
+ * @param {object} rule1 - First rule
+ * @param {object} rule2 - Second rule
+ * @returns {object | null} Conflict object or null if no conflict
+ * @example
  */
 export function checkRuleConflict(rule1, rule2) {
   if (rule1.action.type !== rule2.action.type) {

@@ -41,21 +41,21 @@ export const NitroTaskMetadataSchema = z.object({
 /**
  * Executor that integrates Daemon with Nitro Task Engine
  * Bridges daemon operations to Nitro's execution model
- * @extends EventEmitter
+ * @augments EventEmitter
  */
 export class NitroTaskExecutor extends EventEmitter {
   /**
    * Create a new Nitro task executor
    * @param {Daemon} daemon - Daemon instance to integrate
-   * @param {Object} options - Configuration
+   * @param {object} options - Configuration
    * @param {string} [options.executorId] - Executor identifier
-   * @param {boolean} [options.autoStart=true] - Start on creation
-   * @param {boolean} [options.autoRegister=true] - Auto-register operations as Nitro tasks
-   * @param {number} [options.timeout=30000] - Task execution timeout
-   * @param {number} [options.maxRetries=3] - Maximum retry attempts
-   * @param {boolean} [options.enableEventRelay=true] - Relay events to Nitro
-   * @param {boolean} [options.enableMetrics=true] - Collect task metrics
-   * @param {string} [options.taskPrefix='daemon:'] - Prefix for Nitro task names
+   * @param {boolean} [options.autoStart] - Start on creation
+   * @param {boolean} [options.autoRegister] - Auto-register operations as Nitro tasks
+   * @param {number} [options.timeout] - Task execution timeout
+   * @param {number} [options.maxRetries] - Maximum retry attempts
+   * @param {boolean} [options.enableEventRelay] - Relay events to Nitro
+   * @param {boolean} [options.enableMetrics] - Collect task metrics
+   * @param {string} [options.taskPrefix] - Prefix for Nitro task names
    */
   constructor(daemon, options = {}) {
     super();
@@ -167,12 +167,12 @@ export class NitroTaskExecutor extends EventEmitter {
    * Register a daemon operation as a Nitro task
    * @param {string} operationId - Daemon operation ID
    * @param {string} operationName - Human-readable operation name
-   * @param {Object} nitroTaskMeta - Nitro task metadata
+   * @param {object} nitroTaskMeta - Nitro task metadata
    * @param {string} nitroTaskMeta.description - Task description
    * @param {string} [nitroTaskMeta.cronExpression] - Cron schedule
-   * @param {string} [nitroTaskMeta.priority='normal'] - Task priority
-   * @param {Array<string>} [nitroTaskMeta.tags=[]] - Task tags
-   * @returns {Object} Registration result
+   * @param {string} [nitroTaskMeta.priority] - Task priority
+   * @param {Array<string>} [nitroTaskMeta.tags] - Task tags
+   * @returns {object} Registration result
    */
   registerOperationAsTask(operationId, operationName, nitroTaskMeta = {}) {
     const operation = this.daemon.operations.get(operationId);
@@ -236,8 +236,8 @@ export class NitroTaskExecutor extends EventEmitter {
   /**
    * Execute a task via Nitro
    * @param {string} nitroTaskId - Nitro task ID
-   * @param {Object} [payload={}] - Task payload
-   * @returns {Promise<Object>} Execution result
+   * @param {object} [payload] - Task payload
+   * @returns {Promise<object>} Execution result
    */
   async runTask(nitroTaskId, payload = {}) {
     const task = this.nitroTasks.get(nitroTaskId);
@@ -290,7 +290,8 @@ export class NitroTaskExecutor extends EventEmitter {
    * Execute operation via Nitro bridge
    * @private
    * @param {string} operationId - Daemon operation ID
-   * @param {Object} payload - Task payload
+   * @param {object} payload - Task payload
+   * @param _payload
    * @returns {Promise<*>} Operation result
    */
   async _executeViaNitro(operationId, _payload = {}) {
@@ -305,7 +306,7 @@ export class NitroTaskExecutor extends EventEmitter {
 
   /**
    * List all registered tasks
-   * @returns {Array<Object>} Array of task metadata
+   * @returns {Array<object>} Array of task metadata
    */
   listTasks() {
     return Array.from(this.taskMetadata.entries()).map(([opId, meta]) => ({
@@ -318,7 +319,7 @@ export class NitroTaskExecutor extends EventEmitter {
   /**
    * Discover all daemon operations as potential tasks
    * @param {Function} [filter] - Optional filter function
-   * @returns {Array<Object>} Array of discovered operations
+   * @returns {Array<object>} Array of discovered operations
    */
   discoverOperationsAsTaskCandidates(filter) {
     const candidates = this.daemon.listOperations();
@@ -333,7 +334,7 @@ export class NitroTaskExecutor extends EventEmitter {
   /**
    * Get task execution history
    * @param {string} [taskId] - Optional specific task ID
-   * @returns {Array<Object>} Execution records
+   * @returns {Array<object>} Execution records
    */
   getExecutionHistory(taskId) {
     if (taskId) {
@@ -346,7 +347,7 @@ export class NitroTaskExecutor extends EventEmitter {
 
   /**
    * Get executor metrics
-   * @returns {Object} Current metrics
+   * @returns {object} Current metrics
    */
   getMetrics() {
     return {
@@ -375,7 +376,7 @@ export class NitroTaskExecutor extends EventEmitter {
   /**
    * Validate task can execute (pre-flight checks)
    * @param {string} taskId - Task ID to validate
-   * @returns {Object} Validation result
+   * @returns {object} Validation result
    */
   validateTask(taskId) {
     const task = this.nitroTasks.get(taskId);
@@ -398,7 +399,7 @@ export class NitroTaskExecutor extends EventEmitter {
 
   /**
    * Get status of executor and all tasks
-   * @returns {Object} Status information
+   * @returns {object} Status information
    */
   getStatus() {
     return {
@@ -415,8 +416,9 @@ export class NitroTaskExecutor extends EventEmitter {
 /**
  * Create and initialize a Nitro task executor
  * @param {Daemon} daemon - Daemon instance
- * @param {Object} [options={}] - Configuration
+ * @param {object} [options] - Configuration
  * @returns {NitroTaskExecutor} Configured executor
+ * @example
  */
 export function createNitroTaskExecutor(daemon, options = {}) {
   return new NitroTaskExecutor(daemon, options);
@@ -425,9 +427,10 @@ export function createNitroTaskExecutor(daemon, options = {}) {
 /**
  * Integrate daemon with Nitro task system
  * @param {Daemon} daemon - Daemon instance
- * @param {Array<Object>} operations - Operations to register as tasks
- * @param {Object} [config={}] - Integration config
+ * @param {Array<object>} operations - Operations to register as tasks
+ * @param {object} [config] - Integration config
  * @returns {Promise<NitroTaskExecutor>} Configured executor
+ * @example
  */
 export async function integrateNitroTasks(daemon, operations = [], config = {}) {
   const executor = new NitroTaskExecutor(daemon, config);
@@ -443,7 +446,7 @@ export async function integrateNitroTasks(daemon, operations = [], config = {}) 
 
 /**
  * Nitro Tasks Integration module exports
- * @type {Object}
+ * @type {object}
  * @property {typeof NitroTaskExecutor} NitroTaskExecutor - Executor class
  * @property {z.ZodType} NitroTaskConfigSchema - Config schema
  * @property {z.ZodType} NitroTaskMetadataSchema - Metadata schema

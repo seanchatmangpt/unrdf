@@ -97,6 +97,8 @@ const VersionSchema = z.object({
 
 /**
  * Validate RDF/OWL syntax
+ * @param args
+ * @example
  */
 export async function onto_validate(args) {
   try {
@@ -115,6 +117,8 @@ export async function onto_validate(args) {
 
 /**
  * Show ontology statistics
+ * @param args
+ * @example
  */
 export async function onto_stats(args) {
   try {
@@ -136,6 +140,8 @@ export async function onto_stats(args) {
 
 /**
  * Execute SPARQL query
+ * @param args
+ * @example
  */
 export async function onto_query(args) {
   try {
@@ -154,6 +160,8 @@ export async function onto_query(args) {
 
 /**
  * Load ontology into store
+ * @param args
+ * @example
  */
 export async function onto_load(args) {
   try {
@@ -173,6 +181,8 @@ export async function onto_load(args) {
 
 /**
  * Browse/install marketplace ontologies
+ * @param args
+ * @example
  */
 export async function onto_marketplace(args) {
   try {
@@ -199,6 +209,8 @@ export async function onto_marketplace(args) {
 
 /**
  * Perform RDFS/OWL reasoning
+ * @param args
+ * @example
  */
 export async function onto_reason(args) {
   try {
@@ -219,6 +231,8 @@ export async function onto_reason(args) {
 
 /**
  * Validate with SHACL shapes
+ * @param args
+ * @example
  */
 export async function onto_shacl(args) {
   try {
@@ -236,6 +250,8 @@ export async function onto_shacl(args) {
 
 /**
  * Save ontology store to file
+ * @param args
+ * @example
  */
 export async function onto_save(args) {
   try {
@@ -254,6 +270,8 @@ export async function onto_save(args) {
 
 /**
  * Clear ontology store
+ * @param args
+ * @example
  */
 export async function onto_clear(args) {
   try {
@@ -276,6 +294,8 @@ export async function onto_clear(args) {
 
 /**
  * Convert RDF file between formats
+ * @param args
+ * @example
  */
 export async function onto_convert(args) {
   try {
@@ -298,6 +318,8 @@ export async function onto_convert(args) {
 
 /**
  * Detect ontology alignment candidates
+ * @param args
+ * @example
  */
 export async function onto_align(args) {
   try {
@@ -316,6 +338,8 @@ export async function onto_align(args) {
 
 /**
  * Detect version drift
+ * @param args
+ * @example
  */
 export async function onto_drift(args) {
   try {
@@ -334,6 +358,8 @@ export async function onto_drift(args) {
 
 /**
  * Plan ontology changes
+ * @param args
+ * @example
  */
 export async function onto_plan(args) {
   try {
@@ -352,6 +378,8 @@ export async function onto_plan(args) {
 
 /**
  * Apply planned changes
+ * @param args
+ * @example
  */
 export async function onto_apply(args) {
   try {
@@ -371,6 +399,8 @@ export async function onto_apply(args) {
 
 /**
  * Manage ontology versions
+ * @param args
+ * @example
  */
 export async function onto_version(args) {
   try {

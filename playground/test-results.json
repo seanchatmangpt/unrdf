@@ -1,1 +1,79 @@
-{"numTotalTestSuites":0,"numPassedTestSuites":0,"numFailedTestSuites":0,"numPendingTestSuites":0,"numTotalTests":0,"numPassedTests":0,"numFailedTests":0,"numPendingTests":0,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1758828695690,"success":false,"testResults":[]}
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 0,
+  "numFailedTests": 3,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1779744208578,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Nitro API"],
+          "fullName": "Nitro API GET /api/runtime/status returns ok",
+          "status": "failed",
+          "title": "GET /api/runtime/status returns ok",
+          "duration": 30163.429916,
+          "failureMessages": [
+            "Error: STACK_TRACE_ERROR\n    at task (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1784:27)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1817:16)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1563:28)\n    at chain (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:599:14)\n    at /Users/sac/unrdf/playground/test/api.test.mjs:20:5\n    at file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:40\n    at runWithSuite (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:2258:8)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:10)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:54)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"
+          ],
+          "location": { "line": 20, "column": 5 },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": ["Nitro API"],
+          "fullName": "Nitro API hooks CRUD + evaluate happy path",
+          "status": "failed",
+          "title": "hooks CRUD + evaluate happy path",
+          "duration": 30011.405875000004,
+          "failureMessages": [
+            "Error: STACK_TRACE_ERROR\n    at task (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1784:27)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1817:16)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1563:28)\n    at chain (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:599:14)\n    at /Users/sac/unrdf/playground/test/api.test.mjs:26:5\n    at file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:40\n    at runWithSuite (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:2258:8)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:10)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:54)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"
+          ],
+          "location": { "line": 26, "column": 5 },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": ["Nitro API"],
+          "fullName": "Nitro API data create and query",
+          "status": "failed",
+          "title": "data create and query",
+          "duration": 30032.380082999996,
+          "failureMessages": [
+            "Error: STACK_TRACE_ERROR\n    at task (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1784:27)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1817:16)\n    at Object.<anonymous> (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1563:28)\n    at chain (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:599:14)\n    at /Users/sac/unrdf/playground/test/api.test.mjs:59:5\n    at file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:40\n    at runWithSuite (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:2258:8)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:10)\n    at Object.collect (file:///Users/sac/unrdf/node_modules/.pnpm/@vitest+runner@4.1.5/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:54)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"
+          ],
+          "location": { "line": 59, "column": 5 },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1779744210060,
+      "endTime": 1779744300270.3801,
+      "status": "failed",
+      "message": "",
+      "name": "/Users/sac/unrdf/playground/test/api.test.mjs"
+    }
+  ]
+}

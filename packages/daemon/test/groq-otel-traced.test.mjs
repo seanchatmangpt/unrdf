@@ -36,6 +36,7 @@ const tracer = provider.getTracer('groq-rdf-generation');
 
 /**
  * Groq LLM RDF generation with OTEL tracing
+ * @param store
  */
 async function groqRdfGenerationTraced(store) {
   const apiKey = process.env.GROQ_API_KEY;
@@ -176,6 +177,7 @@ Only respond with valid JSON. No other text.`;
 
 /**
  * Increment counter hook
+ * @param store
  */
 async function incrementCounterHook(store) {
   const currentQuads = getQuads(
@@ -210,6 +212,7 @@ async function incrementCounterHook(store) {
 
 /**
  * Compute hash of store state
+ * @param store
  */
 function computeStoreHash(store) {
   const quads = getQuads(store);

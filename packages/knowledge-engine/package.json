@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/knowledge-engine",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -22,7 +22,7 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "unbuild || true",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/",

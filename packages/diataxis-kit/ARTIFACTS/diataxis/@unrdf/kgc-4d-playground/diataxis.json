@@ -6,13 +6,9 @@
     "tutorials": 0.3
   },
   "evidence": {
-    "docsFiles": [
-      "COMPLETION-SUMMARY.md",
-      "PHASE-1-FORENSIC-UX.md",
-      "VISUALIZATION-GUIDE.md"
-    ],
+    "docsFiles": ["PHASE-1-FORENSIC-UX.md", "VISUALIZATION-GUIDE.md"],
     "examplesFiles": [],
-    "fingerprint": "37f64962ca3d0e75672f98f66e8c3e65b1eb71aeb53fe6f6bf632bbd4ce912f4",
+    "fingerprint": "4f1ae472585cb3c7cdbb58d15eb5ddb0f4c9d8bae125948be5ddaa228f4d4f4d",
     "readmeHeadings": [
       "🚀 Quick Start",
       "📊 Dashboard (9 Visualization Pages)",
@@ -23,16 +19,10 @@
   },
   "explanation": {
     "architecture": "Production-ready visualizations demonstrating the complete Knowledge Hooks system with μ(O) Calculus, JTBD validation, FMEA analysis, and Lean Six Sigma quality framework.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.6,
     "id": "explanation-unrdf-kgc-4d-playground-explanation",
-    "source": [
-      "readme",
-      "docs",
-      "inferred"
-    ],
+    "source": ["readme", "docs", "inferred"],
     "title": "Understanding @unrdf/kgc-4d-playground",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,14 +36,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -61,14 +45,8 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-unrdf-kgc-4d-playground",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
-      ],
+      "source": ["inferred"],
+      "steps": ["Import the package", "Initialize with options", "Execute operations"],
       "task": "Perform basic operations with @unrdf/kgc-4d-playground",
       "title": "Use @unrdf/kgc-4d-playground"
     }
@@ -85,9 +63,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "@unrdf/kgc-4d-playground Reference"
   },
   "tutorials": [
@@ -96,9 +72,7 @@
       "goal": "Learn how to set up and use @unrdf/kgc-4d-playground in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-4d-playground",
       "prerequisites": [],
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -108,5 +82,5 @@
       "title": "Getting Started with @unrdf/kgc-4d-playground"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

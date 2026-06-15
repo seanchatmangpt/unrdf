@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 /**
  * Confidence level enumeration
- * @type {Object}
+ * @type {object}
  */
 export const ConfidenceLevels = {
   VERY_HIGH: 0.95,

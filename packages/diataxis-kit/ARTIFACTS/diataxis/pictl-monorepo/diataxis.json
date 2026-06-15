@@ -80,15 +80,10 @@
   },
   "explanation": {
     "architecture": "pictl-monorepo is a package in the UNRDF ecosystem",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-pictl-monorepo-explanation",
-    "source": [
-      "docs",
-      "inferred"
-    ],
+    "source": ["docs", "inferred"],
     "title": "Understanding pictl-monorepo",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -102,14 +97,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for pictl-monorepo",
       "title": "Handle Errors"
     },
@@ -117,14 +106,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -141,9 +124,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "pictl-monorepo Reference"
   },
   "tutorials": [
@@ -151,12 +132,8 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with pictl-monorepo\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with pictl-monorepo\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through basic-config.toml",
         "Work through conformance-audit-example.d.mts",
@@ -171,9 +148,7 @@
       "goal": "Learn how to set up and use pictl-monorepo in your project",
       "id": "tutorial-getting-started-with-pictl-monorepo",
       "prerequisites": [],
-      "source": [
-        "examples"
-      ],
+      "source": ["examples"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -183,5 +158,5 @@
       "title": "Getting Started with pictl-monorepo"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

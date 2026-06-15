@@ -9,23 +9,14 @@
     "docsFiles": [],
     "examplesFiles": [],
     "fingerprint": "b88c1be673f33cf57f61a1826c570f96e212e7d398161b52b39848b191915a16",
-    "readmeHeadings": [
-      "Features",
-      "Usage",
-      "Convergence Criteria"
-    ]
+    "readmeHeadings": ["Features", "Usage", "Convergence Criteria"]
   },
   "explanation": {
     "architecture": "Multi-worker coordinator with convergence detection for parallel process mining.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-pictl-swarm-explanation",
-    "source": [
-      "readme",
-      "inferred"
-    ],
+    "source": ["readme", "inferred"],
     "title": "Understanding @pictl/swarm",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -39,14 +30,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -54,9 +39,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -84,10 +67,7 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@pictl/swarm Reference"
   },
   "tutorials": [
@@ -96,9 +76,7 @@
       "goal": "Learn how to set up and use @pictl/swarm in your project",
       "id": "tutorial-getting-started-with-pictl-swarm",
       "prerequisites": [],
-      "source": [
-        "inferred"
-      ],
+      "source": ["inferred"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -108,5 +86,5 @@
       "title": "Getting Started with @pictl/swarm"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

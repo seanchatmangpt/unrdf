@@ -51,6 +51,9 @@ export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonic
 // Safe quad cloning (avoids N3 prototype-getter spread bug)
 export { cloneQuad } from './utils/quad-utils.mjs';
 
+// Ring buffer for efficient streaming operations
+export { RingBuffer } from './utils/ring-buffer.mjs';
+
 // Graph diffing and change tracking
 export { diffGraphFromStores, diffGraphFromDelta, diffOntologyFromGraphDiff } from './diff.mjs';
 

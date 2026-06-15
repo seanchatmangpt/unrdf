@@ -126,7 +126,7 @@ export const PACKAGE_REGISTRY = new Map([
     description: 'Query and Store Caching',
     measures: { D_t: true, TC: true, TE: false, C_t: true },
     dependencies: ['core'],
-    dependents: ['kgc-4d', 'engine-gateway'],
+    dependents: ['kgc-4d'],
     criticality: 'high',
     policyInfluencing: false
   }],
@@ -138,17 +138,6 @@ export const PACKAGE_REGISTRY = new Map([
     measures: { D_t: true, TC: true, TE: false, C_t: true },
     dependencies: ['core'],
     dependents: ['federation', 'blockchain'],
-    criticality: 'high',
-    policyInfluencing: false
-  }],
-  ['engine-gateway', {
-    name: 'engine-gateway',
-    path: 'packages/engine-gateway',
-    tier: 2,
-    description: 'API Gateway and Request Routing',
-    measures: { D_t: true, TC: true, TE: false, C_t: true },
-    dependencies: ['core', 'observability'],
-    dependents: ['serverless'],
     criticality: 'high',
     policyInfluencing: false
   }],

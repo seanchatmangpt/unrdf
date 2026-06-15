@@ -6,10 +6,11 @@
 
 /**
  * Evaluate approval policy
- *
- * @param {Object} policy - Policy configuration
- * @param {Object} context - Policy evaluation context
- * @returns {Promise<Object>} Evaluation result with decision and reason
+ * @param {object} policy - Policy configuration
+ * @param {object} context - Policy evaluation context
+ * @param _context
+ * @returns {Promise<object>} Evaluation result with decision and reason
+ * @example
  */
 export async function evaluateApprovalPolicy(policy, _context) {
   if (!policy.config.requiresApproval) {
@@ -26,10 +27,11 @@ export async function evaluateApprovalPolicy(policy, _context) {
 
 /**
  * Evaluate time-window policy
- *
- * @param {Object} policy - Policy configuration
- * @param {Object} context - Policy evaluation context
- * @returns {Promise<Object>} Evaluation result with decision and reason
+ * @param {object} policy - Policy configuration
+ * @param {object} context - Policy evaluation context
+ * @param _context
+ * @returns {Promise<object>} Evaluation result with decision and reason
+ * @example
  */
 export async function evaluateTimeWindowPolicy(policy, _context) {
   const config = policy.config;
@@ -63,11 +65,11 @@ export async function evaluateTimeWindowPolicy(policy, _context) {
 
 /**
  * Evaluate resource-limit policy
- *
- * @param {Object} policy - Policy configuration
- * @param {Object} context - Policy evaluation context
+ * @param {object} policy - Policy configuration
+ * @param {object} context - Policy evaluation context
  * @param {Map<string, number>} resourceUsage - Current resource usage map
- * @returns {Promise<Object>} Evaluation result with decision and reason
+ * @returns {Promise<object>} Evaluation result with decision and reason
+ * @example
  */
 export async function evaluateResourceLimitPolicy(policy, context, resourceUsage) {
   const config = policy.config;
@@ -86,11 +88,11 @@ export async function evaluateResourceLimitPolicy(policy, context, resourceUsage
 
 /**
  * Evaluate rate-limit policy
- *
- * @param {Object} policy - Policy configuration
- * @param {Object} context - Policy evaluation context
+ * @param {object} policy - Policy configuration
+ * @param {object} context - Policy evaluation context
  * @param {Map<string, number>} operationRateLimit - Rate limit tracking map
- * @returns {Promise<Object>} Evaluation result with decision and reason
+ * @returns {Promise<object>} Evaluation result with decision and reason
+ * @example
  */
 export async function evaluateRateLimitPolicy(policy, context, operationRateLimit) {
   const config = policy.config;
@@ -118,10 +120,10 @@ export async function evaluateRateLimitPolicy(policy, context, operationRateLimi
 
 /**
  * Evaluate custom policy
- *
- * @param {Object} policy - Policy configuration
- * @param {Object} context - Policy evaluation context
- * @returns {Promise<Object>} Evaluation result with decision and reason
+ * @param {object} policy - Policy configuration
+ * @param {object} context - Policy evaluation context
+ * @returns {Promise<object>} Evaluation result with decision and reason
+ * @example
  */
 export async function evaluateCustomPolicy(policy, context) {
   if (!policy.config.evaluatorFn || typeof policy.config.evaluatorFn !== 'function') {
@@ -141,12 +143,12 @@ export async function evaluateCustomPolicy(policy, context) {
 
 /**
  * Resolve conflicts between policy decisions
- *
  * @param {string} operationId - Operation ID
  * @param {Array} evaluations - Array of policy evaluations
  * @param {string} conflictStrategy - Conflict resolution strategy
  * @param {Function} recordDecision - Function to record decision
- * @returns {Object} Resolved decision
+ * @returns {object} Resolved decision
+ * @example
  */
 export function resolveConflicts(operationId, evaluations, conflictStrategy, recordDecision) {
   const decisions = evaluations.map(e => e.decision);

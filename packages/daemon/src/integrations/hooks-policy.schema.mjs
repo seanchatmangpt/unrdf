@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 /**
  * Policy definition schema
- * @type {Object}
+ * @type {object}
  */
 export const PolicySchema = z.object({
   id: z.string().min(1),
@@ -26,7 +26,7 @@ export const PolicySchema = z.object({
 
 /**
  * Policy decision schema
- * @type {Object}
+ * @type {object}
  */
 export const PolicyDecisionSchema = z.object({
   id: z.string(),
@@ -42,7 +42,7 @@ export const PolicyDecisionSchema = z.object({
 
 /**
  * Policy audit entry schema
- * @type {Object}
+ * @type {object}
  */
 export const PolicyAuditSchema = z.object({
   id: z.string(),

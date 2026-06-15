@@ -28,19 +28,10 @@
   },
   "explanation": {
     "architecture": "**Professional command-line interface for process mining discovery, analysis, and automation.",
-    "concepts": [
-      "process-mining",
-      "cli",
-      "discovery",
-      "workflow"
-    ],
+    "concepts": ["process-mining", "cli", "discovery", "workflow"],
     "confidenceScore": 0.7,
     "id": "explanation-seanchatmangpt-pictl-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @seanchatmangpt/pictl",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -54,9 +45,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-seanchatmangpt-pictl",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -69,15 +58,8 @@
       "confidenceScore": 0.7,
       "context": "When working with process-mining in your project",
       "id": "howto-integrate-with-process-mining",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @seanchatmangpt/pictl with process-mining",
       "title": "Integrate with process-mining"
     },
@@ -85,9 +67,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -115,10 +95,7 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@seanchatmangpt/pictl Reference"
   },
   "tutorials": [
@@ -127,10 +104,7 @@
       "goal": "Learn how to set up and use @seanchatmangpt/pictl in your project",
       "id": "tutorial-getting-started-with-seanchatmangpt-pictl",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -140,5 +114,5 @@
       "title": "Getting Started with @seanchatmangpt/pictl"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

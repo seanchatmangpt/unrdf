@@ -12,6 +12,7 @@ const PLAYGROUND_ONTO = './ontologies/disney-governed-universe.ttl';
 
 /**
  * Run open-ontologies CLI command
+ * @param args
  */
 function runOntoCommand(args) {
   return new Promise((resolve, reject) => {

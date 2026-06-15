@@ -28,10 +28,10 @@ const AuditSchema = z.object({
  */
 export class OperationAuditor {
   /**
-   * @param {Object} options - Configuration
-   * @param {Object} options.eventStore - Event store with appendEvent method
-   * @param {Object} options.receiptGenerator - Generator with generateBatchReceipt method
-   * @param {Object} [options.logger] - Logger instance
+   * @param {object} options - Configuration
+   * @param {object} options.eventStore - Event store with appendEvent method
+   * @param {object} options.receiptGenerator - Generator with generateBatchReceipt method
+   * @param {object} [options.logger] - Logger instance
    */
   constructor(options = {}) {
     if (!options.eventStore?.appendEvent) throw new TypeError('eventStore required');
@@ -55,6 +55,7 @@ export class OperationAuditor {
 
   /**
    *
+   * @param data
    */
   async _hash(data) {
     const s = JSON.stringify(data, (k, v) => typeof v === 'bigint' ? v.toString() : v);
@@ -75,7 +76,7 @@ export class OperationAuditor {
    * Log operation enqueued
    * @param {string} opId - Operation ID
    * @param {string} type - Operation type
-   * @param {Object} input - Input data
+   * @param {object} input - Input data
    */
   async logEnqueued(opId, type, input) {
     if (!opId?.trim()) throw new TypeError('opId required');
@@ -121,7 +122,7 @@ export class OperationAuditor {
   /**
    * Log operation success - generates receipt and maintains Merkle chain
    * @param {string} opId - Operation ID
-   * @param {Object} output - Result data
+   * @param {object} output - Result data
    */
   async logSuccess(opId, output) {
     if (!opId?.trim()) throw new TypeError('opId required');
@@ -169,6 +170,7 @@ export class OperationAuditor {
 
   /**
    *
+   * @param opId
    */
   getAuditTrail(opId) { return this.auditLog.filter(e => e.operationId === opId); }
   /**
@@ -180,8 +182,9 @@ export class OperationAuditor {
 /**
  * Integrate event store with daemon
  * Sets up event logging for daemon operations with nanosecond timestamps
- * @param {Object} daemon - UnrdfDaemon instance (EventEmitter)
- * @param {Object} eventStore - Event store with appendEvent method
+ * @param {object} daemon - UnrdfDaemon instance (EventEmitter)
+ * @param {object} eventStore - Event store with appendEvent method
+ * @example
  */
 export async function integrateEventStore(daemon, eventStore) {
   if (!daemon?.on) throw new TypeError('daemon must be EventEmitter');
@@ -214,8 +217,9 @@ export async function integrateEventStore(daemon, eventStore) {
 /**
  * Integrate receipt generator with daemon
  * Generates receipts for daemon operations and maintains Merkle chain
- * @param {Object} daemon - UnrdfDaemon instance
- * @param {Object} receiptGenerator - Generator with generateBatchReceipt method
+ * @param {object} daemon - UnrdfDaemon instance
+ * @param {object} receiptGenerator - Generator with generateBatchReceipt method
+ * @example
  */
 export async function integrateReceiptGenerator(daemon, receiptGenerator) {
   if (!daemon?.on) throw new TypeError('daemon must be EventEmitter');
@@ -233,9 +237,10 @@ export async function integrateReceiptGenerator(daemon, receiptGenerator) {
 /**
  * Replay operations from event store
  * Reconstructs operation history between timestamps
- * @param {Object} eventStore - Event store with queryEventLog method
+ * @param {object} eventStore - Event store with queryEventLog method
  * @param {bigint} startTime - Start nanosecond timestamp
  * @param {bigint} endTime - End nanosecond timestamp
+ * @example
  */
 export async function replayOperations(eventStore, startTime, endTime) {
   if (!eventStore?.queryEventLog) throw new TypeError('eventStore.queryEventLog required');

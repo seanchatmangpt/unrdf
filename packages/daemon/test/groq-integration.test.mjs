@@ -101,7 +101,7 @@ What entities are present? What properties do they have?`,
       )
     );
 
-    let storeContent = Array.from(store)
+    const storeContent = Array.from(store)
       .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value}.`)
       .join('\n');
 

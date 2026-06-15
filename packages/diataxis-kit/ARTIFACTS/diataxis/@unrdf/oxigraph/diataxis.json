@@ -7,9 +7,7 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": [
-      "production-benchmark.mjs"
-    ],
+    "examplesFiles": ["production-benchmark.mjs"],
     "fingerprint": "72f430a1c95a44fdb0166b13abb3ce8bed75c54dd0874a1214468cb41a4f28af",
     "readmeHeadings": [
       "Features",
@@ -27,23 +25,12 @@
   },
   "explanation": {
     "architecture": "![Version](https://img.shields.io/badge/version-[VERSION]--beta.1-blue) ![Production Ready](https://img.shields.",
-    "concepts": [
-      "rdf",
-      "sparql",
-      "graph-database",
-      "oxigraph",
-      "knowledge-graph"
-    ],
+    "concepts": ["rdf", "sparql", "graph-database", "oxigraph", "knowledge-graph"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-oxigraph-explanation",
-    "source": [
-      "keywords",
-      "readme"
-    ],
+    "source": ["keywords", "readme"],
     "title": "Understanding @unrdf/oxigraph",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -51,14 +38,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/oxigraph",
       "title": "Handle Errors"
     },
@@ -66,15 +47,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/oxigraph with rdf",
       "title": "Integrate with rdf"
     }
@@ -121,9 +95,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/oxigraph Reference"
   },
   "tutorials": [
@@ -131,14 +103,8 @@
       "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/oxigraph in your project",
       "id": "tutorial-getting-started-with-unrdf-oxigraph",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "examples",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["examples", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -148,5 +114,5 @@
       "title": "Getting Started with @unrdf/oxigraph"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

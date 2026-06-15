@@ -38,8 +38,7 @@ export {
  * Daemon Rule Engine extending knowledge-engine with intelligent rule execution
  * Provides SPARQL pattern matching, inference chains, confidence scoring,
  * and A/B testing for autonomous operation triggering.
- *
- * @extends EventEmitter
+ * @augments EventEmitter
  * @example
  * ```javascript
  * const engine = new DaemonRuleEngine(daemon, config);
@@ -53,8 +52,8 @@ export {
 export class DaemonRuleEngine extends EventEmitter {
   /**
    * Creates a new Daemon Rule Engine instance
-   * @param {Object} daemon - Daemon instance for operation execution
-   * @param {Object} [config] - Engine configuration
+   * @param {object} daemon - Daemon instance for operation execution
+   * @param {object} [config] - Engine configuration
    * @throws {Error} If configuration is invalid
    */
   constructor(daemon, config = {}) {
@@ -88,7 +87,7 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Register a rule in the engine
-   * @param {Object} rule - Rule definition
+   * @param {object} rule - Rule definition
    * @returns {void}
    * @throws {Error} If rule is invalid or duplicate
    * @example
@@ -157,7 +156,7 @@ export class DaemonRuleEngine extends EventEmitter {
   /**
    * Get rule by ID
    * @param {string} ruleId - Rule identifier
-   * @returns {Object|null} Rule definition or null if not found
+   * @returns {object | null} Rule definition or null if not found
    */
   getRule(ruleId) {
     return this.rulesById.get(ruleId) || null;
@@ -165,9 +164,9 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Evaluate all rules against operation metadata
-   * @param {Object} operationMetadata - Operation metadata for pattern matching
-   * @param {Object} [context] - Additional context for evaluation
-   * @returns {Promise<Object>} Evaluation results with matched rules and inference chains
+   * @param {object} operationMetadata - Operation metadata for pattern matching
+   * @param {object} [context] - Additional context for evaluation
+   * @returns {Promise<object>} Evaluation results with matched rules and inference chains
    * @example
    * const results = await engine.evaluateRules(
    *   { operationType: 'write', entityType: 'Document', size: 1000 },
@@ -275,11 +274,11 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Evaluate a single rule against operation metadata
-   * @param {Object} rule - Rule definition
-   * @param {Object} operationMetadata - Operation metadata
-   * @param {Object} context - Evaluation context
+   * @param {object} rule - Rule definition
+   * @param {object} operationMetadata - Operation metadata
+   * @param {object} context - Evaluation context
    * @param {string} evaluationId - Evaluation identifier
-   * @returns {Promise<Object>} Rule execution result
+   * @returns {Promise<object>} Rule execution result
    * @private
    */
   async _evaluateRule(rule, operationMetadata, context, evaluationId) {
@@ -328,8 +327,8 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Select rule variant for A/B testing
-   * @param {Object} rule - Rule definition
-   * @returns {Object} Selected rule variant or original rule
+   * @param {object} rule - Rule definition
+   * @returns {object} Selected rule variant or original rule
    * @private
    */
   _selectRuleVariant(rule) {
@@ -371,7 +370,7 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Get engine metrics and statistics
-   * @returns {Object} Metrics object
+   * @returns {object} Metrics object
    */
   getMetrics() {
     return {
@@ -390,7 +389,7 @@ export class DaemonRuleEngine extends EventEmitter {
 
   /**
    * Clear execution history
-   * @param {number} [keepLast=100] - Number of recent entries to keep
+   * @param {number} [keepLast] - Number of recent entries to keep
    */
   clearExecutionHistory(keepLast = 100) {
     if (this.executionHistory.length > keepLast) {

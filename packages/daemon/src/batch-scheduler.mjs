@@ -11,8 +11,8 @@
  */
 export class BatchScheduler {
   /**
-   * @param {number} [batchSize=100] - Operations to batch before processing
-   * @param {number} [flushIntervalMs=10] - Maximum wait time before flush
+   * @param {number} [batchSize] - Operations to batch before processing
+   * @param {number} [flushIntervalMs] - Maximum wait time before flush
    */
   constructor(batchSize = 100, flushIntervalMs = 10) {
     this.batchSize = batchSize;
@@ -24,7 +24,7 @@ export class BatchScheduler {
 
   /**
    * Add operation to batch
-   * @param {Object} operation - Operation to add
+   * @param {object} operation - Operation to add
    */
   add(operation) {
     this.pendingOperations.push(operation);

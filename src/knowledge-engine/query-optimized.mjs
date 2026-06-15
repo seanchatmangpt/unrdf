@@ -10,7 +10,7 @@
  * - Efficient binding conversion
  */
 
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, Store } from '@unrdf/oxigraph';
 import { getQueryEngine } from './query-cache.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { LRUCache } from 'lru-cache';
@@ -30,10 +30,12 @@ const queryResultCache = new LRUCache({
  * Hash a query for caching
  * @param {Store} store - Store to query
  * @param {string} sparql - SPARQL query
+ * @param {Object} [variables] - Query variables
  * @returns {string} Hash
  */
-function hashQuery(store, sparql) {
-  const key = `${store.size}:${sparql}`;
+function hashQuery(store, sparql, variables = {}) {
+  const varsKey = JSON.stringify(variables);
+  const key = `${store.size}:${sparql}:${varsKey}`;
   return bytesToHex(sha3_256(utf8ToBytes(key)));
 }
 
@@ -45,10 +47,12 @@ function hashQuery(store, sparql) {
  * - Reduced object allocations in binding conversion
  * - Streaming support for large result sets
  * - Batch processing of bindings
+ * - Safe parameter binding
  *
  * @param {Store} store - The store to query against
  * @param {string} sparql - The SPARQL query string
  * @param {Object} [options] - Query options
+ * @param {Object} [options.variables] - SPARQL variables for parameter binding
  * @param {number} [options.limit] - Maximum number of results
  * @param {AbortSignal} [options.signal] - Abort signal for cancellation
  * @param {boolean} [options.deterministic] - Enable deterministic results
@@ -64,11 +68,11 @@ export async function queryOptimized(store, sparql, options = {}) {
     throw new TypeError('queryOptimized: sparql must be a non-empty string');
   }
 
-  const { useCache = true, streaming = false } = options;
+  const { useCache = true, streaming = false, variables = {} } = options;
 
   // Check cache first
   if (useCache) {
-    const cacheKey = hashQuery(store, sparql);
+    const cacheKey = hashQuery(store, sparql, variables);
     const cached = queryResultCache.get(cacheKey);
     if (cached) {
       return cached;
@@ -83,11 +87,13 @@ export async function queryOptimized(store, sparql, options = {}) {
         'query.length': sparql.length,
         'query.store_size': store.size,
         'query.cached': useCache,
-        'query.streaming': streaming
+        'query.streaming': streaming,
+        'query.has_variables': Object.keys(variables).length > 0
       });
 
       const queryOptions = {
         sources: [store],
+        initialBindings: variables,
         ...options,
       };
 
@@ -145,7 +151,7 @@ export async function queryOptimized(store, sparql, options = {}) {
 
       // Cache result if not streaming
       if (useCache && !streaming) {
-        const cacheKey = hashQuery(store, sparql);
+        const cacheKey = hashQuery(store, sparql, variables);
         queryResultCache.set(cacheKey, result);
       }
 

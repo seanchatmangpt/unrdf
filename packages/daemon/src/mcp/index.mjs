@@ -20,6 +20,7 @@ import * as ontoHandlers from './open-ontologies-handlers.mjs';
 /**
  * Create and configure the MCP server
  * @returns {McpServer} Configured MCP server instance
+ * @example
  */
 export function createMCPServer() {
   const server = new McpServer({
@@ -835,6 +836,7 @@ export function createMCPServer() {
 /**
  * Get MCP server running status
  * @returns {Promise<{running: boolean, transport: string, pid: number, uptime: string}>}
+ * @example
  */
 export async function getMCPServerStatus() {
   return {
@@ -848,6 +850,7 @@ export async function getMCPServerStatus() {
 /**
  * Inspect MCP server capabilities without starting it
  * @returns {Promise<{tools: Array, resources: Array, prompts: Array}>}
+ * @example
  */
 export async function inspectMCPServer() {
   const { mcpResources } = await import('./resources.mjs');
@@ -914,6 +917,7 @@ export async function inspectMCPServer() {
 /**
  * Start the MCP server with stdio transport
  * @returns {Promise<void>}
+ * @example
  */
 export async function startMCPServer() {
   const server = createMCPServer();
@@ -922,16 +926,15 @@ export async function startMCPServer() {
   console.error('MCP server connected to stdio');
 }
 
+import { startMCPServerSSE as startSSE } from './sse.mjs';
+
 /**
  * Start the MCP server with SSE transport (for HTTP)
  * @param {number} port Port to listen on
  * @returns {Promise<void>}
- * @throws {Error} SSE transport is not yet implemented
+ * @example
  */
-export async function startMCPServerSSE(_port = 8765) {
-  throw new Error(
-    'SSE transport is not yet implemented. ' +
-    'Use startMCPServer() for stdio transport instead. ' +
-    'To implement SSE, you must provide an HTTP server integration.'
-  );
+export async function startMCPServerSSE(port = 8765) {
+  const server = createMCPServer();
+  return startSSE(server, { port });
 }

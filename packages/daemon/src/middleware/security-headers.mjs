@@ -119,7 +119,7 @@ const SANITIZATION_PATTERNS = {
  */
 export class SecurityHeadersMiddleware {
   /**
-   * @param {Object} config - Security configuration
+   * @param {object} config - Security configuration
    */
   constructor(config = {}) {
     this.config = SecurityHeadersConfigSchema.parse(config);
@@ -205,8 +205,8 @@ export class SecurityHeadersMiddleware {
 
   /**
    * Apply CORS headers
-   * @param {Object} request - Request object
-   * @param {Object} response - Response object
+   * @param {object} request - Request object
+   * @param {object} response - Response object
    */
   applyCORSHeaders(request, response) {
     const cors = this.config.cors || CORSConfigSchema.parse({});
@@ -239,7 +239,7 @@ export class SecurityHeadersMiddleware {
   /**
    * Check rate limit
    * @param {string} key - Rate limit key (e.g., IP address)
-   * @returns {Object} Rate limit result
+   * @returns {object} Rate limit result
    */
   checkRateLimit(key) {
     const rateLimit = this.config.rateLimit || RateLimitConfigSchema.parse({});
@@ -274,7 +274,7 @@ export class SecurityHeadersMiddleware {
   /**
    * Sanitize input string
    * @param {string} input - Input to sanitize
-   * @param {Object} [options] - Sanitization options
+   * @param {object} [options] - Sanitization options
    * @returns {string} Sanitized input
    */
   sanitizeInput(input, options = {}) {
@@ -317,9 +317,9 @@ export class SecurityHeadersMiddleware {
 
   /**
    * Sanitize object recursively
-   * @param {Object} obj - Object to sanitize
-   * @param {Object} [options] - Sanitization options
-   * @returns {Object} Sanitized object
+   * @param {object} obj - Object to sanitize
+   * @param {object} [options] - Sanitization options
+   * @returns {object} Sanitized object
    */
   sanitizeObject(obj, options = {}) {
     if (typeof obj !== 'object' || obj === null) {
@@ -357,8 +357,8 @@ export class SecurityHeadersMiddleware {
 
   /**
    * Check request size limits
-   * @param {Object} request - Request object
-   * @returns {Object} Validation result
+   * @param {object} request - Request object
+   * @returns {object} Validation result
    */
   checkRequestLimits(request) {
     const limits = this.config.requestLimits || RequestLimitsSchema.parse({});
@@ -393,8 +393,8 @@ export class SecurityHeadersMiddleware {
 
   /**
    * Apply security headers to response
-   * @param {Object} response - Response object
-   * @param {Object} [options] - Options
+   * @param {object} response - Response object
+   * @param {object} [options] - Options
    */
   applySecurityHeaders(response, options = {}) {
     response.headers = response.headers || {};
@@ -481,8 +481,8 @@ export class SecurityHeadersMiddleware {
 
   /**
    * Middleware handler
-   * @param {Object} request - Request object
-   * @param {Object} response - Response object
+   * @param {object} request - Request object
+   * @param {object} response - Response object
    * @param {Function} next - Next middleware
    * @returns {Promise<void>}
    */
@@ -593,8 +593,9 @@ export class SecurityHeadersMiddleware {
 
 /**
  * Create security headers middleware
- * @param {Object} config - Security configuration
+ * @param {object} config - Security configuration
  * @returns {SecurityHeadersMiddleware} Middleware instance
+ * @example
  */
 export function createSecurityMiddleware(config) {
   return new SecurityHeadersMiddleware(config);

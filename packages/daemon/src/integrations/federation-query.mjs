@@ -28,9 +28,7 @@ const tracer = trace.getTracer('@unrdf/daemon-federation');
  *
  * Coordinates distributed SPARQL query execution across federated Raft nodes
  * with topology awareness, intelligent scheduling, and result consistency.
- *
  * @class DaemonFederationExecutor
- *
  * @example
  * const executor = new DaemonFederationExecutor(daemon, federationCoordinator, {
  *   strategy: 'selective',
@@ -43,9 +41,9 @@ const tracer = trace.getTracer('@unrdf/daemon-federation');
 export class DaemonFederationExecutor {
   /**
    * Create a federation query executor
-   * @param {Object} daemon - Daemon instance
-   * @param {Object} federationCoordinator - Federation coordinator
-   * @param {Object} [options] - Executor options
+   * @param {object} daemon - Daemon instance
+   * @param {object} federationCoordinator - Federation coordinator
+   * @param {object} [options] - Executor options
    */
   constructor(daemon, federationCoordinator, options = {}) {
     const cfg = FederationExecutorConfigSchema.parse(options);
@@ -63,13 +61,12 @@ export class DaemonFederationExecutor {
 
   /**
    * Execute a SPARQL query across federated nodes
-   *
    * @param {string} sparqlQuery - SPARQL query string
-   * @param {Object} [options] - Query execution options
+   * @param {object} [options] - Query execution options
    * @param {string} [options.strategy] - Override execution strategy
    * @param {number} [options.timeout] - Override timeout in milliseconds
    * @param {Array<string>} [options.excludeNodes] - Nodes to exclude from query
-   * @returns {Promise<Object>} Aggregated query results with metadata
+   * @returns {Promise<object>} Aggregated query results with metadata
    * @throws {Error} If query execution fails on all nodes
    */
   async executeQuery(sparqlQuery, options = {}) {
@@ -195,13 +192,12 @@ export class DaemonFederationExecutor {
 
   /**
    * Execute query on a specific node
-   *
    * @private
    * @param {string} queryId - Query identifier
    * @param {string} nodeId - Node ID to query
    * @param {string} sparqlQuery - SPARQL query
    * @param {number} timeout - Query timeout in milliseconds
-   * @returns {Promise<Object>} Query result from node
+   * @returns {Promise<object>} Query result from node
    */
   async _executeOnNode(queryId, nodeId, sparqlQuery, timeout) {
     const span = tracer.startSpan('federation.executeOnNode', {
@@ -269,10 +265,9 @@ export class DaemonFederationExecutor {
 
   /**
    * Aggregate results from multiple peers
-   *
    * @private
-   * @param {Array<Object>} peerResults - Results from each peer
-   * @returns {Array<Object>} Aggregated results
+   * @param {Array<object>} peerResults - Results from each peer
+   * @returns {Array<object>} Aggregated results
    */
   _aggregateResults(peerResults) {
     const resultMap = new Map();
@@ -310,10 +305,9 @@ export class DaemonFederationExecutor {
 
   /**
    * Deduplicate results based on content
-   *
    * @private
-   * @param {Array<Object>} results - Results to deduplicate
-   * @returns {Array<Object>} Deduplicated results
+   * @param {Array<object>} results - Results to deduplicate
+   * @returns {Array<object>} Deduplicated results
    */
   _deduplicateResults(results) {
     const seen = new Set();
@@ -335,9 +329,8 @@ export class DaemonFederationExecutor {
 
   /**
    * Get query statistics
-   *
    * @param {string} [queryId] - Optional query ID to get specific stats
-   * @returns {Object|Map} Statistics for query or all queries
+   * @returns {object | Map} Statistics for query or all queries
    */
   getStats(queryId) {
     if (queryId !== undefined) {
@@ -355,9 +348,8 @@ export class DaemonFederationExecutor {
 
   /**
    * Get node performance metrics
-   *
    * @param {string} [nodeId] - Optional node ID
-   * @returns {Object} Node metrics
+   * @returns {object} Node metrics
    */
   getNodeMetrics(nodeId) {
     if (nodeId !== undefined) {
@@ -380,8 +372,7 @@ export class DaemonFederationExecutor {
 
   /**
    * Get executor health status
-   *
-   * @returns {Object} Health information
+   * @returns {object} Health information
    */
   getHealth() {
     const totalQueries = this.queryStats.size;
@@ -406,12 +397,10 @@ export class DaemonFederationExecutor {
 
 /**
  * Create a daemon federation executor
- *
- * @param {Object} daemon - Daemon instance
- * @param {Object} federationCoordinator - Federation coordinator
- * @param {Object} [options] - Executor options
+ * @param {object} daemon - Daemon instance
+ * @param {object} federationCoordinator - Federation coordinator
+ * @param {object} [options] - Executor options
  * @returns {DaemonFederationExecutor} Executor instance
- *
  * @example
  * const executor = createDaemonFederationExecutor(daemon, coordinator, {
  *   strategy: 'selective',

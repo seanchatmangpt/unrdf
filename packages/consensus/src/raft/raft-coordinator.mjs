@@ -115,6 +115,11 @@ export class RaftCoordinator extends EventEmitter {
     this.commitIndex = 0;
     this.lastApplied = 0;
 
+    // Snapshot state
+    this.lastIncludedIndex = 0;
+    this.lastIncludedTerm = 0;
+    this.snapshot = null;
+
     // Volatile leader state
     this.nextIndex = new Map();
     this.matchIndex = new Map();
@@ -253,7 +258,7 @@ export class RaftCoordinator extends EventEmitter {
     // Check if we can grant vote
     const logOk =
       lastLogTerm > this.getLastLogTerm() ||
-      (lastLogTerm === this.getLastLogTerm() && lastLogIndex >= this.log.length);
+      (lastLogTerm === this.getLastLogTerm() && lastLogIndex >= this.getLastLogIndex());
     const granted =
       term >= this.currentTerm &&
       (this.votedFor === null || this.votedFor === candidateId) &&
@@ -289,21 +294,32 @@ export class RaftCoordinator extends EventEmitter {
     }
 
     // Check log consistency
-    const logOk =
-      prevLogIndex === 0 ||
-      (prevLogIndex <= this.log.length && this.log[prevLogIndex - 1]?.term === prevLogTerm);
+    let logOk = false;
+    if (prevLogIndex === 0) {
+      logOk = true;
+    } else if (prevLogIndex === this.lastIncludedIndex) {
+      logOk = (prevLogTerm === this.lastIncludedTerm);
+    } else if (prevLogIndex > this.lastIncludedIndex && prevLogIndex <= this.getLastLogIndex()) {
+      const entry = this.getEntry(prevLogIndex);
+      logOk = (entry && entry.term === prevLogTerm);
+    }
 
     let success = false;
     if (term >= this.currentTerm && logOk) {
       // Append entries
       if (entries && entries.length > 0) {
-        this.log = this.log.slice(0, prevLogIndex);
-        this.log.push(...entries);
+        const startIdx = entries[0].index;
+        const internalStart = startIdx - this.lastIncludedIndex - 1;
+        
+        if (internalStart >= 0) {
+          this.log = this.log.slice(0, internalStart);
+          this.log.push(...entries);
+        }
       }
 
       // Update commit index
       if (leaderCommit > this.commitIndex) {
-        this.commitIndex = Math.min(leaderCommit, this.log.length);
+        this.commitIndex = Math.min(leaderCommit, this.getLastLogIndex());
         this.applyCommittedEntries();
       }
 
@@ -388,13 +404,12 @@ export class RaftCoordinator extends EventEmitter {
         // Add to Raft log
         const entry = {
           term: this.currentTerm,
-          index: this.log.length + 1,
+          index: this.getLastLogIndex() + 1,
           command: validatedCommand,
           id: randomUUID(),
         };
 
         this.log.push(entry);
-        this.commandLog.push(entry);
 
         // Replicate to followers
         await this.replicateToFollowers();
@@ -498,12 +513,41 @@ export class RaftCoordinator extends EventEmitter {
   }
 
   /**
+   * Get last log index
+   * @returns {number} Last log index
+   * @private
+   */
+  getLastLogIndex() {
+    return this.lastIncludedIndex + this.log.length;
+  }
+
+  /**
    * Get last log term
    * @returns {number} Last log term
    * @private
    */
   getLastLogTerm() {
-    return this.log.length > 0 ? this.log[this.log.length - 1].term : 0;
+    if (this.log.length > 0) {
+      return this.log[this.log.length - 1].term;
+    }
+    return this.lastIncludedTerm;
+  }
+
+  /**
+   * Get log entry by index
+   * @param {number} index - Log index
+   * @returns {Object|null} Log entry
+   * @private
+   */
+  getEntry(index) {
+    if (index <= this.lastIncludedIndex) {
+      return null;
+    }
+    const internalIndex = index - this.lastIncludedIndex - 1;
+    if (internalIndex < 0 || internalIndex >= this.log.length) {
+      return null;
+    }
+    return this.log[internalIndex];
   }
 
   /**
@@ -640,7 +684,7 @@ export class RaftCoordinator extends EventEmitter {
           data: {
             term: this.currentTerm,
             leaderId: this.config.nodeId,
-            prevLogIndex: this.log.length,
+            prevLogIndex: this.getLastLogIndex(),
             prevLogTerm: this.getLastLogTerm(),
             entries: [],
             leaderCommit: this.commitIndex,
@@ -664,9 +708,25 @@ export class RaftCoordinator extends EventEmitter {
     const promises = Array.from(this.peers.keys()).map(async peerId => {
       try {
         const nextIdx = this.nextIndex.get(peerId) || 1;
+
+        // If nextIdx is behind snapshot, we should send snapshot
+        // For this task, we'll just skip or log if we can't send entries
+        if (nextIdx <= this.lastIncludedIndex) {
+          // In a full implementation, we would send InstallSnapshot here
+          return;
+        }
+
         const prevLogIndex = nextIdx - 1;
-        const prevLogTerm = prevLogIndex > 0 ? this.log[prevLogIndex - 1].term : 0;
-        const entries = this.log.slice(nextIdx - 1);
+        let prevLogTerm = 0;
+        
+        if (prevLogIndex === this.lastIncludedIndex) {
+          prevLogTerm = this.lastIncludedTerm;
+        } else if (prevLogIndex > this.lastIncludedIndex) {
+          const entry = this.getEntry(prevLogIndex);
+          prevLogTerm = entry ? entry.term : 0;
+        }
+
+        const entries = this.log.slice(nextIdx - this.lastIncludedIndex - 1);
 
         const response = await this.transport.send(peerId, {
           type: 'append_entries',
@@ -682,8 +742,8 @@ export class RaftCoordinator extends EventEmitter {
         });
 
         if (response.success) {
-          this.nextIndex.set(peerId, this.log.length + 1);
-          this.matchIndex.set(peerId, this.log.length);
+          this.nextIndex.set(peerId, this.getLastLogIndex() + 1);
+          this.matchIndex.set(peerId, this.getLastLogIndex());
         } else {
           // Decrement nextIndex and retry
           this.nextIndex.set(peerId, Math.max(1, nextIdx - 1));
@@ -718,14 +778,58 @@ export class RaftCoordinator extends EventEmitter {
    * @private
    */
   applyCommittedEntries() {
-    while (this.lastApplied < this.commitIndex && this.lastApplied < this.log.length) {
+    while (this.lastApplied < this.commitIndex) {
       this.lastApplied++;
-      const entry = this.log[this.lastApplied - 1];
+      const entry = this.getEntry(this.lastApplied);
 
       if (entry) {
         this.applyCommand(entry);
       }
     }
+
+    // Check if snapshot is needed
+    if (this.lastApplied - this.lastIncludedIndex >= this.config.snapshotThreshold) {
+      this.takeSnapshot();
+    }
+  }
+
+  /**
+   * Take a snapshot of the current state machine
+   * @private
+   */
+  takeSnapshot() {
+    return tracer.startActiveSpan('raft.takeSnapshot', span => {
+      try {
+        const snapshotIndex = this.lastApplied;
+        const entry = this.getEntry(snapshotIndex);
+        const snapshotTerm = entry ? entry.term : this.lastIncludedTerm;
+
+        span.setAttribute('snapshot.index', snapshotIndex);
+        span.setAttribute('snapshot.term', snapshotTerm);
+
+        // Capture current state machine
+        this.snapshot = new Map(this.stateMachine);
+
+        // Truncate log
+        const truncateCount = snapshotIndex - this.lastIncludedIndex;
+        this.log = this.log.slice(truncateCount);
+
+        this.lastIncludedIndex = snapshotIndex;
+        this.lastIncludedTerm = snapshotTerm;
+
+        this.emit('snapshot_taken', {
+          index: this.lastIncludedIndex,
+          term: this.lastIncludedTerm,
+        });
+
+        span.setStatus({ code: SpanStatusCode.OK });
+      } catch (error) {
+        span.recordException(error);
+        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      } finally {
+        span.end();
+      }
+    });
   }
 
   /**

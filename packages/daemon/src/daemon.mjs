@@ -71,12 +71,12 @@ class LRUCache {
 export class Daemon extends EventEmitter {
   /**
    * Creates a new daemon instance
-   * @param {Object} config - Daemon configuration
-   * @param {string} [config.id='default-daemon'] - Unique daemon identifier
+   * @param {object} config - Daemon configuration
+   * @param {string} [config.id] - Unique daemon identifier
    * @param {string} [config.nodeId] - Node identifier in cluster
    * @param {string} [config.clusterId] - Cluster identifier
-   * @param {number} [config.maxConcurrent=5] - Maximum concurrent operations
-   * @param {Object} [config.logger] - Logger instance
+   * @param {number} [config.maxConcurrent] - Maximum concurrent operations
+   * @param {object} [config.logger] - Logger instance
    * @throws {Error} If configuration is invalid
    */
   constructor(config = {}) {
@@ -110,14 +110,8 @@ export class Daemon extends EventEmitter {
       return;
     }
     
-    // Vision 2030 Semantic Sidecar Integration
-    this.semanticSidecar.start();
-
-    this.isRunning = true;
-    this.startTime = Date.now();
-
     try {
-      // Initialize OTEL SDK
+      // Initialize OTEL SDK as early as possible
       await initializeOTelSDK({
         serviceName: 'unrdf-daemon',
         version: '[VERSION]',
@@ -129,6 +123,13 @@ export class Daemon extends EventEmitter {
         this.logger.warn('[Daemon] OTEL SDK initialization failed, continuing without tracing:', error.message);
       }
     }
+
+    // Vision 2030 Semantic Sidecar Integration
+    this.semanticSidecar.start();
+
+    this.isRunning = true;
+    this.startTime = Date.now();
+
     this.logger.info(`[Daemon ${this.nodeId}] Started`);
     this._safeEmit('daemon:started', { nodeId: this.nodeId, timestamp: new Date() });
   }
@@ -159,11 +160,11 @@ export class Daemon extends EventEmitter {
 
   /**
    * Schedule an operation for execution
-   * @param {Object} operation - Operation to schedule
+   * @param {object} operation - Operation to schedule
    * @param {string} operation.id - Operation identifier
    * @param {Function} operation.handler - Operation handler function
    * @param {string} [operation.name] - Human-readable operation name
-   * @param {Object} [operation.metadata] - Operation metadata
+   * @param {object} [operation.metadata] - Operation metadata
    * @throws {Error} If operation is invalid
    */
   schedule(operation) {
@@ -303,7 +304,7 @@ export class Daemon extends EventEmitter {
 
   /**
    * Get daemon health status
-   * @returns {Object} Health information
+   * @returns {object} Health information
    */
   getHealth() {
     const uptime = this.startTime ? Date.now() - this.startTime : 0;
@@ -323,7 +324,7 @@ export class Daemon extends EventEmitter {
 
   /**
    * Get daemon metrics
-   * @returns {Object} Performance and operation metrics
+   * @returns {object} Performance and operation metrics
    */
   getMetrics() {
     const completed = this.completedOperations.entries();

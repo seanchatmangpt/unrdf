@@ -34,12 +34,11 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Create a new knowledge self-play loop
-   *
-   * @param {Object} options - Configuration
-   * @param {Object} options.store - Oxigraph RDF store instance
-   * @param {Object} options.engine - KnowledgeHookEngine instance
-   * @param {number} [options.maxIterations=10] - Maximum iterations before force-stop
-   * @param {string} [options.triggerType='continuous-improvement'] - Hook trigger type to filter
+   * @param {object} options - Configuration
+   * @param {object} options.store - Oxigraph RDF store instance
+   * @param {object} options.engine - KnowledgeHookEngine instance
+   * @param {number} [options.maxIterations] - Maximum iterations before force-stop
+   * @param {string} [options.triggerType] - Hook trigger type to filter
    */
   constructor({ store, engine, maxIterations = 10, triggerType = 'continuous-improvement' }) {
     if (!store) throw new Error('store is required');
@@ -57,9 +56,8 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Execute one iteration of the self-play loop
-   *
-   * @param {Object} [delta={}] - RDF delta context (previous receipt, metadata, etc.)
-   * @returns {Promise<Object>} Step result with receipt, feedback, and convergence signal
+   * @param {object} [delta] - RDF delta context (previous receipt, metadata, etc.)
+   * @returns {Promise<object>} Step result with receipt, feedback, and convergence signal
    */
   async step(delta = {}) {
     // Execute hooks: evaluate conditions, fire matching hooks, return receipt
@@ -91,9 +89,8 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Run the self-play loop until convergence or max iterations
-   *
-   * @param {Object} [initialDelta={}] - Initial RDF delta context
-   * @returns {Promise<Object>} Run result with episode ID, iterations, receipts, feedback, convergence flag
+   * @param {object} [initialDelta] - Initial RDF delta context
+   * @returns {Promise<object>} Run result with episode ID, iterations, receipts, feedback, convergence flag
    */
   async run(initialDelta = {}) {
     let delta = initialDelta;
@@ -133,8 +130,7 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Materialize episode metadata as RDF quads in the store
-   *
-   * @param {Object} runResult - Result from run()
+   * @param {object} runResult - Result from run()
    * @returns {Array} Array of quads written to store
    */
   materializeEpisodeRDF(runResult) {
@@ -228,7 +224,6 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Get the execution history of all steps
-   *
    * @returns {Array} Array of step records { stepNumber, timestamp, receipt, feedback, storeChanged, hooksExecuted }
    */
   getHistory() {
@@ -237,7 +232,6 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Get the episode ID
-   *
    * @returns {string} Episode UUID
    */
   getEpisodeId() {
@@ -246,8 +240,7 @@ export class KnowledgeSelfPlayLoop {
 
   /**
    * Get current episode metrics
-   *
-   * @returns {Object} Metrics including total feedback, iterations so far, convergence status
+   * @returns {object} Metrics including total feedback, iterations so far, convergence status
    */
   getMetrics() {
     const totalFeedback = this.#history.reduce((sum, step) => sum + step.feedback, 0);
@@ -267,11 +260,11 @@ export class KnowledgeSelfPlayLoop {
 
 /**
  * Factory function to create a KnowledgeSelfPlayLoop
- *
- * @param {Object} store - Oxigraph RDF store
- * @param {Object} engine - KnowledgeHookEngine instance
- * @param {Object} [options={}] - Configuration options
+ * @param {object} store - Oxigraph RDF store
+ * @param {object} engine - KnowledgeHookEngine instance
+ * @param {object} [options] - Configuration options
  * @returns {KnowledgeSelfPlayLoop} Self-play loop instance
+ * @example
  */
 export function createKnowledgeSelfPlayLoop(store, engine, options = {}) {
   return new KnowledgeSelfPlayLoop({ store, engine, ...options });

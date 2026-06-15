@@ -24,15 +24,10 @@
   },
   "explanation": {
     "architecture": "This example demonstrates how to use **@unrdf/hooks** for creating sequential hook chains that validate and transform RDF quads through multiple stages.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-unrdf-hooks-example-chains-explanation",
-    "source": [
-      "readme",
-      "inferred"
-    ],
+    "source": ["readme", "inferred"],
     "title": "Understanding @unrdf/hooks-example-chains",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,14 +41,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/hooks-example-chains",
       "title": "Handle Errors"
     },
@@ -61,14 +50,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -85,9 +68,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "@unrdf/hooks-example-chains Reference"
   },
   "tutorials": [
@@ -96,9 +77,7 @@
       "goal": "Learn how to set up and use @unrdf/hooks-example-chains in your project",
       "id": "tutorial-getting-started-with-unrdf-hooks-example-chains",
       "prerequisites": [],
-      "source": [
-        "inferred"
-      ],
+      "source": ["inferred"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -108,5 +87,5 @@
       "title": "Getting Started with @unrdf/hooks-example-chains"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

@@ -24,7 +24,7 @@ const capabilityMap = JSON.parse(readFileSync(capabilityMapPath, 'utf-8'));
 // Categories mapping for organization
 const CATEGORIES = {
   'RDF & Storage': ['@unrdf/core', '@unrdf/oxigraph', '@unrdf/caching', '@unrdf/collab', '@unrdf/graph-analytics', '@unrdf/semantic-search', '@unrdf/rdf-graphql'],
-  'Governance & Policy': ['@unrdf/hooks', '@unrdf/validation', '@unrdf/v6-core', '@unrdf/engine-gateway', '@unrdf/decision-fabric'],
+  'Governance & Policy': ['@unrdf/hooks', '@unrdf/validation', '@unrdf/v6-core', '@unrdf/decision-fabric'],
   'Temporal & Events': ['@unrdf/kgc-4d', '@unrdf/kgc-substrate', '@unrdf/kgc-claude', '@unrdf/kgc-probe', '@unrdf/kgc-runtime', '@unrdf/blockchain'],
   'Streaming & Distribution': ['@unrdf/streaming', '@unrdf/federation', '@unrdf/consensus', '@unrdf/yawl-kafka', '@unrdf/yawl-queue'],
   'Workflow & Orchestration': ['@unrdf/yawl', '@unrdf/yawl-api', '@unrdf/yawl-ai', '@unrdf/yawl-durable', '@unrdf/yawl-langchain', '@unrdf/yawl-observability', '@unrdf/yawl-realtime', '@unrdf/yawl-viz'],

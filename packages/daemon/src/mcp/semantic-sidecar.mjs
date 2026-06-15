@@ -6,6 +6,10 @@ import fs from 'fs';
  * Manages the Open Ontologies binary as a production-hardened sidecar.
  */
 export class SemanticSidecarManager {
+  /**
+   *
+   * @param logger
+   */
   constructor(logger = console) {
     this.logger = logger;
     this.process = null;
@@ -50,6 +54,9 @@ export class SemanticSidecarManager {
     });
   }
 
+  /**
+   *
+   */
   async stop() {
     if (this.watchdog) clearInterval(this.watchdog);
     if (!this.process) return;

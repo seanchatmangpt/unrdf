@@ -28,21 +28,12 @@
   },
   "explanation": {
     "architecture": "Core kernel for algorithm registration and step execution in the pictl process mining pipeline.",
-    "concepts": [
-      "kernel",
-      "runtime",
-      "utilities"
-    ],
+    "concepts": ["kernel", "runtime", "utilities"],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-kernel-explanation",
-    "source": [
-      "keywords",
-      "readme"
-    ],
+    "source": ["keywords", "readme"],
     "title": "Understanding @pictl/kernel",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -50,15 +41,8 @@
       "confidenceScore": 0.7,
       "context": "When working with kernel in your project",
       "id": "howto-integrate-with-kernel",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/kernel with kernel",
       "title": "Integrate with kernel"
     },
@@ -66,14 +50,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -90,9 +68,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@pictl/kernel Reference"
   },
   "tutorials": [
@@ -101,9 +77,7 @@
       "goal": "Learn how to set up and use @pictl/kernel in your project",
       "id": "tutorial-getting-started-with-pictl-kernel",
       "prerequisites": [],
-      "source": [
-        "keywords"
-      ],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -113,5 +87,5 @@
       "title": "Getting Started with @pictl/kernel"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

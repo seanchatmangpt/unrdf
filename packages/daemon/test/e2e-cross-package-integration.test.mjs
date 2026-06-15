@@ -46,7 +46,7 @@ class MockRdfStore extends EventEmitter {
 
   /**
    * Add a quad to the store
-   * @param {Object} quad - RDF quad
+   * @param {object} quad - RDF quad
    * @returns {void}
    */
   addQuad(quad) {
@@ -57,7 +57,7 @@ class MockRdfStore extends EventEmitter {
 
   /**
    * Remove a quad from the store
-   * @param {Object} quad - RDF quad
+   * @param {object} quad - RDF quad
    * @returns {void}
    */
   removeQuad(quad) {
@@ -76,7 +76,7 @@ class MockRdfStore extends EventEmitter {
 
   /**
    * Query quads by pattern
-   * @param {Object} pattern - Query pattern
+   * @param {object} pattern - Query pattern
    * @returns {Array} Matching quads
    */
   queryQuads(pattern) {
@@ -104,8 +104,8 @@ class MockHookScheduler extends EventEmitter {
   /**
    * Register a hook with validation/transformation policy
    * @param {string} hookId - Hook identifier
-   * @param {Object} hook - Hook definition
-   * @param {Object} policy - Execution policy
+   * @param {object} hook - Hook definition
+   * @param {object} policy - Execution policy
    * @returns {void}
    */
   registerHook(hookId, hook, policy = {}) {
@@ -117,8 +117,8 @@ class MockHookScheduler extends EventEmitter {
   /**
    * Execute a hook
    * @param {string} hookId - Hook identifier
-   * @param {Object} input - Input data
-   * @returns {Promise<Object>} Execution result
+   * @param {object} input - Input data
+   * @returns {Promise<object>} Execution result
    */
   async executeHook(hookId, input) {
     const hook = this.hooks.get(hookId);
@@ -176,7 +176,7 @@ class MockStreamingFeed extends EventEmitter {
   /**
    * Subscribe to changes matching a pattern
    * @param {string} subscriberId - Subscriber identifier
-   * @param {Object} pattern - Change pattern to match
+   * @param {object} pattern - Change pattern to match
    * @param {Function} onMatch - Callback when pattern matches
    * @returns {string} Subscription ID
    */
@@ -202,7 +202,7 @@ class MockStreamingFeed extends EventEmitter {
 
   /**
    * Emit a change event
-   * @param {Object} change - Change event
+   * @param {object} change - Change event
    * @returns {Promise<void>}
    */
   async emitChange(change) {
@@ -224,8 +224,8 @@ class MockStreamingFeed extends EventEmitter {
 
   /**
    * Check if change matches pattern
-   * @param {Object} change - Change event
-   * @param {Object} pattern - Pattern to match
+   * @param {object} change - Change event
+   * @param {object} pattern - Pattern to match
    * @returns {boolean}
    * @private
    */
@@ -270,7 +270,7 @@ class MockConsensusCoordinator extends EventEmitter {
 
   /**
    * Replicate log entry across cluster
-   * @param {Object} entry - Log entry
+   * @param {object} entry - Log entry
    * @returns {Promise<boolean>} Whether replication succeeded
    */
   async replicateLog(entry) {
@@ -340,8 +340,8 @@ class MockYawlEngine extends EventEmitter {
 
   /**
    * Create a new workflow case
-   * @param {Object} options - Case options
-   * @returns {Promise<Object>} Created case
+   * @param {object} options - Case options
+   * @returns {Promise<object>} Created case
    */
   async createCase(options = {}) {
     const caseId = options.caseId || `case-${Date.now()}`;
@@ -362,8 +362,8 @@ class MockYawlEngine extends EventEmitter {
 
   /**
    * Complete a task
-   * @param {Object} options - Task completion options
-   * @returns {Promise<Object>} Task result
+   * @param {object} options - Task completion options
+   * @returns {Promise<object>} Task result
    */
   async completeTask(options = {}) {
     const { caseId, taskId, outputData = {} } = options;
@@ -384,8 +384,8 @@ class MockYawlEngine extends EventEmitter {
 
   /**
    * Fail a task
-   * @param {Object} options - Task failure options
-   * @returns {Promise<Object>} Task result
+   * @param {object} options - Task failure options
+   * @returns {Promise<object>} Task result
    */
   async failTask(options = {}) {
     const { caseId, taskId, error = '' } = options;
@@ -407,7 +407,7 @@ class MockYawlEngine extends EventEmitter {
   /**
    * Get case details
    * @param {string} caseId - Case identifier
-   * @returns {Object} Case details
+   * @returns {object} Case details
    */
   getCase(caseId) {
     return this.cases.get(caseId);

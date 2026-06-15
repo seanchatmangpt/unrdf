@@ -28,15 +28,10 @@
   },
   "explanation": {
     "architecture": "**Start with #01. Add complexity only if needed.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.3,
     "id": "explanation-unrdf-examples-explanation",
-    "source": [
-      "readme",
-      "inferred"
-    ],
+    "source": ["readme", "inferred"],
     "title": "Understanding @unrdf/examples",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -50,14 +45,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     },
@@ -65,14 +54,8 @@
       "confidenceScore": 0.4,
       "context": "When you need to accomplish common tasks",
       "id": "howto-use-unrdf-examples",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Import the package",
-        "Initialize with options",
-        "Execute operations"
-      ],
+      "source": ["inferred"],
+      "steps": ["Import the package", "Initialize with options", "Execute operations"],
       "task": "Perform basic operations with @unrdf/examples",
       "title": "Use @unrdf/examples"
     }
@@ -89,9 +72,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "@unrdf/examples Reference"
   },
   "tutorials": [
@@ -100,9 +81,7 @@
       "goal": "Learn how to set up and use @unrdf/examples in your project",
       "id": "tutorial-getting-started-with-unrdf-examples",
       "prerequisites": [],
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "stepsOutline": [
         "Beginner Examples (Start Here)",
         "Intermediate Examples (Only If Needed)",
@@ -113,5 +92,5 @@
       "title": "Getting Started with @unrdf/examples"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

@@ -31,6 +31,10 @@ export const MetricType = {
  * PM4Py Python integration helper
  */
 class PM4PyIntegration {
+  /**
+   *
+   * @param pythonPath
+   */
   constructor(pythonPath = 'python3') {
     this.pythonPath = pythonPath;
     this.pm4pyPath = process.env.PM4PY_PATH || '~/chatmangpt/pm4py';
@@ -38,6 +42,7 @@ class PM4PyIntegration {
 
   /**
    * Execute Python code in pm4py context
+   * @param code
    */
   async execute(code) {
     const script = `
@@ -84,6 +89,10 @@ print(json.dumps(result))
 
   /**
    * Record a metric in pm4py
+   * @param name
+   * @param value
+   * @param type
+   * @param labels
    */
   async recordMetric(name, value, type = MetricType.GAUGE, labels = {}) {
     const code = `
@@ -141,6 +150,8 @@ let pm4pyInstance = null;
 
 /**
  * Get PM4Py integration instance
+ * @param options
+ * @example
  */
 export function getPM4Py(options = {}) {
   if (!pm4pyInstance) {
@@ -151,6 +162,9 @@ export function getPM4Py(options = {}) {
 
 /**
  * Record UNRDF-specific metrics in pm4py
+ * @param operation
+ * @param metadata
+ * @example
  */
 export async function recordUNRDFMetrics(operation, metadata = {}) {
   const pm4py = getPM4Py();
@@ -180,6 +194,7 @@ export async function recordUNRDFMetrics(operation, metadata = {}) {
 
 /**
  * Get pm4py system path
+ * @example
  */
 export function getPM4PyPath() {
   return process.env.PM4PY_PATH || '~/chatmangpt/pm4py';
@@ -187,6 +202,7 @@ export function getPM4PyPath() {
 
 /**
  * Check if pm4py is available
+ * @example
  */
 export async function checkPM4PyAvailable() {
   const pm4py = getPM4Py();
@@ -200,6 +216,7 @@ export async function checkPM4PyAvailable() {
 
 /**
  * Initialize pm4py metrics for UNRDF
+ * @example
  */
 export async function initializeUNRDFMetrics() {
   const pm4py = getPM4Py();

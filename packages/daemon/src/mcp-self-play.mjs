@@ -12,6 +12,10 @@ import { randomUUID } from 'crypto';
  * Self-play episode (autonomous tool chain execution)
  */
 export class SelfPlayEpisode {
+  /**
+   *
+   * @param initialContext
+   */
   constructor(initialContext) {
     this.episodeId = randomUUID();
     this.context = initialContext;
@@ -24,6 +28,10 @@ export class SelfPlayEpisode {
 
   /**
    * Record a tool execution step
+   * @param toolName
+   * @param input
+   * @param output
+   * @param metadata
    */
   recordStep(toolName, input, output, metadata = {}) {
     this.steps.push({
@@ -39,6 +47,8 @@ export class SelfPlayEpisode {
 
   /**
    * Record feedback signal (reward/penalty)
+   * @param signal
+   * @param reason
    */
   recordFeedback(signal, reason = '') {
     this.feedback.push({
@@ -51,6 +61,7 @@ export class SelfPlayEpisode {
 
   /**
    * Terminate episode with reason
+   * @param reason
    */
   terminate(reason) {
     this.terminated = true;
@@ -97,6 +108,11 @@ export class SelfPlayEpisode {
  * Self-play agent (makes decisions and executes tools)
  */
 export class SelfPlayAgent {
+  /**
+   *
+   * @param toolRegistry
+   * @param decisionFn
+   */
   constructor(toolRegistry, decisionFn) {
     this.toolRegistry = toolRegistry; // { toolName: { handler, schema } }
     this.decisionFn = decisionFn; // (episode, previousResult) → { toolName, input } or null
@@ -107,6 +123,7 @@ export class SelfPlayAgent {
 
   /**
    * Run a single episode
+   * @param initialContext
    */
   async runEpisode(initialContext) {
     const episode = new SelfPlayEpisode(initialContext);
@@ -165,6 +182,8 @@ export class SelfPlayAgent {
 
   /**
    * Run multiple episodes
+   * @param initialContext
+   * @param count
    */
   async runEpisodes(initialContext, count = this.maxEpisodes) {
     const results = [];
@@ -220,6 +239,7 @@ export class SelfPlayAgent {
  * Factory function for random tool selection policy (fixed signature)
  * @param {Array<string>} toolNames - Available tool names
  * @returns {Function} decisionFn(episode, previousResult) => { toolName, input } | null
+ * @example
  */
 export function createRandomPolicy(toolNames) {
   return async (episode, _previousResult) => {
@@ -232,8 +252,9 @@ export function createRandomPolicy(toolNames) {
 /**
  * Factory function for greedy feedback policy (fixed signature)
  * Selects tools with highest success rate, with inter-episode history
- * @param {Object} toolRegistry - { toolName: { handler, schema } }
+ * @param {object} toolRegistry - { toolName: { handler, schema } }
  * @returns {Function} decisionFn(episode, previousResult) => { toolName, input } | null
+ * @example
  */
 export function createGreedyPolicy(toolRegistry) {
   const history = {}; // toolName → { success, total }
@@ -273,6 +294,8 @@ export function createGreedyPolicy(toolRegistry) {
 export const SelfPlayPolicies = {
   /**
    * Query → Hooks → Query (explore pattern)
+   * @param episode
+   * @param _previousResult
    */
   explorePatternDecision: async (episode, _previousResult) => {
     const stepCount = episode.steps.length;
@@ -327,6 +350,9 @@ export const SelfPlayPolicies = {
 
 /**
  * Self-play orchestrator
+ * @param toolRegistry
+ * @param options
+ * @example
  */
 export async function runSelfPlayLoop(toolRegistry, options = {}) {
   const {

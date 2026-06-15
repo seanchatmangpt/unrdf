@@ -29,20 +29,10 @@
   },
   "explanation": {
     "architecture": "Configuration management system for pictl with Zod-based validation, provenance tracking, and support for multiple config sources.",
-    "concepts": [
-      "config",
-      "configuration",
-      "zod",
-      "validation",
-      "provenance"
-    ],
+    "concepts": ["config", "configuration", "zod", "validation", "provenance"],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-config-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @pictl/config",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -56,9 +46,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-pictl-config",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -71,15 +59,8 @@
       "confidenceScore": 0.7,
       "context": "When working with config in your project",
       "id": "howto-integrate-with-config",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/config with config",
       "title": "Integrate with config"
     }
@@ -126,9 +107,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@pictl/config Reference"
   },
   "tutorials": [
@@ -137,10 +116,7 @@
       "goal": "Learn how to set up and use @pictl/config in your project",
       "id": "tutorial-getting-started-with-pictl-config",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -150,5 +126,5 @@
       "title": "Getting Started with @pictl/config"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

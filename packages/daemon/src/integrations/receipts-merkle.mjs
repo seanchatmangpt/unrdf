@@ -39,7 +39,6 @@ function generateUUID() {
 /**
  * DaemonReceiptGenerator - Generates cryptographic receipts with Merkle tree batching
  * for daemon operations. Supports batch proof generation, chaining, and verification.
- *
  * @example
  * const generator = new DaemonReceiptGenerator({ batchSize: 50 });
  * const receipt = await generator.generateReceipt({
@@ -54,9 +53,9 @@ function generateUUID() {
 export class DaemonReceiptGenerator {
   /**
    * Creates a new DaemonReceiptGenerator
-   * @param {Object} options - Generator options
-   * @param {number} [options.batchSize=100] - Operations per batch (10-100)
-   * @param {number} [options.maxBufferSize=1000] - Max buffered operations
+   * @param {object} options - Generator options
+   * @param {number} [options.batchSize] - Operations per batch (10-100)
+   * @param {number} [options.maxBufferSize] - Max buffered operations
    * @throws {Error} If options are invalid
    */
   constructor(options = {}) {
@@ -73,8 +72,8 @@ export class DaemonReceiptGenerator {
 
   /**
    * Generate receipt for a single operation
-   * @param {Object} operation - Operation to receipt
-   * @returns {Promise<Object>} Generated receipt
+   * @param {object} operation - Operation to receipt
+   * @returns {Promise<object>} Generated receipt
    * @throws {Error} If operation is invalid
    */
   async generateReceipt(operation) {
@@ -137,7 +136,7 @@ export class DaemonReceiptGenerator {
    * Generate batch proof for accumulated receipts
    * Creates Merkle tree from buffered receipts and returns batch proof.
    * @param {number} [count] - Number of receipts to batch (default: all)
-   * @returns {Promise<Object>} Batch proof with Merkle tree
+   * @returns {Promise<object>} Batch proof with Merkle tree
    * @throws {Error} If buffer is empty or count invalid
    */
   async generateBatchProof(count) {
@@ -180,8 +179,8 @@ export class DaemonReceiptGenerator {
   /**
    * Generate Merkle inclusion proof for a specific receipt
    * @param {string} receiptId - Receipt ID to prove
-   * @param {Array<Object>} receipts - Array of receipts in tree
-   * @returns {Promise<Object>} Merkle proof for receipt
+   * @param {Array<object>} receipts - Array of receipts in tree
+   * @returns {Promise<object>} Merkle proof for receipt
    * @throws {Error} If receipt not found
    */
   async getReceiptProof(receiptId, receipts) {
@@ -210,7 +209,7 @@ export class DaemonReceiptGenerator {
 
   /**
    * Verify Merkle inclusion proof
-   * @param {Object} proof - Merkle proof to verify
+   * @param {object} proof - Merkle proof to verify
    * @returns {Promise<boolean>} True if proof is valid
    */
   async verifyProof(proof) {
@@ -220,8 +219,8 @@ export class DaemonReceiptGenerator {
   /**
    * Verify entire receipt chain
    * Checks chain links, hash integrity, and Merkle tree consistency.
-   * @param {Array<Object>} receipts - Receipts to verify
-   * @returns {Promise<Object>} Chain verification result
+   * @param {Array<object>} receipts - Receipts to verify
+   * @returns {Promise<object>} Chain verification result
    */
   async verifyChain(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
@@ -301,8 +300,8 @@ export class DaemonReceiptGenerator {
 
   /**
    * Detect tampered receipts in a batch
-   * @param {Array<Object>} receipts - Receipts to check
-   * @returns {Promise<Array<Object>>} Array of tampered receipts
+   * @param {Array<object>} receipts - Receipts to check
+   * @returns {Promise<Array<object>>} Array of tampered receipts
    */
   async detectTampering(receipts) {
     const result = await this.verifyChain(receipts);
@@ -311,8 +310,8 @@ export class DaemonReceiptGenerator {
 
   /**
    * Export Merkle tree as JSON
-   * @param {Array<Object>} receipts - Receipts in tree
-   * @returns {Promise<Object>} Tree structure for export
+   * @param {Array<object>} receipts - Receipts in tree
+   * @returns {Promise<object>} Tree structure for export
    */
   async exportMerkleTree(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
@@ -331,7 +330,7 @@ export class DaemonReceiptGenerator {
 
   /**
    * Get batch statistics
-   * @returns {Object} Batch and buffer statistics
+   * @returns {object} Batch and buffer statistics
    */
   getStatistics() {
     return {
@@ -350,8 +349,8 @@ export class DaemonReceiptGenerator {
   /**
    * Serialize tree structure to plain object
    * @private
-   * @param {Object} tree - Tree to serialize
-   * @returns {Object} Serialized tree
+   * @param {object} tree - Tree to serialize
+   * @returns {object} Serialized tree
    */
   _serializeTree(tree) {
     return {

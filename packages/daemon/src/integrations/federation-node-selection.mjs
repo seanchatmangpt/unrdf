@@ -4,6 +4,14 @@
  * @description Node selection strategies for federated query execution
  */
 
+/**
+ *
+ * @param coordinator
+ * @param strategy
+ * @param excludeNodes
+ * @param nodeMetrics
+ * @example
+ */
 export function selectNodes(coordinator, strategy, excludeNodes = [], nodeMetrics = new Map()) {
   const peers = coordinator.listPeers?.() || [];
   const availableNodes = peers
@@ -23,6 +31,12 @@ export function selectNodes(coordinator, strategy, excludeNodes = [], nodeMetric
   }
 }
 
+/**
+ *
+ * @param nodeIds
+ * @param nodeMetrics
+ * @example
+ */
 export function selectBestNode(nodeIds, nodeMetrics) {
   let bestNode = nodeIds[0];
   let bestScore = -Infinity;
@@ -41,6 +55,13 @@ export function selectBestNode(nodeIds, nodeMetrics) {
   return bestNode;
 }
 
+/**
+ *
+ * @param nodeIds
+ * @param count
+ * @param nodeMetrics
+ * @example
+ */
 export function selectTopNodes(nodeIds, count, nodeMetrics) {
   const scored = nodeIds.map(nodeId => {
     const metrics = nodeMetrics.get(nodeId) || {
@@ -54,6 +75,12 @@ export function selectTopNodes(nodeIds, count, nodeMetrics) {
   return scored.sort((a, b) => b.score - a.score).slice(0, count).map(s => s.nodeId);
 }
 
+/**
+ *
+ * @param nodeMetrics
+ * @param peerResults
+ * @example
+ */
 export function updateNodeMetrics(nodeMetrics, peerResults) {
   for (const result of peerResults) {
     const nodeId = result.nodeId;

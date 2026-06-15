@@ -171,43 +171,6 @@ export function createCustomFilters(options = {}) {
       return parts.slice(0, -1).join('/');
     },
 
-    // Date arithmetic filters
-    dateAdd: (dateStr, amount, unit = 'day') => {
-      const date = new Date(dateStr);
-      switch (unit) {
-        case 'day':
-          date.setDate(date.getDate() + amount);
-          break;
-        case 'month':
-          date.setMonth(date.getMonth() + amount);
-          break;
-        case 'year':
-          date.setFullYear(date.getFullYear() + amount);
-          break;
-        default:
-          throw new Error(`Unknown unit: ${unit}`);
-      }
-      return date.toISOString();
-    },
-
-    dateSub: (dateStr, amount, unit = 'day') => {
-      const date = new Date(dateStr);
-      switch (unit) {
-        case 'day':
-          date.setDate(date.getDate() - amount);
-          break;
-        case 'month':
-          date.setMonth(date.getMonth() - amount);
-          break;
-        case 'year':
-          date.setFullYear(date.getFullYear() - amount);
-          break;
-        default:
-          throw new Error(`Unknown unit: ${unit}`);
-      }
-      return date.toISOString();
-    },
-
     // Path utility filters
     resolve: (base, relative) => {
       // Simple path resolution (normalize and join)

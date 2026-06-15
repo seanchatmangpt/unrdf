@@ -9,30 +9,14 @@
     "docsFiles": [],
     "examplesFiles": [],
     "fingerprint": "282532c011b51d65a2e165ba62f7158751aa950c955f8a0cf8654243582508d3",
-    "readmeHeadings": [
-      "Features",
-      "Quick Start",
-      "Documentation",
-      "Testing",
-      "License"
-    ]
+    "readmeHeadings": ["Features", "Quick Start", "Documentation", "Testing", "License"]
   },
   "explanation": {
     "architecture": "Runtime contracts, receipts, and cryptographic verification for process mining.",
-    "concepts": [
-      "contracts",
-      "receipts",
-      "hashing",
-      "blake3",
-      "verification"
-    ],
+    "concepts": ["contracts", "receipts", "hashing", "blake3", "verification"],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-contracts-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @pictl/contracts",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,15 +30,8 @@
       "confidenceScore": 0.7,
       "context": "When working with contracts in your project",
       "id": "howto-integrate-with-contracts",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/contracts with contracts",
       "title": "Integrate with contracts"
     },
@@ -62,14 +39,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -134,9 +105,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@pictl/contracts Reference"
   },
   "tutorials": [
@@ -145,10 +114,7 @@
       "goal": "Learn how to set up and use @pictl/contracts in your project",
       "id": "tutorial-getting-started-with-pictl-contracts",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -158,5 +124,5 @@
       "title": "Getting Started with @pictl/contracts"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

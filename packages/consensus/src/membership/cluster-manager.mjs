@@ -271,13 +271,29 @@ export class ClusterManager extends EventEmitter {
         if (!this.nodes.has(command.nodeId)) {
           this.nodes.set(command.nodeId, command.data);
           this.nodeHealth.set(command.nodeId, NodeHealth.UNKNOWN);
+
+          // Propagate to RaftCoordinator if not already added
+          if (this.raftCoordinator && command.nodeId !== this.config.nodeId) {
+            this.raftCoordinator.addPeer(
+              command.nodeId,
+              command.data.host,
+              command.data.port
+            );
+          }
         }
         break;
 
       case 'DEREGISTER_NODE':
-        this.nodes.delete(command.nodeId);
-        this.nodeHealth.delete(command.nodeId);
-        this.failedHealthChecks.delete(command.nodeId);
+        if (this.nodes.has(command.nodeId)) {
+          this.nodes.delete(command.nodeId);
+          this.nodeHealth.delete(command.nodeId);
+          this.failedHealthChecks.delete(command.nodeId);
+
+          // Propagate removal to RaftCoordinator
+          if (this.raftCoordinator && command.nodeId !== this.config.nodeId) {
+            this.raftCoordinator.removePeer(command.nodeId);
+          }
+        }
         break;
 
       default:

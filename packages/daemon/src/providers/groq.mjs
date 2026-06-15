@@ -8,7 +8,7 @@ import { groq, createGroq } from '@ai-sdk/groq';
 import { z } from 'zod';
 
 /**
- * @typedef {Object} GroqProviderConfig
+ * @typedef {object} GroqProviderConfig
  * @property {string} [apiKey] - Groq API key (defaults to GROQ_API_KEY env var)
  * @property {string} [baseURL] - Custom Groq API base URL
  * @property {string} [model='openai/gpt-oss-20b'] - Default Groq model ID
@@ -82,7 +82,7 @@ class GroqProvider {
 
   /**
    * Get provider options for AI SDK
-   * @returns {Object} Provider options object
+   * @returns {object} Provider options object
    */
   getProviderOptions() {
     return {
@@ -111,6 +111,7 @@ let _groqProvider = null;
  * Initialize Groq provider (call once at daemon startup)
  * @param {Partial<GroqProviderConfig>} [config] - Configuration options
  * @returns {GroqProvider} Initialized provider instance
+ * @example
  */
 export function initializeGroqProvider(config = {}) {
   _groqProvider = new GroqProvider(config);
@@ -120,6 +121,7 @@ export function initializeGroqProvider(config = {}) {
 /**
  * Get or create Groq provider instance
  * @returns {GroqProvider} Groq provider instance
+ * @example
  */
 export function getGroqProvider() {
   if (!_groqProvider) {
@@ -132,6 +134,7 @@ export function getGroqProvider() {
  * Create a new Groq provider instance with custom config
  * @param {Partial<GroqProviderConfig>} [config] - Custom configuration
  * @returns {GroqProvider} New provider instance
+ * @example
  */
 export function createGroqProvider(config = {}) {
   return new GroqProvider(config);

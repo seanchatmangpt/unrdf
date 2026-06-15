@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/example-rdf-parsing",
-  "version": "0.0.0-agnostic",
+  "version": "26.5.5",
   "description": "RDF format parsing examples with UNRDF",
   "type": "module",
   "private": true,

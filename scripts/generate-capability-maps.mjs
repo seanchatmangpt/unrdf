@@ -28,9 +28,6 @@ const capabilityAtoms = {
   'diataxis-kit': [
     { id: 'A52', name: 'Documentation Generation', runtime: 'Node.js', invariants: 'structured, evidence-based', evidence: 'packages/diataxis-kit/src/index.mjs' }
   ],
-  'engine-gateway': [
-    { id: 'A53', name: 'API Gateway', runtime: 'Node.js', invariants: 'routing, load-balancing', evidence: 'packages/engine-gateway/src/index.mjs' }
-  ],
   fusion: [
     { id: 'A54', name: 'Unified Integration Layer', runtime: 'Node.js', invariants: 'cross-package composition', evidence: 'packages/fusion/src/index.mjs' }
   ],
@@ -159,7 +156,7 @@ const capabilityAtoms = {
 
 // Package batches
 const batches = [
-  ['atomvm', 'dark-matter', 'decision-fabric', 'diataxis-kit', 'engine-gateway', 'fusion', 'graph-analytics', 'ml-inference', 'ml-versioning', 'observability', 'rdf-graphql', 'react', 'semantic-search', 'serverless', 'v6-compat'],
+  ['atomvm', 'dark-matter', 'decision-fabric', 'diataxis-kit', 'fusion', 'graph-analytics', 'ml-inference', 'ml-versioning', 'observability', 'rdf-graphql', 'react', 'semantic-search', 'serverless', 'v6-compat'],
   ['v6-core', 'yawl-ai', 'yawl-api', 'yawl-durable', 'yawl-kafka', 'yawl-langchain', 'yawl-observability', 'yawl-queue', 'yawl-realtime', 'yawl-viz', 'kgc-cli', 'kgc-docs', 'kgc-probe', 'kgc-runtime', 'kgc-substrate'],
   ['kgc-swarm', 'kgc-tools', 'kgn', 'cli', 'collab', 'composables', 'validation', 'test-utils', 'project-engine', 'blockchain', 'caching', 'domain', 'nextra', 'integration-tests', 'docs']
 ];

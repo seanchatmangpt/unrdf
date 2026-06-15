@@ -45,6 +45,12 @@ import { createHash } from 'crypto';
  * Violation Error — thrown when invariant check fails
  */
 export class InvariantViolation extends Error {
+  /**
+   *
+   * @param invariantType
+   * @param violationCode
+   * @param details
+   */
   constructor(invariantType, violationCode, details) {
     super(`Invariant violation: ${invariantType}::${violationCode} - ${details}`);
     this.name = 'InvariantViolation';
@@ -58,6 +64,10 @@ export class InvariantViolation extends Error {
  * Semantic Invariants Validator
  */
 export class SemanticInvariantsValidator {
+  /**
+   *
+   * @param options
+   */
   constructor(options = {}) {
     this.observationWindowMs = options.observationWindowMs ?? 300000; // 5 minutes default
     this.enableBlocking = options.enableBlocking ?? true; // Block violations or just warn
@@ -74,6 +84,9 @@ export class SemanticInvariantsValidator {
 
   /**
    * Validate all spans in a trace against semantic invariants
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateTrace(spans, ocelEvents, options = {}) {
     const results = {
@@ -114,6 +127,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 1: Semantic Causality
    * task_id, workflow_id, case_id MUST be stable across all systems in trace
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateSemanticCausality(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -190,6 +206,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 2: OTel-OCEL Isomorphism
    * 1:1 mapping between OTel spans and OCEL events, lossless conversion
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateOtelOcelIsomorphism(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -290,6 +309,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 3: Temporal Consistency
    * No orphan tasks, no broken workflows, no duplicate identifiers
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateTemporalConsistency(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -422,6 +444,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 4: Replay Determinism
    * Same inputs → same outputs (hash equivalence)
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateReplayDeterminism(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -552,6 +577,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 5: Closed-Loop Completion
    * BusinessOS → Canopy → OSA → BusinessOS with preserved semantic identifiers
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateClosedLoopCompletion(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -656,6 +684,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 6: Minimality
    * No redundant paths, no duplicate events, no unnecessary transformations
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateMinimality(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -740,6 +771,9 @@ export class SemanticInvariantsValidator {
   /**
    * Invariant 7: Semantic Validity
    * All transformations valid against schemas/constraints/ontologies
+   * @param spans
+   * @param ocelEvents
+   * @param options
    */
   async validateSemanticValidity(spans, ocelEvents, options = {}) {
     const violations = [];
@@ -795,6 +829,8 @@ export class SemanticInvariantsValidator {
 
   /**
    * Helper: Extract semantic attributes (excluding ignored ones)
+   * @param attributes
+   * @param ignoreAttrs
    */
   _extractSemanticAttributes(attributes, ignoreAttrs) {
     const result = {};
@@ -814,6 +850,10 @@ export const validator = new SemanticInvariantsValidator();
 
 /**
  * Convenience function: Validate a trace
+ * @param spans
+ * @param ocelEvents
+ * @param options
+ * @example
  */
 export async function validateSemanticInvariants(spans, ocelEvents, options) {
   return validator.validateTrace(spans, ocelEvents, options);

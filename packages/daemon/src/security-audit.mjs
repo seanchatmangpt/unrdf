@@ -107,7 +107,8 @@ function extractStringValues(value, visited = new Set()) {
  * Validates input against injection attack patterns
  * @param {*} input - Input to validate
  * @param {string} type - Input type: 'command', 'sql', 'rdf'
- * @returns {Object} Validation result
+ * @returns {object} Validation result
+ * @example
  */
 export function validateInputSafety(input, type = 'command') {
   const eventId = crypto.randomUUID();
@@ -155,7 +156,8 @@ export function validateInputSafety(input, type = 'command') {
 /**
  * Prevents path traversal attacks
  * @param {string} path - Path to validate
- * @returns {Object} Validation result
+ * @returns {object} Validation result
+ * @example
  */
 export function validatePathSafety(path) {
   const eventId = crypto.randomUUID();
@@ -198,6 +200,7 @@ export function validatePathSafety(path) {
  * @param {string} a - First string to compare
  * @param {string} b - Second string to compare
  * @returns {boolean} Whether strings are equal (constant-time)
+ * @example
  */
 export function timingSafeCompare(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') {
@@ -220,7 +223,8 @@ export function timingSafeCompare(a, b) {
  * @param {string} identifier - Rate limit identifier (IP, user ID, etc)
  * @param {number} maxRequests - Maximum requests allowed
  * @param {number} windowMs - Time window in milliseconds
- * @returns {Object} Rate limit status
+ * @returns {object} Rate limit status
+ * @example
  */
 export function checkRateLimit(identifier, maxRequests = 100, windowMs = 60000) {
   const eventId = crypto.randomUUID();
@@ -267,7 +271,8 @@ export function checkRateLimit(identifier, maxRequests = 100, windowMs = 60000) 
  * Verifies cryptographic integrity using BLAKE3 (via SHA-256 as fallback)
  * @param {Buffer|string} data - Data to hash
  * @param {string} expectedHash - Expected hash value
- * @returns {Object} Verification result
+ * @returns {object} Verification result
+ * @example
  */
 export function verifyCryptographicHash(data, expectedHash) {
   const eventId = crypto.randomUUID();
@@ -304,11 +309,12 @@ export function verifyCryptographicHash(data, expectedHash) {
 /**
  * Comprehensive payload validation combining all security checks
  * @param {*} payload - Payload to validate
- * @param {Object} options - Validation options
+ * @param {object} options - Validation options
  * @param {string} [options.type] - Input type for injection detection
  * @param {boolean} [options.checkPath] - Whether to check for path traversal
  * @param {string} [options.rateLimitId] - Rate limiter identifier
- * @returns {Object} Comprehensive validation result
+ * @returns {object} Comprehensive validation result
+ * @example
  */
 export function validatePayload(payload, options = {}) {
   const eventId = crypto.randomUUID();
@@ -419,11 +425,12 @@ export function validatePayload(payload, options = {}) {
 
 /**
  * Retrieves the audit log
- * @param {Object} options - Filter options
+ * @param {object} options - Filter options
  * @param {string} [options.severity] - Filter by severity
  * @param {string} [options.eventType] - Filter by event type
  * @param {number} [options.limit] - Limit results
  * @returns {Array} Audit log entries
+ * @example
  */
 export function getAuditLog(options = {}) {
   let filtered = [...auditLog];
@@ -446,6 +453,7 @@ export function getAuditLog(options = {}) {
 /**
  * Clears the audit log
  * @returns {number} Number of entries cleared
+ * @example
  */
 export function clearAuditLog() {
   const count = auditLog.length;
@@ -455,7 +463,8 @@ export function clearAuditLog() {
 
 /**
  * Gets security statistics
- * @returns {Object} Security statistics
+ * @returns {object} Security statistics
+ * @example
  */
 export function getSecurityStats() {
   const byType = {};
@@ -493,7 +502,8 @@ const SECRET_PATTERNS = [
 /**
  * Detect potential secrets in strings
  * @param {string} input - Input string to scan
- * @returns {Object} Detection result with matches
+ * @returns {object} Detection result with matches
+ * @example
  */
 export function detectSecrets(input) {
   const eventId = crypto.randomUUID();
@@ -539,7 +549,8 @@ export function detectSecrets(input) {
  * Detect injection attacks (convenience wrapper)
  * @param {*} input - Input to validate
  * @param {string} type - Input type
- * @returns {Object} Detection result
+ * @returns {object} Detection result
+ * @example
  */
 export function detectInjection(input, type = 'command') {
   const result = validateInputSafety(input, type);
@@ -556,6 +567,7 @@ export function detectInjection(input, type = 'command') {
  * @param {string} path - Path to sanitize
  * @returns {string} Sanitized path or throws on unsafe path
  * @throws {Error} If path contains traversal attacks
+ * @example
  */
 export function sanitizePath(path) {
   const result = validatePathSafety(path);
@@ -569,6 +581,7 @@ export function sanitizePath(path) {
  * Sanitize error messages to remove sensitive information
  * @param {Error} error - Error to sanitize
  * @returns {Error} Sanitized error
+ * @example
  */
 export function sanitizeError(error) {
   if (!(error instanceof Error)) {

@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
 /**
+ * @typedef {import('graphlib').Graph} Graph
+ */
+
+/**
  * Community Detection & Clustering
  *
  * Identifies communities and clusters in RDF knowledge graphs

@@ -94,8 +94,8 @@ const EcosystemHealthReportSpec = z.object({
 export class EcosystemCompositionValidator {
   /**
    * Create ecosystem validator
-   * @param {Object} config - Configuration options
-   * @param {Object} [config.logger] - Logger instance
+   * @param {object} config - Configuration options
+   * @param {object} [config.logger] - Logger instance
    * @param {number} [config.timeout] - Validation timeout in ms
    * @param {boolean} [config.strict] - Strict mode (fail on any issue)
    */
@@ -114,7 +114,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Register an integration module
-   * @param {Object} spec - Module specification
+   * @param {object} spec - Module specification
    */
   registerModule(spec) {
     const validated = IntegrationModuleSpec.parse(spec);
@@ -129,7 +129,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Register API call specification
-   * @param {Object} spec - API call specification
+   * @param {object} spec - API call specification
    */
   registerApiCall(spec) {
     const validated = ApiCallSpec.parse(spec);
@@ -140,7 +140,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Register event flow specification
-   * @param {Object} spec - Event flow specification
+   * @param {object} spec - Event flow specification
    */
   registerEventFlow(spec) {
     const validated = EventFlowSpec.parse(spec);
@@ -150,7 +150,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Register performance target
-   * @param {Object} spec - Performance target specification
+   * @param {object} spec - Performance target specification
    */
   registerPerformanceTarget(spec) {
     const validated = PerformanceTargetSpec.parse(spec);
@@ -161,7 +161,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Validate module loading
-   * @returns {Promise<Object>} Module loading validation result
+   * @returns {Promise<object>} Module loading validation result
    */
   async validateModuleLoading() {
     const result = {
@@ -212,7 +212,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Validate cross-module API compatibility
-   * @returns {Promise<Object>} API compatibility validation result
+   * @returns {Promise<object>} API compatibility validation result
    */
   async validateApiCompatibility() {
     const result = {
@@ -271,7 +271,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Validate event flow between modules
-   * @returns {Promise<Object>} Event flow validation result
+   * @returns {Promise<object>} Event flow validation result
    */
   async validateEventFlow() {
     const result = {
@@ -331,7 +331,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Validate performance targets are met
-   * @returns {Promise<Object>} Performance validation result
+   * @returns {Promise<object>} Performance validation result
    */
   async validatePerformance() {
     const result = {
@@ -398,8 +398,8 @@ export class EcosystemCompositionValidator {
 
   /**
    * Test complete end-to-end workflow
-   * @param {Object} workflow - Workflow specification
-   * @returns {Promise<Object>} Workflow execution result
+   * @param {object} workflow - Workflow specification
+   * @returns {Promise<object>} Workflow execution result
    */
   async testCompleteWorkflow(workflow) {
     const workflowId = `workflow-${Date.now()}`;
@@ -478,7 +478,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Validate graceful degradation when modules unavailable
-   * @returns {Promise<Object>} Degradation validation result
+   * @returns {Promise<object>} Degradation validation result
    */
   async validateGracefulDegradation() {
     const result = {
@@ -528,7 +528,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Check for circular dependencies between modules
-   * @returns {Promise<Object>} Circular dependency check result
+   * @returns {Promise<object>} Circular dependency check result
    */
   async checkCircularDependencies() {
     const result = {
@@ -648,7 +648,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Generate comprehensive ecosystem health report
-   * @returns {Promise<Object>} Complete health report
+   * @returns {Promise<object>} Complete health report
    */
   async generateHealthReport() {
     const timestamp = new Date();
@@ -754,7 +754,7 @@ export class EcosystemCompositionValidator {
 
   /**
    * Export validation results
-   * @returns {Object} Complete validation results
+   * @returns {object} Complete validation results
    */
   async exportResults() {
     return {

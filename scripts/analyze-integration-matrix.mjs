@@ -22,7 +22,7 @@ const LAYERS = {
   SPECIALIZED: ['graph-analytics', 'ml-inference', 'ml-versioning', 'serverless',
                 'caching', 'validation', 'test-utils', 'composables', 'collab',
                 'fusion', 'dark-matter', 'decision-fabric', 'domain', 'project-engine',
-                'atomvm', 'engine-gateway', 'kgn', 'integration-tests', 'docs', 'diataxis-kit']
+                'atomvm', 'kgn', 'integration-tests', 'docs', 'diataxis-kit']
 };
 
 function getAllPackages() {

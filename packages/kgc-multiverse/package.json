@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-multiverse",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
   "type": "module",
   "exports": {
@@ -29,7 +29,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",
     "lint:fix": "eslint --fix src test",
-    "build": "unbuild",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {

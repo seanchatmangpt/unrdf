@@ -20,6 +20,11 @@ const PowlToOntologySchema = z.object({
   powlModel: z.string().describe('POWL model string'),
 });
 
+/**
+ *
+ * @param args
+ * @example
+ */
 export async function powl_discover(args) {
   try {
     const { logJson, variant } = PowlDiscoverSchema.parse(args);
@@ -40,6 +45,11 @@ export async function powl_discover(args) {
   }
 }
 
+/**
+ *
+ * @param args
+ * @example
+ */
 export async function powl_conformance(args) {
   try {
     const { powlModel, logJson } = PowlConformanceSchema.parse(args);
@@ -62,6 +72,11 @@ export async function powl_conformance(args) {
   }
 }
 
+/**
+ *
+ * @param args
+ * @example
+ */
 export async function powl_to_ontology(args) {
   try {
     const { powlModel } = PowlToOntologySchema.parse(args);

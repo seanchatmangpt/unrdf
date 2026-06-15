@@ -1,4 +1,5 @@
 import { RDFEmbedder } from '../embeddings/rdf-embedder.mjs';
+import { SemanticQueryEngine } from '../search/semantic-query-engine.mjs';
 import { z } from 'zod';
 
 /**
@@ -14,7 +15,7 @@ const RecommendationOptionsSchema = z
 
 /**
  * KnowledgeRecommender - Discover and recommend related concepts
- * Uses embeddings for knowledge graph exploration
+ * Uses ANN-based retrieval via SemanticQueryEngine
  */
 export class KnowledgeRecommender {
   /**
@@ -27,16 +28,43 @@ export class KnowledgeRecommender {
     }
 
     this.store = store;
-    this.embedder = new RDFEmbedder(options.embedder || {});
+    this.engine = options.engine || new SemanticQueryEngine(store, options);
+    this.embedder = this.engine.embedder;
     this.entityEmbeddings = new Map();
   }
 
   /**
-   * Initialize the recommender
+   * Initialize the recommender and engine
    * @returns {Promise<void>}
    */
   async initialize() {
-    await this.embedder.initialize();
+    await this.engine.initialize();
+  }
+
+  /**
+   * Index all entities in the graph for ANN retrieval
+   * @returns {Promise<number>} Number of indexed entities
+   */
+  async indexEntities() {
+    if (!this.engine.index) {
+      await this.initialize();
+    }
+
+    const entities = this.getAllEntities();
+    let count = 0;
+
+    for (const entityUri of entities) {
+      try {
+        const embedding = await this.embedEntity(entityUri);
+        await this.engine.indexEntity(entityUri, embedding);
+        count++;
+      } catch (error) {
+        // Skip entities that can't be embedded
+        continue;
+      }
+    }
+
+    return count;
   }
 
   /**
@@ -88,41 +116,24 @@ export class KnowledgeRecommender {
   async findSimilarEntities(entityUri, options = {}) {
     const config = RecommendationOptionsSchema.parse(options);
 
-    if (!this.embedder.embedder) {
+    if (!this.engine.index) {
       await this.initialize();
     }
 
     // Get embedding for query entity
     const queryEmbedding = await this.embedEntity(entityUri);
 
-    // Get all unique entities in the graph
-    const entities = this.getAllEntities();
+    // Use ANN retrieval via engine
+    const results = await this.engine.queryEntities(queryEmbedding, config.limit * 2);
 
-    // Calculate similarities
-    const similarities = [];
-
-    for (const entity of entities) {
-      if (entity === entityUri) continue; // Skip self
-
-      try {
-        const entityEmbedding = await this.embedEntity(entity);
-        const similarity = this.cosineSimilarity(queryEmbedding, entityEmbedding);
-
-        if (similarity >= config.threshold) {
-          similarities.push({
-            entity,
-            label: this.embedder.extractLabel(entity),
-            score: similarity,
-          });
-        }
-      } catch (error) {
-        // Skip entities with no triples
-        continue;
-      }
-    }
-
-    // Sort by similarity
-    similarities.sort((a, b) => b.score - a.score);
+    // Filter by threshold and self
+    const similarities = results
+      .filter(r => r.entity !== entityUri && r.score >= config.threshold)
+      .map(r => ({
+        entity: r.entity,
+        label: r.label,
+        score: r.score,
+      }));
 
     // Apply diversity if requested
     if (config.diversityWeight > 0) {
@@ -249,39 +260,24 @@ export class KnowledgeRecommender {
   async recommendConcepts(query, options = {}) {
     const config = RecommendationOptionsSchema.parse(options);
 
-    if (!this.embedder.embedder) {
+    if (!this.engine.index) {
       await this.initialize();
     }
 
     // Embed query
     const queryEmbedding = await this.embedder.embedText(query);
 
-    // Get all entities
-    const entities = this.getAllEntities();
+    // Use ANN retrieval via engine
+    const results = await this.engine.queryEntities(queryEmbedding, config.limit);
 
-    // Calculate similarities
-    const recommendations = [];
-
-    for (const entity of entities) {
-      try {
-        const entityEmbedding = await this.embedEntity(entity);
-        const similarity = this.cosineSimilarity(queryEmbedding, entityEmbedding);
-
-        if (similarity >= config.threshold) {
-          recommendations.push({
-            entity,
-            label: this.embedder.extractLabel(entity),
-            score: similarity,
-            tripleCount: this.getEntityTriples(entity).length,
-          });
-        }
-      } catch (error) {
-        continue;
-      }
-    }
-
-    recommendations.sort((a, b) => b.score - a.score);
-    return recommendations.slice(0, config.limit);
+    return results
+      .filter(r => r.score >= config.threshold)
+      .map(r => ({
+        entity: r.entity,
+        label: r.label,
+        score: r.score,
+        tripleCount: this.getEntityTriples(r.entity).length,
+      }));
   }
 
   /**

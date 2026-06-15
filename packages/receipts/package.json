@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/receipts",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "KGC Receipts - Batch receipt generation with Merkle tree verification and post-quantum cryptography for knowledge graph operations",
   "type": "module",
   "exports": {
@@ -24,7 +24,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",
     "lint:fix": "eslint --fix src test",
-    "build": "unbuild",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {

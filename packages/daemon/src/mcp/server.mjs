@@ -25,6 +25,7 @@ const pkgVersion = JSON.parse(
  * @param {string} options.name - Server name (default: 'unrdf')
  * @param {string} options.version - Server version (default: from package.json)
  * @returns {Server} Configured MCP server instance
+ * @example
  */
 export function createMCPServer(options = {}) {
   const {

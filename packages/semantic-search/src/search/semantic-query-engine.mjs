@@ -34,6 +34,7 @@ export class SemanticQueryEngine {
 
     this.store = store;
     this.embedder = new RDFEmbedder(options.embedder || {});
+    this.indexDir = options.indexDir || path.join(process.cwd(), '.unrdf-index');
     this.index = null;
     this.indexed = false;
     this.tripleCache = [];
@@ -46,12 +47,22 @@ export class SemanticQueryEngine {
   async initialize() {
     await this.embedder.initialize();
 
-    // Create vector index
-    this.tempDir = path.join(os.tmpdir(), `vectra-index-${crypto.randomUUID()}`);
-    this.index = new LocalIndex(this.tempDir);
-    await this.index.createIndex();
+    // Ensure index directory exists
+    if (!fs.existsSync(this.indexDir)) {
+      fs.mkdirSync(this.indexDir, { recursive: true });
+    }
 
-    this.indexed = false;
+    // Create or load vector index
+    this.index = new LocalIndex(this.indexDir);
+
+    if (!(await this.index.isIndexCreated())) {
+      await this.index.createIndex();
+      this.indexed = false;
+    } else {
+      // Index exists, check if it has items
+      const items = await this.index.queryItems(new Array(this.embedder.dimension || 384).fill(0), 1);
+      this.indexed = items.length > 0;
+    }
   }
 
   /**
@@ -61,6 +72,12 @@ export class SemanticQueryEngine {
   async indexStore() {
     if (!this.index) {
       await this.initialize();
+    }
+
+    // Clear existing index if we want a fresh start, 
+    // but the task says "recovery on startup", so maybe we only index if not already indexed
+    if (this.indexed) {
+      return (await this.index.listItems()).length;
     }
 
     // Get all triples from store
@@ -76,6 +93,7 @@ export class SemanticQueryEngine {
         id: `triple-${i}`,
         vector: embedding,
         metadata: {
+          type: 'triple',
           subject: triple.subject.value,
           predicate: triple.predicate.value,
           object: triple.object.value,
@@ -243,20 +261,63 @@ export class SemanticQueryEngine {
       tripleCount: this.tripleCache.length,
       cacheStats: this.embedder.getCacheStats(),
       storeSize: this.store.size,
+      indexDir: this.indexDir,
     };
   }
 
   /**
-   * Cleanup resources, deleting the temporary vector index directory
+   * Index an entity in the vector index
+   * @param {string} entityUri - Entity URI
+   * @param {number[]} embedding - Entity embedding
+   * @returns {Promise<void>}
+   */
+  async indexEntity(entityUri, embedding) {
+    if (!this.index) {
+      await this.initialize();
+    }
+
+    await this.index.insertItem({
+      id: `entity-${entityUri}`,
+      vector: embedding,
+      metadata: {
+        type: 'entity',
+        uri: entityUri,
+        label: this.embedder.extractLabel(entityUri),
+      },
+    });
+  }
+
+  /**
+   * Query for similar entities
+   * @param {number[]} embedding - Query embedding
+   * @param {number} limit - Result limit
+   * @returns {Promise<Array>} Similar entities
+   */
+  async queryEntities(embedding, limit = 10) {
+    if (!this.index) {
+      await this.initialize();
+    }
+
+    // Since we might have both triples and entities, we over-fetch and filter
+    const results = await this.index.queryItems(embedding, limit * 5);
+    
+    return results
+      .filter(r => r.item.metadata.type === 'entity')
+      .slice(0, limit)
+      .map(r => ({
+        entity: r.item.metadata.uri,
+        label: r.item.metadata.label,
+        score: r.score,
+      }));
+  }
+
+  /**
+   * Cleanup resources
    */
   async dispose() {
-    if (this.tempDir) {
-      try {
-        fs.rmSync(this.tempDir, { recursive: true, force: true });
-      } catch (err) {
-        console.error('Failed to cleanup SemanticQueryEngine index directory:', err);
-      }
-    }
+    // We no longer delete the indexDir because it's persistent
+    this.index = null;
+    this.indexed = false;
   }
 }
 

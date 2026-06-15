@@ -8,11 +8,11 @@ import cronParser from 'cron-parser';
 
 /**
  * Evaluates whether a trigger should execute based on its type and configuration
- * @param {Object} trigger - Trigger configuration
+ * @param {object} trigger - Trigger configuration
  * @param {string} trigger.type - Trigger type: 'interval', 'cron', 'idle', 'reactive', 'event'
  * @param {string|number} trigger.value - Interval ms, cron expression, or idle ms
  * @param {number} lastExecuted - Last execution timestamp (ms since epoch)
- * @returns {Object} Evaluation result
+ * @returns {object} Evaluation result
  * @returns {boolean} result.shouldExecute - Whether trigger should execute now
  * @returns {number} result.nextExecutionTime - Milliseconds until next execution
  * @example
@@ -58,7 +58,7 @@ export function evaluateTrigger(trigger, lastExecuted) {
  * @param {number} ms - Interval in milliseconds
  * @param {number} lastExecuted - Last execution timestamp
  * @param {number} [now] - Current timestamp (defaults to Date.now())
- * @returns {Object} Evaluation result with shouldExecute and nextExecutionTime
+ * @returns {object} Evaluation result with shouldExecute and nextExecutionTime
  * @private
  */
 function shouldExecuteInterval(ms, lastExecuted, now = Date.now()) {
@@ -81,7 +81,7 @@ function shouldExecuteInterval(ms, lastExecuted, now = Date.now()) {
  * @param {string} expression - Cron expression (e.g., '0 *\/6 * * *' for every 6 hours)
  * @param {number} lastExecuted - Last execution timestamp
  * @param {number} [now] - Current timestamp (defaults to Date.now())
- * @returns {Object} Evaluation result with shouldExecute and nextExecutionTime
+ * @returns {object} Evaluation result with shouldExecute and nextExecutionTime
  * @throws {Error} If cron expression is invalid
  * @private
  */
@@ -112,14 +112,14 @@ function shouldExecuteCron(expression, lastExecuted, now = Date.now()) {
  * @param {number} ms - Idle threshold in milliseconds
  * @param {number} lastActivityTime - Timestamp of last activity
  * @param {number} [now] - Current timestamp (defaults to Date.now())
- * @returns {Object} Evaluation result with shouldExecute and nextExecutionTime
+ * @returns {object} Evaluation result with shouldExecute and nextExecutionTime
  * @example
  * const result = shouldExecuteIdle(
  *   30000,
  *   Date.now() - 35000
  * );
  * console.log(result); // { shouldExecute: true, nextExecutionTime: 0 }
- * @internal Used internally by evaluateTrigger
+ * @internal
  */
 export function shouldExecuteIdle(ms, lastActivityTime, now = Date.now()) {
   if (typeof ms !== 'number' || ms <= 0) {
@@ -138,7 +138,7 @@ export function shouldExecuteIdle(ms, lastActivityTime, now = Date.now()) {
 
 /**
  * Calculates milliseconds until next execution for a trigger
- * @param {Object} trigger - Trigger configuration
+ * @param {object} trigger - Trigger configuration
  * @param {string} trigger.type - Trigger type: 'interval', 'cron', 'idle'
  * @param {string|number} trigger.value - Interval/cron/idle value
  * @param {number} lastExecuted - Last execution or activity timestamp
@@ -157,7 +157,7 @@ export function calculateNextExecutionTime(trigger, lastExecuted) {
 
 /**
  * Validates trigger configuration structure
- * @param {Object} trigger - Trigger to validate
+ * @param {object} trigger - Trigger to validate
  * @returns {boolean} Whether trigger has valid structure
  * @example
  * const isValid = isValidTrigger({ type: 'interval', value: 5000 });

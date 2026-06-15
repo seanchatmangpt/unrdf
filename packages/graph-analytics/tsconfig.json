@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "ignoreDeprecations": "6.0",
     "allowJs": true,
-    "checkJs": false,
+    "checkJs": true,
+    "strict": true,
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationMap": false,
@@ -15,8 +17,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo",
-    "maxNodeModuleJsDepth": 1
+    "tsBuildInfoFile": "./.tsbuildinfo"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.mjs", "**/*.spec.mjs"]

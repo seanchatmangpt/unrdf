@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/sidecar",
-  "version": "0.0.0-agnostic",
+  "version": "26.5.5",
   "private": true,
   "type": "module",
   "scripts": {

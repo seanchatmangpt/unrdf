@@ -46,3 +46,4 @@ temp/
 !templates/.gitkeep
 !ontologies/.gitkeep
 !output/.gitkeep
+assets/

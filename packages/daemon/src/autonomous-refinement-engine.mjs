@@ -86,6 +86,11 @@ export const RefinementEpisodeSchema = z.object({
  * Orchestrates LLM-driven graph refinement with full UNRDF ecosystem integration.
  */
 export class AutonomousRefinementEngine extends EventEmitter {
+  /**
+   *
+   * @param config
+   * @param dependencies
+   */
   constructor(config, dependencies) {
     super();
     this.config = RefinementConfigSchema.parse(config);
@@ -120,6 +125,7 @@ export class AutonomousRefinementEngine extends EventEmitter {
 
   /**
    * Build MCP tool registry for LLM invocation
+   * @param store
    */
   buildToolRegistry(store) {
     return {
@@ -333,6 +339,8 @@ export class AutonomousRefinementEngine extends EventEmitter {
 
   /**
    * Main autonomous refinement loop
+   * @param store
+   * @param llmProvider
    */
   async refine(store, llmProvider = null) {
     if (this.state !== 'ready') {
@@ -632,6 +640,9 @@ export class AutonomousRefinementEngine extends EventEmitter {
 
 /**
  * Factory function
+ * @param config
+ * @param dependencies
+ * @example
  */
 export async function createAutonomousRefinementEngine(config, dependencies = {}) {
   const engine = new AutonomousRefinementEngine(config, dependencies);

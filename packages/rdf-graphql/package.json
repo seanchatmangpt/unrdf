@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/rdf-graphql",
-  "version": "0.0.0-agnostic",
+  "version": "26.6.12",
   "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
   "type": "module",
   "main": "src/adapter.mjs",
@@ -31,5 +31,8 @@
     "zod": "^3.22.4"
   },
   "author": "UNRDF Team",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -20,6 +20,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 /**
  * Call open-ontologies CLI command
+ * @param args
  */
 function runOntoCommand(args) {
   return new Promise((resolve, reject) => {
@@ -99,6 +100,7 @@ ex:knows a rdf:Property ;
 
 /**
  * Groq LLM RDF generation with ontology validation
+ * @param store
  */
 async function groqRdfWithOntologyHook(store) {
   const apiKey = process.env.GROQ_API_KEY;
@@ -226,6 +228,7 @@ Only respond with valid JSON. No other text.`;
 
 /**
  * Increment counter hook
+ * @param store
  */
 async function incrementCounterHook(store) {
   const currentQuads = getQuads(
@@ -260,6 +263,7 @@ async function incrementCounterHook(store) {
 
 /**
  * Compute hash of store state
+ * @param store
  */
 function computeStoreHash(store) {
   const quads = getQuads(store);
@@ -324,7 +328,7 @@ async function main() {
     // Track statistics
     let totalTriplesGenerated = 0;
     let successfulCalls = 0;
-    let ontoResults = [];
+    const ontoResults = [];
 
     // Main loop
     while (Date.now() < endTime && !converged && iteration < MAX_ITERATIONS) {

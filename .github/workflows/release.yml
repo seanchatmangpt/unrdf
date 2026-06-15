@@ -228,18 +228,18 @@ jobs:
       - name: Verify package can be published
         run: |
           echo "Verifying package..."
-          pnpm publish --dry-run
+          pnpm -r publish --no-git-checks --access public --dry-run
           echo "✅ Package verification successful"
 
       - name: Publish to npm (stable)
         if: needs.validate.outputs.is_prerelease == 'false'
-        run: pnpm publish --no-git-checks --access public
+        run: pnpm -r publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm (prerelease)
         if: needs.validate.outputs.is_prerelease == 'true'
-        run: pnpm publish --no-git-checks --access public --tag next
+        run: pnpm -r publish --no-git-checks --access public --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -249,7 +249,7 @@ jobs:
           sleep 10  # Wait for npm registry to update
 
           echo "Verifying published package..."
-          npm view unrdf@${VERSION} version
+          npm view @unrdf/core@${VERSION} version
           echo "✅ Package published successfully"
 
   # Build and Push Docker Image

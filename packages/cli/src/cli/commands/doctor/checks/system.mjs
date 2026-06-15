@@ -369,6 +369,38 @@ function formatBytes(bytes) {
 }
 
 /**
+ * Check Oxigraph backend
+ */
+async function checkOxigraphBackend() {
+  try {
+    const { OxigraphStore } = await import('@unrdf/oxigraph');
+    const store = new OxigraphStore();
+    await store.add({ subject: '<s>', predicate: '<p>', object: '<o>' });
+    const quads = await store.getQuads({ subject: '<s>' });
+    if (quads.length > 0) {
+      return {
+        status: 'pass',
+        actual: 'Oxigraph accessible',
+        expected: 'Oxigraph accessible',
+      };
+    }
+    return {
+      status: 'fail',
+      actual: 'Oxigraph query failed',
+      expected: 'Oxigraph accessible',
+      fix: 'Verify WASM support',
+    };
+  } catch (error) {
+    return {
+      status: 'fail',
+      actual: `Oxigraph failed: ${error.message}`,
+      expected: 'Oxigraph accessible',
+      fix: 'Verify @unrdf/oxigraph installation',
+    };
+  }
+}
+
+/**
  * Run all system checks
  */
 export async function checkSystem() {
@@ -390,6 +422,10 @@ export async function checkSystem() {
       {
         name: 'RDF store',
         ...checkRDFStore(),
+      },
+      {
+        name: 'Oxigraph backend',
+        ...(await checkOxigraphBackend()),
       },
       {
         name: 'Port availability',

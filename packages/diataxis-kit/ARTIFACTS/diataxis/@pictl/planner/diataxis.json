@@ -31,18 +31,10 @@
   },
   "explanation": {
     "architecture": "Execution plan generation for the pictl process mining engine.",
-    "concepts": [
-      "process-mining",
-      "planning",
-      "optimization"
-    ],
+    "concepts": ["process-mining", "planning", "optimization"],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-planner-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @pictl/planner",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -56,9 +48,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-pictl-planner",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -71,15 +61,8 @@
       "confidenceScore": 0.7,
       "context": "When working with process-mining in your project",
       "id": "howto-integrate-with-process-mining",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/planner with process-mining",
       "title": "Integrate with process-mining"
     }
@@ -96,9 +79,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@pictl/planner Reference"
   },
   "tutorials": [
@@ -107,17 +88,10 @@
       "goal": "Learn how to set up and use @pictl/planner in your project",
       "id": "tutorial-getting-started-with-pictl-planner",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
-      "stepsOutline": [
-        "Installation",
-        "Per PRD §11: explain() == run()",
-        "Examples"
-      ],
+      "source": ["readme", "keywords"],
+      "stepsOutline": ["Installation", "Per PRD §11: explain() == run()", "Examples"],
       "title": "Getting Started with @pictl/planner"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

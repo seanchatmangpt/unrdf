@@ -19,6 +19,7 @@ import { syncCommand } from '../../../cli/src/cli/commands/sync.mjs';
 import { templateCommand } from '../../../cli/src/cli/commands/template.mjs';
 import { hooksCommand } from '../../../cli/src/cli/commands/hooks.mjs';
 import { mcpCommand } from '../../../cli/src/cli/commands/mcp.mjs';
+import { virtualCommand } from '../../../cli/src/cli/commands/virtual.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +43,7 @@ function buildCliCommands() {
       mcp: mcpCommand,
       sync: syncCommand,
       template: templateCommand,
+      virtual: virtualCommand,
     },
   };
 }
@@ -49,9 +51,9 @@ function buildCliCommands() {
 /**
  * Recursively walk command tree to extract leaf commands
  * @param {string} name - Command name
- * @param {Object} cmd - Command object with meta, args, subCommands
+ * @param {object} cmd - Command object with meta, args, subCommands
  * @param {string} parentPath - Parent command path (for nesting)
- * @returns {Array<Object>} Array of leaf command definitions
+ * @returns {Array<object>} Array of leaf command definitions
  */
 function walkCommands(name, cmd, parentPath = '') {
   const cliPath = parentPath ? `${parentPath} ${name}` : name;

@@ -17,7 +17,7 @@ import { BatchScheduler } from './batch-scheduler.mjs';
  */
 class CompactOperationMetadata {
   /**
-   * @param {Object} op - Operation data
+   * @param {object} op - Operation data
    */
   constructor(op) {
     this.id = op.id;
@@ -32,7 +32,7 @@ class CompactOperationMetadata {
 
   /**
    * Convert to minimal JSON for transmission
-   * @returns {Object} Minimal representation
+   * @returns {object} Minimal representation
    */
   toMinimal() {
     const result = {
@@ -55,15 +55,15 @@ class CompactOperationMetadata {
 export class OptimizedDaemon extends EventEmitter {
   /**
    * Creates a new optimized daemon instance
-   * @param {Object} config - Daemon configuration
-   * @param {string} [config.id='default-daemon'] - Unique daemon identifier
+   * @param {object} config - Daemon configuration
+   * @param {string} [config.id] - Unique daemon identifier
    * @param {string} [config.nodeId] - Node identifier in cluster
    * @param {string} [config.clusterId] - Cluster identifier
-   * @param {number} [config.maxConcurrent=100] - Maximum concurrent operations
-   * @param {number} [config.cacheSize=5000] - LRU cache size for completed operations
-   * @param {number} [config.batchSize=100] - Batch size for scheduling
-   * @param {number} [config.batchFlushMs=10] - Batch flush interval
-   * @param {Object} [config.logger] - Logger instance
+   * @param {number} [config.maxConcurrent] - Maximum concurrent operations
+   * @param {number} [config.cacheSize] - LRU cache size for completed operations
+   * @param {number} [config.batchSize] - Batch size for scheduling
+   * @param {number} [config.batchFlushMs] - Batch flush interval
+   * @param {object} [config.logger] - Logger instance
    * @throws {Error} If configuration is invalid
    */
   constructor(config = {}) {
@@ -147,11 +147,11 @@ export class OptimizedDaemon extends EventEmitter {
 
   /**
    * Schedule an operation for execution (uses batching)
-   * @param {Object} operation - Operation to schedule
+   * @param {object} operation - Operation to schedule
    * @param {string} operation.id - Operation identifier
    * @param {Function} operation.handler - Operation handler function
    * @param {string} [operation.name] - Human-readable operation name
-   * @param {Object} [operation.metadata] - Operation metadata
+   * @param {object} [operation.metadata] - Operation metadata
    * @throws {Error} If operation is invalid
    */
   schedule(operation) {
@@ -180,6 +180,7 @@ export class OptimizedDaemon extends EventEmitter {
 
   /**
    * Process a batch of scheduled operations
+   * @param operations
    * @private
    */
   _processBatch(operations) {
@@ -330,7 +331,7 @@ export class OptimizedDaemon extends EventEmitter {
 
   /**
    * Get daemon health status
-   * @returns {Object} Health information
+   * @returns {object} Health information
    */
   getHealth() {
     const uptime = this.startTime ? Date.now() - this.startTime : 0;
@@ -352,7 +353,7 @@ export class OptimizedDaemon extends EventEmitter {
 
   /**
    * Get daemon metrics with percentiles
-   * @returns {Object} Performance metrics
+   * @returns {object} Performance metrics
    */
   getMetrics() {
     const cacheStats = this.completedOperations.getStats();

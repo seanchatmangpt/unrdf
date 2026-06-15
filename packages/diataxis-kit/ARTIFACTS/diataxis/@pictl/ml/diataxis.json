@@ -9,12 +9,7 @@
     "docsFiles": [],
     "examplesFiles": [],
     "fingerprint": "0176b35af60b0b784de90a17d37e40ebb85622d15ae42a8b91ef0a173d333f23",
-    "readmeHeadings": [
-      "Algorithms",
-      "Known Behavior",
-      "Usage",
-      "CLI"
-    ]
+    "readmeHeadings": ["Algorithms", "Known Behavior", "Usage", "CLI"]
   },
   "explanation": {
     "architecture": "Micro-ML analysis for process mining. 6 algorithms for classification, clustering, forecasting, anomaly detection, regression, and dimensionality reduction.",
@@ -27,11 +22,7 @@
     ],
     "confidenceScore": 0.7,
     "id": "explanation-pictl-ml-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @pictl/ml",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -45,15 +36,8 @@
       "confidenceScore": 0.7,
       "context": "When working with machine-learning in your project",
       "id": "howto-integrate-with-machine-learning",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @pictl/ml with machine-learning",
       "title": "Integrate with machine-learning"
     },
@@ -61,14 +45,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -85,9 +63,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@pictl/ml Reference"
   },
   "tutorials": [
@@ -96,9 +72,7 @@
       "goal": "Learn how to set up and use @pictl/ml in your project",
       "id": "tutorial-getting-started-with-pictl-ml",
       "prerequisites": [],
-      "source": [
-        "keywords"
-      ],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -108,5 +82,5 @@
       "title": "Getting Started with @pictl/ml"
     }
   ],
-  "version": "0.0.0-agnostic"
+  "version": "26.6.12"
 }

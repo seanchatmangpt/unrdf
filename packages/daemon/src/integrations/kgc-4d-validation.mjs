@@ -4,6 +4,11 @@
  * @description Validation functions for event log entries and related structures
  */
 
+/**
+ *
+ * @param entry
+ * @example
+ */
 export function validateEventLogEntry(entry) {
   if (!entry.id || typeof entry.id !== 'string') throw new TypeError('id must be string');
   if (typeof entry.timestamp !== 'bigint') throw new TypeError('timestamp must be bigint');
@@ -15,6 +20,11 @@ export function validateEventLogEntry(entry) {
   if (!entry.currentHash || typeof entry.currentHash !== 'string') throw new TypeError('currentHash must be string');
 }
 
+/**
+ *
+ * @param snapshot
+ * @example
+ */
 export function validateUniverseFreeze(snapshot) {
   if (!snapshot.freezeId || typeof snapshot.freezeId !== 'string') throw new TypeError('freezeId must be string');
   if (typeof snapshot.timestamp !== 'bigint') throw new TypeError('timestamp must be bigint');
@@ -25,6 +35,11 @@ export function validateUniverseFreeze(snapshot) {
   if (!Array.isArray(snapshot.operations)) throw new TypeError('operations must be array');
 }
 
+/**
+ *
+ * @param proof
+ * @example
+ */
 export function validateMerkleProof(proof) {
   if (typeof proof.leafIndex !== 'number' || proof.leafIndex < 0) throw new TypeError('leafIndex must be non-negative number');
   if (!proof.leafHash || typeof proof.leafHash !== 'string') throw new TypeError('leafHash must be string');
@@ -32,6 +47,11 @@ export function validateMerkleProof(proof) {
   if (!proof.merkleRoot || typeof proof.merkleRoot !== 'string') throw new TypeError('merkleRoot must be string');
 }
 
+/**
+ *
+ * @param query
+ * @example
+ */
 export function validateTemporalQuery(query) {
   if (query.fromTimestamp && typeof query.fromTimestamp !== 'bigint') throw new TypeError('fromTimestamp must be bigint or undefined');
   if (query.toTimestamp && typeof query.toTimestamp !== 'bigint') throw new TypeError('toTimestamp must be bigint or undefined');
@@ -40,6 +60,10 @@ export function validateTemporalQuery(query) {
   if (query.status && !['enqueued', 'started', 'success', 'failure'].includes(query.status)) throw new TypeError('invalid status');
 }
 
+/**
+ *
+ * @example
+ */
 export function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;

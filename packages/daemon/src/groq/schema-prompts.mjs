@@ -224,15 +224,13 @@ Return a JSON proposal with type "alignment".`;
 
 /**
  * Generates RDF schema proposals using Groq LLM
- *
  * @class SchemaProposalGenerator
  */
 export class SchemaProposalGenerator {
   /**
    * Create a new schema proposal generator
-   *
-   * @param {Object} [config={}] - Generator configuration
-   * @param {Object} [llmProvider] - Groq LLM provider instance
+   * @param {object} [config] - Generator configuration
+   * @param {object} [llmProvider] - Groq LLM provider instance
    */
   constructor(config = {}, llmProvider = null) {
     const validatedConfig = SchemaProposalConfigSchema.parse(config);
@@ -251,9 +249,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Record query pattern for analysis
-   *
    * @param {string} sparql - SPARQL query string
-   * @param {Object} metadata - Query metadata (latency, frequency, etc.)
+   * @param {object} metadata - Query metadata (latency, frequency, etc.)
    */
   recordQueryPattern(sparql, metadata = {}) {
     const pattern = this.extractQueryPattern(sparql);
@@ -276,7 +273,6 @@ export class SchemaProposalGenerator {
 
   /**
    * Record data distribution for analysis
-   *
    * @param {string} subject - Subject IRI
    * @param {string} predicate - Predicate IRI
    * @param {string} object - Object value
@@ -300,9 +296,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate class extension proposal
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generateClassExtensionProposal(context = {}) {
     const prompt = this._buildPrompt(CLASS_EXTENSION_TEMPLATE, {
@@ -317,9 +312,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate property addition proposal
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generatePropertyAdditionProposal(context = {}) {
     const prompt = this._buildPrompt(PROPERTY_ADDITION_TEMPLATE, {
@@ -334,9 +328,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate SHACL constraint proposal
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generateConstraintProposal(context = {}) {
     const prompt = this._buildPrompt(CONSTRAINT_TEMPLATE, {
@@ -351,9 +344,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate optimization proposal
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generateOptimizationProposal(context = {}) {
     const prompt = this._buildPrompt(OPTIMIZATION_TEMPLATE, {
@@ -368,9 +360,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate ontology alignment proposal
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generateAlignmentProposal(context = {}) {
     const prompt = this._buildPrompt(ALIGNMENT_TEMPLATE, {
@@ -385,9 +376,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Generate comprehensive proposal (all types)
-   *
-   * @param {Object} context - Analysis context
-   * @returns {Promise<Object>} Generated proposal
+   * @param {object} context - Analysis context
+   * @returns {Promise<object>} Generated proposal
    */
   async generateComprehensiveProposal(context = {}) {
     const proposals = await Promise.all([
@@ -414,7 +404,6 @@ export class SchemaProposalGenerator {
 
   /**
    * Extract query pattern for analysis
-   *
    * @param {string} sparql - SPARQL query
    * @returns {string} Normalized pattern
    * @private
@@ -430,7 +419,6 @@ export class SchemaProposalGenerator {
 
   /**
    * Format query patterns for prompt
-   *
    * @returns {string} Formatted patterns
    * @private
    */
@@ -446,7 +434,6 @@ export class SchemaProposalGenerator {
 
   /**
    * Format data distribution for prompt
-   *
    * @returns {string} Formatted distribution
    * @private
    */
@@ -467,9 +454,8 @@ export class SchemaProposalGenerator {
 
   /**
    * Build prompt with template variables
-   *
    * @param {string} template - Prompt template
-   * @param {Object} variables - Template variables
+   * @param {object} variables - Template variables
    * @returns {string} Compiled prompt
    * @private
    */
@@ -486,7 +472,6 @@ export class SchemaProposalGenerator {
 
   /**
    * Call Groq LLM API
-   *
    * @param {string} prompt - Prompt to send
    * @returns {Promise<string>} LLM response
    * @private
@@ -512,10 +497,9 @@ export class SchemaProposalGenerator {
 
   /**
    * Parse LLM response into proposal
-   *
    * @param {string} response - LLM response text
    * @param {string} expectedType - Expected proposal type
-   * @returns {Object} Parsed proposal
+   * @returns {object} Parsed proposal
    * @private
    */
   _parseProposal(response, expectedType) {
@@ -564,8 +548,7 @@ export class SchemaProposalGenerator {
 
   /**
    * Get generator statistics
-   *
-   * @returns {Object} Statistics
+   * @returns {object} Statistics
    */
   getStats() {
     return {
@@ -592,10 +575,10 @@ export class SchemaProposalGenerator {
 
 /**
  * Create a schema proposal generator
- *
- * @param {Object} [config={}] - Generator configuration
- * @param {Object} [llmProvider] - Groq LLM provider
+ * @param {object} [config] - Generator configuration
+ * @param {object} [llmProvider] - Groq LLM provider
  * @returns {SchemaProposalGenerator} Generator instance
+ * @example
  */
 export function createSchemaProposalGenerator(config = {}, llmProvider = null) {
   return new SchemaProposalGenerator(config, llmProvider);
@@ -610,10 +593,10 @@ let globalGenerator = null;
 
 /**
  * Get or create global schema proposal generator
- *
- * @param {Object} [config={}] - Configuration (only used on first call)
- * @param {Object} [llmProvider] - LLM provider (only used on first call)
+ * @param {object} [config] - Configuration (only used on first call)
+ * @param {object} [llmProvider] - LLM provider (only used on first call)
  * @returns {SchemaProposalGenerator} - Global generator instance
+ * @example
  */
 export function getGlobalSchemaProposalGenerator(config = {}, llmProvider = null) {
   if (!globalGenerator) {
@@ -624,6 +607,7 @@ export function getGlobalSchemaProposalGenerator(config = {}, llmProvider = null
 
 /**
  * Dispose global generator
+ * @example
  */
 export function disposeGlobalSchemaProposalGenerator() {
   if (globalGenerator) {
@@ -638,10 +622,10 @@ export function disposeGlobalSchemaProposalGenerator() {
 
 /**
  * Validate proposal against SHACL schema
- *
- * @param {Object} proposal - Schema proposal
- * @param {Object} shaclValidator - SHACL validator instance
- * @returns {Promise<Object>} Validation results
+ * @param {object} proposal - Schema proposal
+ * @param {object} shaclValidator - SHACL validator instance
+ * @returns {Promise<object>} Validation results
+ * @example
  */
 export async function validateProposalWithSHACL(proposal, shaclValidator) {
   if (!shaclValidator) {
@@ -680,10 +664,10 @@ export async function validateProposalWithSHACL(proposal, shaclValidator) {
 
 /**
  * Check ontology alignment
- *
- * @param {Object} proposal - Schema proposal
+ * @param {object} proposal - Schema proposal
  * @param {string} targetOntology - Target ontology IRI
- * @returns {Promise<Object>} Alignment results
+ * @returns {Promise<object>} Alignment results
+ * @example
  */
 export async function checkOntologyAlignment(proposal, targetOntology) {
   // Simplified alignment check
@@ -709,11 +693,11 @@ export async function checkOntologyAlignment(proposal, targetOntology) {
 
 /**
  * Deploy proposal to knowledge graph
- *
- * @param {Object} proposal - Validated proposal
- * @param {Object} store - RDF store
- * @param {Object} options - Deployment options
- * @returns {Promise<Object>} Deployment results
+ * @param {object} proposal - Validated proposal
+ * @param {object} store - RDF store
+ * @param {object} options - Deployment options
+ * @returns {Promise<object>} Deployment results
+ * @example
  */
 export async function deployProposal(proposal, store, options = {}) {
   const {
@@ -777,9 +761,8 @@ export async function deployProposal(proposal, store, options = {}) {
 
 /**
  * Rollback deployed proposal
- *
- * @param {Object} proposal - Proposal to rollback
- * @param {Object} store - RDF store
+ * @param {object} proposal - Proposal to rollback
+ * @param {object} store - RDF store
  * @returns {Promise<void>}
  * @private
  */

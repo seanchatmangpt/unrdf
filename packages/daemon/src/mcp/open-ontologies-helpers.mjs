@@ -20,6 +20,7 @@ const DEFAULT_TIMEOUT_MS = 5000;
  * @param {object} options.env - Environment variables to merge
  * @param {string} options.input - Stdin input (for commands like load that accept -)
  * @returns {Promise<object>} Parsed JSON response or stdout
+ * @example
  */
 export async function runOntoCommand(args, options = {}) {
   const {
@@ -84,6 +85,7 @@ export async function runOntoCommand(args, options = {}) {
  * Validate open-ontologies installation
  * @returns {Promise<boolean>} True if binary exists and is executable
  * @throws {Error} If binary not found
+ * @example
  */
 export async function validateOntoInstallation() {
   if (!existsSync(ONTO_BINARY)) {
@@ -106,6 +108,7 @@ export async function validateOntoInstallation() {
 /**
  * Ensure open-ontologies data directory exists
  * @returns {Promise<string>} Path to data directory
+ * @example
  */
 export async function ensureDataDir() {
   if (!existsSync(ONTO_DATA_DIR)) {
@@ -118,6 +121,7 @@ export async function ensureDataDir() {
  * Format error for MCP response
  * @param {Error} error - Error object
  * @returns {string} Formatted error message
+ * @example
  */
 export function formatOntoError(error) {
   if (error.message.includes('Command timeout')) {
@@ -137,6 +141,7 @@ export function formatOntoError(error) {
  * @param {*} result - Command result (object or string)
  * @param {string} _toolName - Tool name for logging (unused, for future logging)
  * @returns {object} MCP response object
+ * @example
  */
 export function createOntoResponse(result, _toolName) {
   const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
@@ -157,6 +162,7 @@ export function createOntoResponse(result, _toolName) {
  * @param {Error} error - Error object
  * @param {string} _toolName - Tool name for logging (unused, for future logging)
  * @returns {object} MCP error response object
+ * @example
  */
 export function createOntoErrorResponse(error, _toolName) {
   return {

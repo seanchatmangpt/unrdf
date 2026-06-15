@@ -8,7 +8,7 @@
  */
 
 import { Transform } from 'stream';
-import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 Parser for streaming
+import { StreamParser } from '@unrdf/core/rdf/n3-justified-only'; // JUSTIFIED: N3 StreamParser for streaming
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 
@@ -40,15 +40,6 @@ export class RDFStreamParser extends Transform {
    * Create an RDF stream parser
    *
    * @param {Object} [options] - Parser options
-   * @param {string} [options.format='turtle'] - RDF format
-   * @param {string} [options.baseIRI] - Base IRI for relative URIs
-   * @param {string} [options.blankNodePrefix] - Prefix for blank nodes
-   * @param {number} [options.highWaterMark=16384] - Stream buffer size in bytes
-   * @param {number} [options.chunkSize=1000] - Number of quads per chunk
-   * @param {boolean} [options.enableBackpressure=true] - Enable backpressure handling
-   * @param {Function} [options.onQuad] - Callback for each parsed quad
-   * @param {Function} [options.onError] - Error callback
-   * @param {Function} [options.onProgress] - Progress callback
    */
   constructor(options = {}) {
     const config = RDFStreamParserConfigSchema.parse(options);
@@ -59,14 +50,14 @@ export class RDFStreamParser extends Transform {
     });
 
     this.config = config;
-    // Create N3 Parser instance without format parameter (auto-detect)
-    this.parser = new Parser({
+    
+    // Create N3 StreamParser instance for incremental parsing
+    this.n3StreamParser = new StreamParser({
       baseIRI: config.baseIRI,
       blankNodePrefix: config.blankNodePrefix,
+      format: config.format,
     });
-    this.pendingInput = '';
 
-    this.buffer = '';
     this.quadCount = 0;
     this.chunkBuffer = [];
     this.bytesProcessed = 0;
@@ -82,6 +73,50 @@ export class RDFStreamParser extends Transform {
       errors: 0,
       duration: 0,
     };
+
+    // Setup N3 StreamParser listeners
+    this.n3StreamParser.on('data', (quad) => {
+      this.quadCount++;
+      this.metrics.quadsProcessed++;
+
+      if (this.config.onQuad) {
+        this.config.onQuad(quad);
+      }
+
+      this.chunkBuffer.push(quad);
+
+      // Emit chunk when full
+      if (this.chunkBuffer.length >= this.config.chunkSize) {
+        const canPush = this._emitChunk();
+        
+        // Respect backpressure from downstream
+        if (!canPush && this.config.enableBackpressure) {
+          this.n3StreamParser.pause();
+          if (!this.backpressureActive) {
+            this.backpressureActive = true;
+            this.metrics.backpressureEvents++;
+          }
+        }
+      }
+
+      // Report progress periodically
+      if (this.config.onProgress && this.quadCount % 10000 === 0) {
+        this.config.onProgress({
+          quadsProcessed: this.quadCount,
+          bytesProcessed: this.bytesProcessed,
+          chunksEmitted: this.metrics.chunksEmitted,
+          duration: Date.now() - this.startTime,
+        });
+      }
+    });
+
+    this.n3StreamParser.on('error', (error) => {
+      this.metrics.errors++;
+      if (this.config.onError) {
+        this.config.onError(error);
+      }
+      this.emit('error', error);
+    });
   }
 
   /**
@@ -95,47 +130,25 @@ export class RDFStreamParser extends Transform {
   _transform(chunk, encoding, callback) {
     return tracer.startActiveSpan('rdf-stream-parser.transform', async span => {
       try {
-        // Convert buffer to string
-        const str = typeof chunk === 'string' ? chunk : chunk.toString('utf8');
-        this.buffer += str;
-        this.bytesProcessed += str.length;
-        this.metrics.bytesProcessed += str.length;
+        const len = chunk.length;
+        this.bytesProcessed += len;
+        this.metrics.bytesProcessed += len;
 
         span.setAttributes({
-          'chunk.size': str.length,
-          'buffer.size': this.buffer.length,
+          'chunk.size': len,
           'quads.processed': this.quadCount,
         });
 
-        // Just accumulate data, parsing happens in _flush
-        // This is more reliable than incremental parsing with N3
-        const quads = [];
-
-        // Report progress
-        if (this.config.onProgress && this.quadCount % 10000 === 0) {
-          this.config.onProgress({
-            quadsProcessed: this.quadCount,
-            bytesProcessed: this.bytesProcessed,
-            chunksEmitted: this.metrics.chunksEmitted,
-            duration: Date.now() - this.startTime,
+        // Write to N3 parser and handle backpressure
+        if (!this.n3StreamParser.write(chunk, encoding)) {
+          this.n3StreamParser.once('drain', () => {
+            span.end();
+            callback();
           });
+        } else {
+          span.end();
+          callback();
         }
-
-        // Check backpressure
-        if (this.config.enableBackpressure) {
-          const shouldPause = !this.push({ type: 'progress', quads: quads.length });
-          if (shouldPause && !this.backpressureActive) {
-            this.backpressureActive = true;
-            this.metrics.backpressureEvents++;
-            span.setAttribute('backpressure.active', true);
-          } else if (!shouldPause && this.backpressureActive) {
-            this.backpressureActive = false;
-          }
-        }
-
-        span.setStatus({ code: SpanStatusCode.OK });
-        span.end();
-        callback();
       } catch (error) {
         span.recordException(error);
         span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
@@ -151,53 +164,9 @@ export class RDFStreamParser extends Transform {
    * @param {Function} callback - Callback
    * @private
    */
-  async _flush(callback) {
-    try {
-      // Parse all buffered data at once
-      if (this.buffer && this.buffer.trim().length > 0) {
-        try {
-          const inputStr = this.buffer.trim();
-
-          // Wait for N3 Parser to complete parsing
-          await new Promise((resolve, _reject) => {
-            this.parser.parse(inputStr + '\n', (error, quad) => {
-              if (error) {
-                this.metrics.errors++;
-                if (this.config.onError) {
-                  this.config.onError(error);
-                }
-                // Don't reject, just continue - N3 can emit errors for individual quads
-                return;
-              }
-
-              if (quad) {
-                this.quadCount++;
-                this.metrics.quadsProcessed++;
-
-                if (this.config.onQuad) {
-                  this.config.onQuad(quad);
-                }
-
-                this.chunkBuffer.push(quad);
-
-                // Emit chunk when full
-                if (this.chunkBuffer.length >= this.config.chunkSize) {
-                  this._emitChunk();
-                }
-              } else {
-                // quad === null signals end of parsing
-                resolve();
-              }
-            });
-          });
-        } catch (parseError) {
-          this.metrics.errors++;
-          if (this.config.onError) {
-            this.config.onError(parseError);
-          }
-        }
-      }
-
+  _flush(callback) {
+    this.n3StreamParser.end();
+    this.n3StreamParser.on('end', () => {
       // Emit any remaining quads in chunk buffer
       if (this.chunkBuffer.length > 0) {
         this._emitChunk();
@@ -213,18 +182,31 @@ export class RDFStreamParser extends Transform {
       });
 
       callback();
-    } catch (error) {
-      callback(error);
+    });
+  }
+
+  /**
+   * Override _read to resume internal parser when downstream is ready
+   *
+   * @param {number} size - Number of bytes to read
+   * @private
+   */
+  _read(size) {
+    if (this.backpressureActive) {
+      this.backpressureActive = false;
+      this.n3StreamParser.resume();
     }
+    super._read(size);
   }
 
   /**
    * Emit a chunk of quads
    *
+   * @returns {boolean} Whether more data can be pushed
    * @private
    */
   _emitChunk() {
-    if (this.chunkBuffer.length === 0) return;
+    if (this.chunkBuffer.length === 0) return true;
 
     const chunk = {
       type: 'quads',
@@ -233,9 +215,10 @@ export class RDFStreamParser extends Transform {
       timestamp: Date.now(),
     };
 
-    this.push(chunk);
+    const canPush = this.push(chunk);
     this.metrics.chunksEmitted++;
     this.chunkBuffer = [];
+    return canPush;
   }
 
   /**
@@ -263,16 +246,6 @@ export class RDFStreamParser extends Transform {
  *
  * @param {Object} [options] - Parser options
  * @returns {RDFStreamParser} Stream parser instance
- *
- * @example
- * const parser = createRDFStreamParser({ format: 'turtle' });
- * fs.createReadStream('data.ttl')
- *   .pipe(parser)
- *   .on('data', (chunk) => {
- *     if (chunk.type === 'quads') {
- *       console.log(`Received ${chunk.count} quads`);
- *     }
- *   });
  */
 export function createRDFStreamParser(options = {}) {
   return new RDFStreamParser(options);
@@ -284,10 +257,6 @@ export function createRDFStreamParser(options = {}) {
  * @param {ReadableStream} stream - Input stream
  * @param {Object} [options] - Parser options
  * @returns {Promise<Array>} Array of all parsed quads
- *
- * @example
- * const quads = await parseRDFStream(fs.createReadStream('data.ttl'));
- * console.log(`Parsed ${quads.length} quads`);
  */
 export async function parseRDFStream(stream, options = {}) {
   return new Promise((resolve, reject) => {

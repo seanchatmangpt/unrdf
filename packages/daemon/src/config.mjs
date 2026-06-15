@@ -132,6 +132,7 @@ function parseToml(content) {
  * Load configuration from unrdf.toml in project root
  * @param {string} [configPath] - Custom path to unrdf.toml
  * @returns {Partial<DaemonFullConfig>} Partial configuration object
+ * @example
  */
 export function loadConfigFromToml(configPath) {
   const path = configPath || resolve(process.cwd(), 'unrdf.toml');
@@ -148,6 +149,7 @@ export function loadConfigFromToml(configPath) {
 /**
  * Load configuration from environment variables
  * @returns {Partial<DaemonFullConfig>} Configuration from environment
+ * @example
  */
 export function loadConfigFromEnv() {
   return {
@@ -173,6 +175,7 @@ export function loadConfigFromEnv() {
  * Merge multiple configurations (env overrides toml)
  * @param {...Partial<DaemonFullConfig>} configs - Configuration objects to merge
  * @returns {DaemonFullConfig} Merged configuration
+ * @example
  */
 export function mergeConfigs(...configs) {
   const merged = {};
@@ -194,6 +197,7 @@ export function mergeConfigs(...configs) {
  * Load and merge all configuration sources
  * @param {string} [configPath] - Custom path to unrdf.toml
  * @returns {DaemonFullConfig} Merged configuration from all sources
+ * @example
  */
 export function loadConfig(configPath) {
   const tomlConfig = loadConfigFromToml(configPath);
@@ -206,6 +210,7 @@ export function loadConfig(configPath) {
  * @param {DaemonFullConfig} config - Configuration object
  * @param {string} section - Section name to retrieve
  * @returns {*} Configuration section
+ * @example
  */
 export function getConfigSection(config, section) {
   return config[section] || {};

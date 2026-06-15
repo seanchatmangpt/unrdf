@@ -61,10 +61,8 @@ export {
  * Bridges daemon scheduling with v6-core delta gate operations.
  * Enforces admissibility policies, generates receipts, tracks state,
  * and supports rollback via delta reversal.
- *
  * @class
- * @extends EventEmitter
- *
+ * @augments EventEmitter
  * @example
  * const gate = new DaemonDeltaGate({ daemonId: 'my-daemon' });
  * const receipt = await gate.proposeDelta(delta);
@@ -75,14 +73,13 @@ export {
 export class DaemonDeltaGate extends EventEmitter {
   /**
    * Create a new DaemonDeltaGate instance
-   *
-   * @param {Object} options - Configuration
+   * @param {object} options - Configuration
    * @param {string} options.daemonId - Unique daemon identifier
-   * @param {Object} [options.store] - State store (defaults to in-memory)
+   * @param {object} [options.store] - State store (defaults to in-memory)
    * @param {Function} [options.onDeltaApplied] - Delta applied hook
    * @param {Function} [options.onDeltaRejected] - Delta rejected hook
-   * @param {Object} [options.logger] - Logger instance
-   * @param {number} [options.maxHistorySize=1000] - Max receipt history
+   * @param {object} [options.logger] - Logger instance
+   * @param {number} [options.maxHistorySize] - Max receipt history
    */
   constructor(options = {}) {
     super();
@@ -116,12 +113,10 @@ export class DaemonDeltaGate extends EventEmitter {
    * 4. Apply operations atomically
    * 5. Generate receipt with proof chain
    * 6. Emit events for cross-package coordination
-   *
-   * @param {Object} delta - Delta contract to apply
-   * @param {Object} [context={}] - Execution context
-   * @returns {Promise<Object>} Receipt with stateHash and proof chain
+   * @param {object} delta - Delta contract to apply
+   * @param {object} [context] - Execution context
+   * @returns {Promise<object>} Receipt with stateHash and proof chain
    * @throws {Error} On validation failure
-   *
    * @example
    * const delta = {
    *   id: uuid(),
@@ -221,12 +216,10 @@ export class DaemonDeltaGate extends EventEmitter {
    *
    * Reverses previous delta by proposing inverse operations.
    * Validates that current state matches expected state before rollback.
-   *
    * @param {string} receiptId - Receipt ID to rollback
-   * @param {Object} [context={}] - Execution context
-   * @returns {Promise<Object>} Rollback receipt
+   * @param {object} [context] - Execution context
+   * @returns {Promise<object>} Rollback receipt
    * @throws {Error} If receipt not found or state mismatch
-   *
    * @example
    * const rollbackReceipt = await gate.rollback(receiptId);
    */
@@ -271,11 +264,9 @@ export class DaemonDeltaGate extends EventEmitter {
    * Register cross-package coordinator
    *
    * Allows other packages (WASM4PM, streaming, hooks) to coordinate deltas.
-   *
    * @param {string} packageName - Package name (e.g., '@pictl/engine')
-   * @param {Object} coordinator - Coordinator implementation
+   * @param {object} coordinator - Coordinator implementation
    * @returns {void}
-   *
    * @example
    * gate.registerCoordinator('@pictl/engine', wasm4pmCoordinator);
    */
@@ -285,9 +276,8 @@ export class DaemonDeltaGate extends EventEmitter {
 
   /**
    * Get delta by ID
-   *
    * @param {string} deltaId - Delta ID
-   * @returns {Object|null} Delta or null if not found
+   * @returns {object | null} Delta or null if not found
    */
   getDelta(deltaId) {
     return this.deltaHistory.find((d) => d.id === deltaId) || null;
@@ -295,9 +285,8 @@ export class DaemonDeltaGate extends EventEmitter {
 
   /**
    * Get receipt by ID
-   *
    * @param {string} receiptId - Receipt ID
-   * @returns {Object|null} Receipt or null if not found
+   * @returns {object | null} Receipt or null if not found
    */
   getReceipt(receiptId) {
     return this.receiptHistory.find((r) => r.id === receiptId) || null;
@@ -307,9 +296,7 @@ export class DaemonDeltaGate extends EventEmitter {
    * Get health status
    *
    * Returns operational health metrics tracked via delta processing.
-   *
-   * @returns {Object} Health status
-   *
+   * @returns {object} Health status
    * @example
    * const health = gate.getHealthStatus();
    * console.log(health.status); // 'healthy' | 'degraded' | 'unhealthy'
@@ -340,8 +327,7 @@ export class DaemonDeltaGate extends EventEmitter {
    * Get receipt chain (proof chain)
    *
    * Returns ordered list of receipts with proof chain validation.
-   *
-   * @returns {Array<Object>} Ordered receipts with chain validation
+   * @returns {Array<object>} Ordered receipts with chain validation
    */
   getReceiptChain() {
     return this.receiptHistory.map((receipt, index) => ({
@@ -356,6 +342,8 @@ export class DaemonDeltaGate extends EventEmitter {
 
   /**
    * Reject delta
+   * @param delta
+   * @param reason
    * @private
    */
   async _rejectDelta(delta, reason) {
