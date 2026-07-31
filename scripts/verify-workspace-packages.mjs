@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, '.artifacts/package-matrix');
 const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const limit = +(process.argv.find(x => x.startsWith('--concurrency='))?.split('=')[1] || 4);
-const timeout = +(process.argv.find(x => x.startsWith('--timeout-ms='))?.split('=')[1] || 720000);
+const timeout = +(process.argv.find(x => x.startsWith('--timeout-ms='))?.split('=')[1] || 300000);
 const phases = ['lint', 'build', 'test'];
 const noop = /\b(echo|printf)\b.*\b(no|skipped)\b.*\b(test|build|lint)/i;
 const masked = /\|\|\s*true\b|;\s*exit\s+0\b/;

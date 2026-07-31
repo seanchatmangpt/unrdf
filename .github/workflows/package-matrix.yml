@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: workspace-package-matrix-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-packages:
     runs-on: ubuntu-24.04
@@ -37,7 +41,7 @@ jobs:
         env:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/verify-workspace-packages.mjs --concurrency=4
+        run: node scripts/verify-workspace-packages.mjs --concurrency=4 --timeout-ms=300000
 
       - name: Upload package matrix receipt
         if: always()
