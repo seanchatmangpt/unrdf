@@ -1,6 +1,9 @@
 name: Materialize agent tree
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - agent/fix-all-packages
@@ -10,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: materialize-agent-tree-${{ github.ref }}
+  group: materialize-agent-tree-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,6 +24,7 @@ jobs:
       - name: Checkout exact branch head
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
 
       - name: Create dependency-free source archive
