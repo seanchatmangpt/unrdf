@@ -1,0 +1,46 @@
+name: Materialize agent tree
+
+on:
+  push:
+    branches:
+      - agent/fix-all-packages
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: materialize-agent-tree-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create dependency-free source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > MATERIALIZED_HEAD_SHA
+          tar \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=.artifacts \
+            --exclude=coverage \
+            --exclude='**/dist' \
+            -czf /tmp/unrdf-agent-tree.tar.gz .
+
+      - name: Upload exact source tree
+        uses: actions/upload-artifact@v4
+        with:
+          name: unrdf-agent-tree
+          path: /tmp/unrdf-agent-tree.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
