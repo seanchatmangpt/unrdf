@@ -1,156 +1,98 @@
 #!/usr/bin/env node
-/** Execute every applicable workspace lint, build, and test script with receipts. */
 import { spawn } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { createWriteStream, existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = path.join(root, '.artifacts', 'package-matrix');
-const concurrency = process.argv.find((a) => a.startsWith('--concurrency='))?.split('=')[1] ?? '4';
+const out = path.join(root, '.artifacts/package-matrix');
+const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+const limit = +(process.argv.find(x => x.startsWith('--concurrency='))?.split('=')[1] || 4);
+const timeout = +(process.argv.find(x => x.startsWith('--timeout-ms='))?.split('=')[1] || 720000);
 const phases = ['lint', 'build', 'test'];
+const noop = /\b(echo|printf)\b.*\b(no|skipped)\b.*\b(test|build|lint)/i;
+const masked = /\|\|\s*true\b|;\s*exit\s+0\b/;
+const receipt = { schemaVersion: 2, base: process.env.GITHUB_BASE_SHA || null, head: process.env.GITHUB_HEAD_SHA || null, node: process.version, startedAt: new Date().toISOString(), state: 'UNKNOWN', packages: [], executions: [], imports: [] };
 
-async function exec(command, args, timeoutMs = 7_200_000) {
-  const startedAt = new Date().toISOString();
+const slug = s => s.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-');
+const tail = (a, b, n = 16384) => (a + b).slice(-n);
+
+async function run(cmd, args, cwd, logPath, ms = timeout) {
+  await mkdir(path.dirname(logPath), { recursive: true });
+  const log = createWriteStream(logPath);
   const start = process.hrtime.bigint();
-  const stdout = [];
-  const stderr = [];
-  const child = spawn(command, args, { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
-  child.stdout.on('data', (chunk) => {
-    stdout.push(chunk);
-    process.stdout.write(chunk);
-  });
-  child.stderr.on('data', (chunk) => {
-    stderr.push(chunk);
-    process.stderr.write(chunk);
-  });
-  let timedOut = false;
-  const timer = setTimeout(() => {
-    timedOut = true;
-    child.kill('SIGTERM');
-  }, timeoutMs);
-  const exitCode = await new Promise((resolve, reject) => {
-    child.once('error', reject);
-    child.once('close', (code) => resolve(code ?? 1));
-  });
-  clearTimeout(timer);
-  return {
-    command: [command, ...args],
-    startedAt,
-    completedAt: new Date().toISOString(),
-    durationMs: Math.round(Number(process.hrtime.bigint() - start) / 1_000_000),
-    exitCode,
-    timedOut,
-    stdout: Buffer.concat(stdout).toString('utf8'),
-    stderr: Buffer.concat(stderr).toString('utf8'),
-  };
+  let stdout = '', stderr = '', timedOut = false, spawnError = null;
+  const child = spawn(cmd, args, { cwd, env: { ...process.env, CI: process.env.CI || '1' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  child.stdout.on('data', x => { const s = x.toString(); stdout = tail(stdout, s, 1048576); log.write(s); });
+  child.stderr.on('data', x => { const s = x.toString(); stderr = tail(stderr, s); log.write(s); });
+  child.once('error', e => { spawnError = e.message; });
+  const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, ms);
+  const exitCode = await new Promise(resolve => child.once('close', code => resolve(code ?? 1)));
+  clearTimeout(timer); await new Promise(resolve => log.end(resolve));
+  return { command: [cmd, ...args], cwd: path.relative(root, cwd) || '.', log: path.relative(root, logPath), exitCode, timedOut, spawnError, durationMs: Math.round(Number(process.hrtime.bigint() - start) / 1e6), stdoutTail: stdout, stderrTail: stderr };
+}
+
+async function pool(items, worker) {
+  const results = new Array(items.length); let cursor = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) { const i = cursor++; results[i] = await worker(items[i]); }
+  }));
+  return results;
 }
 
 function entries(manifest) {
   const values = [manifest.module, manifest.main];
-  const exported = manifest.exports?.['.'] ?? manifest.exports;
-  if (typeof exported === 'string') values.push(exported);
-  if (exported && typeof exported === 'object') values.push(exported.import, exported.default);
-  return [...new Set(values.filter((value) => typeof value === 'string' && !value.includes('*')))];
+  const rootExport = manifest.exports?.['.'] ?? manifest.exports;
+  if (typeof rootExport === 'string') values.push(rootExport);
+  else if (rootExport && typeof rootExport === 'object') values.push(rootExport.import, rootExport.node, rootExport.default);
+  return [...new Set(values.filter(x => typeof x === 'string' && !x.includes('*')))];
 }
 
-await mkdir(outDir, { recursive: true });
-const receipt = {
-  schemaVersion: 1,
-  base: process.env.GITHUB_BASE_SHA ?? null,
-  head: process.env.GITHUB_HEAD_SHA ?? null,
-  node: process.version,
-  startedAt: new Date().toISOString(),
-  state: 'UNKNOWN',
-  packages: [],
-  phases: [],
-  smoke: [],
-};
-
-const discovery = await exec('pnpm', ['list', '-r', '--depth', '-1', '--json']);
-if (discovery.exitCode !== 0) throw new Error('WORKSPACE_DISCOVERY_FAILED');
-const listed = JSON.parse(discovery.stdout);
-const names = new Map();
-for (const item of listed) {
-  const packagePath = path.resolve(item.path);
-  if (packagePath === root) continue;
-  const relativePath = path.relative(root, packagePath);
-  const manifestPath = path.join(packagePath, 'package.json');
-  if (!existsSync(manifestPath)) throw new Error(`WORKSPACE_MANIFEST_MISSING:${relativePath}`);
-  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-  if (!manifest.name) throw new Error(`PACKAGE_NAME_MISSING:${relativePath}`);
-  if (names.has(manifest.name)) throw new Error(`PACKAGE_NAME_DUPLICATE:${manifest.name}`);
-  names.set(manifest.name, relativePath);
-  receipt.packages.push({ name: manifest.name, path: relativePath, manifest });
-}
-receipt.packages.sort((a, b) => a.path.localeCompare(b.path));
-if (receipt.packages.length === 0) throw new Error('WORKSPACE_DISCOVERY_EMPTY');
-
-for (const phase of phases) {
-  const targets = receipt.packages.filter((pkg) => typeof pkg.manifest.scripts?.[phase] === 'string');
-  if (targets.length === 0) continue;
-  const result = await exec('pnpm', [
-    '-r',
-    '--no-bail',
-    '--stream',
-    `--workspace-concurrency=${concurrency}`,
-    '--if-present',
-    'run',
-    phase,
-  ]);
-  await writeFile(path.join(outDir, `${phase}.log`), `${result.stdout}${result.stderr}`);
-  receipt.phases.push({
-    phase,
-    targets: targets.map(({ name, path: packagePath }) => ({ name, path: packagePath })),
-    targetCount: targets.length,
-    exitCode: result.exitCode,
-    timedOut: result.timedOut,
-    durationMs: result.durationMs,
-    state: result.exitCode === 0 && !result.timedOut ? 'ALIVE' : 'BUILD_BROKEN',
-  });
-}
-
-for (const pkg of receipt.packages.filter((item) => !item.manifest.scripts?.test)) {
-  const candidate = entries(pkg.manifest).find((entry) => existsSync(path.resolve(root, pkg.path, entry)));
-  if (!candidate) {
-    receipt.smoke.push({
-      name: pkg.name,
-      path: pkg.path,
-      state: pkg.manifest.private ? 'NOT_APPLICABLE' : 'UNSUPPORTED',
-      reason: 'no test script or existing import target',
-    });
-    continue;
+await mkdir(out, { recursive: true });
+try {
+  const discovery = await run(pnpm, ['list', '-r', '--depth', '-1', '--json'], root, path.join(out, 'discovery.log'), 120000);
+  if (discovery.exitCode) throw new Error('WORKSPACE_DISCOVERY_FAILED');
+  const seen = new Set();
+  for (const item of JSON.parse(discovery.stdoutTail)) {
+    const abs = path.resolve(item.path); if (abs === root) continue;
+    const rel = path.relative(root, abs); const manifest = JSON.parse(await readFile(path.join(abs, 'package.json'), 'utf8'));
+    if (!manifest.name) throw new Error(`PACKAGE_NAME_MISSING:${rel}`);
+    if (seen.has(manifest.name)) throw new Error(`PACKAGE_NAME_DUPLICATE:${manifest.name}`);
+    seen.add(manifest.name); receipt.packages.push({ name: manifest.name, path: rel, private: manifest.private === true, scripts: manifest.scripts || {}, entries: entries(manifest) });
   }
-  const target = path.resolve(root, pkg.path, candidate);
-  const result = await exec(process.execPath, [
-    '--input-type=module',
-    '--eval',
-    `await import(${JSON.stringify(pathToFileURL(target).href)})`,
-  ], 300_000);
-  receipt.smoke.push({
-    name: pkg.name,
-    path: pkg.path,
-    target: candidate,
-    exitCode: result.exitCode,
-    state: result.exitCode === 0 && !result.timedOut ? 'ALIVE' : 'BUILD_BROKEN',
-  });
-}
+  receipt.packages.sort((a, b) => a.path.localeCompare(b.path));
+  if (!receipt.packages.length) throw new Error('WORKSPACE_DISCOVERY_EMPTY');
 
-receipt.completedAt = new Date().toISOString();
-receipt.state = [
-  ...receipt.phases.map((phase) => phase.state),
-  ...receipt.smoke.map((smoke) => smoke.state),
-].every((state) => ['ALIVE', 'NOT_APPLICABLE'].includes(state))
-  ? 'ALIVE'
-  : 'BUILD_BROKEN';
-for (const pkg of receipt.packages) delete pkg.manifest;
-await writeFile(path.join(outDir, 'receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`);
-console.log(`PACKAGE_MATRIX_RECEIPT ${JSON.stringify({
-  state: receipt.state,
-  packageCount: receipt.packages.length,
-  phases: receipt.phases.map(({ phase, targetCount, state }) => ({ phase, targetCount, state })),
-  smoke: receipt.smoke,
-})}`);
-process.exitCode = receipt.state === 'ALIVE' ? 0 : 1;
+  for (const phase of phases) {
+    const targets = receipt.packages.filter(p => typeof p.scripts[phase] === 'string');
+    receipt.executions.push(...await pool(targets, async p => {
+      console.log(`[${phase}] ${p.name}`);
+      const result = await run(pnpm, ['--dir', path.join(root, p.path), 'run', phase], root, path.join(out, phase, `${slug(p.name)}.log`));
+      const script = p.scripts[phase];
+      const state = result.exitCode || result.timedOut || result.spawnError ? 'BUILD_BROKEN' : masked.test(script) ? 'UNSUPPORTED' : noop.test(script) ? 'NOT_APPLICABLE' : 'ALIVE';
+      console.log(`[${phase}] ${p.name}: ${state}`);
+      return { package: p.name, path: p.path, phase, script, state, ...result };
+    }));
+    for (const p of receipt.packages.filter(p => !p.scripts[phase])) receipt.executions.push({ package: p.name, path: p.path, phase, script: null, state: 'NOT_APPLICABLE', reason: `no ${phase} script` });
+  }
+
+  receipt.imports.push(...await pool(receipt.packages, async p => {
+    const target = p.entries.find(x => existsSync(path.resolve(root, p.path, x)));
+    if (!target) return { package: p.name, path: p.path, state: p.private ? 'NOT_APPLICABLE' : 'BUILD_BROKEN', reason: p.entries.length ? 'declared root export is missing' : 'no root export declared', candidates: p.entries };
+    const result = await run(process.execPath, ['--input-type=module', '--eval', `await import(${JSON.stringify(pathToFileURL(path.resolve(root, p.path, target)).href)})`], root, path.join(out, 'import', `${slug(p.name)}.log`), 120000);
+    return { package: p.name, path: p.path, target, state: result.exitCode || result.timedOut ? 'BUILD_BROKEN' : 'ALIVE', ...result };
+  }));
+
+  const states = [...receipt.executions, ...receipt.imports].map(x => x.state);
+  receipt.summary = states.reduce((m, s) => (m[s] = (m[s] || 0) + 1, m), {});
+  receipt.state = states.every(s => s === 'ALIVE' || s === 'NOT_APPLICABLE') ? 'ALIVE' : 'BUILD_BROKEN';
+} catch (error) {
+  receipt.state = 'BUILD_BROKEN'; receipt.error = { name: error.name, message: error.message, stack: error.stack };
+} finally {
+  receipt.completedAt = new Date().toISOString();
+  await writeFile(path.join(out, 'receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`);
+  console.log(`PACKAGE_MATRIX_RECEIPT ${JSON.stringify({ state: receipt.state, packageCount: receipt.packages.length, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
+  process.exitCode = receipt.state === 'ALIVE' ? 0 : 1;
+}

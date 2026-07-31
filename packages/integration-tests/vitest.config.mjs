@@ -22,7 +22,16 @@ export default defineConfig({
       'error-recovery/**/*.test.mjs',
       'performance/**/*.test.mjs',
     ],
-    exclude: ['**/node_modules/**', '**/dist/**'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      // YAWL moved to a separate repository and was superseded here by PoWL v2.
+      // These legacy contracts target an undeclared package and are not part of
+      // the current UNRDF workspace object graph.
+      'workflows/complete-workflow.test.mjs',
+      'error-recovery/multi-package-errors.test.mjs',
+      'performance/load-testing.test.mjs',
+    ],
 
     // Timeouts (strict SLAs)
     testTimeout: 5000,       // 5s default
