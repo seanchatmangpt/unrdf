@@ -126,3 +126,10 @@ export { POWL8_OPCODES, registerPowl8Opcodes } from './vm/opcodes.mjs';
 export { Powl8Scheduler } from './vm/scheduler.mjs';
 export { VmTelemetry } from './vm/telemetry.mjs';
 export { ReceiptGenerator } from './vm/receipt-generator.mjs';
+
+// Federated AtomVM swarm cluster control plane
+export {
+  AtomVMSwarmCluster,
+  SwarmClusterRefusal,
+  createAtomVMSwarmCluster,
+} from './swarm-cluster.mjs';
