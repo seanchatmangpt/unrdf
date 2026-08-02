@@ -10,7 +10,8 @@
     "./dilithium3": "./src/dilithium3.mjs",
     "./hybrid-signature": "./src/hybrid-signature.mjs",
     "./pq-signer": "./src/pq-signer.mjs",
-    "./pq-merkle": "./src/pq-merkle.mjs"
+    "./pq-merkle": "./src/pq-merkle.mjs",
+    "./verifier": "./src/receipt-verifier.mjs"
   },
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",

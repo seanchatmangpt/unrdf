@@ -40,3 +40,6 @@ export { createSnapshot, verifySnapshot, diffSnapshots } from './snapshot.mjs';
 export { BoundedCache, createBoundedCache } from './bounded-cache.mjs';
 export { EventLog, createEventLog } from './event-log.mjs';
 export { LeaseRegistry, createLeaseRegistry } from './lease.mjs';
+
+// Dense transaction semantics
+export { MemoryQuadStore, QuadTransaction, TransactionConflict, TransactionRefusal, beginTransaction, verifyTransactionReceipt, replayOperations, quadKey as transactionQuadKey } from './utils/transaction-core.mjs';

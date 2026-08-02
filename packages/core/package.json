@@ -34,10 +34,16 @@
     "./execution-plan": "./src/execution-plan.mjs",
     "./admission": "./src/admission-boundary.mjs",
     "./command-verifier": "./src/command-verifier.mjs",
-    "./replay": "./src/replay-runner.mjs"
+    "./replay": "./src/replay-runner.mjs",
+    "./transaction-core": "./src/utils/transaction-core.mjs"
   },
   "sideEffects": false,
-  "files": ["src/", "dist/", "README.md", "LICENSE"],
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "vitest run --no-coverage",
     "test:coverage": "vitest run --coverage",
@@ -51,7 +57,13 @@
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
     "dev": "echo 'Development mode for @unrdf/core'"
   },
-  "keywords": ["rdf", "knowledge-graph", "sparql", "semantic-web", "linked-data"],
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "sparql",
+    "semantic-web",
+    "linked-data"
+  ],
   "dependencies": {
     "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/namespace": "^2.0.1",
@@ -74,10 +86,20 @@
     "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
-  "engines": {"node": ">=18.0.0"},
-  "repository": {"type": "git", "url": "https://github.com/unrdf/unrdf.git", "directory": "packages/core"},
-  "bugs": {"url": "https://github.com/unrdf/unrdf/issues"},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
   "homepage": "https://github.com/unrdf/unrdf#readme",
   "license": "MIT",
-  "publishConfig": {"access": "public"}
+  "publishConfig": {
+    "access": "public"
+  }
 }

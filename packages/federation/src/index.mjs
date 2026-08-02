@@ -84,3 +84,6 @@ export {
   AdvancedFederationConfigSchema,
   QueryExecutionResultSchema,
 } from './advanced-sparql-federation.mjs';
+
+// Deterministic federation planning and bind-join execution
+export { parseBasicSparql, buildFederationPlan, executeFederationPlan, joinBindings, canonicalBinding, renderPattern, FederationPlanError, FederationExecutionError } from './federation/query-planner-core.mjs';
