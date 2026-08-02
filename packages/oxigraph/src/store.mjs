@@ -1,4 +1,4 @@
-import oxigraph from 'oxigraph';
+import * as oxigraph from 'oxigraph';
 
 /**
  * OxigraphStore - Wrapper around Oxigraph SPARQL engine
@@ -34,7 +34,6 @@ class OxigraphStore {
    * @returns {void}
    */
   addQuad(quadOrSubject, predicate, object, graph) {
-    // If predicate is provided, build quad from separate args
     if (predicate !== undefined) {
       const quad = oxigraph.quad(
         quadOrSubject,
@@ -44,33 +43,17 @@ class OxigraphStore {
       );
       return this.add(quad);
     }
-    // Otherwise treat first arg as complete quad object
     return this.add(quadOrSubject);
   }
 
-  /**
-   * Delete a quad from the store
-   * @param {Object} quad - RDF quad to delete
-   * @returns {void}
-   */
+  /** Delete a quad from the store. */
   delete(quad) {
     if (!quad) throw new Error('Quad is required');
     this.store.delete(quad);
   }
 
-  /**
-   * Remove a quad from the store (alias for delete, compatibility method)
-   * Supports two call patterns:
-   * 1. removeQuad(quadObject)
-   * 2. removeQuad(subject, predicate, object, graph?)
-   * @param {Object} quadOrSubject - RDF quad object OR subject term
-   * @param {Object} [predicate] - Predicate term (if using separate args)
-   * @param {Object} [object] - Object term (if using separate args)
-   * @param {Object} [graph] - Graph term (if using separate args)
-   * @returns {void}
-   */
+  /** Remove a quad from the store. */
   removeQuad(quadOrSubject, predicate, object, graph) {
-    // If predicate is provided, build quad from separate args
     if (predicate !== undefined) {
       const quad = oxigraph.quad(
         quadOrSubject,
@@ -80,28 +63,16 @@ class OxigraphStore {
       );
       return this.delete(quad);
     }
-    // Otherwise treat first arg as complete quad object
     return this.delete(quadOrSubject);
   }
 
-  /**
-   * Check if a quad exists in the store
-   * @param {Object} quad - RDF quad to check
-   * @returns {boolean}
-   */
+  /** Check if a quad exists in the store. */
   has(quad) {
     if (!quad) throw new Error('Quad is required');
     return this.store.has(quad);
   }
 
-  /**
-   * Match quads by pattern (alias: getQuads for compatibility)
-   * @param {Object} [subject] - Subject to match
-   * @param {Object} [predicate] - Predicate to match
-   * @param {Object} [object] - Object to match
-   * @param {Object} [graph] - Graph to match
-   * @returns {Array<Object>} Matching quads
-   */
+  /** Match quads by pattern. */
   match(subject, predicate, object, graph) {
     try {
       const result = this.store.match(subject, predicate, object, graph);
@@ -111,29 +82,16 @@ class OxigraphStore {
     }
   }
 
-  /**
-   * Get quads matching a pattern (alias for match)
-   * @param {Object} [subject] - Subject to match
-   * @param {Object} [predicate] - Predicate to match
-   * @param {Object} [object] - Object to match
-   * @param {Object} [graph] - Graph to match
-   * @returns {Array<Object>} Matching quads
-   */
+  /** Get quads matching a pattern. */
   getQuads(subject, predicate, object, graph) {
     return this.match(subject, predicate, object, graph);
   }
 
-  /**
-   * Execute a SPARQL SELECT/CONSTRUCT/DESCRIBE/ASK query
-   * @param {string} query - SPARQL query string
-   * @param {Object} [options] - Query options
-   * @returns {Array|boolean} Query results
-   */
+  /** Execute a SPARQL query. */
   query(query, options) {
     if (!query || typeof query !== 'string') {
       throw new Error('Query must be a non-empty string');
     }
-
     try {
       return this.store.query(query, options);
     } catch (error) {
@@ -141,17 +99,11 @@ class OxigraphStore {
     }
   }
 
-  /**
-   * Execute a SPARQL UPDATE query
-   * @param {string} query - SPARQL UPDATE query string
-   * @param {Object} [options] - Update options
-   * @returns {void}
-   */
+  /** Execute a SPARQL UPDATE query. */
   update(query, options) {
     if (!query || typeof query !== 'string') {
       throw new Error('Query must be a non-empty string');
     }
-
     try {
       this.store.update(query, options);
     } catch (error) {
@@ -159,12 +111,7 @@ class OxigraphStore {
     }
   }
 
-  /**
-   * Load RDF data into the store
-   * @param {string} data - Serialized RDF data
-   * @param {Object} options - Load options (format required)
-   * @returns {void}
-   */
+  /** Load RDF data into the store. */
   load(data, options) {
     if (!data || typeof data !== 'string') {
       throw new Error('Data must be a non-empty string');
@@ -172,7 +119,6 @@ class OxigraphStore {
     if (!options || !options.format) {
       throw new Error('Format option is required');
     }
-
     try {
       this.store.load(data, options);
     } catch (error) {
@@ -180,16 +126,11 @@ class OxigraphStore {
     }
   }
 
-  /**
-   * Dump the store to serialized RDF format
-   * @param {Object} options - Dump options (format required)
-   * @returns {string} Serialized RDF data
-   */
+  /** Dump the store to a serialized RDF format. */
   dump(options) {
     if (!options || !options.format) {
       throw new Error('Format option is required');
     }
-
     try {
       return this.store.dump(options);
     } catch (error) {
@@ -197,30 +138,19 @@ class OxigraphStore {
     }
   }
 
-  /**
-   * Get the size of the store (number of quads)
-   * @returns {number} Number of quads in store
-   */
+  /** Number of quads in the store. */
   get size() {
-    const quads = this.match();
-    return quads.length;
+    return this.match().length;
   }
 
-  /**
-   * Clear all quads from the store
-   * @returns {void}
-   */
+  /** Clear all quads from the store. */
   clear() {
-    const quads = this.match();
-    quads.forEach(quad => {
+    for (const quad of this.match()) {
       this.delete(quad);
-    });
+    }
   }
 
-  /**
-   * Export Oxigraph dataFactory methods for compatibility
-   * @returns {Object} DataFactory methods
-   */
+  /** Export Oxigraph data-factory methods for compatibility. */
   static getDataFactory() {
     return {
       namedNode: oxigraph.namedNode,
