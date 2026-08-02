@@ -5,15 +5,19 @@ import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'no
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { z } from 'zod';
 
-const SafeModuleNameSchema = z.string()
-  .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/, 'Module name must start with a letter and contain only letters, numbers, and underscores');
-
+const MODULE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
 const srcDir = join(rootDir, 'src/erlang');
 const publicDir = join(rootDir, 'public');
+
+function validateModuleName(value) {
+  if (typeof value !== 'string' || !MODULE_NAME.test(value)) {
+    throw new TypeError('Module name must start with a letter and contain only letters, numbers, and underscores');
+  }
+  return value;
+}
 
 function runTool(binary, args, label) {
   try {
@@ -31,7 +35,7 @@ function runTool(binary, args, label) {
  * - PACKBEAM_BIN=/path/to/PackBEAM
  */
 export async function buildModule(moduleName) {
-  const validatedModuleName = SafeModuleNameSchema.parse(moduleName);
+  const validatedModuleName = validateModuleName(moduleName);
   const erlc = process.env.ERLC_BIN || 'erlc';
   const packbeam = process.env.PACKBEAM_BIN || 'PackBEAM';
 
