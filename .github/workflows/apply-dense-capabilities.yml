@@ -6,26 +6,32 @@ on:
     paths:
       - '.agent-density/**'
       - '.github/workflows/apply-dense-capabilities.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.agent-density/**'
+      - '.github/workflows/apply-dense-capabilities.yml'
 
 permissions:
   contents: write
 
 concurrency:
-  group: dense-unrdf-capabilities
+  group: dense-unrdf-capabilities-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
   apply-verify-publish:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - name: Checkout exact transport commit
+      - name: Checkout exact transport head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ github.sha }}
-          fetch-depth: 2
-      - name: Guard exact admitted parent
-        run: test "$(git rev-parse HEAD^)" = "539f3542319323514684697b9a84fc33ea37c2be"
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Guard admitted ancestry
+        run: git merge-base --is-ancestor 539f3542319323514684697b9a84fc33ea37c2be HEAD
       - name: Reconstruct and apply dense capability patch
         run: |
           cat .agent-density/part-* | base64 --decode | gzip --decompress > /tmp/dense-capabilities.patch
