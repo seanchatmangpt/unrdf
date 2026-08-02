@@ -1,0 +1,143 @@
+name: AtomVM Runtime ALIVE
+
+on:
+  push:
+    branches:
+      - agent/atomvm-swarm-cluster
+    paths:
+      - '.github/workflows/atomvm-runtime-alive.yml'
+      - 'packages/atomvm/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atomvm-runtime-alive-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ATOMVM_SOURCE_REF: v0.6.6
+
+jobs:
+  build-and-execute:
+    name: Build AtomVM and execute three swarms
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout exact unrdf head
+        uses: actions/checkout@v4
+
+      - name: Install AtomVM build toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential \
+            cmake \
+            elixir \
+            erlang-base \
+            erlang-dev \
+            erlang-tools \
+            gperf \
+            libmbedtls-dev \
+            rebar3 \
+            zlib1g-dev
+
+      - name: Materialize exact AtomVM source
+        run: |
+          set -euxo pipefail
+          rm -rf .build/AtomVM
+          git clone \
+            --depth 1 \
+            --branch "$ATOMVM_SOURCE_REF" \
+            --recurse-submodules \
+            https://github.com/atomvm/AtomVM.git \
+            .build/AtomVM
+          git -C .build/AtomVM rev-parse HEAD | tee .build/atomvm-source.sha
+          test "$(git -C .build/AtomVM describe --tags --exact-match)" = "$ATOMVM_SOURCE_REF"
+
+      - name: Build AtomVM Generic UNIX and PackBEAM
+        run: |
+          set -euxo pipefail
+          cmake \
+            -S .build/AtomVM \
+            -B .build/AtomVM-build \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build .build/AtomVM-build --parallel 2
+          test -x .build/AtomVM-build/src/AtomVM
+          test -x .build/AtomVM-build/tools/packbeam/PackBEAM
+          test -s .build/AtomVM-build/libs/atomvmlib.avm
+          .build/AtomVM-build/src/AtomVM --version 2>&1 | tee .build/atomvm-version.log || true
+
+      - name: Compile and package the swarm probe
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/swarm-probe
+          erlc \
+            -o .build/swarm-probe \
+            packages/atomvm/examples/erlang/swarm_probe.erl
+          test -s .build/swarm-probe/swarm_probe.beam
+          .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/swarm-probe/swarm_probe.avm \
+            .build/swarm-probe/swarm_probe.beam
+          test -s .build/swarm-probe/swarm_probe.avm
+          .build/AtomVM-build/tools/packbeam/PackBEAM \
+            -l .build/swarm-probe/swarm_probe.avm \
+            | tee .build/swarm-probe/packbeam-list.log
+
+      - name: Execute AtomVM directly
+        run: |
+          set -euxo pipefail
+          .build/AtomVM-build/src/AtomVM \
+            .build/swarm-probe/swarm_probe.avm \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            2>&1 | tee .build/swarm-probe/direct-runtime.log
+          grep -q 'atomvm_swarm_alive' .build/swarm-probe/direct-runtime.log
+
+      - name: Verify JavaScript boundaries
+        run: |
+          set -euxo pipefail
+          node --test \
+            packages/atomvm/test/swarm-cluster.test.mjs \
+            packages/atomvm/test/innovation-checkpoints.test.mjs \
+            packages/atomvm/test/process-broker.test.mjs
+
+      - name: Execute three AtomVM swarms through unrdf
+        env:
+          ATOMVM_BIN: ${{ github.workspace }}/.build/AtomVM-build/src/AtomVM
+          ATOMVM_APP: ${{ github.workspace }}/.build/swarm-probe/swarm_probe.avm
+          ATOMVM_LIB: ${{ github.workspace }}/.build/AtomVM-build/libs/atomvmlib.avm
+          ATOMVM_RECEIPT_PATH: ${{ github.workspace }}/.build/receipts/atomvm-runtime-cluster-receipt.json
+        run: |
+          set -euxo pipefail
+          node packages/atomvm/scripts/verify-runtime-cluster.mjs \
+            | tee .build/receipts/verification.log
+          node -e "const r=require('./.build/receipts/atomvm-runtime-cluster-receipt.json'); if(r.status!=='ALIVE'||r.executions.length!==3||r.checkpoints.status!=='ALIVE') process.exit(1)"
+
+      - name: Record build identities
+        run: |
+          set -euxo pipefail
+          sha256sum \
+            .build/AtomVM-build/src/AtomVM \
+            .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            .build/swarm-probe/swarm_probe.beam \
+            .build/swarm-probe/swarm_probe.avm \
+            | tee .build/receipts/sha256sums.txt
+
+      - name: Upload replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomvm-runtime-alive-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            .build/atomvm-source.sha
+            .build/atomvm-version.log
+            .build/swarm-probe/direct-runtime.log
+            .build/swarm-probe/packbeam-list.log
+            .build/receipts/atomvm-runtime-cluster-receipt.json
+            .build/receipts/verification.log
+            .build/receipts/sha256sums.txt
