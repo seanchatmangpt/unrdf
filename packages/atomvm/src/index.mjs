@@ -134,6 +134,13 @@ export {
   createAtomVMSwarmCluster,
 } from './swarm-cluster.mjs';
 
+// Authority-bearing Generic UNIX AtomVM process broker
+export {
+  AtomVMProcessBroker,
+  AtomVMProcessRefusal,
+  createAtomVMProcessBroker,
+} from './process-broker.mjs';
+
 // Executable Gall / process-mining / Clean Architecture / Pragmatic checkpoints
 export {
   INNOVATION_CHECKPOINTS,
