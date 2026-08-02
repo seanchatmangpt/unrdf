@@ -133,3 +133,10 @@ export {
   SwarmClusterRefusal,
   createAtomVMSwarmCluster,
 } from './swarm-cluster.mjs';
+
+// Executable Gall / process-mining / Clean Architecture / Pragmatic checkpoints
+export {
+  INNOVATION_CHECKPOINTS,
+  evaluateInnovationCheckpoints,
+  receiptToOcel,
+} from './innovation-checkpoints.mjs';
