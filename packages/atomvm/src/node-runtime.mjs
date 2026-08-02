@@ -9,7 +9,7 @@
 
 import { spawn, spawnSync } from 'node:child_process';
 import { accessSync, constants, statSync } from 'node:fs';
-import { delimiter, dirname, isAbsolute, resolve } from 'node:path';
+import { delimiter, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SUCCESS_EXIT_CODE = 0;
