@@ -14,10 +14,7 @@
 // === Synchronous APIs (NEW - Primary) ===
 // ============================================================================
 
-// Synchronous RDF Store (UnrdfStore class with direct method calls)
 export { UnrdfStore, createStore as createUnrdfStore } from './rdf/unrdf-store.mjs';
-
-// Synchronous SPARQL Executors (no async/await required)
 export {
   executeQuerySync,
   executeSelectSync,
@@ -30,7 +27,6 @@ export {
 // === Async APIs (Existing - Backward Compatibility) ===
 // ============================================================================
 
-// Async RDF operations (functional style with async store)
 export {
   createStore,
   addQuad,
@@ -47,14 +43,8 @@ export {
 } from './rdf/store.mjs';
 
 export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonicalize.mjs';
-
-// Safe quad cloning (avoids N3 prototype-getter spread bug)
 export { cloneQuad } from './utils/quad-utils.mjs';
-
-// Graph diffing and change tracking
 export { diffGraphFromStores, diffGraphFromDelta, diffOntologyFromGraphDiff } from './diff.mjs';
-
-// Async SPARQL operations (legacy functional API)
 export {
   executeQuery,
   prepareQuery,
@@ -62,8 +52,6 @@ export {
   executeConstruct,
   executeAsk,
 } from './sparql/executor.mjs';
-
-// Export types and utilities
 export {
   createTerms,
   createNamedNode,
@@ -72,11 +60,7 @@ export {
   createVariable,
   createQuad,
 } from './types.mjs';
-
-// Export constants
 export { RDF, RDFS, OWL, XSD, FOAF, DCTERMS, SKOS, COMMON_PREFIXES } from './constants.mjs';
-
-// Export validation utilities
 export {
   QuadSchema,
   StoreSchema,
@@ -89,7 +73,6 @@ export {
 // === Error Handling & Debugging ===
 // ============================================================================
 
-// Error classes and utilities
 export {
   UnrdfError,
   ValidationError,
@@ -104,8 +87,6 @@ export {
   wrapError,
   assertError,
 } from './errors.mjs';
-
-// Debug utilities
 export {
   DebugLogger,
   createDebugger,
@@ -117,8 +98,6 @@ export {
   getSystemInfo,
   dumpDebugSnapshot,
 } from './debug.mjs';
-
-// Error recovery patterns
 export {
   retry,
   CircuitBreaker,
@@ -133,18 +112,13 @@ export {
 // === Visualization & Debugging ===
 // ============================================================================
 
-// Graph visualization tools
 export { toDOT, toMermaid, toASCII, toHTML, extractSubgraph } from './viz/graph-visualizer.mjs';
-
-// Query explanation and performance analysis
 export {
   explainQuery,
   formatPlanAsTree,
   trackQueryStats,
   compareQueryPerformance,
 } from './viz/query-explainer.mjs';
-
-// RDF graph inspection and quality metrics
 export {
   getGraphStatistics,
   analyzeNamespaces,
@@ -153,10 +127,11 @@ export {
   checkSchemaConformance,
   generateInspectionReport,
 } from './debug/rdf-inspector.mjs';
+
+// ============================================================================
 // === RDF-star (W3C RDF 1.2) Support ===
 // ============================================================================
 
-// RDF-star factory and utilities
 export {
   RDFStarFactory,
   factory as rdfStarFactory,
@@ -164,11 +139,7 @@ export {
   isQuotedTriple,
   extractBaseTriple,
 } from './rdf-star.mjs';
-
-// Quoted triple class
 export { QuotedTriple, createQuotedTriple } from './quoted-triple.mjs';
-
-// Annotation helpers
 export {
   AnnotationBuilder,
   createAnnotationBuilder,
@@ -179,8 +150,6 @@ export {
   mergeAnnotations,
   extractAnnotations,
 } from './annotation.mjs';
-
-// RDF-star schemas
 export {
   QuotedTripleSchema,
   ProvenanceSchema,
@@ -198,3 +167,8 @@ export {
   safeParseQuotedTriple,
   safeParseAnnotation,
 } from './rdf-star.schema.mjs';
+
+// Capability standing, receipts, replay, and deterministic execution plans
+export { Standing, Disposition, CapabilityLedger, createCapabilityLedger } from './capability-ledger.mjs';
+export { ReceiptChain, createReceiptChain, canonicalizeJSON, hashCanonical, compareReplay } from './receipt-chain.mjs';
+export { ExecutionPlan, createExecutionPlan } from './execution-plan.mjs';
