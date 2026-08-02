@@ -9,14 +9,11 @@
 
 import { spawn, spawnSync } from 'node:child_process';
 import { accessSync, constants, statSync } from 'node:fs';
-import { delimiter, isAbsolute, resolve } from 'node:path';
-import { trace } from '@opentelemetry/api';
+import { delimiter, dirname, isAbsolute, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SUCCESS_EXIT_CODE = 0;
-
-function getTracer() {
-  return trace.getTracer('atomvm-node-runtime');
-}
+const PUBLIC_DIR = fileURLToPath(new URL('../public/', import.meta.url));
 
 function validateNonEmptyString(value, name) {
   if (typeof value !== 'string' || value.trim().length === 0) {
@@ -90,46 +87,33 @@ export class AtomVMNodeRuntime {
   }
 
   async load() {
-    return getTracer().startActiveSpan('atomvm.load_native', async span => {
-      try {
-        if (this.state === 'Destroyed') {
-          throw new Error('Cannot load AtomVM: runtime has been destroyed');
-        }
-        if (this.state === 'Ready' || this.state === 'Executing') return;
-        if (this.state === 'Loading') throw new Error('AtomVM load already in progress');
+    if (this.state === 'Destroyed') {
+      throw new Error('Cannot load AtomVM: runtime has been destroyed');
+    }
+    if (this.state === 'Ready' || this.state === 'Executing') return;
+    if (this.state === 'Loading') throw new Error('AtomVM load already in progress');
 
-        this.state = 'Loading';
-        this.atomvmPath = resolveExecutable(this.requestedBinary);
-        const version = spawnSync(this.atomvmPath, ['-v'], {
-          encoding: 'utf8',
-          shell: false,
-        });
-        if (version.error || version.status !== SUCCESS_EXIT_CODE) {
-          throw new Error(
-            `[ATOMVM_VERSION_PROBE_REFUSED] Unable to execute ${this.atomvmPath} -v: ` +
-            `${version.error?.message ?? version.stderr ?? `exit ${version.status}`}`,
-          );
-        }
-
-        this.runtimeVersion = `${version.stdout ?? ''}${version.stderr ?? ''}`.trim();
-        this.state = 'Ready';
-        span.setAttributes({
-          'runtime.type': 'generic-unix',
-          'runtime.path': this.atomvmPath,
-          'atomvm.version': this.runtimeVersion,
-          'runtime.state': this.state,
-        });
-        span.setStatus({ code: 1 });
-        this.log(`Found AtomVM ${this.runtimeVersion} at ${this.atomvmPath}`);
-      } catch (error) {
-        this.state = 'Error';
-        span.recordException(error);
-        span.setStatus({ code: 2, message: error.message });
-        throw error;
-      } finally {
-        span.end();
+    this.state = 'Loading';
+    try {
+      this.atomvmPath = resolveExecutable(this.requestedBinary);
+      const version = spawnSync(this.atomvmPath, ['-v'], {
+        encoding: 'utf8',
+        shell: false,
+      });
+      if (version.error || version.status !== SUCCESS_EXIT_CODE) {
+        throw new Error(
+          `[ATOMVM_VERSION_PROBE_REFUSED] Unable to execute ${this.atomvmPath} -v: ` +
+          `${version.error?.message ?? version.stderr ?? `exit ${version.status}`}`,
+        );
       }
-    });
+
+      this.runtimeVersion = `${version.stdout ?? ''}${version.stderr ?? ''}`.trim();
+      this.state = 'Ready';
+      this.log(`Found AtomVM ${this.runtimeVersion} at ${this.atomvmPath}`);
+    } catch (error) {
+      this.state = 'Error';
+      throw error;
+    }
   }
 
   async execute(avmPath) {
@@ -151,6 +135,8 @@ export class AtomVMNodeRuntime {
 
       let stdout = '';
       let stderr = '';
+      let settled = false;
+
       child.stdout.on('data', data => {
         const text = data.toString();
         stdout += text;
@@ -163,10 +149,14 @@ export class AtomVMNodeRuntime {
       });
 
       child.on('error', error => {
+        if (settled) return;
+        settled = true;
         this.state = 'Error';
         reject(new Error(`[ATOMVM_EXECUTION_BLOCKED] Failed to execute AtomVM: ${error.message}`, { cause: error }));
       });
       child.on('close', (exitCode, signal) => {
+        if (settled) return;
+        settled = true;
         if (exitCode !== SUCCESS_EXIT_CODE) {
           this.state = 'Error';
           reject(new Error(
@@ -196,7 +186,7 @@ export class AtomVMNodeRuntime {
 
   async runExample(moduleName) {
     validateNonEmptyString(moduleName, 'moduleName');
-    return this.execute(resolve(new URL('../public/', import.meta.url).pathname, `${moduleName}.avm`));
+    return this.execute(resolve(PUBLIC_DIR, `${moduleName}.avm`));
   }
 
   destroy() {
