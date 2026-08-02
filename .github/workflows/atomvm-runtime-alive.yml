@@ -102,6 +102,7 @@ jobs:
             .build/AtomVM-build/libs/atomvmlib.avm \
             2>&1 | tee .build/swarm-probe/direct-runtime.log
           grep -q 'atomvm_swarm_alive' .build/swarm-probe/direct-runtime.log
+          grep -q 'Return value: ok' .build/swarm-probe/direct-runtime.log
 
       - name: Verify JavaScript boundaries
         run: |
@@ -120,7 +121,8 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p .build/receipts
-          node packages/atomvm/scripts/verify-runtime-cluster.mjs \
+          ATOMVM_SOURCE_REF="$(cat .build/atomvm-source.sha)" \
+            node packages/atomvm/scripts/verify-runtime-cluster.mjs \
             | tee .build/receipts/verification.log
           node -e "const r=require('./.build/receipts/atomvm-runtime-cluster-receipt.json'); if(r.status!=='ALIVE'||r.executions.length!==3||r.checkpoints.status!=='ALIVE') process.exit(1)"
 
