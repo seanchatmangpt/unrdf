@@ -173,10 +173,11 @@ export class AtomVMSwarmCluster {
     const emitted = new Set();
     for (const [left, peers] of [...this.#links.entries()].sort()) {
       for (const right of [...peers].sort()) {
-        const key = [left, right].sort().join('|');
+        const [source, target] = [left, right].sort();
+        const key = `${source}|${target}`;
         if (emitted.has(key)) continue;
         emitted.add(key);
-        lines.push(`<${NS}swarm/${left}> <${NS}federatedWith> <${NS}swarm/${right}> ${graph} .`);
+        lines.push(`<${NS}swarm/${source}> <${NS}federatedWith> <${NS}swarm/${target}> ${graph} .`);
       }
     }
     return `${lines.join('\n')}\n`;
