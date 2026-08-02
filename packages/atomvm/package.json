@@ -1,7 +1,7 @@
 {
   "name": "@unrdf/atomvm",
   "version": "0.0.0-agnostic",
-  "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+  "description": "AtomVM runtimes, OTP patterns, and receipted swarm control planes for browser and Node.js",
   "type": "module",
   "main": "src/index.mjs",
   "types": "./dist/index.d.mts",
@@ -23,6 +23,8 @@
     "build:erlang:workflow": "node scripts/index.mjs workflow",
     "build:erlang:clean": "node scripts/index.mjs clean",
     "test": "vitest run --coverage",
+    "test:otp-patterns": "node --test test/otp-patterns-chicago.test.mjs",
+    "test:otp-patterns:chicago": "node scripts/verify-chicago-tdd.mjs && node --test test/otp-patterns-chicago.test.mjs",
     "test:watch": "vitest --coverage",
     "test:ui": "vitest --ui",
     "test:browser": "vitest run --config vitest.browser.config.mjs",
@@ -33,6 +35,7 @@
   "keywords": [
     "atomvm",
     "erlang",
+    "otp",
     "beam",
     "wasm",
     "browser",
@@ -63,6 +66,7 @@
   "files": [
     "src/",
     "dist/",
+    "books/atomvm-patterns/",
     "README.md",
     "LICENSE"
   ],
