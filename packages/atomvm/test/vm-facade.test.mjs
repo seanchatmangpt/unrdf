@@ -1,35 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import { Store } from '@unrdf/oxigraph';
 import { HardenedAtomVM } from '../src/vm/facade.mjs';
-import { POWL8_OPCODES } from '../src/vm/opcodes.mjs';
+import { AtomVMNodeRuntime } from '../src/node-runtime.mjs';
 
-describe('HardenedAtomVM Facade', () => {
-  let mockRawVm;
-  let mockPolicyGraph;
+describe('HardenedAtomVM façade — Chicago boundaries', () => {
+  it('constructs the real façade around a real RDF store and native runtime adapter', () => {
+    const store = new Store();
+    const vm = new HardenedAtomVM(store, { action: 'mcpp:MutateGraph' }, {
+      atomvmBinary: process.env.ATOMVM_BIN,
+      log: () => {},
+      errorLog: () => {},
+    });
 
-  beforeEach(() => {
-    mockRawVm = {
-      registerOpcode: vi.fn(),
-      intercept: vi.fn(),
-      execute: vi.fn().mockResolvedValue({ status: 'ok' }),
-      getState: vi.fn().mockReturnValue({ state: 'synced' }),
-      getOpcodeCount: vi.fn().mockReturnValue(42),
-      executeMicrotask: vi.fn().mockResolvedValue(),
-      evaluatePredicate: vi.fn().mockResolvedValue(true)
-    };
-    mockPolicyGraph = { action: 'mcpp:MutateGraph' };
+    expect(vm.store).toBe(store);
+    expect(vm.runtime).toBeInstanceOf(AtomVMNodeRuntime);
+    expect(vm.bridge.store).toBe(store);
   });
 
-  it('should initialize successfully and register opcodes', () => {
-    const vm = new HardenedAtomVM(mockRawVm, mockPolicyGraph);
-    expect(vm).toBeDefined();
-    expect(mockRawVm.registerOpcode).toHaveBeenCalledWith('OP_SPAWN_SEQ', POWL8_OPCODES.OP_SPAWN_SEQ);
-  });
+  it('refuses execution before an authentic compilation receipt is admitted', async () => {
+    const store = new Store();
+    const vm = new HardenedAtomVM(store, {});
 
-  it('should execute raw bytecode sequentially by default', async () => {
-    const vm = new HardenedAtomVM(mockRawVm, mockPolicyGraph);
-    const mockReceipt = { schema: 'shacl:conforms', signature: Buffer.from('mock').toString('base64') };
-    
-    // We mock verifyPQReceipt, which we didn't inject, but we can bypass verification failure by spying or mocking if it fails.
-    // For now we'll see if it throws or we need to mock it.
+    await expect(vm.execute('/unadmitted/module.avm', null, 'agent:chicago', {}))
+      .rejects.toThrow(/ConstitutionalViolationError/);
   });
 });
