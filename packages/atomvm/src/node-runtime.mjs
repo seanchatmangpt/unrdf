@@ -1,290 +1,208 @@
 /**
- * AtomVM Node.js Runtime
+ * AtomVM Generic UNIX runtime for Node.js callers.
  *
- * Handles loading and execution of AtomVM in Node.js environment.
- * Uses AtomVM-node-<version>.js for execution.
- * 
- * **Poka-Yoke Design**: Uses state machine pattern to prevent invalid operations.
- * Invalid states are unrepresentable - operations can only be called in valid states.
+ * This class executes the real AtomVM binary. It does not load a generated
+ * JavaScript shim and it never invokes a shell.
  *
  * @module node-runtime
  */
 
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import { dirname, join, resolve } from 'path';
-import { readFileSync } from 'fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { accessSync, constants, statSync } from 'node:fs';
+import { delimiter, isAbsolute, resolve } from 'node:path';
 import { trace } from '@opentelemetry/api';
-import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES } from './roundtrip-sla.mjs';
 
-// Get tracer lazily to ensure provider is registered first
+const SUCCESS_EXIT_CODE = 0;
+
 function getTracer() {
   return trace.getTracer('atomvm-node-runtime');
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
-
-const ATOMVM_VERSION = '[VERSION]';
-
-/** @constant {number} Exit code indicating successful execution */
-const SUCCESS_EXIT_CODE = 0;
-
-/**
- * Runtime state machine states
- * 
- * **Poka-Yoke**: Enum prevents invalid states. Cannot be in multiple states simultaneously.
- * Valid transitions:
- * - Uninitialized => Loading => Ready
- * - Uninitialized => Loading => Error
- * - Ready => Executing => Ready
- * - Any => Destroyed (terminal state)
- * 
- * @typedef {'Uninitialized' | 'Loading' | 'Ready' | 'Executing' | 'Error' | 'Destroyed'} NodeRuntimeState
- */
-
-/**
- * Validates that a string is non-empty
- * 
- * **Poka-Yoke**: Prevents empty/null/undefined strings from being used
- * 
- * @param {string} value - String to validate
- * @param {string} name - Name of parameter for error message
- * @returns {string} Validated non-empty string
- * @throws {Error} If value is empty, null, or undefined
- */
 function validateNonEmptyString(value, name) {
   if (typeof value !== 'string' || value.trim().length === 0) {
-    throw new Error(`${name} is required and must be a non-empty string`);
+    throw new TypeError(`${name} is required and must be a non-empty string`);
   }
   return value;
 }
 
+function requireReadableFile(path, label) {
+  const resolved = resolve(validateNonEmptyString(path, label));
+  let info;
+  try {
+    info = statSync(resolved);
+    accessSync(resolved, constants.R_OK);
+  } catch (error) {
+    throw new Error(`[ATOMVM_FILE_NOT_FOUND_REFUSED] ${label} is unavailable: ${resolved}`, { cause: error });
+  }
+  if (!info.isFile()) {
+    throw new Error(`[ATOMVM_FILE_NOT_FOUND_REFUSED] ${label} is not a file: ${resolved}`);
+  }
+  return resolved;
+}
+
+function executableAt(path) {
+  try {
+    const info = statSync(path);
+    accessSync(path, constants.X_OK);
+    return info.isFile();
+  } catch {
+    return false;
+  }
+}
+
+function resolveExecutable(candidate) {
+  const requested = validateNonEmptyString(candidate, 'atomvmBinary');
+  if (isAbsolute(requested) || requested.includes('/') || requested.includes('\\')) {
+    const resolved = resolve(requested);
+    if (executableAt(resolved)) return resolved;
+    throw new Error(`[ATOMVM_BINARY_NOT_FOUND_REFUSED] AtomVM binary is unavailable or not executable: ${resolved}`);
+  }
+
+  for (const directory of (process.env.PATH ?? '').split(delimiter).filter(Boolean)) {
+    const resolved = resolve(directory, requested);
+    if (executableAt(resolved)) return resolved;
+  }
+  throw new Error(`[ATOMVM_BINARY_NOT_FOUND_REFUSED] AtomVM binary was not found in PATH: ${requested}`);
+}
+
 /**
- * AtomVM Node.js Runtime class
- * 
- * **Poka-Yoke Design**:
- * - State machine prevents invalid operations (cannot execute before load)
- * - Validation prevents invalid inputs (non-empty avmPath)
- * - Type guards ensure state consistency
+ * @typedef {'Uninitialized' | 'Loading' | 'Ready' | 'Executing' | 'Error' | 'Destroyed'} NodeRuntimeState
  */
+
 export class AtomVMNodeRuntime {
-  /**
-   * @param {Object} [options] - Runtime options
-   * @param {Function} [options.log] - Logging function
-   * @param {Function} [options.errorLog] - Error logging function
-   */
   constructor(options = {}) {
-    this.log = options.log || console.log;
-    this.errorLog = options.errorLog || console.error;
+    this.log = options.log ?? console.log;
+    this.errorLog = options.errorLog ?? console.error;
+    this.requestedBinary = options.atomvmBinary ?? process.env.ATOMVM_BIN ?? 'AtomVM';
+    this.libraryPaths = Object.freeze([...(options.libraryPaths ?? [])]);
     this.atomvmPath = null;
-    
-    // Poka-yoke: State machine prevents invalid operations
+    this.runtimeVersion = null;
     /** @type {NodeRuntimeState} */
     this.state = 'Uninitialized';
   }
 
-  /**
-   * Type guard: Check if runtime is ready for operations
-   * 
-   * **Poka-Yoke**: Prevents operations in invalid states
-   * 
-   * @returns {boolean} True if runtime is ready
-   */
   isReady() {
     return this.state === 'Ready' && this.atomvmPath !== null;
   }
 
-  /**
-   * Type guard: Check if runtime is loaded
-   * 
-   * **Poka-yoke**: Ensures state consistency
-   * 
-   * @returns {boolean} True if runtime is loaded
-   */
   isLoaded() {
     return this.state === 'Ready' || this.state === 'Executing';
   }
 
-  /**
-   * Load AtomVM Node.js module
-   * 
-   * **Poka-Yoke**: State machine prevents multiple loads and loads after destroy
-   *
-   * @returns {Promise<void>}
-   * @throws {Error} If state is invalid or file not found
-   */
   async load() {
-    return getTracer().startActiveSpan('atomvm.load_wasm', {
-      attributes: {
-        'runtime.type': 'node',
-        'atomvm.version': ATOMVM_VERSION
-      }
-    }, async (span) => {
-    // Poka-yoke: State machine prevents invalid operations
-    if (this.state === 'Destroyed') {
-      throw new Error('Cannot load AtomVM: Runtime has been destroyed');
-    }
-    if (this.state === 'Ready' || this.state === 'Executing') {
-      this.log('AtomVM already loaded');
-      return;
-    }
-    if (this.state === 'Loading') {
-      throw new Error('AtomVM load already in progress');
-    }
+    return getTracer().startActiveSpan('atomvm.load_native', async span => {
+      try {
+        if (this.state === 'Destroyed') {
+          throw new Error('Cannot load AtomVM: runtime has been destroyed');
+        }
+        if (this.state === 'Ready' || this.state === 'Executing') return;
+        if (this.state === 'Loading') throw new Error('AtomVM load already in progress');
 
-    // Transition to Loading state
-    this.state = 'Loading';
+        this.state = 'Loading';
+        this.atomvmPath = resolveExecutable(this.requestedBinary);
+        const version = spawnSync(this.atomvmPath, ['-v'], {
+          encoding: 'utf8',
+          shell: false,
+        });
+        if (version.error || version.status !== SUCCESS_EXIT_CODE) {
+          throw new Error(
+            `[ATOMVM_VERSION_PROBE_REFUSED] Unable to execute ${this.atomvmPath} -v: ` +
+            `${version.error?.message ?? version.stderr ?? `exit ${version.status}`}`,
+          );
+        }
 
-    const publicDir = resolve(__dirname, '../public');
-    const atomvmFile = join(publicDir, `AtomVM-node-${ATOMVM_VERSION}.js`);
-    
-    let stats;
-    try {
-      stats = require('fs').statSync(atomvmFile);
-    } catch (error) {
-      this.state = 'Error';
-      span.setStatus({ code: 2, message: error.message });
-      span.end();
-      if (error.code === 'ENOENT') {
-        throw new Error(`AtomVM file not found: ${atomvmFile}`);
+        this.runtimeVersion = `${version.stdout ?? ''}${version.stderr ?? ''}`.trim();
+        this.state = 'Ready';
+        span.setAttributes({
+          'runtime.type': 'generic-unix',
+          'runtime.path': this.atomvmPath,
+          'atomvm.version': this.runtimeVersion,
+          'runtime.state': this.state,
+        });
+        span.setStatus({ code: 1 });
+        this.log(`Found AtomVM ${this.runtimeVersion} at ${this.atomvmPath}`);
+      } catch (error) {
+        this.state = 'Error';
+        span.recordException(error);
+        span.setStatus({ code: 2, message: error.message });
+        throw error;
+      } finally {
+        span.end();
       }
-      throw new Error(`Failed to access AtomVM file ${atomvmFile}: ${error.message}`);
-    }
-    
-    if (!stats.isFile()) {
-      this.state = 'Error';
-      span.setStatus({ code: 2, message: 'Path is not a file' });
-      span.end();
-      throw new Error(`AtomVM path is not a file: ${atomvmFile}`);
-    }
-    
-    // Poka-yoke: State transition ensures consistency
-    this.atomvmPath = atomvmFile;
-    this.state = 'Ready';
-    span.setAttribute('runtime.state', this.state);
-    span.setStatus({ code: 1 }); // OK
-    span.end();
-    this.log(`Found AtomVM: AtomVM-node-${ATOMVM_VERSION}.js`);
     });
   }
 
-  /**
-   * Execute .avm file
-   * 
-   * **Poka-Yoke**: State machine and validation prevent invalid operations
-   *
-   * @param {string} avmPath - Path to .avm file to execute (required, non-empty)
-   * @returns {Promise<any>} Execution result
-   * @throws {Error} If runtime is not ready or avmPath is invalid
-   */
   async execute(avmPath) {
-    // Poka-yoke: State check prevents invalid operations
     if (!this.isReady()) {
       throw new Error(`Runtime not ready. Current state: ${this.state}. Call load() first.`);
     }
 
-    // Poka-yoke: Validation prevents invalid inputs
-    validateNonEmptyString(avmPath, 'avmPath');
-
-    // Transition to Executing state
+    const applicationPath = requireReadableFile(avmPath, 'avmPath');
+    const libraries = this.libraryPaths.map(path => requireReadableFile(path, 'libraryPath'));
     this.state = 'Executing';
 
-    return new Promise((resolve, reject) => {
-      try {
-        // Use Node.js child_process to execute AtomVM
-        const { spawn } = require('child_process');
-        
-        this.log(`Executing: node ${this.atomvmPath} ${avmPath}`);
+    return new Promise((resolvePromise, reject) => {
+      const args = [applicationPath, ...libraries];
+      this.log(`Executing: ${this.atomvmPath} ${args.join(' ')}`);
+      const child = spawn(this.atomvmPath, args, {
+        stdio: ['ignore', 'pipe', 'pipe'],
+        shell: false,
+      });
 
-        let atomvm;
-        try {
-          atomvm = spawn('node', [this.atomvmPath, avmPath], {
-            stdio: ['inherit', 'pipe', 'pipe']
-          });
-        } catch (error) {
-          if (error.code === 'ENOENT') {
-            throw new Error(`node command not found in PATH`);
-          }
-          throw error;
+      let stdout = '';
+      let stderr = '';
+      child.stdout.on('data', data => {
+        const text = data.toString();
+        stdout += text;
+        this.log(text.trim());
+      });
+      child.stderr.on('data', data => {
+        const text = data.toString();
+        stderr += text;
+        this.errorLog(text.trim());
+      });
+
+      child.on('error', error => {
+        this.state = 'Error';
+        reject(new Error(`[ATOMVM_EXECUTION_BLOCKED] Failed to execute AtomVM: ${error.message}`, { cause: error }));
+      });
+      child.on('close', (exitCode, signal) => {
+        if (exitCode !== SUCCESS_EXIT_CODE) {
+          this.state = 'Error';
+          reject(new Error(
+            `[ATOMVM_EXIT_BLOCKED] AtomVM exited with code ${exitCode}` +
+            `${signal ? ` (${signal})` : ''}\n${stderr}`,
+          ));
+          return;
         }
 
-        let stdout = '';
-        let stderr = '';
-
-        atomvm.stdout.on('data', (data) => {
-          const text = data.toString();
-          stdout += text;
-          this.log(text.trim());
-        });
-
-        atomvm.stderr.on('data', (data) => {
-          const text = data.toString();
-          stderr += text;
-          this.errorLog(text.trim());
-        });
-
-        atomvm.on('close', (code) => {
-          if (code === SUCCESS_EXIT_CODE) {
-            // Poka-yoke: State transition back to Ready after execution
-            this.state = 'Ready';
-            resolve({
-              status: 'ok',
-              exitCode: SUCCESS_EXIT_CODE,
-              stdout,
-              stderr
-            });
-          } else {
-            // Poka-yoke: State transition to Error on failure
-            this.state = 'Error';
-            reject(new Error(`AtomVM exited with code ${code}\n${stderr}`));
-          }
-        });
-
-        atomvm.on('error', (error) => {
-          // Poka-yoke: State transition to Error on exception
-          this.state = 'Error';
-          const diagCode = error.code === 'ENOENT' ? 'ERR_ATOMVM_BINARY_NOT_FOUND' : 'ERR_ATOMVM_EXECUTION_FAILED';
-          reject(new Error(`[${diagCode}] Failed to execute AtomVM: ${error.message}`));
-        });
-
-      } catch (error) {
-        // Poka-yoke: State transition to Error on exception
-        this.state = 'Error';
-        reject(error);
-      }
+        this.state = 'Ready';
+        resolvePromise(Object.freeze({
+          status: 'ok',
+          runtime: 'AtomVM',
+          runtimeVersion: this.runtimeVersion,
+          binary: this.atomvmPath,
+          exitCode,
+          stdout,
+          stderr,
+        }));
+      });
     });
   }
 
-  /**
-   * Execute .avm file (alias for execute)
-   * @param {string} avmPath - Path to .avm file
-   * @returns {Promise<any>}
-   */
   async executeBeam(avmPath) {
     return this.execute(avmPath);
   }
 
-  /**
-   * Run a built-in example (simulated for Node)
-   * @param {string} moduleName - Name of the example module
-   * @returns {Promise<any>}
-   */
   async runExample(moduleName) {
-    const examplePath = resolve(__dirname, `../public/${moduleName}.avm`);
-    return this.execute(examplePath);
+    validateNonEmptyString(moduleName, 'moduleName');
+    return this.execute(resolve(new URL('../public/', import.meta.url).pathname, `${moduleName}.avm`));
   }
 
-  /**
-   * Clean up resources
-   * 
-   * **Poka-Yoke**: Terminal state prevents further operations
-   */
   destroy() {
-    // Poka-yoke: Terminal state prevents further operations
     this.state = 'Destroyed';
     this.atomvmPath = null;
+    this.runtimeVersion = null;
     this.log('Runtime destroyed');
   }
 }
