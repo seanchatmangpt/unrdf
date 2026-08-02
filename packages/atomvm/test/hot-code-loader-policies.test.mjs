@@ -54,19 +54,19 @@ afterAll(async () => {
 describe('HotCodeLoader policy packs — real state transitions', () => {
   it('validates RDF state with a real policy and reloads its serialized bytes', async () => {
     const first = new PolicyPack('fleet-policy', 1).registerRule(
-      'test:Vehicle',
-      [{ property: 'test:id', required: true, datatype: 'xsd:string' }],
-      'test:Vehicle',
+      'http://example.org/Vehicle',
+      [{ property: 'http://example.org/id', required: true, datatype: 'xsd:string' }],
+      'http://example.org/Vehicle',
     );
     const triples = [
       {
         subject: 'http://example.org/V-1',
         predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-        value: 'test:Vehicle',
+        value: 'http://example.org/Vehicle',
       },
       {
         subject: 'http://example.org/V-1',
-        predicate: 'test:id',
+        predicate: 'http://example.org/id',
         value: 'V-1',
         datatype: 'http://www.w3.org/2001/XMLSchema#string',
       },
@@ -80,12 +80,12 @@ describe('HotCodeLoader policy packs — real state transitions', () => {
     expect(loaded.success).toBe(true);
 
     const second = new PolicyPack('fleet-policy', 2).registerRule(
-      'test:Vehicle',
+      'http://example.org/Vehicle',
       [
-        { property: 'test:id', required: true, datatype: 'xsd:string' },
-        { property: 'test:status', required: true },
+        { property: 'http://example.org/id', required: true, datatype: 'xsd:string' },
+        { property: 'http://example.org/status', required: true },
       ],
-      'test:Vehicle',
+      'http://example.org/Vehicle',
     );
     currentBytes = second.bytes();
     const reloaded = await loader.reloadModule('fleet-policy');
