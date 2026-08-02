@@ -66,14 +66,16 @@ jobs:
           git -C .build/AtomVM rev-parse HEAD | tee .build/atomvm-source.sha
           test "$(git -C .build/AtomVM describe --tags --exact-match)" = "$ATOMVM_SOURCE_REF"
 
-      - name: Build AtomVM Generic UNIX and PackBEAM
+      - name: Build dependency-closed AtomVM targets
         run: |
           set -euxo pipefail
           cmake \
             -S .build/AtomVM \
             -B .build/AtomVM-build \
             -DCMAKE_BUILD_TYPE=Release
-          cmake --build .build/AtomVM-build --parallel 2
+          cmake --build .build/AtomVM-build \
+            --parallel 2 \
+            --target AtomVM PackBEAM atomvmlib
           test -x .build/AtomVM-build/src/AtomVM
           test -x .build/AtomVM-build/tools/packbeam/PackBEAM
           test -s .build/AtomVM-build/libs/atomvmlib.avm
