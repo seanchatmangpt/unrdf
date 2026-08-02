@@ -1,0 +1,42 @@
+name: ggen-legacy package admission
+
+on:
+  push:
+    branches: [agent/fix-all-packages]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ggen-legacy-package-admission-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  admit-packages:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+      - name: Execute ggen-legacy package admission
+        env:
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ggen-legacy-package-admission.mjs
+      - name: Upload exact-head package receipts
+        if: always()
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: ggen-legacy-package-admission-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .artifacts/ggen-legacy-package-admission
+          if-no-files-found: error
+          retention-days: 14
