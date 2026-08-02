@@ -42,7 +42,6 @@ function runProcess({ binary, args, cwd, env, timeoutMs }) {
     let stdout = '';
     let stderr = '';
     let settled = false;
-
     const timer = setTimeout(() => {
       if (settled) return;
       settled = true;
@@ -56,7 +55,6 @@ function runProcess({ binary, args, cwd, env, timeoutMs }) {
 
     child.stdout.on('data', chunk => { stdout += chunk.toString(); });
     child.stderr.on('data', chunk => { stderr += chunk.toString(); });
-
     child.on('error', error => {
       if (settled) return;
       settled = true;
@@ -67,7 +65,6 @@ function runProcess({ binary, args, cwd, env, timeoutMs }) {
         { binary, args, cause: error.message },
       ));
     });
-
     child.on('close', (exitCode, signal) => {
       if (settled) return;
       settled = true;
@@ -77,18 +74,8 @@ function runProcess({ binary, args, cwd, env, timeoutMs }) {
   });
 }
 
-/**
- * Authority-bearing broker that executes a previously admitted swarm intent
- * against a real Generic UNIX AtomVM process.
- */
 export class AtomVMProcessBroker {
-  constructor({
-    atomvmBinary,
-    swarms,
-    runtimeRef = 'unknown',
-    timeoutMs = 10_000,
-    runner = runProcess,
-  } = {}) {
+  constructor({ atomvmBinary, swarms, runtimeRef = 'unknown', timeoutMs = 10_000 } = {}) {
     if (!(swarms instanceof Map) && (typeof swarms !== 'object' || swarms === null)) {
       throw new TypeError('swarms must be a Map or object keyed by admitted swarm id');
     }
@@ -96,7 +83,6 @@ export class AtomVMProcessBroker {
     this.swarms = swarms instanceof Map ? new Map(swarms) : new Map(Object.entries(swarms));
     this.runtimeRef = runtimeRef;
     this.timeoutMs = timeoutMs;
-    this.runner = runner;
   }
 
   async execute({ intent, target, route }) {
@@ -131,7 +117,7 @@ export class AtomVMProcessBroker {
     }
 
     const args = [config.avmPath, ...(config.libraryPaths ?? [])];
-    const observed = await this.runner({
+    const observed = await runProcess({
       binary: this.atomvmBinary,
       args,
       cwd: config.cwd,

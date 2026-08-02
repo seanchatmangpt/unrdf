@@ -1,15 +1,4 @@
-/**
- * AtomVM Library Entry Point
- *
- * Exports all public APIs for library usage.
- * This is the main entry point when importing @unrdf/atomvm as a library.
- *
- * For the browser application, see src/app.mjs
- *
- * @module @unrdf/atomvm
- */
-
-// Re-export all public APIs for library usage
+/** Main public entry point for @unrdf/atomvm. */
 export { AtomVMRuntime } from './atomvm-runtime.mjs';
 export { AtomVMNodeRuntime } from './node-runtime.mjs';
 export { TerminalUI } from './terminal-ui.mjs';
@@ -17,50 +6,23 @@ export {
   registerServiceWorker,
   checkCrossOriginIsolation,
   getCOIStatus,
-  waitForCOI
+  waitForCOI,
 } from './service-worker-manager.mjs';
 
-// Hot code loading and supervision
 export { HotCodeLoader } from './hot-code-loader.mjs';
 export { SupervisorTree } from './supervisor-tree.mjs';
-
-// Query caching for SPARQL results
 export { QueryCache, createQueryCache } from './query-cache.mjs';
-
-// Oxigraph RDF store integration
 export { OxigraphBridge, BRIDGE_OPERATIONS } from './oxigraph-bridge.mjs';
-
-// Oxigraph Integration - Real @unrdf/oxigraph integration
 export {
   createOxigraphStore,
   createOxigraphBridge,
   createIntegratedStore,
   dataFactory,
 } from './oxigraph-integration.mjs';
-
-// RDF Validation Framework
-export {
-  RDFValidator,
-  NAMESPACES,
-  createPreInsertionValidator
-} from './rdf-validator.mjs';
-
-// Export App class for browser application usage
+export { RDFValidator, NAMESPACES, createPreInsertionValidator } from './rdf-validator.mjs';
 export { App } from './app.mjs';
-
-// Triple Stream Batcher for bulk RDF operations
-export {
-  TripleStreamBatcher,
-  createTripleStreamBatcher,
-} from './triple-stream-batcher.mjs';
-
-// SPARQL Pattern Matching
-export {
-  SPARQLPatternMatcher,
-  createSPARQLPatternMatcher,
-} from './sparql-pattern-matcher.mjs';
-
-// Distributed Message Validation
+export { TripleStreamBatcher, createTripleStreamBatcher } from './triple-stream-batcher.mjs';
+export { SPARQLPatternMatcher, createSPARQLPatternMatcher } from './sparql-pattern-matcher.mjs';
 export {
   messageSchemas,
   validateTriplePattern,
@@ -73,8 +35,6 @@ export {
   createValidationMiddleware,
   withValidation,
 } from './message-validator.mjs';
-
-// OTEL Instrumentation
 export {
   tracer,
   getTracer,
@@ -92,22 +52,8 @@ export {
   traceBatchOperation,
   traceWithTiming,
 } from './otel-instrumentation.mjs';
-
-// SLA Monitoring
-export {
-  SLAMonitor,
-  createSLAMonitor,
-  defaultSLAMonitor,
-  OPERATION_TYPES,
-} from './sla-monitor.mjs';
-
-// Hooks Bridge - BiDirectional JS/Erlang bridge
-export {
-  HooksBridge,
-  HOOKS_BRIDGE_OPERATIONS,
-} from './hooks-bridge.mjs';
-
-// Additional exports from pre-existing modules
+export { SLAMonitor, createSLAMonitor, defaultSLAMonitor, OPERATION_TYPES } from './sla-monitor.mjs';
+export { HooksBridge, HOOKS_BRIDGE_OPERATIONS } from './hooks-bridge.mjs';
 export { CircuitBreaker } from './circuit-breaker.mjs';
 export {
   startRoundtrip,
@@ -116,8 +62,6 @@ export {
   canStartRoundtrip,
   validateRoundtripLatency,
 } from './roundtrip-sla.mjs';
-
-// L4 Hardening Modules
 export { HardenedAtomVM } from './vm/facade.mjs';
 export { Powl8Builder } from './vm/builder.mjs';
 export { ConstitutionalLoader } from './vm/loader.mjs';
@@ -126,24 +70,21 @@ export { POWL8_OPCODES, registerPowl8Opcodes } from './vm/opcodes.mjs';
 export { Powl8Scheduler } from './vm/scheduler.mjs';
 export { VmTelemetry } from './vm/telemetry.mjs';
 export { ReceiptGenerator } from './vm/receipt-generator.mjs';
-
-// Federated AtomVM swarm cluster control plane
 export {
   AtomVMSwarmCluster,
   SwarmClusterRefusal,
   createAtomVMSwarmCluster,
 } from './swarm-cluster.mjs';
-
-// Authority-bearing Generic UNIX AtomVM process broker
 export {
   AtomVMProcessBroker,
   AtomVMProcessRefusal,
   createAtomVMProcessBroker,
 } from './process-broker.mjs';
-
-// Executable Gall / process-mining / Clean Architecture / Pragmatic checkpoints
 export {
   INNOVATION_CHECKPOINTS,
   evaluateInnovationCheckpoints,
   receiptToOcel,
 } from './innovation-checkpoints.mjs';
+
+// JOTP pattern-language port: real processes, lifecycle, workers, and applications.
+export * from './otp/index.mjs';
