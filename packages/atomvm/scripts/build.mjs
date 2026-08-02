@@ -76,6 +76,6 @@ function generateErlangModule(moduleName) {
 
 start() ->
     erlang:display({atomvm_module_alive, ${moduleName}}),
-    0.
+    ok.
 `;
 }
