@@ -55,29 +55,28 @@ function routeConforms(route, snapshot) {
 export function receiptToOcel(receipt, intent) {
   if (!receipt || !intent) throw new TypeError('receipt and intent are required');
   const eventId = `event:${receipt.receiptId}`;
+  const candidates = [
+    { id: `cluster:${receipt.clusterId}`, type: 'cluster' },
+    { id: `swarm:${intent.sourceId}`, type: 'swarm' },
+    { id: `swarm:${intent.targetId}`, type: 'swarm' },
+    { id: `intent:${intent.intentId}`, type: 'intent' },
+    { id: `receipt:${receipt.receiptId}`, type: 'receipt' },
+  ];
+  const objectMap = new Map(candidates.map(object => [object.id, Object.freeze(object)]));
+  const objects = Object.freeze([...objectMap.values()]);
+  const objectIds = Object.freeze([...objectMap.keys()]);
+
   return Object.freeze({
     objectTypes: Object.freeze(['cluster', 'swarm', 'intent', 'receipt']),
-    objects: Object.freeze([
-      { id: `cluster:${receipt.clusterId}`, type: 'cluster' },
-      { id: `swarm:${intent.sourceId}`, type: 'swarm' },
-      { id: `swarm:${intent.targetId}`, type: 'swarm' },
-      { id: `intent:${intent.intentId}`, type: 'intent' },
-      { id: `receipt:${receipt.receiptId}`, type: 'receipt' },
-    ]),
-    events: Object.freeze([{
+    objects,
+    events: Object.freeze([Object.freeze({
       id: eventId,
       activity: intent.operation,
       time: receipt.completedAt,
       outcome: receipt.status,
-      objects: Object.freeze([
-        `cluster:${receipt.clusterId}`,
-        `swarm:${intent.sourceId}`,
-        `swarm:${intent.targetId}`,
-        `intent:${intent.intentId}`,
-        `receipt:${receipt.receiptId}`,
-      ]),
+      objects: objectIds,
       attributes: Object.freeze({ route: [...receipt.route], intentDigest: receipt.intentDigest }),
-    }]),
+    })]),
   });
 }
 
@@ -99,8 +98,8 @@ export function evaluateInnovationCheckpoints({ cluster, intent, receipt, replay
 
   const checks = [
     result('gall-working-core', snapshot.swarms.length >= 2 && routeOk && receiptVerified, { swarms: snapshot.swarms.length, route: receipt?.route }),
-    result('ocel-event-completeness', Boolean(ocel?.events[0]?.activity && ocel.events[0]?.time && ocel.events[0]?.outcome && ocel.events[0]?.objects.length >= 5), { eventId: ocel?.events[0]?.id }),
-    result('object-centric-identity', Boolean(new Set(ocel?.objects.map(({ id }) => id)).size === ocel?.objects.length && ocel?.objects.length >= 5), { objectCount: ocel?.objects.length ?? 0 }),
+    result('ocel-event-completeness', Boolean(ocel?.events[0]?.activity && ocel.events[0]?.time && ocel.events[0]?.outcome && ocel.events[0]?.objects.length >= 4), { eventId: ocel?.events[0]?.id }),
+    result('object-centric-identity', Boolean(new Set(ocel?.objects.map(({ id }) => id)).size === ocel?.objects.length && ocel?.objects.length >= 4), { objectCount: ocel?.objects.length ?? 0 }),
     result('route-conformance', routeOk, { intended: intent?.route, observed: receipt?.route }),
     result('dependency-rule', brokerObserved && negativeControlPassed, { brokerObserved, unbrokeredActuationRefused: negativeControlPassed }),
     result('explicit-contracts', explicitStanding && receiptVerified, { standing: receipt?.status, receiptVerified }),
