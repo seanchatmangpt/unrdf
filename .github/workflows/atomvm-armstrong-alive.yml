@@ -1,0 +1,106 @@
+name: AtomVM Armstrong Kernel ALIVE
+
+on:
+  push:
+    branches:
+      - agent/atomvm-swarm-cluster
+    paths:
+      - '.github/workflows/atomvm-armstrong-alive.yml'
+      - 'packages/atomvm/src/otp/**'
+      - 'packages/atomvm/test/armstrong-kernel-chicago.test.mjs'
+      - 'packages/atomvm/examples/erlang/armstrong_kernel_probe.erl'
+      - 'packages/atomvm/scripts/verify-armstrong-kernel.mjs'
+      - 'packages/atomvm/books/atomvm-patterns/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/atomvm-armstrong-alive.yml'
+      - 'packages/atomvm/src/otp/**'
+      - 'packages/atomvm/test/armstrong-kernel-chicago.test.mjs'
+      - 'packages/atomvm/examples/erlang/armstrong_kernel_probe.erl'
+      - 'packages/atomvm/scripts/verify-armstrong-kernel.mjs'
+      - 'packages/atomvm/books/atomvm-patterns/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ATOMVM_SOURCE_REF: v0.6.6
+
+jobs:
+  armstrong-kernel:
+    name: Validate Armstrong process laws
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Validate JavaScript process laws
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/armstrong-kernel .build/receipts
+          node --test \
+            packages/atomvm/test/armstrong-kernel-chicago.test.mjs \
+            packages/atomvm/test/otp-patterns-chicago.test.mjs \
+            | tee .build/receipts/armstrong-javascript.tap
+          ! grep -q '# SKIP' .build/receipts/armstrong-javascript.tap
+          node packages/atomvm/scripts/verify-chicago-tdd.mjs
+
+      - name: Install AtomVM toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential cmake erlang-base erlang-dev erlang-tools \
+            gperf libmbedtls-dev zlib1g-dev
+
+      - name: Materialize exact AtomVM source
+        run: |
+          set -euxo pipefail
+          git clone --depth 1 --branch "$ATOMVM_SOURCE_REF" --recurse-submodules \
+            https://github.com/atomvm/AtomVM.git .build/AtomVM
+          git -C .build/AtomVM rev-parse HEAD | tee .build/armstrong-kernel/atomvm-source.sha
+          test "$(git -C .build/AtomVM describe --tags --exact-match)" = "$ATOMVM_SOURCE_REF"
+
+      - name: Build and execute Armstrong probe
+        run: |
+          set -euxo pipefail
+          cmake -S .build/AtomVM -B .build/AtomVM-build -DCMAKE_BUILD_TYPE=Release
+          cmake --build .build/AtomVM-build --parallel 2 --target AtomVM PackBEAM atomvmlib
+          erlc -o .build/armstrong-kernel packages/atomvm/examples/erlang/armstrong_kernel_probe.erl
+          .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/armstrong-kernel/armstrong_kernel_probe.avm \
+            .build/armstrong-kernel/armstrong_kernel_probe.beam
+          .build/AtomVM-build/src/AtomVM \
+            .build/armstrong-kernel/armstrong_kernel_probe.avm \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            2>&1 | tee .build/armstrong-kernel/atomvm.log
+          node packages/atomvm/scripts/verify-armstrong-kernel.mjs \
+            .build/armstrong-kernel/atomvm.log \
+            .build/receipts/armstrong-kernel-receipt.json
+          sha256sum \
+            .build/AtomVM-build/src/AtomVM \
+            .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            .build/armstrong-kernel/armstrong_kernel_probe.beam \
+            .build/armstrong-kernel/armstrong_kernel_probe.avm \
+            | tee .build/receipts/armstrong-sha256sums.txt
+
+      - name: Upload Armstrong replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomvm-armstrong-alive-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            .build/armstrong-kernel/atomvm-source.sha
+            .build/armstrong-kernel/atomvm.log
+            .build/receipts/armstrong-javascript.tap
+            .build/receipts/armstrong-kernel-receipt.json
+            .build/receipts/armstrong-sha256sums.txt

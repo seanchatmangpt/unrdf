@@ -2,6 +2,36 @@ import { randomUUID } from 'node:crypto';
 import { Proc } from './proc.mjs';
 import { OtpRefusal } from './values.mjs';
 
+export class ProcAlias {
+  #target;
+  #active = true;
+
+  constructor(target, { id = `alias-${randomUUID()}` } = {}) {
+    if (!(target instanceof Proc) && !(target instanceof ProcRef)) {
+      throw new TypeError('ProcAlias requires a Proc or ProcRef');
+    }
+    this.id = id;
+    this.#target = target;
+  }
+
+  get active() { return this.#active; }
+
+  tell(message) {
+    if (!this.#active) {
+      return Object.freeze({ status: 'DROPPED', code: 'ALIAS_REVOKED', aliasId: this.id });
+    }
+    return this.#target.tryTell
+      ? this.#target.tryTell(message, { from: this.id })
+      : this.#target.proc().tryTell(message, { from: this.id });
+  }
+
+  revoke() {
+    if (!this.#active) return false;
+    this.#active = false;
+    return true;
+  }
+}
+
 export class ProcRef {
   #delegate;
   #swapCallbacks = new Set();
@@ -14,8 +44,15 @@ export class ProcRef {
   }
 
   tell(message) { return this.#delegate.tell(message); }
+  tellFrom(from, message) { return this.#delegate.tellFrom(from, message); }
+  send(message, options) { return this.#delegate.send(message, options); }
+  tryTell(message, options) { return this.#delegate.tryTell(message, options); }
   ask(message, timeoutMs) { return this.#delegate.ask(message, timeoutMs); }
+  askFrom(from, message, timeoutMs) { return this.#delegate.askFrom(from, message, timeoutMs); }
   stop(reason) { return this.#delegate.stop(reason); }
+  exit(reason) { return this.#delegate.exit(reason); }
+  kill(reason) { return this.#delegate.kill(reason); }
+  alias(options) { return new ProcAlias(this, options); }
   proc() { return this.#delegate; }
 
   swap(next) {

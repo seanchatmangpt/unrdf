@@ -51,3 +51,7 @@
   - [Process Introspection](part-5-workers-assembly/process-introspection.md)
   - [Assemble the Application](part-5-workers-assembly/assemble-application.md)
   - [Test the Boundary](part-5-workers-assembly/test-the-boundary.md)
+
+# Appendix
+
+- [The Joe Armstrong Standard](joe-armstrong-standard.md)
