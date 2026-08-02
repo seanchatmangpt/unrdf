@@ -6,13 +6,14 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../test/', import.meta.url));
 const packageRoot = fileURLToPath(new URL('../', import.meta.url));
 const forbidden = [
-  ['VITEST_MOCK', /\bvi\.(?:fn|spyOn|mock|useFakeTimers)\b/],
-  ['JEST_MOCK', /\bjest\.(?:fn|spyOn|mock|useFakeTimers)\b/],
+  ['VITEST_DOUBLE', /\bvi\.(?:fn|spyOn|mock|doMock|unmock|stubGlobal|unstubAllGlobals|useFakeTimers|setSystemTime|advanceTimersByTime|advanceTimersToNextTimer|runAllTimers|clearAllMocks|resetAllMocks|restoreAllMocks)\b/],
+  ['JEST_DOUBLE', /\bjest\.(?:fn|spyOn|mock|doMock|unmock|useFakeTimers|setSystemTime|advanceTimersByTime|runAllTimers|clearAllMocks|resetAllMocks|restoreAllMocks)\b/],
   ['SINON_TEST_DOUBLE', /\bsinon\b/],
   ['INTERACTION_ASSERTION', /\btoHaveBeenCalled(?:Times|With)?\b/],
-  ['MOCK_CONFIGURATION', /\bmock(?:Implementation|ReturnValue|ResolvedValue|RejectedValue)\b/],
-  ['FAKE_TIMER', /\b(?:fakeTimers|useFakeTimers|advanceTimersByTime)\b/],
+  ['DOUBLE_CONFIGURATION', /\bmock(?:Implementation|ReturnValue|ResolvedValue|RejectedValue)\b/],
+  ['FAKE_TIMER', /\b(?:fakeTimers|useFakeTimers|advanceTimersByTime|setSystemTime)\b/],
   ['INJECTED_PROCESS_RUNNER', /\brunner\s*:/],
+  ['TEST_SKIP', /\b(?:it|test|describe)\.(?:skip|skipIf)\b|\bskip\s*:\s*true\b/],
 ];
 
 async function files(directory) {
@@ -26,8 +27,9 @@ async function files(directory) {
   return output;
 }
 
+const testFiles = await files(root);
 const violations = [];
-for (const path of await files(root)) {
+for (const path of testFiles) {
   const content = await readFile(path, 'utf8');
   const lines = content.split('\n');
   lines.forEach((line, index) => {
@@ -41,7 +43,7 @@ for (const path of await files(root)) {
 
 const report = {
   methodology: 'Chicago/Detroit TDD',
-  inspectedTests: (await files(root)).length,
+  inspectedTests: testFiles.length,
   forbiddenCategories: forbidden.map(([code]) => code),
   violations,
   status: violations.length === 0 ? 'ALIVE' : 'BLOCKED',

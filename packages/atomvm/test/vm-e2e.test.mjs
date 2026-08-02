@@ -17,22 +17,26 @@ describe('AtomVM runtime end-to-end — real collaborators', () => {
     expect(JSON.stringify(dag)).toContain('seq2');
   });
 
-  it.skipIf(!(process.env.ATOMVM_BIN && process.env.ATOMVM_APP))(
-    'executes the real AtomVM process through the public Node runtime',
-    async () => {
-      const runtime = new AtomVMNodeRuntime({
-        atomvmBinary: process.env.ATOMVM_BIN,
-        libraryPaths: process.env.ATOMVM_LIB ? [process.env.ATOMVM_LIB] : [],
-        log: () => {},
-        errorLog: () => {},
-      });
-      await runtime.load();
-      const result = await runtime.execute(process.env.ATOMVM_APP);
+  it('executes the configured native runtime or observes its real binary refusal', async () => {
+    const configured = Boolean(process.env.ATOMVM_BIN && process.env.ATOMVM_APP);
+    const runtime = new AtomVMNodeRuntime({
+      atomvmBinary: configured ? process.env.ATOMVM_BIN : '/unavailable/AtomVM',
+      libraryPaths: configured && process.env.ATOMVM_LIB ? [process.env.ATOMVM_LIB] : [],
+      log: () => {},
+      errorLog: () => {},
+    });
 
-      expect(result.runtime).toBe('AtomVM');
-      expect(result.exitCode).toBe(0);
-      expect(`${result.stdout}\n${result.stderr}`).toContain('atomvm_swarm_alive');
-      expect(`${result.stdout}\n${result.stderr}`).toContain('Return value: ok');
-    },
-  );
+    if (!configured) {
+      await expect(runtime.load()).rejects.toThrow(/ATOMVM_BINARY_NOT_FOUND_REFUSED/);
+      expect(runtime.state).toBe('Error');
+      return;
+    }
+
+    await runtime.load();
+    const result = await runtime.execute(process.env.ATOMVM_APP);
+    expect(result.runtime).toBe('AtomVM');
+    expect(result.exitCode).toBe(0);
+    expect(`${result.stdout}\n${result.stderr}`).toContain('atomvm_swarm_alive');
+    expect(`${result.stdout}\n${result.stderr}`).toContain('Return value: ok');
+  });
 });

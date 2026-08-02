@@ -37,6 +37,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
+      - name: Verify one-for-one book projection
+        env:
+          PATTERN_BOOK_RECEIPT: ${{ github.workspace }}/.build/receipts/pattern-book-receipt.json
+        run: |
+          set -euxo pipefail
+          node packages/atomvm/scripts/verify-pattern-book.mjs
+
       - name: Install AtomVM build toolchain
         run: |
           set -euxo pipefail
@@ -149,7 +156,7 @@ jobs:
           }));
           NODE
 
-      - name: Refuse London-style tests
+      - name: Refuse London-style tests and skips
         env:
           CHICAGO_TDD_REPORT: ${{ github.workspace }}/.build/receipts/chicago-tdd-report.json
         run: |
@@ -212,6 +219,7 @@ jobs:
             .build/otp-patterns/packbeam-list.log
             .build/receipts/atomvm-runtime-cluster-receipt.json
             .build/receipts/otp-patterns-receipt.json
+            .build/receipts/pattern-book-receipt.json
             .build/receipts/chicago-tdd-report.json
             .build/receipts/javascript-tests.tap
             .build/receipts/verification.log

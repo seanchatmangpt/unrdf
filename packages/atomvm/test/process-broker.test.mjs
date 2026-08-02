@@ -27,20 +27,28 @@ test('refuses execution when the real AtomVM binary is unavailable', async () =>
   );
 });
 
-test('executes the real AtomVM process and observes its marker', {
-  skip: !(process.env.ATOMVM_BIN && process.env.ATOMVM_APP),
-}, async () => {
+test('executes the configured AtomVM process or observes the real unavailable-binary refusal', async () => {
+  const configured = Boolean(process.env.ATOMVM_BIN && process.env.ATOMVM_APP);
   const broker = new AtomVMProcessBroker({
-    atomvmBinary: process.env.ATOMVM_BIN,
+    atomvmBinary: configured ? process.env.ATOMVM_BIN : '/unavailable/AtomVM',
     runtimeRef: process.env.ATOMVM_SOURCE_REF ?? 'unknown',
     swarms: {
       east: {
-        avmPath: process.env.ATOMVM_APP,
-        libraryPaths: process.env.ATOMVM_LIB ? [process.env.ATOMVM_LIB] : [],
+        avmPath: configured ? process.env.ATOMVM_APP : '/unavailable/probe.avm',
+        libraryPaths: configured && process.env.ATOMVM_LIB ? [process.env.ATOMVM_LIB] : [],
         expectedMarker: 'atomvm_swarm_alive',
       },
     },
   });
+
+  if (!configured) {
+    await assert.rejects(
+      () => broker.execute(request),
+      error => error instanceof AtomVMProcessRefusal && error.code === 'ATOMVM_BINARY_NOT_FOUND_REFUSED',
+    );
+    return;
+  }
+
   const result = await broker.execute(request);
   assert.equal(result.runtime, 'AtomVM');
   assert.equal(result.targetId, 'east');
