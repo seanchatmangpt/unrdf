@@ -1,84 +1,54 @@
 # @unrdf/atomvm
 
-Run AtomVM (Erlang/BEAM VM) in the browser and Node.js using WebAssembly.
+`@unrdf/atomvm` provides AtomVM execution surfaces for browser and Node.js environments plus a bounded control plane for federating multiple AtomVM swarms through unrdf.
 
-## Quick Start
+The package separates three concerns:
 
-### Browser
+1. **Runtime** — load and execute AtomVM modules.
+2. **Construction** — admit swarms, construct routes and create immutable intents.
+3. **Actuation and evidence** — execute only through a supplied broker and return integrity-bound receipts that can be verified and replayed.
 
-1. **Build an Erlang module:**
-   ```bash
-   pnpm run build:erlang mymodule
-   ```
-
-2. **Start dev server:**
-   ```bash
-   pnpm dev
-   ```
-
-3. **Open browser with module name:**
-   ```
-   http://localhost:3000?module=mymodule
-   ```
-
-4. **Click "Initialize AtomVM" then "Run Example"**
-
-The page may auto-reload once to enable Cross-Origin-Isolation (required for SharedArrayBuffer).
-
-### Node.js
-
-1. **Build an Erlang module:**
-   ```bash
-   pnpm run build:erlang mymodule
-   ```
-
-2. **Execute the .avm file:**
-   ```bash
-   node src/cli.mjs public/mymodule.avm
-   ```
-
-## Features
-
-### Browser Runtime
-- **State Machine Design**: Poka-yoke error prevention - invalid operations are impossible
-- **Real AtomVM WASM**: Uses actual AtomVM [VERSION] compiled to WebAssembly
-- **Dual Runtime**: Works in both browser and Node.js environments
-- **Cross-Origin-Isolation**: Automatic COI setup via service workers
-- **Module-Based**: Explicit module naming (no defaults)
-- **SLA Tracking**: Strict SLA for JS→Erlang→JS roundtrips (<10ms latency, <0.1% error rate)
-- **Poka-Yoke SLA**: Prevents operations that would violate SLA thresholds
-
-### Distributed Macroframework (Production)
-- **Docker Swarm Orchestration**: Overlay networking with automatic service discovery
-- **Erlang Distribution**: Full BEAM clustering with EPMD (Erlang Port Mapper Daemon)
-- **Circuit Breaker**: Telecom-grade failure protection (configurable thresholds)
-- **Supervisor Trees**: OTP-style supervision for automatic process restart
-- **Message Passing**: RPC-based distributed messaging across nodes
-- **Chaos Tested**: 10 random container kills, 0 cascading failures, 100% recovery
-- **100% Connectivity**: Verified with `net_adm:ping` across Docker Swarm overlay network
+The RDF graph describes admitted topology. It does not receive ambient execution authority.
 
 ## Installation
+
+From the unrdf workspace:
 
 ```bash
 pnpm install
 ```
 
-## Usage
+Requirements depend on the surface being used:
 
-### Browser Runtime
+- Node.js 18 or newer
+- `pnpm` 7 or newer
+- `erlc` and `packbeam` when building Erlang modules
+- A browser with service-worker and cross-origin-isolation support for browser execution
+- Docker and Erlang tooling only for the Docker Swarm experiments
 
-The browser runtime requires a module name in the URL:
+## Browser runtime
 
-```javascript
-// URL: ?module=mymodule
-// Code automatically:
-// 1. Registers service worker for COI
-// 2. Creates AtomVMRuntime with module name
-// 3. Enables UI controls
+Build an Erlang module:
+
+```bash
+pnpm run build:erlang mymodule
 ```
 
-**API:**
-```javascript
+Start the development server:
+
+```bash
+pnpm dev
+```
+
+Open the application with an explicit module name:
+
+```text
+http://localhost:3000?module=mymodule
+```
+
+Programmatic use:
+
+```js
 import { AtomVMRuntime } from '@unrdf/atomvm';
 
 const runtime = new AtomVMRuntime(terminal, 'mymodule');
@@ -86,160 +56,200 @@ await runtime.loadWASM();
 await runtime.executeBeam('/mymodule.avm');
 ```
 
-### Node.js Runtime
+The browser runtime uses a service worker to establish cross-origin isolation before using `SharedArrayBuffer`.
 
-```javascript
-import { AtomVMNodeRuntime } from '@unrdf/atomvm/src/node-runtime.mjs';
+## Node.js runtime
 
-const runtime = new AtomVMNodeRuntime();
-await runtime.load();
-await runtime.execute('/path/to/file.avm');
-```
-
-### CLI
+Execute an AVM file through the CLI:
 
 ```bash
-# Execute .avm file
 node src/cli.mjs public/mymodule.avm
 ```
 
-### Production Macroframework
+Programmatic use:
 
-**Quick Start:**
+```js
+import { AtomVMNodeRuntime } from '@unrdf/atomvm';
+
+const runtime = new AtomVMNodeRuntime();
+await runtime.load();
+await runtime.execute('/absolute/path/to/module.avm');
+```
+
+## Federated swarm control plane
+
+`AtomVMSwarmCluster` models a cluster of independently operated AtomVM swarms. A swarm must be admitted before it can participate in routing. Links must also be admitted before a cross-swarm route can be constructed.
+
+```js
+import { createAtomVMSwarmCluster } from '@unrdf/atomvm';
+
+const cluster = createAtomVMSwarmCluster({
+  clusterId: 'edge-federation',
+});
+
+cluster.admitSwarm({
+  id: 'west',
+  gatewayNode: 'west-gateway',
+  cookieRef: 'secret://atomvm/west',
+  endpoint: 'atomvm://west',
+});
+
+cluster.admitSwarm({
+  id: 'east',
+  gatewayNode: 'east-gateway',
+  cookieRef: 'secret://atomvm/east',
+  endpoint: 'atomvm://east',
+});
+
+cluster.connect('west', 'east');
+
+const intent = cluster.constructIntent({
+  sourceId: 'west',
+  targetId: 'east',
+  operation: 'rdf.delta.apply',
+  payload: { add: 3 },
+});
+```
+
+Construction does not execute the intent. Actuation requires an explicit broker:
+
+```js
+const receipt = await cluster.actuate(intent, {
+  async execute({ intent, target, route }) {
+    return transport.send({
+      endpoint: target.endpoint,
+      operation: intent.operation,
+      payload: intent.payload,
+      route,
+    });
+  },
+});
+
+if (receipt.status !== 'ALIVE') {
+  throw new Error(`Swarm operation did not complete: ${receipt.status}`);
+}
+
+if (!cluster.verifyReceipt(receipt)) {
+  throw new Error('Receipt integrity verification failed');
+}
+
+const replayed = cluster.replay(receipt.receiptId);
+```
+
+Calling `actuate` without `broker.execute` is refused with `BROKER_REQUIRED_REFUSED`. Broker failures become bounded `BLOCKED` receipts rather than mutating the admitted topology.
+
+### RDF topology projection
+
+The admitted cluster graph can be projected deterministically as N-Quads:
+
+```js
+const nquads = cluster.toNQuads();
+```
+
+This is a projection of the control-plane state. Editing the projection does not actuate infrastructure.
+
+## Ten executable innovation checkpoints
+
+The checkpoint evaluator tests the federation tracer bullet against ten gates derived from Gall's evolutionary constraint, object-centric process evidence and conformance, Clean Architecture boundaries, and Pragmatic Programmer feedback practices.
+
+```js
+import { evaluateInnovationCheckpoints } from '@unrdf/atomvm';
+
+const report = evaluateInnovationCheckpoints({
+  cluster,
+  intent,
+  receipt,
+  replayedReceipt: replayed,
+  brokerObserved: true,
+  negativeControlPassed: true,
+});
+
+console.log(report.status); // ALIVE or PARTIAL_ALIVE
+console.log(report.passed); // number of ALIVE checkpoints
+console.log(report.reportDigest);
+```
+
+`ALIVE` requires all ten checkpoints. Missing authority evidence does not become an implicit success; the affected checkpoint is `UNSUPPORTED`, and the aggregate report is `PARTIAL_ALIVE`.
+
+See:
+
+- [Federated swarm architecture](./docs/explanation/federated-swarm-control-plane.md)
+- [Innovation checkpoint reference](./docs/reference/innovation-checkpoints.md)
+
+## Docker Swarm experiment
+
+The repository also contains an experimental Docker Swarm/Erlang distribution demonstration:
+
 ```bash
-# Run complete production demo (Docker Swarm + Circuit Breaker + Supervisor)
 node examples/production-messaging.mjs
 ```
 
-**Manual Setup:**
+It exercises Docker overlay networking, EPMD discovery, RPC messaging, circuit-breaker handling and supervisor behavior. Treat experiment evidence as evidence for the exact recorded configuration, not as a blanket production guarantee for every environment.
+
+Manual deployment:
+
 ```bash
-# 1. Initialize Docker Swarm
 docker swarm init
-
-# 2. Deploy AtomVM cluster (3 replicas)
-docker stack deploy -c experiments/docker-swarm-messaging/docker-stack-fixed.yml atomvm
-
-# 3. Verify connectivity (returns 'pong')
-CONT=$(docker ps --filter "name=atomvm" --format "{{.ID}}" | head -1)
-docker exec $CONT sh -c "erl -noshell -sname test -setcookie atomvm_secret_cookie -eval \"net_adm:ping('atomvm_node2@atomvm-2'), init:stop().\""
-
-# 4. Send message
-docker exec $CONT sh -c "erl -noshell -sname sender -setcookie atomvm_secret_cookie -eval \"rpc:call('atomvm_node2@atomvm-2', msg_handler, send_msg, ['atomvm_node2@atomvm-2', 'Hello', node()]), init:stop().\""
-
-# 5. Verify reception
-CONT2=$(docker ps --filter "name=atomvm_atomvm-node.2" --format "{{.ID}}")
-docker logs $CONT2 2>&1 | grep RECEIVED
-# Output: [RECEIVED] From: 'sender@atomvm-1', Content: Hello
+docker stack deploy \
+  -c experiments/docker-swarm-messaging/docker-stack-fixed.yml \
+  atomvm
 ```
 
-**API:**
-```javascript
-import { CircuitBreaker } from '@unrdf/atomvm/src/circuit-breaker.mjs';
-import { SupervisorTree } from '@unrdf/atomvm/src/supervisor-tree.mjs';
+## Other package surfaces
 
-// Circuit breaker protecting distributed calls
-const breaker = new CircuitBreaker({
-  failureThreshold: 3,  // Open circuit after 3 failures
-  resetTimeout: 5000    // Try to close after 5 seconds
-});
+The package also exports:
 
-const result = await breaker.call(async () => {
-  // Your distributed operation here
-  return await sendMessageToNode('atomvm_node2@atomvm-2', 'Hello');
-});
+- `CircuitBreaker` and `SupervisorTree`
+- Oxigraph bridges and integrated RDF stores
+- RDF validation and message validation
+- SPARQL pattern matching and query caching
+- OpenTelemetry instrumentation and SLA monitoring
+- triple-stream batching
+- hardened VM construction, scheduling, sandboxing and receipt generation
 
-// Supervisor tree for automatic restart
-const supervisor = new SupervisorTree('my_app', 'one_for_one');
-supervisor.addChild('worker1', async () => {
-  // Worker process
-}, 'one_for_one');
+Consult the source-level exports in `src/index.mjs` for the current public surface.
 
-await supervisor.start();
-```
+## Development and validation
 
-See [Complete Macroframework Documentation](./experiments/ATOMVM-MACROFRAMEWORK-COMPLETE.md) for details.
-
-### Build Scripts
+Run the package test suite:
 
 ```bash
-# Build Erlang module to .avm
-pnpm run build:erlang mymodule
-
-# Complete workflow (build + instructions)
-pnpm run build:erlang:workflow mymodule
-
-# Clean build artifacts
-pnpm run build:erlang:clean
-```
-
-## Browser Compatibility
-
-- **Chrome/Edge**: 92+ ✅
-- **Firefox**: 95+ ✅
-- **Safari**: 15.2+ ✅
-
-Requires service worker support and Cross-Origin-Isolation (automatic via coi-serviceworker).
-
-## SLA Requirements
-
-**Strict SLA for JS→Erlang→JS Roundtrips**:
-- **Latency**: <10ms per roundtrip (end-to-end)
-- **Error Rate**: <0.1% (1 error per 1000 roundtrips)
-
-**Poka-Yoke Enforcement**:
-- Operations rejected if error rate would exceed 0.1%
-- Latency warnings logged if >10ms (but allowed - may be transient)
-- SLA metrics tracked in OTEL spans
-
-See [SLA Roundtrip Documentation](../../docs/SLA-ROUNDTRIP.md) for details.
-
-## Documentation
-
-Complete documentation is organized using the [Diataxis](https://diataxis.fr/) framework:
-
-- **[Tutorials](./docs/tutorials/)** - Learn how to use AtomVM in the browser
-- **[How-To Guides](./docs/how-to/)** - Solve specific problems
-- **[Reference](./docs/reference/)** - Complete API documentation
-- **[Explanations](./docs/explanation/)** - Understand the design and architecture
-
-Start with: [Getting Started Tutorial](./docs/tutorials/01-getting-started.md)
-
-## Development
-
-```bash
-# Run tests
 pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run browser integration tests
-pnpm test:browser
-
-# Run Playwright E2E tests
-pnpm test:playwright
-
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
 ```
 
-## Architecture
+Run the focused federation tests directly:
 
-- **Browser**: Service worker enables COI → SharedArrayBuffer → AtomVM WASM execution
-- **Node.js**: Spawns Node.js process with AtomVM-node-[VERSION].js
-- **State Machine**: Prevents invalid operations (poka-yoke design)
-- **Module-Based**: Explicit module naming required (no defaults)
+```bash
+node --test test/swarm-cluster.test.mjs
+node --test test/innovation-checkpoints.test.mjs
+```
 
-See [Architecture Explanation](./docs/explanation/architecture.md) for details.
+Additional commands:
 
-## Requirements
+```bash
+pnpm test:browser
+pnpm test:playwright
+pnpm build
+pnpm build:vite
+```
 
-- **Browser**: Module name in URL (`?module=<name>`)
-- **Node.js**: Node.js 18+, Erlang toolchain for building modules
-- **Build Tools**: `erlc` and `packbeam` in PATH
+A passing focused test establishes standing only for the tested subject and configuration. Repository-wide standing requires the broader workspace gates to pass against the same source head.
+
+## Typed refusals and standing
+
+The federation API uses explicit refusals for invalid or unauthorized transitions, including:
+
+- `INVALID_ID_REFUSED`
+- `DUPLICATE_SWARM_REFUSED`
+- `UNKNOWN_SWARM_REFUSED`
+- `NO_ROUTE_REFUSED`
+- `UNADMITTED_INTENT_REFUSED`
+- `INTENT_DRIFT_REFUSED`
+- `BROKER_REQUIRED_REFUSED`
+- `RECEIPT_NOT_FOUND_REFUSED`
+- `RECEIPT_DRIFT_REFUSED`
+
+Execution receipts use `ALIVE` or `BLOCKED`. Checkpoint reports use `ALIVE`, `PARTIAL_ALIVE`, and per-checkpoint `UNSUPPORTED` where evidence is absent.
 
 ## License
 
