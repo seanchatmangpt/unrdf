@@ -1,5 +1,5 @@
 /**
- * @unrdf/core - RDF Graph Operations and SPARQL Execution
+ * @unrdf/core - RDF Graph Operations, execution control, and capability evidence.
  * @module @unrdf/core
  */
 
@@ -33,3 +33,10 @@ export { CapabilityGraph, createCapabilityGraph } from './capability-graph.mjs';
 export { AdmissionBoundary, AdmissionRefusal, createAdmissionBoundary, rules as admissionRules } from './admission-boundary.mjs';
 export { verifyCommand, commandVerifier } from './command-verifier.mjs';
 export { replay, requireReplayMatch } from './replay-runner.mjs';
+
+// Deterministic state primitives
+export { PolicyEngine, createPolicyEngine } from './policy-engine.mjs';
+export { createSnapshot, verifySnapshot, diffSnapshots } from './snapshot.mjs';
+export { BoundedCache, createBoundedCache } from './bounded-cache.mjs';
+export { EventLog, createEventLog } from './event-log.mjs';
+export { LeaseRegistry, createLeaseRegistry } from './lease.mjs';
