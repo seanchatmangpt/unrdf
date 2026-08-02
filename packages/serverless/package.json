@@ -9,7 +9,9 @@
     "./cdk": "./src/cdk/index.mjs",
     "./deploy": "./src/deploy/index.mjs",
     "./api": "./src/api/index.mjs",
-    "./storage": "./src/storage/index.mjs"
+    "./storage": "./src/storage/index.mjs",
+    "./storage/dynamodb-core": "./src/storage/dynamodb-core.mjs",
+    "./storage/dynamodb-adapter": "./src/storage/dynamodb-adapter.mjs"
   },
   "sideEffects": false,
   "files": [

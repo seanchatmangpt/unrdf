@@ -13,6 +13,7 @@
 export * from './adapters.mjs';
 export * from './lint-rules.mjs';
 export * from './schema-generator.mjs';
+export * from './schema-codec.mjs';
 
 /**
  * Version information

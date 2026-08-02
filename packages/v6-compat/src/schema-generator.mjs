@@ -10,21 +10,28 @@
  */
 
 import { z } from 'zod';
+import {
+  typeScriptTypeToZod,
+  parseTypeScriptType,
+  typeAstToZod,
+  zodSchemaToTypeScript,
+  generateTypeScriptDeclaration,
+} from './schema-codec.mjs';
 
 /**
  * TypeScript type to Zod schema mapping
  */
 const TS_TO_ZOD = {
-  string: 'z.string()',
-  number: 'z.number()',
-  boolean: 'z.boolean()',
-  Date: 'z.date()',
-  unknown: 'z.unknown()',
-  any: 'z.any()',
-  void: 'z.void()',
-  null: 'z.null()',
-  undefined: 'z.undefined()',
+  string: 'z.string()', number: 'z.number()', boolean: 'z.boolean()', bigint: 'z.bigint()',
+  Date: 'z.date()', unknown: 'z.unknown()', any: 'z.any()', void: 'z.void()', null: 'z.null()',
+  undefined: 'z.undefined()', never: 'z.never()',
 };
+
+function toZod(type) {
+  const normalized = String(type || 'unknown').trim().replace(/^Promise<(.+)>$/, '$1');
+  try { return typeScriptTypeToZod(normalized); }
+  catch { return TS_TO_ZOD[normalized] || `z.unknown() /* ${normalized} */`; }
+}
 
 /**
  * Parse JSDoc typedef to Zod schema
@@ -57,7 +64,7 @@ export function parseJSDocToZod(jsdoc) {
     const match = line.match(/@property\s+\{([^}]+)\}\s+(\[?)(\w+)\]?\s*-?\s*(.*)/);
     if (match) {
       const [, type, optional, name, description] = match;
-      const zodType = TS_TO_ZOD[type] || `z.unknown() /* ${type} */`;
+      const zodType = toZod(type);
       const zodField = optional
         ? `${zodType}.optional() // ${description}`
         : `${zodType} // ${description}`;
@@ -94,25 +101,18 @@ export function parseJSDocToZod(jsdoc) {
  * // }
  */
 export function generateSchemaFromFunction(fnSource) {
-  // Simple parser (production version should use actual TS parser)
-  const paramMatch = fnSource.match(/\(([^)]+)\)/);
-  const returnMatch = fnSource.match(/:\s*(\w+)/);
-
-  const params = [];
-  if (paramMatch) {
-    const paramList = paramMatch[1].split(',').map(p => p.trim());
-    for (const param of paramList) {
-      const [_name, type] = param.split(':').map(s => s.trim());
-      const zodType = TS_TO_ZOD[type] || 'z.unknown()';
-      params.push(zodType);
-    }
-  }
-
-  const returns = returnMatch ? TS_TO_ZOD[returnMatch[1]] || 'z.unknown()' : 'z.void()';
-
+  const signature = fnSource.match(/(?:async\s+)?function\s+\w+\s*\(([^)]*)\)\s*(?::\s*([^\s{]+(?:<[^>]+>)?))?/s);
+  if (!signature) throw new SyntaxError('Unable to parse function signature');
+  const params = signature[1].trim() ? signature[1].split(',').map(parameter => {
+    const match = parameter.trim().match(/^(?:\.\.\.)?([A-Za-z_$][\w$]*)(\?)?\s*:\s*(.+?)(?:\s*=.+)?$/);
+    if (!match) return 'z.unknown()';
+    const schema = toZod(match[3]);
+    return match[2] || parameter.includes('=') ? `${schema}.optional()` : schema;
+  }) : [];
+  const returnType = signature[2] || 'void';
   return {
-    params: params.length > 0 ? `z.tuple([${params.join(', ')}])` : 'z.tuple([])',
-    returns,
+    params: `z.tuple([${params.join(', ')}])`,
+    returns: toZod(returnType),
   };
 }
 
@@ -287,11 +287,11 @@ function extractParamTypesFromJSDoc(jsdoc) {
 function generateSchemaModule(functions, sourceFile) {
   const schemas = functions.map(fn => {
     const paramsSchema = fn.params.map(p => {
-      const zodType = TS_TO_ZOD[p.type] || 'z.unknown()';
+      const zodType = toZod(p.type);
       return p.optional ? `${zodType}.optional()` : zodType;
     });
 
-    const returnZodType = TS_TO_ZOD[fn.returnType] || 'z.unknown()';
+    const returnZodType = toZod(fn.returnType);
 
     return `
 /**
@@ -320,6 +320,13 @@ export const ${fn.name}Schema = {
  */
 
 import { z } from 'zod';
+import {
+  typeScriptTypeToZod,
+  parseTypeScriptType,
+  typeAstToZod,
+  zodSchemaToTypeScript,
+  generateTypeScriptDeclaration,
+} from './schema-codec.mjs';
 
 ${schemas.join('\n\n')}
 
@@ -408,7 +415,17 @@ export function validateWithErrors(schema, data) {
  * //   age?: number;
  * // }
  */
-export function generateTSFromZod(_schema) {
-  // Placeholder - production version should walk Zod schema AST
-  return '// TypeScript generation not implemented yet';
+export function generateTSFromZod(schema, options = {}) {
+  return generateTypeScriptDeclaration(schema, {
+    name: options.name || schema?.description || 'Generated',
+    ...options,
+  });
 }
+
+export {
+  typeScriptTypeToZod,
+  parseTypeScriptType,
+  typeAstToZod,
+  zodSchemaToTypeScript,
+  generateTypeScriptDeclaration,
+};

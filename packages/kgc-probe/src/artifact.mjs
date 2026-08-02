@@ -12,6 +12,7 @@
 
 import { randomUUID } from 'crypto';
 import { ArtifactSchema, validateArtifact, DiffResultSchema } from './types.mjs';
+import { canonicalJson, mergeObservations, sortObservations } from './orchestration-core.mjs';
 
 /**
  * ObservationValidator - Validates observations against schema
@@ -74,56 +75,14 @@ export function createObservationValidator() {
  * @returns {Promise<string>} Hex-encoded Blake3 hash
  */
 export async function hashObservations(observations) {
-  // Sort for determinism
-  const sorted = observations
-    .slice() // Copy
-    .sort((a, b) => {
-      const aKey = `${a.agent}|${a.timestamp}|${a.subject}`;
-      const bKey = `${b.agent}|${b.timestamp}|${b.subject}`;
-      return aKey.localeCompare(bKey);
-    });
-
-  // Stringify core fields
-  const parts = sorted.map(obs =>
-    JSON.stringify({
-      agent: obs.agent,
-      timestamp: obs.timestamp,
-      kind: obs.kind,
-      subject: obs.subject,
-      predicate: obs.predicate,
-      object: obs.object,
-      severity: obs.severity,
-      evidence_query: obs.evidence?.query,
-      metrics_confidence: obs.metrics?.confidence,
-      metrics_coverage: obs.metrics?.coverage,
-    })
-  );
-
-  const combined = parts.join('|');
-
-  // In production, use hash-wasm for Blake3
-  // For now, simulate with a deterministic hash
-  return computeSimpleHash(combined);
-}
-
-/**
- * Simple deterministic hash (fallback until hash-wasm integrated)
- * @param {string} data - Data to hash
- * @returns {string} Hex hash
- * @private
- */
-function computeSimpleHash(data) {
-  // Create a simple deterministic hash from string content
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+  const canonical = canonicalJson(sortObservations(observations || []));
+  try {
+    const { blake3 } = await import('hash-wasm');
+    return blake3(canonical);
+  } catch {
+    const { createHash } = await import('node:crypto');
+    return createHash('sha256').update(canonical).digest('hex');
   }
-
-  // Convert to hex (64-char for Blake3 simulation)
-  const hex = Math.abs(hash).toString(16);
-  return hex.padStart(64, '0');
 }
 
 // ============================================================================
@@ -143,42 +102,8 @@ function computeSimpleHash(data) {
  * @param {Array} newObservations - Additional observations to merge
  * @returns {Promise<Array>} Merged and deduplicated observations
  */
-export async function mergeShards(shards, newObservations = []) {
-  // Phase 1: Collect all
-  const allObservations = [];
-
-  for (const shard of shards) {
-    if (shard.observations && Array.isArray(shard.observations)) {
-      allObservations.push(...shard.observations);
-    }
-  }
-
-  // Phase 2: Add new
-  allObservations.push(...newObservations);
-
-  // Phase 3: Dedup by content hash
-  const seen = new Map();
-  const deduped = [];
-
-  for (const obs of allObservations) {
-    // Create content hash
-    const contentKey = `${obs.agent}|${obs.kind}|${obs.subject}|${obs.predicate || ''}|${obs.object || ''}`;
-    const contentHash = computeSimpleHash(contentKey);
-
-    if (!seen.has(contentHash)) {
-      seen.set(contentHash, true);
-      deduped.push(obs);
-    }
-  }
-
-  // Phase 4: Sort deterministically
-  deduped.sort((a, b) => {
-    const aTs = new Date(a.timestamp).getTime();
-    const bTs = new Date(b.timestamp).getTime();
-    return aTs - bTs;
-  });
-
-  return deduped;
+export async function mergeShards(shards, newObservations = [], options = {}) {
+  return mergeObservations(shards || [], newObservations || [], options).observations;
 }
 
 // ============================================================================

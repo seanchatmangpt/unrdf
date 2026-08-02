@@ -14,6 +14,7 @@ import { ProbeConfigSchema, validateProbeConfig } from './types.mjs';
 import { createGuardRegistry } from './guards.mjs';
 import { createAgentRegistry } from './agents/index.mjs';
 import { hashObservations, computeArtifactSummary } from './artifact.mjs';
+import { deterministicId, mergeObservations, runAgentPool, sortObservations } from './orchestration-core.mjs';
 
 /**
  * ProbeOrchestrator - Main orchestration engine
@@ -42,6 +43,11 @@ export class ProbeOrchestrator {
     this.storage = options.storage;
     this.guards = options.guards || createGuardRegistry();
     this.agents = options.agents || createAgentRegistry();
+    this.clock = options.clock || (() => Date.now());
+    this.idFactory = options.idFactory || randomUUID;
+    this.concurrency = Math.max(1, options.concurrency || 4);
+    this.agentTimeoutMs = options.agentTimeoutMs || null;
+    this.abortSignal = options.signal || null;
 
     /** @type {Set<string>} - Event listeners */
     this.listeners = new Map();
@@ -102,8 +108,10 @@ export class ProbeOrchestrator {
       throw new Error(`Invalid probe config: ${err.message}`);
     }
 
-    const startTime = Date.now();
-    const runId = randomUUID();
+    const startTime = this.clock();
+    const runId = config.deterministic
+      ? deterministicId('probe', { universe_id: config.universe_id, snapshot_id: config.snapshot_id || 'current', agents: config.agents || this.agents.list() })
+      : this.idFactory();
     const observations = [];
     const errors = [];
 
@@ -114,41 +122,59 @@ export class ProbeOrchestrator {
       // Phase 2: Parallel Agent Execution
       const agentIds = config.agents || this.agents.list();
 
-      const agentPromises = agentIds.map(agentId =>
-        this.executeAgent(agentId, config, observations, errors)
-      );
+      const pool = await runAgentPool(agentIds.map(agentId => ({
+        id: agentId,
+        timeoutMs: this.agentTimeoutMs || config.timeout_ms,
+        run: async signal => {
+          const agent = this.agents.get(agentId);
+          if (!agent) throw new Error(`Agent not found: ${agentId}`);
+          const results = await agent.scan({ ...config, signal });
+          if (!Array.isArray(results)) throw new TypeError(`Agent ${agentId} must return an observation array`);
+          return results;
+        },
+      })), {
+        concurrency: this.concurrency,
+        timeoutMs: this.agentTimeoutMs || config.timeout_ms,
+        signal: this.abortSignal,
+        now: this.clock,
+      });
 
-      await Promise.allSettled(agentPromises);
+      for (const result of pool.results) {
+        if (result.status === 'fulfilled') {
+          observations.push(...result.value);
+          this.emit('agent_complete', { agentId: result.id, observationCount: result.value.length, latency: result.durationMs });
+        } else {
+          errors.push({ agent: result.id, error: result.error.message, code: result.error.code || result.error.name });
+          this.emit('agent_error', { agentId: result.id, error: result.error.message });
+        }
+      }
+      observations.splice(0, observations.length, ...sortObservations(observations));
 
       this.emit('agents_complete', {
         runId,
         agentCount: agentIds.length,
         observationCount: observations.length,
+        failedAgentCount: pool.errors.length,
       });
 
       // Phase 3: Guard Validation
       const guardIds = config.guards || this.guards.list();
+      const guardInput = Object.freeze(sortObservations(observations));
+      const guardObservations = [];
       for (const guardId of guardIds) {
         try {
-          const violations = this.guards.validate(guardId, observations);
-          for (const violation of violations) {
-            observations.push({
-              id: randomUUID(),
+          const violations = this.guards.validate(guardId, guardInput);
+          for (const [violationIndex, violation] of violations.entries()) {
+            const body = { guardId, violationIndex, details: violation.details, runId };
+            guardObservations.push({
+              id: config.deterministic ? deterministicId('guard', body) : this.idFactory(),
               agent: `guard:${guardId}`,
-              timestamp: new Date().toISOString(),
+              timestamp: new Date(this.clock()).toISOString(),
               kind: 'guard_violation',
               severity: violation.severity,
               subject: 'artifact:self',
-              evidence: {
-                query: `guard_${guardId}`,
-                result: violation.details,
-                witnesses: [],
-              },
-              metrics: {
-                confidence: 1.0,
-                coverage: 1.0,
-                latency_ms: 0,
-              },
+              evidence: { query: `guard_${guardId}`, result: violation.details, witnesses: [] },
+              metrics: { confidence: 1.0, coverage: 1.0, latency_ms: 0 },
               tags: ['guard', guardId],
             });
           }
@@ -158,6 +184,8 @@ export class ProbeOrchestrator {
           this.emit('guard_error', { guardId, error: err.message });
         }
       }
+      observations.push(...guardObservations);
+      observations.splice(0, observations.length, ...sortObservations(observations));
 
       // Phase 4: Shard Merging
       let shardHash = '';
@@ -165,17 +193,13 @@ export class ProbeOrchestrator {
 
       if (config.distributed) {
         try {
-          const shards = await this.storage.fetchShards?.();
-          if (shards && shards.length > 0) {
-            shardCount = shards.length;
-            // Hash all shards together for determinism
-            const shardData = shards
-              .map(s => s.probe_run_id)
-              .sort()
-              .join('|');
-            shardHash = await this.hashString(shardData);
-            this.emit('shards_merged', { shardCount, shardHash });
-          }
+          const shards = await this.storage.fetchShards?.() || [];
+          const merged = mergeObservations(shards, observations, { conflictPolicy: 'latest' });
+          observations.splice(0, observations.length, ...merged.observations);
+          shardCount = shards.length + 1;
+          shardHash = await hashObservations(observations);
+          if (merged.conflicts.length) errors.push({ operation: 'shard_merge', code: 'SHARD_CONFLICTS_RESOLVED', count: merged.conflicts.length });
+          this.emit('shards_merged', { shardCount, shardHash, conflicts: merged.conflicts.length });
         } catch (err) {
           errors.push({ operation: 'shard_merge', error: err.message });
           this.emit('shard_merge_error', { error: err.message });
@@ -185,7 +209,7 @@ export class ProbeOrchestrator {
       }
 
       // Phase 5: Artifact Generation
-      const endTime = Date.now();
+      const endTime = this.clock();
       const executionTime = endTime - startTime;
 
       const artifact = {
@@ -263,7 +287,7 @@ export class ProbeOrchestrator {
         observations.push(...results);
       }
 
-      const endTime = Date.now();
+      const endTime = this.clock();
       this.emit('agent_complete', {
         agentId,
         observationCount: results.length,
@@ -282,13 +306,15 @@ export class ProbeOrchestrator {
    * @private
    */
   async hashString(data) {
-    // In production, use hash-wasm for Blake3
-    // For now, return placeholder
-    const encoder = new TextEncoder();
-    const buffer = encoder.encode(data);
-    // Would be: blake3(buffer).then(h => h.toString('hex'))
-    return 'blake3_placeholder_' + buffer.length.toString(16).padStart(64, '0');
+    try {
+      const { blake3 } = await import('hash-wasm');
+      return blake3(String(data));
+    } catch {
+      const { createHash } = await import('node:crypto');
+      return createHash('sha256').update(String(data)).digest('hex');
+    }
   }
+
 
   /**
    * Load artifact from storage

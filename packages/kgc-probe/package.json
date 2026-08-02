@@ -15,7 +15,8 @@
     "./cli": "./src/cli.mjs",
     "./utils": "./src/utils/index.mjs",
     "./utils/logger": "./src/utils/logger.mjs",
-    "./utils/errors": "./src/utils/errors.mjs"
+    "./utils/errors": "./src/utils/errors.mjs",
+    "./orchestration-core": "./src/orchestration-core.mjs"
   },
   "sideEffects": false,
   "files": [

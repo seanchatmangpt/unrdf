@@ -4,3 +4,5 @@
  */
 
 export { DynamoDBAdapter, createAdapterFromEnv } from './dynamodb-adapter.mjs';
+
+export * from './dynamodb-core.mjs';

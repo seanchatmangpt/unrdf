@@ -33,7 +33,23 @@ export {
 } from './sync-protocol.mjs';
 
 // Validation
-export { validateShacl, validateQuad } from './validate.mjs';
+export {
+  validateShacl,
+  validateQuad,
+  validateQuads,
+  validateDelta,
+  compileShapes,
+  compileShacl,
+  validateCompiledShacl,
+  validateShaclCore,
+  validateShaclDelta,
+  affectedFocusNodes,
+  evaluatePath,
+  readRdfList,
+  SH,
+  RDF,
+  XSD,
+} from './validate.mjs';
 
 // Observability
 export { createObservabilityManager } from './observability.mjs';

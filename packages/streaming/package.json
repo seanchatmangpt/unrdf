@@ -9,7 +9,9 @@
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./processor": "./src/processor.mjs"
+    "./processor": "./src/processor.mjs",
+    "./shacl-core": "./src/shacl-core.mjs",
+    "./validate": "./src/validate.mjs"
   },
   "sideEffects": false,
   "files": [
