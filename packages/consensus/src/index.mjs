@@ -9,23 +9,11 @@
  * @example
  * import { createRaftCoordinator, createClusterManager, createDistributedStateMachine } from '@unrdf/consensus';
  *
- * // Initialize coordinator
- * const coordinator = createRaftCoordinator({
- *   nodeId: 'node-1',
- *   port: 8080
- * });
+ * const coordinator = createRaftCoordinator({ nodeId: 'node-1', port: 8080 });
  * await coordinator.initialize();
- *
- * // Initialize cluster manager
- * const cluster = createClusterManager({ nodeId: 'node-1' });
- * await cluster.initialize(coordinator);
- *
- * // Initialize state machine
- * const state = createDistributedStateMachine({ nodeId: 'node-1' });
- * await state.initialize(coordinator);
  */
 
-export { RaftCoordinator, createRaftCoordinator } from './raft/raft-coordinator.mjs';
+export { RaftCoordinator, createRaftCoordinator } from './raft/admitted-raft-coordinator.mjs';
 export { ClusterManager, createClusterManager, NodeHealth } from './membership/cluster-manager.mjs';
 export {
   DistributedStateMachine,
