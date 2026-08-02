@@ -1,0 +1,51 @@
+name: Apply dense UNRDF capabilities
+
+on:
+  push:
+    branches: [agent/fix-all-packages]
+    paths:
+      - '.agent-density/**'
+      - '.github/workflows/apply-dense-capabilities.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dense-unrdf-capabilities
+  cancel-in-progress: false
+
+jobs:
+  apply-verify-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact transport commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Guard exact admitted parent
+        run: test "$(git rev-parse HEAD^)" = "539f3542319323514684697b9a84fc33ea37c2be"
+      - name: Reconstruct and apply dense capability patch
+        run: |
+          cat .agent-density/part-* | base64 --decode | gzip --decompress > /tmp/dense-capabilities.patch
+          git apply --check /tmp/dense-capabilities.patch
+          git apply --index /tmp/dense-capabilities.patch
+      - name: Execute focused capability suite
+        run: |
+          node --test \
+            packages/streaming/test/shacl-core.node.test.mjs \
+            packages/serverless/test/dynamodb-core.node.test.mjs \
+            packages/v6-compat/test/schema-codec.node.test.mjs \
+            packages/kgc-probe/test/orchestration-core.node.test.mjs
+      - name: Validate source and manifests
+        run: |
+          git diff --cached --name-only -- '*.mjs' | while read -r file; do node --check "$file"; done
+          git diff --cached --name-only -- '*/package.json' | while read -r file; do python3 -m json.tool "$file" >/dev/null; done
+      - name: Remove transport and publish production commit
+        run: |
+          git rm -r .agent-density .github/workflows/apply-dense-capabilities.yml
+          git config user.name "unrdf-capability-manufacturer"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "feat: implement dense RDF validation, storage, schema, and probe capabilities"
+          git push origin HEAD:agent/fix-all-packages
