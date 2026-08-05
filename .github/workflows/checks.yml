@@ -1,15 +1,40 @@
 name: checks
-on: { push: {}, pull_request: {} }
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
-      - run: npm i -fg corepack && corepack enable
-      - uses: actions/setup-node@v4
-        with: { node-version: lts/*, cache: "pnpm" }
-      - run: pnpm install
-      - run: pnpm run lint
-      - run: pnpm vitest --coverage
-      # - uses: codecov/codecov-action@v5
-      #   with: { token: "${{ secrets.CODECOV_TOKEN }}" }
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install exact dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Test with coverage
+        run: pnpm vitest --coverage

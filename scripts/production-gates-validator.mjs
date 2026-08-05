@@ -25,6 +25,16 @@ function stable(value) {
   return value;
 }
 
+function currentRevision() {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA;
+  const result = spawnSync('git', ['rev-parse', 'HEAD'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: 5_000,
+  });
+  return result.status === 0 ? result.stdout.trim() : null;
+}
+
 function execute(command, args, timeoutMs) {
   const startedAt = Date.now();
   const result = spawnSync(command, args, {
@@ -36,18 +46,26 @@ function execute(command, args, timeoutMs) {
   });
   const stdout = result.stdout || '';
   const stderr = result.stderr || '';
-  return {
+  const execution = {
     command: [command, ...args],
     exitCode: result.status,
     signal: result.signal,
     timedOut: result.error?.code === 'ETIMEDOUT',
     spawnError: result.error ? result.error.message : null,
     durationMs: Date.now() - startedAt,
+    stdoutBytes: Buffer.byteLength(stdout),
+    stderrBytes: Buffer.byteLength(stderr),
     stdoutDigest: digest(stdout),
     stderrDigest: digest(stderr),
     stdoutTail: stdout.slice(-4000),
     stderrTail: stderr.slice(-4000),
   };
+
+  Object.defineProperties(execution, {
+    stdout: { value: stdout, enumerable: false },
+    stderr: { value: stderr, enumerable: false },
+  });
+  return execution;
 }
 
 function commandGate(number, name, command, args, timeoutMs, inspect = null) {
@@ -69,7 +87,14 @@ function commandGate(number, name, command, args, timeoutMs, inspect = null) {
       }
       if (inspect) {
         const inspection = inspect(execution);
-        if (!inspection.ok) return { status: 'FAIL', reason: inspection.reason, execution, evidence: inspection.evidence };
+        if (!inspection.ok) {
+          return {
+            status: 'FAIL',
+            reason: inspection.reason,
+            execution,
+            evidence: inspection.evidence,
+          };
+        }
         return { status: 'PASS', execution, evidence: inspection.evidence };
       }
       return { status: 'PASS', execution };
@@ -90,11 +115,15 @@ function parseCoverage() {
   const belowThreshold = Object.entries(metrics).filter(([, value]) => value < 80);
   return belowThreshold.length === 0
     ? { ok: true, evidence: { threshold: 80, metrics } }
-    : { ok: false, reason: 'COVERAGE_BELOW_THRESHOLD', evidence: { threshold: 80, metrics, belowThreshold } };
+    : {
+        ok: false,
+        reason: 'COVERAGE_BELOW_THRESHOLD',
+        evidence: { threshold: 80, metrics, belowThreshold },
+      };
 }
 
 function inspectOtel(execution) {
-  const output = `${execution.stdoutTail}\n${execution.stderrTail}`;
+  const output = `${execution.stdout}\n${execution.stderr}`;
   const scoreMatch = output.match(/Score:\s*(\d+)\/100/i);
   if (!scoreMatch) return { ok: false, reason: 'OTEL_SCORE_NOT_OBSERVED' };
   const score = Number(scoreMatch[1]);
@@ -103,9 +132,26 @@ function inspectOtel(execution) {
     : { ok: false, reason: 'OTEL_SCORE_BELOW_THRESHOLD', evidence: { score, threshold: 80 } };
 }
 
+function inspectWip(execution) {
+  try {
+    const audit = JSON.parse(execution.stdout);
+    const actionable = audit.summary?.actionable;
+    const digestValid = /^[a-f0-9]{64}$/.test(audit.digest || '');
+    return audit.standing === 'ALIVE' && actionable === 0 && digestValid
+      ? { ok: true, evidence: { standing: audit.standing, actionable, digest: audit.digest } }
+      : {
+          ok: false,
+          reason: 'WIP_AUDIT_NOT_ALIVE',
+          evidence: { standing: audit.standing, actionable, digestValid },
+        };
+  } catch {
+    return { ok: false, reason: 'WIP_AUDIT_JSON_NOT_OBSERVED' };
+  }
+}
+
 function inspectAudit(execution) {
   try {
-    const audit = JSON.parse(execution.stdoutTail);
+    const audit = JSON.parse(execution.stdout);
     const vulnerabilities = audit.metadata?.vulnerabilities || {};
     const high = vulnerabilities.high || 0;
     const critical = vulnerabilities.critical || 0;
@@ -125,7 +171,14 @@ const gates = [
   commandGate(5, 'Performance Benchmarks', 'pnpm', ['benchmark:core'], 60_000),
   commandGate(6, 'Examples', process.execPath, ['scripts/validate-all-examples.mjs'], 120_000),
   commandGate(7, 'Build', 'pnpm', ['build'], 120_000),
-  commandGate(8, 'Executable WIP Audit', process.execPath, ['scripts/audit-wip.mjs', '--scope', 'packages', '--scope', 'scripts', '--json'], 60_000),
+  commandGate(
+    8,
+    'Executable WIP Audit',
+    process.execPath,
+    ['scripts/audit-wip.mjs', '--scope', 'packages', '--scope', 'scripts', '--json'],
+    60_000,
+    inspectWip
+  ),
   commandGate(9, 'Security Audit', 'pnpm', ['audit', '--audit-level', 'high', '--json'], 120_000, inspectAudit),
   commandGate(10, 'Documentation Accuracy', process.execPath, ['scripts/validate-docs.mjs'], 120_000),
 ];
@@ -167,6 +220,7 @@ function main() {
     schema: 'urn:unrdf:production-gates-receipt:v1',
     subject: {
       root: ROOT,
+      revision: currentRevision(),
       selectedGate: gateNumber,
       gateCount: admittedGates.length,
     },
