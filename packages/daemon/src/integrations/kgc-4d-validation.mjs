@@ -5,6 +5,8 @@
 
 import { randomUUID } from 'node:crypto';
 
+const HASH_PATTERN = /^[a-f0-9]{64}$/i;
+
 export function validateEventLogEntry(entry) {
   if (!entry.id || typeof entry.id !== 'string') throw new TypeError('id must be string');
   if (typeof entry.timestamp !== 'bigint') throw new TypeError('timestamp must be bigint');
@@ -12,8 +14,12 @@ export function validateEventLogEntry(entry) {
   if (!entry.operationId || typeof entry.operationId !== 'string') throw new TypeError('operationId must be string');
   if (!['enqueued', 'started', 'success', 'failure'].includes(entry.status)) throw new TypeError('invalid status');
   if (entry.payload && typeof entry.payload !== 'object') throw new TypeError('payload must be object');
-  if (!entry.previousHash || typeof entry.previousHash !== 'string') throw new TypeError('previousHash must be string');
-  if (!entry.currentHash || typeof entry.currentHash !== 'string') throw new TypeError('currentHash must be string');
+  if (typeof entry.previousHash !== 'string' || !HASH_PATTERN.test(entry.previousHash)) {
+    throw new TypeError('previousHash must be a 64-character hexadecimal hash');
+  }
+  if (typeof entry.currentHash !== 'string' || !HASH_PATTERN.test(entry.currentHash)) {
+    throw new TypeError('currentHash must be a 64-character hexadecimal hash');
+  }
   if (entry.previousEventId !== null && entry.previousEventId !== undefined && typeof entry.previousEventId !== 'string') {
     throw new TypeError('previousEventId must be string, null, or undefined');
   }

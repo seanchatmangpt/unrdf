@@ -28,6 +28,7 @@ describe('DaemonEventStore append-only transition law', () => {
     expect(await store.verifyTransitionChain()).toEqual({
       valid: true,
       count: 3,
+      operationCount: 1,
       head: success.currentHash,
       reason: null,
     });
@@ -57,6 +58,37 @@ describe('DaemonEventStore append-only transition law', () => {
     expect(store.getStats()).toEqual(before);
   });
 
+  it('refuses ambiguous evidence without changing state', async () => {
+    const store = new DaemonEventStore({ logger });
+    await store.initialize();
+    const before = store.getStats();
+    const cyclic = {};
+    cyclic.self = cyclic;
+    const sparse = [];
+    sparse.length = 1;
+
+    for (const payload of [
+      { value: Number.NaN },
+      { value: undefined },
+      { value: new Date() },
+      cyclic,
+      sparse,
+    ]) {
+      await expect(store.appendEvent('task', payload)).rejects.toThrow(TypeError);
+      expect(store.getStats()).toEqual(before);
+    }
+  });
+
+  it('refuses non-plain result values before a status transition', async () => {
+    const store = new DaemonEventStore({ logger });
+    const event = await store.appendEvent('task', { admitted: 1n });
+    const before = store.getStats();
+
+    await expect(store.updateEventStatus(event.operationId, 'success', new Map())).rejects.toThrow(TypeError);
+    expect(store.getStats()).toEqual(before);
+    expect(store.eventLog[0].status).toBe('enqueued');
+  });
+
   it('detects replacement tampering in the transition ledger', async () => {
     const store = new DaemonEventStore({ logger });
     await store.appendEvent('task', { input: 1 });
@@ -65,6 +97,19 @@ describe('DaemonEventStore append-only transition law', () => {
     const receipt = await store.verifyTransitionChain();
     expect(receipt.valid).toBe(false);
     expect(receipt.reason).toBe('CURRENT_HASH_MISMATCH');
+  });
+
+  it('binds per-operation ancestry and current views', async () => {
+    const ancestryStore = new DaemonEventStore({ logger });
+    const first = await ancestryStore.appendEvent('task', {});
+    await ancestryStore.updateEventStatus(first.operationId, 'started');
+    ancestryStore.transitionLog[1] = { ...ancestryStore.transitionLog[1], previousEventId: 'wrong' };
+    expect((await ancestryStore.verifyTransitionChain()).reason).toBe('PREVIOUS_EVENT_ID_MISMATCH');
+
+    const viewStore = new DaemonEventStore({ logger });
+    const current = await viewStore.appendEvent('task', {});
+    viewStore.eventLog[0] = { ...current, id: 'wrong' };
+    expect((await viewStore.verifyTransitionChain()).reason).toBe('CURRENT_VIEW_MISMATCH');
   });
 });
 

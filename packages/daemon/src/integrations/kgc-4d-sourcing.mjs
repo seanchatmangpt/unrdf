@@ -19,26 +19,113 @@ import {
   verifyMerkleProof,
 } from './kgc-4d-merkle.mjs';
 
-const HASH_SCHEMA = 'urn:unrdf:daemon:event-transition:v1';
+const HASH_SCHEMA = 'urn:unrdf:daemon:event-transition:v2';
 const TERMINAL_STATUSES = new Set(['success', 'failure']);
+const TEXT_ENCODER = new TextEncoder();
 
-function canonical(value) {
-  if (typeof value === 'bigint') return value.toString();
-  if (Array.isArray(value)) return value.map(canonical);
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
-  }
-  return value;
+function failEvidence(path, message) {
+  throw new TypeError(`${path}: ${message}`);
 }
 
-function clone(value) {
-  return value === undefined ? undefined : structuredClone(value);
+function admitEvidence(value, path = 'value', ancestors = new WeakSet()) {
+  if (value === null) return null;
+
+  switch (typeof value) {
+    case 'string':
+    case 'boolean':
+    case 'bigint':
+      return value;
+    case 'number':
+      if (!Number.isFinite(value)) failEvidence(path, 'numbers must be finite');
+      return value;
+    case 'undefined':
+    case 'function':
+    case 'symbol':
+      failEvidence(path, `${typeof value} is not deterministic evidence`);
+      break;
+    case 'object':
+      break;
+    default:
+      failEvidence(path, `unsupported value type ${typeof value}`);
+  }
+
+  if (ancestors.has(value)) failEvidence(path, 'cyclic evidence is not admitted');
+  ancestors.add(value);
+  try {
+    if (Array.isArray(value)) {
+      const ownKeys = Reflect.ownKeys(value).filter(key => key !== 'length');
+      if (ownKeys.some(key => typeof key !== 'string' || !/^(0|[1-9]\d*)$/.test(key))) {
+        failEvidence(path, 'arrays may not contain symbol or named properties');
+      }
+      const admitted = [];
+      for (let index = 0; index < value.length; index += 1) {
+        if (!Object.hasOwn(value, index)) failEvidence(`${path}[${index}]`, 'sparse arrays are not admitted');
+        const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+        if (!descriptor?.enumerable || !('value' in descriptor)) {
+          failEvidence(`${path}[${index}]`, 'array elements must be enumerable data properties');
+        }
+        admitted.push(admitEvidence(descriptor.value, `${path}[${index}]`, ancestors));
+      }
+      return admitted;
+    }
+
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      failEvidence(path, 'only plain records and arrays are admitted');
+    }
+
+    const admitted = {};
+    for (const key of Reflect.ownKeys(value).sort((left, right) => String(left).localeCompare(String(right)))) {
+      if (typeof key !== 'string') failEvidence(path, 'symbol keys are not admitted');
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor?.enumerable || !('value' in descriptor)) {
+        failEvidence(`${path}.${key}`, 'properties must be enumerable data properties');
+      }
+      Object.defineProperty(admitted, key, {
+        value: admitEvidence(descriptor.value, `${path}.${key}`, ancestors),
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      });
+    }
+    return admitted;
+  } finally {
+    ancestors.delete(value);
+  }
+}
+
+function canonicalBytes(value) {
+  if (value === null) return 'N;';
+  switch (typeof value) {
+    case 'string':
+      return `S${TEXT_ENCODER.encode(value).byteLength}:${value};`;
+    case 'boolean':
+      return value ? 'B1;' : 'B0;';
+    case 'number':
+      return `D${Object.is(value, -0) ? '-0' : String(value)};`;
+    case 'bigint':
+      return `I${value};`;
+    case 'object':
+      if (Array.isArray(value)) {
+        return `A${value.length}[${value.map(canonicalBytes).join('')}]`;
+      }
+      {
+        const keys = Object.keys(value).sort();
+        return `O${keys.length}{${keys.map(key => `${canonicalBytes(key)}${canonicalBytes(value[key])}`).join('')}}`;
+      }
+    default:
+      throw new TypeError(`Cannot canonically encode ${typeof value}`);
+  }
 }
 
 function deepFreeze(value) {
   if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
   for (const child of Object.values(value)) deepFreeze(child);
   return Object.freeze(value);
+}
+
+function invalidReceipt(index, reason, details = {}) {
+  return { valid: false, index, reason, ...details };
 }
 
 export class DaemonEventStore {
@@ -53,6 +140,7 @@ export class DaemonEventStore {
     this.freezeHistory = [];
     this.previousHash = '';
     this.universeState = new Map();
+    this._lastTimestamp = 0n;
     this._initialized = false;
   }
 
@@ -69,12 +157,12 @@ export class DaemonEventStore {
 
   _nextTimestamp() {
     const observed = this._getNs();
-    const previous = this.transitionLog.at(-1)?.timestamp;
-    return previous !== undefined && observed <= previous ? previous + 1n : observed;
+    this._lastTimestamp = observed <= this._lastTimestamp ? this._lastTimestamp + 1n : observed;
+    return this._lastTimestamp;
   }
 
   async _hash(data) {
-    return blake3(JSON.stringify(canonical(data)));
+    return blake3(canonicalBytes(data));
   }
 
   _hashMaterial(entry) {
@@ -99,10 +187,10 @@ export class DaemonEventStore {
       operationType: fields.operationType,
       operationId: fields.operationId,
       status: fields.status,
-      payload: clone(fields.payload) || {},
-      metadata: clone(fields.metadata) || {},
+      payload: admitEvidence(fields.payload ?? {}, 'payload'),
+      metadata: admitEvidence(fields.metadata ?? {}, 'metadata'),
       previousHash: this.previousHash,
-      previousEventId: fields.previousEventId || null,
+      previousEventId: fields.previousEventId ?? null,
     };
     candidate.currentHash = await this._hash(this._hashMaterial(candidate));
     validateEventLogEntry(candidate);
@@ -114,19 +202,19 @@ export class DaemonEventStore {
     if (typeof operationType !== 'string' || !operationType.trim()) {
       throw new TypeError('operationType must be non-empty string');
     }
-    if (payload && typeof payload !== 'object') {
-      throw new TypeError('payload must be object or undefined');
+    if (payload !== null && typeof payload !== 'object') {
+      throw new TypeError('payload must be object, null, or undefined');
     }
-    if (metadata && typeof metadata !== 'object') {
-      throw new TypeError('metadata must be object or undefined');
+    if (metadata !== null && typeof metadata !== 'object') {
+      throw new TypeError('metadata must be object, null, or undefined');
     }
 
     const entry = await this._manufactureEntry({
-      operationType,
+      operationType: operationType.trim(),
       operationId: generateUUID(),
       status: 'enqueued',
-      payload,
-      metadata,
+      payload: payload ?? {},
+      metadata: metadata ?? {},
       previousEventId: null,
     });
 
@@ -134,7 +222,7 @@ export class DaemonEventStore {
     this.transitionLog.push(entry);
     this.eventHashMap.set(entry.operationId, entry);
     this.previousHash = entry.currentHash;
-    this.logger.log(`[EventStore] Appended: ${operationType} (${entry.operationId})`);
+    this.logger.log(`[EventStore] Appended: ${entry.operationType} (${entry.operationId})`);
     return entry;
   }
 
@@ -156,8 +244,8 @@ export class DaemonEventStore {
       throw new Error(`Operation ${operationId} is already started`);
     }
 
-    const payload = clone(current.payload) || {};
-    payload.result = clone(result);
+    const payload = admitEvidence(current.payload, 'payload');
+    payload.result = admitEvidence(result, 'result');
     const next = await this._manufactureEntry({
       operationType: current.operationType,
       operationId,
@@ -285,34 +373,125 @@ export class DaemonEventStore {
   async verifyTransitionChain() {
     await this.initialize();
     let previousHash = await blake3('');
+    let previousTimestamp = 0n;
+    const latestByOperation = new Map();
+
     for (let index = 0; index < this.transitionLog.length; index += 1) {
       const entry = this.transitionLog[index];
+      try {
+        validateEventLogEntry(entry);
+      } catch (error) {
+        return invalidReceipt(index, 'ENTRY_INVALID', { message: error.message });
+      }
+      if (entry.timestamp <= previousTimestamp) {
+        return invalidReceipt(index, 'TIMESTAMP_NOT_MONOTONIC', {
+          previous: previousTimestamp,
+          observed: entry.timestamp,
+        });
+      }
       if (entry.previousHash !== previousHash) {
-        return {
-          valid: false,
-          index,
-          reason: 'PREVIOUS_HASH_MISMATCH',
+        return invalidReceipt(index, 'PREVIOUS_HASH_MISMATCH', {
           expected: previousHash,
           observed: entry.previousHash,
-        };
+        });
       }
+
+      const priorOperationEntry = latestByOperation.get(entry.operationId);
+      if (!priorOperationEntry) {
+        if (entry.status !== 'enqueued') {
+          return invalidReceipt(index, 'INITIAL_STATUS_MISMATCH', { observed: entry.status });
+        }
+        if (entry.previousEventId !== null) {
+          return invalidReceipt(index, 'INITIAL_PREVIOUS_EVENT_ID_MISMATCH', {
+            observed: entry.previousEventId,
+          });
+        }
+      } else {
+        if (entry.previousEventId !== priorOperationEntry.id) {
+          return invalidReceipt(index, 'PREVIOUS_EVENT_ID_MISMATCH', {
+            expected: priorOperationEntry.id,
+            observed: entry.previousEventId,
+          });
+        }
+        if (TERMINAL_STATUSES.has(priorOperationEntry.status)) {
+          return invalidReceipt(index, 'POST_TERMINAL_TRANSITION', {
+            previousStatus: priorOperationEntry.status,
+            observed: entry.status,
+          });
+        }
+        if (priorOperationEntry.status === 'started' && entry.status === 'started') {
+          return invalidReceipt(index, 'DUPLICATE_STARTED_TRANSITION');
+        }
+      }
+
       const expected = await this._hash(this._hashMaterial(entry));
       if (entry.currentHash !== expected) {
-        return {
-          valid: false,
-          index,
-          reason: 'CURRENT_HASH_MISMATCH',
+        return invalidReceipt(index, 'CURRENT_HASH_MISMATCH', {
           expected,
           observed: entry.currentHash,
-        };
+        });
       }
+
       previousHash = entry.currentHash;
+      previousTimestamp = entry.timestamp;
+      latestByOperation.set(entry.operationId, entry);
     }
+
+    if (previousHash !== this.previousHash) {
+      return invalidReceipt(this.transitionLog.length, 'HEAD_HASH_MISMATCH', {
+        expected: previousHash,
+        observed: this.previousHash,
+      });
+    }
+    if (this.eventLog.length !== latestByOperation.size) {
+      return invalidReceipt(this.transitionLog.length, 'CURRENT_VIEW_SIZE_MISMATCH', {
+        expected: latestByOperation.size,
+        observed: this.eventLog.length,
+      });
+    }
+
+    const observedOperations = new Set();
+    for (let index = 0; index < this.eventLog.length; index += 1) {
+      const entry = this.eventLog[index];
+      if (observedOperations.has(entry.operationId)) {
+        return invalidReceipt(index, 'CURRENT_VIEW_DUPLICATE_OPERATION', {
+          operationId: entry.operationId,
+        });
+      }
+      observedOperations.add(entry.operationId);
+      const expected = latestByOperation.get(entry.operationId);
+      if (!expected || entry.id !== expected.id || entry.currentHash !== expected.currentHash) {
+        return invalidReceipt(index, 'CURRENT_VIEW_MISMATCH', {
+          operationId: entry.operationId,
+          expectedId: expected?.id || null,
+          observedId: entry.id,
+        });
+      }
+    }
+
+    if (this.eventHashMap.size !== latestByOperation.size) {
+      return invalidReceipt(this.transitionLog.length, 'CURRENT_INDEX_SIZE_MISMATCH', {
+        expected: latestByOperation.size,
+        observed: this.eventHashMap.size,
+      });
+    }
+    for (const [operationId, expected] of latestByOperation) {
+      const observed = this.eventHashMap.get(operationId);
+      if (!observed || observed.id !== expected.id || observed.currentHash !== expected.currentHash) {
+        return invalidReceipt(this.transitionLog.length, 'CURRENT_INDEX_MISMATCH', {
+          operationId,
+          expectedId: expected.id,
+          observedId: observed?.id || null,
+        });
+      }
+    }
+
     return {
-      valid: previousHash === this.previousHash,
+      valid: true,
       count: this.transitionLog.length,
+      operationCount: latestByOperation.size,
       head: previousHash,
-      reason: previousHash === this.previousHash ? null : 'HEAD_HASH_MISMATCH',
+      reason: null,
     };
   }
 
