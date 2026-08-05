@@ -26,7 +26,16 @@
     "./utils/semantic-bridge": "./src/utils/semantic-bridge.mjs",
     "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
     "./viz/query-explainer": "./src/viz/query-explainer.mjs",
-    "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs"
+    "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs",
+    "./capabilities": "./src/capability-ledger.mjs",
+    "./capability-graph": "./src/capability-graph.mjs",
+    "./evidence": "./src/evidence-store.mjs",
+    "./receipts": "./src/receipt-chain.mjs",
+    "./execution-plan": "./src/execution-plan.mjs",
+    "./admission": "./src/admission-boundary.mjs",
+    "./command-verifier": "./src/command-verifier.mjs",
+    "./replay": "./src/replay-runner.mjs",
+    "./transaction-core": "./src/utils/transaction-core.mjs"
   },
   "sideEffects": false,
   "files": [

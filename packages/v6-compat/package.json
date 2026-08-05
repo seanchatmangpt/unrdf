@@ -8,7 +8,8 @@
     ".": "./src/index.mjs",
     "./adapters": "./src/adapters.mjs",
     "./lint-rules": "./src/lint-rules.mjs",
-    "./schema-generator": "./src/schema-generator.mjs"
+    "./schema-generator": "./src/schema-generator.mjs",
+    "./schema-codec": "./src/schema-codec.mjs"
   },
   "sideEffects": false,
   "files": [

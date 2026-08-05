@@ -4,7 +4,6 @@
   "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
   "type": "module",
   "main": "./src/index.mjs",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.mjs",
     "./gateway": "./src/gateway.mjs",
@@ -24,8 +23,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "build": "unbuild && tsc --emitDeclarationOnly || true",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build": "node --check src/index.mjs && node --check src/gateway.mjs && node --check src/operation-detector.mjs && node --check src/validators.mjs"
   },
   "engines": {
     "node": ">=18.0.0",

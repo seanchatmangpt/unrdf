@@ -1,209 +1,146 @@
 /**
- * @file SHACL Validation - Validation logic for streaming RDF data
- * @module streaming/validate
+ * @file SHACL validation for RDF streams.
  *
- * @description
- * Provides SHACL validation functionality for RDF streams with support
- * for full validation, incremental validation, and delta-only validation.
+ * Compiles SHACL Core shapes once, validates complete datasets or affected
+ * focus nodes for a delta, and returns deterministic violation structures.
  */
 
 import { z } from 'zod';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { createStore } from '@unrdf/oxigraph';
+import {
+  compileShacl,
+  validateCompiledShacl,
+  validateShaclCore,
+  validateShaclDelta,
+  affectedFocusNodes,
+  evaluatePath,
+  readRdfList,
+  SH,
+  RDF,
+  XSD,
+} from './shacl-core.mjs';
 
-const { namedNode } = dataFactory;
-
-const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-const SHACL_NODE_SHAPE = namedNode('http://www.w3.org/ns/shacl#NodeShape');
-const SHACL_PROPERTY_SHAPE = namedNode('http://www.w3.org/ns/shacl#PropertyShape');
-
-/**
- * SHACL validation options schema
- */
 export const ValidationOptionsSchema = z.object({
   strict: z.boolean().default(false),
   includeDetails: z.boolean().default(true),
-  maxViolations: z.number().positive().optional(),
-});
-
-/**
- * SHACL validation result schema
- */
-export const ShaclValidationResultSchema = z.object({
-  conforms: z.boolean(),
-  results: z.array(z.any()).default([]),
+  maxViolations: z.number().int().positive().optional(),
+  maxDepth: z.number().int().positive().default(64),
+  maxNodes: z.number().int().positive().default(100_000),
   timestamp: z.number().optional(),
 });
 
-/**
- * Validate RDF data against SHACL shapes
- *
- * @param {import('@unrdf/oxigraph').OxigraphStore} dataStore - Store containing data to validate
- * @param {import('@unrdf/oxigraph').OxigraphStore} shapesStore - Store containing SHACL shapes
- * @param {Object} [options] - Validation options
- * @param {boolean} [options.strict=false] - Strict validation mode
- * @param {boolean} [options.includeDetails=true] - Include detailed violation information
- * @param {number} [options.maxViolations] - Maximum number of violations to report
- * @returns {Promise<Object>} Validation result with conforms flag and violations
- */
-export async function validateShacl(dataStore, shapesStore, options = {}) {
+export const ShaclValidationResultSchema = z.object({
+  conforms: z.boolean(),
+  results: z.array(z.any()).default([]),
+  warnings: z.array(z.any()).default([]),
+  checkedShapes: z.number().int().nonnegative().default(0),
+  checkedFocusNodes: z.number().int().nonnegative().default(0),
+  timestamp: z.number(),
+});
+
+function normalizeResult(result, options) {
+  const normalized = {
+    ...result,
+    warnings: result.warnings || [],
+    timestamp: options.timestamp ?? Date.now(),
+  };
+  if (!options.includeDetails) {
+    normalized.results = normalized.results.map(({ severity, sourceConstraintComponent, focusNode, resultPath }) => ({
+      severity,
+      sourceConstraintComponent,
+      focusNode,
+      resultPath,
+    }));
+  }
+  return ShaclValidationResultSchema.parse(normalized);
+}
+
+/** Compile a shapes graph into an immutable validation plan. */
+export function compileShapes(shapesStore) {
+  return compileShacl(shapesStore);
+}
+
+/** Validate an RDF dataset against SHACL Core shapes. */
+export async function validateShacl(dataStore, shapesStoreOrCompiled, options = {}) {
   const validatedOptions = ValidationOptionsSchema.parse(options);
-
-  // Basic validation implementation
-  // In production, this would use a proper SHACL validator library
-  // For now, we provide a minimal implementation that checks basic patterns
-
-  const violations = [];
-  const warnings = [];
-
   try {
-    // Extract all shapes from the shapes store
-    const shapes = extractShapes(shapesStore);
-
-    // Validate each shape against the data
-    for (const shape of shapes) {
-      const shapeViolations = await validateShape(dataStore, shape, validatedOptions);
-      violations.push(...shapeViolations);
-
-      // Stop early if max violations reached
-      if (validatedOptions.maxViolations && violations.length >= validatedOptions.maxViolations) {
-        break;
-      }
-    }
-
-    return {
-      conforms: violations.length === 0,
-      results: violations,
-      warnings,
-      timestamp: Date.now(),
-    };
+    const result = shapesStoreOrCompiled?.shapesById
+      ? validateCompiledShacl(dataStore, shapesStoreOrCompiled, validatedOptions)
+      : validateShaclCore(dataStore, shapesStoreOrCompiled, validatedOptions);
+    return normalizeResult(result, validatedOptions);
   } catch (error) {
-    throw error;
+    if (validatedOptions.strict) throw error;
+    return normalizeResult({
+      conforms: false,
+      checkedShapes: 0,
+      checkedFocusNodes: 0,
+      warnings: [{ code: 'SHACL_VALIDATION_ERROR', message: error.message }],
+      results: [{
+        severity: SH.Violation,
+        sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
+        focusNode: null,
+        resultPath: null,
+        value: null,
+        message: error.message,
+      }],
+    }, validatedOptions);
   }
 }
 
-/**
- * Extract SHACL shapes from shapes store
- *
- * @param {import('@unrdf/oxigraph').OxigraphStore} shapesStore - Store containing shapes
- * @returns {Array<Object>} Array of shape definitions
- * @private
- */
-function extractShapes(shapesStore) {
-  const shapes = [];
-
+/** Validate only focus nodes affected by additions/deletions in a stream delta. */
+export async function validateDelta(dataStore, shapesStoreOrCompiled, delta, options = {}) {
+  const validatedOptions = ValidationOptionsSchema.parse(options);
   try {
-    // Query for all sh:NodeShape and sh:PropertyShape instances
-    const shapeQuads = shapesStore.getQuads(
-      null,
-      RDF_TYPE,
-      SHACL_NODE_SHAPE,
-      null
-    );
-
-    for (const quad of shapeQuads) {
-      shapes.push({
-        id: quad.subject.value,
-        type: 'NodeShape',
-        // Additional shape properties would be extracted here
-      });
-    }
-
-    const propertyShapeQuads = shapesStore.getQuads(
-      null,
-      RDF_TYPE,
-      SHACL_PROPERTY_SHAPE,
-      null
-    );
-
-    for (const quad of propertyShapeQuads) {
-      shapes.push({
-        id: quad.subject.value,
-        type: 'PropertyShape',
-        // Additional shape properties would be extracted here
-      });
-    }
+    const result = validateShaclDelta(dataStore, shapesStoreOrCompiled, delta, validatedOptions);
+    return normalizeResult(result, validatedOptions);
   } catch (error) {
-    throw new Error(`Failed to extract SHACL shapes: ${error.message}`, { cause: error });
+    if (validatedOptions.strict) throw error;
+    return normalizeResult({
+      conforms: false,
+      checkedShapes: 0,
+      checkedFocusNodes: 0,
+      warnings: [{ code: 'SHACL_DELTA_VALIDATION_ERROR', message: error.message }],
+      results: [{
+        severity: SH.Violation,
+        sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
+        focusNode: null,
+        resultPath: null,
+        value: null,
+        message: error.message,
+      }],
+    }, validatedOptions);
   }
-
-  return shapes;
 }
 
-/**
- * Validate data against a single shape
- *
- * @param {import('@unrdf/oxigraph').OxigraphStore} dataStore - Data store
- * @param {Object} shape - Shape definition
- * @param {Object} options - Validation options
- * @returns {Promise<Array>} Array of violations
- * @private
- */
-async function validateShape(dataStore, shape, options) {
-  const violations = [];
-
-  try {
-    // Minimal shape validation logic
-    // In production, implement full SHACL validation spec
-    // For now, just check if shape targets exist
-
-    // This is a placeholder implementation
-    // Real SHACL validation would check constraints like:
-    // - sh:minCount, sh:maxCount
-    // - sh:datatype
-    // - sh:pattern
-    // - sh:class
-    // - sh:nodeKind
-    // etc.
-
-    if (options.includeDetails) {
-      // Include shape ID in validation context
-      console.debug(`[validateShape] Validating shape: ${shape.id}`);
-    }
-  } catch (error) {
-    if (options.strict) {
-      throw error;
-    }
-
-    violations.push({
-      severity: 'http://www.w3.org/ns/shacl#Violation',
-      message: `Shape validation error for ${shape.id}: ${error.message}`,
-      sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
-      focusNode: shape.id,
-    });
-  }
-
-  return violations;
-}
-
-/**
- * Validate a single triple/quad
- *
- * @param {Object} quad - Quad to validate
- * @param {import('@unrdf/oxigraph').OxigraphStore} shapesStore - Shapes store
- * @param {Object} [options] - Validation options
- * @returns {Promise<Object>} Validation result
- */
-export async function validateQuad(quad, shapesStore, options = {}) {
+/** Validate a single RDF/JS quad. */
+export async function validateQuad(quad, shapesStoreOrCompiled, options = {}) {
+  if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError('validateQuad requires an RDF/JS quad');
   const tempStore = createStore();
   tempStore.addQuad(quad);
-
-  return validateShacl(tempStore, shapesStore, options);
+  return validateShacl(tempStore, shapesStoreOrCompiled, options);
 }
 
-/**
- * Validate multiple quads as a batch
- *
- * @param {Array<Object>} quads - Quads to validate
- * @param {import('@unrdf/oxigraph').OxigraphStore} shapesStore - Shapes store
- * @param {Object} [options] - Validation options
- * @returns {Promise<Object>} Validation result
- */
-export async function validateQuads(quads, shapesStore, options = {}) {
+/** Validate an iterable of RDF/JS quads as one dataset. */
+export async function validateQuads(quads, shapesStoreOrCompiled, options = {}) {
   const tempStore = createStore();
-
-  for (const quad of quads) {
+  let count = 0;
+  for (const quad of quads || []) {
+    if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError(`Invalid RDF/JS quad at index ${count}`);
     tempStore.addQuad(quad);
+    count += 1;
   }
-
-  return validateShacl(tempStore, shapesStore, options);
+  return validateShacl(tempStore, shapesStoreOrCompiled, options);
 }
+
+export {
+  compileShacl,
+  validateCompiledShacl,
+  validateShaclCore,
+  validateShaclDelta,
+  affectedFocusNodes,
+  evaluatePath,
+  readRdfList,
+  SH,
+  RDF,
+  XSD,
+};

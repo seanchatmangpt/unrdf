@@ -25,8 +25,7 @@
     "./templates/*": "./src/templates/*"
   },
   "scripts": {
-    "build": "unbuild && tsc --emitDeclarationOnly || true",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build": "unbuild",
     "build:watch": "nodemon --watch src --exec 'npm run build'",
     "test": "vitest run",
     "test:watch": "vitest",

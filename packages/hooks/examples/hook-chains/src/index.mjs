@@ -12,7 +12,6 @@
  */
 
 import { namedNode, literal, quad, createStore } from '@unrdf/core';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   defineHook,
   createHookRegistry,
@@ -59,22 +58,19 @@ const validateIRIs = defineHook({
 const normalizeWhitespace = defineHook({
   name: 'normalize-whitespace',
   trigger: 'before-add',
-  transform: quad => {
-    if (quad.object.termType !== 'Literal') {
-      return quad;
+  transform: inputQuad => {
+    if (inputQuad.object.termType !== 'Literal') {
+      return inputQuad;
     }
 
     // Normalize whitespace: trim and collapse multiple spaces
-    const normalized = quad.object.value.trim().replace(/\s+/g, ' ');
+    const normalized = inputQuad.object.value.trim().replace(/\s+/g, ' ');
 
-    return dataFactory.quad(
-      quad.subject,
-      quad.predicate,
-      dataFactory.literal(
-        normalized,
-        quad.object.language || quad.object.datatype
-      ),
-      quad.graph
+    return quad(
+      inputQuad.subject,
+      inputQuad.predicate,
+      literal(normalized, inputQuad.object.language || inputQuad.object.datatype),
+      inputQuad.graph
     );
   },
   metadata: {
@@ -110,17 +106,17 @@ const validateLiteralLength = defineHook({
 const addProvenance = defineHook({
   name: 'add-provenance',
   trigger: 'before-add',
-  transform: quad => {
+  transform: inputQuad => {
     // If no graph specified, add provenance graph
-    if (!quad.graph || quad.graph.termType === 'DefaultGraph') {
-      return dataFactory.quad(
-        quad.subject,
-        quad.predicate,
-        quad.object,
+    if (!inputQuad.graph || inputQuad.graph.termType === 'DefaultGraph') {
+      return quad(
+        inputQuad.subject,
+        inputQuad.predicate,
+        inputQuad.object,
         namedNode(`http://example.org/provenance/${Date.now()}`)
       );
     }
-    return quad;
+    return inputQuad;
   },
   metadata: {
     description: 'Step 4: Add provenance metadata',

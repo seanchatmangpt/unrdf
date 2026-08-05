@@ -10,8 +10,7 @@
  * @module hooks-example-policy
  */
 
-import { namedNode, literal, quad, createStore, addQuad } from '@unrdf/core';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { namedNode, literal, quad, createStore } from '@unrdf/core';
 import {
   defineHook,
   createHookRegistry,
@@ -81,19 +80,19 @@ const dataTypePolicy = defineHook({
 const privacyPolicy = defineHook({
   name: 'privacy-policy',
   trigger: 'before-add',
-  transform: quad => {
-    if (quad.predicate.value === 'http://xmlns.com/foaf/0.1/mbox') {
-      if (quad.object.termType === 'Literal') {
+  transform: inputQuad => {
+    if (inputQuad.predicate.value === 'http://xmlns.com/foaf/0.1/mbox') {
+      if (inputQuad.object.termType === 'Literal') {
         // Redact email - replace with placeholder
-        return dataFactory.quad(
-          quad.subject,
-          quad.predicate,
-          dataFactory.literal('[REDACTED]'),
-          quad.graph
+        return quad(
+          inputQuad.subject,
+          inputQuad.predicate,
+          literal('[REDACTED]'),
+          inputQuad.graph
         );
       }
     }
-    return quad;
+    return inputQuad;
   },
   metadata: {
     description: 'Privacy policy - redact email addresses',

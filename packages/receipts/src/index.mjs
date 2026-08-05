@@ -62,3 +62,6 @@ export {
   verifyPQMerkleProof,
   getPQMerkleTreeInfo,
 } from './pq-merkle.mjs';
+
+// Deterministic receipts, chains, Merkle membership, disclosure, and replay
+export { ReceiptLedger, ReceiptVerificationError, createReceipt, verifyReceipt, verifyReceiptChain, signReceipt, verifySignature, buildReceiptMerkleTree, createReceiptMerkleProof, verifyReceiptMerkleProof, createSelectiveDisclosure, verifySelectiveDisclosure, verifyReplay, canonicalJson as canonicalReceiptJson, hashValue as hashReceiptValue } from './receipt-verifier.mjs';

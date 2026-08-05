@@ -17,6 +17,27 @@
 
 export { createProbeOrchestrator, ProbeOrchestrator } from './orchestrator.mjs';
 
+
+// ============================================================================
+// DETERMINISTIC ORCHESTRATION CORE
+// ============================================================================
+
+export {
+  canonicalize,
+  canonicalJson,
+  digest,
+  deterministicId,
+  observationIdentity,
+  sortObservations,
+  mergeObservations,
+  createArtifactManifest,
+  sealArtifact,
+  verifyArtifact as verifyArtifactManifest,
+  replayArtifacts,
+  withTimeout,
+  runAgentPool,
+} from './orchestration-core.mjs';
+
 // ============================================================================
 // GUARDS REGISTRY
 // ============================================================================

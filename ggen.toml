@@ -1,0 +1,50 @@
+[project]
+name = "unrdf-package-reconstitution"
+version = "26.8.1"
+description = "Manufacture and verify every UNRDF workspace package from admitted ggen-legacy authority"
+
+[ontology]
+base = "https://unrdf.dev/ontology/package-reconstitution/"
+
+[law]
+zero_unreceipted_actuation = true
+no_hand_edited_generated_output = true
+exact_source_identity = true
+independent_verifier_required = true
+
+[authority]
+repository = "seanchatmangpt/ggen-legacy"
+commit = "70e599a599fedb7c62c965377cc2f80df1fa01ec"
+ticket_branch = "agent/unrdf-package-reconstitution"
+ticket_commit = "297e44a78aae35fee11b5a5efa262155a153940e"
+ticket = "planning/v26.8.1/tickets/UNRDF-001-package-reconstitution.json"
+
+[subject]
+repository = "seanchatmangpt/unrdf"
+base_commit = "17e053390316a4d0ae4484d024f817a75e421da1"
+branch = "agent/fix-all-packages"
+
+[[generation.rules]]
+id = "observe-workspace"
+source = "package.json"
+output = "authority/unrdf/package-graph.json"
+mode = "deterministic"
+
+[[generation.rules]]
+id = "manufacture-packages"
+source = "authority/unrdf/package-graph.json"
+template = "templates/unrdf/package"
+output = "packages"
+mode = "merge-owned-surfaces"
+
+[[generation.rules]]
+id = "verify-package-matrix"
+source = "authority/unrdf/package-graph.json"
+output = ".artifacts/package-matrix/receipt.json"
+command = "node scripts/verify-workspace-packages.mjs --concurrency=4 --timeout-ms=300000"
+
+[[generation.rules]]
+id = "replay"
+source = ".artifacts/package-matrix/receipt.json"
+output = ".artifacts/ggen-unrdf/replay-report.json"
+required = ["NO_SEMANTIC_CHANGE", "NO_GENERATED_DRIFT", "REPLAY_MATCH"]
