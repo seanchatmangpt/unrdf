@@ -26,9 +26,20 @@ export function validateUniverseFreeze(snapshot) {
 }
 
 export function validateMerkleProof(proof) {
-  if (typeof proof.leafIndex !== 'number' || proof.leafIndex < 0) throw new TypeError('leafIndex must be non-negative number');
+  if (!proof || typeof proof !== 'object') throw new TypeError('proof must be object');
+  if (!Number.isInteger(proof.leafCount) || proof.leafCount <= 0) {
+    throw new TypeError('leafCount must be positive integer');
+  }
+  if (!Number.isInteger(proof.leafIndex) || proof.leafIndex < 0 || proof.leafIndex >= proof.leafCount) {
+    throw new TypeError('leafIndex must identify a leaf within leafCount');
+  }
   if (!proof.leafHash || typeof proof.leafHash !== 'string') throw new TypeError('leafHash must be string');
   if (!Array.isArray(proof.proof)) throw new TypeError('proof must be array');
+  for (const step of proof.proof) {
+    if (!step || typeof step.hash !== 'string' || !['left', 'right'].includes(step.position)) {
+      throw new TypeError('proof steps must contain hash and left/right position');
+    }
+  }
   if (!proof.merkleRoot || typeof proof.merkleRoot !== 'string') throw new TypeError('merkleRoot must be string');
 }
 
@@ -41,9 +52,9 @@ export function validateTemporalQuery(query) {
 }
 
 export function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+    const random = (Math.random() * 16) | 0;
+    const value = character === 'x' ? random : (random & 0x3) | 0x8;
+    return value.toString(16);
   });
 }
