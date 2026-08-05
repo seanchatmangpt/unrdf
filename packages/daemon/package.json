@@ -13,7 +13,9 @@
     "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
     "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
     "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs",
-    "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs"
+    "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs",
+    "./integrations/kgc-4d-sourcing": "./src/integrations/kgc-4d-sourcing.mjs",
+    "./integrations/kgc-4d-merkle": "./src/integrations/kgc-4d-merkle.mjs"
   },
   "scripts": {
     "test": "vitest run",
