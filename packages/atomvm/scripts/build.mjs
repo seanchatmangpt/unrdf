@@ -1,145 +1,81 @@
 /**
- * Build Script for AtomVM
- *
- * Creates Erlang module, compiles to BEAM, and packages to .avm file.
+ * Build an Erlang module into a runnable AtomVM AVM application.
  */
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
-import { writeFileSync, readFileSync, existsSync, mkdirSync, statSync } from 'fs';
-import { join, resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
-import { z } from 'zod';
-
-/**
- * Safely escape shell argument - prevents command injection
- * @param {string} str - String to escape
- * @returns {string} Escaped string safe for shell
- */
-function escapeShellArg(str) {
-  if (typeof str !== 'string') throw new TypeError('Argument must be a string');
-  // Single quote escaping: replace ' with '\'' (end quote, escaped quote, start quote)
-  return `'${str.replace(/'/g, "'\\''")}'`;
-}
-
-/**
- * Schema for validating module names - alphanumeric with underscores
- */
-const SafeModuleNameSchema = z.string()
-  .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/, 'Module name must start with letter and contain only alphanumeric chars and underscores');
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '../');
+const MODULE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = resolve(__dirname, '..');
 const srcDir = join(rootDir, 'src/erlang');
 const publicDir = join(rootDir, 'public');
 
+function validateModuleName(value) {
+  if (typeof value !== 'string' || !MODULE_NAME.test(value)) {
+    throw new TypeError('Module name must start with a letter and contain only letters, numbers, and underscores');
+  }
+  return value;
+}
+
+function runTool(binary, args, label) {
+  try {
+    execFileSync(binary, args, { stdio: 'inherit' });
+  } catch (error) {
+    throw new Error(`${label} failed: ${error.message}`, { cause: error });
+  }
+}
+
 /**
- * Build an Erlang module to .avm file
- * @param {string} moduleName - Name of the module (without .erl extension, required)
+ * Build an Erlang module to a runnable .avm file.
+ *
+ * Tool overrides:
+ * - ERLC_BIN=/path/to/erlc
+ * - PACKBEAM_BIN=/path/to/PackBEAM
  */
 export async function buildModule(moduleName) {
-  if (!moduleName) {
-    throw new Error('moduleName is required');
-  }
-  // Validate module name to prevent injection attacks
-  const validatedModuleName = SafeModuleNameSchema.parse(moduleName);
-  console.log(`Building Erlang module: ${validatedModuleName}`);
+  const validatedModuleName = validateModuleName(moduleName);
+  const erlc = process.env.ERLC_BIN || 'erlc';
+  const packbeam = process.env.PACKBEAM_BIN || 'PackBEAM';
 
-  // Ensure directories exist
-  if (!existsSync(srcDir)) {
-    mkdirSync(srcDir, { recursive: true });
-  }
-  if (!existsSync(publicDir)) {
-    mkdirSync(publicDir, { recursive: true });
-  }
+  mkdirSync(srcDir, { recursive: true });
+  mkdirSync(publicDir, { recursive: true });
 
-  // Step 1: Create Erlang source file if it doesn't exist
-  const erlFile = join(srcDir, `${moduleName}.erl`);
-  if (!existsSync(erlFile)) {
-    console.log(`Creating ${moduleName}.erl...`);
-    const erlContent = generateErlangModule(moduleName);
-    writeFileSync(erlFile, erlContent, 'utf8');
-    console.log(`✓ Created ${moduleName}.erl`);
-  } else {
-    console.log(`✓ ${moduleName}.erl already exists`);
-  }
-
-  // Step 2: Compile to BEAM
+  const erlFile = join(srcDir, `${validatedModuleName}.erl`);
   const beamFile = join(srcDir, `${validatedModuleName}.beam`);
-  console.log(`Compiling ${validatedModuleName}.erl to ${validatedModuleName}.beam...`);
-
-  try {
-    // Use escaped arguments to prevent shell injection
-    const cmd = `erlc -o ${escapeShellArg(srcDir)} ${escapeShellArg(erlFile)}`;
-    execSync(cmd, { stdio: 'inherit', shell: '/bin/sh' });
-  } catch (error) {
-    throw new Error(`erlc command failed: ${error.message}`);
-  }
-  
-  if (!existsSync(beamFile)) {
-    throw new Error(`Compilation failed: ${beamFile} not created`);
-  }
-  
-  // Verify BEAM file is valid (starts with "FOR1" magic)
-  const beamHeader = readFileSync(beamFile, { encoding: null }).slice(0, 4);
-  const beamMagic = Buffer.from([0x46, 0x4F, 0x52, 0x31]); // "FOR1"
-  if (!beamHeader.equals(beamMagic)) {
-    throw new Error(`Invalid BEAM file: ${beamFile} does not have BEAM magic header`);
-  }
-  
-  console.log(`✓ Compiled to ${moduleName}.beam`);
-
-  // Step 3: Package to .avm using packbeam
   const avmFile = join(publicDir, `${validatedModuleName}.avm`);
-  console.log(`Packaging ${validatedModuleName}.beam to ${validatedModuleName}.avm...`);
 
-  try {
-    // Use escaped arguments to prevent shell injection
-    const cmd = `packbeam -o ${escapeShellArg(avmFile)} ${escapeShellArg(beamFile)}`;
-    execSync(cmd, { stdio: 'inherit', shell: '/bin/sh' });
-  } catch (error) {
-    throw new Error(`packbeam command failed: ${error.message}`);
+  if (!existsSync(erlFile)) {
+    writeFileSync(erlFile, generateErlangModule(validatedModuleName), 'utf8');
+    console.log(`Created ${erlFile}`);
   }
-  
-  if (!existsSync(avmFile)) {
-    throw new Error(`Packaging failed: ${avmFile} not created`);
-  }
-  
-  // Verify AVM file is valid (non-empty, has content)
-  const avmStats = statSync(avmFile);
-  if (avmStats.size === 0) {
-    throw new Error(`Invalid AVM file: ${avmFile} is empty`);
-  }
-  
-  console.log(`✓ Packaged to ${moduleName}.avm`);
-  console.log(`✓ .avm file available at: ${avmFile}`);
 
-  console.log(`\n✓ Build complete! ${moduleName}.avm is ready in public/ directory.`);
+  runTool(erlc, ['-o', srcDir, erlFile], 'erlc');
+  if (!existsSync(beamFile)) {
+    throw new Error(`Compilation failed: ${beamFile} was not created`);
+  }
+  const beamHeader = readFileSync(beamFile).subarray(0, 4);
+  if (!beamHeader.equals(Buffer.from('FOR1'))) {
+    throw new Error(`Invalid BEAM file: ${beamFile} does not have a FOR1 header`);
+  }
+
+  // PackBEAM uses positional output/input arguments. It has no -o option.
+  runTool(packbeam, [avmFile, beamFile], 'PackBEAM');
+  if (!existsSync(avmFile) || statSync(avmFile).size === 0) {
+    throw new Error(`Packaging failed: ${avmFile} was not created or is empty`);
+  }
+
+  console.log(`Built runnable AtomVM application: ${avmFile}`);
+  return Object.freeze({ moduleName: validatedModuleName, erlFile, beamFile, avmFile });
 }
 
-/**
- * Generate a simple Erlang module
- * @param {string} moduleName - Name of the module
- * @returns {string} Erlang source code
- */
 function generateErlangModule(moduleName) {
-  const capitalized = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
-  
   return `-module(${moduleName}).
--export([start/0, world/0]).
+-export([start/0]).
 
-%% Main entry point
 start() ->
-    io:format("Hello from AtomVM!~n"),
-    io:format("Module: ${moduleName}~n"),
-    world(),
-    {ok, ${moduleName}}.
-
-%% Example function
-world() ->
-    io:format("Hello, World from ${capitalized}!~n"),
-    io:format("Running in browser via WebAssembly~n"),
-    {ok, browser, ready}.
+    erlang:display({atomvm_module_alive, ${moduleName}}),
+    ok.
 `;
 }
-

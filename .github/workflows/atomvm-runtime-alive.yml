@@ -1,0 +1,226 @@
+name: AtomVM Runtime ALIVE
+
+on:
+  push:
+    branches:
+      - agent/atomvm-swarm-cluster
+    paths:
+      - '.github/workflows/atomvm-runtime-alive.yml'
+      - 'packages/atomvm/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/atomvm-runtime-alive.yml'
+      - 'packages/atomvm/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atomvm-runtime-alive-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ATOMVM_SOURCE_REF: v0.6.6
+
+jobs:
+  build-and-execute:
+    name: Build AtomVM and validate 30 OTP patterns
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout exact unrdf head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify one-for-one book projection
+        env:
+          PATTERN_BOOK_RECEIPT: ${{ github.workspace }}/.build/receipts/pattern-book-receipt.json
+        run: |
+          set -euxo pipefail
+          node packages/atomvm/scripts/verify-pattern-book.mjs
+
+      - name: Install AtomVM build toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential \
+            cmake \
+            elixir \
+            erlang-base \
+            erlang-dev \
+            erlang-tools \
+            gperf \
+            libmbedtls-dev \
+            rebar3 \
+            zlib1g-dev
+
+      - name: Materialize exact AtomVM source
+        run: |
+          set -euxo pipefail
+          rm -rf .build/AtomVM
+          mkdir -p .build
+          git clone \
+            --depth 1 \
+            --branch "$ATOMVM_SOURCE_REF" \
+            --recurse-submodules \
+            https://github.com/atomvm/AtomVM.git \
+            .build/AtomVM
+          git -C .build/AtomVM rev-parse HEAD | tee .build/atomvm-source.sha
+          test "$(git -C .build/AtomVM describe --tags --exact-match)" = "$ATOMVM_SOURCE_REF"
+
+      - name: Build dependency-closed AtomVM targets
+        run: |
+          set -euxo pipefail
+          cmake \
+            -S .build/AtomVM \
+            -B .build/AtomVM-build \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build .build/AtomVM-build \
+            --parallel 2 \
+            --target AtomVM PackBEAM atomvmlib
+          test -x .build/AtomVM-build/src/AtomVM
+          test -x .build/AtomVM-build/tools/packbeam/PackBEAM
+          test -s .build/AtomVM-build/libs/atomvmlib.avm
+
+      - name: Compile and package executable probes
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/swarm-probe .build/otp-patterns .build/receipts
+          erlc -o .build/swarm-probe packages/atomvm/examples/erlang/swarm_probe.erl
+          erlc -o .build/otp-patterns packages/atomvm/examples/erlang/otp_patterns_probe.erl
+          test -s .build/swarm-probe/swarm_probe.beam
+          test -s .build/otp-patterns/otp_patterns_probe.beam
+          .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/swarm-probe/swarm_probe.avm \
+            .build/swarm-probe/swarm_probe.beam
+          .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/otp-patterns/otp_patterns_probe.avm \
+            .build/otp-patterns/otp_patterns_probe.beam
+          test -s .build/swarm-probe/swarm_probe.avm
+          test -s .build/otp-patterns/otp_patterns_probe.avm
+          .build/AtomVM-build/tools/packbeam/PackBEAM -l \
+            .build/otp-patterns/otp_patterns_probe.avm \
+            | tee .build/otp-patterns/packbeam-list.log
+
+      - name: Execute 30 patterns in the real AtomVM runtime
+        run: |
+          set -euxo pipefail
+          .build/AtomVM-build/src/AtomVM \
+            .build/otp-patterns/otp_patterns_probe.avm \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            2>&1 | tee .build/otp-patterns/atomvm.log
+          node packages/atomvm/scripts/verify-otp-pattern-markers.mjs \
+            .build/otp-patterns/atomvm.log \
+            .build/receipts/otp-patterns-receipt.json
+
+      - name: Execute swarm tracer bullet directly
+        run: |
+          set -euxo pipefail
+          .build/AtomVM-build/src/AtomVM \
+            .build/swarm-probe/swarm_probe.avm \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            2>&1 | tee .build/swarm-probe/direct-runtime.log
+          grep -q 'atomvm_swarm_alive' .build/swarm-probe/direct-runtime.log
+          grep -q 'Return value: ok' .build/swarm-probe/direct-runtime.log
+
+      - name: Execute through public Node runtime
+        env:
+          ATOMVM_BIN: ${{ github.workspace }}/.build/AtomVM-build/src/AtomVM
+          ATOMVM_APP: ${{ github.workspace }}/.build/swarm-probe/swarm_probe.avm
+          ATOMVM_LIB: ${{ github.workspace }}/.build/AtomVM-build/libs/atomvmlib.avm
+        run: |
+          set -euxo pipefail
+          node --input-type=module <<'NODE' | tee .build/swarm-probe/node-runtime.log
+          import { AtomVMNodeRuntime } from './packages/atomvm/src/node-runtime.mjs';
+
+          const runtime = new AtomVMNodeRuntime({
+            atomvmBinary: process.env.ATOMVM_BIN,
+            libraryPaths: [process.env.ATOMVM_LIB],
+          });
+          await runtime.load();
+          const result = await runtime.execute(process.env.ATOMVM_APP);
+          if (result.runtime !== 'AtomVM' || result.exitCode !== 0) process.exit(1);
+          if (!result.stdout.includes('atomvm_swarm_alive')) process.exit(1);
+          if (!result.stderr.includes('Return value: ok')) process.exit(1);
+          console.log(JSON.stringify({
+            status: 'ALIVE',
+            runtime: result.runtime,
+            runtimeVersion: result.runtimeVersion,
+            exitCode: result.exitCode,
+          }));
+          NODE
+
+      - name: Refuse London-style tests and skips
+        env:
+          CHICAGO_TDD_REPORT: ${{ github.workspace }}/.build/receipts/chicago-tdd-report.json
+        run: |
+          set -euxo pipefail
+          node packages/atomvm/scripts/verify-chicago-tdd.mjs
+
+      - name: Verify JavaScript and real-process boundaries
+        env:
+          ATOMVM_BIN: ${{ github.workspace }}/.build/AtomVM-build/src/AtomVM
+          ATOMVM_APP: ${{ github.workspace }}/.build/swarm-probe/swarm_probe.avm
+          ATOMVM_LIB: ${{ github.workspace }}/.build/AtomVM-build/libs/atomvmlib.avm
+          ATOMVM_SOURCE_REF: ${{ env.ATOMVM_SOURCE_REF }}
+        run: |
+          set -euxo pipefail
+          node --test \
+            packages/atomvm/test/otp-patterns-chicago.test.mjs \
+            packages/atomvm/test/swarm-cluster.test.mjs \
+            packages/atomvm/test/innovation-checkpoints.test.mjs \
+            packages/atomvm/test/process-broker.test.mjs \
+            | tee .build/receipts/javascript-tests.tap
+          ! grep -q '# SKIP' .build/receipts/javascript-tests.tap
+
+      - name: Execute three AtomVM swarms through unrdf
+        env:
+          ATOMVM_BIN: ${{ github.workspace }}/.build/AtomVM-build/src/AtomVM
+          ATOMVM_APP: ${{ github.workspace }}/.build/swarm-probe/swarm_probe.avm
+          ATOMVM_LIB: ${{ github.workspace }}/.build/AtomVM-build/libs/atomvmlib.avm
+          ATOMVM_RECEIPT_PATH: ${{ github.workspace }}/.build/receipts/atomvm-runtime-cluster-receipt.json
+        run: |
+          set -euxo pipefail
+          ATOMVM_SOURCE_REF="$(cat .build/atomvm-source.sha)" \
+            node packages/atomvm/scripts/verify-runtime-cluster.mjs \
+            | tee .build/receipts/verification.log
+          node -e "const r=require('./.build/receipts/atomvm-runtime-cluster-receipt.json'); if(r.status!=='ALIVE'||r.executions.length!==3||r.checkpoints.status!=='ALIVE') process.exit(1)"
+
+      - name: Record build identities
+        run: |
+          set -euxo pipefail
+          sha256sum \
+            .build/AtomVM-build/src/AtomVM \
+            .build/AtomVM-build/tools/packbeam/PackBEAM \
+            .build/AtomVM-build/libs/atomvmlib.avm \
+            .build/swarm-probe/swarm_probe.beam \
+            .build/swarm-probe/swarm_probe.avm \
+            .build/otp-patterns/otp_patterns_probe.beam \
+            .build/otp-patterns/otp_patterns_probe.avm \
+            | tee .build/receipts/sha256sums.txt
+
+      - name: Upload replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomvm-otp-patterns-alive-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            .build/atomvm-source.sha
+            .build/swarm-probe/direct-runtime.log
+            .build/swarm-probe/node-runtime.log
+            .build/otp-patterns/atomvm.log
+            .build/otp-patterns/packbeam-list.log
+            .build/receipts/atomvm-runtime-cluster-receipt.json
+            .build/receipts/otp-patterns-receipt.json
+            .build/receipts/pattern-book-receipt.json
+            .build/receipts/chicago-tdd-report.json
+            .build/receipts/javascript-tests.tap
+            .build/receipts/verification.log
+            .build/receipts/sha256sums.txt

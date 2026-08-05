@@ -1,0 +1,11 @@
+[book]
+title = "Designing AtomVM/JavaScript Systems with @unrdf/atomvm"
+authors = ["Sean Chatman"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "book"
+
+[output.html]
+git-repository-url = "https://github.com/seanchatmangpt/unrdf"
