@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout exact source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -37,4 +40,4 @@ jobs:
         run: pnpm run lint
 
       - name: Test with coverage
-        run: pnpm vitest --coverage
+        run: pnpm run test:coverage

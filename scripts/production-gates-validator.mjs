@@ -12,6 +12,7 @@ import process from 'node:process';
 
 const ROOT = resolve(process.cwd());
 const REPORT_PATH = resolve(ROOT, 'production-gates-report.json');
+const RECEIPT_SCHEMA = 'urn:unrdf:production-gates-receipt:v2';
 
 function digest(value) {
   return createHash('sha256').update(value).digest('hex');
@@ -26,20 +27,20 @@ function stable(value) {
 }
 
 function currentRevision() {
-  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA;
   const result = spawnSync('git', ['rev-parse', 'HEAD'], {
     cwd: ROOT,
     encoding: 'utf8',
     timeout: 5_000,
   });
-  return result.status === 0 ? result.stdout.trim() : null;
+  if (result.status === 0) return result.stdout.trim();
+  return process.env.GITHUB_SHA || null;
 }
 
 function execute(command, args, timeoutMs) {
   const startedAt = Date.now();
   const result = spawnSync(command, args, {
     cwd: ROOT,
-    env: { ...process.env, CI: '1' },
+    env: { ...process.env, CI: '1', NO_COLOR: '1' },
     encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 32 * 1024 * 1024,
@@ -68,36 +69,60 @@ function execute(command, args, timeoutMs) {
   return execution;
 }
 
-function commandGate(number, name, command, args, timeoutMs, inspect = null) {
+function commandFailureReason(execution) {
+  if (execution.timedOut) return 'COMMAND_TIMED_OUT';
+  if (execution.spawnError) return 'COMMAND_SPAWN_FAILED';
+  if (execution.exitCode !== 0) return 'COMMAND_EXIT_NONZERO';
+  return null;
+}
+
+function inspectSafely(inspect, execution) {
+  try {
+    return inspect(execution);
+  } catch (error) {
+    return {
+      ok: false,
+      reason: 'INSPECTOR_EXCEPTION',
+      evidence: {
+        name: error?.name || 'Error',
+        message: error?.message || String(error),
+      },
+    };
+  }
+}
+
+function commandGate(number, name, command, args, timeoutMs, inspect = null, options = {}) {
   return {
     number,
     name,
     run() {
       const execution = execute(command, args, timeoutMs);
-      if (execution.exitCode !== 0 || execution.timedOut || execution.spawnError) {
+      const failureReason = commandFailureReason(execution);
+      const inspection = inspect && (!failureReason || options.inspectOnFailure)
+        ? inspectSafely(inspect, execution)
+        : null;
+
+      if (failureReason) {
         return {
           status: 'FAIL',
-          reason: execution.timedOut
-            ? 'COMMAND_TIMED_OUT'
-            : execution.spawnError
-              ? 'COMMAND_SPAWN_FAILED'
-              : 'COMMAND_EXIT_NONZERO',
+          reason: inspection && !inspection.ok ? inspection.reason : failureReason,
           execution,
+          ...(inspection?.evidence === undefined ? {} : { evidence: inspection.evidence }),
         };
       }
-      if (inspect) {
-        const inspection = inspect(execution);
-        if (!inspection.ok) {
-          return {
-            status: 'FAIL',
-            reason: inspection.reason,
-            execution,
-            evidence: inspection.evidence,
-          };
-        }
-        return { status: 'PASS', execution, evidence: inspection.evidence };
+      if (inspection && !inspection.ok) {
+        return {
+          status: 'FAIL',
+          reason: inspection.reason,
+          execution,
+          evidence: inspection.evidence,
+        };
       }
-      return { status: 'PASS', execution };
+      return {
+        status: 'PASS',
+        execution,
+        ...(inspection?.evidence === undefined ? {} : { evidence: inspection.evidence }),
+      };
     },
   };
 }
@@ -105,21 +130,29 @@ function commandGate(number, name, command, args, timeoutMs, inspect = null) {
 function parseCoverage() {
   const path = resolve(ROOT, 'coverage/coverage-summary.json');
   if (!existsSync(path)) return { ok: false, reason: 'COVERAGE_REPORT_MISSING' };
-  const total = JSON.parse(readFileSync(path, 'utf8')).total;
-  const metrics = Object.fromEntries(
-    ['lines', 'functions', 'branches', 'statements'].map(name => [name, total?.[name]?.pct])
-  );
-  if (Object.values(metrics).some(value => typeof value !== 'number')) {
-    return { ok: false, reason: 'COVERAGE_REPORT_INVALID', evidence: metrics };
+  try {
+    const total = JSON.parse(readFileSync(path, 'utf8')).total;
+    const metrics = Object.fromEntries(
+      ['lines', 'functions', 'branches', 'statements'].map(name => [name, total?.[name]?.pct])
+    );
+    if (Object.values(metrics).some(value => typeof value !== 'number' || !Number.isFinite(value))) {
+      return { ok: false, reason: 'COVERAGE_REPORT_INVALID', evidence: metrics };
+    }
+    const belowThreshold = Object.entries(metrics).filter(([, value]) => value < 80);
+    return belowThreshold.length === 0
+      ? { ok: true, evidence: { threshold: 80, metrics } }
+      : {
+          ok: false,
+          reason: 'COVERAGE_BELOW_THRESHOLD',
+          evidence: { threshold: 80, metrics, belowThreshold },
+        };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: 'COVERAGE_REPORT_INVALID',
+      evidence: { name: error.name, message: error.message },
+    };
   }
-  const belowThreshold = Object.entries(metrics).filter(([, value]) => value < 80);
-  return belowThreshold.length === 0
-    ? { ok: true, evidence: { threshold: 80, metrics } }
-    : {
-        ok: false,
-        reason: 'COVERAGE_BELOW_THRESHOLD',
-        evidence: { threshold: 80, metrics, belowThreshold },
-      };
 }
 
 function inspectOtel(execution) {
@@ -144,22 +177,43 @@ function inspectWip(execution) {
           reason: 'WIP_AUDIT_NOT_ALIVE',
           evidence: { standing: audit.standing, actionable, digestValid },
         };
-  } catch {
-    return { ok: false, reason: 'WIP_AUDIT_JSON_NOT_OBSERVED' };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: 'WIP_AUDIT_JSON_NOT_OBSERVED',
+      evidence: { name: error.name, message: error.message },
+    };
   }
 }
 
 function inspectAudit(execution) {
   try {
     const audit = JSON.parse(execution.stdout);
-    const vulnerabilities = audit.metadata?.vulnerabilities || {};
+    if (audit.error) {
+      return {
+        ok: false,
+        reason: 'AUDIT_UNAVAILABLE',
+        evidence: {
+          code: audit.error.code || null,
+          summary: audit.error.summary || audit.error.message || null,
+        },
+      };
+    }
+    const vulnerabilities = audit.metadata?.vulnerabilities;
+    if (!vulnerabilities || typeof vulnerabilities !== 'object') {
+      return { ok: false, reason: 'AUDIT_REPORT_INVALID' };
+    }
     const high = vulnerabilities.high || 0;
     const critical = vulnerabilities.critical || 0;
     return high === 0 && critical === 0
       ? { ok: true, evidence: { high, critical } }
       : { ok: false, reason: 'HIGH_OR_CRITICAL_VULNERABILITIES', evidence: { high, critical } };
-  } catch {
-    return { ok: false, reason: 'AUDIT_JSON_NOT_OBSERVED' };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: 'AUDIT_JSON_NOT_OBSERVED',
+      evidence: { name: error.name, message: error.message },
+    };
   }
 }
 
@@ -179,7 +233,15 @@ const gates = [
     60_000,
     inspectWip
   ),
-  commandGate(9, 'Security Audit', 'pnpm', ['audit', '--audit-level', 'high', '--json'], 120_000, inspectAudit),
+  commandGate(
+    9,
+    'Security Audit',
+    'pnpm',
+    ['audit', '--audit-level', 'high', '--json'],
+    120_000,
+    inspectAudit,
+    { inspectOnFailure: true }
+  ),
   commandGate(10, 'Documentation Accuracy', process.execPath, ['scripts/validate-docs.mjs'], 120_000),
 ];
 
@@ -191,16 +253,64 @@ function renderSummary(report) {
   console.log(`Receipt: ${report.digest}`);
 }
 
+function verifyReport(report) {
+  if (!report || typeof report !== 'object' || Array.isArray(report)) {
+    return { valid: false, reason: 'REPORT_NOT_OBJECT' };
+  }
+  if (report.schema !== RECEIPT_SCHEMA) {
+    return { valid: false, reason: 'REPORT_SCHEMA_MISMATCH' };
+  }
+  if (!/^[a-f0-9]{64}$/.test(report.digest || '')) {
+    return { valid: false, reason: 'REPORT_DIGEST_INVALID' };
+  }
+  const { digest: observed, ...body } = report;
+  const expected = digest(JSON.stringify(stable(body)));
+  return observed === expected
+    ? { valid: true }
+    : { valid: false, reason: 'REPORT_DIGEST_MISMATCH', expected, observed };
+}
+
+function runGate(gate) {
+  try {
+    return {
+      number: gate.number,
+      name: gate.name,
+      ...gate.run(),
+    };
+  } catch (error) {
+    return {
+      number: gate.number,
+      name: gate.name,
+      status: 'FAIL',
+      reason: 'GATE_EXECUTION_EXCEPTION',
+      evidence: {
+        name: error?.name || 'Error',
+        message: error?.message || String(error),
+      },
+    };
+  }
+}
+
 function main() {
   const args = process.argv.slice(2);
   if (args.includes('--summary')) {
     if (!existsSync(REPORT_PATH)) {
       console.error('No production-gates-report.json exists.');
-      process.exit(1);
+      process.exit(2);
     }
-    const report = JSON.parse(readFileSync(REPORT_PATH, 'utf8'));
-    renderSummary(report);
-    process.exit(report.standing === 'ALIVE' ? 0 : 1);
+    try {
+      const report = JSON.parse(readFileSync(REPORT_PATH, 'utf8'));
+      const verification = verifyReport(report);
+      if (!verification.valid) {
+        console.error(`Receipt verification failed: ${verification.reason}`);
+        process.exit(2);
+      }
+      renderSummary(report);
+      process.exit(report.standing === 'ALIVE' ? 0 : 1);
+    } catch (error) {
+      console.error(`Receipt verification failed: ${error.message}`);
+      process.exit(2);
+    }
   }
 
   const selected = args.find(argument => argument.startsWith('--gate='));
@@ -211,15 +321,12 @@ function main() {
   }
 
   const admittedGates = gateNumber ? gates.filter(gate => gate.number === gateNumber) : gates;
-  const observations = admittedGates.map(gate => ({
-    number: gate.number,
-    name: gate.name,
-    ...gate.run(),
-  }));
+  const observations = admittedGates.map(runGate);
   const receiptWithoutDigest = {
-    schema: 'urn:unrdf:production-gates-receipt:v1',
+    schema: RECEIPT_SCHEMA,
     subject: {
-      root: ROOT,
+      repository: process.env.GITHUB_REPOSITORY || null,
+      root: '.',
       revision: currentRevision(),
       selectedGate: gateNumber,
       gateCount: admittedGates.length,
