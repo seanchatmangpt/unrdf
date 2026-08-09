@@ -36,8 +36,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: evidence-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: evidence-${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
 
 env:
   PNPM_VERSION: '10.15.0'
