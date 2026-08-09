@@ -137,6 +137,8 @@
       "rules": {
         "max-lines-per-function": ["warn", { "max": 100 }],
         "max-lines": ["warn", { "max": 800 }],
+        "max-nested-callbacks": "off",
+        "id-length": "off",
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-example": "off",
         "no-console": "off"
