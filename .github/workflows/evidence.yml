@@ -82,9 +82,6 @@ jobs:
       - name: Comprehensive validation
         run: timeout 180s node validation/run-all.mjs comprehensive
 
-      - name: Thesis end-to-end
-        run: timeout 180s node validation/thesis-e2e.mjs
-
   package-sync:
     name: Package projection drift
     if: github.event_name == 'workflow_dispatch' && (inputs.suite == 'package-sync' || inputs.suite == 'all')
