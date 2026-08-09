@@ -1,0 +1,133 @@
+name: Evidence
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/evidence.yml'
+      - 'validation/**'
+      - 'scripts/**'
+      - 'packages/*/package.json'
+      - 'schema/**'
+      - 'templates/**'
+      - 'unrdf.toml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/evidence.yml'
+      - 'validation/**'
+      - 'scripts/**'
+      - 'packages/*/package.json'
+      - 'schema/**'
+      - 'templates/**'
+      - 'unrdf.toml'
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Evidence suite
+        required: true
+        default: thesis
+        type: choice
+        options:
+          - thesis
+          - package-sync
+          - all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
+
+env:
+  PNPM_VERSION: '10.15.0'
+  ESLINT_USE_FLAT_CONFIG: 'false'
+  HUSKY: '0'
+
+jobs:
+  thesis:
+    name: Thesis / OTEL evidence
+    if: github.event_name != 'workflow_dispatch' || inputs.suite == 'thesis' || inputs.suite == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read admitted toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          node_version="$(awk '$1 == "nodejs" { print $2 }' .tool-versions)"
+          test -n "$node_version"
+          echo "node=$node_version" >> "$GITHUB_OUTPUT"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.toolchain.outputs.node }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Comprehensive validation
+        run: timeout 180s node validation/run-all.mjs comprehensive
+
+  package-sync:
+    name: Package projection drift
+    if: github.event_name == 'workflow_dispatch' && (inputs.suite == 'package-sync' || inputs.suite == 'all')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read admitted toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          node_version="$(awk '$1 == "nodejs" { print $2 }' .tool-versions)"
+          test -n "$node_version"
+          echo "node=$node_version" >> "$GITHUB_OUTPUT"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.toolchain.outputs.node }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate projections
+        run: timeout 180s pnpm run unrdf:package-sync
+
+      - name: Verify projection contract
+        run: pnpm run unrdf:verify-packages
+
+      - name: Refuse drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- docs/packages src/generated schema/packages-discovered.ttl; then
+            git diff --stat -- docs/packages src/generated schema/packages-discovered.ttl
+            echo "::error::PACKAGE_PROJECTION_DRIFT_REFUSED"
+            exit 1
+          fi

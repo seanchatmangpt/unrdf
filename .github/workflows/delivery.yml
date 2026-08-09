@@ -1,0 +1,203 @@
+name: Delivery
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Explicit delivery target
+        required: true
+        type: choice
+        options:
+          - pages
+          - npm-package
+      package:
+        description: Workspace package directory name (required for npm-package)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  PNPM_VERSION: '10.15.0'
+  HUSKY: '0'
+
+jobs:
+  pages-admission:
+    name: Pages admission
+    if: inputs.target == 'pages'
+    runs-on: ubuntu-latest
+    outputs:
+      admitted: ${{ steps.admit.outputs.admitted }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Admit Pages source
+        id: admit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "::error::PAGES_NON_MAIN_REF_REFUSED"
+            exit 1
+          fi
+          if [[ ! -f book/book.toml || ! -f book/src/SUMMARY.md ]]; then
+            echo "::error::PAGES_SOURCE_ABSENT_REFUSED"
+            exit 1
+          fi
+          echo "admitted=true" >> "$GITHUB_OUTPUT"
+
+  pages:
+    name: Deploy Pages
+    needs: pages-admission
+    if: needs.pages-admission.outputs.admitted == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Read admitted Rust toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rust_version="$(awk '$1 == "rust" { print $2 }' .tool-versions)"
+          test -n "$rust_version"
+          echo "rust=$rust_version" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ steps.toolchain.outputs.rust }}
+
+      - name: Install mdBook
+        run: |
+          set -euo pipefail
+          cargo install mdbook --version 0.4.37 --locked
+          mdbook --version
+
+      - name: Build book
+        run: mdbook build book -d _site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: book/_site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  npm-admission:
+    name: npm package admission
+    if: inputs.target == 'npm-package'
+    runs-on: ubuntu-latest
+    outputs:
+      package_dir: ${{ steps.admit.outputs.package_dir }}
+      package_name: ${{ steps.admit.outputs.package_name }}
+      package_version: ${{ steps.admit.outputs.package_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Admit workspace package
+        id: admit
+        env:
+          REQUESTED_PACKAGE: ${{ inputs.package }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "::error::NPM_NON_MAIN_REF_REFUSED"
+            exit 1
+          fi
+          if [[ ! "$REQUESTED_PACKAGE" =~ ^[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::NPM_PACKAGE_IDENTIFIER_REFUSED"
+            exit 1
+          fi
+          package_dir="packages/$REQUESTED_PACKAGE"
+          manifest="$package_dir/package.json"
+          if [[ ! -f "$manifest" ]]; then
+            echo "::error::NPM_PACKAGE_NOT_FOUND_REFUSED"
+            exit 1
+          fi
+          node - "$manifest" >> "$GITHUB_OUTPUT" <<'NODE'
+          import fs from 'node:fs';
+          const manifest = process.argv[2];
+          const pkg = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+          if (pkg.private === true) {
+            console.error('::error::NPM_PRIVATE_PACKAGE_REFUSED');
+            process.exit(1);
+          }
+          if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
+            console.error('::error::NPM_PACKAGE_IDENTITY_REFUSED');
+            process.exit(1);
+          }
+          console.log(`package_name=${pkg.name}`);
+          console.log(`package_version=${pkg.version}`);
+          NODE
+          echo "package_dir=$package_dir" >> "$GITHUB_OUTPUT"
+
+  npm-publish:
+    name: Publish admitted npm package
+    needs: npm-admission
+    if: needs.npm-admission.result == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read admitted Node toolchain
+        id: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          node_version="$(awk '$1 == "nodejs" { print $2 }' .tool-versions)"
+          test -n "$node_version"
+          echo "node=$node_version" >> "$GITHUB_OUTPUT"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.toolchain.outputs.node }}
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test admitted package
+        run: pnpm --dir "${{ needs.npm-admission.outputs.package_dir }}" test
+
+      - name: Build admitted package
+        run: pnpm --dir "${{ needs.npm-admission.outputs.package_dir }}" build
+
+      - name: Publish dry-run
+        run: pnpm --dir "${{ needs.npm-admission.outputs.package_dir }}" publish --dry-run --no-git-checks
+
+      - name: Publish
+        run: pnpm --dir "${{ needs.npm-admission.outputs.package_dir }}" publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
