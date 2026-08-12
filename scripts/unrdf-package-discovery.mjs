@@ -1,231 +1,306 @@
 #!/usr/bin/env node
 /**
- * @file scripts/unrdf-package-discovery.mjs
- * @description Scan all UNRDF packages and generate RDF ontology instances
+ * Deterministically observe the packages/* workspace into an RDF package graph.
  *
- * This script integrates package discovery with the existing 57-package monorepo by:
- * 1. Scanning packages/ directory for all package.json files
- * 2. Extracting package metadata (name, version, description, exports, dependencies)
- * 3. Determining tier classification based on package size and dependencies
- * 4. Generating RDF Turtle instances for the domain ontology
- * 5. Creating real package data in schema/domain.ttl
+ * O  = package manifests + package-like filesystem surfaces
+ * O* = validated, normalized package graph in .artifacts/package-observation/package-topology.ttl
  *
- * Usage: node scripts/unrdf-package-discovery.mjs
+ * The observer does not actuate package code. It manufactures evidence only.
  */
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import process from 'node:process';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+export const DEFAULT_ROOT = path.resolve(moduleDir, '..');
+const RDF_NS = 'https://unrdf.dev/ontology/package-readiness#';
+const PUBLIC_DEP_SECTIONS = ['dependencies', 'optionalDependencies', 'peerDependencies'];
+const ALL_DEP_SECTIONS = [...PUBLIC_DEP_SECTIONS, 'devDependencies'];
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '..');
-const packagesDir = path.join(projectRoot, 'packages');
-const schemaDir = path.join(projectRoot, 'schema');
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+export const stableStringify = value => JSON.stringify(sortDeep(value));
 
-/**
- * Classify package into tier based on heuristics
- * @param {Object} pkg Package metadata
- * @returns {string} Tier name (Essential, Extended, Optional, Internal)
- */
-function classifyTier(pkg) {
-  const { name, dependencies = {} } = pkg;
-  const depCount = Object.keys(dependencies).length;
-
-  // Essential tier packages (core, critical foundations)
-  const essentialPatterns = [
-    '@unrdf/core', '@unrdf/oxigraph', '@unrdf/kgc-4d', '@unrdf/hooks',
-    '@unrdf/streaming', '@unrdf/v6-core', '@unrdf/yawl'
-  ];
-  if (essentialPatterns.includes(name)) return 'Essential';
-
-  // Internal tier (test/docs only)
-  const internalPatterns = ['integration-tests', 'docs', 'test-utils', 'validation'];
-  if (internalPatterns.some(p => name.includes(p))) return 'Internal';
-
-  // Optional tier (performance, analytics, optional features)
-  const optionalPatterns = ['benchmark', 'analytics', 'profiler', 'perf', 'cache'];
-  if (optionalPatterns.some(p => name.includes(p))) return 'Optional';
-
-  // Default to Extended (commonly used)
-  return 'Extended';
+function sortDeep(value) {
+  if (Array.isArray(value)) return value.map(sortDeep);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.keys(value).sort().map(key => [key, sortDeep(value[key])]));
 }
 
-/**
- * Extract export paths from package.json exports field
- * @param {Object} pkg Package metadata
- * @returns {string[]} Array of export paths
- */
-function extractExports(pkg) {
-  const { exports = {} } = pkg;
-  if (typeof exports === 'string') return [exports];
-  if (typeof exports === 'object') {
-    return Object.keys(exports).map(key => exports[key]);
-  }
-  return [];
+function turtleString(value) {
+  return `"${String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')}"`;
 }
 
-/**
- * Scan all packages and extract metadata
- * @returns {Object[]} Array of package metadata objects
- */
-function scanPackages() {
-  const packages = [];
-
-  if (!fs.existsSync(packagesDir)) {
-    console.error(`Packages directory not found: ${packagesDir}`);
-    process.exit(1);
-  }
-
-  const entries = fs.readdirSync(packagesDir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-
-    const packagePath = path.join(packagesDir, entry.name);
-    const packageJsonPath = path.join(packagePath, 'package.json');
-
-    if (!fs.existsSync(packageJsonPath)) continue;
-
-    try {
-      const content = fs.readFileSync(packageJsonPath, 'utf-8');
-      const pkg = JSON.parse(content);
-
-      if (!pkg.name || !pkg.name.startsWith('@unrdf/')) continue;
-
-      packages.push({
-        name: pkg.name,
-        version: pkg.version || 'latest',
-        description: pkg.description || 'No description',
-        exports: extractExports(pkg),
-        dependencies: pkg.dependencies || {},
-        directory: entry.name,
-        tier: classifyTier(pkg),
-        keywords: pkg.keywords || [],
-        license: pkg.license || 'MIT'
-      });
-    } catch (error) {
-      console.warn(`Warning: Failed to parse ${packageJsonPath}: ${error.message}`);
-    }
-  }
-
-  return packages.sort((a, b) => a.name.localeCompare(b.name));
+function packageUrn(name) {
+  return `<urn:unrdf:package:${encodeURIComponent(name)}>`;
 }
 
-/**
- * Find internal UNRDF dependencies
- * @param {Object} pkg Package metadata
- * @param {Object[]} allPackages All packages
- * @returns {string[]} Names of dependent UNRDF packages
- */
-function findUnrdfDependencies(pkg, allPackages) {
-  const deps = Object.keys(pkg.dependencies || {});
-  const unrdfDeps = deps.filter(d => d.startsWith('@unrdf/'));
-  return unrdfDeps;
+function readHead(root) {
+  const fromEnv = process.env.GITHUB_HEAD_SHA || process.env.GITHUB_SHA;
+  if (fromEnv) return fromEnv;
+  const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', timeout: 2000 });
+  return result.status === 0 ? result.stdout.trim() : null;
 }
 
-/**
- * Generate RDF Turtle instances for packages
- * @param {Object[]} packages Array of package metadata
- * @returns {string} Turtle RDF string
- */
-function generateTurtleInstances(packages) {
-  const lines = [
-    '# UNRDF Packages - Auto-generated from package discovery',
-    '# Generated by scripts/unrdf-package-discovery.mjs',
-    '# Run: node scripts/unrdf-package-discovery.mjs',
-    '',
-    ''
-  ];
-
-  // Group packages by tier
-  const byTier = {};
-  for (const pkg of packages) {
-    if (!byTier[pkg.tier]) byTier[pkg.tier] = [];
-    byTier[pkg.tier].push(pkg);
+function entryCandidates(manifest) {
+  const values = [manifest.module, manifest.main];
+  const rootExport = manifest.exports?.['.'] ?? manifest.exports;
+  if (typeof rootExport === 'string') values.push(rootExport);
+  else if (rootExport && typeof rootExport === 'object') {
+    values.push(rootExport.import, rootExport.node, rootExport.default);
   }
+  return [...new Set(values.filter(value => typeof value === 'string' && !value.includes('*')))];
+}
 
-  // Generate instances for each package
-  for (const pkg of packages) {
-    const varName = pkg.name
-      .replace('@unrdf/', '')
-      .replace(/-/g, '')
-      .charAt(0)
-      .toUpperCase() +
-      pkg.name
-        .replace('@unrdf/', '')
-        .replace(/-/g, '')
-        .slice(1) +
-      'Package';
+function collectDeclaredDeps(manifest, sections = ALL_DEP_SECTIONS) {
+  return [...new Set(sections.flatMap(section => Object.keys(manifest[section] || {})))].sort();
+}
 
-    lines.push(`# ${pkg.name}`);
-    lines.push(`unrdf:${varName} a unrdf:Package ;`);
-    lines.push(`    unrdf:packageName "${pkg.name}" ;`);
-    lines.push(`    unrdf:packageVersion "${pkg.version}" ;`);
-    lines.push(`    unrdf:packageDescription "${pkg.description.replace(/"/g, '\\"')}" ;`);
-    lines.push(`    unrdf:hasTier unrdf:${pkg.tier}Tier ;`);
+/** Tarjan SCC in deterministic node/edge order. */
+export function stronglyConnectedComponents(nodes, adjacency) {
+  const indexByNode = new Map();
+  const lowByNode = new Map();
+  const onStack = new Set();
+  const stack = [];
+  const components = [];
+  let index = 0;
 
-    // Add dependencies
-    const unrdfDeps = findUnrdfDependencies(pkg, packages);
-    if (unrdfDeps.length > 0) {
-      for (const dep of unrdfDeps) {
-        const depVar = dep
-          .replace('@unrdf/', '')
-          .replace(/-/g, '')
-          .charAt(0)
-          .toUpperCase() +
-          dep
-            .replace('@unrdf/', '')
-            .replace(/-/g, '')
-            .slice(1) +
-          'Package';
-        lines.push(`    unrdf:hasDependency unrdf:${depVar} ;`);
+  function visit(node) {
+    indexByNode.set(node, index);
+    lowByNode.set(node, index);
+    index += 1;
+    stack.push(node);
+    onStack.add(node);
+
+    for (const next of [...(adjacency.get(node) || [])].sort()) {
+      if (!indexByNode.has(next)) {
+        visit(next);
+        lowByNode.set(node, Math.min(lowByNode.get(node), lowByNode.get(next)));
+      } else if (onStack.has(next)) {
+        lowByNode.set(node, Math.min(lowByNode.get(node), indexByNode.get(next)));
       }
     }
 
-    lines.push(`    rdfs:label "${pkg.name}" .`);
-    lines.push('');
+    if (lowByNode.get(node) === indexByNode.get(node)) {
+      const component = [];
+      while (stack.length) {
+        const member = stack.pop();
+        onStack.delete(member);
+        component.push(member);
+        if (member === node) break;
+      }
+      components.push(component.sort());
+    }
   }
 
-  return lines.join('\n');
+  for (const node of [...nodes].sort()) if (!indexByNode.has(node)) visit(node);
+  return components.sort((a, b) => a[0].localeCompare(b[0]));
 }
 
 /**
- * Main execution
+ * Compatibility tier is now a graph projection, not a hard-coded package list.
+ * - private packages are Internal;
+ * - high reverse-dependency centrality is Essential;
+ * - isolated public leaves are Optional;
+ * - the rest are Extended.
  */
-function main() {
-  console.log('🔍 Scanning UNRDF packages...');
-  const packages = scanPackages();
-  console.log(`✅ Found ${packages.length} packages\n`);
-
-  // Print summary
-  const tiers = {};
-  for (const pkg of packages) {
-    if (!tiers[pkg.tier]) tiers[pkg.tier] = [];
-    tiers[pkg.tier].push(pkg.name);
-  }
-
-  console.log('📊 Package Summary by Tier:');
-  for (const [tier, pkgs] of Object.entries(tiers)) {
-    console.log(`  ${tier}: ${pkgs.length} packages`);
-  }
-  console.log('');
-
-  // Generate Turtle
-  const turtle = generateTurtleInstances(packages);
-
-  // Output to file
-  const outputPath = path.join(schemaDir, 'packages-discovered.ttl');
-  fs.writeFileSync(outputPath, turtle, 'utf-8');
-
-  console.log(`✨ Generated RDF instances: ${outputPath}`);
-  console.log(`\n📋 Package discovery complete!`);
-  console.log(`\nNext steps:`);
-  console.log(`  1. Review: cat ${path.relative(projectRoot, outputPath)}`);
-  console.log(`  2. Integrate: Merge contents into schema/domain.ttl`);
-  console.log(`  3. Generate: pnpm run unrdf:generate`);
+export function classifyTier({ isPrivate, reverseDependencyCount, internalDependencyCount }) {
+  if (isPrivate) return 'Internal';
+  if (reverseDependencyCount >= 3) return 'Essential';
+  if (reverseDependencyCount === 0 && internalDependencyCount === 0) return 'Optional';
+  return 'Extended';
 }
 
-main().catch(error => {
-  console.error('❌ Error:', error.message);
-  process.exit(1);
-});
+export function observePackageGraph(root = DEFAULT_ROOT) {
+  const packagesDir = path.join(root, 'packages');
+  if (!existsSync(packagesDir)) throw new Error(`PACKAGES_DIRECTORY_MISSING:${packagesDir}`);
+
+  const packageSurfaces = readdirSync(packagesDir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+  const anomalies = [];
+  const parsed = [];
+  const nameOwner = new Map();
+
+  for (const surface of packageSurfaces) {
+    const rel = `packages/${surface.name}`;
+    if (!surface.isDirectory()) {
+      anomalies.push({ code: 'PACKAGE_SURFACE_NOT_DIRECTORY', path: rel, kind: 'file' });
+      continue;
+    }
+
+    const manifestPath = path.join(packagesDir, surface.name, 'package.json');
+    if (!existsSync(manifestPath)) {
+      anomalies.push({ code: 'PACKAGE_MANIFEST_MISSING', path: rel, kind: 'directory' });
+      continue;
+    }
+
+    const bytes = readFileSync(manifestPath);
+    let manifest;
+    try {
+      manifest = JSON.parse(bytes);
+    } catch (error) {
+      anomalies.push({ code: 'PACKAGE_MANIFEST_INVALID_JSON', path: `${rel}/package.json`, error: error.message });
+      continue;
+    }
+
+    if (!manifest.name || typeof manifest.name !== 'string') {
+      anomalies.push({ code: 'PACKAGE_NAME_MISSING', path: `${rel}/package.json` });
+      continue;
+    }
+    if (nameOwner.has(manifest.name)) {
+      anomalies.push({ code: 'PACKAGE_NAME_DUPLICATE', package: manifest.name, paths: [nameOwner.get(manifest.name), rel] });
+      continue;
+    }
+    nameOwner.set(manifest.name, rel);
+
+    const candidates = entryCandidates(manifest);
+    const entry = candidates.find(candidate => existsSync(path.resolve(packagesDir, surface.name, candidate))) || null;
+    parsed.push({
+      name: manifest.name,
+      path: rel,
+      version: manifest.version ?? null,
+      description: manifest.description ?? '',
+      private: manifest.private === true,
+      license: manifest.license ?? null,
+      manifestDigest: sha256(bytes),
+      entry,
+      entryCandidates: candidates,
+      scripts: manifest.scripts || {},
+      declaredDependencies: collectDeclaredDeps(manifest),
+      declaredRuntimeDependencies: collectDeclaredDeps(manifest, PUBLIC_DEP_SECTIONS),
+    });
+  }
+
+  parsed.sort((a, b) => a.name.localeCompare(b.name));
+  const names = new Set(parsed.map(pkg => pkg.name));
+  const adjacency = new Map();
+  const reverse = new Map(parsed.map(pkg => [pkg.name, []]));
+
+  for (const pkg of parsed) {
+    pkg.internalDependencies = pkg.declaredRuntimeDependencies.filter(dep => names.has(dep)).sort();
+    pkg.danglingInternalDependencies = pkg.declaredRuntimeDependencies
+      .filter(dep => dep.startsWith('@unrdf/') && !names.has(dep))
+      .sort();
+    for (const dep of pkg.danglingInternalDependencies) {
+      anomalies.push({ code: 'INTERNAL_DEPENDENCY_MISSING', package: pkg.name, dependency: dep, path: `${pkg.path}/package.json` });
+    }
+    adjacency.set(pkg.name, pkg.internalDependencies);
+    for (const dep of pkg.internalDependencies) reverse.get(dep)?.push(pkg.name);
+  }
+  for (const dependents of reverse.values()) dependents.sort();
+
+  const components = stronglyConnectedComponents(parsed.map(pkg => pkg.name), adjacency);
+  const componentByName = new Map();
+  components.forEach((members, i) => members.forEach(name => componentByName.set(name, { id: `scc-${String(i + 1).padStart(3, '0')}`, members })));
+
+  for (const pkg of parsed) {
+    pkg.reverseDependencies = reverse.get(pkg.name) || [];
+    pkg.tier = classifyTier({
+      isPrivate: pkg.private,
+      reverseDependencyCount: pkg.reverseDependencies.length,
+      internalDependencyCount: pkg.internalDependencies.length,
+    });
+    const component = componentByName.get(pkg.name);
+    pkg.sccId = component.id;
+    pkg.sccSize = component.members.length;
+    pkg.cyclic = component.members.length > 1 || pkg.internalDependencies.includes(pkg.name);
+    pkg.hasLint = typeof pkg.scripts.lint === 'string';
+    pkg.hasBuild = typeof pkg.scripts.build === 'string';
+    pkg.hasTest = typeof pkg.scripts.test === 'string';
+  }
+
+  const fatalCodes = new Set(['PACKAGE_MANIFEST_INVALID_JSON', 'PACKAGE_NAME_MISSING', 'PACKAGE_NAME_DUPLICATE', 'INTERNAL_DEPENDENCY_MISSING']);
+  const state = anomalies.some(item => fatalCodes.has(item.code))
+    ? 'BUILD_BROKEN'
+    : anomalies.length
+      ? 'PARTIAL_ALIVE'
+      : 'ALIVE';
+
+  const graph = {
+    schema: 'urn:unrdf:package-observation:v3',
+    source: { repository: 'seanchatmangpt/unrdf', commit: readHead(root) },
+    packages: parsed,
+    stronglyConnectedComponents: components.filter(members => members.length > 1),
+    anomalies: anomalies.sort((a, b) => stableStringify(a).localeCompare(stableStringify(b))),
+  };
+  graph.graphDigest = sha256(stableStringify(graph));
+  graph.state = state;
+  return graph;
+}
+
+export function renderPackageTurtle(graph) {
+  const lines = [
+    '# GENERATED observation graph. Do not hand edit.',
+    '# O = packages/*/package.json; O* = this admitted, normalized graph.',
+    '@prefix dcterms: <http://purl.org/dc/terms/> .',
+    '@prefix doap: <http://usefulinc.com/ns/doap#> .',
+    '@prefix prov: <http://www.w3.org/ns/prov#> .',
+    '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
+    `@prefix unrdf: <${RDF_NS}> .`,
+    '',
+    '<urn:unrdf:package-observation> a prov:Entity ;',
+    `    dcterms:identifier ${turtleString(graph.graphDigest)} ;`,
+    `    unrdf:standing ${turtleString(graph.state)} ;`,
+    `    unrdf:packageCount ${graph.packages.length} .`,
+    '',
+  ];
+
+  for (const pkg of graph.packages) {
+    const predicates = [
+      'a doap:Project, prov:Entity',
+      `dcterms:identifier ${turtleString(pkg.name)}`,
+      `doap:name ${turtleString(pkg.name)}`,
+      `doap:revision ${turtleString(pkg.version ?? '')}`,
+      `dcterms:description ${turtleString(pkg.description)}`,
+      `unrdf:path ${turtleString(pkg.path)}`,
+      `unrdf:tier ${turtleString(pkg.tier)}`,
+      `unrdf:private ${pkg.private ? 'true' : 'false'}`,
+      `unrdf:entry ${turtleString(pkg.entry ?? '')}`,
+      `unrdf:manifestDigest ${turtleString(pkg.manifestDigest)}`,
+      `unrdf:internalDependenciesJson ${turtleString(JSON.stringify(pkg.internalDependencies))}`,
+      `unrdf:reverseDependenciesJson ${turtleString(JSON.stringify(pkg.reverseDependencies))}`,
+      `unrdf:internalDependencyCount ${pkg.internalDependencies.length}`,
+      `unrdf:reverseDependencyCount ${pkg.reverseDependencies.length}`,
+      `unrdf:sccId ${turtleString(pkg.sccId)}`,
+      `unrdf:sccSize ${pkg.sccSize}`,
+      `unrdf:cyclic ${pkg.cyclic ? 'true' : 'false'}`,
+      `unrdf:hasLint ${pkg.hasLint ? 'true' : 'false'}`,
+      `unrdf:hasBuild ${pkg.hasBuild ? 'true' : 'false'}`,
+      `unrdf:hasTest ${pkg.hasTest ? 'true' : 'false'}`,
+      ...pkg.internalDependencies.map(dep => `unrdf:dependsOn ${packageUrn(dep)}`),
+    ];
+    lines.push(`${packageUrn(pkg.name)} ${predicates.map((predicate, i) => `${i ? '    ' : ''}${predicate}`).join(' ;\n')} .`, '');
+  }
+  return `${lines.join('\n')}\n`;
+}
+
+export async function writeObservation(graph, root = DEFAULT_ROOT) {
+  const ttlPath = path.join(root, '.artifacts', 'package-observation', 'package-topology.ttl');
+  const receiptPath = path.join(root, '.artifacts', 'package-observation', 'receipt.json');
+  await mkdir(path.dirname(ttlPath), { recursive: true });
+  await mkdir(path.dirname(receiptPath), { recursive: true });
+  await writeFile(ttlPath, renderPackageTurtle(graph));
+  await writeFile(receiptPath, `${JSON.stringify(graph, null, 2)}\n`);
+  return { ttlPath, receiptPath };
+}
+
+export async function main(root = DEFAULT_ROOT) {
+  const graph = observePackageGraph(root);
+  const { ttlPath, receiptPath } = await writeObservation(graph, root);
+  console.log(`PACKAGE_OBSERVATION ${JSON.stringify({ state: graph.state, packageCount: graph.packages.length, anomalies: graph.anomalies.length, sccs: graph.stronglyConnectedComponents.length, graphDigest: graph.graphDigest, ttl: path.relative(root, ttlPath), receipt: path.relative(root, receiptPath) })}`);
+  process.exitCode = graph.state === 'BUILD_BROKEN' ? 1 : 0;
+  return graph;
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch(error => {
+    console.error(`PACKAGE_OBSERVATION_FAILED ${error.stack || error.message}`);
+    process.exitCode = 1;
+  });
+}
