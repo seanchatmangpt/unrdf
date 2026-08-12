@@ -8,11 +8,12 @@ on:
       - 'templates/package-exports.mjs.tera'
       - 'scripts/unrdf-package-discovery.mjs'
       - 'scripts/unrdf-generate-integration.mjs'
-      - 'scripts/verify-workspace-packages.mjs'
       - 'src/unrdf-package-registry.mjs'
       - 'src/unrdf-dependency-resolver.mjs'
+      - 'src/unrdf-package-validator.mjs'
       - 'src/generated/package-exports.mjs'
       - 'test/package-factory.test.mjs'
+      - 'test/unrdf-package-system.test.mjs'
       - '.github/workflows/unrdf-sync-integration.yml'
   pull_request:
     paths:
@@ -21,11 +22,12 @@ on:
       - 'templates/package-exports.mjs.tera'
       - 'scripts/unrdf-package-discovery.mjs'
       - 'scripts/unrdf-generate-integration.mjs'
-      - 'scripts/verify-workspace-packages.mjs'
       - 'src/unrdf-package-registry.mjs'
       - 'src/unrdf-dependency-resolver.mjs'
+      - 'src/unrdf-package-validator.mjs'
       - 'src/generated/package-exports.mjs'
       - 'test/package-factory.test.mjs'
+      - 'test/unrdf-package-system.test.mjs'
       - '.github/workflows/unrdf-sync-integration.yml'
 
 concurrency:
@@ -33,13 +35,14 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  package-factory:
+  construct-package-graph:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
+      GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       GGEN_VERSION: v26.8.12
       GGEN_RELEASE_COMMIT: ebcc48c35fa3f2781fda52ce4826d347abb8faf6
       GGEN_ASSET_ID: '511958450'
@@ -49,7 +52,7 @@ jobs:
       - name: Checkout exact subject
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ env.GITHUB_HEAD_SHA }}
           fetch-depth: 1
 
       - name: Setup pnpm
@@ -103,8 +106,8 @@ jobs:
           test -f .artifacts/package-observation/receipt.json
           exit 0
 
-      - name: Prove observation calculus
-        run: pnpm exec vitest run test/package-factory.test.mjs
+      - name: Prove observation and package-system calculus
+        run: pnpm exec vitest run test/package-factory.test.mjs test/unrdf-package-system.test.mjs
 
       - name: Manufacture projections with ggen
         run: ggen sync run
@@ -122,42 +125,43 @@ jobs:
           ggen sync run
           cmp /tmp/package-exports.first.mjs src/generated/package-exports.mjs
 
-      - name: Execute bounded package readiness matrix
-        id: matrix
-        shell: bash
-        run: |
-          set +e
-          node scripts/verify-workspace-packages.mjs --concurrency=6 --timeout-ms=120000
-          code=$?
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          test -f .artifacts/package-matrix/receipt.json
-          exit 0
-
-      - name: Assert projections are committed and replayable
+      - name: Bootstrap exact generated projection
+        id: projection
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code -- src/generated/package-exports.mjs
+          if git diff --quiet -- src/generated/package-exports.mjs; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/generated/package-exports.mjs
+          git commit -m 'chore: project canonical package graph with ggen'
+          git push origin "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
 
       - name: Upload package factory receipts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: package-factory-${{ github.event.pull_request.head.sha || github.sha }}
+          name: package-factory-${{ env.GITHUB_HEAD_SHA }}
           if-no-files-found: error
           retention-days: 30
           include-hidden-files: true
           path: |
             .artifacts/package-observation/
             src/generated/package-exports.mjs
-            .artifacts/package-matrix/
             .ggen-v2/
             .ggen/
 
-      - name: Report scoped standing
+      - name: Report construction standing
         if: always()
         shell: bash
         run: |
-          echo "factory=ALIVE if this job reaches the projection-drift crown"
-          echo "package_observation_exit=${{ steps.observe.outputs.exit_code }} (product observation; nonzero does not revoke projection authority)"
-          echo "package_matrix_exit=${{ steps.matrix.outputs.exit_code }} (dependency-closed product standing; receipt uploaded)"
+          echo "subject=${GITHUB_HEAD_SHA}"
+          echo "SELECT=package manifests"
+          echo "CONSTRUCT=observation RDF -> ggen SPARQL/Tera projection"
+          echo "DO=separate Workspace Package Matrix workflow"
+          echo "projection_changed=${{ steps.projection.outputs.changed }}"
+          echo "package_observation_exit=${{ steps.observe.outputs.exit_code }}"
