@@ -1,0 +1,17 @@
+[pack]
+name = "unrdf-production"
+version = "26.8.12"
+description = "Canonical UNRDF package production gates"
+
+[ownership]
+files = [
+  { path = "eslint.config.mjs", class = "Exclusive" },
+  { path = "scripts/verify-workspace-packages.mjs", class = "Exclusive" },
+]
+
+[templates]
+"eslint.config.mjs" = "templates/eslint.config.mjs.tera"
+"scripts/verify-workspace-packages.mjs" = "templates/verify-workspace-packages.mjs.tera"
+
+[queries]
+factory = "queries/factory.rq"

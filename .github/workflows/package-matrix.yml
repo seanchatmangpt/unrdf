@@ -17,10 +17,18 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     steps:
-      - name: Checkout pull request head
+      - name: Checkout exact UNRDF head
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Checkout pinned ggen manufacturer
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 3c456cb06c1cb325efafcdde6685ed27104450d8
+          path: .tools/ggen
           fetch-depth: 1
 
       - name: Install pnpm
@@ -34,20 +42,32 @@ jobs:
           node-version: 20.20.2
           cache: pnpm
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build exact ggen
+        run: cargo build --release --manifest-path .tools/ggen/Cargo.toml -p ggen-cli
+
+      - name: Execute ggen production projection
+        run: |
+          .tools/ggen/target/release/ggen graph validate
+          .tools/ggen/target/release/ggen sync run
+          git diff --exit-code -- eslint.config.mjs scripts/verify-workspace-packages.mjs
 
       - name: Verify every workspace package
         env:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/verify-workspace-packages.mjs --concurrency=4 --timeout-ms=300000
+        run: node scripts/verify-workspace-packages.mjs --concurrency=6 --timeout-ms=180000
 
       - name: Upload package matrix receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: workspace-package-matrix
+          name: workspace-package-matrix-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/package-matrix
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30
