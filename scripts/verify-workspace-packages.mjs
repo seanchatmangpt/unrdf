@@ -2,9 +2,9 @@
 /**
  * Production package verifier.
  *
- * Separates observation, execution, release closure and standing. A package is
- * ALIVE only when its admitted public surface imports, every applicable local
- * gate executes without masking, and every runtime dependency is itself ALIVE.
+ * Separates observation, execution, package standing, dependency-closed release
+ * standing, and aggregate standing. ALIVE is manufactured only from executed
+ * evidence against the admitted package graph.
  */
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -17,11 +17,28 @@ import { ALL_PACKAGES } from '../src/generated/package-exports.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, '.artifacts/package-matrix');
+const observationReceiptPath = path.join(root, '.artifacts/package-observation/receipt.json');
+const observationTurtlePath = path.join(root, '.artifacts/package-observation/package-topology.ttl');
 const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const concurrency = +(process.argv.find(x => x.startsWith('--concurrency='))?.split('=')[1] || 6);
 const timeoutMs = +(process.argv.find(x => x.startsWith('--timeout-ms='))?.split('=')[1] || 120000);
 const masked = /\|\|\s*true\b|;\s*exit\s+0\b/;
 const noop = /\b(echo|printf)\b.*\b(no|skip|not applicable)\b.*\b(test|build|lint)/i;
+const fatalObservationCodes = new Set([
+  'PACKAGE_MANIFEST_INVALID_JSON',
+  'PACKAGE_NAME_MISSING',
+  'PACKAGE_NAME_DUPLICATE',
+  'INTERNAL_DEPENDENCY_MISSING',
+]);
+const standingSeverity = new Map([
+  ['ALIVE', 0],
+  ['NOT_APPLICABLE', 0],
+  ['PARTIAL_ALIVE', 1],
+  ['UNKNOWN', 2],
+  ['UNSUPPORTED', 3],
+  ['BLOCKED', 4],
+  ['BUILD_BROKEN', 5],
+]);
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const relative = value => path.relative(root, value).split(path.sep).join('/');
 const tail = (current, addition, max = 16384) => (current + addition).slice(-max);
@@ -96,8 +113,37 @@ function aggregateStanding(states, { publicSurface = true } = {}) {
   if (states.includes('BUILD_BROKEN')) return 'BUILD_BROKEN';
   if (states.includes('BLOCKED')) return 'BLOCKED';
   if (states.includes('UNSUPPORTED')) return 'UNSUPPORTED';
+  if (states.includes('UNKNOWN')) return 'UNKNOWN';
   if (publicSurface && !states.includes('ALIVE')) return 'UNKNOWN';
   return states.every(state => ['ALIVE', 'NOT_APPLICABLE'].includes(state)) ? 'ALIVE' : 'PARTIAL_ALIVE';
+}
+
+function dependencyClosedStanding(own, dependencyStates) {
+  if (own !== 'ALIVE') return own;
+  const worst = dependencyStates.reduce((state, next) => {
+    return (standingSeverity.get(next) || 0) > (standingSeverity.get(state) || 0) ? next : state;
+  }, 'ALIVE');
+  return worst === 'NOT_APPLICABLE' ? 'ALIVE' : worst;
+}
+
+async function ensureObservation() {
+  if (!existsSync(observationReceiptPath) || !existsSync(observationTurtlePath)) {
+    const execution = await run(
+      process.execPath,
+      ['scripts/unrdf-package-discovery.mjs'],
+      root,
+      path.join(out, 'observation.log'),
+      30000,
+    );
+    if (execution.spawnError || execution.timedOut || !existsSync(observationReceiptPath) || !existsSync(observationTurtlePath)) {
+      throw new Error(`PACKAGE_OBSERVATION_BLOCKED:${execution.spawnError || `exit=${execution.exitCode}`}`);
+    }
+  }
+  const observation = JSON.parse(await readFile(observationReceiptPath, 'utf8'));
+  if (!observation?.graphDigest || !Array.isArray(observation.packages) || !Array.isArray(observation.anomalies)) {
+    throw new Error('PACKAGE_OBSERVATION_RECEIPT_INVALID');
+  }
+  return observation;
 }
 
 async function discoverWorkspace() {
@@ -113,19 +159,36 @@ async function discoverWorkspace() {
   return packages.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function projectionParity(workspace) {
+function projectionParity(workspace, observation) {
   const observed = workspace.map(pkg => `${pkg.name}\t${pkg.path}`).sort();
   const projected = ALL_PACKAGES.map(pkg => `${pkg.name}\t${pkg.path}`).sort();
-  const missingFromProjection = observed.filter(item => !projected.includes(item));
-  const phantomProjection = projected.filter(item => !observed.includes(item));
+  const admitted = observation.packages.map(pkg => `${pkg.name}\t${pkg.path}`).sort();
+  const missingFromProjection = admitted.filter(item => !projected.includes(item));
+  const phantomProjection = projected.filter(item => !admitted.includes(item));
+  const workspaceVsObservation = {
+    missingFromObservation: observed.filter(item => !admitted.includes(item)),
+    phantomObservation: admitted.filter(item => !observed.includes(item)),
+  };
   return {
-    state: missingFromProjection.length || phantomProjection.length ? 'BUILD_BROKEN' : 'ALIVE',
-    observedCount: observed.length,
+    state: missingFromProjection.length || phantomProjection.length || workspaceVsObservation.missingFromObservation.length || workspaceVsObservation.phantomObservation.length
+      ? 'BUILD_BROKEN'
+      : 'ALIVE',
+    workspaceCount: observed.length,
+    observationCount: admitted.length,
     projectedCount: projected.length,
     missingFromProjection,
     phantomProjection,
-    digest: sha256(JSON.stringify(projected)),
+    ...workspaceVsObservation,
+    digest: sha256(JSON.stringify({ observed, admitted, projected })),
   };
+}
+
+function observationDefectsFor(pkg, observation) {
+  return observation.anomalies.filter(anomaly => {
+    if (anomaly.package === pkg.name) return true;
+    if (typeof anomaly.path === 'string' && (anomaly.path === pkg.path || anomaly.path.startsWith(`${pkg.path}/`))) return true;
+    return false;
+  });
 }
 
 async function importSurface(pkg) {
@@ -144,12 +207,21 @@ async function main() {
     source: { repository: 'seanchatmangpt/unrdf', commit: sourceIdentity() },
     startedAt: new Date().toISOString(),
     environment: { node: process.version, platform: process.platform, arch: process.arch },
-    state: 'UNKNOWN', parity: null, packages: [], executions: [], dependencyClosure: [],
+    state: 'UNKNOWN', observation: null, parity: null, packages: [], executions: [], dependencyClosure: [],
   };
 
   try {
+    const observation = await ensureObservation();
+    receipt.observation = {
+      state: observation.state,
+      graphDigest: observation.graphDigest,
+      anomalyCount: observation.anomalies.length,
+      stronglyConnectedComponents: observation.stronglyConnectedComponents,
+      anomalies: observation.anomalies,
+    };
+
     const workspace = await discoverWorkspace();
-    receipt.parity = projectionParity(workspace);
+    receipt.parity = projectionParity(workspace, observation);
     const workspaceByName = new Map(workspace.map(pkg => [pkg.name, pkg]));
 
     // Cheap, high-information public-surface proof first. Slow package tests can no longer
@@ -165,7 +237,14 @@ async function main() {
         return { package: pkg.name, phase, script, state: scriptStanding(script, result), ...result };
       }));
       for (const pkg of ALL_PACKAGES.filter(pkg => typeof workspaceByName.get(pkg.name)?.scripts?.[phase] !== 'string')) {
-        receipt.executions.push({ package: pkg.name, phase, script: null, state: 'NOT_APPLICABLE', reason: `no ${phase} script` });
+        const requiredTestMissing = phase === 'test' && !pkg.private;
+        receipt.executions.push({
+          package: pkg.name,
+          phase,
+          script: null,
+          state: requiredTestMissing ? 'UNSUPPORTED' : 'NOT_APPLICABLE',
+          reason: requiredTestMissing ? 'public package has no executable test script' : `no ${phase} script`,
+        });
       }
     }
 
@@ -178,46 +257,68 @@ async function main() {
 
     for (const projection of ALL_PACKAGES) {
       const executions = executionsByPackage.get(projection.name) || [];
-      const ownStanding = aggregateStanding(executions.map(item => item.state), { publicSurface: !projection.private });
+      const observationDefects = observationDefectsFor(projection, observation);
+      const fatalDefects = observationDefects.filter(defect => fatalObservationCodes.has(defect.code));
+      const executedStanding = aggregateStanding(executions.map(item => item.state), { publicSurface: !projection.private });
+      const ownStanding = fatalDefects.length ? 'BUILD_BROKEN' : executedStanding;
       receipt.packages.push({
         ...projection,
+        observationDefects,
+        executedStanding,
         ownStanding,
         executed: executions.map(({ phase, state, exitCode, timedOut, durationMs, log, reason }) => ({ phase, state, exitCode, timedOut, durationMs, log, reason })),
       });
     }
 
-    const standingByName = new Map(receipt.packages.map(pkg => [pkg.name, pkg.ownStanding]));
+    const ownStandingByName = new Map(receipt.packages.map(pkg => [pkg.name, pkg.ownStanding]));
+    const releaseStanding = new Map(ownStandingByName);
     let changed = true;
-    const releaseStanding = new Map(standingByName);
-    // Monotone fixed point: dependency failure can only reduce release standing, never raise it.
+    // Monotone fixed point over the admitted dependency graph. One broken edge is topology;
+    // its consequence propagates only through packages that actually depend on it.
     while (changed) {
       changed = false;
       for (const pkg of receipt.packages) {
-        const own = standingByName.get(pkg.name);
-        const blockedDeps = pkg.dependencies.filter(dep => releaseStanding.get(dep) !== 'ALIVE');
-        const next = own === 'ALIVE' && blockedDeps.length === 0 ? 'ALIVE' : own === 'BUILD_BROKEN' ? 'BUILD_BROKEN' : blockedDeps.length ? 'PARTIAL_ALIVE' : own;
-        if (releaseStanding.get(pkg.name) !== next) { releaseStanding.set(pkg.name, next); changed = true; }
+        const dependencyStates = pkg.dependencies.map(dep => releaseStanding.get(dep) || 'UNKNOWN');
+        const next = dependencyClosedStanding(ownStandingByName.get(pkg.name), dependencyStates);
+        if ((standingSeverity.get(next) || 0) > (standingSeverity.get(releaseStanding.get(pkg.name)) || 0)) {
+          releaseStanding.set(pkg.name, next);
+          changed = true;
+        }
       }
     }
 
     for (const pkg of receipt.packages) {
       pkg.releaseStanding = releaseStanding.get(pkg.name);
-      pkg.blockedBy = pkg.dependencies.filter(dep => releaseStanding.get(dep) !== 'ALIVE');
+      pkg.blockedBy = pkg.dependencies
+        .map(dep => ({ package: dep, standing: releaseStanding.get(dep) || 'UNKNOWN' }))
+        .filter(dep => dep.standing !== 'ALIVE');
     }
-    receipt.dependencyClosure = receipt.packages.filter(pkg => pkg.cyclic).map(pkg => ({ package: pkg.name, sccId: pkg.sccId, sccSize: pkg.sccSize, dependencies: pkg.dependencies }));
+
+    receipt.dependencyClosure = receipt.packages
+      .filter(pkg => pkg.cyclic)
+      .map(pkg => ({ package: pkg.name, sccId: pkg.sccId, sccSize: pkg.sccSize, dependencies: pkg.dependencies }));
     receipt.summary = receipt.packages.reduce((summary, pkg) => {
       summary[pkg.releaseStanding] = (summary[pkg.releaseStanding] || 0) + 1;
       return summary;
     }, {});
-    receipt.state = receipt.parity.state === 'ALIVE' && receipt.packages.every(pkg => pkg.private || pkg.releaseStanding === 'ALIVE') ? 'ALIVE' : 'BUILD_BROKEN';
+
+    const publicStates = receipt.packages.filter(pkg => !pkg.private).map(pkg => pkg.releaseStanding);
+    if (receipt.observation.state === 'BUILD_BROKEN' || receipt.parity.state === 'BUILD_BROKEN' || publicStates.includes('BUILD_BROKEN')) receipt.state = 'BUILD_BROKEN';
+    else if (publicStates.includes('BLOCKED')) receipt.state = 'BLOCKED';
+    else if (publicStates.includes('UNSUPPORTED')) receipt.state = 'UNSUPPORTED';
+    else if (receipt.observation.state === 'PARTIAL_ALIVE' || publicStates.some(state => state !== 'ALIVE')) receipt.state = 'PARTIAL_ALIVE';
+    else receipt.state = 'ALIVE';
   } catch (error) {
     receipt.state = 'BUILD_BROKEN';
     receipt.error = { name: error.name, message: error.message, stack: error.stack };
   } finally {
     receipt.completedAt = new Date().toISOString();
     await writeFile(path.join(out, 'receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`);
-    await writeFile(path.join(out, 'package-standing.tsv'), ['package\town\trelease\tblocked_by', ...receipt.packages.map(pkg => `${pkg.name}\t${pkg.ownStanding}\t${pkg.releaseStanding}\t${pkg.blockedBy.join(',')}`)].join('\n') + '\n');
-    console.log(`PACKAGE_READINESS_RECEIPT ${JSON.stringify({ state: receipt.state, parity: receipt.parity?.state, packageCount: receipt.packages.length, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
+    await writeFile(path.join(out, 'package-standing.tsv'), [
+      'package\texecuted\town\trelease\tblocked_by',
+      ...receipt.packages.map(pkg => `${pkg.name}\t${pkg.executedStanding}\t${pkg.ownStanding}\t${pkg.releaseStanding}\t${pkg.blockedBy.map(dep => `${dep.package}:${dep.standing}`).join(',')}`),
+    ].join('\n') + '\n');
+    console.log(`PACKAGE_READINESS_RECEIPT ${JSON.stringify({ state: receipt.state, observation: receipt.observation?.state, parity: receipt.parity?.state, packageCount: receipt.packages.length, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
     process.exitCode = receipt.state === 'ALIVE' ? 0 : 1;
   }
 }
