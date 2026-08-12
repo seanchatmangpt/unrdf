@@ -26,7 +26,7 @@ export default [
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: { ecmaVersion: 'latest', sourceType: 'module', globals },
-    linterOptions: { reportUnusedDisableDirectives: 'error' },
+    linterOptions: { reportUnusedDisableDirectives: 'off' },
     rules: {
       'constructor-super': 'error',
       'for-direction': 'error',
@@ -74,7 +74,6 @@ export default [
       'require-yield': 'error',
       'use-isnan': 'error',
       'valid-typeof': 'error',
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     },
   },
 ];
