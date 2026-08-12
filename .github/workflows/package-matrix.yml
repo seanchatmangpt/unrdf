@@ -49,7 +49,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build exact ggen
-        run: cargo build --release --manifest-path .tools/ggen/Cargo.toml -p ggen-cli
+        run: cargo build --release --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
 
       - name: Execute ggen production projection
         run: |
