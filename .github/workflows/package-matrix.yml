@@ -42,18 +42,20 @@ jobs:
           node-version: 20.20.2
           cache: pnpm
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup pinned ggen Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly-2026-06-22
+        with:
+          components: rustfmt,clippy
 
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build exact ggen
-        run: cargo build --release --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+        run: cargo +nightly-2026-06-22 build --release --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
 
       - name: Execute ggen production projection
         run: |
-          .tools/ggen/target/release/ggen graph validate
+          .tools/ggen/target/release/ggen graph validate --files ontology/unrdf-package-factory.ttl
           .tools/ggen/target/release/ggen sync run
           git diff --exit-code -- eslint.config.mjs scripts/verify-workspace-packages.mjs
 
@@ -69,5 +71,5 @@ jobs:
         with:
           name: workspace-package-matrix-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/package-matrix
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30

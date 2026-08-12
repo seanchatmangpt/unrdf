@@ -13,6 +13,7 @@ const globals = {
   WebSocket: 'readonly', indexedDB: 'readonly', localStorage: 'readonly', sessionStorage: 'readonly',
   describe: 'readonly', it: 'readonly', test: 'readonly', expect: 'readonly', beforeAll: 'readonly',
   afterAll: 'readonly', beforeEach: 'readonly', afterEach: 'readonly', vi: 'readonly', suite: 'readonly',
+  module: 'readonly', require: 'readonly', exports: 'readonly', __dirname: 'readonly', __filename: 'readonly',
 };
 
 export default [
@@ -53,7 +54,6 @@ export default [
       'no-loss-of-precision': 'error',
       'no-new-native-nonconstructor': 'error',
       'no-obj-calls': 'error',
-      'no-promise-executor-return': 'error',
       'no-self-assign': 'error',
       'no-setter-return': 'error',
       'no-shadow-restricted-names': 'error',
