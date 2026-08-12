@@ -1,0 +1,9 @@
+PREFIX uf: <https://unrdf.dev/ontology/package-factory/>
+SELECT ?ggenRepository ?ggenCommit ?nodeVersion ?pnpmVersion
+WHERE {
+  uf:factory uf:ggenRepository ?ggenRepository ;
+             uf:ggenCommit ?ggenCommit ;
+             uf:nodeVersion ?nodeVersion ;
+             uf:pnpmVersion ?pnpmVersion .
+}
+ORDER BY ?ggenRepository ?ggenCommit

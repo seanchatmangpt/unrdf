@@ -10,9 +10,9 @@ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 
 let globalProvider = null;
 let processor = null;
+let spanExporter = null;
 const pendingSpans = new Map(); // Map<validationId, Array<Span>>
 let shutdownPromise = null;
-let exporterCalled = false;
 
 /**
  * Validate non-empty string input (poka-yoke: prevents invalid validationId)
@@ -44,7 +44,7 @@ export async function ensureProviderInitialized(validationId) {
   // Create provider if not already initialized (lazy initialization)
   if (!globalProvider) {
     // Create span exporter that collects spans for all validations
-    const spanExporter = {
+    spanExporter = {
       export: (spans) => {
         console.log(`[OTEL Exporter] export() called with ${spans?.length || 0} spans`);
         if (!spans || !Array.isArray(spans) || spans.length === 0) {
@@ -144,17 +144,18 @@ export async function ensureProviderInitialized(validationId) {
 export async function shutdownProvider(validationId) {
   if (validationId !== undefined) {
     validateNonEmptyString(validationId, 'validationId');
-    spanCollectors.delete(validationId);
+    pendingSpans.delete(validationId);
   }
 
   // If no more validations or no validationId provided, shutdown provider
-  if ((validationId === undefined || spanCollectors.size === 0) && globalProvider) {
+  if ((validationId === undefined || pendingSpans.size === 0) && globalProvider) {
     if (!shutdownPromise) {
       shutdownPromise = globalProvider.shutdown()
         .then(() => {
           globalProvider = null;
           processor = null;
-          spanCollectors.clear();
+          spanExporter = null;
+          pendingSpans.clear();
           shutdownPromise = null;
         })
         .catch((error) => {

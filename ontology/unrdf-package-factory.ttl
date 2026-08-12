@@ -1,0 +1,16 @@
+@prefix uf: <https://unrdf.dev/ontology/package-factory/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+uf:factory a uf:ProductionFactory, prov:Entity ;
+  dcterms:title "UNRDF ggen production package factory" ;
+  uf:ggenRepository "seanchatmangpt/ggen" ;
+  uf:ggenCommit "3c456cb06c1cb325efafcdde6685ed27104450d8" ;
+  uf:nodeVersion "20.20.2" ;
+  uf:pnpmVersion "10.34.5" ;
+  uf:zeroUnreceiptedActuation true ;
+  uf:requireLint true ;
+  uf:requireBuildOrSourceWitness true ;
+  uf:requireTests true ;
+  uf:requireImport true ;
+  uf:requirePackForPublic true .
