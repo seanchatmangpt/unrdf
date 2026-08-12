@@ -6,7 +6,7 @@
  * standing, and aggregate standing. ALIVE is manufactured only from executed
  * evidence against the admitted package graph.
  */
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createWriteStream, existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -44,7 +44,10 @@ const relative = value => path.relative(root, value).split(path.sep).join('/');
 const tail = (current, addition, max = 16384) => (current + addition).slice(-max);
 
 function sourceIdentity() {
-  return process.env.GITHUB_HEAD_SHA || process.env.GITHUB_SHA || null;
+  const fromEnvironment = process.env.GITHUB_HEAD_SHA || process.env.GITHUB_SHA;
+  if (fromEnvironment) return fromEnvironment;
+  const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', timeout: 2000 });
+  return result.status === 0 ? result.stdout.trim() : null;
 }
 
 async function killTree(child) {
@@ -71,8 +74,16 @@ async function run(cmd, args, cwd, logPath, ms = timeoutMs) {
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: process.platform !== 'win32',
   });
-  child.stdout.on('data', chunk => { const text = chunk.toString(); stdout = tail(stdout, text, 1024 * 1024); log.write(text); });
-  child.stderr.on('data', chunk => { const text = chunk.toString(); stderr = tail(stderr, text); log.write(text); });
+  child.stdout.on('data', chunk => {
+    const text = chunk.toString();
+    stdout = tail(stdout, text, 1024 * 1024);
+    log.write(text);
+  });
+  child.stderr.on('data', chunk => {
+    const text = chunk.toString();
+    stderr = tail(stderr, text);
+    log.write(text);
+  });
   child.once('error', error => { spawnError = error.message; });
 
   const timer = setTimeout(async () => {
@@ -83,9 +94,15 @@ async function run(cmd, args, cwd, logPath, ms = timeoutMs) {
   clearTimeout(timer);
   await new Promise(resolve => log.end(resolve));
   return {
-    command: [cmd, ...args], cwd: relative(cwd), log: relative(logPath), exitCode,
-    timedOut, spawnError, durationMs: Math.round(Number(process.hrtime.bigint() - start) / 1e6),
-    stdoutTail: stdout, stderrTail: stderr,
+    command: [cmd, ...args],
+    cwd: relative(cwd),
+    log: relative(logPath),
+    exitCode,
+    timedOut,
+    spawnError,
+    durationMs: Math.round(Number(process.hrtime.bigint() - start) / 1e6),
+    stdoutTail: stdout,
+    stderrTail: stderr,
   };
 }
 
@@ -152,9 +169,14 @@ async function discoverWorkspace() {
   const packages = [];
   for (const item of JSON.parse(result.stdoutTail)) {
     const abs = path.resolve(item.path);
-    if (abs === root || !abs.startsWith(path.join(root, 'packages') + path.sep)) continue;
+    if (abs === root) continue;
+    const rel = relative(abs);
+    const segments = rel.split('/');
+    // The admitted release graph is packages/* only. Nested examples are separate
+    // workspace fixtures, not independently released @unrdf package surfaces.
+    if (segments.length !== 2 || segments[0] !== 'packages') continue;
     const manifest = JSON.parse(await readFile(path.join(abs, 'package.json'), 'utf8'));
-    packages.push({ name: manifest.name, path: relative(abs), private: manifest.private === true, scripts: manifest.scripts || {} });
+    packages.push({ name: manifest.name, path: rel, private: manifest.private === true, scripts: manifest.scripts || {} });
   }
   return packages.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -192,12 +214,30 @@ function observationDefectsFor(pkg, observation) {
 }
 
 async function importSurface(pkg) {
-  if (pkg.private && !pkg.entry) return { package: pkg.name, phase: 'import', state: 'NOT_APPLICABLE', reason: 'private package without declared root entry' };
-  if (!pkg.entry) return { package: pkg.name, phase: 'import', state: 'BUILD_BROKEN', reason: 'declared public root entry missing from projection' };
+  if (pkg.private && !pkg.entry) {
+    return { package: pkg.name, phase: 'import', state: 'NOT_APPLICABLE', reason: 'private package without declared root entry' };
+  }
+  if (!pkg.entry) {
+    return { package: pkg.name, phase: 'import', state: 'BUILD_BROKEN', reason: 'declared public root entry missing from projection' };
+  }
   const target = path.resolve(root, pkg.path, pkg.entry);
-  if (!existsSync(target)) return { package: pkg.name, phase: 'import', state: 'BUILD_BROKEN', reason: `projected entry missing: ${relative(target)}` };
-  const result = await run(process.execPath, ['--input-type=module', '--eval', `await import(${JSON.stringify(pathToFileURL(target).href)})`], root, path.join(out, 'import', `${pkg.name.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-')}.log`), 60000);
-  return { package: pkg.name, phase: 'import', target: relative(target), state: result.exitCode || result.timedOut ? 'BUILD_BROKEN' : result.spawnError ? 'BLOCKED' : 'ALIVE', ...result };
+  if (!existsSync(target)) {
+    return { package: pkg.name, phase: 'import', state: 'BUILD_BROKEN', reason: `projected entry missing: ${relative(target)}` };
+  }
+  const result = await run(
+    process.execPath,
+    ['--input-type=module', '--eval', `await import(${JSON.stringify(pathToFileURL(target).href)})`],
+    root,
+    path.join(out, 'import', `${pkg.name.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-')}.log`),
+    60000,
+  );
+  return {
+    package: pkg.name,
+    phase: 'import',
+    target: relative(target),
+    state: result.exitCode || result.timedOut ? 'BUILD_BROKEN' : result.spawnError ? 'BLOCKED' : 'ALIVE',
+    ...result,
+  };
 }
 
 async function main() {
@@ -207,7 +247,13 @@ async function main() {
     source: { repository: 'seanchatmangpt/unrdf', commit: sourceIdentity() },
     startedAt: new Date().toISOString(),
     environment: { node: process.version, platform: process.platform, arch: process.arch },
-    state: 'UNKNOWN', observation: null, parity: null, packages: [], executions: [], dependencyClosure: [],
+    state: 'UNKNOWN',
+    observation: null,
+    parity: null,
+    refusal: null,
+    packages: [],
+    executions: [],
+    dependencyClosure: [],
   };
 
   try {
@@ -222,6 +268,22 @@ async function main() {
 
     const workspace = await discoverWorkspace();
     receipt.parity = projectionParity(workspace, observation);
+
+    // Zero unreceipted actuation: never execute package code against a stale or
+    // phantom projection. ggen must first project the admitted graph and commit
+    // that result. The next verifier run can then execute the exact subject.
+    if (receipt.parity.state !== 'ALIVE') {
+      receipt.state = 'BUILD_BROKEN';
+      receipt.refusal = {
+        code: 'PROJECTION_DRIFT',
+        standing: 'BUILD_BROKEN',
+        message: 'Committed generated package projection does not equal the admitted package observation graph',
+        observationDigest: receipt.observation.graphDigest,
+        parityDigest: receipt.parity.digest,
+      };
+      return;
+    }
+
     const workspaceByName = new Map(workspace.map(pkg => [pkg.name, pkg]));
 
     // Cheap, high-information public-surface proof first. Slow package tests can no longer
@@ -233,7 +295,12 @@ async function main() {
       const targets = ALL_PACKAGES.filter(pkg => typeof workspaceByName.get(pkg.name)?.scripts?.[phase] === 'string');
       receipt.executions.push(...await pool(targets, async pkg => {
         const script = workspaceByName.get(pkg.name).scripts[phase];
-        const result = await run(pnpm, ['--dir', path.join(root, pkg.path), 'run', phase], root, path.join(out, phase, `${pkg.name.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-')}.log`));
+        const result = await run(
+          pnpm,
+          ['--dir', path.join(root, pkg.path), 'run', phase],
+          root,
+          path.join(out, phase, `${pkg.name.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-')}.log`),
+        );
         return { package: pkg.name, phase, script, state: scriptStanding(script, result), ...result };
       }));
       for (const pkg of ALL_PACKAGES.filter(pkg => typeof workspaceByName.get(pkg.name)?.scripts?.[phase] !== 'string')) {
@@ -266,7 +333,15 @@ async function main() {
         observationDefects,
         executedStanding,
         ownStanding,
-        executed: executions.map(({ phase, state, exitCode, timedOut, durationMs, log, reason }) => ({ phase, state, exitCode, timedOut, durationMs, log, reason })),
+        executed: executions.map(({ phase, state, exitCode, timedOut, durationMs, log, reason }) => ({
+          phase,
+          state,
+          exitCode,
+          timedOut,
+          durationMs,
+          log,
+          reason,
+        })),
       });
     }
 
@@ -303,11 +378,17 @@ async function main() {
     }, {});
 
     const publicStates = receipt.packages.filter(pkg => !pkg.private).map(pkg => pkg.releaseStanding);
-    if (receipt.observation.state === 'BUILD_BROKEN' || receipt.parity.state === 'BUILD_BROKEN' || publicStates.includes('BUILD_BROKEN')) receipt.state = 'BUILD_BROKEN';
-    else if (publicStates.includes('BLOCKED')) receipt.state = 'BLOCKED';
-    else if (publicStates.includes('UNSUPPORTED')) receipt.state = 'UNSUPPORTED';
-    else if (receipt.observation.state === 'PARTIAL_ALIVE' || publicStates.some(state => state !== 'ALIVE')) receipt.state = 'PARTIAL_ALIVE';
-    else receipt.state = 'ALIVE';
+    if (receipt.observation.state === 'BUILD_BROKEN' || receipt.parity.state === 'BUILD_BROKEN' || publicStates.includes('BUILD_BROKEN')) {
+      receipt.state = 'BUILD_BROKEN';
+    } else if (publicStates.includes('BLOCKED')) {
+      receipt.state = 'BLOCKED';
+    } else if (publicStates.includes('UNSUPPORTED')) {
+      receipt.state = 'UNSUPPORTED';
+    } else if (receipt.observation.state === 'PARTIAL_ALIVE' || publicStates.some(state => state !== 'ALIVE')) {
+      receipt.state = 'PARTIAL_ALIVE';
+    } else {
+      receipt.state = 'ALIVE';
+    }
   } catch (error) {
     receipt.state = 'BUILD_BROKEN';
     receipt.error = { name: error.name, message: error.message, stack: error.stack };
@@ -318,7 +399,15 @@ async function main() {
       'package\texecuted\town\trelease\tblocked_by',
       ...receipt.packages.map(pkg => `${pkg.name}\t${pkg.executedStanding}\t${pkg.ownStanding}\t${pkg.releaseStanding}\t${pkg.blockedBy.map(dep => `${dep.package}:${dep.standing}`).join(',')}`),
     ].join('\n') + '\n');
-    console.log(`PACKAGE_READINESS_RECEIPT ${JSON.stringify({ state: receipt.state, observation: receipt.observation?.state, parity: receipt.parity?.state, packageCount: receipt.packages.length, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
+    console.log(`PACKAGE_READINESS_RECEIPT ${JSON.stringify({
+      state: receipt.state,
+      observation: receipt.observation?.state,
+      parity: receipt.parity?.state,
+      refusal: receipt.refusal?.code || null,
+      packageCount: receipt.packages.length,
+      summary: receipt.summary || {},
+      receipt: '.artifacts/package-matrix/receipt.json',
+    })}`);
     process.exitCode = receipt.state === 'ALIVE' ? 0 : 1;
   }
 }
