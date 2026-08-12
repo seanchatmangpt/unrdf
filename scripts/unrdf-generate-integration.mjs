@@ -2,6 +2,10 @@
 /**
  * Compatibility entrypoint for the package projection surface.
  * Generation authority moved from hand-written JS string assembly to ggen.
+ *
+ * Important boundary: observation standing describes the PRODUCT graph. A
+ * BUILD_BROKEN product graph is still valid O* for deterministic projection;
+ * only failure to manufacture the observation artifacts blocks ggen.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -11,11 +15,26 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ggen = process.env.GGEN_BIN || 'ggen';
-const observe = spawnSync(process.execPath, ['scripts/unrdf-package-discovery.mjs'], { cwd: root, encoding: 'utf8', stdio: 'inherit', timeout: 30000 });
-if (observe.status !== 0 || observe.error) {
-  console.error(`PACKAGE_OBSERVATION_BLOCKED: ${observe.error?.message || `exit ${observe.status}`}`);
-  process.exit(observe.status ?? 1);
+const observationArtifacts = [
+  '.artifacts/package-observation/package-topology.ttl',
+  '.artifacts/package-observation/receipt.json',
+];
+
+const observe = spawnSync(process.execPath, ['scripts/unrdf-package-discovery.mjs'], {
+  cwd: root,
+  encoding: 'utf8',
+  stdio: 'inherit',
+  timeout: 30000,
+});
+const observationMissing = observationArtifacts.filter(file => !existsSync(path.join(root, file)));
+if (observe.error || observationMissing.length) {
+  console.error(`PACKAGE_OBSERVATION_BLOCKED: ${observe.error?.message || `missing artifacts: ${observationMissing.join(', ')}`}`);
+  process.exit(2);
 }
+if (observe.status !== 0) {
+  console.error(`PACKAGE_PRODUCT_STANDING_NONZERO: observation exit ${observe.status}; projecting emitted O* without granting product ALIVE`);
+}
+
 const result = spawnSync(ggen, ['sync', 'run'], {
   cwd: root,
   encoding: 'utf8',
@@ -41,4 +60,4 @@ if (missing.length) {
 }
 
 const { ALL_PACKAGES } = await import(`../src/generated/package-exports.mjs?run=${Date.now()}`);
-console.log(`GGEN_PACKAGE_PROJECTION ${JSON.stringify({ standing: 'ALIVE', packageCount: ALL_PACKAGES.length, generated: required })}`);
+console.log(`GGEN_PACKAGE_PROJECTION ${JSON.stringify({ standing: 'ALIVE', observationExit: observe.status ?? 0, packageCount: ALL_PACKAGES.length, generated: required })}`);

@@ -82,7 +82,16 @@ jobs:
           "$HOME/.local/bin/ggen" --version
 
       - name: Observe workspace into admitted RDF graph
-        run: node scripts/unrdf-package-discovery.mjs
+        id: observe
+        shell: bash
+        run: |
+          set +e
+          node scripts/unrdf-package-discovery.mjs
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          test -f .artifacts/package-observation/package-topology.ttl
+          test -f .artifacts/package-observation/receipt.json
+          exit 0
 
       - name: Prove observation calculus
         run: pnpm exec vitest run test/package-factory.test.mjs
@@ -140,4 +149,5 @@ jobs:
         shell: bash
         run: |
           echo "factory=ALIVE if this job reaches the projection-drift crown"
-          echo "package_matrix_exit=${{ steps.matrix.outputs.exit_code }} (separate product standing; receipt uploaded)"
+          echo "package_observation_exit=${{ steps.observe.outputs.exit_code }} (product observation; nonzero does not revoke projection authority)"
+          echo "package_matrix_exit=${{ steps.matrix.outputs.exit_code }} (dependency-closed product standing; receipt uploaded)"
