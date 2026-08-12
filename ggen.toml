@@ -11,7 +11,7 @@ output_dir = "."
 
 [inference]
 rules = [
-  { name = "identity", construct = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }" }
+  { name = "identity", construct = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } ORDER BY ?s ?p ?o" }
 ]
 
 [[generation.rules]]
