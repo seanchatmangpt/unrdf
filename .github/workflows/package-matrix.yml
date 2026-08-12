@@ -43,8 +43,9 @@ jobs:
           cache: pnpm
 
       - name: Setup pinned ggen Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly-2026-06-22
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: nightly-2026-06-22
           components: rustfmt,clippy
 
       - name: Install workspace dependencies
