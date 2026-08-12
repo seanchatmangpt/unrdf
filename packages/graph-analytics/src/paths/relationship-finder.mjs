@@ -77,7 +77,7 @@ export function findShortestPath(graph, source, target, options = {}) {
       length: path.length - 1,
       totalWeight: dijkstraResult[target].distance,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
