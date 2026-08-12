@@ -41,6 +41,8 @@ jobs:
     timeout-minutes: 30
     env:
       GGEN_VERSION: v26.8.12
+      GGEN_RELEASE_COMMIT: ebcc48c35fa3f2781fda52ce4826d347abb8faf6
+      GGEN_ASSET_ID: '511958450'
       GGEN_SHA256: 2914f5ccb1a3d045888fe0c263da52514c6ba3d29964ca2eff2b575b94cdf067
 
     steps:
@@ -64,14 +66,19 @@ jobs:
       - name: Install exact workspace dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install pinned ggen release
+      - name: Install pinned ggen release through GitHub API
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           archive=/tmp/ggen-x86_64-unknown-linux-gnu.tar.gz
-          curl --fail --location --retry 3 \
-            "https://github.com/seanchatmangpt/ggen/releases/download/${GGEN_VERSION}/ggen-x86_64-unknown-linux-gnu.tar.gz" \
-            --output "$archive"
+          api="https://api.github.com/repos/seanchatmangpt/ggen/releases/assets/${GGEN_ASSET_ID}"
+          curl --fail --location --http1.1 --retry 5 --retry-all-errors --retry-delay 2 \
+            --header "Accept: application/octet-stream" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "$api" --output "$archive"
           echo "${GGEN_SHA256}  ${archive}" | sha256sum --check --strict
           mkdir -p /tmp/ggen "$HOME/.local/bin"
           tar -xzf "$archive" -C /tmp/ggen
@@ -79,7 +86,10 @@ jobs:
           test -n "$binary"
           install -m 0755 "$binary" "$HOME/.local/bin/ggen"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          "$HOME/.local/bin/ggen" --version
+          actual_version=$("$HOME/.local/bin/ggen" --version)
+          printf '%s\n' "$actual_version"
+          printf '%s\n' "$actual_version" | grep -F '26.8.12'
+          echo "GGEN_TOOLCHAIN_RECEIPT version=${GGEN_VERSION} release_commit=${GGEN_RELEASE_COMMIT} asset_id=${GGEN_ASSET_ID} sha256=${GGEN_SHA256}"
 
       - name: Observe workspace into admitted RDF graph
         id: observe
