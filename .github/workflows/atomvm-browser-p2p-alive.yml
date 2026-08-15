@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/atomvm-browser-p2p-alive.yml'
+      - '.github/workflows/deploy-book.yml'
       - 'packages/atomvm/**'
   push:
     branches:
       - 'feat/atomvm-p2p-explorer'
     paths:
       - '.github/workflows/atomvm-browser-p2p-alive.yml'
+      - '.github/workflows/deploy-book.yml'
       - 'packages/atomvm/**'
   workflow_dispatch: {}
 
