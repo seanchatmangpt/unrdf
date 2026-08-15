@@ -118,6 +118,8 @@ jobs:
           cache: pnpm
 
       - name: Install AtomVM workspace closure
+        env:
+          HUSKY: '0'
         run: pnpm install --frozen-lockfile --filter @unrdf/atomvm...
 
       - name: Download exact browser runtime
@@ -152,16 +154,18 @@ jobs:
 
       - name: Manufacture browser ALIVE receipt
         if: success()
+        env:
+          UNRDF_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euxo pipefail
           mkdir -p .build/receipts
-          ATOMVM_SHA="$(cat .runtime-artifact/.build/atomvm-browser-source.sha)"
+          export ATOMVM_SHA="$(cat .runtime-artifact/.build/atomvm-browser-source.sha)"
           node - <<'NODE'
           const fs = require('node:fs');
           const receipt = {
             status: 'ALIVE',
             subject: 'UNRDF AtomVM OCEL v2 peer explorer',
-            unrdfHead: process.env.GITHUB_SHA,
+            unrdfHead: process.env.UNRDF_HEAD,
             atomvmSourceRef: process.env.ATOMVM_SOURCE_REF,
             atomvmSourceSha: process.env.ATOMVM_SHA,
             execution: {
@@ -176,8 +180,6 @@ jobs:
           };
           fs.writeFileSync('.build/receipts/atomvm-browser-p2p-alive.json', JSON.stringify(receipt, null, 2) + '\n');
           NODE
-        env:
-          ATOMVM_SHA: ${{ env.ATOMVM_SHA }}
 
       - name: Upload browser replay evidence
         if: always()
