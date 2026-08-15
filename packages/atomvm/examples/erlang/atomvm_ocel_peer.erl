@@ -18,10 +18,10 @@ loop(Sequence) ->
         {emscripten, {call, Promise, Message}} ->
             Next = Sequence + 1,
             Digest = checksum(Message),
-            %% Encode both the monotonic runtime sequence and message checksum
-            %% in one JS-safe integer: sequence * 1_000_000_000 + checksum.
-            %% Browser code decodes this receipt and refuses mismatches.
-            Receipt = (Next * 1000000000) + Digest,
+            %% Emscripten's promise integer bridge uses a C int. Return the
+            %% monotonic sequence and full checksum as a string so no receipt
+            %% information is truncated at the WASM/JS boundary.
+            Receipt = <<(integer_to_binary(Next))/binary, $:, (integer_to_binary(Digest))/binary>>,
             emscripten:promise_resolve(Promise, Receipt),
             loop(Next);
         {emscripten, {cast, _Message}} ->
