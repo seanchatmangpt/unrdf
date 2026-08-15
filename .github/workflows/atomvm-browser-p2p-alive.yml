@@ -17,6 +17,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 concurrency:
   group: atomvm-browser-p2p-${{ github.ref }}
   cancel-in-progress: true
