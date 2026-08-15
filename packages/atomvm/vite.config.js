@@ -1,35 +1,39 @@
 import { defineConfig } from 'vite';
 
+const base = process.env.ATOMVM_EXPLORER_BASE || '/';
+
 export default defineConfig({
   root: '.',
+  base,
   publicDir: 'public',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: './index.html'
-      }
+        main: './index.html',
+      },
     },
-    copyPublicDir: true
+    copyPublicDir: true,
   },
   server: {
     port: 3000,
     headers: {
-      // These headers will be overridden by coi-serviceworker
-      // but setting them here helps during development
       'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp'
-    }
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+    },
   },
   preview: {
-    port: 3000,
+    port: 8080,
+    host: '127.0.0.1',
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp'
-    }
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+    },
   },
   optimizeDeps: {
-    exclude: ['coi-serviceworker']
-  }
+    exclude: ['coi-serviceworker'],
+  },
 });
