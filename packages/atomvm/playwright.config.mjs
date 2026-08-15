@@ -1,9 +1,11 @@
 /**
  * Playwright configuration for the real AtomVM/WASM OCEL v2 peer explorer.
- * The preview server emits COOP/COEP headers so the Emscripten pthread build
- * executes exactly as it must under the GitHub Pages COI service-worker rail.
+ * Local preview emits COOP/COEP headers. When PLAYWRIGHT_BASE_URL is set the
+ * same tests execute against the already-deployed public origin instead.
  */
 import { defineConfig, devices } from '@playwright/test';
+
+const remoteBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
   testDir: './test/playwright',
@@ -16,7 +18,7 @@ export default defineConfig({
   expect: { timeout: 20000 },
 
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:8080',
+    baseURL: remoteBaseUrl || 'http://127.0.0.1:8080',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -39,7 +41,7 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
+  webServer: remoteBaseUrl ? undefined : {
     command: 'pnpm exec vite preview --host 127.0.0.1 --port 8080',
     url: 'http://127.0.0.1:8080',
     reuseExistingServer: !process.env.CI,
