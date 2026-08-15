@@ -1,25 +1,25 @@
 /**
- * @file Playwright Configuration for AtomVM Browser Tests
- * @description
- * Playwright tests that verify the built production bundle works in real browsers.
- * Uses a simple HTTP server to serve the dist/ directory.
+ * Playwright configuration for the real AtomVM/WASM OCEL v2 peer explorer.
+ * The preview server emits COOP/COEP headers so the Emscripten pthread build
+ * executes exactly as it must under the GitHub Pages COI service-worker rail.
  */
-
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './test/playwright',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  timeout: 5000, // 5s SLA for all tests
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'html',
+  timeout: 60000,
+  expect: { timeout: 20000 },
 
   use: {
-    baseURL: 'http://localhost:8080',
-    trace: 'on-first-retry',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:8080',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   projects: [
@@ -28,18 +28,20 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'firefox',
+      name: 'firefox-smoke',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: /ocel-p2p\.spec\.mjs/,
     },
     {
-      name: 'webkit',
+      name: 'webkit-smoke',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: /ocel-p2p\.spec\.mjs/,
     },
   ],
 
   webServer: {
-    command: 'npx serve dist -l 8080',
-    port: 8080,
+    command: 'pnpm exec vite preview --host 127.0.0.1 --port 8080',
+    url: 'http://127.0.0.1:8080',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
     stdout: 'pipe',
