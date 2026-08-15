@@ -260,12 +260,17 @@ export class AtomVMOcelV2Log extends EventTarget {
 }
 
 export function decodeAtomVMReceipt(receipt) {
-  const numeric = Number(receipt);
-  if (!Number.isSafeInteger(numeric) || numeric < 0) {
+  if (typeof receipt !== 'string') {
+    throw new TypeError(`AtomVM runtime receipt must be a string, got ${typeof receipt}`);
+  }
+  const match = /^(\d+):(\d+)$/.exec(receipt);
+  if (!match) {
     throw new TypeError(`Invalid AtomVM runtime receipt: ${receipt}`);
   }
-  return {
-    sequence: Math.floor(numeric / 1000000000),
-    checksum: numeric % 1000000000,
-  };
+  const sequence = Number(match[1]);
+  const checksum = Number(match[2]);
+  if (!Number.isSafeInteger(sequence) || sequence < 1 || !Number.isSafeInteger(checksum) || checksum < 0 || checksum >= 1000000000) {
+    throw new TypeError(`Out-of-range AtomVM runtime receipt: ${receipt}`);
+  }
+  return { sequence, checksum };
 }
