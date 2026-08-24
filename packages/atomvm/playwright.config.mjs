@@ -1,25 +1,27 @@
 /**
- * @file Playwright Configuration for AtomVM Browser Tests
- * @description
- * Playwright tests that verify the built production bundle works in real browsers.
- * Uses a simple HTTP server to serve the dist/ directory.
+ * Playwright configuration for the real AtomVM/WASM OCEL v2 peer explorer.
+ * Local preview emits COOP/COEP headers. When PLAYWRIGHT_BASE_URL is set the
+ * same tests execute against the already-deployed public origin instead.
  */
-
 import { defineConfig, devices } from '@playwright/test';
+
+const remoteBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
   testDir: './test/playwright',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  timeout: 5000, // 5s SLA for all tests
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'html',
+  timeout: 60000,
+  expect: { timeout: 20000 },
 
   use: {
-    baseURL: 'http://localhost:8080',
-    trace: 'on-first-retry',
+    baseURL: remoteBaseUrl || 'http://127.0.0.1:8080',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   projects: [
@@ -28,18 +30,20 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'firefox',
+      name: 'firefox-smoke',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: /ocel-p2p\.spec\.mjs/,
     },
     {
-      name: 'webkit',
+      name: 'webkit-smoke',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: /ocel-p2p\.spec\.mjs/,
     },
   ],
 
-  webServer: {
-    command: 'npx serve dist -l 8080',
-    port: 8080,
+  webServer: remoteBaseUrl ? undefined : {
+    command: 'pnpm exec vite preview --host 127.0.0.1 --port 8080',
+    url: 'http://127.0.0.1:8080',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
     stdout: 'pipe',

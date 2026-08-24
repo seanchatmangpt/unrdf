@@ -1,57 +1,31 @@
-/**
- * @fileoverview Playwright E2E Tests for AtomVM Browser Runtime
- * @description
- * Fast tests that verify the production build works in real browsers.
- * All tests must complete within 5s SLA.
- */
-
 import { test, expect } from '@playwright/test';
 
-test.describe('AtomVM Browser Runtime', () => {
+test.describe('AtomVM OCEL explorer browser surface', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/?peer=smoke', { waitUntil: 'domcontentloaded' });
   });
 
-  test('should load the application with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/AtomVM Browser Runtime/, { timeout: 2000 });
-    const heading = page.getByRole('heading', { name: /AtomVM Browser Runtime/i });
-    await expect(heading).toBeVisible({ timeout: 2000 });
+  test('renders the UNRDF peer exploration surface', async ({ page }) => {
+    await expect(page).toHaveTitle(/UNRDF AtomVM OCEL v2 Peer Explorer/);
+    await expect(page.getByRole('heading', { name: /AtomVM OCEL v2 Peer Explorer/i })).toBeVisible();
+    await expect(page.locator('#ocelGraph')).toBeVisible();
+    await expect(page.locator('#rawOcel')).toContainText('objectTypes');
+    await expect(page.locator('#rawOcel')).toContainText('eventTypes');
   });
 
-  test('should verify service worker infrastructure availability', async ({ page }) => {
-    const swSupported = await page.evaluate(() => 'serviceWorker' in navigator);
-    expect(swSupported).toBe(true);
+  test('boots an observed AtomVM/WASM runtime', async ({ page }) => {
+    await expect.poll(async () => page.evaluate(() => window.__atomvmExplorer?.state()?.runtimeStanding), { timeout: 30000 }).toBe('ALIVE');
+    const proof = await page.evaluate(() => window.__atomvmExplorer.runtime.observe('smoke-proof'));
+    expect(proof.sequence).toBeGreaterThan(0);
+    expect(proof.checksum).toBeGreaterThan(0);
+    await expect(page.locator('#runtimeStanding')).toHaveAttribute('data-standing', 'ALIVE');
   });
 
-  test('should have COI infrastructure prepared', async ({ page }) => {
-    const coiStatus = await page.evaluate(() => {
-      return {
-        crossOriginIsolated: typeof crossOriginIsolated !== 'undefined',
-        sharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined',
-        serviceWorkerSupported: 'serviceWorker' in navigator,
-      };
-    });
-
-    expect(coiStatus.serviceWorkerSupported).toBe(true);
-    expect(typeof coiStatus.crossOriginIsolated).toBe('boolean');
-  });
-
-  test('should display required UI elements', async ({ page }) => {
-    await expect(page.locator('#status')).toBeVisible({ timeout: 2000 });
-    await expect(page.locator('#terminal')).toBeVisible({ timeout: 2000 });
-  });
-
-  test('should have operational control buttons', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Initialize AtomVM/i })).toBeVisible({ timeout: 2000 });
-    await expect(page.getByRole('button', { name: /Run Example/i })).toBeVisible({ timeout: 2000 });
-    await expect(page.getByRole('button', { name: /Clear Console/i })).toBeVisible({ timeout: 2000 });
-  });
-
-  test('should load without critical application errors', async ({ page }) => {
-    const errors = [];
-    page.on('pageerror', (err) => errors.push(err.message));
-    
-    await expect(page.locator('body')).toBeVisible({ timeout: 2000 });
-    expect(errors.filter(e => e.includes('Failed to load') || e.includes('SyntaxError'))).toHaveLength(0);
+  test('exposes real WebRTC signaling controls without a graph server', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Create offer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Accept offer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Accept answer' })).toBeVisible();
+    const hasWebRtc = await page.evaluate(() => typeof RTCPeerConnection === 'function');
+    expect(hasWebRtc).toBe(true);
   });
 });

@@ -1,197 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtomVM Browser Runtime</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 800px;
-            width: 100%;
-            padding: 40px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-
-        .status {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .status.loading {
-            background: #fef3c7;
-            color: #92400e;
-            border-left: 4px solid #f59e0b;
-        }
-
-        .status.ready {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-
-        .status.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
-
-        .terminal {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 8px;
-            padding: 20px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .terminal-line {
-            margin-bottom: 5px;
-        }
-
-        .terminal-line.success {
-            color: #4ade80;
-        }
-
-        .terminal-line.error {
-            color: #f87171;
-        }
-
-        .terminal-line.info {
-            color: #60a5fa;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-
-        button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .info-box {
-            background: #f3f4f6;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-
-        .info-box h3 {
-            color: #374151;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .info-box ul {
-            list-style-position: inside;
-            color: #6b7280;
-        }
-
-        .info-box li {
-            margin-bottom: 5px;
-        }
-
-        code {
-            background: #e5e7eb;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9em;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Peer-to-peer AtomVM communication visualized as an OCEL v2 object-centric event log." />
+  <title>UNRDF AtomVM OCEL v2 Peer Explorer</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background:#080b12; color:#eef2ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#172554 0,#080b12 42rem); }
+    main { max-width:1440px; margin:0 auto; padding:28px; }
+    header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-bottom:24px; }
+    h1 { margin:0; font-size:clamp(2rem,5vw,4.5rem); letter-spacing:-.045em; line-height:.95; }
+    h2 { margin:0 0 14px; font-size:1rem; letter-spacing:.08em; text-transform:uppercase; color:#a5b4fc; }
+    p { color:#aeb8d4; line-height:1.5; }
+    .eyebrow { color:#67e8f9; font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin-bottom:10px; }
+    .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+    .card { background:rgba(10,15,28,.86); border:1px solid #28344e; border-radius:16px; padding:18px; box-shadow:0 18px 45px rgba(0,0,0,.22); }
+    .status-card { min-width:260px; }
+    .status-row { display:grid; grid-template-columns:1fr auto; gap:12px; padding:8px 0; border-bottom:1px solid #1d2940; }
+    .status-row:last-child { border:0; }
+    [data-standing='ALIVE'] { color:#86efac; font-weight:800; }
+    [data-standing='BLOCKED'] { color:#fca5a5; font-weight:800; }
+    [data-standing='UNKNOWN'] { color:#fde68a; font-weight:800; }
+    .connection { grid-column:span 4; }
+    .graph-card { grid-column:span 8; min-height:540px; }
+    .events { grid-column:span 5; }
+    .raw { grid-column:span 7; }
+    textarea,input,button { width:100%; border-radius:10px; border:1px solid #334155; background:#0d1423; color:#f8fafc; padding:11px 12px; font:inherit; }
+    textarea { min-height:112px; resize:vertical; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.76rem; }
+    button { cursor:pointer; background:#172554; border-color:#3730a3; font-weight:750; }
+    button:hover { background:#1e3a8a; }
+    .button-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:9px 0 14px; }
+    label { display:block; color:#c7d2fe; font-size:.78rem; font-weight:700; margin:11px 0 6px; }
+    .send-row { display:grid; grid-template-columns:1fr 150px; gap:8px; margin-top:16px; }
+    .stats { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .pill { border:1px solid #334155; border-radius:999px; padding:7px 10px; color:#cbd5e1; font-size:.78rem; }
+    #ocelGraph { width:100%; min-height:420px; border:1px solid #1f2a44; border-radius:12px; background:#080d18; }
+    .ocel-edge { stroke:#475569; stroke-width:1.3; opacity:.72; }
+    .ocel-node circle,.ocel-node rect { fill:#111c33; stroke:#818cf8; stroke-width:2; }
+    .ocel-node.atomvm-runtime circle { fill:#172554; stroke:#67e8f9; stroke-width:3; }
+    .ocel-node.p2p-session circle { fill:#1f2937; stroke:#c084fc; }
+    .ocel-node.message circle { fill:#13251c; stroke:#86efac; }
+    .ocel-node.event rect { fill:#23183d; stroke:#c084fc; }
+    .ocel-node text { fill:#f8fafc; font-size:10px; pointer-events:none; }
+    #eventStream { list-style:none; padding:0; margin:0; max-height:420px; overflow:auto; }
+    #eventStream li { display:grid; grid-template-columns:minmax(150px,.7fr) 1fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid #1d2940; font-size:.82rem; }
+    #eventStream time { color:#64748b; font-family:ui-monospace,monospace; font-size:.7rem; }
+    .verification { border-radius:999px; padding:3px 7px; font-size:.64rem; font-weight:800; }
+    .verification.alive { background:#12351f; color:#86efac; }
+    .verification.blocked { background:#411b20; color:#fca5a5; }
+    pre { margin:0; white-space:pre-wrap; word-break:break-word; max-height:500px; overflow:auto; font-size:.72rem; line-height:1.45; color:#cbd5e1; }
+    .receipt { font-family:ui-monospace,monospace; color:#94a3b8; font-size:.72rem; overflow-wrap:anywhere; }
+    .refusal { color:#fca5a5; min-height:1.2em; }
+    @media (max-width:980px) { .connection,.graph-card,.events,.raw { grid-column:1/-1; } header{flex-direction:column;} .status-card{width:100%;} }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>⚛️ AtomVM Browser Runtime</h1>
-        <p class="subtitle">Erlang/BEAM VM running in your browser via WebAssembly</p>
-
-        <div id="status" class="status loading">
-            🔄 Initializing service worker and AtomVM runtime...
-        </div>
-
-        <div class="terminal" id="terminal">
-            <div class="terminal-line info">AtomVM Browser Console</div>
-            <div class="terminal-line info">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-        </div>
-
-        <div class="controls">
-            <button id="initBtn" disabled>Initialize AtomVM</button>
-            <button id="runExampleBtn" disabled>Run Example</button>
-            <button id="clearBtn">Clear Console</button>
-        </div>
-
-        <div class="info-box">
-            <h3>🔧 Technical Details</h3>
-            <ul>
-                <li><code>coi-serviceworker</code> enables SharedArrayBuffer support</li>
-                <li>Cross-Origin-Isolation via COOP/COEP headers</li>
-                <li>AtomVM WASM running with threading support</li>
-                <li>Service Worker status: <span id="swStatus">pending</span></li>
-            </ul>
-        </div>
+<body data-runtime-standing="UNKNOWN" data-p2p-standing="UNKNOWN">
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">UNRDF · peer-to-peer execution evidence</div>
+      <h1>AtomVM OCEL v2<br/>Peer Explorer</h1>
+      <p>Two real AtomVM/WASM runtimes communicate over WebRTC. Every send, receive, and acknowledgement becomes an object-centric event linked to the exact runtimes, session, and message that produced it.</p>
     </div>
+    <section class="card status-card" aria-label="Runtime standing">
+      <div class="status-row"><span>Local peer</span><strong id="peerId">—</strong></div>
+      <div class="status-row"><span>AtomVM</span><strong id="runtimeStanding" data-standing="UNKNOWN">UNKNOWN</strong></div>
+      <div class="status-row"><span>Remote AtomVM</span><strong id="remotePeerId">—</strong></div>
+      <div class="status-row"><span>P2P rail</span><strong id="p2pStanding" data-standing="UNKNOWN">UNKNOWN</strong></div>
+      <div class="receipt" id="runtimeReceipt"></div>
+    </section>
+  </header>
 
-    <script type="module" src="/src/app.mjs"></script>
+  <div class="grid">
+    <section class="card connection">
+      <h2>1 · Connect AtomVM peers</h2>
+      <p>No graph server owns the process state. Exchange the WebRTC offer/answer directly with the other browser.</p>
+      <div class="button-row">
+        <button id="createOfferBtn">Create offer</button>
+        <button id="acceptOfferBtn">Accept offer</button>
+        <button id="acceptAnswerBtn">Accept answer</button>
+      </div>
+      <label for="remoteSignal">Signal from remote peer</label>
+      <textarea id="remoteSignal" spellcheck="false" placeholder="Paste remote offer or answer"></textarea>
+      <label for="localSignal">Signal to send to remote peer</label>
+      <textarea id="localSignal" spellcheck="false" readonly placeholder="Your offer or answer appears here"></textarea>
+      <div class="send-row">
+        <input id="messageInput" value="SELECT * WHERE { ?s ?p ?o } LIMIT 10" aria-label="Message to remote AtomVM" />
+        <button id="sendBtn">Send via AtomVM</button>
+      </div>
+      <p class="receipt" id="lastReceipt"></p>
+      <p class="refusal" id="lastRefusal"></p>
+      <details>
+        <summary>AtomVM runtime output</summary>
+        <pre id="runtimeLog"></pre>
+      </details>
+    </section>
+
+    <section class="card graph-card">
+      <h2>2 · Live OCEL v2 object/event graph</h2>
+      <div class="stats">
+        <span class="pill">Objects <strong id="objectCount">0</strong></span>
+        <span class="pill">Events <strong id="eventCount">0</strong></span>
+        <span class="pill">Transport WebRTC</span>
+        <span class="pill">Runtime AtomVM/WASM</span>
+      </div>
+      <svg id="ocelGraph" role="img" aria-label="Live AtomVM OCEL v2 graph"></svg>
+    </section>
+
+    <section class="card events">
+      <h2>3 · Observed event stream</h2>
+      <ol id="eventStream"></ol>
+    </section>
+
+    <section class="card raw">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
+        <h2 style="margin:0">4 · OCEL v2 JSON</h2>
+        <button id="downloadBtn" style="width:auto">Download log</button>
+      </div>
+      <pre id="rawOcel"></pre>
+    </section>
+  </div>
+</main>
+<script type="module" src="/src/browser/explorer-app.mjs"></script>
 </body>
 </html>

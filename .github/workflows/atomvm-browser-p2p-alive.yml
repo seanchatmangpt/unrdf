@@ -1,0 +1,203 @@
+name: AtomVM Browser P2P OCEL ALIVE
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/atomvm-browser-p2p-alive.yml'
+      - '.github/workflows/deploy-book.yml'
+      - 'packages/atomvm/**'
+  push:
+    branches:
+      - 'feat/atomvm-p2p-explorer'
+    paths:
+      - '.github/workflows/atomvm-browser-p2p-alive.yml'
+      - '.github/workflows/deploy-book.yml'
+      - 'packages/atomvm/**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: atomvm-browser-p2p-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ATOMVM_SOURCE_REF: v0.6.6
+
+jobs:
+  build-browser-runtime:
+    name: Build exact AtomVM Emscripten runtime
+    runs-on: ubuntu-24.04
+    container: emscripten/emsdk:latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact UNRDF head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Install AtomVM build dependencies
+        run: |
+          set -euxo pipefail
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ca-certificates cmake erlang-base erlang-dev git gperf
+
+      - name: Materialize exact AtomVM source
+        run: |
+          set -euxo pipefail
+          rm -rf .build/AtomVM-web-src
+          mkdir -p .build
+          git clone --depth 1 --branch "$ATOMVM_SOURCE_REF" https://github.com/atomvm/AtomVM.git .build/AtomVM-web-src
+          git -C .build/AtomVM-web-src rev-parse HEAD | tee .build/atomvm-browser-source.sha
+          test "$(git -C .build/AtomVM-web-src describe --tags --exact-match)" = "$ATOMVM_SOURCE_REF"
+
+      - name: Build real Emscripten web runtime
+        working-directory: .build/AtomVM-web-src/src/platforms/emscripten
+        run: |
+          set -euxo pipefail
+          mkdir -p build
+          cd build
+          emcmake cmake .. -DAVM_EMSCRIPTEN_ENV=web -DCMAKE_BUILD_TYPE=Release
+          emmake make -j2
+          test -s src/AtomVM.js
+          test -s src/AtomVM.wasm
+
+      - name: Compile browser peer Erlang module
+        run: |
+          set -euxo pipefail
+          mkdir -p packages/atomvm/public/runtime
+          erlc -o packages/atomvm/public/runtime packages/atomvm/examples/erlang/atomvm_ocel_peer.erl
+          test -s packages/atomvm/public/runtime/atomvm_ocel_peer.beam
+
+      - name: Stage runtime and record identities
+        run: |
+          set -euxo pipefail
+          find .build/AtomVM-web-src/src/platforms/emscripten/build/src \
+            -maxdepth 1 -type f -name 'AtomVM*' -exec cp {} packages/atomvm/public/runtime/ \;
+          test -s packages/atomvm/public/runtime/AtomVM.js
+          test -s packages/atomvm/public/runtime/AtomVM.wasm
+          {
+            echo "unrdf_head=${{ github.event.pull_request.head.sha || github.sha }}"
+            echo "atomvm_ref=$ATOMVM_SOURCE_REF"
+            echo "atomvm_sha=$(cat .build/atomvm-browser-source.sha)"
+            emcc --version | head -n 1 | sed 's/^/emscripten=/'
+          } | tee packages/atomvm/public/runtime/identity.txt
+          sha256sum packages/atomvm/public/runtime/* | tee packages/atomvm/public/runtime/sha256sums.txt
+
+      - name: Upload dependency-closed browser runtime
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomvm-browser-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            packages/atomvm/public/runtime/
+            .build/atomvm-browser-source.sha
+
+  browser-e2e:
+    name: Two AtomVM peers -> WebRTC -> OCEL v2
+    needs: build-browser-runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact UNRDF head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install AtomVM workspace closure
+        env:
+          HUSKY: '0'
+        run: pnpm install --frozen-lockfile --filter @unrdf/atomvm...
+
+      - name: Download exact browser runtime
+        uses: actions/download-artifact@v4
+        with:
+          name: atomvm-browser-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .runtime-artifact
+
+      - name: Materialize runtime into Vite public tree
+        run: |
+          set -euxo pipefail
+          rm -rf packages/atomvm/public/runtime
+          mkdir -p packages/atomvm/public/runtime
+          cp -a .runtime-artifact/packages/atomvm/public/runtime/. packages/atomvm/public/runtime/
+          test -s packages/atomvm/public/runtime/AtomVM.js
+          test -s packages/atomvm/public/runtime/AtomVM.wasm
+          test -s packages/atomvm/public/runtime/atomvm_ocel_peer.beam
+
+      - name: Build production explorer
+        run: pnpm -C packages/atomvm build:vite
+
+      - name: Install Chromium
+        run: pnpm -C packages/atomvm exec playwright install --with-deps chromium
+
+      - name: Execute real two-peer browser proof
+        run: |
+          set -euxo pipefail
+          pnpm -C packages/atomvm exec playwright test \
+            test/playwright/atomvm.spec.mjs \
+            test/playwright/ocel-p2p.spec.mjs \
+            --project=chromium
+
+      - name: Manufacture browser ALIVE receipt
+        if: success()
+        env:
+          UNRDF_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/receipts
+          export ATOMVM_SHA="$(cat .runtime-artifact/.build/atomvm-browser-source.sha)"
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const receipt = {
+            status: 'ALIVE',
+            subject: 'UNRDF AtomVM OCEL v2 peer explorer',
+            unrdfHead: process.env.UNRDF_HEAD,
+            atomvmSourceRef: process.env.ATOMVM_SOURCE_REF,
+            atomvmSourceSha: process.env.ATOMVM_SHA,
+            execution: {
+              browser: 'chromium',
+              runtimes: 2,
+              runtime: 'AtomVM/Emscripten/WASM',
+              transport: 'WebRTC RTCDataChannel',
+              requiredEvents: ['peer.connected', 'message.sent', 'message.received', 'message.acknowledged'],
+              messageIdentityProof: 'source AtomVM checksum == target AtomVM checksum',
+              ocel: '2.0 JSON object/event shape with qualified relationships',
+            },
+          };
+          fs.writeFileSync('.build/receipts/atomvm-browser-p2p-alive.json', JSON.stringify(receipt, null, 2) + '\n');
+          NODE
+
+      - name: Upload browser replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomvm-browser-p2p-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            .build/receipts/
+            packages/atomvm/playwright-report/
+            packages/atomvm/test-results/
+            packages/atomvm/dist/
+            packages/atomvm/public/runtime/identity.txt
+            packages/atomvm/public/runtime/sha256sums.txt
