@@ -1,0 +1,14 @@
+{
+  "schema": "ggen.forced-top25-qualification-consumer/v1",
+  "consumer_repo": "seanchatmangpt/unrdf",
+  "consumer_base": "dcc6ada4df196fd23cb96885f018cb5c1c89386e",
+  "consumer_family": "rdf-js-workspace-ggen",
+  "consumer_ggen_contract": "OBSERVED",
+  "producer_repo": "seanchatmangpt/ggen-marketplace",
+  "producer_head": "18a88bddb5ed39c8fec8685adfdabfb9952cb564",
+  "producer_pack": "forced-top25-qualification-capsule-pack",
+  "producer_capability": "R86_FORCED_TOP25_QUALIFICATION_CAPSULE",
+  "authority": "VERIFY|CONSTRUCT",
+  "consequential_do": false,
+  "standing": "ADMITTED"
+}
