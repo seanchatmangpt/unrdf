@@ -11,26 +11,32 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
-      - name: Checkout exact consumer subject
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
-          persist-credentials: false
+      - name: Materialize exact consumer subject without gitlink traversal
+        env:
+          SUBJECT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p _subject
+          curl --fail --silent --show-error --location \
+            "https://github.com/seanchatmangpt/unrdf/archive/${SUBJECT_SHA}.tar.gz" \
+            | tar -xz --strip-components=1 -C _subject
+          printf '%s\n' "$SUBJECT_SHA" > _subject/.admitted-head
       - name: Admit exact consumer head
-        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+        env:
+          SUBJECT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(cat _subject/.admitted-head)" = "$SUBJECT_SHA"
       - name: Execute target-local admission court
+        working-directory: _subject
         run: python3 verification/r83-tcps-ready-set/verify.py
       - name: Prove observed local GGEN contract exists
-        run: test -s ggen.toml
-      - name: Checkout exact canonical producer
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          repository: seanchatmangpt/ggen-marketplace
-          ref: aef231ceb3e27150366a11b547dd115720230880
-          path: _r78_producer
-          fetch-depth: 1
-          persist-credentials: false
+        run: test -s _subject/ggen.toml
+      - name: Materialize exact canonical producer
+        run: |
+          set -euo pipefail
+          mkdir -p _r78_producer
+          curl --fail --silent --show-error --location \
+            "https://github.com/seanchatmangpt/ggen-marketplace/archive/aef231ceb3e27150366a11b547dd115720230880.tar.gz" \
+            | tar -xz --strip-components=1 -C _r78_producer
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
@@ -40,4 +46,4 @@ jobs:
       - name: Execute canonical R78 producer court
         run: pytest -q _r78_producer/packs/portfolio-epistemic-observability-pack/tests/test_r78_tcps_ready_set_capital.py
       - name: Prove zero ambient consequential actuation
-        run: test "$(python -c 'import json; print(str(json.load(open("verification/r83-tcps-ready-set/subject.json"))["consequential_do"]).lower())')" = "false"
+        run: test "$(python -c 'import json; print(str(json.load(open("_subject/verification/r83-tcps-ready-set/subject.json"))["consequential_do"]).lower())')" = "false"
