@@ -12,9 +12,10 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout exact consumer subject
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
           persist-credentials: false
       - name: Admit exact consumer head
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
@@ -23,11 +24,12 @@ jobs:
       - name: Prove observed local GGEN contract exists
         run: test -s ggen.toml
       - name: Checkout exact canonical producer
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen-marketplace
           ref: aef231ceb3e27150366a11b547dd115720230880
           path: _r78_producer
+          fetch-depth: 1
           persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
