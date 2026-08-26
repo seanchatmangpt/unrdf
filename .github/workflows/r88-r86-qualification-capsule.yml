@@ -1,0 +1,41 @@
+name: R88 R86 Qualification Capsule Consumer
+on:
+  pull_request:
+    paths:
+      - 'verification/r88-qualification-capsule/**'
+      - '.github/workflows/r88-r86-qualification-capsule.yml'
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact consumer subject
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Admit exact consumer head
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Execute target-local capsule court
+        run: python3 verification/r88-qualification-capsule/verify.py
+      - name: Prove observed local GGEN contract exists
+        run: test -s ggen.toml
+      - name: Checkout exact canonical capsule producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: seanchatmangpt/ggen-marketplace
+          ref: 18a88bddb5ed39c8fec8685adfdabfb9952cb564
+          path: _r86_producer
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Install bounded producer verifier
+        run: python -m pip install --disable-pip-version-check 'pytest==8.3.5' 'rdflib==7.1.4'
+      - name: Execute canonical R86 capsule court
+        run: pytest -q _r86_producer/packs/forced-top25-qualification-capsule-pack/tests/test_r86_qualification_capsule.py
+      - name: Prove zero ambient consequential actuation
+        run: test "$(python -c 'import json; print(str(json.load(open("verification/r88-qualification-capsule/subject.json"))["consequential_do"]).lower())')" = "false"
