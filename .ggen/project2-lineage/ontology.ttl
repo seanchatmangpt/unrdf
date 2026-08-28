@@ -1,0 +1,7 @@
+@prefix clp: <https://ggen.dev/ontology/capability-lineage-propagation#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+clp:capability a clp:QualifiedCapability ; clp:standing "ALIVE" ; dcterms:identifier "unrdf" .
+clp:edge01 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:plan a clp:PropagationPlan ; clp:capability clp:capability ; clp:edge clp:edge01 ; clp:authority "CONSTRUCT" ; clp:actuationPerformed false ; clp:forcePushAllowed false .

@@ -1,0 +1,11 @@
+{
+  "packs": {
+    "capability-lineage-propagation-pack": {
+      "version": "0.0.0",
+      "source": {"type": "Registry", "url": "https://registry.ggen.io"},
+      "integrity": "sha256-fe3840b1de183e2e4658036f021f2ce6b4c7151549e6c56d108169e138ac200b",
+      "dependencies": []
+    }
+  },
+  "ggen_version": "26.8.27"
+}
