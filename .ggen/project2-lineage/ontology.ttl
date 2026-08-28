@@ -6,4 +6,11 @@ clp:capability a clp:QualifiedCapability ; clp:standing "ALIVE" ; dcterms:identi
 clp:edge01 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
 clp:edge02 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
 clp:edge03 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
-clp:plan a clp:PropagationPlan ; clp:capability clp:capability ; clp:edge clp:edge01, clp:edge02, clp:edge03 ; clp:authority "CONSTRUCT" ; clp:actuationPerformed false ; clp:forcePushAllowed false .
+clp:edge04 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge05 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge06 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge07 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge08 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge09 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:edge10 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:plan a clp:PropagationPlan ; clp:capability clp:capability ; clp:edge clp:edge01, clp:edge02, clp:edge03, clp:edge04, clp:edge05, clp:edge06, clp:edge07, clp:edge08, clp:edge09, clp:edge10 ; clp:authority "CONSTRUCT" ; clp:actuationPerformed false ; clp:forcePushAllowed false .
