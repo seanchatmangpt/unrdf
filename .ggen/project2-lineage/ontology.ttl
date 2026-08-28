@@ -5,4 +5,5 @@
 clp:capability a clp:QualifiedCapability ; clp:standing "ALIVE" ; dcterms:identifier "unrdf" .
 clp:edge01 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
 clp:edge02 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
-clp:plan a clp:PropagationPlan ; clp:capability clp:capability ; clp:edge clp:edge01, clp:edge02 ; clp:authority "CONSTRUCT" ; clp:actuationPerformed false ; clp:forcePushAllowed false .
+clp:edge03 a clp:LineageEdge ; clp:preservesCapability true ; clp:semanticDelta 0 .
+clp:plan a clp:PropagationPlan ; clp:capability clp:capability ; clp:edge clp:edge01, clp:edge02, clp:edge03 ; clp:authority "CONSTRUCT" ; clp:actuationPerformed false ; clp:forcePushAllowed false .
