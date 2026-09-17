@@ -7,20 +7,19 @@
  * @module @unrdf/kgc-4d/hdit/vector-engine-client
  */
 
-import { Worker as NodeWorker } from 'node:worker_threads';
-import { fileURLToPath } from 'node:url';
-
 /**
  * Detect environment and create appropriate Worker
  */
-function createWorker(workerURL) {
+async function createWorker(workerURL) {
   // Node.js environment
   if (typeof process !== 'undefined' && process.versions?.node) {
     // Convert URL to file path for Node.js Worker
+    const worker_threads = await import('node:worker_threads');
+    const url = await import('node:url');
     const workerPath = workerURL instanceof URL
-      ? fileURLToPath(workerURL)
+      ? url.fileURLToPath(workerURL)
       : workerURL;
-    return new NodeWorker(workerPath);
+    return new worker_threads.Worker(workerPath);
   }
 
   // Browser environment
@@ -39,45 +38,58 @@ export class VectorEngineClient {
    *
    */
   constructor(workerURL) {
-    this.worker = createWorker(workerURL);
+    this.workerURL = workerURL;
+    this.worker = null;
     this.nextId = 0;
     this.pending = new Map();
     this.ready = false;
+    this.initPromise = null;
+  }
 
-    // Handle both browser Worker (onmessage) and Node Worker (on('message'))
-    const messageHandler = (data) => {
-      const { type, id, result, error } = data;
+  /**
+   *
+   */
+  async _init() {
+    if (this.initPromise) return this.initPromise;
+    this.initPromise = (async () => {
+      this.worker = await createWorker(this.workerURL);
+      
+      const messageHandler = (data) => {
+        const { type, id, result, error } = data;
 
-      if (type === 'ready') {
-        this.ready = true;
-        return;
-      }
+        if (type === 'ready') {
+          this.ready = true;
+          return;
+        }
 
-      const promise = this.pending.get(id);
-      if (!promise) return;
+        const promise = this.pending.get(id);
+        if (!promise) return;
 
-      this.pending.delete(id);
+        this.pending.delete(id);
 
-      if (error) {
-        promise.reject(new Error(error));
+        if (error) {
+          promise.reject(new Error(error));
+        } else {
+          promise.resolve(result);
+        }
+      };
+
+      if (this.worker.on) {
+        // Node.js Worker
+        this.worker.on('message', messageHandler);
       } else {
-        promise.resolve(result);
+        // Browser Worker
+        this.worker.onmessage = (e) => messageHandler(e.data);
       }
-    };
-
-    if (this.worker.on) {
-      // Node.js Worker
-      this.worker.on('message', messageHandler);
-    } else {
-      // Browser Worker
-      this.worker.onmessage = (e) => messageHandler(e.data);
-    }
+    })();
+    return this.initPromise;
   }
 
   /**
    * Wait for worker to be ready
    */
   async waitReady() {
+    await this._init();
     if (this.ready) return;
 
     return new Promise((resolve) => {
@@ -281,6 +293,8 @@ export class VectorEngineClient {
    * Terminate worker
    */
   terminate() {
-    this.worker.terminate();
+    if (this.worker) {
+      this.worker.terminate();
+    }
   }
 }

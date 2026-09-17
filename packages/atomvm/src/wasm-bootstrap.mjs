@@ -12,7 +12,7 @@
  * - OTEL tracing for load timing
  * - Error handling with meaningful messages
  *
- * @version [VERSION]
+ * @version v0.6.1
  * @license MIT
  */
 
@@ -22,7 +22,7 @@ import { withSpan, recordAttribute, recordError } from './otel-instrumentation.m
  * AtomVM version
  * @constant {string}
  */
-export const ATOMVM_VERSION = '[VERSION]';
+export const ATOMVM_VERSION = 'v0.6.1';
 
 /**
  * Environment type

@@ -2,7 +2,6 @@ packages:
   - 'packages/*'
   - 'packages/wasm4pm/wasm4pm'
   - 'packages/wasm4pm/packages/*'
-  - 'packages/wasm4pm/apps/*'
   - 'packages/kgc-4d/playground'
   - 'packages/cli/examples/*'
   - 'packages/hooks/examples/*'
@@ -14,6 +13,7 @@ packages:
   - 'AUTONOMIC_INNOVATION/agent-*'
   - 'exploration/agents/agent-*'
   - 'benchmarks'
+  - '../mfact/web/mfact-ui'
 overrides:
   jsdom: 25.0.1
   html-encoding-sniffer: 4.0.0
@@ -42,7 +42,9 @@ onlyBuiltDependencies:
   - unrs-resolver
 
 allowBuilds:
+  '@swc/core': true
   '@tensorflow/tfjs-node': true
+  '@xviz/protobufjs': true
   blake-hash: true
   blake3: true
   core-js: true
@@ -53,6 +55,7 @@ allowBuilds:
   msgpackr-extract: true
   onnxruntime-node: true
   protobufjs: true
+  puppeteer: true
   sharp: true
   ssh2: true
   unrs-resolver: true

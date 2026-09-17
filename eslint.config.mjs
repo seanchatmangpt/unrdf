@@ -20,7 +20,10 @@ export default [
       'build.*.mjs',
       'packages/kgn/src/core/index.js',
       'packages/kgn/src/base/index.js',
-      'packages/kgn/src/engine/index.js'
+      'packages/kgn/src/engine/index.js',
+      'packages/atomvm/public/**',
+      'packages/atomvm/playwright-report/**',
+      'packages/atomvm/test-results/**'
     ]
   },
   // Base configuration for all files

@@ -190,7 +190,7 @@ describe('Integration: AtomVM + SPARQL Queries', () => {
 
     // ASSERT: Correctness
     expect(results).toHaveLength(3);
-    const names = results.map((r) => r.get('name').value).sort();
+    const names = results.map((r) => r.name.value).sort();
     expect(names).toEqual(['Alice', 'Bob', 'Charlie']);
 
     // ASSERT: Performance SLA (<10ms)
@@ -256,7 +256,7 @@ describe('Integration: AtomVM + SPARQL Queries', () => {
 
     // ASSERT
     expect(results).toHaveLength(1);
-    expect(results[0].get('person').value).toBe(`${EX}alice`);
+    expect(results[0].person.value).toBe(`${EX}alice`);
   });
 
   it('should handle query errors gracefully', () => {
@@ -797,9 +797,9 @@ describe('Integration: Cross-Package Export Verification', () => {
     const results = store.match(s, p, null);
 
     // ASSERT: Data format is correct
-    expect(results[0].subject.termType).toBe('NamedNode');
-    expect(results[0].predicate.termType).toBe('NamedNode');
-    expect(results[0].object.termType).toBe('Literal');
+    expect(results[0].subject.type).toBe('NamedNode');
+    expect(results[0].predicate.type).toBe('NamedNode');
+    expect(results[0].object.type).toBe('Literal');
     expect(results[0].object.language).toBe('en');
   });
 

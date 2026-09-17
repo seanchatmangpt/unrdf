@@ -384,7 +384,8 @@ const isNode = typeof process !== 'undefined' && process.versions?.node;
 
 if (isNode) {
   // Node.js Worker (worker_threads)
-  const { parentPort } = await import('node:worker_threads');
+  const mod = 'node:worker_threads';
+  const { parentPort } = await import(mod);
 
   parentPort.on('message', (data) => {
     const { id, operation, params } = data;
