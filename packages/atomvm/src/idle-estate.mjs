@@ -29,6 +29,30 @@ function assertStableId(value, field) {
   }
 }
 
+function assertAbsoluteIri(value, field) {
+  if (typeof value !== 'string' || value.length === 0 || !value.includes(':')) {
+    throw new IdleEstateRefusal('SEMANTIC_IDENTITY_REFUSED', `${field} must be an absolute IRI`, { field, value });
+  }
+}
+
+function assertGraphDigest(value) {
+  if (typeof value !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(value)) {
+    throw new IdleEstateRefusal('GRAPH_DIGEST_REFUSED', 'graphDigest must be sha256:<64 lowercase hex>', { value });
+  }
+}
+
+function assertGitSha(value) {
+  if (typeof value !== 'string' || !/^[0-9a-f]{40}$/.test(value)) {
+    throw new IdleEstateRefusal('BASE_SHA_REFUSED', 'baseSha must be a full lowercase git SHA', { value });
+  }
+}
+
+function assertRepositoryIdentity(value) {
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value)) {
+    throw new IdleEstateRefusal('REPOSITORY_IDENTITY_REFUSED', 'repositoryIdentity must be owner/repo', { value });
+  }
+}
+
 function subset(requested = [], allowed = []) {
   const admitted = new Set(allowed);
   return requested.every(value => admitted.has(value));
@@ -129,10 +153,16 @@ export class AtomVMIdleEstate {
     const {
       jobId,
       semanticSubject,
+      workOrderIri,
+      checkpointIri,
+      graphDigest,
+      repositoryIdentity,
+      baseSha,
       workloadClass = IDLE_ESTATE_WORK_CLASS,
       payload,
       resources,
       authority = {},
+      semanticAuthority = 'NONE',
       standing = 'admitted',
     } = job ?? {};
 
@@ -149,6 +179,25 @@ export class AtomVMIdleEstate {
     if (typeof semanticSubject !== 'string' || semanticSubject.length === 0) {
       throw new IdleEstateRefusal('SEMANTIC_SUBJECT_REFUSED', 'semanticSubject is required', { jobId });
     }
+    assertAbsoluteIri(workOrderIri, 'workOrderIri');
+    assertAbsoluteIri(checkpointIri, 'checkpointIri');
+    assertGraphDigest(graphDigest);
+    assertRepositoryIdentity(repositoryIdentity);
+    assertGitSha(baseSha);
+    if (semanticSubject !== workOrderIri) {
+      throw new IdleEstateRefusal(
+        'SEMANTIC_SUBJECT_MISMATCH_REFUSED',
+        'semanticSubject must equal workOrderIri',
+        { jobId, semanticSubject, workOrderIri },
+      );
+    }
+    if (semanticAuthority !== 'NONE') {
+      throw new IdleEstateRefusal(
+        'SEMANTIC_AUTHORITY_REFUSED',
+        'idle-estate execution cannot manufacture semantic authority',
+        { jobId, semanticAuthority },
+      );
+    }
     for (const field of ['cpuUnits', 'memoryMb', 'storageMb']) {
       if (!Number.isFinite(resources?.[field]) || resources[field] < 0) {
         throw new IdleEstateRefusal('JOB_RESOURCE_REFUSED', `${field} must be finite and non-negative`, { jobId, field });
@@ -158,6 +207,11 @@ export class AtomVMIdleEstate {
     const body = {
       jobId,
       semanticSubject,
+      workOrderIri,
+      checkpointIri,
+      graphDigest,
+      repositoryIdentity,
+      baseSha,
       workloadClass,
       payload,
       resources: Object.freeze({ ...resources }),
@@ -165,11 +219,22 @@ export class AtomVMIdleEstate {
         networkCapabilities: Object.freeze([...(authority.networkCapabilities ?? [])].sort()),
         filesystem: authority.filesystem ?? 'none',
       }),
+      semanticAuthority: 'NONE',
       standing,
     };
     const admitted = Object.freeze({ ...body, packageDigest: digest(body) });
     this.#jobs.set(jobId, admitted);
-    this.#receipt('JOB_ADMITTED', { jobId, packageDigest: admitted.packageDigest, semanticSubject });
+    this.#receipt('JOB_ADMITTED', {
+      jobId,
+      packageDigest: admitted.packageDigest,
+      semanticSubject,
+      workOrderIri,
+      checkpointIri,
+      graphDigest,
+      repositoryIdentity,
+      baseSha,
+      semanticAuthority: 'NONE',
+    });
     return admitted;
   }
 
@@ -217,8 +282,14 @@ export class AtomVMIdleEstate {
       estateId: this.estateId,
       hostId: host.hostId,
       jobId: job.jobId,
+      workOrderIri: job.workOrderIri,
+      checkpointIri: job.checkpointIri,
+      graphDigest: job.graphDigest,
+      repositoryIdentity: job.repositoryIdentity,
+      baseSha: job.baseSha,
       packageDigest: job.packageDigest,
       leasedAt: now,
+      semanticAuthority: 'NONE',
       authority: job.authority,
       resources: job.resources,
     };
@@ -258,7 +329,11 @@ export class AtomVMIdleEstate {
         hostId: host.hostId,
         jobId: job.jobId,
         packageDigest: job.packageDigest,
+        workOrderIri: job.workOrderIri,
+        graphDigest: job.graphDigest,
         status: 'COMPLETED',
+        semanticStanding: 'CANDIDATE',
+        semanticAuthority: 'NONE',
         result,
       });
       this.#replaceHost(host.hostId, { state: 'ADMITTED', leaseId: null });
@@ -268,7 +343,11 @@ export class AtomVMIdleEstate {
         hostId: host.hostId,
         jobId: job.jobId,
         packageDigest: job.packageDigest,
+        workOrderIri: job.workOrderIri,
+        graphDigest: job.graphDigest,
         status: 'UNKNOWN',
+        semanticStanding: 'UNKNOWN',
+        semanticAuthority: 'NONE',
         error: { name: error?.name ?? 'Error', message: error?.message ?? String(error) },
       });
       this.#replaceHost(host.hostId, { state: 'PRIMARY', leaseId: null });
