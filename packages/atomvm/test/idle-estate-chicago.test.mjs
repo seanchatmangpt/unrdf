@@ -42,7 +42,13 @@ function fixture() {
 function job(jobId, overrides = {}) {
   return {
     jobId,
-    semanticSubject: `urn:test:${jobId}`,
+    semanticSubject: `urn:gall:work-order:${jobId}`,
+    workOrderIri: `urn:gall:work-order:${jobId}`,
+    checkpointIri: `urn:gall:checkpoint:${jobId}`,
+    graphDigest: 'sha256:' + 'a'.repeat(64),
+    repositoryIdentity: 'seanchatmangpt/unrdf',
+    baseSha: 'b'.repeat(40),
+    semanticAuthority: 'NONE',
     standing: 'admitted',
     workloadClass: IDLE_ESTATE_WORK_CLASS,
     payload: { query: 'bounded unknown' },
@@ -158,4 +164,52 @@ test('abrupt host loss produces receipted UNKNOWN and returns host to PRIMARY', 
   assert.equal(estate.replayOutcome('host-loss').receiptDigest, receipt.receiptDigest);
   assert.equal(estate.snapshot().hosts.find(host => host.hostId === 'host-a').state, 'PRIMARY');
   assert.ok(estate.receipts().some(item => item.kind === 'EXECUTION_UNKNOWN'));
+});
+
+
+test('job package is bound to exact WorkOrder graph and base identity', () => {
+  const { estate } = fixture();
+
+  const admitted = estate.admitJob(job('exact-subject'));
+  assert.equal(admitted.semanticSubject, admitted.workOrderIri);
+  assert.equal(admitted.graphDigest, 'sha256:' + 'a'.repeat(64));
+  assert.equal(admitted.repositoryIdentity, 'seanchatmangpt/unrdf');
+  assert.equal(admitted.baseSha, 'b'.repeat(40));
+  assert.equal(admitted.semanticAuthority, 'NONE');
+});
+
+test('moved WorkOrder identity is refused before leasing', () => {
+  const { estate } = fixture();
+
+  assert.throws(
+    () => estate.admitJob(job('moved', { workOrderIri: 'urn:gall:work-order:other' })),
+    error => error instanceof IdleEstateRefusal && error.code === 'SEMANTIC_SUBJECT_MISMATCH_REFUSED',
+  );
+});
+
+test('branch name cannot replace exact base SHA', () => {
+  const { estate } = fixture();
+
+  assert.throws(
+    () => estate.admitJob(job('branch-base', { baseSha: 'main' })),
+    error => error instanceof IdleEstateRefusal && error.code === 'BASE_SHA_REFUSED',
+  );
+});
+
+test('edge execution returns candidate evidence and no semantic authority', async () => {
+  const { estate } = fixture();
+  estate.openIdle('host-a', 100);
+  estate.admitJob(job('candidate-result'));
+  const lease = estate.lease('candidate-result', { hostId: 'host-a', now: 110 });
+
+  const receipt = await estate.execute(
+    lease.leaseId,
+    { async execute() { return { value: 42 }; } },
+    120,
+  );
+
+  assert.equal(receipt.status, 'COMPLETED');
+  assert.equal(receipt.semanticStanding, 'CANDIDATE');
+  assert.equal(receipt.semanticAuthority, 'NONE');
+  assert.equal(receipt.workOrderIri, 'urn:gall:work-order:candidate-result');
 });
