@@ -63,14 +63,16 @@ function semanticIdentity(axis, concept) {
 
 function orderedUniqueConcepts(entries) {
   const seen = new Set();
-  return entries
+  return [...entries]
+    .sort((left, right) =>
+      left.semantic_id.localeCompare(right.semantic_id)
+      || left.concept_id.localeCompare(right.concept_id),
+    )
     .filter((entry) => {
-      const key = entry.concept_id;
-      if (seen.has(key)) return false;
-      seen.add(key);
+      if (seen.has(entry.semantic_id)) return false;
+      seen.add(entry.semantic_id);
       return true;
-    })
-    .sort((left, right) => left.concept_id.localeCompare(right.concept_id));
+    });
 }
 
 /**
