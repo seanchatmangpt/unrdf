@@ -1,0 +1,140 @@
+{
+  "bench": "interchangeable-parts",
+  "command": "node scripts/bench-interchangeable-parts.mjs --iterations=2000 --json",
+  "check": "node scripts/bench-interchangeable-parts.mjs --check",
+  "regenerate": "node scripts/bench-interchangeable-parts.mjs --write-receipt --runs=3",
+  "subject": {
+    "kind": "git-blob-ids-of-measured-kernel-sources",
+    "kernel_blobs": {
+      "packages/atomvm/src/part-admission-broker.mjs": "89d6a5319f1f21cc08efd64d9101f2a561df591c",
+      "packages/core/src/interchangeable-part.mjs": "0e0689c33c1832a6088a05310d32172815495ff4",
+      "packages/receipts/src/substitution-receipt.mjs": "2699876f1e41cb68e40d4c0017f24a5db1261287"
+    }
+  },
+  "host": {
+    "node": "v26.8.1",
+    "platform": "darwin-arm64"
+  },
+  "evidence_ceiling": "HOST_NATIVE_TIMING",
+  "runs": [
+    {
+      "verifyPartPassport": {
+        "medianNs": 22667,
+        "p99Ns": 138209,
+        "opsPerSec": 44117
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 54750,
+        "p99Ns": 256042,
+        "opsPerSec": 18265
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 49792,
+        "p99Ns": 251333,
+        "opsPerSec": 20084
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 64417,
+        "p99Ns": 300042,
+        "opsPerSec": 15524
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 65042,
+        "p99Ns": 293792,
+        "opsPerSec": 15375
+      },
+      "broker.execute": {
+        "medianNs": 123042,
+        "p99Ns": 711500,
+        "opsPerSec": 8127
+      }
+    },
+    {
+      "verifyPartPassport": {
+        "medianNs": 22916,
+        "p99Ns": 96375,
+        "opsPerSec": 43638
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 55208,
+        "p99Ns": 194459,
+        "opsPerSec": 18113
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 50208,
+        "p99Ns": 204000,
+        "opsPerSec": 19917
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 64333,
+        "p99Ns": 232625,
+        "opsPerSec": 15544
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 64625,
+        "p99Ns": 257917,
+        "opsPerSec": 15474
+      },
+      "broker.execute": {
+        "medianNs": 120916,
+        "p99Ns": 320167,
+        "opsPerSec": 8270
+      }
+    },
+    {
+      "verifyPartPassport": {
+        "medianNs": 22792,
+        "p99Ns": 74833,
+        "opsPerSec": 43875
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 55500,
+        "p99Ns": 190417,
+        "opsPerSec": 18018
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 50333,
+        "p99Ns": 180459,
+        "opsPerSec": 19868
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 64000,
+        "p99Ns": 228125,
+        "opsPerSec": 15625
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 65292,
+        "p99Ns": 276000,
+        "opsPerSec": 15316
+      },
+      "broker.execute": {
+        "medianNs": 122334,
+        "p99Ns": 309917,
+        "opsPerSec": 8174
+      }
+    }
+  ],
+  "pre_fix_core_at_parent": {
+    "medianNs": {
+      "verifyPartPassport": 10500,
+      "evaluateSubstitution.admit": 23791,
+      "evaluateSubstitution.forgedRefuse": 23833,
+      "createSubstitutionReceipt": 32167,
+      "verifySubstitutionReceipt": 33000,
+      "broker.execute": 56917
+    },
+    "wrongVerdicts": ["evaluateSubstitution.forgedRefuse"],
+    "note": "core at f597b915 is faster because it skips canonical remanufacture, and it admits the NaN-resource forged passport (wrong verdict)."
+  },
+  "bounds": {
+    "rule": "medianNs <= 10 x max observed median over 3 host runs, rounded up to 1 microsecond; wrong verdicts refuse regardless of speed",
+    "medianNs": {
+      "verifyPartPassport": 230000,
+      "evaluateSubstitution.admit": 555000,
+      "evaluateSubstitution.forgedRefuse": 504000,
+      "createSubstitutionReceipt": 645000,
+      "verifySubstitutionReceipt": 653000,
+      "broker.execute": 1231000
+    }
+  }
+}

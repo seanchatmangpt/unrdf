@@ -76,9 +76,68 @@ function budget(value, name) {
     if (typeof observed !== 'number' || !Number.isFinite(observed) || observed < 0) {
       throw new TypeError(`${name}.${key} must be a finite non-negative number`);
     }
-    normalized[key] = observed;
+    // defineProperty, not assignment: a key named "__proto__" must stay an own
+    // data property instead of being silently dropped as a prototype write.
+    // `+ 0` folds -0 into 0 so the digest (JSON writes both as 0) stays injective.
+    Object.defineProperty(normalized, key, {
+      value: observed + 0,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
   }
   return normalized;
+}
+
+/**
+ * Admit only values the digest encodes injectively.
+ *
+ * The record digest is sha256(JSON.stringify(canonical(body))). JSON writes NaN
+ * and Infinity as null, drops undefined members, writes -0 as 0 and writes
+ * non-plain objects (Date, Map, class instances) by their enumerable keys only,
+ * so any of those would let two different records share one digest and one
+ * substitution receipt. Free-form fields (metadata, provenance) are therefore
+ * restricted to JSON values; -0 is folded into 0 at manufacture.
+ */
+function jsonValue(value, name) {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new TypeError(`${name} must be a finite number`);
+    return value + 0;
+  }
+  if (Array.isArray(value)) {
+    const out = [];
+    for (let index = 0; index < value.length; index += 1) {
+      if (!Object.hasOwn(value, index)) throw new TypeError(`${name}[${index}] must not be a hole`);
+      out.push(jsonValue(value[index], `${name}[${index}]`));
+    }
+    return out;
+  }
+  if (typeof value === 'object') {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new TypeError(`${name} must be a plain JSON object`);
+    }
+    const out = {};
+    for (const key of Object.keys(value).sort()) {
+      Object.defineProperty(out, key, {
+        value: jsonValue(value[key], `${name}.${key}`),
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      });
+    }
+    return out;
+  }
+  throw new TypeError(`${name} must be a JSON value, got ${typeof value}`);
+}
+
+function jsonObject(value, name) {
+  if (value === undefined) return {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new TypeError(`${name} must be an object`);
+  }
+  return jsonValue(value, name);
 }
 
 function subset(left, right) {
@@ -100,13 +159,61 @@ function reason(code, path, required, observed) {
   return deepFreeze({ code, path, required: canonical(required), observed: canonical(observed) });
 }
 
-function verifyDigest(record, schema) {
-  if (!record || typeof record !== 'object') return { valid: false, reason: 'MISSING_RECORD' };
+/**
+ * Verify a requirement/passport record.
+ *
+ * The digest is an unkeyed sha256 of the body, so anyone can recompute it after
+ * editing a field. A matching digest therefore only proves self-consistency; the
+ * record must also be a fixed point of its own manufacturer (`remanufacture`),
+ * otherwise values the constructor refuses (NaN or negative resources, negative
+ * delegation depth, non-array capability sets, unsorted/duplicate sets, extra
+ * keys) would reach evaluation with a valid digest. NaN serializes to null in
+ * JSON, so a NaN resource demand would otherwise pass every `>` ceiling check.
+ */
+function verifyDigest(record, schema, remanufacture) {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    return { valid: false, reason: 'MISSING_RECORD' };
+  }
   if (record.schema !== schema) return { valid: false, reason: 'SCHEMA_MISMATCH' };
   if (typeof record.digest !== 'string') return { valid: false, reason: 'DIGEST_MISSING' };
-  return record.digest === digestRecord(record)
+  const tampered = () => record.digest !== digestRecord(record);
+  let rebuilt;
+  try {
+    rebuilt = remanufacture(record);
+  } catch {
+    return { valid: false, reason: tampered() ? 'DIGEST_MISMATCH' : 'MALFORMED_RECORD' };
+  }
+  const { digest: _digest, ...body } = record;
+  const { digest: rebuiltDigest, ...rebuiltBody } = rebuilt;
+  // Compare structurally rather than by digest: JSON.stringify maps NaN and
+  // Infinity to null, so equal digests do not imply equal values.
+  if (!sameValue(body, rebuiltBody)) {
+    return { valid: false, reason: tampered() ? 'DIGEST_MISMATCH' : 'NON_CANONICAL_RECORD' };
+  }
+  // Structurally equal bodies canonicalize identically, so the rebuilt digest is
+  // the body digest: one sha256 on the admitted path instead of two.
+  return record.digest === rebuiltDigest
     ? { valid: true, reason: null }
     : { valid: false, reason: 'DIGEST_MISMATCH' };
+}
+
+function sameValue(left, right) {
+  if (Object.is(left, right)) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((value, index) => sameValue(value, right[index]))
+    );
+  }
+  if (!left || !right || typeof left !== 'object' || typeof right !== 'object') return false;
+  const leftKeys = Object.keys(left).sort();
+  const rightKeys = Object.keys(right).sort();
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every((key, index) => key === rightKeys[index] && sameValue(left[key], right[key]))
+  );
 }
 
 function contractFields(source) {
@@ -141,7 +248,7 @@ export function createPartRequirement(input = {}) {
     receiptSchema: text(input.receiptSchema, 'receiptSchema'),
     replayRequired: input.replayRequired !== false,
     allowedRuntimes: stringSet(input.allowedRuntimes, 'allowedRuntimes'),
-    metadata: canonical(input.metadata ?? {}),
+    metadata: jsonObject(input.metadata, 'metadata'),
   });
 
   if (!Number.isInteger(body.maxDelegationDepth) || body.maxDelegationDepth < 0) {
@@ -176,8 +283,8 @@ export function createPartPassport(input = {}) {
     receiptSchema: text(input.receiptSchema, 'receiptSchema'),
     replay: input.replay === true,
     runtime: text(input.runtime, 'runtime'),
-    provenance: canonical(input.provenance ?? {}),
-    metadata: canonical(input.metadata ?? {}),
+    provenance: jsonObject(input.provenance, 'provenance'),
+    metadata: jsonObject(input.metadata, 'metadata'),
   });
 
   if (!Number.isInteger(body.delegationDepth) || body.delegationDepth < 0) {
@@ -194,11 +301,44 @@ export function createPartPassport(input = {}) {
 }
 
 export function verifyPartRequirement(requirement) {
-  return verifyDigest(requirement, PART_REQUIREMENT_SCHEMA);
+  return verifyDigest(requirement, PART_REQUIREMENT_SCHEMA, createPartRequirement);
 }
 
 export function verifyPartPassport(passport) {
-  return verifyDigest(passport, PART_PASSPORT_SCHEMA);
+  return verifyDigest(passport, PART_PASSPORT_SCHEMA, createPartPassport);
+}
+
+function integrityRefusal(reasons, requirement, candidate) {
+  const body = canonical({
+    schema: SUBSTITUTION_JUDGEMENT_SCHEMA,
+    state: 'REFUSED',
+    requirementDigest: typeof requirement?.digest === 'string' ? requirement.digest : null,
+    candidateDigest: typeof candidate?.digest === 'string' ? candidate.digest : null,
+    effectiveAuthority: { issuers: [], capabilities: [] },
+    effectiveResourceCeilings: {},
+    reasons,
+    falsifier: reasons[0] ?? null,
+  });
+  return deepFreeze({ ...body, digest: digest(body) });
+}
+
+function contextRefusal(context) {
+  if (context === null || typeof context !== 'object' || Array.isArray(context)) {
+    return reason('CONTEXT_MALFORMED_REFUSED', 'context', 'object', context === null ? null : typeof context);
+  }
+  for (const [field, check] of [
+    ['hostCapabilities', stringSet],
+    ['hostAuthorityIssuers', stringSet],
+    ['hostResourceCeilings', budget],
+  ]) {
+    if (context[field] === undefined) continue;
+    try {
+      check(context[field], `context.${field}`);
+    } catch (error) {
+      return reason('CONTEXT_MALFORMED_REFUSED', `context.${field}`, 'well-formed', error.message);
+    }
+  }
+  return null;
 }
 
 /**
@@ -223,6 +363,11 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
   if (!passportVerification.valid) {
     reasons.push(reason('PASSPORT_INTEGRITY_REFUSED', 'candidate.digest', 'valid', passportVerification.reason));
   }
+  const malformedContext = contextRefusal(context);
+  if (malformedContext) reasons.push(malformedContext);
+  // Unverified or malformed records are not evaluated field by field: their
+  // shape is unknown, so the law refuses on integrity alone (total, never throws).
+  if (reasons.length > 0) return integrityRefusal(reasons, requirement, candidate);
 
   const exactContracts = [
     ['semanticContract', 'SEMANTIC_CONTRACT_MISMATCH'],
@@ -286,14 +431,19 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
   const hostResources = context.hostResourceCeilings === undefined
     ? requirement?.resourceCeilings ?? {}
     : budget(context.hostResourceCeilings, 'context.hostResourceCeilings');
-  const effectiveResourceCeilings = {};
+  const effectiveResourceCeilings = Object.create(null);
   for (const key of Object.keys(requirement?.resourceCeilings ?? {}).sort()) {
     const requirementCeiling = requirement.resourceCeilings[key];
     const hostCeiling = Object.hasOwn(hostResources, key) ? hostResources[key] : undefined;
     if (hostCeiling !== undefined) effectiveResourceCeilings[key] = Math.min(requirementCeiling, hostCeiling);
   }
   for (const [key, observed] of Object.entries(candidate?.resources ?? {})) {
-    const ceiling = effectiveResourceCeilings[key];
+    // Own-property lookup only: a demand named after an Object.prototype member
+    // (constructor, toString, valueOf, ...) must not read the inherited function
+    // as its ceiling, because `observed > function` is `observed > NaN` = false.
+    const ceiling = Object.hasOwn(effectiveResourceCeilings, key)
+      ? effectiveResourceCeilings[key]
+      : undefined;
     if (ceiling === undefined || observed > ceiling) {
       reasons.push(reason('RESOURCE_CEILING_REFUSED', `resources.${key}`, ceiling ?? 'UNADMITTED', observed));
     }

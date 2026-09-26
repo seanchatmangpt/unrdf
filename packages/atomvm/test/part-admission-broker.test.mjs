@@ -104,13 +104,18 @@ test('zero unreceipted actuation prevents delegate execution', async () => {
     requirement,
     candidate,
     context,
-    delegate: { execute: async () => { executions += 1; } },
+    delegate: {
+      execute: async () => {
+        executions += 1;
+      },
+    },
   });
 
   await assert.rejects(
     () => broker.execute({ operation: 'atomvm.execute' }),
-    error => error instanceof PartAdmissionBrokerRefusal
-      && error.code === 'PART_SUBSTITUTION_RECEIPT_REQUIRED',
+    error =>
+      error instanceof PartAdmissionBrokerRefusal &&
+      error.code === 'PART_SUBSTITUTION_RECEIPT_REQUIRED'
   );
   assert.equal(executions, 0);
 });
@@ -133,13 +138,17 @@ test('host authority drift invalidates a previously admitted receipt before actu
       hostCapabilities: [],
     },
     substitutionReceipt,
-    delegate: { execute: async () => { executions += 1; } },
+    delegate: {
+      execute: async () => {
+        executions += 1;
+      },
+    },
   });
 
   await assert.rejects(
     () => broker.execute({ operation: 'atomvm.execute' }),
-    error => error instanceof PartAdmissionBrokerRefusal
-      && error.code === 'PART_SUBSTITUTION_REFUSED',
+    error =>
+      error instanceof PartAdmissionBrokerRefusal && error.code === 'PART_SUBSTITUTION_REFUSED'
   );
   assert.equal(executions, 0);
 });
@@ -163,13 +172,75 @@ test('tampered admission receipt is refused before delegate execution', async ()
     candidate,
     context,
     substitutionReceipt,
-    delegate: { execute: async () => { executions += 1; } },
+    delegate: {
+      execute: async () => {
+        executions += 1;
+      },
+    },
   });
 
   await assert.rejects(
     () => broker.execute({ operation: 'atomvm.execute' }),
-    error => error instanceof PartAdmissionBrokerRefusal
-      && error.code === 'PART_SUBSTITUTION_RECEIPT_INVALID',
+    error =>
+      error instanceof PartAdmissionBrokerRefusal &&
+      error.code === 'PART_SUBSTITUTION_RECEIPT_INVALID'
+  );
+  assert.equal(executions, 0);
+});
+
+test('bindings are frozen at construction and cannot be reassigned to bypass admission', async () => {
+  const { requirement, candidate, context } = fixture();
+  const other = fixture({
+    partId: 'urn:part:atomvm-worker-v2',
+    version: '2.0.0',
+  });
+  const otherReceipt = createSubstitutionReceipt({
+    requirement: other.requirement,
+    candidate: other.candidate,
+    context: other.context,
+    receiptId: 'atomvm-other-admission',
+    timestamp: 0,
+  });
+  let executions = 0;
+  const broker = createPartAdmissionBroker({
+    requirement,
+    candidate,
+    context,
+    delegate: {
+      execute: async () => {
+        executions += 1;
+      },
+    },
+  });
+
+  assert.ok(Object.isFrozen(broker));
+  assert.throws(() => {
+    broker.substitutionReceipt = otherReceipt;
+  }, TypeError);
+  assert.throws(() => {
+    broker.candidate = other.candidate;
+  }, TypeError);
+  assert.throws(() => {
+    broker.requirement = other.requirement;
+  }, TypeError);
+  assert.throws(() => {
+    broker.context = { ...context, hostCapabilities: ['cap:admin'] };
+  }, TypeError);
+  assert.throws(() => {
+    broker.delegate = { execute: async () => 'bypass' };
+  }, TypeError);
+  assert.throws(() => {
+    broker.context.hostCapabilities.push('cap:admin');
+  }, TypeError);
+
+  assert.equal(broker.candidate.digest, candidate.digest);
+  assert.equal(broker.substitutionReceipt, undefined);
+
+  await assert.rejects(
+    () => broker.execute({ operation: 'atomvm.execute' }),
+    error =>
+      error instanceof PartAdmissionBrokerRefusal &&
+      error.code === 'PART_SUBSTITUTION_RECEIPT_REQUIRED'
   );
   assert.equal(executions, 0);
 });
