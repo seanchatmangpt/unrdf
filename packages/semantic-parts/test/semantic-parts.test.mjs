@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   admitSemanticPartsGraph,
+  admitSemanticIndex,
+  buildSemanticIndex,
   findAlternatives,
+  indexedCandidatePartIds,
   fromCodeGraphTables,
   substitutionSurvivesSemanticFalsifier,
 } from '../src/index.mjs';
@@ -80,6 +83,33 @@ describe('semantic parts graph', () => {
     });
 
     expect(reordered).toEqual(graph);
+  });
+
+
+  it('indexes required-axis candidate membership without scanning semantics at query time', () => {
+    const graph = fromCodeGraphTables(tables);
+    const index = buildSemanticIndex(graph);
+
+    expect(index.schema).toBe('unrdf.semantic-parts.index.v1');
+    expect(index.authority).toBe('NONE');
+    expect(indexedCandidatePartIds(graph, index, '1', {
+      requiredAxes: ['algorithm', 'domain', 'paradigm'],
+    })).toEqual(['codegraph:file:2']);
+  });
+
+  it('refuses forged or stale semantic indexes', () => {
+    const graph = fromCodeGraphTables(tables);
+    const index = buildSemanticIndex(graph);
+
+    expect(() => admitSemanticIndex({ ...index, authority: 'DO' }, graph))
+      .toThrow('REFUSED_INDEX_AUTHORITY');
+    expect(() => admitSemanticIndex({ ...index, part_count: 999 }, graph))
+      .toThrow('REFUSED_INDEX_PART_COUNT');
+
+    const forged = structuredClone(index);
+    forged.axes.algorithm['wikidata:Q12105'].push('codegraph:file:404');
+    expect(() => admitSemanticIndex(forged, graph))
+      .toThrow('REFUSED_INDEX_DANGLING_PART:algorithm:codegraph:file:404');
   });
 
   it('refuses dangling CodeGraph edges', () => {
