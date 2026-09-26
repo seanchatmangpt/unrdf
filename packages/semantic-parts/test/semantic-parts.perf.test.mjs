@@ -22,74 +22,92 @@ import {
 import { syntheticTables } from '../bench/fixture.mjs';
 
 const PERF_TIMEOUT_MS = 120000;
-const receipt = JSON.parse(readFileSync(new URL('../bench/receipt-v26.9.26.json', import.meta.url), 'utf8'));
+const receipt = JSON.parse(
+  readFileSync(new URL('../bench/receipt-v26.9.26.json', import.meta.url), 'utf8')
+);
 
 describe('semantic-parts performance and replay', () => {
   const tables = syntheticTables({ files: receipt.input.files });
 
-  it('replays the benchmarked graph byte-identically (digest matches receipt)', () => {
-    const graph = fromCodeGraphTables(tables);
-    const digest = createHash('sha256').update(JSON.stringify(graph)).digest('hex');
-    expect(digest).toBe(receipt.graph_sha256);
-  }, PERF_TIMEOUT_MS);
+  it(
+    'replays the benchmarked graph byte-identically (digest matches receipt)',
+    () => {
+      const graph = fromCodeGraphTables(tables);
+      const digest = createHash('sha256').update(JSON.stringify(graph)).digest('hex');
+      expect(digest).toBe(receipt.graph_sha256);
+    },
+    PERF_TIMEOUT_MS
+  );
 
-  it('builds 10k parts and answers a 2-axis query inside the regression bound', () => {
-    const t0 = performance.now();
-    const graph = fromCodeGraphTables(tables);
-    const buildMs = performance.now() - t0;
-    const t1 = performance.now();
-    const candidates = findAlternatives(graph, '1', { requiredAxes: ['algorithm', 'domain'] });
-    const queryMs = performance.now() - t1;
-    expect(Array.isArray(candidates)).toBe(true);
-    expect(buildMs).toBeLessThan(Math.max(4000, receipt.fromCodeGraphTables.median_ms * 20));
-    expect(queryMs).toBeLessThan(Math.max(1000, receipt.findAlternatives_2axis.median_ms * 20));
-  }, PERF_TIMEOUT_MS);
+  it(
+    'builds 10k parts and answers a 2-axis query inside the regression bound',
+    () => {
+      const t0 = performance.now();
+      const graph = fromCodeGraphTables(tables);
+      const buildMs = performance.now() - t0;
+      const t1 = performance.now();
+      const candidates = findAlternatives(graph, '1', { requiredAxes: ['algorithm', 'domain'] });
+      const queryMs = performance.now() - t1;
+      expect(Array.isArray(candidates)).toBe(true);
+      expect(buildMs).toBeLessThan(Math.max(4000, receipt.fromCodeGraphTables.median_ms * 20));
+      expect(queryMs).toBeLessThan(Math.max(1000, receipt.findAlternatives_2axis.median_ms * 20));
+    },
+    PERF_TIMEOUT_MS
+  );
 
-  it('scales build time sub-quadratically (8x input stays under 40x time)', () => {
-    // Sparse shape (1 edge per file per axis) keeps the retained heap small:
-    // above ~8k dense files V8 major-GC cost grows with the heap and makes wall
-    // time superlinear for reasons unrelated to the algorithm (measured on
-    // 19e2413a and here alike: 4k->8k->16k dense = 50/216/646 ms).
-    // Measured ratio 1000->8000: 6.6-10.3x as written; 71.8x with an injected
-    // O(parts^2) lookup (mutation check), so the 40x bound separates them.
-    // Samples are interleaved so both sizes see the same runner load.
-    const small = syntheticTables({ files: 1000, edgesPerFile: 1 });
-    const large = syntheticTables({ files: 8000, edgesPerFile: 1 });
-    fromCodeGraphTables(small);
-    fromCodeGraphTables(large);
-    let bestSmall = Infinity;
-    let bestLarge = Infinity;
-    for (let i = 0; i < 7; i += 1) {
-      let s = performance.now();
+  it(
+    'scales build time sub-quadratically (8x input stays under 40x time)',
+    () => {
+      // Sparse shape (1 edge per file per axis) keeps the retained heap small:
+      // above ~8k dense files V8 major-GC cost grows with the heap and makes wall
+      // time superlinear for reasons unrelated to the algorithm (measured on
+      // 19e2413a and here alike: 4k->8k->16k dense = 50/216/646 ms).
+      // Measured ratio 1000->8000: 6.6-10.3x as written; 71.8x with an injected
+      // O(parts^2) lookup (mutation check), so the 40x bound separates them.
+      // Samples are interleaved so both sizes see the same runner load.
+      const small = syntheticTables({ files: 1000, edgesPerFile: 1 });
+      const large = syntheticTables({ files: 8000, edgesPerFile: 1 });
       fromCodeGraphTables(small);
-      bestSmall = Math.min(bestSmall, performance.now() - s);
-      s = performance.now();
       fromCodeGraphTables(large);
-      bestLarge = Math.min(bestLarge, performance.now() - s);
-    }
-    expect(bestLarge / bestSmall).toBeLessThan(40);
-  }, PERF_TIMEOUT_MS);
+      let bestSmall = Infinity;
+      let bestLarge = Infinity;
+      for (let i = 0; i < 7; i += 1) {
+        let s = performance.now();
+        fromCodeGraphTables(small);
+        bestSmall = Math.min(bestSmall, performance.now() - s);
+        s = performance.now();
+        fromCodeGraphTables(large);
+        bestLarge = Math.min(bestLarge, performance.now() - s);
+      }
+      expect(bestLarge / bestSmall).toBeLessThan(40);
+    },
+    PERF_TIMEOUT_MS
+  );
 
-  it('answers an indexed query at least 2x faster than the scan it must equal', () => {
-    // Falsifier for per-query re-admission: before the immutable admission
-    // cache, every indexed query re-walked the whole graph and index, so the
-    // index was no faster than a scan (measured 31-157 ms vs 18-98 ms scan on
-    // 10k files); with it, 0.9-2.6 ms vs 12-30 ms. Interleaved best-of-5.
-    const graph = fromCodeGraphTables(tables);
-    const index = buildSemanticIndex(graph);
-    const options = { requiredAxes: ['algorithm', 'domain'] };
-    let bestScan = Infinity;
-    let bestIndexed = Infinity;
-    for (let i = 0; i < 5; i += 1) {
-      const subject = String(((i * 997) % receipt.input.files) + 1);
-      let s = performance.now();
-      const scan = findAlternatives(graph, subject, options);
-      bestScan = Math.min(bestScan, performance.now() - s);
-      s = performance.now();
-      const indexed = findAlternativesIndexed(graph, index, subject, options);
-      bestIndexed = Math.min(bestIndexed, performance.now() - s);
-      expect(indexed).toEqual(scan);
-    }
-    expect(bestIndexed * 2).toBeLessThan(bestScan);
-  }, PERF_TIMEOUT_MS);
+  it(
+    'answers an indexed query at least 2x faster than the scan it must equal',
+    () => {
+      // Falsifier for per-query re-admission: before the immutable admission
+      // cache, every indexed query re-walked the whole graph and index, so the
+      // index was no faster than a scan (measured 31-157 ms vs 18-98 ms scan on
+      // 10k files); with it, 0.9-2.6 ms vs 12-30 ms. Interleaved best-of-5.
+      const graph = fromCodeGraphTables(tables);
+      const index = buildSemanticIndex(graph);
+      const options = { requiredAxes: ['algorithm', 'domain'] };
+      let bestScan = Infinity;
+      let bestIndexed = Infinity;
+      for (let i = 0; i < 5; i += 1) {
+        const subject = String(((i * 997) % receipt.input.files) + 1);
+        let s = performance.now();
+        const scan = findAlternatives(graph, subject, options);
+        bestScan = Math.min(bestScan, performance.now() - s);
+        s = performance.now();
+        const indexed = findAlternativesIndexed(graph, index, subject, options);
+        bestIndexed = Math.min(bestIndexed, performance.now() - s);
+        expect(indexed).toEqual(scan);
+      }
+      expect(bestIndexed * 2).toBeLessThan(bestScan);
+    },
+    PERF_TIMEOUT_MS
+  );
 });

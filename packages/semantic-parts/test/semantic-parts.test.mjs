@@ -23,11 +23,30 @@ const tables = {
   ],
   concepts: {
     algorithms: [
-      { concept_id: 10, name: 'dijkstra algorithm', wikidata_qid: 'Q12105', label: "Dijkstra's algorithm" },
-      { concept_id: 11, name: 'bellman ford algorithm', wikidata_qid: 'Q294195', label: 'Bellman–Ford algorithm' },
+      {
+        concept_id: 10,
+        name: 'dijkstra algorithm',
+        wikidata_qid: 'Q12105',
+        label: "Dijkstra's algorithm",
+      },
+      {
+        concept_id: 11,
+        name: 'bellman ford algorithm',
+        wikidata_qid: 'Q294195',
+        label: 'Bellman–Ford algorithm',
+      },
     ],
-    domains: [{ concept_id: 20, name: 'graph theory', wikidata_qid: 'Q131476', label: 'graph theory' }],
-    paradigms: [{ concept_id: 30, name: 'imperative programming', wikidata_qid: 'Q275596', label: 'imperative programming' }],
+    domains: [
+      { concept_id: 20, name: 'graph theory', wikidata_qid: 'Q131476', label: 'graph theory' },
+    ],
+    paradigms: [
+      {
+        concept_id: 30,
+        name: 'imperative programming',
+        wikidata_qid: 'Q275596',
+        label: 'imperative programming',
+      },
+    ],
     design_patterns: [],
   },
   edges: {
@@ -77,19 +96,17 @@ describe('semantic parts graph', () => {
     expect(candidates[0].authority).toBe('NONE');
   });
 
-
   it('is deterministic under source edge ordering', () => {
     const graph = fromCodeGraphTables(tables);
     const reordered = fromCodeGraphTables({
       ...tables,
       edges: Object.fromEntries(
-        Object.entries(tables.edges).map(([name, rows]) => [name, [...rows].reverse()]),
+        Object.entries(tables.edges).map(([name, rows]) => [name, [...rows].reverse()])
       ),
     });
 
     expect(reordered).toEqual(graph);
   });
-
 
   it('indexes required-axis candidate membership without scanning semantics at query time', () => {
     const graph = fromCodeGraphTables(tables);
@@ -97,27 +114,30 @@ describe('semantic parts graph', () => {
 
     expect(index.schema).toBe('unrdf.semantic-parts.index.v1');
     expect(index.authority).toBe('NONE');
-    expect(indexedCandidatePartIds(graph, index, '1', {
-      requiredAxes: ['algorithm', 'domain', 'paradigm'],
-    })).toEqual(['codegraph:file:2']);
+    expect(
+      indexedCandidatePartIds(graph, index, '1', {
+        requiredAxes: ['algorithm', 'domain', 'paradigm'],
+      })
+    ).toEqual(['codegraph:file:2']);
   });
 
   it('refuses forged or stale semantic indexes', () => {
     const graph = fromCodeGraphTables(tables);
     const index = buildSemanticIndex(graph);
 
-    expect(() => admitSemanticIndex({ ...index, authority: 'DO' }, graph))
-      .toThrow('REFUSED_INDEX_AUTHORITY');
-    expect(() => admitSemanticIndex({ ...index, part_count: 999 }, graph))
-      .toThrow('REFUSED_INDEX_PART_COUNT');
+    expect(() => admitSemanticIndex({ ...index, authority: 'DO' }, graph)).toThrow(
+      'REFUSED_INDEX_AUTHORITY'
+    );
+    expect(() => admitSemanticIndex({ ...index, part_count: 999 }, graph)).toThrow(
+      'REFUSED_INDEX_PART_COUNT'
+    );
 
     const forged = structuredClone(index);
     forged.axes.algorithm['wikidata:Q12105'].push('codegraph:file:404');
-    expect(() => admitSemanticIndex(forged, graph))
-      .toThrow('REFUSED_INDEX_DANGLING_PART:algorithm:codegraph:file:404');
+    expect(() => admitSemanticIndex(forged, graph)).toThrow(
+      'REFUSED_INDEX_DANGLING_PART:algorithm:codegraph:file:404'
+    );
   });
-
-
 
   it('indexed ranked retrieval is contract-equivalent to the scan path', () => {
     const graph = fromCodeGraphTables(tables);
@@ -127,16 +147,19 @@ describe('semantic parts graph', () => {
       minimumShared: 3,
     };
 
-    expect(findAlternativesIndexed(graph, index, '1', options))
-      .toEqual(findAlternatives(graph, '1', options));
+    expect(findAlternativesIndexed(graph, index, '1', options)).toEqual(
+      findAlternatives(graph, '1', options)
+    );
   });
 
   it('distinguishes exact observed semantics from mere adjacency', () => {
     const graph = fromCodeGraphTables(tables);
 
-    expect(comparePartSemantics(graph, '1', '2', {
-      axes: ['algorithm', 'domain', 'paradigm'],
-    })).toMatchObject({
+    expect(
+      comparePartSemantics(graph, '1', '2', {
+        axes: ['algorithm', 'domain', 'paradigm'],
+      })
+    ).toMatchObject({
       exact_observed_semantics: true,
       authority: 'NONE',
       standing: 'CANDIDATE',
@@ -162,8 +185,6 @@ describe('semantic parts graph', () => {
     expect(classes[0].authority).toBe('NONE');
     expect(classes[0].standing).toBe('CANDIDATE');
   });
-
-
 
   it('consumes CodeGraph exact release table names through an async reader', async () => {
     const requested = [];
@@ -220,15 +241,18 @@ describe('semantic parts graph', () => {
   });
 
   it('refuses dangling CodeGraph edges', () => {
-    expect(() => fromCodeGraphTables({
-      ...tables,
-      edges: { ...tables.edges, file_algorithm: [{ file_id: 999, concept_id: 10 }] },
-    })).toThrow('REFUSED_DANGLING_FILE_EDGE');
+    expect(() =>
+      fromCodeGraphTables({
+        ...tables,
+        edges: { ...tables.edges, file_algorithm: [{ file_id: 999, concept_id: 10 }] },
+      })
+    ).toThrow('REFUSED_DANGLING_FILE_EDGE');
   });
 
   it('refuses a graph that smuggles ambient authority', () => {
     const graph = fromCodeGraphTables(tables);
-    expect(() => admitSemanticPartsGraph({ ...graph, authority: 'DO' }))
-      .toThrow('REFUSED_AMBIENT_AUTHORITY');
+    expect(() => admitSemanticPartsGraph({ ...graph, authority: 'DO' })).toThrow(
+      'REFUSED_AMBIENT_AUTHORITY'
+    );
   });
 });

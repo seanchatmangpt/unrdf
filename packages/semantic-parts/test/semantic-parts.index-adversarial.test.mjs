@@ -65,8 +65,9 @@ describe('stale or forged index is refused', () => {
 
   it('refuses an index that grants authority or carries an unknown axis', () => {
     const graph = fromCodeGraphTables(tables());
-    expect(() => admitSemanticIndex({ ...buildSemanticIndex(graph), authority: 'DO' }, graph))
-      .toThrow('REFUSED_INDEX_AUTHORITY');
+    expect(() =>
+      admitSemanticIndex({ ...buildSemanticIndex(graph), authority: 'DO' }, graph)
+    ).toThrow('REFUSED_INDEX_AUTHORITY');
     const extra = structuredClone(buildSemanticIndex(graph));
     extra.axes.language = { x: ['codegraph:file:1'] };
     expect(() => admitSemanticIndex(extra, graph)).toThrow('REFUSED_INDEX_UNKNOWN_AXIS:language');
@@ -76,9 +77,14 @@ describe('stale or forged index is refused', () => {
     const graph = fromCodeGraphTables(syntheticTables({ files: 150, conceptsPerAxis: 20 }));
     const index = buildSemanticIndex(graph);
     for (const part of graph.parts) {
-      for (const requiredAxes of [['algorithm'], ['algorithm', 'domain'], ['paradigm', 'design_pattern']]) {
-        expect(findAlternativesIndexed(graph, index, part.part_id, { requiredAxes }))
-          .toEqual(findAlternatives(graph, part.part_id, { requiredAxes }));
+      for (const requiredAxes of [
+        ['algorithm'],
+        ['algorithm', 'domain'],
+        ['paradigm', 'design_pattern'],
+      ]) {
+        expect(findAlternativesIndexed(graph, index, part.part_id, { requiredAxes })).toEqual(
+          findAlternatives(graph, part.part_id, { requiredAxes })
+        );
       }
     }
   }, 120000);
@@ -89,8 +95,12 @@ describe('immutable admission cache', () => {
     const graph = fromCodeGraphTables(tables());
     const index = buildSemanticIndex(graph);
     expect(Object.isFrozen(graph.parts[0].semantics.algorithm[0])).toBe(true);
-    expect(() => { graph.parts[0].authority = 'DO'; }).toThrow(TypeError);
-    expect(() => { index.axes.algorithm['wikidata:Q12105'].push('codegraph:file:3'); }).toThrow(TypeError);
+    expect(() => {
+      graph.parts[0].authority = 'DO';
+    }).toThrow(TypeError);
+    expect(() => {
+      index.axes.algorithm['wikidata:Q12105'].push('codegraph:file:3');
+    }).toThrow(TypeError);
     expect(graph.parts[0].authority).toBe('NONE');
   });
 
@@ -121,7 +131,7 @@ describe('reader protocol boundaries', () => {
       concepts_algorithms: t.concepts.algorithms ?? [],
       edges_file_algorithm: t.edges.file_algorithm ?? [],
     };
-    return { readRows: (name) => names[name] ?? [] };
+    return { readRows: name => names[name] ?? [] };
   }
 
   it('matches fromCodeGraphTables for the same rows', async () => {
@@ -129,7 +139,7 @@ describe('reader protocol boundaries', () => {
   });
 
   it('refuses a table delivered as a string instead of rows', async () => {
-    const reader = { readRows: (name) => (name === 'files' ? 'file_id\n1' : []) };
+    const reader = { readRows: name => (name === 'files' ? 'file_id\n1' : []) };
     await expect(fromCodeGraphReader(reader)).rejects.toThrow('REFUSED_READER_ROWS:files');
   });
 
