@@ -69,6 +69,19 @@ describe('semantic parts graph', () => {
     expect(candidates[0].authority).toBe('NONE');
   });
 
+
+  it('is deterministic under source edge ordering', () => {
+    const graph = fromCodeGraphTables(tables);
+    const reordered = fromCodeGraphTables({
+      ...tables,
+      edges: Object.fromEntries(
+        Object.entries(tables.edges).map(([name, rows]) => [name, [...rows].reverse()]),
+      ),
+    });
+
+    expect(reordered).toEqual(graph);
+  });
+
   it('refuses dangling CodeGraph edges', () => {
     expect(() => fromCodeGraphTables({
       ...tables,
