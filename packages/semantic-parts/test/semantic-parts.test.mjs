@@ -4,6 +4,8 @@ import {
   admitSemanticPartsGraph,
   admitSemanticIndex,
   buildSemanticIndex,
+  comparePartSemantics,
+  exactSemanticClasses,
   findAlternatives,
   indexedCandidatePartIds,
   fromCodeGraphTables,
@@ -110,6 +112,39 @@ describe('semantic parts graph', () => {
     forged.axes.algorithm['wikidata:Q12105'].push('codegraph:file:404');
     expect(() => admitSemanticIndex(forged, graph))
       .toThrow('REFUSED_INDEX_DANGLING_PART:algorithm:codegraph:file:404');
+  });
+
+
+  it('distinguishes exact observed semantics from mere adjacency', () => {
+    const graph = fromCodeGraphTables(tables);
+
+    expect(comparePartSemantics(graph, '1', '2', {
+      axes: ['algorithm', 'domain', 'paradigm'],
+    })).toMatchObject({
+      exact_observed_semantics: true,
+      authority: 'NONE',
+      standing: 'CANDIDATE',
+    });
+
+    const nonEquivalent = comparePartSemantics(graph, '1', '3', {
+      axes: ['algorithm', 'domain'],
+    });
+    expect(nonEquivalent.exact_observed_semantics).toBe(false);
+    expect(nonEquivalent.delta.algorithm.only_left).toEqual(['wikidata:Q12105']);
+    expect(nonEquivalent.delta.algorithm.only_right).toEqual(['wikidata:Q294195']);
+    expect(nonEquivalent.standing).toBe('OBSERVED');
+  });
+
+  it('manufactures exact semantic-signature classes without treating unknown as equal', () => {
+    const graph = fromCodeGraphTables(tables);
+    const classes = exactSemanticClasses(graph, {
+      axes: ['algorithm', 'domain', 'paradigm'],
+    });
+
+    expect(classes).toHaveLength(1);
+    expect(classes[0].members).toEqual(['codegraph:file:1', 'codegraph:file:2']);
+    expect(classes[0].authority).toBe('NONE');
+    expect(classes[0].standing).toBe('CANDIDATE');
   });
 
   it('refuses dangling CodeGraph edges', () => {
