@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPartPassport, createPartRequirement } from '@unrdf/core';
+import { createPartPassport, createPartRequirement, evaluateSubstitution } from '@unrdf/core';
 import {
   createSubstitutionReceipt,
   verifySubstitutionReceipt,
@@ -137,4 +137,50 @@ test('receipt does not verify against a different candidate or host boundary', (
   assert.equal(verification.valid, false);
   assert.ok(verification.errors.includes('candidate subject mismatch'));
   assert.ok(verification.errors.includes('candidate digest mismatch'));
+});
+
+test('receipt binds the raw host context even when a wider host yields an identical judgement', () => {
+  const req = requirement();
+  const candidate = passport();
+  const mintedUnder = {
+    hostCapabilities: ['cap:read'],
+    hostAuthorityIssuers: ['issuer:host'],
+    hostResourceCeilings: { memoryMiB: 48 },
+  };
+  const presentedUnder = {
+    hostCapabilities: ['cap:read', 'cap:admin'],
+    hostAuthorityIssuers: ['issuer:host', 'issuer:other'],
+    hostResourceCeilings: { memoryMiB: 48 },
+  };
+
+  // Precondition: the judgement cannot tell the two hosts apart, so only the
+  // raw-context binding in the receipt inputs can refuse the swap.
+  const judgementA = evaluateSubstitution(req, candidate, mintedUnder);
+  const judgementB = evaluateSubstitution(req, candidate, presentedUnder);
+  assert.equal(judgementA.state, 'ADMITTED');
+  assert.equal(judgementB.digest, judgementA.digest);
+
+  const receipt = createSubstitutionReceipt({
+    requirement: req,
+    candidate,
+    context: mintedUnder,
+    receiptId: 'receipt-host-swap',
+    timestamp: 0,
+  });
+
+  const sameHost = verifySubstitutionReceipt(receipt, {
+    requirement: req,
+    candidate,
+    context: mintedUnder,
+  });
+  assert.equal(sameHost.valid, true);
+
+  const swapped = verifySubstitutionReceipt(receipt, {
+    requirement: req,
+    candidate,
+    context: presentedUnder,
+  });
+  assert.equal(swapped.valid, false);
+  assert.equal(swapped.state, 'REFUSED');
+  assert.deepEqual(swapped.errors, ['input hash mismatch']);
 });
