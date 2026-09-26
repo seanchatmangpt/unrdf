@@ -25,3 +25,10 @@ export {
 } from './repository-fact-accounting.mjs';
 
 export { collectGitRepositoryFacts } from './git-repository-facts.mjs';
+
+export {
+  EPR_CANDIDATE_SCHEMA,
+  EPR_SUBSTITUTION_EVALUATION_SCHEMA,
+  evaluatePriorArtSubstitution,
+  replayPriorArtSubstitution,
+} from './prior-art-substitution.mjs';
