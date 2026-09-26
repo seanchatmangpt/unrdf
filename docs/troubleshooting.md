@@ -18,6 +18,7 @@ Common issues and their solutions. If you don't find your issue here, check [Git
 ### "pnpm: command not found"
 
 **Symptom:**
+
 ```bash
 $ pnpm install
 pnpm: command not found
@@ -26,12 +27,14 @@ pnpm: command not found
 **Cause:** pnpm is not installed globally.
 
 **Solution:**
+
 ```bash
 npm install -g pnpm
 pnpm --version  # Verify installation
 ```
 
 **Alternative (using npm):**
+
 ```bash
 npm install -g @pnpm/exe
 ```
@@ -41,6 +44,7 @@ npm install -g @pnpm/exe
 ### "Cannot find module '@unrdf/core'"
 
 **Symptom:**
+
 ```
 Error: Cannot find module '@unrdf/core'
 ```
@@ -48,6 +52,7 @@ Error: Cannot find module '@unrdf/core'
 **Cause:** Dependencies not installed or packages not built.
 
 **Solution:**
+
 ```bash
 # Reinstall dependencies
 pnpm install
@@ -64,6 +69,7 @@ pnpm list --depth 0 | grep @unrdf
 ### Node Version Too Old
 
 **Symptom:**
+
 ```
 Error: The engine "node" is incompatible with this module.
 Expected version ">=18.0.0". Got "16.x.x"
@@ -74,6 +80,7 @@ Expected version ">=18.0.0". Got "16.x.x"
 **Solution:**
 
 Using nvm:
+
 ```bash
 nvm install 18
 nvm use 18
@@ -87,6 +94,7 @@ Or download from [nodejs.org](https://nodejs.org).
 ### Peer Dependency Warnings
 
 **Symptom:**
+
 ```
 WARN  Issues with peer dependencies found
 ```
@@ -94,6 +102,7 @@ WARN  Issues with peer dependencies found
 **Cause:** Version conflicts in dependencies.
 
 **Solution:**
+
 ```bash
 # Usually safe to ignore warnings
 # If builds fail, try:
@@ -111,6 +120,7 @@ pnpm install
 ### Build Fails with "Permission denied"
 
 **Symptom:**
+
 ```
 EACCES: permission denied, mkdir '/home/user/unrdf/packages/core/dist'
 ```
@@ -118,6 +128,7 @@ EACCES: permission denied, mkdir '/home/user/unrdf/packages/core/dist'
 **Cause:** Incorrect file permissions.
 
 **Solution:**
+
 ```bash
 # Fix ownership
 sudo chown -R $(whoami) .
@@ -131,6 +142,7 @@ pnpm run build
 ### "Cannot find module './dist/index.mjs'"
 
 **Symptom:**
+
 ```
 Error: Cannot find module './dist/index.mjs'
 ```
@@ -138,6 +150,7 @@ Error: Cannot find module './dist/index.mjs'
 **Cause:** Package not built yet.
 
 **Solution:**
+
 ```bash
 # Build all packages
 pnpm run build
@@ -155,6 +168,7 @@ pnpm --filter @unrdf/core run build
 **Cause:** Dependency resolution issue or network problem.
 
 **Solution:**
+
 ```bash
 # Cancel build (Ctrl+C)
 
@@ -172,6 +186,7 @@ pnpm run build
 ### TypeScript Errors in Build
 
 **Symptom:**
+
 ```
 error TS2307: Cannot find module '@unrdf/core'
 ```
@@ -179,6 +194,7 @@ error TS2307: Cannot find module '@unrdf/core'
 **Cause:** TypeScript definitions not generated.
 
 **Solution:**
+
 ```bash
 # Build dependencies first
 pnpm --filter @unrdf/core run build
@@ -195,6 +211,7 @@ pnpm --filter @unrdf/YOUR-PACKAGE run build
 ### Tests Fail After Fresh Install
 
 **Symptom:**
+
 ```
 FAIL packages/core/test/parse.test.mjs
 ```
@@ -202,6 +219,7 @@ FAIL packages/core/test/parse.test.mjs
 **Cause:** Known test failures or environment issues.
 
 **Solution:**
+
 ```bash
 # Check if it's a known issue
 cat TEST-RESULTS.md  # If exists
@@ -219,6 +237,7 @@ pnpm --filter @unrdf/core test -- parse.test.mjs
 ### "Timeout of 5000ms exceeded"
 
 **Symptom:**
+
 ```
 Error: Timeout of 5000ms exceeded
 ```
@@ -228,6 +247,7 @@ Error: Timeout of 5000ms exceeded
 **Solution:**
 
 In test file, increase timeout:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 
@@ -242,6 +262,7 @@ describe('slow test', () => {
 ```
 
 Or run with timeout flag:
+
 ```bash
 pnpm test -- --testTimeout=30000
 ```
@@ -255,6 +276,7 @@ pnpm test -- --testTimeout=30000
 **Cause:** Environment differences (file paths, timing, resources).
 
 **Solution:**
+
 - Check CI logs for specific error
 - Ensure tests don't depend on local file paths
 - Make tests deterministic (avoid race conditions)
@@ -267,6 +289,7 @@ pnpm test -- --testTimeout=30000
 ### "Invalid or incomplete RDF data"
 
 **Symptom:**
+
 ```
 Error: Invalid or incomplete RDF data
 ```
@@ -276,6 +299,7 @@ Error: Invalid or incomplete RDF data
 **Solution:**
 
 Validate your RDF:
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
@@ -294,6 +318,7 @@ try {
 ```
 
 Common syntax errors:
+
 - Missing period (`.`) at end of statement
 - Missing prefix declaration
 - Unescaped quotes in literals
@@ -304,6 +329,7 @@ Common syntax errors:
 ### "SPARQL query failed"
 
 **Symptom:**
+
 ```
 Error: SPARQL query failed: Syntax error at line X
 ```
@@ -313,6 +339,7 @@ Error: SPARQL query failed: Syntax error at line X
 **Solution:**
 
 Test query step by step:
+
 ```javascript
 // Start simple
 const query1 = 'SELECT * WHERE { ?s ?p ?o }';
@@ -337,6 +364,7 @@ Use a SPARQL validator: https://sparql.org/query-validator.html
 ### Memory Issues with Large Graphs
 
 **Symptom:**
+
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
@@ -346,6 +374,7 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 **Solution:**
 
 Use streaming:
+
 ```javascript
 import { createReadStream } from 'fs';
 
@@ -369,6 +398,7 @@ for await (const chunk of stream) {
 ```
 
 Or increase Node.js memory:
+
 ```bash
 node --max-old-space-size=8192 your-script.mjs
 ```
@@ -378,6 +408,7 @@ node --max-old-space-size=8192 your-script.mjs
 ### "Store is not defined"
 
 **Symptom:**
+
 ```
 ReferenceError: store is not defined
 ```
@@ -387,6 +418,7 @@ ReferenceError: store is not defined
 **Solution:**
 
 Ensure proper initialization:
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
@@ -407,6 +439,7 @@ const results = await core.query(store, '...');
 ### "Can't push to GitHub"
 
 **Symptom:**
+
 ```
 ERROR: Permission to unrdf/unrdf.git denied
 ```
@@ -414,6 +447,7 @@ ERROR: Permission to unrdf/unrdf.git denied
 **Cause:** Trying to push to upstream instead of your fork.
 
 **Solution:**
+
 ```bash
 # Check remotes
 git remote -v
@@ -433,11 +467,13 @@ git push origin feat/your-branch
 ### Merge Conflicts
 
 **Symptom:**
+
 ```
 CONFLICT (content): Merge conflict in packages/core/src/parse.mjs
 ```
 
 **Solution:**
+
 ```bash
 # 1. Update main branch
 git checkout main
@@ -463,6 +499,7 @@ git push origin feat/your-feature --force
 ### "Detached HEAD state"
 
 **Symptom:**
+
 ```
 You are in 'detached HEAD' state.
 ```
@@ -470,6 +507,7 @@ You are in 'detached HEAD' state.
 **Cause:** Checked out a specific commit instead of a branch.
 
 **Solution:**
+
 ```bash
 # Create a branch from current position
 git checkout -b fix/my-fix
@@ -483,6 +521,7 @@ git checkout main
 ### Pre-commit Hook Failures
 
 **Symptom:**
+
 ```
 pre-commit hook failed
 ```
@@ -490,6 +529,7 @@ pre-commit hook failed
 **Cause:** Lint or test failures.
 
 **Solution:**
+
 ```bash
 # Fix linting issues
 pnpm run lint:fix
@@ -514,6 +554,7 @@ git commit --no-verify
 **Solution:**
 
 Optimize query:
+
 ```javascript
 // Bad - Cartesian product
 const slow = `
@@ -533,13 +574,14 @@ const fast = `
 ```
 
 Use indexes or persistent storage:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 
 // Persistent store with indexes
 const store = await createStore({
   type: 'persistent',
-  path: './data/store.db'
+  path: './data/store.db',
 });
 ```
 
@@ -554,6 +596,7 @@ const store = await createStore({
 **Solution:**
 
 Monitor memory:
+
 ```javascript
 console.log('Memory:', process.memoryUsage());
 
@@ -570,6 +613,7 @@ console.log('Memory used:', (after - before) / 1024 / 1024, 'MB');
 Use streaming for large datasets (see above).
 
 Clear stores when done:
+
 ```javascript
 store.clear();
 store = null;
@@ -584,6 +628,7 @@ store = null;
 **Cause:** Network issues or large node_modules.
 
 **Solution:**
+
 ```bash
 # Use fast mirror
 pnpm config set registry https://registry.npmmirror.com
@@ -621,42 +666,54 @@ pnpm install --force
 ### Provide Good Bug Reports
 
 Include:
-```markdown
+
+````markdown
 ## Description
+
 Brief description of the issue
 
 ## Environment
+
 - Node.js version: 18.19.0
 - UNRDF version: 18.19.0
 - OS: Ubuntu 18.19.0
 - Package manager: pnpm 18.19.0
 
 ## Steps to Reproduce
+
 1. Step 1
 2. Step 2
 3. Step 3
 
 ## Expected Behavior
+
 What should happen
 
 ## Actual Behavior
+
 What actually happens
 
 ## Code Sample
+
 ```javascript
 // Minimal code that reproduces the issue
 ```
+````
 
 ## Error Output
+
 ```
 Full error message and stack trace
 ```
 
 ## What I've Tried
+
 - Tried X, didn't work
 - Tried Y, didn't work
+
 ```
 
 ---
 
 **Still stuck?** Don't hesitate to ask in [Discussions](https://github.com/unrdf/unrdf/discussions). We're here to help!
+```

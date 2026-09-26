@@ -627,9 +627,9 @@ Brief description of the issue
 
 ## Environment
 - Node.js version: 18.19.0
-- UNRDF version: 5.0.1
-- OS: Ubuntu 22.04
-- Package manager: pnpm 8.15.0
+- UNRDF version: 18.19.0
+- OS: Ubuntu 18.19.0
+- Package manager: pnpm 18.19.0
 
 ## Steps to Reproduce
 1. Step 1
