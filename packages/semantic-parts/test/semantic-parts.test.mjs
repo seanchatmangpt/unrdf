@@ -7,6 +7,7 @@ import {
   comparePartSemantics,
   exactSemanticClasses,
   findAlternatives,
+  findAlternativesIndexed,
   indexedCandidatePartIds,
   toSemanticPartsTurtle,
   fromCodeGraphTables,
@@ -115,6 +116,19 @@ describe('semantic parts graph', () => {
       .toThrow('REFUSED_INDEX_DANGLING_PART:algorithm:codegraph:file:404');
   });
 
+
+
+  it('indexed ranked retrieval is contract-equivalent to the scan path', () => {
+    const graph = fromCodeGraphTables(tables);
+    const index = buildSemanticIndex(graph);
+    const options = {
+      requiredAxes: ['algorithm', 'domain', 'paradigm'],
+      minimumShared: 3,
+    };
+
+    expect(findAlternativesIndexed(graph, index, '1', options))
+      .toEqual(findAlternatives(graph, '1', options));
+  });
 
   it('distinguishes exact observed semantics from mere adjacency', () => {
     const graph = fromCodeGraphTables(tables);
