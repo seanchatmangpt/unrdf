@@ -97,7 +97,7 @@ function countingDelegate() {
 async function assertRefused(broker, delegate, code) {
   await assert.rejects(
     () => broker.execute({ operation: 'atomvm.execute' }),
-    error => error instanceof PartAdmissionBrokerRefusal && error.code === code,
+    error => error instanceof PartAdmissionBrokerRefusal && error.code === code
   );
   assert.equal(delegate.executions, 0, 'delegate must not run without admission');
 }
@@ -109,7 +109,10 @@ test('receipt for one admitted part cannot actuate a different admitted part', a
     artifactDigest: 'sha256:atomvm-worker-b',
   });
   // Both parts are independently substitutable: the refusal must come from receipt binding.
-  assert.equal(verifySubstitutionReceipt(receiptFor(partB), { requirement, candidate: partB, context }).valid, true);
+  assert.equal(
+    verifySubstitutionReceipt(receiptFor(partB), { requirement, candidate: partB, context }).valid,
+    true
+  );
 
   const delegate = countingDelegate();
   const broker = createPartAdmissionBroker({
@@ -166,9 +169,10 @@ test('passport edited after manufacture is refused on integrity before receipts 
   });
   await assert.rejects(
     () => broker.execute({ operation: 'atomvm.execute' }),
-    error => error instanceof PartAdmissionBrokerRefusal
-      && error.code === 'PART_SUBSTITUTION_REFUSED'
-      && error.details.judgement.reasons.some(r => r.code === 'PASSPORT_INTEGRITY_REFUSED'),
+    error =>
+      error instanceof PartAdmissionBrokerRefusal &&
+      error.code === 'PART_SUBSTITUTION_REFUSED' &&
+      error.details.judgement.reasons.some(r => r.code === 'PASSPORT_INTEGRITY_REFUSED')
   );
   assert.equal(delegate.executions, 0);
 });
@@ -195,7 +199,10 @@ test('mutating the caller context after construction cannot widen the admitted b
     requirement,
     candidate,
     context: callerContext,
-    substitutionReceipt: receiptFor(candidate, { ...context, hostResourceCeilings: { memoryMiB: 64 } }),
+    substitutionReceipt: receiptFor(candidate, {
+      ...context,
+      hostResourceCeilings: { memoryMiB: 64 },
+    }),
     delegate,
   });
   callerContext.hostResourceCeilings.memoryMiB = 64;

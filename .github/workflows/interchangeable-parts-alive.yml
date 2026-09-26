@@ -1,0 +1,98 @@
+name: Interchangeable Parts ALIVE
+
+# Executes the node:test falsifiers for the interchangeable-parts kernel
+# (@unrdf/core PartRequirement/PartPassport/evaluateSubstitution,
+# @unrdf/receipts substitution receipt, @unrdf/manufacturing part passport,
+# @unrdf/atomvm mandatory admission broker). Package `test` scripts run vitest,
+# which cannot collect node:test files, so this is the only CI path that runs them.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/interchangeable-parts-alive.yml'
+      - 'scripts/test-interchangeable-parts.mjs'
+      - 'packages/core/**'
+      - 'packages/receipts/**'
+      - 'packages/manufacturing/**'
+      - 'packages/atomvm/**'
+      - 'pnpm-lock.yaml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/interchangeable-parts-alive.yml'
+      - 'scripts/test-interchangeable-parts.mjs'
+      - 'packages/core/**'
+      - 'packages/receipts/**'
+      - 'packages/manufacturing/**'
+      - 'packages/atomvm/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: interchangeable-parts-alive-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  falsifiers:
+    name: Interchangeable-part falsifiers (node:test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact UNRDF head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install workspace closure
+        env:
+          HUSKY: '0'
+        run: >-
+          pnpm install --frozen-lockfile
+          --filter @unrdf/core...
+          --filter @unrdf/receipts...
+          --filter @unrdf/manufacturing...
+          --filter @unrdf/atomvm...
+
+      - name: Refuse London-style atomvm tests
+        env:
+          CHICAGO_TDD_REPORT: ${{ github.workspace }}/.build/receipts/chicago-tdd-report.json
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/receipts
+          node packages/atomvm/scripts/verify-chicago-tdd.mjs
+
+      - name: Run interchangeable-parts gate
+        run: |
+          set -euxo pipefail
+          mkdir -p .build/receipts
+          node scripts/test-interchangeable-parts.mjs | tee .build/receipts/interchangeable-parts.tap
+
+      - name: Upload replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: interchangeable-parts-alive-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            .build/receipts/interchangeable-parts.tap
+            .build/receipts/chicago-tdd-report.json

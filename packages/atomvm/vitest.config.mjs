@@ -13,7 +13,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     include: ['test/**/*.test.mjs'],
-    exclude: ['test/playwright/**', 'node_modules/**', 'dist/**'],
+    exclude: [
+      'test/playwright/**',
+      'node_modules/**',
+      'dist/**',
+      // node:test suites run by scripts/test-interchangeable-parts.mjs (vitest cannot collect them)
+      'test/part-admission-broker.test.mjs',
+      'test/part-admission-broker-falsifiers.test.mjs',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

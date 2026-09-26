@@ -46,6 +46,7 @@
     "test:pkg:fast": "bash -c 'pnpm -C packages/$1 test:fast' _",
     "test:coverage": "pnpm -r test -- --coverage",
     "test:core": "pnpm -C packages/core test",
+    "test:interchangeable-parts": "node scripts/test-interchangeable-parts.mjs",
     "test:hooks": "pnpm -C packages/hooks test",
     "test:federation": "pnpm -C packages/federation test",
     "test:streaming": "pnpm -C packages/streaming test",
