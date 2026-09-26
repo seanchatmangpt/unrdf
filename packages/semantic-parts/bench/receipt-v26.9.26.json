@@ -9,14 +9,31 @@
   },
   "graph_sha256": "c8970a79dcb4b5470989d0b455f0aecb9bc8c67e1bc3a3dadab6aca246973d32",
   "fromCodeGraphTables": {
-    "median_ms": 160.766,
-    "p95_ms": 277.879,
-    "min_ms": 118.175
+    "median_ms": 278.297,
+    "p95_ms": 571.238,
+    "min_ms": 201.106
+  },
+  "buildSemanticIndex": {
+    "median_ms": 48.23,
+    "p95_ms": 105.477,
+    "min_ms": 34.267
   },
   "findAlternatives_2axis": {
-    "median_ms": 18.201,
-    "p95_ms": 118.395,
-    "min_ms": 15.535,
+    "median_ms": 14.723,
+    "p95_ms": 47.311,
+    "min_ms": 9.601,
+    "last_candidates": 4
+  },
+  "indexedCandidatePartIds_2axis": {
+    "median_ms": 0.979,
+    "p95_ms": 4.303,
+    "min_ms": 0.768,
+    "last_candidates": 4
+  },
+  "findAlternativesIndexed_2axis": {
+    "median_ms": 2.615,
+    "p95_ms": 10.905,
+    "min_ms": 2.016,
     "last_candidates": 4
   }
 }

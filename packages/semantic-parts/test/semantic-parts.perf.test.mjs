@@ -13,7 +13,12 @@ import { performance } from 'node:perf_hooks';
 
 import { describe, expect, it } from 'vitest';
 
-import { findAlternatives, fromCodeGraphTables } from '../src/index.mjs';
+import {
+  buildSemanticIndex,
+  findAlternatives,
+  findAlternativesIndexed,
+  fromCodeGraphTables,
+} from '../src/index.mjs';
 import { syntheticTables } from '../bench/fixture.mjs';
 
 const PERF_TIMEOUT_MS = 120000;
@@ -63,5 +68,28 @@ describe('semantic-parts performance and replay', () => {
       bestLarge = Math.min(bestLarge, performance.now() - s);
     }
     expect(bestLarge / bestSmall).toBeLessThan(40);
+  }, PERF_TIMEOUT_MS);
+
+  it('answers an indexed query at least 2x faster than the scan it must equal', () => {
+    // Falsifier for per-query re-admission: before the immutable admission
+    // cache, every indexed query re-walked the whole graph and index, so the
+    // index was no faster than a scan (measured 31-157 ms vs 18-98 ms scan on
+    // 10k files); with it, 0.9-2.6 ms vs 12-30 ms. Interleaved best-of-5.
+    const graph = fromCodeGraphTables(tables);
+    const index = buildSemanticIndex(graph);
+    const options = { requiredAxes: ['algorithm', 'domain'] };
+    let bestScan = Infinity;
+    let bestIndexed = Infinity;
+    for (let i = 0; i < 5; i += 1) {
+      const subject = String(((i * 997) % receipt.input.files) + 1);
+      let s = performance.now();
+      const scan = findAlternatives(graph, subject, options);
+      bestScan = Math.min(bestScan, performance.now() - s);
+      s = performance.now();
+      const indexed = findAlternativesIndexed(graph, index, subject, options);
+      bestIndexed = Math.min(bestIndexed, performance.now() - s);
+      expect(indexed).toEqual(scan);
+    }
+    expect(bestIndexed * 2).toBeLessThan(bestScan);
   }, PERF_TIMEOUT_MS);
 });
