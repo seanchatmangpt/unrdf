@@ -1,0 +1,22 @@
+{
+  "schema": "unrdf.semantic-parts.bench.v1",
+  "node": "v26.8.1",
+  "platform": "darwin-arm64",
+  "input": {
+    "files": 10000,
+    "edges": 119671,
+    "iterations": 15
+  },
+  "graph_sha256": "c8970a79dcb4b5470989d0b455f0aecb9bc8c67e1bc3a3dadab6aca246973d32",
+  "fromCodeGraphTables": {
+    "median_ms": 160.766,
+    "p95_ms": 277.879,
+    "min_ms": 118.175
+  },
+  "findAlternatives_2axis": {
+    "median_ms": 18.201,
+    "p95_ms": 118.395,
+    "min_ms": 15.535,
+    "last_candidates": 4
+  }
+}

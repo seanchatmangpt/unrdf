@@ -1,0 +1,23 @@
+{
+  "name": "@unrdf/semantic-parts",
+  "version": "0.0.0-agnostic",
+  "description": "Evidence-bounded semantic software-parts graph and cross-language substitution discovery",
+  "type": "module",
+  "private": true,
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run --reporter=verbose",
+    "build": "echo 'ESM \u2014 no build step required'",
+    "bench": "node bench/semantic-parts.bench.mjs"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
