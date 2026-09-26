@@ -13,7 +13,8 @@
     "./causality": "./src/causality/index.mjs",
     "./artifact": "./src/artifact/index.mjs",
     "./repository-fact-accounting": "./src/repository-fact-accounting.mjs",
-    "./git-repository-facts": "./src/git-repository-facts.mjs"
+    "./git-repository-facts": "./src/git-repository-facts.mjs",
+    "./prior-art-substitution": "./src/prior-art-substitution.mjs"
   },
   "scripts": {
     "test": "vitest run",
