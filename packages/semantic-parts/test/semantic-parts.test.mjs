@@ -10,6 +10,7 @@ import {
   findAlternativesIndexed,
   indexedCandidatePartIds,
   toSemanticPartsTurtle,
+  fromCodeGraphReader,
   fromCodeGraphTables,
   substitutionSurvivesSemanticFalsifier,
 } from '../src/index.mjs';
@@ -162,6 +163,47 @@ describe('semantic parts graph', () => {
     expect(classes[0].standing).toBe('CANDIDATE');
   });
 
+
+
+  it('consumes CodeGraph exact release table names through an async reader', async () => {
+    const requested = [];
+    const releaseTables = {
+      files: tables.files,
+      concepts_algorithms: tables.concepts.algorithms,
+      concepts_domains: tables.concepts.domains,
+      concepts_paradigms: tables.concepts.paradigms,
+      concepts_design_patterns: tables.concepts.design_patterns,
+      edges_file_algorithm: tables.edges.file_algorithm,
+      edges_file_domain: tables.edges.file_domain,
+      edges_file_paradigm: tables.edges.file_paradigm,
+      edges_file_design_pattern: tables.edges.file_design_pattern,
+    };
+    const reader = {
+      async *readRows(name) {
+        requested.push(name);
+        for (const row of releaseTables[name]) yield row;
+      },
+    };
+
+    const graph = await fromCodeGraphReader(reader);
+
+    expect(graph).toEqual(fromCodeGraphTables(tables));
+    expect(requested).toEqual([
+      'files',
+      'concepts_algorithms',
+      'concepts_domains',
+      'concepts_paradigms',
+      'concepts_design_patterns',
+      'edges_file_algorithm',
+      'edges_file_domain',
+      'edges_file_paradigm',
+      'edges_file_design_pattern',
+    ]);
+  });
+
+  it('refuses a reader that does not implement the release-row protocol', async () => {
+    await expect(fromCodeGraphReader({})).rejects.toThrow('REFUSED_CODEGRAPH_READER');
+  });
 
   it('projects the admitted graph into the marketplace semantic-parts RDF vocabulary', () => {
     const graph = fromCodeGraphTables(tables);
