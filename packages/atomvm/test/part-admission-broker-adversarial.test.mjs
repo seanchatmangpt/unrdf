@@ -294,3 +294,20 @@ test('construction refuses missing bindings and non-data receipts before any bro
     error => error.name === 'DataCloneError'
   );
 });
+
+test('a prototype-named undeclared resource demand never actuates, even with a receipt minted over it', async () => {
+  for (const key of ['constructor', 'toString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf']) {
+    const candidate = passport({ resources: { memoryMiB: 32, [key]: 1e12 } });
+    const receipt = receiptFor({ candidate, receiptId: `proto-${key}` });
+    assert.equal(receipt.action, 'part.substitution.refuse', key);
+    const delegate = recordingDelegate();
+    const broker = createPartAdmissionBroker({
+      requirement,
+      candidate,
+      context,
+      substitutionReceipt: receipt,
+      delegate,
+    });
+    await assertRefused(broker, delegate, 'PART_SUBSTITUTION_REFUSED', 'RESOURCE_CEILING_REFUSED');
+  }
+});

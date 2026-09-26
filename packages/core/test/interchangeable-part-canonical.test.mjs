@@ -216,3 +216,102 @@ test('judgement is invariant under host-context key and set reordering', () => {
   assert.equal(a.state, 'ADMITTED');
   assert.equal(a.digest, b.digest);
 });
+
+const PROTOTYPE_KEYS = ['constructor', 'toString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf'];
+
+test('an undeclared demand named after an Object.prototype member is refused, never admitted', () => {
+  const control = evaluateSubstitution(requirement, passport(), host);
+  assert.equal(control.state, 'ADMITTED');
+
+  for (const key of [...PROTOTYPE_KEYS, 'gpuHours']) {
+    const candidate = passport({ resources: { memoryMiB: 32, [key]: 1e12 } });
+    assert.equal(verifyPartPassport(candidate).valid, true, key);
+    const judgement = evaluateSubstitution(requirement, candidate, host);
+    assert.equal(judgement.state, 'REFUSED', key);
+    assert.deepEqual(judgement.reasons, [
+      {
+        code: 'RESOURCE_CEILING_REFUSED',
+        path: `resources.${key}`,
+        required: 'UNADMITTED',
+        observed: 1e12,
+      },
+    ]);
+    assert.deepEqual(judgement.effectiveResourceCeilings, { memoryMiB: 48 }, key);
+  }
+});
+
+test('a "__proto__" resource demand stays an own key and is refused as undeclared', () => {
+  const resources = JSON.parse('{"memoryMiB":32,"__proto__":1e12}');
+  const candidate = passport({ resources });
+  assert.deepEqual(Object.keys(candidate.resources), ['__proto__', 'memoryMiB']);
+  assert.equal(Object.getPrototypeOf(candidate.resources), Object.prototype);
+  assert.equal(verifyPartPassport(candidate).valid, true);
+  const judgement = evaluateSubstitution(requirement, candidate, host);
+  assert.equal(judgement.state, 'REFUSED');
+  assert.deepEqual(reasonCodes(judgement), ['RESOURCE_CEILING_REFUSED']);
+  assert.equal(judgement.reasons[0].path, 'resources.__proto__');
+
+  // A "__proto__" ceiling is honoured as an ordinary resource name end to end.
+  const protoRequirement = createPartRequirement({
+    ...requirement,
+    resourceCeilings: JSON.parse('{"memoryMiB":64,"__proto__":10}'),
+  });
+  const admitted = evaluateSubstitution(
+    protoRequirement,
+    passport({ resources: JSON.parse('{"memoryMiB":32,"__proto__":5}') }),
+    { hostResourceCeilings: JSON.parse('{"memoryMiB":48,"__proto__":8}') }
+  );
+  assert.equal(admitted.state, 'ADMITTED');
+  assert.equal(Object.hasOwn(admitted.effectiveResourceCeilings, '__proto__'), true);
+  assert.equal(admitted.effectiveResourceCeilings.__proto__, 8);
+});
+
+test('the digest is injective: values JSON would collapse are refused at manufacture and on verify', () => {
+  class Tag {
+    constructor() {
+      this.v = 1;
+    }
+  }
+  for (const metadata of [
+    { note: Number.NaN },
+    { note: Number.POSITIVE_INFINITY },
+    { note: undefined },
+    { note: new Date(0) },
+    { note: new Tag() },
+    { note: [1, , 3] }, // eslint-disable-line no-sparse-arrays
+    { note: () => 1 },
+    { note: 1n },
+  ]) {
+    assert.throws(() => passport({ metadata }), TypeError, String(metadata.note));
+  }
+  assert.throws(
+    () => passport({ provenance: { source: 's', artifactDigest: 'sha256:canonical', at: NaN } }),
+    TypeError
+  );
+
+  // The adversary forges NaN metadata that digests like null: verify refuses it,
+  // so a receipt minted over the null passport cannot vouch for the NaN one.
+  const genuine = passport({ metadata: { note: null } });
+  const forged = forge(genuine, { metadata: { note: Number.NaN } });
+  assert.equal(forged.digest, genuine.digest);
+  assert.equal(verifyPartPassport(genuine).valid, true);
+  assert.equal(verifyPartPassport(forged).valid, false);
+  assert.deepEqual(reasonCodes(evaluateSubstitution(requirement, forged, host)), [
+    'PASSPORT_INTEGRITY_REFUSED',
+  ]);
+
+  // -0 and 0 share a JSON encoding: manufacture folds -0, and a -0 record is non-canonical.
+  const folded = passport({ metadata: { n: -0 }, resources: { memoryMiB: -0 } });
+  assert.equal(Object.is(folded.metadata.n, 0), true);
+  assert.equal(Object.is(folded.resources.memoryMiB, 0), true);
+  const negativeZero = forge(folded, { metadata: { n: -0 } });
+  assert.equal(negativeZero.digest, folded.digest);
+  assert.equal(verifyPartPassport(negativeZero).valid, false);
+
+  // Ordinary JSON metadata still manufactures to a verifying fixed point.
+  const lawful = passport({ metadata: { tags: ['a', 'b'], nested: { ok: true, n: 1.5 } } });
+  assert.equal(verifyPartPassport(lawful).valid, true);
+  assert.equal(evaluateSubstitution(requirement, lawful, host).state, 'ADMITTED');
+  const nanRequirement = forge(requirement, { metadata: { note: Number.NaN } });
+  assert.equal(verifyPartRequirement(nanRequirement).valid, false);
+});

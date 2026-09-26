@@ -25,12 +25,12 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Suite path -> exact number of top-level tests it must execute. */
 export const INTERCHANGEABLE_PART_SUITE_COUNTS = Object.freeze({
   'packages/core/test/interchangeable-part.test.mjs': 6,
-  'packages/core/test/interchangeable-part-canonical.test.mjs': 8,
+  'packages/core/test/interchangeable-part-canonical.test.mjs': 11,
   'packages/receipts/test/substitution-receipt.test.mjs': 4,
   'packages/manufacturing/test/artifact/interchangeable-part.test.mjs': 2,
   'packages/atomvm/test/part-admission-broker.test.mjs': 5,
   'packages/atomvm/test/part-admission-broker-falsifiers.test.mjs': 7,
-  'packages/atomvm/test/part-admission-broker-adversarial.test.mjs': 8,
+  'packages/atomvm/test/part-admission-broker-adversarial.test.mjs': 9,
 });
 
 export const INTERCHANGEABLE_PART_SUITES = Object.freeze(

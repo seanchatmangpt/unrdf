@@ -76,9 +76,68 @@ function budget(value, name) {
     if (typeof observed !== 'number' || !Number.isFinite(observed) || observed < 0) {
       throw new TypeError(`${name}.${key} must be a finite non-negative number`);
     }
-    normalized[key] = observed;
+    // defineProperty, not assignment: a key named "__proto__" must stay an own
+    // data property instead of being silently dropped as a prototype write.
+    // `+ 0` folds -0 into 0 so the digest (JSON writes both as 0) stays injective.
+    Object.defineProperty(normalized, key, {
+      value: observed + 0,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
   }
   return normalized;
+}
+
+/**
+ * Admit only values the digest encodes injectively.
+ *
+ * The record digest is sha256(JSON.stringify(canonical(body))). JSON writes NaN
+ * and Infinity as null, drops undefined members, writes -0 as 0 and writes
+ * non-plain objects (Date, Map, class instances) by their enumerable keys only,
+ * so any of those would let two different records share one digest and one
+ * substitution receipt. Free-form fields (metadata, provenance) are therefore
+ * restricted to JSON values; -0 is folded into 0 at manufacture.
+ */
+function jsonValue(value, name) {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new TypeError(`${name} must be a finite number`);
+    return value + 0;
+  }
+  if (Array.isArray(value)) {
+    const out = [];
+    for (let index = 0; index < value.length; index += 1) {
+      if (!Object.hasOwn(value, index)) throw new TypeError(`${name}[${index}] must not be a hole`);
+      out.push(jsonValue(value[index], `${name}[${index}]`));
+    }
+    return out;
+  }
+  if (typeof value === 'object') {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new TypeError(`${name} must be a plain JSON object`);
+    }
+    const out = {};
+    for (const key of Object.keys(value).sort()) {
+      Object.defineProperty(out, key, {
+        value: jsonValue(value[key], `${name}.${key}`),
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      });
+    }
+    return out;
+  }
+  throw new TypeError(`${name} must be a JSON value, got ${typeof value}`);
+}
+
+function jsonObject(value, name) {
+  if (value === undefined) return {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new TypeError(`${name} must be an object`);
+  }
+  return jsonValue(value, name);
 }
 
 function subset(left, right) {
@@ -189,7 +248,7 @@ export function createPartRequirement(input = {}) {
     receiptSchema: text(input.receiptSchema, 'receiptSchema'),
     replayRequired: input.replayRequired !== false,
     allowedRuntimes: stringSet(input.allowedRuntimes, 'allowedRuntimes'),
-    metadata: canonical(input.metadata ?? {}),
+    metadata: jsonObject(input.metadata, 'metadata'),
   });
 
   if (!Number.isInteger(body.maxDelegationDepth) || body.maxDelegationDepth < 0) {
@@ -224,8 +283,8 @@ export function createPartPassport(input = {}) {
     receiptSchema: text(input.receiptSchema, 'receiptSchema'),
     replay: input.replay === true,
     runtime: text(input.runtime, 'runtime'),
-    provenance: canonical(input.provenance ?? {}),
-    metadata: canonical(input.metadata ?? {}),
+    provenance: jsonObject(input.provenance, 'provenance'),
+    metadata: jsonObject(input.metadata, 'metadata'),
   });
 
   if (!Number.isInteger(body.delegationDepth) || body.delegationDepth < 0) {
@@ -372,14 +431,19 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
   const hostResources = context.hostResourceCeilings === undefined
     ? requirement?.resourceCeilings ?? {}
     : budget(context.hostResourceCeilings, 'context.hostResourceCeilings');
-  const effectiveResourceCeilings = {};
+  const effectiveResourceCeilings = Object.create(null);
   for (const key of Object.keys(requirement?.resourceCeilings ?? {}).sort()) {
     const requirementCeiling = requirement.resourceCeilings[key];
     const hostCeiling = Object.hasOwn(hostResources, key) ? hostResources[key] : undefined;
     if (hostCeiling !== undefined) effectiveResourceCeilings[key] = Math.min(requirementCeiling, hostCeiling);
   }
   for (const [key, observed] of Object.entries(candidate?.resources ?? {})) {
-    const ceiling = effectiveResourceCeilings[key];
+    // Own-property lookup only: a demand named after an Object.prototype member
+    // (constructor, toString, valueOf, ...) must not read the inherited function
+    // as its ceiling, because `observed > function` is `observed > NaN` = false.
+    const ceiling = Object.hasOwn(effectiveResourceCeilings, key)
+      ? effectiveResourceCeilings[key]
+      : undefined;
     if (ceiling === undefined || observed > ceiling) {
       reasons.push(reason('RESOURCE_CEILING_REFUSED', `resources.${key}`, ceiling ?? 'UNADMITTED', observed));
     }
