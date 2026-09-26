@@ -8,6 +8,7 @@ import {
   exactSemanticClasses,
   findAlternatives,
   indexedCandidatePartIds,
+  toSemanticPartsTurtle,
   fromCodeGraphTables,
   substitutionSurvivesSemanticFalsifier,
 } from '../src/index.mjs';
@@ -145,6 +146,21 @@ describe('semantic parts graph', () => {
     expect(classes[0].members).toEqual(['codegraph:file:1', 'codegraph:file:2']);
     expect(classes[0].authority).toBe('NONE');
     expect(classes[0].standing).toBe('CANDIDATE');
+  });
+
+
+  it('projects the admitted graph into the marketplace semantic-parts RDF vocabulary', () => {
+    const graph = fromCodeGraphTables(tables);
+    const turtle = toSemanticPartsTurtle(graph);
+
+    expect(turtle).toContain('@prefix sp: <https://chatmangpt.com/ontology/semantic-parts#> .');
+    expect(turtle).toContain('a sp:SoftwarePart');
+    expect(turtle).toContain('sp:authorityBoundary "NONE"');
+    expect(turtle).toContain('sp:standing sp:Observed');
+    expect(turtle).toContain('sp:implementsAlgorithm');
+    expect(turtle).toContain('sp:groundedIn <https://www.wikidata.org/entity/Q12105>');
+    expect(turtle).toContain('sp:language "Rust"');
+    expect(toSemanticPartsTurtle(graph)).toBe(turtle);
   });
 
   it('refuses dangling CodeGraph edges', () => {
