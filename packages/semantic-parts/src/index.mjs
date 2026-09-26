@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 /**
  * Evidence-bounded semantic software-parts graph.
  *
@@ -739,3 +741,195 @@ export function toSemanticPartsTurtle(graph) {
 
   return triples.join('\n') + '\n';
 }
+
+export const EPR_CANDIDATE_SCHEMA = 'unrdf.epr-candidate/1';
+const IMMUTABLE_GIT_SHA = /^[0-9a-f]{40}$/u;
+const SHA256_DIGEST = /^sha256:[0-9a-f]{64}$/u;
+
+function canonicalValue(value) {
+  if (Array.isArray(value)) return value.map(canonicalValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort(compareCodePoints)
+        .map((key) => [key, canonicalValue(value[key])]),
+    );
+  }
+  return value;
+}
+
+function canonicalJson(value) {
+  return JSON.stringify(canonicalValue(value));
+}
+
+function sha256Digest(value) {
+  return 'sha256:' + createHash('sha256').update(value).digest('hex');
+}
+
+function assertImmutableSupplier(supplier) {
+  if (!supplier || typeof supplier !== 'object' || Array.isArray(supplier)) {
+    throw new Error('REFUSED_EPR_SUPPLIER_REQUIRED');
+  }
+  if (typeof supplier.repository !== 'string' || supplier.repository.trim() === '') {
+    throw new Error('REFUSED_EPR_SUPPLIER_REPOSITORY');
+  }
+  if (!IMMUTABLE_GIT_SHA.test(supplier.commit ?? '')) {
+    throw new Error('REFUSED_EPR_MUTABLE_SUPPLIER_REF');
+  }
+  if (!SHA256_DIGEST.test(supplier.release_digest ?? '')) {
+    throw new Error('REFUSED_EPR_RELEASE_DIGEST');
+  }
+}
+
+/**
+ * Manufacture an immutable prior-art candidate from observed semantic overlap.
+ *
+ * This is the only transition CodeGraph evidence may perform:
+ * OBSERVED -> CANDIDATE. It never constructs a PartPassport, never claims
+ * behavioral equivalence, and never grants DO authority.
+ *
+ * The supplier is bound to an immutable Git commit plus release digest so the
+ * classification can be replayed against the exact source. Required-axis
+ * overlap is the cheapest falsifier; actual consequence-preserving
+ * substitution remains owned by the canonical interchangeable-parts court.
+ */
+export function manufacturePriorArtCandidate(
+  graph,
+  subjectId,
+  candidateId,
+  {
+    requiredAxes = ['algorithm'],
+    supplier,
+  } = {},
+) {
+  admitSemanticPartsGraph(graph);
+  assertImmutableSupplier(supplier);
+
+  const axes = normalizeSemanticAxes(requiredAxes);
+  const subject = partById(graph, subjectId);
+  const candidate = partById(graph, candidateId);
+  if (!subject) throw new Error('REFUSED_UNKNOWN_SUBJECT:' + String(subjectId));
+  if (!candidate) throw new Error('REFUSED_UNKNOWN_CANDIDATE:' + String(candidateId));
+  if (subject.part_id === candidate.part_id) {
+    throw new Error('REFUSED_EPR_SELF_SUBSTITUTION');
+  }
+
+  const comparison = comparePartSemantics(graph, subject.part_id, candidate.part_id, {
+    axes,
+  });
+
+  const shared = {};
+  for (const axis of axes) {
+    const overlap = comparison.delta[axis].shared;
+    if (overlap.length === 0) {
+      throw new Error('REFUSED_EPR_SEMANTIC_FALSIFIER:' + axis);
+    }
+    shared[axis] = overlap;
+  }
+
+  const body = {
+    schema: EPR_CANDIDATE_SCHEMA,
+    supplier: {
+      kind: 'CodeGraph',
+      repository: supplier.repository,
+      commit: supplier.commit,
+      release: graph.source?.release ?? CODEGRAPH_RELEASE,
+      release_digest: supplier.release_digest,
+    },
+    subject: {
+      part_id: subject.part_id,
+      file_id: subject.source?.file_id ?? null,
+      language: subject.source?.language ?? null,
+    },
+    candidate: {
+      part_id: candidate.part_id,
+      file_id: candidate.source?.file_id ?? null,
+      language: candidate.source?.language ?? null,
+    },
+    required_axes: axes,
+    shared_semantics: shared,
+    semantic_delta: comparison.delta,
+    semantic_exact: comparison.exact_observed_semantics,
+    behavioral_equivalence_claimed: false,
+    behavioral_qualification_required: true,
+    qualification_receipt: null,
+    authority: 'NONE',
+    grants_do_authority: false,
+    standing: 'CANDIDATE',
+  };
+
+  return Object.freeze({
+    ...body,
+    candidate_digest: sha256Digest(canonicalJson(body)),
+  });
+}
+
+/**
+ * Verify an EPR candidate without trusting its stored digest.
+ *
+ * The supplied exact graph is reclassified and the resulting candidate is
+ * byte-compared to the purported record. A mutable supplier ref, release
+ * digest drift, semantic drift, or candidate-record mutation therefore fails
+ * closed.
+ */
+export function verifyPriorArtCandidate(
+  record,
+  graph,
+  {
+    supplier,
+  } = {},
+) {
+  if (!record || record.schema !== EPR_CANDIDATE_SCHEMA) {
+    return Object.freeze({
+      valid: false,
+      state: 'REFUSED',
+      reason: 'EPR_SCHEMA',
+      authority: 'NONE',
+    });
+  }
+
+  try {
+    const replay = manufacturePriorArtCandidate(
+      graph,
+      record.subject?.part_id,
+      record.candidate?.part_id,
+      {
+        requiredAxes: record.required_axes,
+        supplier,
+      },
+    );
+
+    const valid =
+      record.candidate_digest === replay.candidate_digest
+      && canonicalJson(record) === canonicalJson(replay);
+
+    return Object.freeze({
+      valid,
+      state: valid ? 'CANDIDATE' : 'REFUSED',
+      reason: valid ? null : 'EPR_REPLAY_MISMATCH',
+      replay_digest: replay.candidate_digest,
+      second_run_byte_identical: valid,
+      authority: 'NONE',
+      grants_do_authority: false,
+    });
+  } catch (error) {
+    return Object.freeze({
+      valid: false,
+      state: 'REFUSED',
+      reason: String(error?.message ?? error),
+      authority: 'NONE',
+      grants_do_authority: false,
+    });
+  }
+}
+
+/**
+ * Canonical bytes for replay receipts and downstream exact-subject binding.
+ */
+export function serializePriorArtCandidate(record) {
+  if (!record || record.schema !== EPR_CANDIDATE_SCHEMA) {
+    throw new Error('REFUSED_EPR_SCHEMA');
+  }
+  return canonicalJson(record) + '\n';
+}
+
