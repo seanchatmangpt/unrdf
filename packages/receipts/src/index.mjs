@@ -65,3 +65,5 @@ export {
 
 // Deterministic receipts, chains, Merkle membership, disclosure, and replay
 export { ReceiptLedger, ReceiptVerificationError, createReceipt, verifyReceipt, verifyReceiptChain, signReceipt, verifySignature, buildReceiptMerkleTree, createReceiptMerkleProof, verifyReceiptMerkleProof, createSelectiveDisclosure, verifySelectiveDisclosure, verifyReplay, canonicalJson as canonicalReceiptJson, hashValue as hashReceiptValue } from './receipt-verifier.mjs';
+
+export { SUBSTITUTION_RECEIPT_SCHEMA, createSubstitutionReceipt, verifySubstitutionReceipt } from './substitution-receipt.mjs';
