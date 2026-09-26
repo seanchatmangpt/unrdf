@@ -116,6 +116,66 @@ function orderedUniqueConcepts(entries, axis, fileId) {
   return unique;
 }
 
+const CODEGRAPH_TABLE_NAMES = Object.freeze({
+  files: 'files',
+  concepts: Object.freeze({
+    algorithms: 'concepts_algorithms',
+    domains: 'concepts_domains',
+    paradigms: 'concepts_paradigms',
+    design_patterns: 'concepts_design_patterns',
+  }),
+  edges: Object.freeze({
+    file_algorithm: 'edges_file_algorithm',
+    file_domain: 'edges_file_domain',
+    file_paradigm: 'edges_file_paradigm',
+    file_design_pattern: 'edges_file_design_pattern',
+  }),
+});
+
+async function collectReaderRows(value, tableName) {
+  const resolved = await value;
+  if (Array.isArray(resolved)) return resolved;
+
+  if (resolved && typeof resolved[Symbol.asyncIterator] === 'function') {
+    const rows = [];
+    for await (const row of resolved) rows.push(row);
+    return rows;
+  }
+
+  if (resolved && typeof resolved[Symbol.iterator] === 'function') {
+    return [...resolved];
+  }
+
+  throw new TypeError(`REFUSED_READER_ROWS:${tableName}`);
+}
+
+/**
+ * Read CodeGraph's exact public-release table names through a transport-neutral
+ * row reader. A reader implements readRows(tableName) and may return an array,
+ * iterable, async iterable, or Promise of any of those. Parquet/DuckDB/Arrow
+ * remain dependencies of the transport, not of semantic-parts.
+ */
+export async function fromCodeGraphReader(reader) {
+  if (!reader || typeof reader.readRows !== 'function') {
+    throw new TypeError('REFUSED_CODEGRAPH_READER');
+  }
+
+  const read = async (name) => collectReaderRows(reader.readRows(name), name);
+  const files = await read(CODEGRAPH_TABLE_NAMES.files);
+
+  const concepts = {};
+  for (const [targetName, tableName] of Object.entries(CODEGRAPH_TABLE_NAMES.concepts)) {
+    concepts[targetName] = await read(tableName);
+  }
+
+  const edges = {};
+  for (const [targetName, tableName] of Object.entries(CODEGRAPH_TABLE_NAMES.edges)) {
+    edges[targetName] = await read(tableName);
+  }
+
+  return fromCodeGraphTables({ files, concepts, edges });
+}
+
 /**
  * Convert already-decoded rows from CodeGraph's public release tables into
  * the canonical semantic-parts graph. Parquet I/O intentionally remains
