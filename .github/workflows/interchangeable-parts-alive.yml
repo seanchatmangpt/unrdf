@@ -12,6 +12,8 @@ on:
     paths:
       - '.github/workflows/interchangeable-parts-alive.yml'
       - 'scripts/test-interchangeable-parts.mjs'
+      - 'scripts/bench-interchangeable-parts.mjs'
+      - 'benchmarks/interchangeable-parts/**'
       - 'packages/core/**'
       - 'packages/receipts/**'
       - 'packages/manufacturing/**'
@@ -22,6 +24,8 @@ on:
     paths:
       - '.github/workflows/interchangeable-parts-alive.yml'
       - 'scripts/test-interchangeable-parts.mjs'
+      - 'scripts/bench-interchangeable-parts.mjs'
+      - 'benchmarks/interchangeable-parts/**'
       - 'packages/core/**'
       - 'packages/receipts/**'
       - 'packages/manufacturing/**'
@@ -86,6 +90,11 @@ jobs:
           mkdir -p .build/receipts
           node scripts/test-interchangeable-parts.mjs | tee .build/receipts/interchangeable-parts.tap
 
+      - name: Benchmark regression bound (wrong verdicts refuse regardless of speed)
+        run: |
+          set -euxo pipefail
+          node scripts/bench-interchangeable-parts.mjs --check | tee .build/receipts/interchangeable-parts-bench.json
+
       - name: Upload replay evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -96,3 +105,4 @@ jobs:
           path: |
             .build/receipts/interchangeable-parts.tap
             .build/receipts/chicago-tdd-report.json
+            .build/receipts/interchangeable-parts-bench.json

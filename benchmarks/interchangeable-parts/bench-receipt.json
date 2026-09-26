@@ -1,0 +1,134 @@
+{
+  "bench": "interchangeable-parts",
+  "command": "node scripts/bench-interchangeable-parts.mjs --iterations=2000 --json",
+  "check": "node scripts/bench-interchangeable-parts.mjs --check",
+  "parent_subject": "f597b915786cd1edf9c6c46236f93295734c142d",
+  "host": {
+    "node": "v26.8.1",
+    "platform": "darwin-arm64"
+  },
+  "evidence_ceiling": "HOST_NATIVE_TIMING",
+  "runs": [
+    {
+      "verifyPartPassport": {
+        "medianNs": 23875,
+        "p99Ns": 8325167,
+        "opsPerSec": 41885
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 52500,
+        "p99Ns": 5736292,
+        "opsPerSec": 19048
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 48833,
+        "p99Ns": 9068250,
+        "opsPerSec": 20478
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 62334,
+        "p99Ns": 10556250,
+        "opsPerSec": 16043
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 61916,
+        "p99Ns": 7745958,
+        "opsPerSec": 16151
+      },
+      "broker.execute": {
+        "medianNs": 115875,
+        "p99Ns": 13710500,
+        "opsPerSec": 8630
+      }
+    },
+    {
+      "verifyPartPassport": {
+        "medianNs": 22333,
+        "p99Ns": 4981125,
+        "opsPerSec": 44777
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 47458,
+        "p99Ns": 1518125,
+        "opsPerSec": 21071
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 48875,
+        "p99Ns": 4440209,
+        "opsPerSec": 20460
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 61417,
+        "p99Ns": 5781042,
+        "opsPerSec": 16282
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 62041,
+        "p99Ns": 5891917,
+        "opsPerSec": 16118
+      },
+      "broker.execute": {
+        "medianNs": 116458,
+        "p99Ns": 19956667,
+        "opsPerSec": 8587
+      }
+    },
+    {
+      "verifyPartPassport": {
+        "medianNs": 21792,
+        "p99Ns": 685958,
+        "opsPerSec": 45888
+      },
+      "evaluateSubstitution.admit": {
+        "medianNs": 48708,
+        "p99Ns": 740250,
+        "opsPerSec": 20531
+      },
+      "evaluateSubstitution.forgedRefuse": {
+        "medianNs": 48083,
+        "p99Ns": 229375,
+        "opsPerSec": 20797
+      },
+      "createSubstitutionReceipt": {
+        "medianNs": 63125,
+        "p99Ns": 5104709,
+        "opsPerSec": 15842
+      },
+      "verifySubstitutionReceipt": {
+        "medianNs": 62458,
+        "p99Ns": 307708,
+        "opsPerSec": 16011
+      },
+      "broker.execute": {
+        "medianNs": 116791,
+        "p99Ns": 13318084,
+        "opsPerSec": 8562
+      }
+    }
+  ],
+  "pre_fix_core_at_parent": {
+    "medianNs": {
+      "verifyPartPassport": 10500,
+      "evaluateSubstitution.admit": 23791,
+      "evaluateSubstitution.forgedRefuse": 23833,
+      "createSubstitutionReceipt": 32167,
+      "verifySubstitutionReceipt": 33000,
+      "broker.execute": 56917
+    },
+    "wrongVerdicts": [
+      "evaluateSubstitution.forgedRefuse"
+    ],
+    "note": "core at f597b915 is faster because it skips canonical remanufacture, and it admits the NaN-resource forged passport (wrong verdict)."
+  },
+  "bounds": {
+    "rule": "medianNs <= 10 x max observed median over 3 host runs, rounded up to 1 microsecond; wrong verdicts refuse regardless of speed",
+    "medianNs": {
+      "verifyPartPassport": 239000,
+      "evaluateSubstitution.admit": 525000,
+      "evaluateSubstitution.forgedRefuse": 489000,
+      "createSubstitutionReceipt": 632000,
+      "verifySubstitutionReceipt": 625000,
+      "broker.execute": 1168000
+    }
+  }
+}

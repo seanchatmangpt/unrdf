@@ -6,7 +6,11 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.test.mjs'],
     // node:test suites run by scripts/test-interchangeable-parts.mjs (vitest cannot collect them)
-    exclude: [...configDefaults.exclude, 'test/interchangeable-part.test.mjs'],
+    exclude: [
+      ...configDefaults.exclude,
+      'test/interchangeable-part.test.mjs',
+      'test/interchangeable-part-canonical.test.mjs',
+    ],
     testTimeout: 60000, // 60s timeout for long-running tests (e.g., 100K quad performance tests)
     coverage: {
       provider: 'v8',

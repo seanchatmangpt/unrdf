@@ -100,13 +100,61 @@ function reason(code, path, required, observed) {
   return deepFreeze({ code, path, required: canonical(required), observed: canonical(observed) });
 }
 
-function verifyDigest(record, schema) {
-  if (!record || typeof record !== 'object') return { valid: false, reason: 'MISSING_RECORD' };
+/**
+ * Verify a requirement/passport record.
+ *
+ * The digest is an unkeyed sha256 of the body, so anyone can recompute it after
+ * editing a field. A matching digest therefore only proves self-consistency; the
+ * record must also be a fixed point of its own manufacturer (`remanufacture`),
+ * otherwise values the constructor refuses (NaN or negative resources, negative
+ * delegation depth, non-array capability sets, unsorted/duplicate sets, extra
+ * keys) would reach evaluation with a valid digest. NaN serializes to null in
+ * JSON, so a NaN resource demand would otherwise pass every `>` ceiling check.
+ */
+function verifyDigest(record, schema, remanufacture) {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    return { valid: false, reason: 'MISSING_RECORD' };
+  }
   if (record.schema !== schema) return { valid: false, reason: 'SCHEMA_MISMATCH' };
   if (typeof record.digest !== 'string') return { valid: false, reason: 'DIGEST_MISSING' };
-  return record.digest === digestRecord(record)
+  const tampered = () => record.digest !== digestRecord(record);
+  let rebuilt;
+  try {
+    rebuilt = remanufacture(record);
+  } catch {
+    return { valid: false, reason: tampered() ? 'DIGEST_MISMATCH' : 'MALFORMED_RECORD' };
+  }
+  const { digest: _digest, ...body } = record;
+  const { digest: rebuiltDigest, ...rebuiltBody } = rebuilt;
+  // Compare structurally rather than by digest: JSON.stringify maps NaN and
+  // Infinity to null, so equal digests do not imply equal values.
+  if (!sameValue(body, rebuiltBody)) {
+    return { valid: false, reason: tampered() ? 'DIGEST_MISMATCH' : 'NON_CANONICAL_RECORD' };
+  }
+  // Structurally equal bodies canonicalize identically, so the rebuilt digest is
+  // the body digest: one sha256 on the admitted path instead of two.
+  return record.digest === rebuiltDigest
     ? { valid: true, reason: null }
     : { valid: false, reason: 'DIGEST_MISMATCH' };
+}
+
+function sameValue(left, right) {
+  if (Object.is(left, right)) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((value, index) => sameValue(value, right[index]))
+    );
+  }
+  if (!left || !right || typeof left !== 'object' || typeof right !== 'object') return false;
+  const leftKeys = Object.keys(left).sort();
+  const rightKeys = Object.keys(right).sort();
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every((key, index) => key === rightKeys[index] && sameValue(left[key], right[key]))
+  );
 }
 
 function contractFields(source) {
@@ -194,11 +242,44 @@ export function createPartPassport(input = {}) {
 }
 
 export function verifyPartRequirement(requirement) {
-  return verifyDigest(requirement, PART_REQUIREMENT_SCHEMA);
+  return verifyDigest(requirement, PART_REQUIREMENT_SCHEMA, createPartRequirement);
 }
 
 export function verifyPartPassport(passport) {
-  return verifyDigest(passport, PART_PASSPORT_SCHEMA);
+  return verifyDigest(passport, PART_PASSPORT_SCHEMA, createPartPassport);
+}
+
+function integrityRefusal(reasons, requirement, candidate) {
+  const body = canonical({
+    schema: SUBSTITUTION_JUDGEMENT_SCHEMA,
+    state: 'REFUSED',
+    requirementDigest: typeof requirement?.digest === 'string' ? requirement.digest : null,
+    candidateDigest: typeof candidate?.digest === 'string' ? candidate.digest : null,
+    effectiveAuthority: { issuers: [], capabilities: [] },
+    effectiveResourceCeilings: {},
+    reasons,
+    falsifier: reasons[0] ?? null,
+  });
+  return deepFreeze({ ...body, digest: digest(body) });
+}
+
+function contextRefusal(context) {
+  if (context === null || typeof context !== 'object' || Array.isArray(context)) {
+    return reason('CONTEXT_MALFORMED_REFUSED', 'context', 'object', context === null ? null : typeof context);
+  }
+  for (const [field, check] of [
+    ['hostCapabilities', stringSet],
+    ['hostAuthorityIssuers', stringSet],
+    ['hostResourceCeilings', budget],
+  ]) {
+    if (context[field] === undefined) continue;
+    try {
+      check(context[field], `context.${field}`);
+    } catch (error) {
+      return reason('CONTEXT_MALFORMED_REFUSED', `context.${field}`, 'well-formed', error.message);
+    }
+  }
+  return null;
 }
 
 /**
@@ -223,6 +304,11 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
   if (!passportVerification.valid) {
     reasons.push(reason('PASSPORT_INTEGRITY_REFUSED', 'candidate.digest', 'valid', passportVerification.reason));
   }
+  const malformedContext = contextRefusal(context);
+  if (malformedContext) reasons.push(malformedContext);
+  // Unverified or malformed records are not evaluated field by field: their
+  // shape is unknown, so the law refuses on integrity alone (total, never throws).
+  if (reasons.length > 0) return integrityRefusal(reasons, requirement, candidate);
 
   const exactContracts = [
     ['semanticContract', 'SEMANTIC_CONTRACT_MISMATCH'],

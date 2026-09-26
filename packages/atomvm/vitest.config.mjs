@@ -20,6 +20,7 @@ export default defineConfig({
       // node:test suites run by scripts/test-interchangeable-parts.mjs (vitest cannot collect them)
       'test/part-admission-broker.test.mjs',
       'test/part-admission-broker-falsifiers.test.mjs',
+      'test/part-admission-broker-adversarial.test.mjs',
     ],
     coverage: {
       provider: 'v8',
