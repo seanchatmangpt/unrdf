@@ -81,6 +81,12 @@ export {
   createAtomVMProcessBroker,
 } from './process-broker.mjs';
 export {
+  IDLE_ESTATE_WORK_CLASS,
+  AtomVMIdleEstate,
+  IdleEstateRefusal,
+  createAtomVMIdleEstate,
+} from './idle-estate.mjs';
+export {
   INNOVATION_CHECKPOINTS,
   evaluateInnovationCheckpoints,
   receiptToOcel,
