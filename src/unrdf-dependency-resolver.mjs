@@ -1,280 +1,109 @@
 /**
- * @file src/unrdf-dependency-resolver.mjs
- * @description Ontology-driven dependency resolution from RDF package data
+ * Dependency resolver over the admitted ggen package projection.
+ * Cycles are preserved as topology and surfaced as SCCs; they are not silently
+ * discarded or misclassified as duplicate-package conflicts.
  */
+import { getRegistry } from './unrdf-package-registry.mjs';
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+function tarjan(nodes, adjacency) {
+  const indices = new Map(), low = new Map(), stack = [], onStack = new Set(), components = [];
+  let cursor = 0;
+  const visit = node => {
+    indices.set(node, cursor); low.set(node, cursor); cursor += 1; stack.push(node); onStack.add(node);
+    for (const next of [...(adjacency.get(node) || [])].sort()) {
+      if (!indices.has(next)) { visit(next); low.set(node, Math.min(low.get(node), low.get(next))); }
+      else if (onStack.has(next)) low.set(node, Math.min(low.get(node), indices.get(next)));
+    }
+    if (low.get(node) === indices.get(node)) {
+      const component = [];
+      while (stack.length) { const member = stack.pop(); onStack.delete(member); component.push(member); if (member === node) break; }
+      components.push(component.sort());
+    }
+  };
+  for (const node of [...nodes].sort()) if (!indices.has(node)) visit(node);
+  return components.sort((a, b) => a[0].localeCompare(b[0]));
+}
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '..');
-
-class DependencyResolver {
-  constructor() {
-    this.turtleData = null;
-    this.dependencies = new Map();
-    this.initialized = false;
-  }
+export class DependencyResolver {
+  constructor() { this.registry = null; this.dependencies = new Map(); this.initialized = false; }
 
   async initialize() {
     if (this.initialized) return;
-
-    const turtlePath = path.join(projectRoot, 'schema', 'packages-discovered.ttl');
-
-    if (!fs.existsSync(turtlePath)) {
-      throw new Error(`Ontology file not found: ${turtlePath}`);
-    }
-
-    this.turtleData = fs.readFileSync(turtlePath, 'utf-8');
-    this._parseOntology();
+    this.registry = await getRegistry();
+    this.dependencies = new Map(this.registry.getAllPackages().map(pkg => [pkg.name, [...(pkg.dependencies || [])]]));
     this.initialized = true;
-  }
-
-  _parseOntology() {
-    const packageBlocks = this.turtleData.split(/unrdf:\w+Package a unrdf:Package/);
-
-    for (const block of packageBlocks.slice(1)) {
-      const nameMatch = block.match(/unrdf:packageName "([^"]+)"/);
-      if (!nameMatch) continue;
-
-      const pkgName = nameMatch[1];
-      const depMatches = [...block.matchAll(/unrdf:hasDependency unrdf:(\w+)Package\s*;/g)];
-
-      const deps = [];
-      for (const match of depMatches) {
-        const depVarName = match[1];
-        const depName = this._varNameToPackageName(depVarName);
-        if (depName) deps.push(depName);
-      }
-
-      this.dependencies.set(pkgName, deps);
-    }
-  }
-
-  _varNameToPackageName(varName) {
-    // Convert CamelCase back to kebab-case
-    const withHyphens = varName.replace(/([A-Z])/g, '-$1').toLowerCase();
-    const cleaned = withHyphens.replace(/^-/, '').replace(/-package$/, '');
-    return `@unrdf/${cleaned}`;
   }
 
   async resolve(packageName, options = {}) {
     if (!this.initialized) await this.initialize();
-
-    const { includeOptional = true, checkConflicts = true } = options;
-
-    const resolved = new Set();
-    const queue = [packageName];
+    if (!this.dependencies.has(packageName)) return { success: false, conflicts: [{ type: 'missing-package', package: packageName, message: `Package ${packageName} is not in the admitted graph` }], resolved: null, cycles: [] };
     const visited = new Set();
-
-    while (queue.length > 0) {
-      const current = queue.shift();
-
-      if (visited.has(current)) {
-        continue;
+    const missing = new Set();
+    const visit = name => {
+      if (visited.has(name)) return;
+      visited.add(name);
+      for (const dep of this.dependencies.get(name) || []) {
+        if (!this.dependencies.has(dep)) missing.add(dep);
+        else visit(dep);
       }
-      visited.add(current);
-
-      const deps = this.dependencies.get(current) || [];
-
-      for (const dep of deps) {
-        resolved.add(dep);
-        queue.push(dep);
-      }
-    }
-
-    resolved.add(packageName);
-
-    const sortedDeps = this._topologicalSort(Array.from(resolved));
-
-    if (checkConflicts) {
-      const conflicts = this._findConflicts(sortedDeps);
-      if (conflicts.length > 0) {
-        return {
-          success: false,
-          conflicts,
-          resolved: null,
-        };
-      }
-    }
-
-    return {
-      success: true,
-      resolved: sortedDeps,
-      conflicts: [],
     };
-  }
-
-  _topologicalSort(packages) {
-    const graph = new Map();
-    const inDegree = new Map();
-
-    for (const pkg of packages) {
-      graph.set(pkg, this.dependencies.get(pkg) || []);
-      inDegree.set(pkg, 0);
-    }
-
-    for (const pkg of packages) {
-      const deps = graph.get(pkg) || [];
-      for (const dep of deps) {
-        if (inDegree.has(dep)) {
-          inDegree.set(dep, (inDegree.get(dep) || 0) + 1);
-        }
-      }
-    }
-
-    const queue = [];
-    for (const pkg of packages) {
-      if ((inDegree.get(pkg) || 0) === 0) {
-        queue.push(pkg);
-      }
-    }
-
-    const sorted = [];
-    while (queue.length > 0) {
-      const current = queue.shift();
-      sorted.push(current);
-
-      for (const pkg of graph.get(current) || []) {
-        inDegree.set(pkg, (inDegree.get(pkg) || 0) - 1);
-        if (inDegree.get(pkg) === 0) {
-          queue.push(pkg);
-        }
-      }
-    }
-
-    return sorted;
-  }
-
-  _findConflicts(packages) {
-    const conflicts = [];
-    const seen = new Set();
-
-    for (const pkg of packages) {
-      if (seen.has(pkg)) {
-        conflicts.push({
-          type: 'duplicate',
-          package: pkg,
-          message: `Package ${pkg} appears multiple times in dependency tree`,
-        });
-      }
-      seen.add(pkg);
-    }
-
-    return conflicts;
+    visit(packageName);
+    const closure = [...visited].sort();
+    const closureSet = new Set(closure);
+    const adjacency = new Map(closure.map(name => [name, (this.dependencies.get(name) || []).filter(dep => closureSet.has(dep))]));
+    const cycles = tarjan(closure, adjacency).filter(component => component.length > 1 || (adjacency.get(component[0]) || []).includes(component[0]));
+    const conflicts = [...missing].sort().map(dep => ({ type: 'missing-dependency', package: dep, message: `Dependency ${dep} is not in the admitted graph` }));
+    return { success: options.checkConflicts !== false ? conflicts.length === 0 : true, resolved: conflicts.length && options.checkConflicts !== false ? null : closure, conflicts, cycles };
   }
 
   async getFullDependencyTree(packageName) {
     if (!this.initialized) await this.initialize();
-
     const tree = {};
     const queue = [{ name: packageName, level: 0 }];
     const visited = new Set();
-
-    while (queue.length > 0) {
+    while (queue.length) {
       const { name, level } = queue.shift();
-
-      if (visited.has(name)) {
-        continue;
-      }
+      if (visited.has(name)) continue;
       visited.add(name);
-
-      tree[name] = {
-        level,
-        dependencies: this.dependencies.get(name) || [],
-      };
-
-      const deps = this.dependencies.get(name) || [];
-      for (const dep of deps) {
-        queue.push({ name: dep, level: level + 1 });
-      }
+      const dependencies = [...(this.dependencies.get(name) || [])];
+      tree[name] = { level, dependencies };
+      for (const dep of dependencies) if (this.dependencies.has(dep)) queue.push({ name: dep, level: level + 1 });
     }
-
     return tree;
   }
 
-  async getDirectDependencies(packageName) {
-    if (!this.initialized) await this.initialize();
-    return this.dependencies.get(packageName) || [];
-  }
-
-  async getReverseDependencies(packageName) {
-    if (!this.initialized) await this.initialize();
-
-    const reverseDeps = [];
-    for (const [pkg, deps] of this.dependencies.entries()) {
-      if (deps.includes(packageName)) {
-        reverseDeps.push(pkg);
-      }
-    }
-    return reverseDeps;
-  }
+  async getDirectDependencies(packageName) { if (!this.initialized) await this.initialize(); return [...(this.dependencies.get(packageName) || [])]; }
+  async getReverseDependencies(packageName) { if (!this.initialized) await this.initialize(); return this.registry.getReverseDependencies(packageName); }
 
   async getTotalDependencyCount(packageName) {
-    if (!this.initialized) await this.initialize();
-
     const result = await this.resolve(packageName);
-    if (!result.success) {
-      throw new Error(`Failed to resolve dependencies: ${result.conflicts.map((c) => c.message).join(', ')}`);
-    }
-
+    if (!result.success) throw new Error(result.conflicts.map(item => item.message).join(', '));
     return result.resolved.length - 1;
   }
 
   async getSharedDependencies(packageNames) {
+    if (!packageNames.length) return [];
+    const closures = [];
+    for (const name of packageNames) { const result = await this.resolve(name); if (result.success) closures.push(new Set(result.resolved)); }
+    if (!closures.length) return [];
+    return [...closures.slice(1).reduce((shared, next) => new Set([...shared].filter(item => next.has(item))), closures[0])].sort();
+  }
+
+  async getStronglyConnectedComponents() {
     if (!this.initialized) await this.initialize();
-
-    if (packageNames.length === 0) return [];
-    if (packageNames.length === 1) return [];
-
-    const depSets = [];
-    for (const pkg of packageNames) {
-      const result = await this.resolve(pkg);
-      if (result.success) {
-        depSets.push(new Set(result.resolved));
-      }
-    }
-
-    if (depSets.length === 0) return [];
-
-    let shared = depSets[0];
-    for (let i = 1; i < depSets.length; i++) {
-      shared = new Set([...shared].filter((x) => depSets[i].has(x)));
-    }
-
-    return Array.from(shared).sort();
+    return tarjan([...this.dependencies.keys()], this.dependencies);
   }
 
   async analyzeDepthAndBreadth(packageName) {
-    if (!this.initialized) await this.initialize();
-
     const tree = await this.getFullDependencyTree(packageName);
-    const maxDepth = Math.max(0, ...Object.values(tree).map((node) => node.level));
-    const breadth = Object.keys(tree).length - 1;
-
-    const depCountByLevel = {};
-    for (const [pkg, node] of Object.entries(tree)) {
-      if (!depCountByLevel[node.level]) {
-        depCountByLevel[node.level] = 0;
-      }
-      depCountByLevel[node.level]++;
-    }
-
-    return {
-      depth: maxDepth,
-      breadth,
-      totalDependencies: breadth,
-      depthDistribution: depCountByLevel,
-    };
+    const result = await this.resolve(packageName, { checkConflicts: false });
+    const maxDepth = Math.max(0, ...Object.values(tree).map(node => node.level));
+    const depthDistribution = {};
+    for (const node of Object.values(tree)) depthDistribution[node.level] = (depthDistribution[node.level] || 0) + 1;
+    return { depth: maxDepth, breadth: Math.max(0, Object.keys(tree).length - 1), totalDependencies: Math.max(0, Object.keys(tree).length - 1), depthDistribution, cycles: result.cycles };
   }
 }
 
 export const resolver = new DependencyResolver();
-
-export async function getResolver() {
-  await resolver.initialize();
-  return resolver;
-}
-
+export async function getResolver() { await resolver.initialize(); return resolver; }
 export default resolver;
