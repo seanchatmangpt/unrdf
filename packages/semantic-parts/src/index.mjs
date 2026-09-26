@@ -329,6 +329,64 @@ export function admitSemanticIndex(index, graph) {
  * membership court used by findAlternatives, but returns only part ids so a
  * caller can cheaply bound the candidate set before richer verification.
  */
+/**
+ * Use the inverted index to return the same ranked candidate contract as
+ * findAlternatives while touching only the preselected candidate subset.
+ */
+export function findAlternativesIndexed(
+  graph,
+  index,
+  subjectId,
+  { requiredAxes = ['algorithm'], minimumShared = 1 } = {},
+) {
+  if (!Number.isSafeInteger(minimumShared) || minimumShared < 1) {
+    throw new Error(`REFUSED_MINIMUM_SHARED:${String(minimumShared)}`);
+  }
+
+  const candidateIds = indexedCandidatePartIds(graph, index, subjectId, { requiredAxes });
+  const subject = partById(graph, subjectId);
+  const axes = normalizeSemanticAxes(requiredAxes);
+  const subjectSets = Object.fromEntries(
+    axes.map((axis) => [axis, axisIdentities(subject, axis)]),
+  );
+  const partMap = new Map(graph.parts.map((part) => [part.part_id, part]));
+
+  return candidateIds
+    .map((partId) => {
+      const candidate = partMap.get(partId);
+      const shared = {};
+      let sharedCount = 0;
+      let subjectCount = 0;
+
+      for (const axis of axes) {
+        const candidateSet = axisIdentities(candidate, axis);
+        const overlap = [...subjectSets[axis]]
+          .filter((id) => candidateSet.has(id))
+          .sort(compareCodePoints);
+        shared[axis] = overlap;
+        sharedCount += overlap.length;
+        subjectCount += subjectSets[axis].size;
+      }
+
+      return {
+        part_id: candidate.part_id,
+        language: candidate.source?.language ?? null,
+        shared,
+        shared_count: sharedCount,
+        coverage: subjectCount === 0 ? 0 : sharedCount / subjectCount,
+        authority: 'NONE',
+        standing: 'CANDIDATE',
+        all_required_axes_satisfied: true,
+      };
+    })
+    .filter((candidate) => candidate.shared_count >= minimumShared)
+    .sort((left, right) =>
+      right.coverage - left.coverage
+      || right.shared_count - left.shared_count
+      || compareCodePoints(left.part_id, right.part_id),
+    );
+}
+
 export function indexedCandidatePartIds(
   graph,
   index,
