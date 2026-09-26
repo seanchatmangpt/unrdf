@@ -88,3 +88,5 @@ export {
 
 // JOTP pattern-language port: real processes, lifecycle, workers, and applications.
 export * from './otp/index.mjs';
+
+export { PartAdmissionBroker, PartAdmissionBrokerRefusal, createPartAdmissionBroker } from './part-admission-broker.mjs';
