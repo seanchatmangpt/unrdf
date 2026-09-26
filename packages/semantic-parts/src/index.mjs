@@ -439,3 +439,103 @@ export function substitutionSurvivesSemanticFalsifier(graph, subjectId, candidat
   if (!candidate) throw new Error(`REFUSED_UNKNOWN_CANDIDATE:${candidateId}`);
   return candidates.some((entry) => entry.part_id === candidate.part_id);
 }
+
+
+function normalizeSemanticAxes(axes) {
+  const normalized = asArray(axes, 'axes').map((axis) => {
+    if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
+    return axis;
+  });
+  if (normalized.length === 0) throw new Error('REFUSED_REQUIRED_AXES_EMPTY');
+  if (new Set(normalized).size !== normalized.length) {
+    throw new Error('REFUSED_DUPLICATE_REQUIRED_AXIS');
+  }
+  return normalized;
+}
+
+/**
+ * Compare two admitted parts axis-by-axis. Exact observed-semantic equivalence
+ * means identical canonical semantic identities on every requested axis.
+ * This remains observational evidence only; behavior is not inferred.
+ */
+export function comparePartSemantics(
+  graph,
+  leftId,
+  rightId,
+  { axes = SEMANTIC_AXES } = {},
+) {
+  admitSemanticPartsGraph(graph);
+  const left = partById(graph, leftId);
+  const right = partById(graph, rightId);
+  if (!left) throw new Error(`REFUSED_UNKNOWN_SUBJECT:${leftId}`);
+  if (!right) throw new Error(`REFUSED_UNKNOWN_CANDIDATE:${rightId}`);
+
+  const requiredAxes = normalizeSemanticAxes(axes);
+  const delta = {};
+  let exact = true;
+  let sharedCount = 0;
+
+  for (const axis of requiredAxes) {
+    const leftIds = axisIdentities(left, axis);
+    const rightIds = axisIdentities(right, axis);
+    const shared = [...leftIds].filter((id) => rightIds.has(id)).sort(compareCodePoints);
+    const onlyLeft = [...leftIds].filter((id) => !rightIds.has(id)).sort(compareCodePoints);
+    const onlyRight = [...rightIds].filter((id) => !leftIds.has(id)).sort(compareCodePoints);
+    delta[axis] = { shared, only_left: onlyLeft, only_right: onlyRight };
+    sharedCount += shared.length;
+    if (onlyLeft.length !== 0 || onlyRight.length !== 0) exact = false;
+  }
+
+  return {
+    schema: 'unrdf.semantic-parts.delta.v1',
+    left_part_id: left.part_id,
+    right_part_id: right.part_id,
+    axes: requiredAxes,
+    delta,
+    shared_count: sharedCount,
+    exact_observed_semantics: exact,
+    authority: 'NONE',
+    standing: exact ? 'CANDIDATE' : 'OBSERVED',
+  };
+}
+
+/**
+ * Partition the graph into exact semantic-signature classes. Empty signatures
+ * are excluded by default because "both unknown" is not equivalence evidence.
+ */
+export function exactSemanticClasses(
+  graph,
+  { axes = ['algorithm'], includeSingletons = false } = {},
+) {
+  admitSemanticPartsGraph(graph);
+  const requiredAxes = normalizeSemanticAxes(axes);
+  const classes = new Map();
+
+  for (const part of graph.parts) {
+    const signatureParts = requiredAxes.map((axis) => {
+      const ids = [...axisIdentities(part, axis)].sort(compareCodePoints);
+      return [axis, ids];
+    });
+    if (signatureParts.some(([, ids]) => ids.length === 0)) continue;
+
+    const signature = JSON.stringify(signatureParts);
+    const members = classes.get(signature) ?? [];
+    members.push(part.part_id);
+    classes.set(signature, members);
+  }
+
+  return [...classes.entries()]
+    .map(([signature, members]) => ({
+      signature,
+      axes: requiredAxes,
+      members: members.sort(compareCodePoints),
+      member_count: members.length,
+      authority: 'NONE',
+      standing: 'CANDIDATE',
+    }))
+    .filter((entry) => includeSingletons || entry.member_count > 1)
+    .sort((left, right) =>
+      right.member_count - left.member_count
+      || compareCodePoints(left.signature, right.signature),
+    );
+}
