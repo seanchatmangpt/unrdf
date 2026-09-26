@@ -32,7 +32,27 @@ function identity(value, label) {
   if (value === undefined || value === null || value === '') {
     throw new TypeError(`${label} is required`);
   }
-  return String(value);
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  if (typeof value === 'bigint') return String(value);
+  throw new TypeError(`REFUSED_NON_SCALAR_IDENTITY:${label}`);
+}
+
+/**
+ * Locale-independent code-point ordering. `localeCompare` depends on the
+ * host ICU/locale, which would make the canonical graph environment-relative.
+ */
+function compareCodePoints(left, right) {
+  if (left === right) return 0;
+  return left < right ? -1 : 1;
+}
+
+function asRecord(value, label) {
+  if (value === undefined) return {};
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new TypeError(`${label} must be an object`);
+  }
+  return value;
 }
 
 function conceptProjection(row) {
@@ -61,18 +81,38 @@ function semanticIdentity(axis, concept) {
     : `codegraph:${axis}:${concept.concept_id}`;
 }
 
-function orderedUniqueConcepts(entries) {
-  const seen = new Set();
-  return [...entries]
-    .sort((left, right) =>
-      left.semantic_id.localeCompare(right.semantic_id)
-      || left.concept_id.localeCompare(right.concept_id),
-    )
-    .filter((entry) => {
-      if (seen.has(entry.semantic_id)) return false;
-      seen.add(entry.semantic_id);
-      return true;
-    });
+function evidenceKey(evidence) {
+  return `${typeof evidence.confidence}:${evidence.confidence ?? ''}\u0000${evidence.description ?? ''}`;
+}
+
+/**
+ * Sort by (semantic_id, concept_id) in code-point order and keep the first
+ * entry per semantic identity. Aliases (distinct concept_ids sharing one
+ * grounded identity) collapse to the lowest concept_id. A re-delivered edge
+ * (same concept_id) is idempotent only when its evidence is identical;
+ * conflicting evidence has no canonical winner, so it is refused rather than
+ * resolved by input row order. Duplicates are adjacent after the sort, so the
+ * check costs one comparison per entry.
+ */
+function orderedUniqueConcepts(entries, axis, fileId) {
+  const sorted = [...entries].sort((left, right) =>
+    compareCodePoints(left.semantic_id, right.semantic_id)
+    || compareCodePoints(left.concept_id, right.concept_id),
+  );
+  const unique = [];
+  let previous = null;
+  for (const entry of sorted) {
+    if (previous && previous.semantic_id === entry.semantic_id) {
+      if (previous.concept_id === entry.concept_id
+        && evidenceKey(previous.evidence) !== evidenceKey(entry.evidence)) {
+        throw new Error(`REFUSED_CONFLICTING_DUPLICATE_EDGE:${axis}:${fileId}:${entry.concept_id}`);
+      }
+      continue;
+    }
+    unique.push(entry);
+    previous = entry;
+  }
+  return unique;
 }
 
 /**
@@ -80,7 +120,10 @@ function orderedUniqueConcepts(entries) {
  * the canonical semantic-parts graph. Parquet I/O intentionally remains
  * outside this package; callers may use any standards-compliant reader.
  */
-export function fromCodeGraphTables({ files, concepts = {}, edges = {} }) {
+export function fromCodeGraphTables(tables) {
+  const { files, concepts: rawConcepts, edges: rawEdges } = asRecord(tables, 'tables');
+  const concepts = asRecord(rawConcepts, 'concepts');
+  const edges = asRecord(rawEdges, 'edges');
   const fileRows = asArray(files, 'files');
   const parts = new Map();
 
@@ -139,10 +182,10 @@ export function fromCodeGraphTables({ files, concepts = {}, edges = {} }) {
       .map((part) => ({
         ...part,
         semantics: Object.fromEntries(
-          SEMANTIC_AXES.map((axis) => [axis, orderedUniqueConcepts(part.semantics[axis])]),
+          SEMANTIC_AXES.map((axis) => [axis, orderedUniqueConcepts(part.semantics[axis], axis, part.source.file_id)]),
         ),
       }))
-      .sort((left, right) => left.part_id.localeCompare(right.part_id)),
+      .sort((left, right) => compareCodePoints(left.part_id, right.part_id)),
   };
 
   return admitSemanticPartsGraph(graph);
@@ -162,6 +205,7 @@ export function admitSemanticPartsGraph(graph) {
   const ids = new Set();
 
   for (const part of parts) {
+    if (!part || typeof part !== 'object') throw new Error('REFUSED_PART_NOT_OBJECT');
     const partId = identity(part.part_id, 'part_id');
     if (ids.has(partId)) throw new Error(`REFUSED_DUPLICATE_PART:${partId}`);
     ids.add(partId);
@@ -173,6 +217,9 @@ export function admitSemanticPartsGraph(graph) {
       const values = asArray(part.semantics[axis] ?? [], `${partId}.semantics.${axis}`);
       const semanticIds = new Set();
       for (const value of values) {
+        if (!value || typeof value !== 'object') {
+          throw new Error(`REFUSED_SEMANTIC_VALUE_NOT_OBJECT:${partId}:${axis}`);
+        }
         const semanticId = identity(value.semantic_id, 'semantic_id');
         if (semanticIds.has(semanticId)) {
           throw new Error(`REFUSED_DUPLICATE_SEMANTIC_ID:${partId}:${semanticId}`);
@@ -184,9 +231,17 @@ export function admitSemanticPartsGraph(graph) {
   return graph;
 }
 
+/**
+ * Resolve a part by exact part_id first, then by CodeGraph file_id. A file_id
+ * that matches more than one part is refused rather than resolved by order.
+ */
 function partById(graph, partId) {
-  const canonical = String(partId);
-  return graph.parts.find((part) => part.part_id === canonical || part.source?.file_id === canonical);
+  const canonical = identity(partId, 'part reference');
+  const exact = graph.parts.find((part) => part.part_id === canonical);
+  if (exact) return exact;
+  const byFile = graph.parts.filter((part) => part.source?.file_id === canonical);
+  if (byFile.length > 1) throw new Error(`REFUSED_AMBIGUOUS_PART_REFERENCE:${canonical}`);
+  return byFile[0];
 }
 
 function axisIdentities(part, axis) {
@@ -207,11 +262,15 @@ export function findAlternatives(
   const subject = partById(graph, subjectId);
   if (!subject) throw new Error(`REFUSED_UNKNOWN_SUBJECT:${subjectId}`);
 
-  const axes = requiredAxes.map((axis) => {
+  if (!Number.isSafeInteger(minimumShared) || minimumShared < 1) {
+    throw new Error(`REFUSED_MINIMUM_SHARED:${String(minimumShared)}`);
+  }
+  const axes = asArray(requiredAxes, 'requiredAxes').map((axis) => {
     if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
     return axis;
   });
   if (axes.length === 0) throw new Error('REFUSED_REQUIRED_AXES_EMPTY');
+  if (new Set(axes).size !== axes.length) throw new Error('REFUSED_DUPLICATE_REQUIRED_AXIS');
 
   const subjectSets = Object.fromEntries(axes.map((axis) => [axis, axisIdentities(subject, axis)]));
   for (const axis of axes) {
@@ -250,7 +309,7 @@ export function findAlternatives(
     .sort((left, right) =>
       right.coverage - left.coverage
       || right.shared_count - left.shared_count
-      || left.part_id.localeCompare(right.part_id),
+      || compareCodePoints(left.part_id, right.part_id),
     );
 }
 
@@ -260,5 +319,7 @@ export function findAlternatives(
  */
 export function substitutionSurvivesSemanticFalsifier(graph, subjectId, candidateId, requiredAxes = ['algorithm']) {
   const candidates = findAlternatives(graph, subjectId, { requiredAxes, minimumShared: 1 });
-  return candidates.some((candidate) => candidate.part_id === candidateId);
+  const candidate = partById(graph, candidateId);
+  if (!candidate) throw new Error(`REFUSED_UNKNOWN_CANDIDATE:${candidateId}`);
+  return candidates.some((entry) => entry.part_id === candidate.part_id);
 }

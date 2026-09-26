@@ -11,7 +11,8 @@
   "scripts": {
     "test": "vitest run",
     "test:fast": "vitest run --reporter=verbose",
-    "build": "echo 'ESM — no build step required'"
+    "build": "echo 'ESM \u2014 no build step required'",
+    "bench": "node bench/semantic-parts.bench.mjs"
   },
   "devDependencies": {
     "vitest": "^4.0.16"
