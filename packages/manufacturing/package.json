@@ -11,13 +11,16 @@
     "./pipeline": "./src/pipeline/index.mjs",
     "./gate": "./src/gate/index.mjs",
     "./causality": "./src/causality/index.mjs",
-    "./artifact": "./src/artifact/index.mjs"
+    "./artifact": "./src/artifact/index.mjs",
+    "./repository-fact-accounting": "./src/repository-fact-accounting.mjs",
+    "./git-repository-facts": "./src/git-repository-facts.mjs"
   },
   "scripts": {
     "test": "vitest run",
     "test:fast": "vitest run --reporter=verbose",
     "test:watch": "vitest watch",
-    "build": "echo 'ESM — no build step required'"
+    "build": "echo 'ESM — no build step required'",
+    "errc:receipt": "node bin/errc-receipt.mjs"
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
@@ -28,5 +31,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "bin": {
+    "unrdf-errc-receipt": "./bin/errc-receipt.mjs"
   }
 }

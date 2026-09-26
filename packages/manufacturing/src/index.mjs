@@ -13,3 +13,15 @@ export { CausalityChain } from './causality/index.mjs';
 export { Artifact, createArtifact, ARTIFACT_KINDS } from './artifact/index.mjs';
 
 export { manufacturePartPassport } from './part-passport.mjs';
+
+export {
+  OwnershipKind,
+  ExactGitSubjectSchema,
+  RepositoryFactSchema,
+  AccountingInputSchema,
+  accountRepositoryFacts,
+  compareSemanticCompression,
+  serializeRepositoryFactReceipt,
+} from './repository-fact-accounting.mjs';
+
+export { collectGitRepositoryFacts } from './git-repository-facts.mjs';
