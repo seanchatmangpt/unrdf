@@ -11,8 +11,10 @@
   "scripts": {
     "test": "vitest run",
     "test:fast": "vitest run --reporter=verbose",
-    "build": "echo 'ESM \u2014 no build step required'",
-    "bench": "node bench/semantic-parts.bench.mjs"
+    "build": "echo 'ESM — no build step required'",
+    "bench": "node bench/semantic-parts.bench.mjs",
+    "format": "prettier --write src/ test/ bench/",
+    "format:check": "prettier --check src/ test/ bench/"
   },
   "devDependencies": {
     "vitest": "^4.0.16"

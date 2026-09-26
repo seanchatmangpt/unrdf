@@ -10,12 +10,7 @@
 export const SEMANTIC_PARTS_SCHEMA = 'unrdf.semantic-parts.v1';
 export const SEMANTIC_PARTS_INDEX_SCHEMA = 'unrdf.semantic-parts.index.v1';
 export const CODEGRAPH_RELEASE = 'codegraph_release_v1';
-export const SEMANTIC_AXES = Object.freeze([
-  'algorithm',
-  'domain',
-  'paradigm',
-  'design_pattern',
-]);
+export const SEMANTIC_AXES = Object.freeze(['algorithm', 'domain', 'paradigm', 'design_pattern']);
 
 const AXIS_TABLES = Object.freeze({
   algorithm: { concepts: 'algorithms', edges: 'file_algorithm' },
@@ -60,7 +55,8 @@ function conceptProjection(row) {
   return {
     concept_id: identity(row.concept_id, 'concept_id'),
     name: typeof row.name === 'string' ? row.name : '',
-    wikidata_qid: typeof row.wikidata_qid === 'string' && row.wikidata_qid ? row.wikidata_qid : null,
+    wikidata_qid:
+      typeof row.wikidata_qid === 'string' && row.wikidata_qid ? row.wikidata_qid : null,
     label: typeof row.label === 'string' && row.label ? row.label : null,
   };
 }
@@ -96,16 +92,19 @@ function evidenceKey(evidence) {
  * check costs one comparison per entry.
  */
 function orderedUniqueConcepts(entries, axis, fileId) {
-  const sorted = [...entries].sort((left, right) =>
-    compareCodePoints(left.semantic_id, right.semantic_id)
-    || compareCodePoints(left.concept_id, right.concept_id),
+  const sorted = [...entries].sort(
+    (left, right) =>
+      compareCodePoints(left.semantic_id, right.semantic_id) ||
+      compareCodePoints(left.concept_id, right.concept_id)
   );
   const unique = [];
   let previous = null;
   for (const entry of sorted) {
     if (previous && previous.semantic_id === entry.semantic_id) {
-      if (previous.concept_id === entry.concept_id
-        && evidenceKey(previous.evidence) !== evidenceKey(entry.evidence)) {
+      if (
+        previous.concept_id === entry.concept_id &&
+        evidenceKey(previous.evidence) !== evidenceKey(entry.evidence)
+      ) {
         throw new Error(`REFUSED_CONFLICTING_DUPLICATE_EDGE:${axis}:${fileId}:${entry.concept_id}`);
       }
       continue;
@@ -132,18 +131,36 @@ const CODEGRAPH_TABLE_NAMES = Object.freeze({
   }),
 });
 
+/*
+ * A row is a decoded record (a non-null, non-array object). Strings (primitive
+ * or boxed), typed arrays and other iterables of scalars are undecoded
+ * payloads: iterating them yields characters or bytes, never rows. An empty
+ * boxed string would otherwise be admitted as an empty table.
+ */
+function admitReaderRows(rows, tableName) {
+  for (const row of rows) {
+    if (row === null || typeof row !== 'object' || Array.isArray(row)) {
+      throw new TypeError(`REFUSED_READER_ROWS:${tableName}`);
+    }
+  }
+  return rows;
+}
+
 async function collectReaderRows(value, tableName) {
   const resolved = await value;
-  if (Array.isArray(resolved)) return resolved;
+  if (Array.isArray(resolved)) return admitReaderRows(resolved, tableName);
+  if (typeof resolved === 'string' || resolved instanceof String || ArrayBuffer.isView(resolved)) {
+    throw new TypeError(`REFUSED_READER_ROWS:${tableName}`);
+  }
 
   if (resolved && typeof resolved[Symbol.asyncIterator] === 'function') {
     const rows = [];
     for await (const row of resolved) rows.push(row);
-    return rows;
+    return admitReaderRows(rows, tableName);
   }
 
   if (resolved && typeof resolved[Symbol.iterator] === 'function') {
-    return [...resolved];
+    return admitReaderRows([...resolved], tableName);
   }
 
   throw new TypeError(`REFUSED_READER_ROWS:${tableName}`);
@@ -160,7 +177,7 @@ export async function fromCodeGraphReader(reader) {
     throw new TypeError('REFUSED_CODEGRAPH_READER');
   }
 
-  const read = async (name) => collectReaderRows(reader.readRows(name), name);
+  const read = async name => collectReaderRows(reader.readRows(name), name);
   const files = await read(CODEGRAPH_TABLE_NAMES.files);
 
   const concepts = {};
@@ -197,10 +214,11 @@ export function fromCodeGraphTables(tables) {
         kind: 'CodeGraph',
         release: CODEGRAPH_RELEASE,
         file_id: fileId,
-        sample_id: row.sample_id === undefined || row.sample_id === null ? null : String(row.sample_id),
+        sample_id:
+          row.sample_id === undefined || row.sample_id === null ? null : String(row.sample_id),
         language: typeof row.language === 'string' ? row.language : null,
       },
-      semantics: Object.fromEntries(SEMANTIC_AXES.map((axis) => [axis, []])),
+      semantics: Object.fromEntries(SEMANTIC_AXES.map(axis => [axis, []])),
       authority: 'NONE',
       standing: 'OBSERVED',
     });
@@ -240,22 +258,52 @@ export function fromCodeGraphTables(tables) {
     source: { kind: 'CodeGraph', release: CODEGRAPH_RELEASE },
     authority: 'NONE',
     parts: [...parts.values()]
-      .map((part) => ({
+      .map(part => ({
         ...part,
         semantics: Object.fromEntries(
-          SEMANTIC_AXES.map((axis) => [axis, orderedUniqueConcepts(part.semantics[axis], axis, part.source.file_id)]),
+          SEMANTIC_AXES.map(axis => [
+            axis,
+            orderedUniqueConcepts(part.semantics[axis], axis, part.source.file_id),
+          ])
         ),
       }))
       .sort((left, right) => compareCodePoints(left.part_id, right.part_id)),
   };
 
-  return admitSemanticPartsGraph(graph);
+  admitSemanticPartsGraph(graph);
+  deepFreeze(graph);
+  admittedGraphs.add(graph);
+  return graph;
 }
 
 /**
  * Fail-closed structural admission for a semantic-parts graph.
  */
+/*
+ * Admission cache. Only objects deep-frozen by this module are cached: an
+ * immutable admitted object cannot become stale, so re-admitting it on every
+ * query is pure cost (it made the inverted index no faster than a scan).
+ * Mutable (e.g. structuredClone'd or hand-built) inputs are always re-admitted.
+ */
+const deepFrozen = new WeakSet();
+const admittedGraphs = new WeakSet();
+const admittedIndexes = new WeakMap();
+
+function freezeTree(value) {
+  if (value === null || typeof value !== 'object') return;
+  for (const key of Object.keys(value)) freezeTree(value[key]);
+  if (!Object.isFrozen(value)) Object.freeze(value);
+}
+
+/** Freeze every reachable object, then mark only the root as deep-frozen. */
+function deepFreeze(root) {
+  freezeTree(root);
+  deepFrozen.add(root);
+  return root;
+}
+
 export function admitSemanticPartsGraph(graph) {
+  if (graph && admittedGraphs.has(graph)) return graph;
   if (!graph || graph.schema !== SEMANTIC_PARTS_SCHEMA) {
     throw new Error('REFUSED_SCHEMA');
   }
@@ -298,15 +346,15 @@ export function admitSemanticPartsGraph(graph) {
  */
 function partById(graph, partId) {
   const canonical = identity(partId, 'part reference');
-  const exact = graph.parts.find((part) => part.part_id === canonical);
+  const exact = graph.parts.find(part => part.part_id === canonical);
   if (exact) return exact;
-  const byFile = graph.parts.filter((part) => part.source?.file_id === canonical);
+  const byFile = graph.parts.filter(part => part.source?.file_id === canonical);
   if (byFile.length > 1) throw new Error(`REFUSED_AMBIGUOUS_PART_REFERENCE:${canonical}`);
   return byFile[0];
 }
 
 function axisIdentities(part, axis) {
-  return new Set((part.semantics[axis] ?? []).map((item) => item.semantic_id));
+  return new Set((part.semantics[axis] ?? []).map(item => item.semantic_id));
 }
 
 /**
@@ -330,20 +378,22 @@ export function buildSemanticIndex(graph) {
     axes[axis] = Object.fromEntries(
       [...postings.entries()]
         .sort(([left], [right]) => compareCodePoints(left, right))
-        .map(([semanticId, ids]) => [
-          semanticId,
-          [...new Set(ids)].sort(compareCodePoints),
-        ]),
+        .map(([semanticId, ids]) => [semanticId, [...new Set(ids)].sort(compareCodePoints)])
     );
   }
 
-  return {
+  const index = {
     schema: SEMANTIC_PARTS_INDEX_SCHEMA,
     source_graph_schema: SEMANTIC_PARTS_SCHEMA,
     part_count: graph.parts.length,
     authority: 'NONE',
     axes,
   };
+  // Constructed from the admitted graph, so sound and complete by
+  // construction; only a frozen (graph, index) pair is cached as admitted.
+  deepFreeze(index);
+  if (deepFrozen.has(graph)) admittedIndexes.set(index, graph);
+  return index;
 }
 
 /**
@@ -352,6 +402,7 @@ export function buildSemanticIndex(graph) {
  */
 export function admitSemanticIndex(index, graph) {
   admitSemanticPartsGraph(graph);
+  if (index && admittedIndexes.get(index) === graph) return index;
   if (!index || index.schema !== SEMANTIC_PARTS_INDEX_SCHEMA) {
     throw new Error('REFUSED_INDEX_SCHEMA');
   }
@@ -361,26 +412,44 @@ export function admitSemanticIndex(index, graph) {
   if (index.authority !== 'NONE') throw new Error('REFUSED_INDEX_AUTHORITY');
   if (index.part_count !== graph.parts.length) throw new Error('REFUSED_INDEX_PART_COUNT');
 
-  const partIds = new Set(graph.parts.map((part) => part.part_id));
+  const partMap = new Map(graph.parts.map(part => [part.part_id, part]));
   const axes = asRecord(index.axes, 'index.axes');
+  for (const axis of Object.keys(axes)) {
+    if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_INDEX_UNKNOWN_AXIS:${axis}`);
+  }
   for (const axis of SEMANTIC_AXES) {
     const postings = asRecord(axes[axis], `index.axes.${axis}`);
+    let postingCount = 0;
     for (const [semanticId, ids] of Object.entries(postings)) {
       identity(semanticId, 'index semantic_id');
       const admittedIds = asArray(ids, `index posting ${semanticId}`);
       const seen = new Set();
       for (const partId of admittedIds) {
         const canonical = identity(partId, 'index part_id');
-        if (!partIds.has(canonical)) {
+        const part = partMap.get(canonical);
+        if (!part) {
           throw new Error(`REFUSED_INDEX_DANGLING_PART:${axis}:${canonical}`);
         }
         if (seen.has(canonical)) {
           throw new Error(`REFUSED_INDEX_DUPLICATE_PART:${axis}:${semanticId}:${canonical}`);
         }
         seen.add(canonical);
+        // Soundness: every posting must be backed by the supplied graph.
+        if (!(part.semantics[axis] ?? []).some(value => value.semantic_id === semanticId)) {
+          throw new Error(`REFUSED_INDEX_STALE:${axis}:${semanticId}:${canonical}`);
+        }
+        postingCount += 1;
       }
     }
+    // Completeness: with soundness and no duplicates, equal counts mean the
+    // postings are exactly the graph's (part, semantic_id) pairs on this axis.
+    // An index built from another graph with the same part count is refused.
+    const graphCount = graph.parts.reduce((n, part) => n + (part.semantics[axis] ?? []).length, 0);
+    if (postingCount !== graphCount) {
+      throw new Error(`REFUSED_INDEX_STALE:${axis}:postings=${postingCount}:graph=${graphCount}`);
+    }
   }
+  if (deepFrozen.has(index) && deepFrozen.has(graph)) admittedIndexes.set(index, graph);
   return index;
 }
 
@@ -397,7 +466,7 @@ export function findAlternativesIndexed(
   graph,
   index,
   subjectId,
-  { requiredAxes = ['algorithm'], minimumShared = 1 } = {},
+  { requiredAxes = ['algorithm'], minimumShared = 1 } = {}
 ) {
   if (!Number.isSafeInteger(minimumShared) || minimumShared < 1) {
     throw new Error(`REFUSED_MINIMUM_SHARED:${String(minimumShared)}`);
@@ -406,13 +475,11 @@ export function findAlternativesIndexed(
   const candidateIds = indexedCandidatePartIds(graph, index, subjectId, { requiredAxes });
   const subject = partById(graph, subjectId);
   const axes = normalizeSemanticAxes(requiredAxes);
-  const subjectSets = Object.fromEntries(
-    axes.map((axis) => [axis, axisIdentities(subject, axis)]),
-  );
-  const partMap = new Map(graph.parts.map((part) => [part.part_id, part]));
+  const subjectSets = Object.fromEntries(axes.map(axis => [axis, axisIdentities(subject, axis)]));
+  const partMap = new Map(graph.parts.map(part => [part.part_id, part]));
 
   return candidateIds
-    .map((partId) => {
+    .map(partId => {
       const candidate = partMap.get(partId);
       const shared = {};
       let sharedCount = 0;
@@ -421,7 +488,7 @@ export function findAlternativesIndexed(
       for (const axis of axes) {
         const candidateSet = axisIdentities(candidate, axis);
         const overlap = [...subjectSets[axis]]
-          .filter((id) => candidateSet.has(id))
+          .filter(id => candidateSet.has(id))
           .sort(compareCodePoints);
         shared[axis] = overlap;
         sharedCount += overlap.length;
@@ -439,11 +506,12 @@ export function findAlternativesIndexed(
         all_required_axes_satisfied: true,
       };
     })
-    .filter((candidate) => candidate.shared_count >= minimumShared)
-    .sort((left, right) =>
-      right.coverage - left.coverage
-      || right.shared_count - left.shared_count
-      || compareCodePoints(left.part_id, right.part_id),
+    .filter(candidate => candidate.shared_count >= minimumShared)
+    .sort(
+      (left, right) =>
+        right.coverage - left.coverage ||
+        right.shared_count - left.shared_count ||
+        compareCodePoints(left.part_id, right.part_id)
     );
 }
 
@@ -451,13 +519,13 @@ export function indexedCandidatePartIds(
   graph,
   index,
   subjectId,
-  { requiredAxes = ['algorithm'] } = {},
+  { requiredAxes = ['algorithm'] } = {}
 ) {
   admitSemanticIndex(index, graph);
   const subject = partById(graph, subjectId);
   if (!subject) throw new Error(`REFUSED_UNKNOWN_SUBJECT:${subjectId}`);
 
-  const axes = asArray(requiredAxes, 'requiredAxes').map((axis) => {
+  const axes = asArray(requiredAxes, 'requiredAxes').map(axis => {
     if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
     return axis;
   });
@@ -473,9 +541,10 @@ export function indexedCandidatePartIds(
     for (const semanticId of semanticIds) {
       for (const partId of postings[semanticId] ?? []) axisCandidates.add(partId);
     }
-    candidates = candidates === null
-      ? axisCandidates
-      : new Set([...candidates].filter((partId) => axisCandidates.has(partId)));
+    candidates =
+      candidates === null
+        ? axisCandidates
+        : new Set([...candidates].filter(partId => axisCandidates.has(partId)));
   }
 
   candidates.delete(subject.part_id);
@@ -490,7 +559,7 @@ export function indexedCandidatePartIds(
 export function findAlternatives(
   graph,
   subjectId,
-  { requiredAxes = ['algorithm'], minimumShared = 1 } = {},
+  { requiredAxes = ['algorithm'], minimumShared = 1 } = {}
 ) {
   admitSemanticPartsGraph(graph);
   const subject = partById(graph, subjectId);
@@ -499,21 +568,21 @@ export function findAlternatives(
   if (!Number.isSafeInteger(minimumShared) || minimumShared < 1) {
     throw new Error(`REFUSED_MINIMUM_SHARED:${String(minimumShared)}`);
   }
-  const axes = asArray(requiredAxes, 'requiredAxes').map((axis) => {
+  const axes = asArray(requiredAxes, 'requiredAxes').map(axis => {
     if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
     return axis;
   });
   if (axes.length === 0) throw new Error('REFUSED_REQUIRED_AXES_EMPTY');
   if (new Set(axes).size !== axes.length) throw new Error('REFUSED_DUPLICATE_REQUIRED_AXIS');
 
-  const subjectSets = Object.fromEntries(axes.map((axis) => [axis, axisIdentities(subject, axis)]));
+  const subjectSets = Object.fromEntries(axes.map(axis => [axis, axisIdentities(subject, axis)]));
   for (const axis of axes) {
     if (subjectSets[axis].size === 0) throw new Error(`REFUSED_SUBJECT_AXIS_EMPTY:${axis}`);
   }
 
   return graph.parts
-    .filter((candidate) => candidate.part_id !== subject.part_id)
-    .map((candidate) => {
+    .filter(candidate => candidate.part_id !== subject.part_id)
+    .map(candidate => {
       const shared = {};
       let sharedCount = 0;
       let subjectCount = 0;
@@ -521,7 +590,7 @@ export function findAlternatives(
 
       for (const axis of axes) {
         const candidateSet = axisIdentities(candidate, axis);
-        const overlap = [...subjectSets[axis]].filter((id) => candidateSet.has(id)).sort();
+        const overlap = [...subjectSets[axis]].filter(id => candidateSet.has(id)).sort();
         shared[axis] = overlap;
         sharedCount += overlap.length;
         subjectCount += subjectSets[axis].size;
@@ -539,11 +608,14 @@ export function findAlternatives(
         all_required_axes_satisfied: allAxesSatisfied,
       };
     })
-    .filter((candidate) => candidate.all_required_axes_satisfied && candidate.shared_count >= minimumShared)
-    .sort((left, right) =>
-      right.coverage - left.coverage
-      || right.shared_count - left.shared_count
-      || compareCodePoints(left.part_id, right.part_id),
+    .filter(
+      candidate => candidate.all_required_axes_satisfied && candidate.shared_count >= minimumShared
+    )
+    .sort(
+      (left, right) =>
+        right.coverage - left.coverage ||
+        right.shared_count - left.shared_count ||
+        compareCodePoints(left.part_id, right.part_id)
     );
 }
 
@@ -551,16 +623,20 @@ export function findAlternatives(
  * Cheapest falsifier for a proposed substitution: every required semantic
  * axis must retain at least one exact grounded/canonical concept identity.
  */
-export function substitutionSurvivesSemanticFalsifier(graph, subjectId, candidateId, requiredAxes = ['algorithm']) {
+export function substitutionSurvivesSemanticFalsifier(
+  graph,
+  subjectId,
+  candidateId,
+  requiredAxes = ['algorithm']
+) {
   const candidates = findAlternatives(graph, subjectId, { requiredAxes, minimumShared: 1 });
   const candidate = partById(graph, candidateId);
   if (!candidate) throw new Error(`REFUSED_UNKNOWN_CANDIDATE:${candidateId}`);
-  return candidates.some((entry) => entry.part_id === candidate.part_id);
+  return candidates.some(entry => entry.part_id === candidate.part_id);
 }
 
-
 function normalizeSemanticAxes(axes) {
-  const normalized = asArray(axes, 'axes').map((axis) => {
+  const normalized = asArray(axes, 'axes').map(axis => {
     if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
     return axis;
   });
@@ -576,12 +652,7 @@ function normalizeSemanticAxes(axes) {
  * means identical canonical semantic identities on every requested axis.
  * This remains observational evidence only; behavior is not inferred.
  */
-export function comparePartSemantics(
-  graph,
-  leftId,
-  rightId,
-  { axes = SEMANTIC_AXES } = {},
-) {
+export function comparePartSemantics(graph, leftId, rightId, { axes = SEMANTIC_AXES } = {}) {
   admitSemanticPartsGraph(graph);
   const left = partById(graph, leftId);
   const right = partById(graph, rightId);
@@ -596,9 +667,9 @@ export function comparePartSemantics(
   for (const axis of requiredAxes) {
     const leftIds = axisIdentities(left, axis);
     const rightIds = axisIdentities(right, axis);
-    const shared = [...leftIds].filter((id) => rightIds.has(id)).sort(compareCodePoints);
-    const onlyLeft = [...leftIds].filter((id) => !rightIds.has(id)).sort(compareCodePoints);
-    const onlyRight = [...rightIds].filter((id) => !leftIds.has(id)).sort(compareCodePoints);
+    const shared = [...leftIds].filter(id => rightIds.has(id)).sort(compareCodePoints);
+    const onlyLeft = [...leftIds].filter(id => !rightIds.has(id)).sort(compareCodePoints);
+    const onlyRight = [...rightIds].filter(id => !leftIds.has(id)).sort(compareCodePoints);
     delta[axis] = { shared, only_left: onlyLeft, only_right: onlyRight };
     sharedCount += shared.length;
     if (onlyLeft.length !== 0 || onlyRight.length !== 0) exact = false;
@@ -623,14 +694,14 @@ export function comparePartSemantics(
  */
 export function exactSemanticClasses(
   graph,
-  { axes = ['algorithm'], includeSingletons = false } = {},
+  { axes = ['algorithm'], includeSingletons = false } = {}
 ) {
   admitSemanticPartsGraph(graph);
   const requiredAxes = normalizeSemanticAxes(axes);
   const classes = new Map();
 
   for (const part of graph.parts) {
-    const signatureParts = requiredAxes.map((axis) => {
+    const signatureParts = requiredAxes.map(axis => {
       const ids = [...axisIdentities(part, axis)].sort(compareCodePoints);
       return [axis, ids];
     });
@@ -651,13 +722,12 @@ export function exactSemanticClasses(
       authority: 'NONE',
       standing: 'CANDIDATE',
     }))
-    .filter((entry) => includeSingletons || entry.member_count > 1)
-    .sort((left, right) =>
-      right.member_count - left.member_count
-      || compareCodePoints(left.signature, right.signature),
+    .filter(entry => includeSingletons || entry.member_count > 1)
+    .sort(
+      (left, right) =>
+        right.member_count - left.member_count || compareCodePoints(left.signature, right.signature)
     );
 }
-
 
 const RDF_AXIS = Object.freeze({
   algorithm: { property: 'sp:implementsAlgorithm', className: 'sp:Algorithm' },
@@ -680,7 +750,9 @@ function urn(kind, value) {
 
 function groundedIri(semanticId) {
   const match = /^wikidata:(Q[1-9][0-9]*)$/u.exec(semanticId);
-  return match ? `<https://www.wikidata.org/entity/${match[1]}>` : null;
+  // Wikidata's canonical concept URI namespace is http (RDF dumps and the
+  // query service); an https IRI would not join with Wikidata RDF.
+  return match ? `<http://www.wikidata.org/entity/${match[1]}>` : null;
 }
 
 /**
@@ -727,9 +799,7 @@ export function toSemanticPartsTurtle(graph) {
           ];
           const grounding = groundedIri(semantic.semantic_id);
           if (grounding) conceptProperties.push(`sp:groundedIn ${grounding}`);
-          triples.push(
-            `${conceptIri} ${conceptProperties.join(' ;\n  ')} .`,
-          );
+          triples.push(`${conceptIri} ${conceptProperties.join(' ;\n  ')} .`);
         }
       }
     }

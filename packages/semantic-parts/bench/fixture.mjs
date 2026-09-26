@@ -2,7 +2,12 @@
  * Deterministic synthetic CodeGraph release tables for benchmarking.
  * A fixed-seed LCG makes every run build byte-identical input.
  */
-export function syntheticTables({ files = 10000, conceptsPerAxis = 500, edgesPerFile = 3, seed = 26926 } = {}) {
+export function syntheticTables({
+  files = 10000,
+  conceptsPerAxis = 500,
+  edgesPerFile = 3,
+  seed = 26926,
+} = {}) {
   let state = seed >>> 0;
   const next = () => {
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
