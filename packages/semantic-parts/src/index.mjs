@@ -539,3 +539,85 @@ export function exactSemanticClasses(
       || compareCodePoints(left.signature, right.signature),
     );
 }
+
+
+const RDF_AXIS = Object.freeze({
+  algorithm: { property: 'sp:implementsAlgorithm', className: 'sp:Algorithm' },
+  domain: { property: 'sp:belongsToDomain', className: 'sp:Domain' },
+  paradigm: { property: 'sp:usesParadigm', className: 'sp:ProgrammingParadigm' },
+  design_pattern: { property: 'sp:appliesPattern', className: 'sp:DesignPattern' },
+});
+
+function turtleLiteral(value) {
+  return String(value)
+    .replaceAll('\\', '\\\\')
+    .replaceAll('"', '\\"')
+    .replaceAll('\n', '\\n')
+    .replaceAll('\r', '\\r');
+}
+
+function urn(kind, value) {
+  return `<urn:unrdf:semantic-parts:${kind}:${encodeURIComponent(String(value))}>`;
+}
+
+function groundedIri(semanticId) {
+  const match = /^wikidata:(Q[1-9][0-9]*)$/u.exec(semanticId);
+  return match ? `<https://www.wikidata.org/entity/${match[1]}>` : null;
+}
+
+/**
+ * Deterministically project an admitted graph into the semantic-parts-pack RDF
+ * vocabulary. Generated Turtle is a projection only; it carries authority NONE
+ * and OBSERVED standing for source parts.
+ */
+export function toSemanticPartsTurtle(graph) {
+  admitSemanticPartsGraph(graph);
+  const triples = [
+    '@prefix sp: <https://chatmangpt.com/ontology/semantic-parts#> .',
+    '@prefix dcterms: <http://purl.org/dc/terms/> .',
+    '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
+    '',
+  ];
+  const emittedConcepts = new Set();
+
+  for (const part of graph.parts) {
+    const partIri = urn('part', part.part_id);
+    const properties = [
+      'a sp:SoftwarePart',
+      `dcterms:identifier "${turtleLiteral(part.part_id)}"`,
+      `sp:authorityBoundary "NONE"`,
+      'sp:standing sp:Observed',
+    ];
+    if (part.source?.file_id !== undefined && part.source?.file_id !== null) {
+      properties.push(`sp:sourceFileId "${turtleLiteral(part.source.file_id)}"`);
+    }
+    if (part.source?.language) {
+      properties.push(`sp:language "${turtleLiteral(part.source.language)}"`);
+    }
+
+    for (const axis of SEMANTIC_AXES) {
+      const mapping = RDF_AXIS[axis];
+      for (const semantic of part.semantics[axis]) {
+        const conceptIri = urn('concept', `${axis}:${semantic.semantic_id}`);
+        properties.push(`${mapping.property} ${conceptIri}`);
+
+        if (!emittedConcepts.has(conceptIri)) {
+          emittedConcepts.add(conceptIri);
+          const conceptProperties = [
+            `a ${mapping.className}`,
+            `rdfs:label "${turtleLiteral(semantic.label || semantic.name || semantic.semantic_id)}"`,
+          ];
+          const grounding = groundedIri(semantic.semantic_id);
+          if (grounding) conceptProperties.push(`sp:groundedIn ${grounding}`);
+          triples.push(
+            `${conceptIri} ${conceptProperties.join(' ;\n  ')} .`,
+          );
+        }
+      }
+    }
+
+    triples.push(`${partIri} ${properties.join(' ;\n  ')} .`);
+  }
+
+  return triples.join('\n') + '\n';
+}
