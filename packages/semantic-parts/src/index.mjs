@@ -135,6 +135,8 @@ const CODEGRAPH_TABLE_NAMES = Object.freeze({
 async function collectReaderRows(value, tableName) {
   const resolved = await value;
   if (Array.isArray(resolved)) return resolved;
+  // Strings are iterable, but a string is an undecoded payload, not rows.
+  if (typeof resolved === 'string') throw new TypeError(`REFUSED_READER_ROWS:${tableName}`);
 
   if (resolved && typeof resolved[Symbol.asyncIterator] === 'function') {
     const rows = [];
@@ -249,13 +251,40 @@ export function fromCodeGraphTables(tables) {
       .sort((left, right) => compareCodePoints(left.part_id, right.part_id)),
   };
 
-  return admitSemanticPartsGraph(graph);
+  admitSemanticPartsGraph(graph);
+  deepFreeze(graph);
+  admittedGraphs.add(graph);
+  return graph;
 }
 
 /**
  * Fail-closed structural admission for a semantic-parts graph.
  */
+/*
+ * Admission cache. Only objects deep-frozen by this module are cached: an
+ * immutable admitted object cannot become stale, so re-admitting it on every
+ * query is pure cost (it made the inverted index no faster than a scan).
+ * Mutable (e.g. structuredClone'd or hand-built) inputs are always re-admitted.
+ */
+const deepFrozen = new WeakSet();
+const admittedGraphs = new WeakSet();
+const admittedIndexes = new WeakMap();
+
+function freezeTree(value) {
+  if (value === null || typeof value !== 'object') return;
+  for (const key of Object.keys(value)) freezeTree(value[key]);
+  if (!Object.isFrozen(value)) Object.freeze(value);
+}
+
+/** Freeze every reachable object, then mark only the root as deep-frozen. */
+function deepFreeze(root) {
+  freezeTree(root);
+  deepFrozen.add(root);
+  return root;
+}
+
 export function admitSemanticPartsGraph(graph) {
+  if (graph && admittedGraphs.has(graph)) return graph;
   if (!graph || graph.schema !== SEMANTIC_PARTS_SCHEMA) {
     throw new Error('REFUSED_SCHEMA');
   }
@@ -337,13 +366,18 @@ export function buildSemanticIndex(graph) {
     );
   }
 
-  return {
+  const index = {
     schema: SEMANTIC_PARTS_INDEX_SCHEMA,
     source_graph_schema: SEMANTIC_PARTS_SCHEMA,
     part_count: graph.parts.length,
     authority: 'NONE',
     axes,
   };
+  // Constructed from the admitted graph, so sound and complete by
+  // construction; only a frozen (graph, index) pair is cached as admitted.
+  deepFreeze(index);
+  if (deepFrozen.has(graph)) admittedIndexes.set(index, graph);
+  return index;
 }
 
 /**
@@ -352,6 +386,7 @@ export function buildSemanticIndex(graph) {
  */
 export function admitSemanticIndex(index, graph) {
   admitSemanticPartsGraph(graph);
+  if (index && admittedIndexes.get(index) === graph) return index;
   if (!index || index.schema !== SEMANTIC_PARTS_INDEX_SCHEMA) {
     throw new Error('REFUSED_INDEX_SCHEMA');
   }
@@ -361,26 +396,44 @@ export function admitSemanticIndex(index, graph) {
   if (index.authority !== 'NONE') throw new Error('REFUSED_INDEX_AUTHORITY');
   if (index.part_count !== graph.parts.length) throw new Error('REFUSED_INDEX_PART_COUNT');
 
-  const partIds = new Set(graph.parts.map((part) => part.part_id));
+  const partMap = new Map(graph.parts.map((part) => [part.part_id, part]));
   const axes = asRecord(index.axes, 'index.axes');
+  for (const axis of Object.keys(axes)) {
+    if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_INDEX_UNKNOWN_AXIS:${axis}`);
+  }
   for (const axis of SEMANTIC_AXES) {
     const postings = asRecord(axes[axis], `index.axes.${axis}`);
+    let postingCount = 0;
     for (const [semanticId, ids] of Object.entries(postings)) {
       identity(semanticId, 'index semantic_id');
       const admittedIds = asArray(ids, `index posting ${semanticId}`);
       const seen = new Set();
       for (const partId of admittedIds) {
         const canonical = identity(partId, 'index part_id');
-        if (!partIds.has(canonical)) {
+        const part = partMap.get(canonical);
+        if (!part) {
           throw new Error(`REFUSED_INDEX_DANGLING_PART:${axis}:${canonical}`);
         }
         if (seen.has(canonical)) {
           throw new Error(`REFUSED_INDEX_DUPLICATE_PART:${axis}:${semanticId}:${canonical}`);
         }
         seen.add(canonical);
+        // Soundness: every posting must be backed by the supplied graph.
+        if (!(part.semantics[axis] ?? []).some((value) => value.semantic_id === semanticId)) {
+          throw new Error(`REFUSED_INDEX_STALE:${axis}:${semanticId}:${canonical}`);
+        }
+        postingCount += 1;
       }
     }
+    // Completeness: with soundness and no duplicates, equal counts mean the
+    // postings are exactly the graph's (part, semantic_id) pairs on this axis.
+    // An index built from another graph with the same part count is refused.
+    const graphCount = graph.parts.reduce((n, part) => n + (part.semantics[axis] ?? []).length, 0);
+    if (postingCount !== graphCount) {
+      throw new Error(`REFUSED_INDEX_STALE:${axis}:postings=${postingCount}:graph=${graphCount}`);
+    }
   }
+  if (deepFrozen.has(index) && deepFrozen.has(graph)) admittedIndexes.set(index, graph);
   return index;
 }
 
@@ -680,7 +733,9 @@ function urn(kind, value) {
 
 function groundedIri(semanticId) {
   const match = /^wikidata:(Q[1-9][0-9]*)$/u.exec(semanticId);
-  return match ? `<https://www.wikidata.org/entity/${match[1]}>` : null;
+  // Wikidata's canonical concept URI namespace is http (RDF dumps and the
+  // query service); an https IRI would not join with Wikidata RDF.
+  return match ? `<http://www.wikidata.org/entity/${match[1]}>` : null;
 }
 
 /**

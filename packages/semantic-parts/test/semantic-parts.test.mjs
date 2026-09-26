@@ -214,7 +214,7 @@ describe('semantic parts graph', () => {
     expect(turtle).toContain('sp:authorityBoundary "NONE"');
     expect(turtle).toContain('sp:standing sp:Observed');
     expect(turtle).toContain('sp:implementsAlgorithm');
-    expect(turtle).toContain('sp:groundedIn <https://www.wikidata.org/entity/Q12105>');
+    expect(turtle).toContain('sp:groundedIn <http://www.wikidata.org/entity/Q12105>');
     expect(turtle).toContain('sp:language "Rust"');
     expect(toSemanticPartsTurtle(graph)).toBe(turtle);
   });
