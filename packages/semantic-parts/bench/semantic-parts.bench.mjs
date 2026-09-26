@@ -8,7 +8,12 @@ import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
-import { findAlternatives, fromCodeGraphTables } from '../src/index.mjs';
+import {
+  buildSemanticIndex,
+  findAlternatives,
+  fromCodeGraphTables,
+  indexedCandidatePartIds,
+} from '../src/index.mjs';
 import { syntheticTables } from './fixture.mjs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/, '').split('=')));
@@ -29,12 +34,27 @@ for (let i = 0; i < iterations; i += 1) {
   graph = fromCodeGraphTables(tables);
   buildSamples.push(performance.now() - t0);
 }
+const indexBuildSamples = [];
+let index;
+for (let i = 0; i < iterations; i += 1) {
+  const t0 = performance.now();
+  index = buildSemanticIndex(graph);
+  indexBuildSamples.push(performance.now() - t0);
+}
 const querySamples = [];
+const indexedQuerySamples = [];
 let result;
+let indexedResult;
 for (let i = 0; i < iterations; i += 1) {
   const t0 = performance.now();
   result = findAlternatives(graph, String((i * 997) % files + 1), { requiredAxes: ['algorithm', 'domain'] });
   querySamples.push(performance.now() - t0);
+
+  const t1 = performance.now();
+  indexedResult = indexedCandidatePartIds(graph, index, String((i * 997) % files + 1), {
+    requiredAxes: ['algorithm', 'domain'],
+  });
+  indexedQuerySamples.push(performance.now() - t1);
 }
 const digest = createHash('sha256').update(JSON.stringify(graph)).digest('hex');
 const receipt = {
@@ -44,7 +64,12 @@ const receipt = {
   input: { files, edges: Object.values(tables.edges).reduce((n, r) => n + r.length, 0), iterations },
   graph_sha256: digest,
   fromCodeGraphTables: stats(buildSamples),
+  buildSemanticIndex: stats(indexBuildSamples),
   findAlternatives_2axis: { ...stats(querySamples), last_candidates: result.length },
+  indexedCandidatePartIds_2axis: {
+    ...stats(indexedQuerySamples),
+    last_candidates: indexedResult.length,
+  },
 };
 if (args.out) writeFileSync(args.out, `${JSON.stringify(receipt, null, 2)}\n`);
 process.stdout.write(`${JSON.stringify(receipt, null, 2)}\n`);
