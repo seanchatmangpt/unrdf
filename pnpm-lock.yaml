@@ -1666,6 +1666,12 @@ importers:
         specifier: ^4.0.16
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.4))
 
+  packages/semantic-parts:
+    devDependencies:
+      vitest:
+        specifier: ^4.0.16
+        version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.4))
+
   packages/semantic-search:
     dependencies:
       '@unrdf/oxigraph':
