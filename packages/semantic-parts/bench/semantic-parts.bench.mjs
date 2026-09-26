@@ -11,6 +11,7 @@ import { performance } from 'node:perf_hooks';
 import {
   buildSemanticIndex,
   findAlternatives,
+  findAlternativesIndexed,
   fromCodeGraphTables,
   indexedCandidatePartIds,
 } from '../src/index.mjs';
@@ -43,8 +44,10 @@ for (let i = 0; i < iterations; i += 1) {
 }
 const querySamples = [];
 const indexedQuerySamples = [];
+const indexedRankedQuerySamples = [];
 let result;
 let indexedResult;
+let indexedRankedResult;
 for (let i = 0; i < iterations; i += 1) {
   const t0 = performance.now();
   result = findAlternatives(graph, String((i * 997) % files + 1), { requiredAxes: ['algorithm', 'domain'] });
@@ -55,6 +58,15 @@ for (let i = 0; i < iterations; i += 1) {
     requiredAxes: ['algorithm', 'domain'],
   });
   indexedQuerySamples.push(performance.now() - t1);
+
+  const t2 = performance.now();
+  indexedRankedResult = findAlternativesIndexed(
+    graph,
+    index,
+    String((i * 997) % files + 1),
+    { requiredAxes: ['algorithm', 'domain'] },
+  );
+  indexedRankedQuerySamples.push(performance.now() - t2);
 }
 const digest = createHash('sha256').update(JSON.stringify(graph)).digest('hex');
 const receipt = {
@@ -69,6 +81,10 @@ const receipt = {
   indexedCandidatePartIds_2axis: {
     ...stats(indexedQuerySamples),
     last_candidates: indexedResult.length,
+  },
+  findAlternativesIndexed_2axis: {
+    ...stats(indexedRankedQuerySamples),
+    last_candidates: indexedRankedResult.length,
   },
 };
 if (args.out) writeFileSync(args.out, `${JSON.stringify(receipt, null, 2)}\n`);
