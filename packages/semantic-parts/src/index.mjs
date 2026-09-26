@@ -8,6 +8,7 @@
  */
 
 export const SEMANTIC_PARTS_SCHEMA = 'unrdf.semantic-parts.v1';
+export const SEMANTIC_PARTS_INDEX_SCHEMA = 'unrdf.semantic-parts.index.v1';
 export const CODEGRAPH_RELEASE = 'codegraph_release_v1';
 export const SEMANTIC_AXES = Object.freeze([
   'algorithm',
@@ -246,6 +247,121 @@ function partById(graph, partId) {
 
 function axisIdentities(part, axis) {
   return new Set((part.semantics[axis] ?? []).map((item) => item.semantic_id));
+}
+
+/**
+ * Build a deterministic inverted index from canonical semantic identity to
+ * part ids. The index is a derived acceleration structure: it carries no
+ * standing beyond the admitted graph and cannot grant authority.
+ */
+export function buildSemanticIndex(graph) {
+  admitSemanticPartsGraph(graph);
+  const axes = {};
+
+  for (const axis of SEMANTIC_AXES) {
+    const postings = new Map();
+    for (const part of graph.parts) {
+      for (const semanticId of axisIdentities(part, axis)) {
+        const ids = postings.get(semanticId) ?? [];
+        ids.push(part.part_id);
+        postings.set(semanticId, ids);
+      }
+    }
+    axes[axis] = Object.fromEntries(
+      [...postings.entries()]
+        .sort(([left], [right]) => compareCodePoints(left, right))
+        .map(([semanticId, ids]) => [
+          semanticId,
+          [...new Set(ids)].sort(compareCodePoints),
+        ]),
+    );
+  }
+
+  return {
+    schema: SEMANTIC_PARTS_INDEX_SCHEMA,
+    source_graph_schema: SEMANTIC_PARTS_SCHEMA,
+    part_count: graph.parts.length,
+    authority: 'NONE',
+    axes,
+  };
+}
+
+/**
+ * Fail-closed admission for a derived semantic index. Every posting must point
+ * to an admitted part in the exact graph supplied by the caller.
+ */
+export function admitSemanticIndex(index, graph) {
+  admitSemanticPartsGraph(graph);
+  if (!index || index.schema !== SEMANTIC_PARTS_INDEX_SCHEMA) {
+    throw new Error('REFUSED_INDEX_SCHEMA');
+  }
+  if (index.source_graph_schema !== SEMANTIC_PARTS_SCHEMA) {
+    throw new Error('REFUSED_INDEX_GRAPH_SCHEMA');
+  }
+  if (index.authority !== 'NONE') throw new Error('REFUSED_INDEX_AUTHORITY');
+  if (index.part_count !== graph.parts.length) throw new Error('REFUSED_INDEX_PART_COUNT');
+
+  const partIds = new Set(graph.parts.map((part) => part.part_id));
+  const axes = asRecord(index.axes, 'index.axes');
+  for (const axis of SEMANTIC_AXES) {
+    const postings = asRecord(axes[axis], `index.axes.${axis}`);
+    for (const [semanticId, ids] of Object.entries(postings)) {
+      identity(semanticId, 'index semantic_id');
+      const admittedIds = asArray(ids, `index posting ${semanticId}`);
+      const seen = new Set();
+      for (const partId of admittedIds) {
+        const canonical = identity(partId, 'index part_id');
+        if (!partIds.has(canonical)) {
+          throw new Error(`REFUSED_INDEX_DANGLING_PART:${axis}:${canonical}`);
+        }
+        if (seen.has(canonical)) {
+          throw new Error(`REFUSED_INDEX_DUPLICATE_PART:${axis}:${semanticId}:${canonical}`);
+        }
+        seen.add(canonical);
+      }
+    }
+  }
+  return index;
+}
+
+/**
+ * Indexed candidate preselection. This is equivalent to the required-axis
+ * membership court used by findAlternatives, but returns only part ids so a
+ * caller can cheaply bound the candidate set before richer verification.
+ */
+export function indexedCandidatePartIds(
+  graph,
+  index,
+  subjectId,
+  { requiredAxes = ['algorithm'] } = {},
+) {
+  admitSemanticIndex(index, graph);
+  const subject = partById(graph, subjectId);
+  if (!subject) throw new Error(`REFUSED_UNKNOWN_SUBJECT:${subjectId}`);
+
+  const axes = asArray(requiredAxes, 'requiredAxes').map((axis) => {
+    if (!SEMANTIC_AXES.includes(axis)) throw new Error(`REFUSED_UNKNOWN_AXIS:${axis}`);
+    return axis;
+  });
+  if (axes.length === 0) throw new Error('REFUSED_REQUIRED_AXES_EMPTY');
+  if (new Set(axes).size !== axes.length) throw new Error('REFUSED_DUPLICATE_REQUIRED_AXIS');
+
+  let candidates = null;
+  for (const axis of axes) {
+    const semanticIds = [...axisIdentities(subject, axis)];
+    if (semanticIds.length === 0) throw new Error(`REFUSED_SUBJECT_AXIS_EMPTY:${axis}`);
+    const postings = index.axes[axis];
+    const axisCandidates = new Set();
+    for (const semanticId of semanticIds) {
+      for (const partId of postings[semanticId] ?? []) axisCandidates.add(partId);
+    }
+    candidates = candidates === null
+      ? axisCandidates
+      : new Set([...candidates].filter((partId) => axisCandidates.has(partId)));
+  }
+
+  candidates.delete(subject.part_id);
+  return [...candidates].sort(compareCodePoints);
 }
 
 /**
