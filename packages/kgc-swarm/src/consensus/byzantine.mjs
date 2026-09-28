@@ -43,6 +43,9 @@ export const MessageType = {
   COMMIT: 'commit',
   VIEW_CHANGE: 'view-change',
   NEW_VIEW: 'new-view',
+  // Failure-detector messages (SWIM style): suspicion about a node, and its refutation
+  SUSPECT: 'suspect',
+  ALIVE: 'alive',
 };
 
 /**
@@ -193,6 +196,9 @@ export class ByzantineNode extends EventEmitter {
 
     /** @type {number} - Current view number */
     this.view = 0;
+
+    /** @type {number} - Incarnation number, bumped to refute suspicions about this node */
+    this.incarnation = 0;
 
     /** @type {number} - Next sequence number */
     this.sequence = 0;
@@ -536,7 +542,10 @@ export class ByzantineNode extends EventEmitter {
 
     for (const peer of this.peers) {
       if (peer !== this.nodeId) {
-        this._sendMessage(peer, signedMessage);
+        // Fire and forget: a failed send must not become an unhandled rejection
+        this._sendMessage(peer, signedMessage).catch((error) => {
+          this.emit('networkError', peer, error);
+        });
       }
     }
   }
@@ -601,8 +610,43 @@ export class ByzantineNode extends EventEmitter {
         this._handleNewView(message);
         break;
 
+      case MessageType.SUSPECT:
+        this._handleSuspect(message);
+        break;
+
+      case MessageType.ALIVE:
+        // Refutation from another node; nothing to do at the consensus layer
+        this.emit('nodeAlive', message);
+        break;
+
       default:
         this.emit('error', 'Unknown message type', message.type);
+    }
+  }
+
+  /**
+   * Handle a suspicion message. If it accuses this node at an incarnation that
+   * is not older than ours, refute it by bumping our incarnation and
+   * broadcasting a signed ALIVE message carrying the new number.
+   * @private
+   * @param {Object} message - SUSPECT message with a `members` list
+   */
+  _handleSuspect(message) {
+    for (const member of message.members || []) {
+      if (
+        member.nodeId === this.nodeId &&
+        member.status === 'suspect' &&
+        member.incarnation >= this.incarnation
+      ) {
+        this.incarnation = member.incarnation + 1;
+
+        this._broadcast({
+          type: MessageType.ALIVE,
+          view: this.view,
+          members: [{ nodeId: this.nodeId, status: 'alive', incarnation: this.incarnation }],
+        });
+        this.emit('suspicionRefuted', this.incarnation);
+      }
     }
   }
 
