@@ -10,8 +10,8 @@
  * @format machine-executable
  */
 
-import { runMapekIteration, runContinuousMapekLoop } from 'unrdf/project-engine';
-import { buildProjectModelFromFs, inferDomainModel } from 'unrdf/project-engine';
+import { runMapekIteration, runContinuousMapekLoop } from '@unrdf/project-engine';
+import { buildProjectModelFromFs, inferDomainModel } from '@unrdf/project-engine';
 
 /**
  * Problem: Need to run a single MAPEK cycle and get machine-readable results

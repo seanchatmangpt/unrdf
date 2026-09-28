@@ -11,9 +11,9 @@
  * @format machine-executable
  */
 
-import { runMapekIteration, createAutonomicHooks, reportMapekStatus } from 'unrdf/project-engine';
-import { buildProjectModelFromFs, inferDomainModel } from 'unrdf/project-engine';
-import { createDarkMatterCore, defineHook } from 'unrdf';
+import { runMapekIteration, createAutonomicHooks, reportMapekStatus } from '@unrdf/project-engine';
+import { buildProjectModelFromFs, inferDomainModel } from '@unrdf/project-engine';
+import { createDarkMatterCore, defineHook } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
 
 /**

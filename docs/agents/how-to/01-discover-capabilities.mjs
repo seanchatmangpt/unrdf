@@ -10,7 +10,7 @@
  * @format machine-executable
  */
 
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 
 /**
  * Problem: Need to discover available capabilities matching criteria

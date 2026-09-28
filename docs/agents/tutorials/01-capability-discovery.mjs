@@ -11,7 +11,7 @@
  * @format machine-executable
  */
 
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
 
 /**
@@ -171,14 +171,14 @@ export async function invokeCapability(capabilityName, input) {
   // Invoke capability based on name
   switch (capabilityName) {
     case 'parseTurtle':
-      const { parseTurtle } = await import('unrdf');
+      const { parseTurtle } = await import('@unrdf/knowledge-engine');
       return { result: await parseTurtle(input.content) };
       
     case 'query':
       return { result: await system.query(input) };
       
     case 'defineHook':
-      const { defineHook } = await import('unrdf');
+      const { defineHook } = await import('@unrdf/knowledge-engine');
       return { result: defineHook(input) };
       
     default:
