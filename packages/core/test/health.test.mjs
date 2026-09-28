@@ -151,7 +151,7 @@ describe('Health Check System', () => {
       expect(result).toMatchObject({
         status: HealthStatus.HEALTHY,
         service: 'unrdf',
-        version: '[VERSION]'
+        version: process.env.npm_package_version || 'unknown'
       });
     });
 

@@ -29,7 +29,7 @@
     "./cli/commands/delta": "./src/cli/commands/delta.mjs"
   },
   "scripts": {
-    "test": "node --test test/**/*.test.mjs",
+    "test": "node --test test/grammar/closure.test.mjs test/browser/browser-compat.test.mjs test/browser/receipt-store.test.mjs test/determinism/determinism.test.mjs test/integration/integration.test.mjs test/integration/v6-smoke.test.mjs test/performance/performance.test.mjs test/receipts/receipt-comprehensive.test.mjs test/receipts/tamper-detection.test.mjs test/receipts/with-receipt-node.test.mjs test/validation/zod-schemas.test.mjs test/cli/cli-commands.test.mjs test/errors/error-handling.test.mjs test/delta/delta-cli-integration.test.mjs test/delta/delta-store.test.mjs test/delta/delta-comprehensive.test.mjs test/delta/adapters.test.mjs test/security/security.test.mjs && vitest run",
     "lint": "eslint src/**/*.mjs",
     "type-check": "tsc --noEmit --allowJs --checkJs src/**/*.mjs",
     "build": "echo 'No build step for ESM'",

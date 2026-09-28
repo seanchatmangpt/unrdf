@@ -319,7 +319,7 @@ export function createHealthMiddleware(config) {
      */
     prometheus: async (req, res) => {
       const result = await health.prometheus();
-      res.setHeader('Content-Type', 'text/plain; version=[VERSION]');
+      res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
       res.status(200).send(result);
     },
   };
@@ -334,7 +334,7 @@ export function createHealthMiddleware(config) {
 export function createUnrdfHealthChecks(options = {}) {
   return createHealthChecks({
     serviceName: options.serviceName || 'unrdf',
-    version: options.version || '[VERSION]',
+    version: options.version || process.env.npm_package_version || 'unknown',
     environment: process.env.NODE_ENV || 'production',
     ...options,
   });

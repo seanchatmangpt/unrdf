@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createOTELValidator, createValidationRunner, createValidationHelpers } from './src/index.mjs';
+import { createOTELValidator, createValidationRunner, createValidationHelpers } from '../src/index.mjs';
 
 // ============================================================================
 // Test 1: createOTELValidator - Basic instantiation and validateFeature stub
@@ -82,7 +82,8 @@ describe('ValidationRunner - Suite Execution', () => {
               maxErrorRate: 0.01,
               minThroughput: 10,
               maxMemoryUsage: 100
-            }
+            },
+            validationRules: []
           }
         }
       ]
@@ -107,7 +108,8 @@ describe('ValidationRunner - Suite Execution', () => {
           config: {
             expectedSpans: ['feature1'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         },
         {
@@ -115,7 +117,8 @@ describe('ValidationRunner - Suite Execution', () => {
           config: {
             expectedSpans: ['feature2'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]
@@ -147,7 +150,8 @@ describe('ValidationReport Structure', () => {
           config: {
             expectedSpans: ['test'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]
@@ -175,7 +179,8 @@ describe('ValidationReport Structure', () => {
           config: {
             expectedSpans: ['feature1'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]
@@ -206,10 +211,10 @@ describe('ValidationHelpers', () => {
     const helpers = createValidationHelpers();
 
     // Verify helper methods exist (actual implementation tested separately)
-    expect(typeof helpers.hasSpan).toBe('function');
-    expect(typeof helpers.hasAttributes).toBe('function');
-    expect(typeof helpers.passesThresholds).toBe('function');
-    expect(typeof helpers.calculateScore).toBe('function');
+    expect(typeof helpers.assertSpanExists).toBe('function');
+    expect(typeof helpers.assertSpanAttribute).toBe('function');
+    expect(typeof helpers.assertLatency).toBe('function');
+    expect(typeof helpers.createValidationRule).toBe('function');
   });
 });
 
@@ -293,7 +298,8 @@ describe('Suite Management', () => {
           config: {
             expectedSpans: ['test'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]
@@ -320,7 +326,8 @@ describe('Suite Management', () => {
           config: {
             expectedSpans: ['test'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]
@@ -344,7 +351,8 @@ describe('Suite Management', () => {
           config: {
             expectedSpans: ['test'],
             requiredAttributes: [],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 }
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01, minThroughput: 10, maxMemoryUsage: 100 },
+            validationRules: []
           }
         }
       ]

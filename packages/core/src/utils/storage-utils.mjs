@@ -73,7 +73,7 @@ export class HookStorage {
       _metadata: {
         created: new Date().toISOString(),
         updated: new Date().toISOString(),
-        version: '[VERSION]',
+        version: process.env.npm_package_version || 'unknown',
       },
     };
 

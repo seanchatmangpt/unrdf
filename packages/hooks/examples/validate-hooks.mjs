@@ -22,7 +22,7 @@ const main = defineCommand({
   meta: {
     name: 'validate-hooks',
     description: 'Validate @unrdf/hooks package functionality',
-    version: '[VERSION]',
+    version: '1.0.0',
   },
   args: {
     verbose: {

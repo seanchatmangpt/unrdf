@@ -45,7 +45,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --no-coverage",
+    "test": "vitest run --no-coverage && node --test test/capability-control-plane.test.mjs test/capability-runtime.test.mjs test/state-primitives.test.mjs test/transaction-core.node.test.mjs",
     "test:coverage": "vitest run --coverage",
     "test:fast": "vitest run --no-coverage",
     "test:watch": "vitest --no-coverage",
