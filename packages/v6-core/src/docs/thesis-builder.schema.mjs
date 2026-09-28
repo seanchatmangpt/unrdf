@@ -54,18 +54,28 @@ export const SparqlConstructQuerySchema = z.object({
 }).strict();
 
 /**
+ * Custom CONSTRUCT query entry for renderFromOntology (optional output file name)
+ */
+export const OntologyConstructQuerySchema = SparqlConstructQuerySchema.extend({
+  name: z.string().min(1).optional(),
+}).strict();
+
+/**
  * Ontology rendering configuration schema
  */
 export const OntologyRenderConfigSchema = z.object({
   ontologyPath: z.string().min(1),
   outputDir: z.string().min(1),
-  queries: z.array(SparqlConstructQuerySchema).optional(),
+  queries: z.array(OntologyConstructQuerySchema).optional(),
   templateDir: z.string().optional(),
   generateDiataxis: z.boolean().default(true),
 }).strict();
 
 /**
  * Ontology rendering result schema
+ *
+ * Mirrors what renderFromOntology actually emits: per-doc `classUri`/`size`,
+ * structured `errors` entries ({ classUri | query | stage, error }) and `stats`.
  */
 export const OntologyRenderResultSchema = z.object({
   status: z.enum(['success', 'partial', 'not_implemented', 'error']),
@@ -73,20 +83,41 @@ export const OntologyRenderResultSchema = z.object({
   outputDir: z.string(),
   generatedDocs: z.array(z.object({
     path: z.string(),
-    type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+    type: z.enum(['tutorial', 'howto', 'reference', 'explanation', 'docs', 'construct-result']),
+    classUri: z.string().optional(),
+    size: z.number().int().nonnegative().optional(),
     sourceQuery: z.string().optional(),
-  })).default([]),
-  errors: z.array(z.string()).default([]),
+  }).strict()).default([]),
+  errors: z.array(z.union([
+    z.string(),
+    z.object({
+      error: z.string(),
+      classUri: z.string().optional(),
+      query: z.string().optional(),
+      stage: z.string().optional(),
+    }).strict(),
+  ])).default([]),
   warnings: z.array(z.string()).default([]),
+  stats: z.object({
+    totalDocs: z.number().int().nonnegative(),
+    totalErrors: z.number().int().nonnegative(),
+    totalClasses: z.number().int().nonnegative(),
+  }).optional(),
 }).strict();
 
 /**
  * Documentation template schema
+ *
+ * `template` is an inline Mustache string or a path ending in .md; when omitted the
+ * default template for `type` is used. `queryBinding` is optional metadata.
  */
 export const DocTemplateSchema = z.object({
   type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+  name: z.string().optional(),
+  template: z.string().optional(),
   templatePath: z.string().optional(),
-  queryBinding: z.record(z.string(), z.string()),
+  frontmatter: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  queryBinding: z.record(z.string(), z.string()).optional(),
 }).strict();
 
 export default {

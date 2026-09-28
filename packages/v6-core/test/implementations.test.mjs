@@ -275,6 +275,7 @@ describe('Render from Ontology', () => {
         {
           name: 'labels.ttl',
           query: 'CONSTRUCT { ?s rdfs:label ?o } WHERE { ?s rdfs:label ?o }',
+          prefixes: { rdfs: 'http://www.w3.org/2000/01/rdf-schema#' },
           outputFormat: 'turtle'
         }
       ]
