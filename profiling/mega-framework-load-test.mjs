@@ -54,7 +54,7 @@ async function measureImportCost() {
   const importStart = performance.now();
 
   // Dynamic import to measure cost
-  const framework = await import('../max-combo-10-mega-framework.mjs');
+  const framework = await import('../docs/archive/legacy-pre-2030/max-combo-10-mega-framework-standalone.mjs');
 
   const importEnd = performance.now();
   const afterImport = getMemoryUsageMB();

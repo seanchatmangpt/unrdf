@@ -10,12 +10,18 @@
 
 import { execSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { performance } from 'node:perf_hooks';
 
 console.log('╔════════════════════════════════════════════════════════════════╗');
 console.log('║  ADVERSARIAL PROFILING SUITE                                   ║');
 console.log('║  Comprehensive Memory & Performance Testing                    ║');
 console.log('╚════════════════════════════════════════════════════════════════╝\n');
+
+// Resolve paths from this file, not from a hardcoded checkout location
+const PROFILING_DIR = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = join(PROFILING_DIR, '..');
 
 const results = [];
 const startTime = performance.now();
@@ -31,7 +37,7 @@ try {
   const yawlOutput = execSync(
     'node --expose-gc profiling/yawl-load-test.mjs',
     {
-      cwd: '/home/user/unrdf',
+      cwd: REPO_ROOT,
       encoding: 'utf-8',
       timeout: 120000, // 2 minutes
     }
@@ -68,7 +74,7 @@ try {
   const megaOutput = execSync(
     'node --expose-gc profiling/mega-framework-load-test.mjs',
     {
-      cwd: '/home/user/unrdf',
+      cwd: REPO_ROOT,
       encoding: 'utf-8',
       timeout: 120000,
     }
@@ -131,7 +137,7 @@ const report = {
 };
 
 writeFileSync(
-  '/home/user/unrdf/profiling/profiling-report.json',
+  join(PROFILING_DIR, 'profiling-report.json'),
   JSON.stringify(report, null, 2)
 );
 

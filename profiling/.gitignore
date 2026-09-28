@@ -7,3 +7,4 @@ profiling-output.txt
 
 # Test output
 *.test.log
+profiling-report.json
