@@ -19,7 +19,7 @@ import { trace, SpanStatusCode } from '@opentelemetry/api';
  * @returns {import('@opentelemetry/api').Tracer} OTEL tracer
  */
 function getTracer() {
-  return trace.getTracer('triple-stream-batcher', '[VERSION]');
+  return trace.getTracer('triple-stream-batcher', 'agnostic');
 }
 
 /**

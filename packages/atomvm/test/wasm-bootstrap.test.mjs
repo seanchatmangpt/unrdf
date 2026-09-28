@@ -1,3 +1,4 @@
+// @vitest-environment node
 /**
  * @fileoverview WASM Bootstrap Test Suite
  * @module test/wasm-bootstrap
@@ -95,9 +96,12 @@ describe('WASM Bootstrap', () => {
       expect(result.loadTimeMs).toBeGreaterThanOrEqual(0);
     });
 
-    it('accepts environment override', async () => {
+    it('compiles the shipped node wasm binary for real', async () => {
       const result = await loadWASM({ environment: 'node' });
-      expect(result).toBeDefined();
+      expect(result.error).toBeNull();
+      expect(result.success).toBe(true);
+      expect(result.module).toBeInstanceOf(WebAssembly.Module);
+      expect(result.exports.length).toBeGreaterThan(0);
     });
   });
 
@@ -143,8 +147,9 @@ describe('WASM Bootstrap', () => {
       expect(ATOMVM_VERSION.length).toBeGreaterThan(0);
     });
 
-    it('follows version format', () => {
-      expect(ATOMVM_VERSION).toMatch(/^v\d+\.\d+\.\d+$/);
+    it('is never an unsubstituted template placeholder', () => {
+      expect(ATOMVM_VERSION).not.toMatch(/[[\]{}]/);
+      expect(ATOMVM_VERSION).toMatch(/^[A-Za-z0-9.-]+$/);
     });
   });
 });

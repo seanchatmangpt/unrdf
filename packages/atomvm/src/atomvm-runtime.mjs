@@ -12,13 +12,13 @@
 
 import { trace } from '@opentelemetry/api';
 import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES } from './roundtrip-sla.mjs';
+import { ATOMVM_VERSION, EMSCRIPTEN_WASM_NAME, atomvmAssetName } from './assets.mjs';
 
 /* eslint-env browser */
 // Get tracer lazily to ensure provider is registered first
 function getTracer() {
   return trace.getTracer('atomvm-runtime');
 }
-const ATOMVM_VERSION = '[VERSION]';
 
 /** @constant {number} Delay before checking if Module is ready after script load */
 const MODULE_LOAD_CHECK_DELAY_MS = 100;
@@ -209,6 +209,15 @@ export class AtomVMRuntime {
           this.terminal.log(String(text).trim(), 'error');
         };
 
+        // Emscripten hardcodes AtomVM.wasm; redirect it to the shipped asset name
+        const previousLocateFile = window.Module.locateFile;
+        window.Module.locateFile = (path, scriptDirectory) =>
+          path === EMSCRIPTEN_WASM_NAME
+            ? `/${atomvmAssetName('web', 'wasm')}`
+            : previousLocateFile
+              ? previousLocateFile(path, scriptDirectory)
+              : `${scriptDirectory}${path}`;
+
         // Prevent auto-run on initial load
         window.Module.noInitialRun = true;
         window.Module.arguments = [];
@@ -217,7 +226,7 @@ export class AtomVMRuntime {
         return new Promise((resolve, reject) => {
           // Check if script already exists
           const existingScript = document.querySelector(
-            `script[src*="AtomVM-web-${ATOMVM_VERSION}"]`
+            `script[src*="${atomvmAssetName('web', 'js')}"]`
           );
           if (existingScript) {
             if (window.Module && (window.Module.ready || window.Module.calledRun)) {
@@ -256,7 +265,7 @@ export class AtomVMRuntime {
 
           // Create script element
           const script = document.createElement('script');
-          script.src = `/AtomVM-web-${ATOMVM_VERSION}.js`;
+          script.src = `/${atomvmAssetName('web', 'js')}`;
           script.async = true;
 
           script.onload = () => {

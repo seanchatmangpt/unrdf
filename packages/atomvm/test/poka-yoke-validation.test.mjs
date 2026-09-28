@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * @fileoverview Poka-Yoke Validation Tests
  * @description

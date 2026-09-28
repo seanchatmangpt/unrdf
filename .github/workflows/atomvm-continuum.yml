@@ -1,0 +1,57 @@
+name: AtomVM Continuum (cloud / fog / edge / browser)
+
+# Real AtomVM (shipped WebAssembly build), real sockets, real Chromium. No mocks.
+# Fixtures are committed, so no Erlang toolchain is needed to run the suite.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/atomvm-continuum.yml'
+      - 'packages/atomvm/**'
+  pull_request:
+    paths:
+      - '.github/workflows/atomvm-continuum.yml'
+      - 'packages/atomvm/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atomvm-continuum-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  continuum:
+    name: Bootstrap, first mile and last mile across all four tiers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install @unrdf/atomvm and its workspace dependencies
+        run: pnpm install --filter '@unrdf/atomvm...' --frozen-lockfile=false
+
+      - name: Install Chromium for the browser tier
+        run: pnpm --filter @unrdf/atomvm exec playwright install --with-deps chromium
+
+      - name: Run the continuum suites
+        run: pnpm --filter @unrdf/atomvm run test:continuum
+
+      - name: Run the full package suite (vitest with coverage thresholds + node:test)
+        run: pnpm --filter @unrdf/atomvm test

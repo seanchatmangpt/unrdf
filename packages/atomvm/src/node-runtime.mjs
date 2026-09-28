@@ -13,7 +13,10 @@ import { delimiter, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SUCCESS_EXIT_CODE = 0;
-const PUBLIC_DIR = fileURLToPath(new URL('../public/', import.meta.url));
+
+// Resolved lazily: import.meta.url is not a file: URL in every host (e.g. jsdom).
+const publicDir = () => fileURLToPath(new URL('../public/', import.meta.url));
+const bundledLauncher = () => fileURLToPath(new URL('../bin/atomvm-wasm.mjs', import.meta.url));
 
 function validateNonEmptyString(value, name) {
   if (typeof value !== 'string' || value.trim().length === 0) {
@@ -70,7 +73,12 @@ export class AtomVMNodeRuntime {
   constructor(options = {}) {
     this.log = options.log ?? console.log;
     this.errorLog = options.errorLog ?? console.error;
+    // An explicit binary (option or ATOMVM_BIN) is strict: if it is missing we refuse.
+    // Only the implicit default may fall back to the bundled WASM launcher.
+    this.explicitBinary = Boolean(options.atomvmBinary ?? process.env.ATOMVM_BIN);
     this.requestedBinary = options.atomvmBinary ?? process.env.ATOMVM_BIN ?? 'AtomVM';
+    /** @type {'native'|'wasm-node'|null} */
+    this.backend = null;
     this.libraryPaths = Object.freeze([...(options.libraryPaths ?? [])]);
     this.atomvmPath = null;
     this.runtimeVersion = null;
@@ -95,7 +103,14 @@ export class AtomVMNodeRuntime {
 
     this.state = 'Loading';
     try {
-      this.atomvmPath = resolveExecutable(this.requestedBinary);
+      try {
+        this.atomvmPath = resolveExecutable(this.requestedBinary);
+        this.backend = 'native';
+      } catch (error) {
+        if (this.explicitBinary) throw error;
+        this.atomvmPath = resolveExecutable(bundledLauncher());
+        this.backend = 'wasm-node';
+      }
       const version = spawnSync(this.atomvmPath, ['-v'], {
         encoding: 'utf8',
         shell: false,
@@ -186,13 +201,14 @@ export class AtomVMNodeRuntime {
 
   async runExample(moduleName) {
     validateNonEmptyString(moduleName, 'moduleName');
-    return this.execute(resolve(PUBLIC_DIR, `${moduleName}.avm`));
+    return this.execute(resolve(publicDir(), `${moduleName}.avm`));
   }
 
   destroy() {
     this.state = 'Destroyed';
     this.atomvmPath = null;
     this.runtimeVersion = null;
+    this.backend = null;
     this.log('Runtime destroyed');
   }
 }
