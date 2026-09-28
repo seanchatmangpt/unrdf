@@ -6,6 +6,11 @@ on:
     # Weekly cache warmup on Sunday at 1 AM UTC
     - cron: '0 1 * * 0'
 
+# The cleanup and statistics jobs list and delete Actions caches.
+permissions:
+  contents: read
+  actions: write
+
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '10.15.0'
@@ -85,7 +90,7 @@ jobs:
           path: |
             packages/*/dist
             packages/*/.turbo
-          key: ${{ runner.os }}-build-${{ hashFiles('packages/*/src/**/*.{js,mjs}') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/*/src/**/*.mjs', 'packages/*/src/**/*.js') }}
           restore-keys: |
             ${{ runner.os }}-build-
 

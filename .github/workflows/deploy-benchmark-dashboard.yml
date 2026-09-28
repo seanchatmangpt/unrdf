@@ -1,17 +1,22 @@
 name: Deploy Benchmark Dashboard to GitHub Pages
 
+# Generates benchmarks/dashboard.html from benchmarks/results/benchmark-results.json
+# (benchmarks/generate-dashboard.mjs) and publishes it as the Pages site.
+
 on:
   push:
     branches:
       - main
     paths:
-      - 'packages/react/**'
+      - 'benchmarks/generate-dashboard.mjs'
+      - 'benchmarks/results/benchmark-results.json'
       - '.github/workflows/deploy-benchmark-dashboard.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'packages/react/**'
+      - 'benchmarks/generate-dashboard.mjs'
+      - 'benchmarks/results/benchmark-results.json'
 
 permissions:
   contents: read
@@ -26,44 +31,28 @@ jobs:
   build:
     name: Build Dashboard
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/react
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.15.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
+          node-version: '22'
 
-      - name: Install root dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
+      - name: Generate dashboard
+        run: node benchmarks/generate-dashboard.mjs
 
-      - name: Install React package dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
-
-      - name: Build Next.js application
-        run: pnpm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /unrdf
-
-      - name: Verify build output
-        run: ls -la
+      - name: Stage site
+        run: |
+          mkdir -p site
+          cp benchmarks/dashboard.html site/index.html
+          ls -la site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/react/out
+          path: site
 
   deploy:
     name: Deploy to GitHub Pages
@@ -77,41 +66,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  test:
-    name: Test Dashboard Build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/react
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.15.0
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
-
-      - name: Install root dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
-
-      - name: Install React package dependencies
-        run: pnpm install --ignore-scripts --frozen-lockfile=false
-
-      - name: Lint code
-        run: pnpm run lint || true
-
-      - name: Format check
-        run: pnpm run format:check || true
-
-      - name: Build verification
-        run: pnpm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /unrdf
