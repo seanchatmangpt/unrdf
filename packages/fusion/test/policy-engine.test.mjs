@@ -132,7 +132,7 @@ describe('Policy Engine - Unified API', () => {
 
       // Define and register hook
       const auditHook = defineHook({
-        id: 'auditLog',
+        name: 'auditLog',
         trigger: 'before-add',
         validate: (quad, options) => {
           hookExecuted = true;
@@ -172,7 +172,7 @@ describe('Policy Engine - Unified API', () => {
 
       // Hook that always fails validation
       const rejectHook = defineHook({
-        id: 'rejectAll',
+        name: 'rejectAll',
         trigger: 'before-add',
         validate: () => {
           return { valid: false };
@@ -204,7 +204,7 @@ describe('Policy Engine - Unified API', () => {
 
       // Hook that transforms the quad
       const transformHook = defineHook({
-        id: 'addPrefix',
+        name: 'addPrefix',
         trigger: 'before-add',
         validate: () => ({ valid: true }),
         transform: (quad) => {
@@ -289,7 +289,7 @@ describe('Policy Engine - Unified API', () => {
       const store = createStore();
 
       const testHook = defineHook({
-        id: 'testHook',
+        name: 'testHook',
         trigger: 'before-add',
         validate: () => ({ valid: true }),
       });
@@ -382,8 +382,8 @@ describe('Policy Engine - Unified API', () => {
     it('should track registry statistics', async () => {
       const registry = await createPolicyRegistry();
 
-      const hook1 = defineHook({ id: 'hook1', trigger: 'before-add', validate: () => ({ valid: true }) });
-      const hook2 = defineHook({ id: 'hook2', trigger: 'before-add', validate: () => ({ valid: true }) });
+      const hook1 = defineHook({ name: 'hook1', trigger: 'before-add', validate: () => ({ valid: true }) });
+      const hook2 = defineHook({ name: 'hook2', trigger: 'before-add', validate: () => ({ valid: true }) });
 
       registry.registerHook('hook1', hook1);
       registry.registerHook('hook2', hook2);
@@ -441,7 +441,7 @@ describe('Policy Engine - Unified API', () => {
       // Register audit hook
       const auditLog = [];
       const auditHook = defineHook({
-        id: 'audit',
+        name: 'audit',
         trigger: 'before-add',
         validate: (quad, options) => {
           auditLog.push({ quad, options });

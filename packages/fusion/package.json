@@ -30,6 +30,7 @@
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "graphql": "^16.8.1",
+    "hash-wasm": "^4.12.0",
     "zod": "^4.2.1"
   },
   "devDependencies": {
@@ -37,7 +38,8 @@
   },
   "scripts": {
     "prove": "DETERMINISTIC=1 node ../../tools/prove.mjs",
-    "test": "vitest run",
+    "test": "vitest run && pnpm run test:node",
+    "test:node": "node --test test/determinism.test.mjs test/kgc-docs-proof-appendix.test.mjs test/resource-manager.test.mjs test/store-e2e.test.mjs",
     "test:watch": "vitest"
   }
 }

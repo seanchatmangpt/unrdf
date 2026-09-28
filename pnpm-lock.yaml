@@ -828,6 +828,9 @@ importers:
       graphql:
         specifier: ^16.8.1
         version: 16.13.2
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       zod:
         specifier: ^4.1.13
         version: 4.4.3
@@ -1404,6 +1407,9 @@ importers:
 
   packages/knowledge-engine:
     dependencies:
+      '@comunica/query-sparql':
+        specifier: ^4.5.0
+        version: 4.5.0(encoding@0.1.12)
       '@iarna/toml':
         specifier: ^2.2.5
         version: 2.2.5
@@ -1431,6 +1437,15 @@ importers:
       lru-cache:
         specifier: ^11.2.4
         version: 11.3.6
+      rdf-canonize:
+        specifier: ^5.0.0
+        version: 5.0.0
+      rdf-ext:
+        specifier: ^2.6.0
+        version: 2.6.0
+      rdf-validate-shacl:
+        specifier: ^0.6.5
+        version: 0.6.5
       zod:
         specifier: ^4.1.13
         version: 4.4.3
@@ -1643,6 +1658,19 @@ importers:
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(yaml@2.8.4))
+
+  packages/privacy:
+    dependencies:
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
+    devDependencies:
+      vitest:
+        specifier: ^4.0.16
+        version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.4))
 
   packages/project-engine:
     dependencies:

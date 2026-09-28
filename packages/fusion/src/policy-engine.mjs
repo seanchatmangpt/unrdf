@@ -11,16 +11,36 @@
 
 import { executeAsk } from '@unrdf/core/sparql';
 import { executeHook } from '@unrdf/hooks';
-import { createHash } from 'node:crypto';
+import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 
 /**
- * Deterministic hash function
- * Uses SHA-256 for compatibility (no external dependencies)
- * Can be upgraded to BLAKE3 via hash-wasm when available
+ * Deterministic hash function (BLAKE3 via hash-wasm)
  */
 async function hashContent(content) {
-  return createHash('sha256').update(content).digest('hex');
+  return blake3(content);
+}
+
+/**
+ * Bind an action's args as hook context. `executeHook` only passes the quad to
+ * validate()/transform(), so wrap the hook to forward `args` as the second
+ * argument, and accept legacy `{ valid }` results as well as booleans.
+ * @param {Object} hook - Hook created by defineHook
+ * @param {*} args - Action args
+ * @returns {Object} Hook safe to pass to executeHook
+ */
+function bindHookArgs(hook, args) {
+  const bound = { ...hook };
+  if (typeof hook.validate === 'function') {
+    bound.validate = quad => {
+      const res = hook.validate(quad, args);
+      return res !== null && typeof res === 'object' && 'valid' in res ? res.valid : res;
+    };
+  }
+  if (typeof hook.transform === 'function') {
+    bound.transform = quad => hook.transform(quad, args);
+  }
+  return bound;
 }
 
 // =============================================================================
@@ -149,8 +169,8 @@ export async function createPolicyRegistry() {
       for (const condition of policy.conditions) {
         try {
           const result = await executeAsk(store, condition.sparql);
-          // ASK queries return { type: 'boolean', value: true/false }
-          const passes = result.value === true;
+          // @unrdf/core executeAsk resolves to a plain boolean (legacy shape: { type: 'boolean', value })
+          const passes = result === true || result?.value === true;
           conditionResults.push(passes);
 
           // Short-circuit on first failure
@@ -188,7 +208,7 @@ export async function createPolicyRegistry() {
         }
 
         try {
-          const result = executeHook(hook, resource, action.args);
+          const result = executeHook(bindHookArgs(hook, action.args), resource);
           actionResults.push({
             hook: action.hook,
             valid: result.valid,
@@ -354,7 +374,7 @@ export async function createPolicyRegistry() {
  *
  * // Register hook
  * const auditHook = defineHook({
- *   id: 'logAudit',
+ *   name: 'logAudit',
  *   trigger: 'before-add',
  *   validate: (quad) => {
  *     console.log('Audit:', quad);

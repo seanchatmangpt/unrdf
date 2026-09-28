@@ -34,7 +34,6 @@ import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
 import { createRequire as __createRequire } from 'node:module';
 const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
-import { initCommand } from './commands/init.mjs';
 
 /**
  * Main CLI application

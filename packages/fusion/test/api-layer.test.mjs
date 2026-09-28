@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { graphql, subscribe } from 'graphql';
+import { graphql, parse, subscribe } from 'graphql';
 import { createEngine } from '../src/index.mjs';
 import {
   createGraphQLSchema,
@@ -251,7 +251,7 @@ describe('GraphQL API', () => {
 
       const stream = await subscribe({
         schema: graphqlSchema,
-        document: subscription,
+        document: parse(subscription),
       });
 
       expect(stream).toBeDefined();
@@ -287,7 +287,7 @@ describe('GraphQL API', () => {
 
       const stream = await subscribe({
         schema: graphqlSchema,
-        document: subscription,
+        document: parse(subscription),
       });
 
       expect(stream).toBeDefined();
