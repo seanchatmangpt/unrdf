@@ -39,6 +39,7 @@ import {
 import {
   compareVersions,
   getChangeType,
+  generateChangelog,
 } from '../src/changelog-generator.mjs';
 import { executeCode, formatExecutionOutput } from '../src/executor.mjs';
 
@@ -529,6 +530,13 @@ describe('@unrdf/kgc-docs - Version Tracking', () => {
     expect(compareVersions('1.1.1', '1.1.0')).toBe(1);
     // Agnostic handling
     expect(compareVersions('[VERSION]', '1.0.0')).toBe(1);
+  });
+
+  it('should link real Keep a Changelog / SemVer spec URLs in generated changelog', () => {
+    const md = generateChangelog([{ version: '1.0.0', updated: '2025-01-01' }]);
+    expect(md).toContain('https://keepachangelog.com/en/1.0.0/');
+    expect(md).toContain('https://semver.org/spec/v2.0.0.html');
+    expect(md).not.toContain('[VERSION]');
   });
 
   it('should determine change type from version diff', () => {

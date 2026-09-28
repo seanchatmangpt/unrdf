@@ -111,8 +111,8 @@ export function generateChangelog(versions) {
 
   let changelog = '# Changelog\n\n';
   changelog += `All notable changes to this document are tracked here.\n\n`;
-  changelog += `Format based on [Keep a Changelog](https://keepachangelog.com/en/[VERSION]/),\n`;
-  changelog += `and this project adheres to [Semantic Versioning](https://semver.org/spec/[VERSION].html).\n\n`;
+  changelog += `Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\n`;
+  changelog += `and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n`;
 
   for (const version of sorted) {
     const date = version.updated || version.created || 'Unknown date';

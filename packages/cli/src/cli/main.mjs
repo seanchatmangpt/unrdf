@@ -31,6 +31,9 @@ import { telcoCommand } from './commands/telco.mjs';
 import { validateCommand } from './commands/validate.mjs';
 import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
+import { createRequire } from 'node:module';
+
+const { version: cliVersion } = createRequire(import.meta.url)('../../package.json');
 
 /**
  * Main CLI application
@@ -38,7 +41,7 @@ import { publishCommand } from './commands/publish.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '[VERSION]',
+    version: cliVersion,
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {

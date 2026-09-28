@@ -14,7 +14,10 @@
 
 import { defineCommand, runMain } from 'citty';
 import { Registry, createEnvelope } from './lib/registry.mjs';
-import { loadManifest } from './manifest/extensions.mjs';
+import { loadManifest, overrides } from './manifest/extensions.mjs';
+import { createRequire } from 'node:module';
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Initialize registry and load extensions.
@@ -24,6 +27,7 @@ import { loadManifest } from './manifest/extensions.mjs';
 async function initializeRegistry() {
   const registry = new Registry({
     failOnCollision: true,
+    overrides,
   });
 
   try {
@@ -127,7 +131,7 @@ function buildCittyTree(registry, tree) {
       meta: {
         description: nounData.description || `${noun} commands`,
       },
-      subcommands: verbCommands,
+      subCommands: verbCommands,
     });
   }
 
@@ -136,9 +140,9 @@ function buildCittyTree(registry, tree) {
     meta: {
       name: 'kgc',
       description: 'KGC CLI - Deterministic extension registry for UNRDF workspace',
-      version: '[VERSION]',
+      version: createRequire(import.meta.url)('../package.json').version,
     },
-    subcommands,
+    subCommands: subcommands,
   });
 }
 
@@ -154,6 +158,8 @@ function outputResult(json, ok, data, meta = {}) {
   if (json) {
     const envelope = createEnvelope(ok, data, meta);
     console.log(JSON.stringify(envelope, null, 2));
+    // failures must still be visible to shells/CI via the exit code
+    if (!ok) process.exitCode = 1;
   } else if (!ok) {
     // Human-readable error
     console.error(`Error: ${data.message || 'Unknown error'}`);
@@ -181,10 +187,7 @@ async function main() {
     const command = buildCittyTree(registry, tree);
 
     // Run Citty main loop
-    await runMain({
-      command,
-      args: process.argv.slice(2),
-    });
+    await runMain(command, { rawArgs: process.argv.slice(2) });
   } catch (e) {
     console.error(`[kgc-cli] Fatal error: ${e.message}`);
     console.error(e.stack);
@@ -193,7 +196,16 @@ async function main() {
 }
 
 // Run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// realpath both sides so the check still holds when invoked through a bin symlink
+const isDirectRun = (() => {
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+})();
+
+if (isDirectRun) {
   main().catch(e => {
     console.error(e);
     process.exit(1);

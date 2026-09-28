@@ -338,7 +338,7 @@ export async function generateTestTemplate(engine, testConfig) {
  */
 
 import { describe, it, expect } from 'vitest';
-import {{ testConfig.imports | join(', ') }} from './{{ moduleName }}.mjs';
+import { {{ imports | join(', ') }} } from './{{ moduleName }}.mjs';
 
 describe('{{ moduleName }}', () => {
   {% for testCase in testCases %}

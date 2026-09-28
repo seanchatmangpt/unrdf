@@ -6,7 +6,6 @@
 import { defineCommand } from 'citty';
 import { createStore } from '@unrdf/core';
 import { dataFactory } from '@unrdf/oxigraph';
-import { SemanticSidecarManager } from '@unrdf/daemon';
 import { GitBackbone, KGCStore, freezeUniverse } from '@unrdf/kgc-4d';
 // Assuming hooks are available
 import { HookConditionSchema } from '@unrdf/hooks';
@@ -128,6 +127,7 @@ const pbxCommand = defineCommand({
   async run() {
     console.log('🏢 Provisioning Private Branch Exchange (Ephemeral Sidecar)...');
     try {
+      const { SemanticSidecarManager } = await import('@unrdf/daemon');
       const pbx = new SemanticSidecarManager({
         binPath: 'open-ontologies',
         watchdog: false

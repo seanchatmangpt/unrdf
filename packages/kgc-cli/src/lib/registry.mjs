@@ -110,7 +110,11 @@ export class Registry {
       }
     }
 
-    // Check for collisions in noun/verb space
+    // Check for collisions in noun/verb space. Ownership changes are staged and only
+    // committed once every verb passed, so a rejected extension leaves no orphan claims
+    // (which would otherwise cause spurious collisions for later extensions).
+    const stagedOwnership = new Map();
+    const stagedCollisions = [];
     for (const [noun, nounData] of Object.entries(ext.nouns)) {
       for (const verb of Object.keys(nounData.verbs)) {
         const key = `${noun}:${verb}`;
@@ -132,19 +136,26 @@ export class Registry {
               if (!this.collisions.has(key)) {
                 this.collisions.set(key, []);
               }
-              this.collisions.get(key).push({ ext, noun, verb });
+              stagedCollisions.push({ key, entry: { ext, noun, verb } });
               continue;
             }
           }
 
           // If override says new wins, update ownership
-          if (override.winner === ext.id) {
-            this.ownership.set(key, ext.id);
+          // (manifest overrides name the winner via `package`)
+          if ((override.winner ?? override.package) === ext.id) {
+            stagedOwnership.set(key, ext.id);
           }
         } else {
-          this.ownership.set(key, ext.id);
+          stagedOwnership.set(key, ext.id);
         }
       }
+    }
+
+    for (const [key, owner] of stagedOwnership) this.ownership.set(key, owner);
+    for (const { key, entry } of stagedCollisions) {
+      if (!this.collisions.has(key)) this.collisions.set(key, []);
+      this.collisions.get(key).push(entry);
     }
 
     // Store extension
