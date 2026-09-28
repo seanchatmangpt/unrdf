@@ -10,7 +10,8 @@
  * Run: node prototypes/02-materialized-views.mjs
  */
 
-import { createStore, namedNode, literal } from '@unrdf/core';
+import { namedNode, literal } from '@unrdf/core';
+import { createDemoStore as createStore } from './demo-store.mjs';
 import { createChangeFeed } from '../packages/streaming/src/streaming/change-feed.mjs';
 
 /**
@@ -170,7 +171,14 @@ class MaterializedSPARQLView {
    * Generate key for binding
    */
   bindingKey(binding) {
-    return JSON.stringify(binding, Object.keys(binding).sort());
+    // NOTE: a JSON.stringify replacer array whitelists keys at every depth, so
+    // passing only the top-level variable names dropped the nested term `value`
+    // and made every binding collide on the same key.
+    return JSON.stringify(
+      Object.keys(binding)
+        .sort()
+        .map(name => [name, binding[name]])
+    );
   }
 
   /**
@@ -213,6 +221,8 @@ async function demo() {
   const hasTeam = namedNode('http://example.org/hasTeam');
   const playerType = namedNode('http://example.org/Player');
   const rdfType = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+  // Numeric scores must be xsd:integer so ORDER BY DESC(?score) sorts numerically
+  const intLiteral = n => literal(String(n), namedNode('http://www.w3.org/2001/XMLSchema#integer'));
 
   console.log('1. Creating live leaderboard view...\n');
 
@@ -258,7 +268,7 @@ async function demo() {
 
   for (const p of players) {
     store.add(ex(p.name), rdfType, playerType);
-    store.add(ex(p.name), hasScore, literal(p.score.toString()));
+    store.add(ex(p.name), hasScore, intLiteral(p.score));
     store.add(ex(p.name), hasTeam, literal(p.team));
 
     await new Promise(r => setTimeout(r, 50)); // Small delay
@@ -277,8 +287,8 @@ async function demo() {
   console.log('3. Updating scores (incremental update)...\n');
 
   // Update Bob's score (should move up in leaderboard)
-  store.delete(ex('Bob'), hasScore, literal('850'));
-  store.add(ex('Bob'), hasScore, literal('1250'));
+  store.delete(ex('Bob'), hasScore, intLiteral(850));
+  store.add(ex('Bob'), hasScore, intLiteral(1250));
 
   await new Promise(r => setTimeout(r, 200));
 
@@ -314,7 +324,7 @@ async function demo() {
   console.log('5. Adding new player (both views update)...\n');
 
   store.add(ex('Frank'), rdfType, playerType);
-  store.add(ex('Frank'), hasScore, literal('900'));
+  store.add(ex('Frank'), hasScore, intLiteral(900));
   store.add(ex('Frank'), hasTeam, literal('Blue'));
 
   await new Promise(r => setTimeout(r, 200));

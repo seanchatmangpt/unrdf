@@ -11,7 +11,8 @@
  * Run: node prototypes/03-federated-inference.mjs
  */
 
-import { createStore, namedNode, literal } from '@unrdf/core';
+import { namedNode, literal } from '@unrdf/core';
+import { createDemoStore as createStore } from './demo-store.mjs';
 
 /**
  * Mock Federation Coordinator
