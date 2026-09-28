@@ -48,6 +48,8 @@ export const exportThesisSchema = {
  * SPARQL CONSTRUCT query schema
  */
 export const SparqlConstructQuerySchema = z.object({
+  /** Output file name when used by renderFromOntology */
+  name: z.string().min(1).optional(),
   query: z.string().min(1),
   prefixes: z.record(z.string(), z.string()).default({}),
   outputFormat: z.enum(['turtle', 'ntriples', 'jsonld', 'rdfxml']).default('turtle'),
@@ -73,11 +75,18 @@ export const OntologyRenderResultSchema = z.object({
   outputDir: z.string(),
   generatedDocs: z.array(z.object({
     path: z.string(),
-    type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+    type: z.enum(['tutorial', 'howto', 'reference', 'explanation', 'docs', 'construct-result']),
     sourceQuery: z.string().optional(),
+    classUri: z.string().optional(),
+    size: z.number().optional(),
   })).default([]),
-  errors: z.array(z.string()).default([]),
+  errors: z.array(z.union([z.string(), z.record(z.string(), z.unknown())])).default([]),
   warnings: z.array(z.string()).default([]),
+  stats: z.object({
+    totalDocs: z.number(),
+    totalErrors: z.number(),
+    totalClasses: z.number(),
+  }).optional(),
 }).strict();
 
 /**
@@ -85,8 +94,13 @@ export const OntologyRenderResultSchema = z.object({
  */
 export const DocTemplateSchema = z.object({
   type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+  name: z.string().optional(),
+  /** Inline template string, or path to a .md template file */
+  template: z.string().optional(),
   templatePath: z.string().optional(),
-  queryBinding: z.record(z.string(), z.string()),
+  /** Extra frontmatter key/values */
+  frontmatter: z.record(z.string(), z.unknown()).optional(),
+  queryBinding: z.record(z.string(), z.string()).optional(),
 }).strict();
 
 export default {

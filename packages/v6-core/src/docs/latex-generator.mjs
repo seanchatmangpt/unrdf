@@ -210,8 +210,7 @@ export async function initWasmLatexEngine(config = {}) {
 function generatePreamble(docs) {
   return '% UNRDF Thesis - Generated ' + docs.generatedAt + '\n' +
          '% Merkle Root: ' + docs.merkleRoot + '\n\n' +
-         '\\documentclass[12pt,a4paper]{report}\n\n' +
-         '% Packages\n' +
+         '% Packages (document class is declared in the main file)\n' +
          '\\usepackage[utf8]{inputenc}\n' +
          '\\usepackage[T1]{fontenc}\n' +
          '\\usepackage{lmodern}\n' +
@@ -263,7 +262,8 @@ function generateMainFile(docs, chapterFiles) {
     return '\\input{' + relative + '}';
   }).join('\n');
   
-  return '\\input{preamble.tex}\n\n' +
+  return '\\documentclass[12pt,a4paper]{report}\n\n' +
+         '\\input{preamble.tex}\n\n' +
          '\\begin{document}\n\n' +
          '% Title page\n' +
          '\\title{UNRDF Documentation\\\\\n' +

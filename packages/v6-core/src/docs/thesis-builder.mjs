@@ -13,7 +13,7 @@ import {
   OntologyRenderResultSchema,
   DocTemplateSchema
 } from './thesis-builder.schema.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import * as TemplateRenderer from './template-renderer.mjs';
 
 /**
@@ -147,6 +147,13 @@ export async function buildThesis(config) {
   };
 }
 
+const DEFAULT_PREFIXES = {
+  rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+  rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+  owl: 'http://www.w3.org/2002/07/owl#',
+  xsd: 'http://www.w3.org/2001/XMLSchema#'
+};
+
 /**
  * Execute SPARQL CONSTRUCT query
  * @param {Object} store - RDF store instance (OxigraphStore)
@@ -169,8 +176,14 @@ export async function executeSparqlConstruct(store, query, options = {}) {
   });
 
   try {
-    // Build full query with prefixes
-    const prefixLines = Object.entries(validated.prefixes)
+    // Build full query with prefixes; well-known namespaces are declared unless the caller
+    // or the query already declares them
+    const declared = { ...validated.prefixes };
+    for (const [prefix, uri] of Object.entries(DEFAULT_PREFIXES)) {
+      const inQuery = new RegExp(`PREFIX\\s+${prefix}\\s*:`, 'i').test(validated.query);
+      if (!(prefix in declared) && !inQuery) declared[prefix] = uri;
+    }
+    const prefixLines = Object.entries(declared)
       .map(([prefix, uri]) => `PREFIX ${prefix}: <${uri}>`)
       .join('\n');
 
@@ -203,7 +216,13 @@ export async function executeSparqlConstruct(store, query, options = {}) {
     };
 
     const mimeType = formatMap[validated.outputFormat] || 'text/turtle';
-    const serialized = resultStore.dump({ format: mimeType });
+    // Graph formats (turtle/ntriples/rdfxml) require naming the graph to serialize;
+    // CONSTRUCT output lives in the default graph.
+    const serialized = resultStore.dump(
+      mimeType === 'application/n-quads'
+        ? { format: mimeType }
+        : { format: mimeType, from_graph_name: dataFactory.defaultGraph() }
+    );
 
     return serialized;
   } catch (error) {
@@ -310,7 +329,8 @@ export async function generateDocFromClass(store, classUri, docType) {
 /**
  * Load ontology into RDF store
  * @param {string} ontologyPath - Path to ontology file (.ttl, .rdf, .owl, .nt)
- * @returns {Promise<Object>} RDF store with loaded ontology
+ * @returns {Promise<Object>} RDF store with loaded ontology, annotated with
+ *   `loaded`, `path`, `format` and `tripleCount`
  * @throws {Error} If file cannot be loaded or parsed
  * @example
  * const store = await loadOntology('./schema.ttl');
@@ -344,7 +364,13 @@ export async function loadOntology(ontologyPath) {
     const store = createStore();
     store.load(data, { format });
 
-    // Add query method wrapper for convenience
+    // Return the store itself (has .size/.query) annotated with load metadata
+    Object.defineProperties(store, {
+      loaded: { value: true, enumerable: true },
+      path: { value: ontologyPath, enumerable: true },
+      format: { value: format, enumerable: true },
+      tripleCount: { value: store.size, enumerable: true },
+    });
     return store;
   } catch (error) {
     throw new Error(`Failed to load ontology from ${ontologyPath}: ${error.message}`);
@@ -406,21 +432,26 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
       if (!classUri) continue;
 
       try {
-        // Determine doc type based on Diataxis structure
-        const docType = validated.generateDiataxis ? 'reference' : 'docs';
-        const doc = await generateDocFromClass(store, classUri, docType);
+        // Diataxis mode generates one document per quadrant; otherwise a single flat doc
+        const docTypes = validated.generateDiataxis
+          ? ['tutorial', 'howto', 'reference', 'explanation']
+          : ['docs'];
 
-        // Write markdown file
-        const docPath = join(outputDir, doc.path);
-        await mkdir(join(outputDir, docType), { recursive: true });
-        await writeFile(docPath, doc.content, 'utf-8');
+        for (const docType of docTypes) {
+          const doc = await generateDocFromClass(store, classUri, docType);
 
-        generatedDocs.push({
-          path: doc.path,
-          classUri,
-          type: docType,
-          size: doc.content.length
-        });
+          // Write markdown file
+          const docPath = join(outputDir, doc.path);
+          await mkdir(join(outputDir, docType), { recursive: true });
+          await writeFile(docPath, doc.content, 'utf-8');
+
+          generatedDocs.push({
+            path: doc.path,
+            classUri,
+            type: docType,
+            size: doc.content.length
+          });
+        }
       } catch (error) {
         errors.push({
           classUri,
@@ -535,14 +566,16 @@ export async function applyDocTemplate(template, rdfData) {
 
     // Add frontmatter if not already present
     if (!renderedContent.startsWith('---')) {
-      const frontmatter = `---
-type: ${validated.type}
-name: ${validated.name}
-generated: true
-timestamp: ${templateData.timestamp}
----
-
-`;
+      const fields = {
+        type: validated.type,
+        ...(templateData.name !== undefined ? { name: templateData.name } : {}),
+        generated: true,
+        timestamp: templateData.timestamp,
+        ...(validated.frontmatter || {})
+      };
+      const frontmatter = `---\n${Object.entries(fields)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')}\n---\n\n`;
       return frontmatter + renderedContent;
     }
 
@@ -568,11 +601,7 @@ function getDefaultTemplate(type) {
 {{description}}
 
 {{#properties}}
-### Properties
-
-{{#properties}}
 - **{{name}}**: {{description}}
-{{/properties}}
 {{/properties}}`,
 
     tutorial: `# {{name}}
