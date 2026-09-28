@@ -5,25 +5,28 @@
  */
 
 export { Daemon, Daemon as UnrdfDaemon } from './daemon.mjs';
-export { TriggerEvaluator } from './trigger-evaluator.mjs';
+export {
+  TriggerEvaluator,
+  evaluateTrigger,
+  shouldExecuteIdle,
+  calculateNextExecutionTime,
+  isValidTrigger,
+} from './trigger-evaluator.mjs';
 
 // MCP exports
 export { createMCPServer, startMCPServer } from './mcp/index.mjs';
 
 export {
-  TaskConfigSchema,
-  ScheduleConfigSchema,
-  TriggerEventSchema,
+  ApiKeySchema,
+  ApiKeyHashSchema,
+  AuthConfigSchema,
+  RetryPolicySchema,
+  TriggerSchema,
+  ScheduledOperationSchema,
   DaemonConfigSchema,
-  TaskResultSchema,
-  DaemonStateSchema,
-  DaemonEventSchema,
-  HookExecutionSchema,
-  RateLimitSchema,
-  TaskPrioritySchema,
-  validateDaemonConfig,
-  validateTaskConfigSafe,
-  validateTaskResult,
+  OperationReceiptSchema,
+  DaemonHealthSchema,
+  DaemonMetricsSchema,
 } from './schemas.mjs';
 
 export {
