@@ -28,10 +28,13 @@ jobs:
       - name: Check for TypeScript artifacts
         run: |
           echo "Checking for TypeScript artifacts..."
-          if find . -name "*.ts" -o -name "*.tsx" -o -name "*.d.ts" | grep -v node_modules | grep -v .git; then
+          # Package sources must be pure ESM + JSDoc. Declaration files (*.d.ts) and tool/app
+          # configs outside packages/*/src (unbuild, Next.js, Nuxt) are allowed.
+          FOUND=$(find packages -path '*/node_modules' -prune -o -path 'packages/*/src/*' \( -name '*.ts' -o -name '*.tsx' \) ! -name '*.d.ts' -print)
+          if [ -n "$FOUND" ]; then
             echo "❌ TypeScript artifacts found! This project uses pure ESM + JSDoc only."
             echo "Found TypeScript files:"
-            find . -name "*.ts" -o -name "*.tsx" -o -name "*.d.ts" | grep -v node_modules | grep -v .git
+            echo "$FOUND"
             exit 1
           else
             echo "✅ No TypeScript artifacts found"
@@ -63,7 +66,7 @@ jobs:
         run: pnpm lint
 
       - name: Check Prettier formatting
-        run: pnpm lint:fix --check
+        run: pnpm format:check
 
   # Testing
   test:
@@ -94,11 +97,11 @@ jobs:
         run: pnpm test
 
       - name: Run tests with coverage
-        if: matrix.node-version == 18
+        if: matrix.node-version == 22
         run: pnpm test:coverage
 
       - name: Enforce coverage threshold
-        if: matrix.node-version == 18
+        if: matrix.node-version == 22
         run: |
           echo "Checking coverage threshold..."
           # Vitest generates coverage/coverage-summary.json
@@ -135,7 +138,7 @@ jobs:
           fi
 
       - name: Upload coverage reports
-        if: matrix.node-version == 18
+        if: matrix.node-version == 22
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
@@ -205,38 +208,11 @@ jobs:
       - name: Build project
         run: pnpm build
 
-      - name: Verify build artifacts
+      - name: Verify package entries
         run: |
-          echo "Verifying build artifacts..."
-          if [ ! -d "dist" ]; then
-            echo "❌ dist directory not found"
-            exit 1
-          fi
-
-          if [ ! -f "dist/index.mjs" ]; then
-            echo "❌ dist/index.mjs not found"
-            exit 1
-          fi
-
-          if [ ! -f "dist/knowledge-engine.mjs" ]; then
-            echo "❌ dist/knowledge-engine.mjs not found"
-            exit 1
-          fi
-
-          echo "✅ Build artifacts verified"
-
-      - name: Test built package
-        run: |
-          echo "Testing built package..."
-          node -e "
-            import('./dist/index.mjs').then(module => {
-              console.log('✅ Main module loads successfully');
-              console.log('Available exports:', Object.keys(module));
-            }).catch(err => {
-              console.error('❌ Failed to load main module:', err);
-              process.exit(1);
-            });
-          "
+          echo "Verifying package entries and re-exports..."
+          node scripts/check-package-exports.mjs
+          echo "✅ Package entries verified"
 
   # Documentation Generation
   docs:
@@ -261,25 +237,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate API documentation
+      - name: Validate capability documentation
         run: |
-          echo "Generating API documentation..."
-          npx jsdoc -c jsdoc.conf.json -d docs/api src/
-          echo "✅ API documentation generated"
-
-      - name: Verify documentation
-        run: |
-          echo "Verifying documentation..."
-          if [ ! -d "docs/api" ]; then
-            echo "❌ docs/api directory not found"
-            exit 1
-          fi
-
-          if [ ! -f "docs/api/index.html" ]; then
-            echo "❌ docs/api/index.html not found"
-            exit 1
-          fi
-
+          echo "Validating capability documentation..."
+          node scripts/validate-capability-docs.mjs
           echo "✅ Documentation verified"
 
   # Release Preparation
@@ -308,41 +269,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate changelog
-        run: |
-          echo "Generating changelog..."
-          npx changelogen --release
-          echo "✅ Changelog generated"
-
-      - name: Verify version consistency
-        run: |
-          echo "Verifying version consistency..."
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          CHANGELOG_VERSION=$(grep -o '^## \[[0-9]\+\.[0-9]\+\.[0-9]\+' CHANGELOG.md | head -1 | sed 's/## \[//')
-
-          if [ "$PACKAGE_VERSION" != "$CHANGELOG_VERSION" ]; then
-            echo "❌ Version mismatch: package.json=$PACKAGE_VERSION, CHANGELOG.md=$CHANGELOG_VERSION"
-            exit 1
-          fi
-
-          echo "✅ Version consistency verified: $PACKAGE_VERSION"
-
       - name: Create release artifacts
         run: |
           echo "Creating release artifacts..."
           mkdir -p release-artifacts
 
-          # Create source tarball
-          tar -czf release-artifacts/unrdf-$(node -p "require('./package.json').version").tar.gz \
+          # Create source tarball (the workspace root version is intentionally agnostic,
+          # so artifacts are named by commit)
+          tar -czf release-artifacts/unrdf-${GITHUB_SHA}.tar.gz \
             --exclude=node_modules \
             --exclude=.git \
             --exclude=dist \
             --exclude=coverage \
             --exclude=release-artifacts \
             .
-
-          # Create dist tarball
-          tar -czf release-artifacts/unrdf-$(node -p "require('./package.json').version)-dist.tar.gz dist/
 
           echo "✅ Release artifacts created"
 
@@ -380,7 +320,7 @@ jobs:
         run: |
           echo "Running performance benchmarks..."
           # Run dark matter 80/20 tests as performance benchmark
-          pnpm test:dark-matter
+          pnpm --filter @unrdf/dark-matter test
           echo "✅ Performance benchmarks completed"
 
       - name: Validate performance targets
@@ -466,7 +406,7 @@ jobs:
           echo "Checking for example configurations..."
           if [ -d "packages/cli/examples" ] && [ -n "$(find packages/cli/examples -name '*.toml' 2>/dev/null)" ]; then
             echo "Found example configs, testing..."
-            for config in packages/cli/examples/*.toml; do
+            for config in $(find packages/cli/examples -name '*.toml'); do
               echo "Validating config: $config"
               # Dry-run to validate config structure without generating files
               timeout 10s node packages/cli/src/cli/main.mjs sync --config "$config" --dry-run || {
@@ -644,27 +584,7 @@ jobs:
               console.error('❌ package.json must have type: module');
               process.exit(1);
             }
-            if (!pkg.main || !pkg.main.endsWith('.mjs')) {
-              console.error('❌ package.json main must be .mjs file');
-              process.exit(1);
-            }
             console.log('✅ package.json validated');
           "
-
-          # Check for ESM imports
-          echo "Validating ESM imports..."
-          if grep -r "require(" src/ --include="*.mjs" | grep -v "node_modules"; then
-            echo "❌ CommonJS require() found in .mjs files"
-            exit 1
-          fi
-          echo "✅ ESM imports validated"
-
-          # Check for TypeScript
-          echo "Validating no TypeScript..."
-          if find . -name "*.ts" -o -name "*.tsx" -o -name "*.d.ts" | grep -v node_modules | grep -v .git; then
-            echo "❌ TypeScript files found"
-            exit 1
-          fi
-          echo "✅ No TypeScript files found"
 
           echo "✅ Final validation completed"

@@ -120,7 +120,7 @@ jobs:
         run: pnpm test:e2e || echo "⚠️ E2E tests skipped or failed"
 
       - name: Upload coverage
-        if: matrix.node-version == 18
+        if: matrix.node-version == 22
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
