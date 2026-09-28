@@ -2,8 +2,8 @@
  * @fileoverview Data management API for hooks runtime
  */
 
-import { dataStore } from './_shared.mjs'
-import { requireAuth } from '../../_auth.mjs'
+import { dataStore } from '../../../lib/data-state.mjs'
+import { requireAuth } from '../../../lib/auth.mjs'
 
 /**
  * GET /api/data - List all data sources

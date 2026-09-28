@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import http from 'node:http'
 
+const BASE_URL = `http://localhost:${process.env.PORT || 3000}`
+
 // Simple HTTP helper
 async function request(path, opts = {}) {
-  const res = await fetch(`http://localhost:3000${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, {
     ...opts,
     headers: { 'content-type': 'application/json', ...(opts.headers || {}) }
   })
@@ -13,7 +15,8 @@ async function request(path, opts = {}) {
 
 describe('Nitro API', () => {
   /**
-   * Assumes `pnpm server` runs Nitro on :3000 in another process during tests.
+   * The vitest globalSetup (test/setup.mjs) starts Nitro on PORT (default 3000)
+   * unless a server is already answering there.
    * 80/20: we only verify happy-path endpoints.
    */
 

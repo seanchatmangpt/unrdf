@@ -7,7 +7,9 @@ export default defineConfig({
     testTimeout: 30000,
 
     // Test patterns
-    include: ['**/integration.test.mjs', '**/integration-*.test.mjs'],
+    // api.test.mjs is the HTTP integration suite (integration.test.mjs, referenced by
+    // test/README.md, is not in the repository)
+    include: ['**/integration.test.mjs', '**/integration-*.test.mjs', '**/api.test.mjs'],
     exclude: ['**/node_modules/**', '**/dist/**'],
 
     // Global setup and teardown

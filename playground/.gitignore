@@ -46,3 +46,11 @@ temp/
 !templates/.gitkeep
 !ontologies/.gitkeep
 !output/.gitkeep
+
+# Generated test reports and Nitro build output
+test-results.json
+test-results.html
+html.meta.json.gz
+assets/
+.nitro/
+.output/

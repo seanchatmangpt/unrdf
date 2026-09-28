@@ -2,19 +2,18 @@
  * @fileoverview Hook evaluation API endpoint
  */
 
-import { evaluateHook } from '../../../../src/hooks.mjs'
-import { initStore } from '../../../../src/context/index.mjs'
-import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
+import { evaluateHook } from '../../../../lib/hooks.mjs'
+import { createTurtleStore } from '../../../../lib/store.mjs'
 
 /**
  * POST /api/hooks/[id]/evaluate - Evaluate a hook
  */
 export default defineEventHandler(async (event) => {
-  const { requireAuth } = await import('../../_auth.mjs')
+  const { requireAuth } = await import('../../../../lib/auth.mjs')
   requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  const { hookRegistry, hookResults } = await import('../_shared.mjs')
+  const { hookRegistry, hookResults } = await import('../../../../lib/hooks-state.mjs')
   
   if (!hookRegistry.has(id)) {
     throw createError({
@@ -27,18 +26,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const hook = hookRegistry.get(id)
     
-    // Initialize store with composable architecture
-    const runApp = initStore()
-    
-    const result = await runApp(async () => {
-      const turtle = await useTurtle()
-      
-      // Load data if provided
-      if (body.data) {
-        await turtle.parse(body.data)
-      } else {
-        // Use default sample data
-        const sampleData = `
+    const data = body?.data || `
 @prefix ex: <http://example.org/> .
 
 ex:service1 a ex:Service ;
@@ -51,20 +39,18 @@ ex:service2 a ex:Service ;
   ex:latency 300 ;
   ex:requests 2000 .
 `
-        await turtle.parse(sampleData)
-      }
-      
-      // Evaluate hook
-      const receipt = await evaluateHook(hook)
-      
-      // Store result
-      const results = hookResults.get(id) || []
-      results.push(receipt)
-      hookResults.set(id, results)
-      
-      return receipt
-    })
-    
+    const store = createTurtleStore(data)
+
+    // Evaluate hook
+    const result = await evaluateHook(hook, store)
+
+    // Store result
+    const results = hookResults.get(id) || []
+    results.push(result)
+    // Bounded history: keep the most recent 100 evaluations per hook
+    if (results.length > 100) results.shift()
+    hookResults.set(id, results)
+
     return {
       success: true,
       result,
