@@ -24,8 +24,11 @@ export class VariableExtractor {
     const filters = new Set();
     const functions = new Set();
 
+    // Names bound inside the template ({% for x %} / {% set x %}) are not inputs
+    const bindings = this.findBindings(content);
+
     // Extract {{ variable }} patterns
-    this.extractOutputVariables(content, variables, filters);
+    this.extractOutputVariables(content, variables, filters, bindings);
     
     // Extract {% for variable in ... %} patterns
     this.extractLoopVariables(content, variables);
@@ -53,15 +56,53 @@ export class VariableExtractor {
   /**
    * Extract variables from output expressions {{ ... }}
    */
-  extractOutputVariables(content, variables, filters) {
+  extractOutputVariables(content, variables, filters, bindings = []) {
     // Match {{ variable | filter1 | filter2 }} patterns
-    const outputPattern = /\{\{\s*([^}]+?)\s*\}\}/g;
+    const outputPattern = /\{\{-?\s*([^}]+?)\s*-?\}\}/g;
     let match;
 
     while ((match = outputPattern.exec(content)) !== null) {
       const expression = match[1].trim();
-      this.parseExpression(expression, variables, filters);
+      const found = new Set();
+      this.parseExpression(expression, found, filters);
+      for (const name of found) {
+        const bound = bindings.some(b => b.name === name && match.index >= b.start && match.index < b.end);
+        if (!bound) variables.add(name);
+      }
     }
+  }
+
+  /**
+   * Find where {% for x in ... %} and {% set x = ... %} bind names.
+   * A loop variable is in scope for the loop body; a set variable from its tag
+   * to the end of the template.
+   * @returns {Array<{name: string, start: number, end: number}>}
+   */
+  findBindings(content) {
+    const bindings = [];
+    const stack = [];
+    const tagPattern = /\{\%-?\s*(if|for|endif|endfor|set)\b([^%]*?)-?\%\}/g;
+    let m;
+    while ((m = tagPattern.exec(content)) !== null) {
+      const [tag, keyword, rest] = m;
+      const tagEnd = m.index + tag.length;
+      if (keyword === 'set') {
+        const target = rest.trim().match(/^(\w+)\s*=/);
+        if (target) bindings.push({ name: target[1], start: tagEnd, end: content.length });
+      } else if (keyword === 'for') {
+        const header = rest.trim().match(/^(\w+)(?:\s*,\s*(\w+))?\s+in\b/);
+        stack.push({ kind: 'for', names: header ? [header[1], header[2]].filter(Boolean) : [], start: tagEnd });
+      } else if (keyword === 'if') {
+        stack.push({ kind: 'if', names: [], start: tagEnd });
+      } else {
+        const top = stack[stack.length - 1];
+        if (top && top.kind === (keyword === 'endif' ? 'if' : 'for')) {
+          stack.pop();
+          for (const name of top.names) bindings.push({ name, start: top.start, end: m.index });
+        }
+      }
+    }
+    return bindings;
   }
 
   /**

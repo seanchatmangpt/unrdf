@@ -240,13 +240,25 @@ export class KGenTemplateEngine {
   async renderTemplate(template, context = {}) {
     // Use a simplified pipeline without post-processing for simple rendering
     const plan = await this.plan(template, context);
-    if (!plan.success) return '';
+    if (!plan.success) return this.failSimpleRender(plan);
 
     const renderResult = await this.render(plan, context);
-    if (!renderResult.success) return '';
+    if (!renderResult.success) return this.failSimpleRender(renderResult);
 
     // Return content without post-processing to avoid final newlines
     return renderResult.content || '';
+  }
+
+  /**
+   * Failure path of renderTemplate(): strict mode surfaces the error instead of
+   * silently producing empty output.
+   * @private
+   */
+  failSimpleRender(result) {
+    if (this.options.strictMode) {
+      throw new Error(result.error || `Template ${result.phase || 'render'} failed`);
+    }
+    return '';
   }
 
   /**
