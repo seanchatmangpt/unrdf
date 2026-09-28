@@ -1,2 +1,9 @@
-import { createVitestConfig } from '../../vitest.config.base.mjs';
-export default createVitestConfig();
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    include: ['test/**/*.test.mjs'],
+    exclude: ['node_modules/**', 'dist/**'],
+    environment: 'node',
+  },
+});
