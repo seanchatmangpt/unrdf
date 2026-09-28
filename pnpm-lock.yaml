@@ -734,6 +734,9 @@ importers:
       '@unrdf/caching':
         specifier: workspace:*
         version: link:../caching
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
       '@unrdf/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -746,6 +749,9 @@ importers:
       graphql:
         specifier: ^16.8.1
         version: 16.13.2
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       zod:
         specifier: ^4.1.13
         version: 4.4.3

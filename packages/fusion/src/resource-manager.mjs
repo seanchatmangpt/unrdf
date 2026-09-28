@@ -11,7 +11,7 @@
  *
  * @example
  * import { createResourceManager } from '@unrdf/fusion/resource-manager';
- * import { generateReceipt } from '@unrdf/yawl/receipt-core';
+ * import { generateReceipt } from './resource-receipt.mjs';
  *
  * const rm = await createResourceManager();
  * const pool = rm.createPool('compute', 100, 'round-robin');
@@ -20,7 +20,7 @@
  */
 
 import { z } from 'zod';
-import { generateReceipt, RECEIPT_EVENT_TYPES } from '@unrdf/yawl/receipt';
+import { generateReceipt, RECEIPT_EVENT_TYPES } from './resource-receipt.mjs';
 
 // =============================================================================
 // SCHEMAS & TYPES
