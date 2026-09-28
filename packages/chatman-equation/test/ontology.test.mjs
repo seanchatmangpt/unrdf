@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { Parser, Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { Parser, N3Store as Store } from '@unrdf/core/rdf/n3-justified-only';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

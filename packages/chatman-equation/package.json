@@ -33,7 +33,7 @@
     "@unrdf/kgn": "workspace:*",
     "@unrdf/core": "workspace:*",
     "@iarna/toml": "^2.2.5",
-    "zod": "^3.25.76",
+    "zod": "^4.1.13",
     "glob": "^10.3.10"
   },
   "devDependencies": {

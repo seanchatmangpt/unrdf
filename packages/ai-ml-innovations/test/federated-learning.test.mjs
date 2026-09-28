@@ -188,7 +188,7 @@ describe('Federated Learning', () => {
 
     it('should add Gaussian noise', () => {
       const gradients = {
-        'entity_A': [0, 0, 0, 0, 0],
+        'entity_A': new Array(2000).fill(0),
       };
 
       const noised = mechanism.addNoise(gradients);
@@ -201,7 +201,12 @@ describe('Federated Learning', () => {
       const mean =
         noised['entity_A'].reduce((sum, val) => sum + val, 0) /
         noised['entity_A'].length;
-      expect(Math.abs(mean)).toBeLessThan(1.0); // Loose bound
+      const n = noised['entity_A'].length;
+      const std = Math.sqrt(
+        noised['entity_A'].reduce((sum, val) => sum + (val - mean) ** 2, 0) / n
+      );
+      // Sample mean of zero-mean noise: |mean| < 5 standard errors (scale-free, not flaky)
+      expect(Math.abs(mean)).toBeLessThan((5 * std) / Math.sqrt(n));
     });
 
     it('should privatize gradients (clip + noise)', () => {
@@ -269,10 +274,10 @@ describe('Federated Learning', () => {
     });
 
     it('should throw when budget exhausted', () => {
-      // Use high noise (low privacy cost) for first rounds
+      // Use high noise (~0.097ε per round under basic composition) for first rounds
       for (let i = 0; i < 5; i++) {
         tracker.accountRound({
-          noiseMultiplier: 0.5,
+          noiseMultiplier: 50,
           samplingRate: 1.0,
           steps: 1,
         });
@@ -324,7 +329,7 @@ describe('Federated Learning', () => {
       expect(tracker.canContinue(0.1)).toBe(true);
 
       tracker.accountRound({
-        noiseMultiplier: 0.5,
+        noiseMultiplier: 50, // ~0.097ε
         samplingRate: 1.0,
         steps: 1,
       });
@@ -655,7 +660,7 @@ describe('Federated Learning', () => {
       const rounds = 10;
       for (let i = 0; i < rounds; i++) {
         tracker.accountRound({
-          noiseMultiplier: 2.0, // High noise for low privacy cost
+          noiseMultiplier: 5.0, // 10 rounds x ~0.097ε = ~0.97ε <= 1ε
           samplingRate: 0.1,
           steps: 1,
         });

@@ -56,7 +56,11 @@ export class PrivacyBudgetTracker {
 
     // RDP orders for moments accountant
     this.rdpOrders = (this.composition === 'rdp' || this.composition === 'moments')
-      ? Array.from({ length: 99 }, (_, i) => 1 + (i + 1) / 10)
+      ? [
+          ...Array.from({ length: 99 }, (_, i) => 1 + (i + 1) / 10),
+          // High orders keep the log(1/δ)/(α-1) conversion term small
+          ...[12, 14, 16, 20, 24, 32, 48, 64, 128, 256],
+        ]
       : [];
     this.rdpEpsilons = new Array(this.rdpOrders.length).fill(0);
   }
@@ -126,7 +130,14 @@ export class PrivacyBudgetTracker {
   accountRound(params) {
     const cost = this.computeRoundCost(params);
 
-    this.spent += cost.epsilon;
+    if (this.composition === 'moments' || this.composition === 'rdp') {
+      // RDP accumulates across rounds: commit it and take the cumulative ε
+      // (adding the cumulative ε on every round would double count).
+      this._commitRDP(params.noiseMultiplier, params.samplingRate, params.steps ?? 1);
+      this.spent = this._rdpToDP(this.rdpEpsilons, this.rdpOrders, this.delta);
+    } else {
+      this.spent += cost.epsilon;
+    }
     this.rounds++;
 
     this.history.push({
@@ -215,20 +226,25 @@ export class PrivacyBudgetTracker {
    * @private
    */
   _momentsAccountant(sigma, q, steps) {
-    // Simplified moments accountant
-    // In practice, use precomputed RDP tables or autodp library
+    // Simplified moments accountant (pure: state is only changed by accountRound)
+    const after = this.rdpEpsilons.map(
+      (e, i) => e + this._computeRDP(this.rdpOrders[i], sigma, q) * steps
+    );
+    const before = this._rdpToDP(this.rdpEpsilons, this.rdpOrders, this.delta);
+    const total = this._rdpToDP(after, this.rdpOrders, this.delta);
 
-    // Compute RDP at different orders
+    // Marginal cost of this round
+    return { epsilon: Math.max(0, total - before), delta: this.delta };
+  }
+
+  /**
+   * Add a round's RDP cost to the accumulated per-order totals
+   * @private
+   */
+  _commitRDP(sigma, q, steps) {
     for (let i = 0; i < this.rdpOrders.length; i++) {
-      const alpha = this.rdpOrders[i];
-      const rdp = this._computeRDP(alpha, sigma, q);
-      this.rdpEpsilons[i] += rdp * steps;
+      this.rdpEpsilons[i] += this._computeRDP(this.rdpOrders[i], sigma, q) * steps;
     }
-
-    // Convert RDP to (ε, δ)-DP
-    const epsilon = this._rdpToDP(this.rdpEpsilons, this.rdpOrders, this.delta);
-
-    return { epsilon, delta: this.delta };
   }
 
   /**

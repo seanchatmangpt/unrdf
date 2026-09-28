@@ -141,6 +141,19 @@ export class FederatedEmbeddingTrainer {
             selected_nodes: selectedNodes.length,
           });
 
+          // Enforce the privacy budget BEFORE spending it: never run a round
+          // whose cost would push cumulative epsilon past the budget.
+          if (
+            this.config.enableDifferentialPrivacy &&
+            this.privacySpent + this._computePrivacyCost(selectedNodes.length) >
+              this.config.privacyBudget
+          ) {
+            console.warn(
+              `Privacy budget exhausted: ${this.privacySpent.toFixed(3)}ε spent of ${this.config.privacyBudget}ε, stopping before epoch ${epoch}`
+            );
+            break;
+          }
+
           // Parallel local training on each node
           const nodeUpdates = await Promise.all(
             selectedNodes.map(async (node) => {
@@ -202,11 +215,6 @@ export class FederatedEmbeddingTrainer {
             span.addEvent('Convergence achieved', { epoch });
           }
 
-          // Privacy budget check
-          if (this.config.enableDifferentialPrivacy && this.privacySpent > this.config.privacyBudget) {
-            console.warn(`Privacy budget exhausted: ${this.privacySpent.toFixed(3)}ε > ${this.config.privacyBudget}ε`);
-            break;
-          }
         }
 
         this.stats.rounds = epochs;

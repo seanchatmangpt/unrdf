@@ -7,8 +7,8 @@
  */
 
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { streamingParse, streamingWrite } from '@unrdf/core/rdf/n3-justified-only.mjs';
-import { KGenSHACLTemplates } from '../../../kgn/src/base/shacl-templates.js';
+import { streamingParse, streamingWrite } from '@unrdf/core/rdf/n3-justified-only';
+import { KGenSHACLTemplates } from '../../kgn/src/base/shacl-templates.js';
 
 const tests = [];
 const results = { passed: 0, failed: 0, errors: [] };

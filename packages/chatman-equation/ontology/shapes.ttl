@@ -10,6 +10,8 @@
 @prefix chatman: <urn:chatman:> .
 @prefix ce: <urn:chatman:equation:> .
 @prefix shapes: <urn:chatman:shapes:> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix lineage: <urn:chatman:lineage:> .
 
 # =============================================================================
 # ARTIFACT SHAPES
