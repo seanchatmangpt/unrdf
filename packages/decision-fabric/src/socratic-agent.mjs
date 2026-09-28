@@ -77,8 +77,8 @@ export class SocraticAgent {
    */
   _initializePatterns() {
     return {
-      // Causal assumptions: "X will solve Y"
-      causal: /(.+?)\s+will\s+solve\s+(.+)/i,
+      // Causal assumptions: "X will solve Y", "X will increase Y", ...
+      causal: /(.+?)\s+will\s+(?:solve|fix|eliminate|prevent|increase|decrease|reduce|improve|boost|drive|raise|lower)\s+(.+)/i,
 
       // Need assumptions: "We need to X"
       need: /we\s+need\s+to\s+(.+)/i,
@@ -87,7 +87,7 @@ export class SocraticAgent {
       optimize: /optimize\s+(.+)/i,
 
       // Absolute claims: "Always", "Never", "All", "None"
-      absolute: /(always|never|all|none|every|no)\s+(.+)/i,
+      absolute: /\b(always|never|all|none|every|no)\s+(.+)/i,
 
       // Implicit causality: "If X then Y"
       conditional: /if\s+(.+?)\s+then\s+(.+)/i

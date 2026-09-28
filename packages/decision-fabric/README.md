@@ -67,7 +67,7 @@ const recommendation = analyzer.generateRecommendation();
 
 console.log({
   methodology: recommendation.methodology, // 'Big Bang 80/20' or 'Iterative'
-  pareto_features: recommendation.pareto_frontier.count,
+  core_features: recommendation.core_set.count,
   value_captured: recommendation.value_analysis.percentage + '%',
   cost_savings: recommendation.cost_analysis.savings
 });
@@ -272,10 +272,11 @@ console.log(recommendation);
 // Output:
 // {
 //   methodology: 'Big Bang 80/20',
-//   specification_entropy: 2.85,
-//   pareto_frontier: { count: 5, percentage_of_total: 62.5 },
-//   value_analysis: { percentage: 75.7, meets_8020: true },
-//   recommendation: 'Implement 5 Pareto-optimal features...'
+//   specification_entropy: 2.92,
+//   pareto_frontier: { count: 1, percentage_of_total: 12.5 },  // non-dominated in (value, cost)
+//   core_set: { count: 5, percentage_of_total: 62.5 },        // top-value features covering 75% of value
+//   value_analysis: { percentage: 75.7, meets_8020: false },  // 5 of 8 features is not a 20/80 split
+//   recommendation: 'Implement 5 core features...'
 // }
 ```
 
