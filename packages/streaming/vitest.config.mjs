@@ -8,5 +8,6 @@ export default defineConfig({
     exclude: ['node_modules/**', 'dist/**', 'test/checkpointed-pipeline.node.test.mjs', 'test/shacl-core.node.test.mjs'], // node:test suites, run via node --test
     globals: false,
     isolate: true,
+    execArgv: ['--expose-gc'],
   },
 });

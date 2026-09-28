@@ -580,7 +580,33 @@ describe('Federated Learning', () => {
         convergenceThreshold: 0.01,
       });
 
+      // Must actually converge (null means the loss never settled), and within target rounds
+      expect(result.stats.convergenceRound).not.toBeNull();
       expect(result.stats.convergenceRound).toBeLessThanOrEqual(50);
+
+      // Validation loss is a real, decreasing training signal (not sampling noise)
+      const losses = result.trainingHistory.map(h => h.loss);
+      expect(losses.at(-1)).toBeLessThan(losses[0]);
+    });
+
+    it('should be reproducible when a seed is provided', async () => {
+      const makeNodes = () =>
+        Array.from({ length: 3 }, (_, i) => ({
+          id: `node-${i}`,
+          graph: [{ subject: 'A', predicate: 'knows', object: 'B' }],
+        }));
+      const run = async () => {
+        const trainer = new FederatedEmbeddingTrainer({
+          nodes: makeNodes(),
+          embeddingDim: 32,
+          enableDifferentialPrivacy: true,
+          seed: 42,
+        });
+        const result = await trainer.trainFederated({ epochs: 3, localEpochs: 2 });
+        return { entities: result.model.entityEmbeddings, losses: result.trainingHistory.map(h => h.loss) };
+      };
+
+      expect(await run()).toEqual(await run());
     });
 
     it('should produce embeddings for all entities and relations', async () => {
