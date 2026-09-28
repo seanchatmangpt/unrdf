@@ -374,20 +374,21 @@ ex:{{ ruleName }}Rule
     // Simple template substitution for SHACL
     let shapeContent = template.template;
     
-    // Add standard prefixes if not present
-    if (!shapeContent.includes('@prefix sh:')) {
-      const prefixes = [
-        '@prefix sh: <http://www.w3.org/ns/shacl#> .',
-        `@prefix kgen: <${this.options.namespace}> .`,
-        `@prefix ex: <${this.options.baseIRI}> .`,
-        '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
-        '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
-        ''
-      ].join('\n');
-      
-      shapeContent = prefixes + shapeContent;
+    // Add any standard prefixes the template does not declare itself
+    const standardPrefixes = [
+      ['sh', 'http://www.w3.org/ns/shacl#'],
+      ['kgen', this.options.namespace],
+      ['ex', this.options.baseIRI],
+      ['xsd', 'http://www.w3.org/2001/XMLSchema#'],
+      ['rdfs', 'http://www.w3.org/2000/01/rdf-schema#']
+    ];
+    const missing = standardPrefixes
+      .filter(([prefix]) => !new RegExp(`@prefix\\s+${prefix}:`).test(shapeContent))
+      .map(([prefix, iri]) => `@prefix ${prefix}: <${iri}> .`);
+    if (missing.length > 0) {
+      shapeContent = missing.join('\n') + '\n' + shapeContent;
     }
-    
+
     // Replace template variables
     for (const [key, value] of Object.entries(context)) {
       const regex = new RegExp(`{{\\s*${key}\\s*(?:\\|[^}]*)?\\s*}}`, 'g');
@@ -419,59 +420,113 @@ ex:{{ ruleName }}Rule
   }
 
   /**
-   * Process template logic (loops and conditions)
+   * Process template logic (loops and conditions).
+   *
+   * Parses `{% for x in expr %}`, `{% if expr %}`, `{% else %}` and the matching
+   * end tags into a tree (so blocks nest correctly and inner blocks see the loop
+   * variable), honouring Jinja/Nunjucks `-%}` / `{%-` whitespace control.
+   * `expr` may be a dotted path with an optional `| default(...)` filter.
    */
   processTemplateLogic(content, context) {
-    let result = content;
-    
-    // Process {% for %} loops
-    const forLoopRegex = /{%\s*for\s+(\w+)\s+in\s+([\w.\[\]|()]+)\s*%}([\s\S]*?){%\s*endfor\s*%}/g;
-    
-    result = result.replace(forLoopRegex, (match, itemVar, listExpr, loopContent) => {
-      const listValue = this.evaluateExpression(listExpr, context);
-      if (!Array.isArray(listValue)) {
-        return '';
+    const tagRegex = /{%(-?)\s*([\s\S]*?)\s*(-?)%}/g;
+    const root = { type: 'root', children: [] };
+    root.target = root.children;
+    const stack = [root];
+    let last = 0;
+    let trimNext = false;
+    const pushText = (text) => {
+      if (trimNext) text = text.replace(/^\s+/, '');
+      trimNext = false;
+      if (text) stack[stack.length - 1].target.push({ type: 'text', text });
+    };
+
+    let m;
+    while ((m = tagRegex.exec(content)) !== null) {
+      let text = content.slice(last, m.index);
+      if (m[1] === '-') text = text.replace(/\s+$/, '');
+      pushText(text);
+      last = tagRegex.lastIndex;
+      trimNext = m[3] === '-';
+
+      const body = m[2];
+      const top = stack[stack.length - 1];
+      let mm;
+      if ((mm = body.match(/^for\s+(\w+)\s+in\s+([\s\S]+)$/))) {
+        const node = { type: 'for', itemVar: mm[1], expr: mm[2], children: [] };
+        node.target = node.children;
+        top.target.push(node);
+        stack.push(node);
+      } else if ((mm = body.match(/^if\s+([\s\S]+)$/))) {
+        const node = { type: 'if', expr: mm[1], children: [], elseChildren: [] };
+        node.target = node.children;
+        top.target.push(node);
+        stack.push(node);
+      } else if (body === 'else' && top.type === 'if') {
+        top.target = top.elseChildren;
+      } else if ((body === 'endfor' && top.type === 'for') || (body === 'endif' && top.type === 'if')) {
+        stack.pop();
+      } else {
+        throw new Error(`SHACL template: unexpected or unbalanced tag '{% ${body} %}'`);
       }
-      
-      return listValue.map((item, index) => {
-        const loopContext = {
-          ...context,
-          [itemVar]: item,
-          loop: {
-            index: index,
-            first: index === 0,
-            last: index === listValue.length - 1
-          }
-        };
-        
-        return this.interpolateWithContext(loopContent, loopContext);
-      }).join('');
-    });
-    
-    // Process {% if %} conditions
-    const ifRegex = /{%\s*if\s+([\w.\[\]|()\s!]+)\s*%}([\s\S]*?)(?:{%\s*else\s*%}([\s\S]*?))?{%\s*endif\s*%}/g;
-    
-    result = result.replace(ifRegex, (match, condition, ifContent, elseContent) => {
-      const conditionValue = this.evaluateExpression(condition, context);
-      return conditionValue ? ifContent : (elseContent || '');
-    });
-    
-    return result;
+    }
+    pushText(content.slice(last));
+    if (stack.length !== 1) {
+      throw new Error('SHACL template: unclosed block tag');
+    }
+
+    const render = (nodes, ctx) => {
+      let out = '';
+      for (const node of nodes) {
+        if (node.type === 'text') {
+          out += this.interpolateWithContext(node.text, ctx);
+        } else if (node.type === 'for') {
+          const list = this.evaluateExpression(node.expr, ctx);
+          if (!Array.isArray(list)) continue;
+          list.forEach((item, index) => {
+            out += render(node.children, {
+              ...ctx,
+              [node.itemVar]: item,
+              loop: { index, first: index === 0, last: index === list.length - 1 }
+            });
+          });
+        } else if (node.type === 'if') {
+          out += render(this.evaluateExpression(node.expr, ctx) ? node.children : node.elseChildren, ctx);
+        }
+      }
+      return out;
+    };
+
+    return render(root.children, context);
   }
 
   /**
-   * Evaluate simple expressions
+   * Evaluate a simple expression: dotted path, optionally `!path`, optionally
+   * followed by `| default(<literal>)` where literal is '..', "..", [] or {}.
    */
   evaluateExpression(expr, context) {
-    // Handle default expressions
-    const defaultMatch = expr.match(/(\w+)\s*\|\s*default\('([^']*)'\)/);
+    let text = expr.trim();
+    let fallback;
+    let hasFallback = false;
+    const defaultMatch = text.match(/^([\s\S]*?)\s*\|\s*default\(\s*('([^']*)'|"([^"]*)"|\[\s*\]|\{\s*\}|[\w.-]+)?\s*\)\s*$/);
     if (defaultMatch) {
-      const value = this.getNestedValue(context, defaultMatch[1]);
-      return value !== undefined ? value : defaultMatch[2];
+      text = defaultMatch[1];
+      hasFallback = true;
+      const lit = defaultMatch[2];
+      if (lit === undefined) fallback = '';
+      else if (defaultMatch[3] !== undefined) fallback = defaultMatch[3];
+      else if (defaultMatch[4] !== undefined) fallback = defaultMatch[4];
+      else if (lit.startsWith('[')) fallback = [];
+      else if (lit.startsWith('{')) fallback = {};
+      else fallback = this.getNestedValue(context, lit);
     }
-    
-    // Handle simple property access
-    return this.getNestedValue(context, expr.trim());
+    let negate = false;
+    if (text.startsWith('!')) {
+      negate = true;
+      text = text.slice(1).trim();
+    }
+    let value = this.getNestedValue(context, text);
+    if (hasFallback && (value === undefined || value === null)) value = fallback;
+    return negate ? !value : value;
   }
 
   /**
@@ -487,22 +542,10 @@ ex:{{ ruleName }}Rule
    * Interpolate template with context
    */
   interpolateWithContext(template, context) {
-    let result = template;
-    
-    for (const [key, value] of Object.entries(context)) {
-      if (typeof value === 'object' && value !== null) {
-        // Handle nested objects
-        for (const [nestedKey, nestedValue] of Object.entries(value)) {
-          const regex = new RegExp(`{{\\s*${key}\\.${nestedKey}\\s*}}`, 'g');
-          result = result.replace(regex, String(nestedValue));
-        }
-      } else {
-        const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-        result = result.replace(regex, String(value || ''));
-      }
-    }
-    
-    return result;
+    return template.replace(/{{\s*([^{}]+?)\s*}}/g, (match, expr) => {
+      const value = this.evaluateExpression(expr, context);
+      return value === undefined || value === null ? '' : String(value);
+    });
   }
 
   /**
