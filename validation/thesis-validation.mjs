@@ -13,6 +13,9 @@
  */
 
 import { execSync } from 'node:child_process';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -42,7 +45,7 @@ const results = {
  */
 function exec(command) {
   try {
-    return execSync(command, { encoding: 'utf8', cwd: '/home/user/unrdf' });
+    return execSync(command, { encoding: 'utf8', cwd: `${REPO_ROOT}` });
   } catch (error) {
     return error.stdout || error.stderr || '';
   }
@@ -97,8 +100,8 @@ console.log(`${c.magenta}══════════════════�
 
 console.log(`\n${c.blue}[1/11]${c.reset} Validating KGC-4D LOC count...`);
 
-const kgc4dLOC = countLOC('find /home/user/unrdf/packages/kgc-4d/src -name "*.mjs" -exec wc -l {} + 2>/dev/null | tail -1');
-const kgc4dFiles = exec('find /home/user/unrdf/packages/kgc-4d/src -name "*.mjs" 2>/dev/null | wc -l').trim();
+const kgc4dLOC = countLOC(`find ${REPO_ROOT}/packages/kgc-4d/src -name "*.mjs" -exec wc -l {} + 2>/dev/null | tail -1`);
+const kgc4dFiles = exec(`find ${REPO_ROOT}/packages/kgc-4d/src -name "*.mjs" 2>/dev/null | wc -l`).trim();
 
 const expectedKGC4D = 5465;
 const tolerance = 100; // Allow 100 LOC variance for minor changes
@@ -116,7 +119,7 @@ if (Math.abs(kgc4dLOC - expectedKGC4D) <= tolerance) {
 // ============================================================================
 console.log(`\n${c.blue}[2/11]${c.reset} Validating total codebase LOC...`);
 
-const totalLOC = countLOC('find /home/user/unrdf -name "*.mjs" -o -name "*.js" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1');
+const totalLOC = countLOC(`find ${REPO_ROOT} -name "*.mjs" -o -name "*.js" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1`);
 const expectedTotal = 269806;
 const totalTolerance = 5000; // Allow larger variance for total
 
@@ -133,8 +136,8 @@ if (Math.abs(totalLOC - expectedTotal) <= totalTolerance) {
 // ============================================================================
 console.log(`\n${c.blue}[3/11]${c.reset} Validating YAWL LOC count...`);
 
-const yawlTotalLOC = countLOC('find /home/user/unrdf/packages/yawl -name "*.mjs" -o -name "*.js" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1');
-const yawlSrcLOC = countLOC('find /home/user/unrdf/packages/yawl/src -name "*.mjs" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1');
+const yawlTotalLOC = countLOC(`find ${REPO_ROOT}/packages/yawl -name "*.mjs" -o -name "*.js" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1`);
+const yawlSrcLOC = countLOC(`find ${REPO_ROOT}/packages/yawl/src -name "*.mjs" 2>/dev/null | xargs wc -l 2>/dev/null | tail -1`);
 
 const expectedYawlTotal = 26449;
 const expectedYawlSrc = 19618;
@@ -156,9 +159,9 @@ if (yawlTotalMatch && yawlSrcMatch) {
 // ============================================================================
 console.log(`\n${c.blue}[4/11]${c.reset} Validating microframeworks...`);
 
-const microFwOutput = exec('find /home/user/unrdf -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) -exec wc -l {} + 2>/dev/null');
-const microFwFiles = exec('find /home/user/unrdf -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) 2>/dev/null | wc -l').trim();
-const microFwLOC = countLOC('find /home/user/unrdf -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) -exec wc -l {} + 2>/dev/null | tail -1');
+const microFwOutput = exec(`find ${REPO_ROOT} -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) -exec wc -l {} + 2>/dev/null`);
+const microFwFiles = exec(`find ${REPO_ROOT} -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) 2>/dev/null | wc -l`).trim();
+const microFwLOC = countLOC(`find ${REPO_ROOT} -type f \\( -name "microfw-*.mjs" -o -name "max-combo-*.mjs" \\) -exec wc -l {} + 2>/dev/null | tail -1`);
 
 const expectedMicroFwCount = 3;
 const expectedMicroFwLOC = 1856;
@@ -205,7 +208,7 @@ if (timelineValid) {
 console.log(`\n${c.blue}[6/11]${c.reset} Validating test infrastructure...`);
 
 // Check if vitest is available
-const vitestCheck = exec('cd /home/user/unrdf/packages/yawl && command -v vitest 2>/dev/null || echo "not found"').trim();
+const vitestCheck = exec(`cd ${REPO_ROOT}/packages/yawl && command -v vitest 2>/dev/null || echo "not found"`).trim();
 
 if (vitestCheck.includes('not found')) {
   logWarning('Test Infrastructure',
@@ -220,7 +223,7 @@ if (vitestCheck.includes('not found')) {
 // ============================================================================
 console.log(`\n${c.blue}[7/11]${c.reset} Validating package count...`);
 
-const packageCount = exec('ls -1 /home/user/unrdf/packages/*/package.json 2>/dev/null | wc -l').trim();
+const packageCount = exec(`ls -1 ${REPO_ROOT}/packages/*/package.json 2>/dev/null | wc -l`).trim();
 const expectedPackages = 20;
 const packageTolerance = 2;
 
@@ -238,7 +241,7 @@ if (Math.abs(parseInt(packageCount) - expectedPackages) <= packageTolerance) {
 console.log(`\n${c.blue}[8/11]${c.reset} Validating OTEL scores...`);
 
 // Check if validation-output.log exists
-const otelLogPath = '/home/user/unrdf/validation-output.log';
+const otelLogPath = `${REPO_ROOT}/validation-output.log`;
 if (existsSync(otelLogPath)) {
   const otelLog = readFileSync(otelLogPath, 'utf8');
   const scoreMatch = otelLog.match(/Score:\s*(\d+)\/100/);
@@ -268,7 +271,7 @@ if (existsSync(otelLogPath)) {
 // ============================================================================
 console.log(`\n${c.blue}[9/11]${c.reset} Checking for TODO/FIXME in thesis docs...`);
 
-const thesisTodos = exec('grep -r "TODO\\|FIXME" /home/user/unrdf/ADVERSARIAL-THESIS-REVIEW.md /home/user/unrdf/CORRECTED-THESIS-EXCERPTS.md /home/user/unrdf/books/kgc-thesis/ 2>/dev/null | wc -l').trim();
+const thesisTodos = exec(`grep -r "TODO\\|FIXME" ${REPO_ROOT}/ADVERSARIAL-THESIS-REVIEW.md ${REPO_ROOT}/CORRECTED-THESIS-EXCERPTS.md ${REPO_ROOT}/books/kgc-thesis/ 2>/dev/null | wc -l`).trim();
 
 if (parseInt(thesisTodos) === 0) {
   logResult(true, 'No Unresolved TODOs',
@@ -312,8 +315,8 @@ if (inflatedCommits === 0) {
 console.log(`\n${c.blue}[11/11]${c.reset} Validating cross-reference integrity...`);
 
 // Check that corrected excerpts reference the adversarial review
-const correctedPath = '/home/user/unrdf/CORRECTED-THESIS-EXCERPTS.md';
-const adversarialPath = '/home/user/unrdf/ADVERSARIAL-THESIS-REVIEW.md';
+const correctedPath = `${REPO_ROOT}/CORRECTED-THESIS-EXCERPTS.md`;
+const adversarialPath = `${REPO_ROOT}/ADVERSARIAL-THESIS-REVIEW.md`;
 
 let crossRefValid = true;
 
@@ -353,7 +356,7 @@ if (results.warnings.length > 0) {
 }
 
 // Write report to file
-const reportPath = '/home/user/unrdf/thesis-validation-report.txt';
+const reportPath = `${REPO_ROOT}/thesis-validation-report.txt`;
 const report = `
 Thesis Validation Report
 Generated: ${new Date().toISOString()}

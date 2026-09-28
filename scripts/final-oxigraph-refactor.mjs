@@ -5,6 +5,9 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { join } from 'path';
 
 const stats = {
@@ -150,8 +153,8 @@ function findFiles(dir, files = []) {
 
 console.log('🚀 Comprehensive Oxigraph Refactoring...\n');
 
-const files = findFiles('/Users/sac/unrdf/packages')
-  .concat(findFiles('/Users/sac/unrdf/playground'));
+const files = findFiles(`${REPO_ROOT}/packages`)
+  .concat(findFiles(`${REPO_ROOT}/playground`));
 
 console.log(`📁 Found ${files.length} example files\n`);
 
@@ -159,7 +162,7 @@ for (const file of files) {
   const success = refactorFile(file);
   stats.files++;
   if (success) {
-    console.log(`✅ ${file.replace('/Users/sac/unrdf/', '')}`);
+    console.log(`✅ ${file.replace(REPO_ROOT + '/', '')}`);
   }
 }
 
