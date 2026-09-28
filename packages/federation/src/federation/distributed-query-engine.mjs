@@ -18,6 +18,7 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode, metrics } from '@opentelemetry/api';
+import { spanAttributes } from './tracing.mjs';
 import { analyzeSPARQLQuery } from '@unrdf/core/utils/sparql-utils';
 
 const tracer = trace.getTracer('unrdf-federation');
@@ -124,47 +125,51 @@ export class DistributedQueryEngine {
    * @returns {Promise<Array>} Query results
    */
   async execute(sparql, options = {}) {
-    return tracer.startActiveSpan('federation.query.execute', async span => {
-      const startTime = Date.now();
+    return tracer.startActiveSpan(
+      'federation.query_execute',
+      { attributes: spanAttributes({ peerCount: 0 }) },
+      async span => {
+        const startTime = Date.now();
 
-      try {
-        const queryConfig = { ...this.config, ...options };
-        span.setAttribute('query.sparql', sparql.substring(0, 200));
-        span.setAttribute('query.timeout', queryConfig.timeout);
+        try {
+          const queryConfig = { ...this.config, ...options };
+          span.setAttribute('query.sparql', sparql.substring(0, 200));
+          span.setAttribute('query.timeout', queryConfig.timeout);
 
-        this.queryCounter.add(1);
+          this.queryCounter.add(1);
 
-        // Parse and analyze query
-        const analysis = analyzeSPARQLQuery(sparql);
-        span.setAttribute('query.type', analysis.type);
-        span.setAttribute('query.variables', analysis.variables.join(','));
+          // Parse and analyze query
+          const analysis = analyzeSPARQLQuery(sparql);
+          span.setAttribute('query.type', analysis.type);
+          span.setAttribute('query.variables', analysis.variables.join(','));
 
-        // Create execution plan
-        const plan = await this.createExecutionPlan(sparql, analysis, queryConfig);
-        span.setAttribute('query.plan.nodes', plan.children.length);
+          // Create execution plan
+          const plan = await this.createExecutionPlan(sparql, analysis, queryConfig);
+          span.setAttribute('query.plan.nodes', plan.children.length);
 
-        // Execute plan
-        const results = await this.executePlan(plan, queryConfig);
+          // Execute plan
+          const results = await this.executePlan(plan, queryConfig);
 
-        // Merge and deduplicate results
-        const merged = this.mergeResults(results, analysis);
+          // Merge and deduplicate results
+          const merged = this.mergeResults(results, analysis);
 
-        const duration = Date.now() - startTime;
-        this.queryDuration.record(duration);
+          const duration = Date.now() - startTime;
+          this.queryDuration.record(duration);
 
-        span.setAttribute('query.result_count', merged.length);
-        span.setAttribute('query.duration_ms', duration);
-        span.setStatus({ code: SpanStatusCode.OK });
+          span.setAttribute('query.result_count', merged.length);
+          span.setAttribute('query.duration_ms', duration);
+          span.setStatus({ code: SpanStatusCode.OK });
 
-        return merged;
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
+          return merged;
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
+        }
       }
-    });
+    );
   }
 
   /**
@@ -176,45 +181,49 @@ export class DistributedQueryEngine {
    * @private
    */
   async createExecutionPlan(sparql, analysis, config) {
-    return tracer.startActiveSpan('federation.query.plan', async span => {
-      try {
-        const stores = this.coordinator.getHealthyStores();
-        span.setAttribute('plan.stores_available', stores.length);
+    return tracer.startActiveSpan(
+      'federation.query_plan',
+      { attributes: spanAttributes({ peerCount: 0 }) },
+      async span => {
+        try {
+          const stores = this.coordinator.getHealthyStores();
+          span.setAttribute('plan.stores_available', stores.length);
 
-        if (stores.length === 0) {
-          throw new Error('No healthy stores available for query execution');
+          if (stores.length === 0) {
+            throw new Error('No healthy stores available for query execution');
+          }
+
+          // Determine execution strategy
+          const strategy = this.selectExecutionStrategy(analysis, stores, config);
+          span.setAttribute('plan.strategy', strategy);
+
+          // Create plan based on strategy
+          let plan;
+          switch (strategy) {
+            case ExecutionStrategy.PARALLEL:
+              plan = this.createParallelPlan(sparql, analysis, stores, config);
+              break;
+            case ExecutionStrategy.SEQUENTIAL:
+              plan = this.createSequentialPlan(sparql, analysis, stores, config);
+              break;
+            case ExecutionStrategy.ADAPTIVE:
+              plan = this.createAdaptivePlan(sparql, analysis, stores, config);
+              break;
+            default:
+              plan = this.createParallelPlan(sparql, analysis, stores, config);
+          }
+
+          span.setStatus({ code: SpanStatusCode.OK });
+          return plan;
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Determine execution strategy
-        const strategy = this.selectExecutionStrategy(analysis, stores, config);
-        span.setAttribute('plan.strategy', strategy);
-
-        // Create plan based on strategy
-        let plan;
-        switch (strategy) {
-          case ExecutionStrategy.PARALLEL:
-            plan = this.createParallelPlan(sparql, analysis, stores, config);
-            break;
-          case ExecutionStrategy.SEQUENTIAL:
-            plan = this.createSequentialPlan(sparql, analysis, stores, config);
-            break;
-          case ExecutionStrategy.ADAPTIVE:
-            plan = this.createAdaptivePlan(sparql, analysis, stores, config);
-            break;
-          default:
-            plan = this.createParallelPlan(sparql, analysis, stores, config);
-        }
-
-        span.setStatus({ code: SpanStatusCode.OK });
-        return plan;
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -372,32 +381,42 @@ export class DistributedQueryEngine {
    * @private
    */
   async executePlan(plan, config) {
-    return tracer.startActiveSpan('federation.query.executePlan', async span => {
-      try {
-        span.setAttribute('plan.type', plan.type);
-        span.setAttribute('plan.children', plan.children.length);
+    return tracer.startActiveSpan(
+      'federation.query_execute_plan',
+      { attributes: spanAttributes({ peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('plan.type', plan.type);
+          span.setAttribute('plan.children', plan.children.length);
 
-        switch (plan.type) {
-          case PlanNodeType.MERGE:
-            return await this.executeMergeNode(plan, config);
-          case PlanNodeType.UNION:
-            return await this.executeUnionNode(plan, config);
-          case PlanNodeType.SCAN:
-            return await this.executeScanNode(plan, config);
-          default:
-            throw new Error(`Unsupported plan node type: ${plan.type}`);
+          let planResults;
+          switch (plan.type) {
+            case PlanNodeType.MERGE:
+              planResults = await this.executeMergeNode(plan, config);
+              break;
+            case PlanNodeType.UNION:
+              planResults = await this.executeUnionNode(plan, config);
+              break;
+            case PlanNodeType.SCAN:
+              planResults = await this.executeScanNode(plan, config);
+              break;
+            default:
+              throw new Error(`Unsupported plan node type: ${plan.type}`);
+          }
+          span.setStatus({ code: SpanStatusCode.OK });
+          return planResults;
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error.message,
+          });
+          throw error;
+        } finally {
+          span.end();
         }
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error.message,
-        });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -442,29 +461,33 @@ export class DistributedQueryEngine {
    * @private
    */
   async executeScanNode(node, config) {
-    return tracer.startActiveSpan('federation.query.scan', async span => {
-      try {
-        span.setAttribute('scan.store_id', node.storeId);
-        span.setAttribute('scan.query', node.query.substring(0, 200));
+    return tracer.startActiveSpan(
+      'federation.query_scan',
+      { attributes: spanAttributes({ peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('scan.store_id', node.storeId);
+          span.setAttribute('scan.query', node.query.substring(0, 200));
 
-        this.storeQueryCounter.add(1, { store_id: node.storeId });
+          this.storeQueryCounter.add(1, { store_id: node.storeId });
 
-        // In production, make actual HTTP/gRPC request to store
-        // For now, simulate query execution
-        const results = await this.executeStoreQuery(node.storeId, node.query, config);
+          // In production, make actual HTTP/gRPC request to store
+          // For now, simulate query execution
+          const results = await this.executeStoreQuery(node.storeId, node.query, config);
 
-        span.setAttribute('scan.result_count', results.length);
-        span.setStatus({ code: SpanStatusCode.OK });
+          span.setAttribute('scan.result_count', results.length);
+          span.setStatus({ code: SpanStatusCode.OK });
 
-        return results;
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
+          return results;
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
+        }
       }
-    });
+    );
   }
 
   /**

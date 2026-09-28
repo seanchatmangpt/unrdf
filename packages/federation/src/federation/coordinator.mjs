@@ -3,7 +3,7 @@
  * @module federation/coordinator
  */
 
-import { trace } from '@opentelemetry/api';
+import { SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 import { createPeerManager } from './peer-manager.mjs';
 import {
@@ -13,8 +13,7 @@ import {
 } from './distributed-query.mjs';
 import { recordQuery, recordError, updatePeerMetrics, trackConcurrentQuery } from './metrics.mjs';
 import { getGlobalPredictor } from '../ml/predictor.mjs';
-
-const tracer = trace.getTracer('@unrdf/federation');
+import { withSpan } from './tracing.mjs';
 
 /**
  * @typedef {Object} CoordinatorConfig
@@ -105,33 +104,27 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Registered peer information
      */
     async addPeer(id, endpoint, metadata = {}) {
-      const span = tracer.startSpan('coordinator.addPeer');
-      try {
-        span.setAttributes({
-          'peer.id': id,
-          'peer.endpoint': endpoint,
-        });
+      return withSpan(
+        'federation.add_peer',
+        { 'peer.id': id, 'peer.endpoint': endpoint },
+        async span => {
+          const peer = peerManager.registerPeer(id, endpoint, metadata);
 
-        const peer = peerManager.registerPeer(id, endpoint, metadata);
+          // Verify peer is reachable
+          const isHealthy = await peerManager.ping(id);
+          if (!isHealthy) {
+            console.warn(`Peer ${id} registered but is not currently reachable`);
+          }
 
-        // Verify peer is reachable
-        const isHealthy = await peerManager.ping(id);
-        if (!isHealthy) {
-          console.warn(`Peer ${id} registered but is not currently reachable`);
+          span.setAttributes({
+            'peer.healthy': isHealthy,
+            'peer.status': peer.status,
+            'federation.peer_count': peerManager.listPeers().length,
+          });
+
+          return peer;
         }
-
-        span.setAttributes({
-          'peer.healthy': isHealthy,
-          'peer.status': peer.status,
-        });
-
-        return peer;
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      );
     },
 
     /**
@@ -141,24 +134,15 @@ export function createCoordinator(config = {}) {
      * @returns {boolean} True if peer was removed
      */
     removePeer(id) {
-      const span = tracer.startSpan('coordinator.removePeer');
-      try {
-        span.setAttributes({
-          'peer.id': id,
-        });
-
+      return withSpan('federation.remove_peer', { 'peer.id': id }, span => {
         const removed = peerManager.unregisterPeer(id);
         span.setAttributes({
           'peer.removed': removed,
+          'federation.peer_count': peerManager.listPeers().length,
         });
 
         return removed;
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      });
     },
 
     /**
@@ -192,156 +176,171 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Aggregated query results
      */
     async query(sparqlQuery, options = {}) {
-      const span = tracer.startSpan('coordinator.query');
       const endConcurrent = trackConcurrentQuery();
 
       try {
-        queryCount++;
-
-        // Predictive bypass: Check if we can skip M-of-N voting
-        if (predictor && validatedConfig.enablePredictiveBypass) {
-          const bypassSpan = tracer.startSpan('coordinator.predictiveBypass');
+        return await withSpan('federation.query', {}, async span => {
           try {
-            const stats = this.getStats();
-            const features = predictor.extractFeatures(sparqlQuery, {
-              ...stats,
-              concurrentQueries: 0, // DEFERRED_ACTION(#gap-closure): Track actual concurrency
+            queryCount++;
+
+            const strategy = options.strategy || validatedConfig.strategy;
+            const timeout = options.timeout || validatedConfig.timeout;
+
+            const healthyPeers = peerManager.listPeers({ status: 'healthy' });
+            const degradedPeers = peerManager.listPeers({ status: 'degraded' });
+            const allPeers = [...healthyPeers, ...degradedPeers];
+
+            span.setAttributes({
+              'query.strategy': strategy,
+              'query.timeout': timeout,
+              'peers.healthy': healthyPeers.length,
+              'peers.degraded': degradedPeers.length,
+              'query.length': sparqlQuery.length,
+              'federation.peer_count': allPeers.length,
             });
 
-            const prediction = predictor.predict(features);
+            // Predictive bypass: Check if we can skip M-of-N voting
+            if (predictor && validatedConfig.enablePredictiveBypass && allPeers.length > 0) {
+              let decision = null;
+              try {
+                decision = await withSpan(
+                  'federation.predictive_bypass',
+                  { 'federation.peer_count': allPeers.length },
+                  async bypassSpan => {
+                    const stats = this.getStats();
+                    const features = predictor.extractFeatures(sparqlQuery, {
+                      ...stats,
+                      concurrentQueries: 0, // DEFERRED_ACTION(#gap-closure): Track actual concurrency
+                    });
 
-            bypassSpan.setAttributes({
-              'prediction.should_bypass': prediction.shouldBypass,
-              'prediction.confidence': prediction.confidence,
-              'prediction.strategy': prediction.recommendedStrategy,
-            });
+                    const prediction = predictor.predict(features);
 
-            if (prediction.shouldBypass) {
-              // Bypass M-of-N voting, execute directly
-              bypassSpan.setStatus({ code: 0, message: 'Bypass enabled' });
+                    bypassSpan.setAttributes({
+                      'prediction.should_bypass': prediction.shouldBypass,
+                      'prediction.confidence': prediction.confidence,
+                      'prediction.strategy': prediction.recommendedStrategy,
+                    });
+                    return { features, prediction };
+                  },
+                  { parent: span }
+                );
+              } catch {
+                // Continue with normal execution if prediction fails (span already ERROR)
+              }
 
-              const bypassResult = await this.executeWithBypass(
-                allPeers,
-                sparqlQuery,
-                prediction,
-                options,
-                span
-              );
+              if (decision?.prediction.shouldBypass) {
+                const { features, prediction } = decision;
+                // Bypass M-of-N voting, execute directly
+                const bypassResult = await this.executeWithBypass(
+                  allPeers,
+                  sparqlQuery,
+                  prediction,
+                  options,
+                  span
+                );
 
-              // Record outcome for learning
-              predictor.recordOutcome(features, {
-                success: bypassResult.success,
-                latency: bypassResult.totalDuration || 0,
-                strategy: prediction.recommendedStrategy,
-                peerResults: bypassResult.peerResults,
+                // Record outcome for learning
+                predictor.recordOutcome(features, {
+                  success: bypassResult.success,
+                  latency: bypassResult.totalDuration || 0,
+                  strategy: prediction.recommendedStrategy,
+                  peerResults: (bypassResult.peerResults || []).map(r => ({
+                    peerId: r.peerId,
+                    success: Boolean(r.success),
+                    latency: r.latency ?? r.duration ?? 0,
+                  })),
+                });
+
+                span.setAttributes({
+                  'query.bypassed': true,
+                  'query.success': bypassResult.success,
+                });
+                return bypassResult;
+              }
+            }
+
+            if (allPeers.length === 0) {
+              errorCount++;
+              span.setAttributes({
+                'query.error': 'no_healthy_peers',
               });
-
-              bypassSpan.end();
-              endConcurrent();
-              span.end();
-
-              return bypassResult;
+              span.setStatus({ code: SpanStatusCode.ERROR, message: 'No healthy peers available' });
+              return {
+                success: false,
+                results: [],
+                peerResults: [],
+                totalDuration: 0,
+                successCount: 0,
+                failureCount: 0,
+                error: 'No healthy peers available',
+              };
             }
 
-            bypassSpan.setStatus({ code: 0, message: 'Bypass not recommended' });
-          } catch (error) {
-            bypassSpan.recordException(error);
-            // Continue with normal execution if prediction fails
-          } finally {
-            bypassSpan.end();
-          }
-        }
+            const targetPeers = routeQuery(allPeers, sparqlQuery, strategy);
+            span.setAttributes({
+              'peers.target': targetPeers.length,
+            });
 
-        const strategy = options.strategy || validatedConfig.strategy;
-        const timeout = options.timeout || validatedConfig.timeout;
+            const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
+              timeout,
+              format: options.format,
+              strategy: options.executionStrategy || 'parallel',
+            });
 
-        const healthyPeers = peerManager.listPeers({ status: 'healthy' });
-        const degradedPeers = peerManager.listPeers({ status: 'degraded' });
-        const allPeers = [...healthyPeers, ...degradedPeers];
+            totalDuration += result.totalDuration || 0;
 
-        span.setAttributes({
-          'query.strategy': strategy,
-          'query.timeout': timeout,
-          'peers.healthy': healthyPeers.length,
-          'peers.degraded': degradedPeers.length,
-          'query.length': sparqlQuery.length,
-        });
-
-        if (allPeers.length === 0) {
-          errorCount++;
-          span.setAttributes({
-            'query.error': 'no_healthy_peers',
-          });
-          return {
-            success: false,
-            results: [],
-            peerResults: [],
-            totalDuration: 0,
-            successCount: 0,
-            failureCount: 0,
-            error: 'No healthy peers available',
-          };
-        }
-
-        const targetPeers = routeQuery(allPeers, sparqlQuery, strategy);
-        span.setAttributes({
-          'peers.target': targetPeers.length,
-        });
-
-        const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
-          timeout,
-          format: options.format,
-          strategy: options.executionStrategy || 'parallel',
-        });
-
-        totalDuration += result.totalDuration || 0;
-
-        if (!result.success) {
-          errorCount++;
-          // Record failed queries
-          for (const peerResult of result.peerResults || []) {
-            if (!peerResult.success) {
-              recordError(peerResult.peerId, 'query_failed');
-            }
-          }
-        } else {
-          // Record successful queries
-          for (const peerResult of result.peerResults || []) {
-            if (peerResult.success) {
-              recordQuery(peerResult.peerId, peerResult.duration || 0, strategy);
+            if (!result.success) {
+              errorCount++;
+              // Record failed queries
+              for (const peerResult of result.peerResults || []) {
+                if (!peerResult.success) {
+                  recordError(peerResult.peerId, 'query_failed');
+                }
+              }
             } else {
-              recordError(peerResult.peerId, 'query_failed');
+              // Record successful queries
+              for (const peerResult of result.peerResults || []) {
+                if (peerResult.success) {
+                  recordQuery(peerResult.peerId, peerResult.duration || 0, strategy);
+                } else {
+                  recordError(peerResult.peerId, 'query_failed');
+                }
+              }
             }
+
+            // Update peer metrics
+            updatePeerMetrics(this.getStats());
+
+            span.setAttributes({
+              'query.success': result.success,
+              'query.results': result.results?.length || 0,
+              'query.duration': result.totalDuration || 0,
+              'query.successCount': result.successCount || 0,
+              'query.failureCount': result.failureCount || 0,
+            });
+            if (!result.success) {
+              span.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: result.error || 'Query failed',
+              });
+            }
+
+            return result;
+          } catch (error) {
+            errorCount++;
+            span.setAttributes({
+              'query.error': error.message,
+            });
+            const targetPeers = peerManager.listPeers({ status: 'healthy' });
+            // Record errors for all target peers
+            for (const peer of targetPeers) {
+              recordError(peer.id, 'execution_error');
+            }
+            throw new Error(`Query execution failed: ${error.message}`, { cause: error });
           }
-        }
-
-        // Update peer metrics
-        updatePeerMetrics(this.getStats());
-
-        span.setAttributes({
-          'query.success': result.success,
-          'query.results': result.results?.length || 0,
-          'query.duration': result.totalDuration || 0,
-          'query.successCount': result.successCount || 0,
-          'query.failureCount': result.failureCount || 0,
         });
-
-        return result;
-      } catch (error) {
-        errorCount++;
-        span.recordException(error);
-        span.setAttributes({
-          'query.error': error.message,
-        });
-        const targetPeers = peerManager.listPeers({ status: 'healthy' });
-        // Record errors for all target peers
-        for (const peer of targetPeers) {
-          recordError(peer.id, 'execution_error');
-        }
-        throw new Error(`Query execution failed: ${error.message}`, { cause: error });
       } finally {
         endConcurrent();
-        span.end();
       }
     },
 
@@ -403,7 +402,9 @@ export function createCoordinator(config = {}) {
           errorCount++;
           peerManager.updateStatus(peerId, 'unreachable');
           recordError(peerId, 'execution_error');
-          throw new Error(`Query execution failed for peer ${peerId}: ${error.message}`, { cause: error });
+          throw new Error(`Query execution failed for peer ${peerId}: ${error.message}`, {
+            cause: error,
+          });
         }
       } finally {
         endConcurrent();
@@ -422,80 +423,84 @@ export function createCoordinator(config = {}) {
      * @private
      */
     async executeWithBypass(allPeers, sparqlQuery, prediction, options, parentSpan) {
-      const bypassSpan = tracer.startSpan('coordinator.executeWithBypass', undefined, parentSpan);
-
-      try {
-        bypassSpan.setAttributes({
+      return withSpan(
+        'federation.execute_with_bypass',
+        {
           'bypass.strategy': prediction.recommendedStrategy,
           'bypass.predicted_latency': prediction.predictedLatency,
-        });
+          'federation.peer_count': allPeers.length,
+        },
+        async bypassSpan => {
+          // Select optimal peer based on prediction
+          let targetPeers;
+          switch (prediction.recommendedStrategy) {
+            case 'single-peer':
+              // Use single best peer
+              targetPeers = allPeers.slice(0, 1);
+              break;
+            case 'first-available':
+              // Use first available peer
+              targetPeers = allPeers.slice(0, 1);
+              break;
+            case 'selective':
+              // Use subset of peers
+              targetPeers = allPeers.slice(0, Math.min(3, allPeers.length));
+              break;
+            default:
+              // Fallback to all peers
+              targetPeers = allPeers;
+          }
 
-        // Select optimal peer based on prediction
-        let targetPeers;
-        switch (prediction.recommendedStrategy) {
-          case 'single-peer':
-            // Use single best peer
-            targetPeers = allPeers.slice(0, 1);
-            break;
-          case 'first-available':
-            // Use first available peer
-            targetPeers = allPeers.slice(0, 1);
-            break;
-          case 'selective':
-            // Use subset of peers
-            targetPeers = allPeers.slice(0, Math.min(3, allPeers.length));
-            break;
-          default:
-            // Fallback to all peers
-            targetPeers = allPeers;
-        }
+          bypassSpan.setAttributes({
+            'peers.target': targetPeers.length,
+            'peers.total': allPeers.length,
+          });
 
-        bypassSpan.setAttributes({
-          'peers.target': targetPeers.length,
-          'peers.total': allPeers.length,
-        });
+          // Execute with selected peers only
+          const startTime = Date.now();
+          const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
+            timeout: options.timeout || validatedConfig.timeout,
+            format: options.format,
+            strategy: 'sequential', // Use sequential for bypass
+          });
 
-        // Execute with selected peers only
-        const startTime = Date.now();
-        const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
-          timeout: options.timeout || validatedConfig.timeout,
-          format: options.format,
-          strategy: 'sequential', // Use sequential for bypass
-        });
+          const duration = Date.now() - startTime;
 
-        const duration = Date.now() - startTime;
+          // Enhance result with bypass metadata
+          result.bypassed = true;
+          result.bypassStrategy = prediction.recommendedStrategy;
+          result.bypassConfidence = prediction.confidence;
+          result.totalDuration = duration;
+          result.peersSkipped = allPeers.length - targetPeers.length;
 
-        // Enhance result with bypass metadata
-        result.bypassed = true;
-        result.bypassStrategy = prediction.recommendedStrategy;
-        result.bypassConfidence = prediction.confidence;
-        result.totalDuration = duration;
-        result.peersSkipped = allPeers.length - targetPeers.length;
+          bypassSpan.setAttributes({
+            'bypass.success': result.success,
+            'bypass.duration_ms': duration,
+            'bypass.peers_skipped': result.peersSkipped,
+          });
 
-        bypassSpan.setAttributes({
-          'bypass.success': result.success,
-          'bypass.duration_ms': duration,
-          'bypass.peers_skipped': result.peersSkipped,
-        });
-
-        // Record metrics
-        if (result.success) {
-          for (const peerResult of result.peerResults || []) {
-            if (peerResult.success) {
-              recordQuery(peerResult.peerId, peerResult.duration || 0, 'bypass');
-            } else {
-              recordError(peerResult.peerId, 'bypass_query_failed');
+          // Record metrics
+          if (result.success) {
+            for (const peerResult of result.peerResults || []) {
+              if (peerResult.success) {
+                recordQuery(peerResult.peerId, peerResult.duration || 0, 'bypass');
+              } else {
+                recordError(peerResult.peerId, 'bypass_query_failed');
+              }
             }
           }
-        }
 
-        return result;
-      } catch (error) {
-        bypassSpan.recordException(error);
-        throw error;
-      } finally {
-        bypassSpan.end();
-      }
+          if (!result.success) {
+            bypassSpan.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: result.error || 'Bypass query failed',
+            });
+          }
+
+          return result;
+        },
+        { parent: parentSpan }
+      );
     },
 
     /**
@@ -504,11 +509,11 @@ export function createCoordinator(config = {}) {
      * @returns {Promise<Object>} Health check results
      */
     async healthCheck() {
-      const span = tracer.startSpan('coordinator.healthCheck');
-      try {
+      return withSpan('federation.health_check', {}, async span => {
         const peers = peerManager.listPeers();
         span.setAttributes({
           'peer.count': peers.length,
+          'federation.peer_count': peers.length,
         });
 
         const results = await Promise.all(
@@ -540,12 +545,7 @@ export function createCoordinator(config = {}) {
           unreachablePeers: unreachableCount,
           results,
         };
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      });
     },
 
     /**

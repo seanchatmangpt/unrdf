@@ -44,7 +44,6 @@
     "@opentelemetry/sdk-node": "^0.55.0",
     "@opentelemetry/sdk-trace-node": "^1.27.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
-    "@pictl/kernel": "workspace:^",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/otel": "workspace:*",
