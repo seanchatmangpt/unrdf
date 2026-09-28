@@ -163,7 +163,7 @@ describe('Template Verification', () => {
     // openapi-spec.njk includes all parts
     const specContent = await readFile(join(TEMPLATES_DIR, 'openapi/openapi-spec.njk'), 'utf-8');
     const specBody = extractFrontmatter(specContent).body;
-    expect(specBody).toContain('openapi: "[VERSION]"');
+    expect(specBody).toContain('openapi: "3.0.3"');
     expect(specBody).toContain('{% include');
 
     // zod-entities.njk imports zod and exports schemas
