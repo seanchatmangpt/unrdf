@@ -35,8 +35,8 @@
 
   // Faro Web SDK CDN URL (loads the full bundle)
   // For production, vendor this or use npm: @grafana/faro-web-sdk
-  const FARO_SDK_URL = 'https://unpkg.com/@grafana/faro-web-sdk@latest/dist/faro-web-sdk.iife.js';
-  const FARO_WEB_VITALS_URL = 'https://unpkg.com/@grafana/faro-web-vitals@latest/dist/faro-web-vitals.iife.js';
+  const FARO_SDK_URL = 'https://unpkg.com/@grafana/faro-web-sdk@1.9.0/dist/faro-web-sdk.iife.js';
+  const FARO_WEB_VITALS_URL = 'https://unpkg.com/@grafana/faro-web-vitals@1.9.0/dist/faro-web-vitals.iife.js';
 
   function initFaro() {
     if (!window.GrafanaFaroWebSdk || !window.GrafanaFaroWebVitals) {
