@@ -1,0 +1,6 @@
+PREFIX sw: <https://unrdf.dev/ns/git-swarm#>
+SELECT ?receipt ?repository ?branch ?commit ?task ?tool WHERE {
+ ?receipt a sw:SwarmReceipt ; sw:repository ?repository ; sw:branch ?branch ; sw:commitSha ?commit ; sw:taskId ?task ; sw:toolEdge ?tool .
+ FILTER(STRLEN(STR(?commit)) = 40)
+ FILTER NOT EXISTS { ?receipt sw:refusalCode ?refusal }
+}
