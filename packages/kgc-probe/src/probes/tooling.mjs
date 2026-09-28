@@ -154,7 +154,7 @@ async function probeGit(timeout) {
   const metadata = {};
 
   if (result.success && result.stdout) {
-    // Parse version: "git version [VERSION]" -> "[VERSION]"
+    // Parse version: "git version 2.34.1" -> "2.34.1"
     const match = result.stdout.match(/git version ([\d.]+)/);
     if (match) {
       outputs.version = match[1];
@@ -186,7 +186,7 @@ async function probeNode(timeout) {
   const metadata = {};
 
   if (result.success && result.stdout) {
-    // Parse version: "[VERSION]" -> "[VERSION]"
+    // Parse version: "v18.17.0" -> "18.17.0"
     const version = result.stdout.replace(/^v/, '');
     outputs.version = version;
     outputs.available = true;

@@ -61,8 +61,8 @@ export const FORBIDDEN_URLS = [
   'data:*',
   '*.local',
   'localhost:*',
-  '[VERSION].1:*',
-  '[VERSION].254/*'  // AWS metadata endpoint
+  '127.0.0.1:*',
+  '169.254.169.254/*'  // AWS metadata endpoint
 ];
 
 /**
@@ -261,7 +261,7 @@ export const CASE_DENY_METADATA = {
     timestamp: FROZEN_TIMESTAMP,
     kind: 'net_check',
     severity: 'info',
-    subject: 'http://[VERSION].254/latest/meta-data/',  // FORBIDDEN
+    subject: 'http://169.254.169.254/latest/meta-data/',  // FORBIDDEN
     evidence: {
       query: 'HTTP GET metadata endpoint',
       result: {
@@ -279,8 +279,8 @@ export const CASE_DENY_METADATA = {
   expected: {
     allowed: false,
     guard_id: 'forbidden_url',
-    reason: 'Observation references forbidden URL pattern: [VERSION].254/*',
-    pattern_matched: '[VERSION].254'
+    reason: 'Observation references forbidden URL pattern: 169.254.169.254/*',
+    pattern_matched: '169.254.169.254'
   }
 };
 
@@ -363,11 +363,11 @@ export const CASE_ALLOW_SYSTEM_INFO = {
     severity: 'info',
     subject: 'node:version',
     predicate: 'sys:version',
-    object: '[VERSION]',
+    object: 'v22.12.0',
     evidence: {
       query: 'process.version',
       result: {
-        version: '[VERSION]',
+        version: 'v22.12.0',
         platform: 'linux',
         arch: 'x64'
       },

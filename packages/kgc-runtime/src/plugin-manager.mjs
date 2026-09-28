@@ -35,7 +35,7 @@ const VALID_TRANSITIONS = {
  * @example
  * import { PluginManager } from '@unrdf/kgc-runtime/plugin-manager';
  * const manager = new PluginManager();
- * await manager.registerPlugin({ name: 'my-plugin', version: '[VERSION]', ... });
+ * await manager.registerPlugin({ name: 'my-plugin', version: '1.0.0', ... });
  * await manager.loadPlugin('my-plugin');
  * await manager.activatePlugin('my-plugin');
  */
@@ -75,11 +75,11 @@ export class PluginManager {
    * @example
    * const id = await manager.registerPlugin({
    *   name: 'custom-receipt',
-   *   version: '[VERSION]',
+   *   version: '1.0.0',
    *   description: 'Custom receipt types',
    *   entryPoint: './plugin.mjs',
    *   capabilities: ['custom-receipt'],
-   *   api_version: '[VERSION]'
+   *   api_version: '5.0.1'
    * });
    */
   async registerPlugin(manifest) {
@@ -119,7 +119,7 @@ export class PluginManager {
    * @throws {Error} If plugin not found or load fails
    *
    * @example
-   * await manager.loadPlugin('custom-receipt@[VERSION]');
+   * await manager.loadPlugin('custom-receipt@1.0.0');
    */
   async loadPlugin(pluginId) {
     const plugin = this.plugins.get(pluginId);
@@ -158,7 +158,7 @@ export class PluginManager {
    * @throws {Error} If plugin not loaded or activation fails
    *
    * @example
-   * await manager.activatePlugin('custom-receipt@[VERSION]');
+   * await manager.activatePlugin('custom-receipt@1.0.0');
    */
   async activatePlugin(pluginId) {
     const plugin = this.plugins.get(pluginId);
@@ -192,7 +192,7 @@ export class PluginManager {
    * @returns {Promise<void>}
    *
    * @example
-   * await manager.deactivatePlugin('custom-receipt@[VERSION]');
+   * await manager.deactivatePlugin('custom-receipt@1.0.0');
    */
   async deactivatePlugin(pluginId) {
     const plugin = this.plugins.get(pluginId);
@@ -220,7 +220,7 @@ export class PluginManager {
    * @returns {Promise<void>}
    *
    * @example
-   * await manager.unloadPlugin('custom-receipt@[VERSION]');
+   * await manager.unloadPlugin('custom-receipt@1.0.0');
    */
   async unloadPlugin(pluginId) {
     const plugin = this.plugins.get(pluginId);
@@ -252,7 +252,7 @@ export class PluginManager {
    * @returns {Promise<void>}
    *
    * @example
-   * await manager.uninstallPlugin('custom-receipt@[VERSION]');
+   * await manager.uninstallPlugin('custom-receipt@1.0.0');
    */
   async uninstallPlugin(pluginId) {
     const plugin = this.plugins.get(pluginId);

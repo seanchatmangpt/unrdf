@@ -1,6 +1,6 @@
 {
   "name": "example-plugin",
-  "version": "[VERSION]",
+  "version": "1.0.0",
   "description": "Example KGC Runtime plugin template",
   "entryPoint": "./index.mjs",
   "capabilities": [
@@ -8,7 +8,7 @@
     "receipt:validate",
     "custom:example"
   ],
-  "api_version": "[VERSION]",
+  "api_version": "5.0.1",
   "author": "Your Name",
   "license": "MIT",
   "repository": "https://github.com/your-org/example-plugin",
