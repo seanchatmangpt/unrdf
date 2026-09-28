@@ -20,7 +20,9 @@ import { createHash } from 'node:crypto';
  */
 export const QuadSchema = z.object({
   subject: z.object({
-    termType: z.enum(['NamedNode', 'BlankNode']),
+    // 'Literal' is structurally representable so that the Q_typing invariant can reject it
+    // (and report a violation) instead of the constructor throwing
+    termType: z.enum(['NamedNode', 'BlankNode', 'Literal']),
     value: z.string().min(1)
   }),
   predicate: z.object({
@@ -73,7 +75,8 @@ export const InvariantRefSchema = z.object({
  * Zod schema for provenance metadata
  */
 export const ProvenanceSchema = z.object({
-  agent: z.string().min(1),
+  // Emptiness is judged by the Q_provenance invariant, not by the constructor
+  agent: z.string(),
   timestamp: z.string().datetime(),
   source: z.string().optional(),
   justification: z.string().optional()

@@ -105,7 +105,7 @@ export const SceneSchema = z.object({
   artifacts: z.record(z.string(), z.any()).default({}), // Side products (logs, metrics, etc.)
   receipts: z.array(ReceiptSchema).default([]), // Receipt chain
   timestamp: z.date().default(() => new Date()),
-  previousSceneId: z.string().uuid().optional(), // Link to previous scene (linear history)
+  previousSceneId: z.string().uuid().nullish(), // Link to previous scene (linear history)
 });
 
 /**

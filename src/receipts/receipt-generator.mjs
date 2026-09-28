@@ -46,6 +46,34 @@ export class ReceiptGenerator {
     this.chain = new ReceiptChain();
     this.toolchainVersion = null;
     this.packageJsonPath = options.packageJsonPath;
+    this._queue = Promise.resolve();
+  }
+
+  /**
+   * Run receipt emission one at a time: each receipt reads the chain head (beforeHash) and
+   * then appends, so concurrent emissions would otherwise link to the same predecessor.
+   * @private
+   */
+  _serialize(fn) {
+    const run = this._queue.then(fn);
+    this._queue = run.catch(() => {});
+    return run;
+  }
+
+  /**
+   * Timestamp strictly after the last receipt in the chain (epochs must increase; two
+   * receipts generated in the same millisecond would otherwise be rejected).
+   * @private
+   */
+  _monotonicTimestamp(requested) {
+    if (requested) return requested;
+    const now = new Date();
+    const last = this.chain.getLast();
+    if (last?.generatedAtTime) {
+      const lastMs = new Date(last.generatedAtTime).getTime();
+      if (now.getTime() <= lastMs) return new Date(lastMs + 1);
+    }
+    return now;
   }
 
   /**
@@ -120,7 +148,12 @@ export class ReceiptGenerator {
    * @param {Date} [options.timestamp] - Generation timestamp
    * @returns {Promise<Receipt>} Emitted receipt
    */
-  async emitAdmissibilityReceipt(options) {
+  emitAdmissibilityReceipt(options) {
+    return this._serialize(() => this._emitAdmissibilityReceiptUnlocked(options));
+  }
+
+  /** @private */
+  async _emitAdmissibilityReceiptUnlocked(options) {
     const outputHash = await this.computeOutputHash(options.universeState);
     const beforeHash = this.chain.getLast()?.receiptHash || null;
 
@@ -133,7 +166,7 @@ export class ReceiptGenerator {
       outputHash,
       toolchainVersion: this.getToolchainVersion(),
       beforeHash,
-      timestamp: options.timestamp,
+      timestamp: this._monotonicTimestamp(options.timestamp),
     });
 
     await this.chain.append(receipt);
@@ -151,7 +184,12 @@ export class ReceiptGenerator {
    * @param {Date} [options.timestamp] - Generation timestamp
    * @returns {Promise<Receipt>} Emitted receipt
    */
-  async emitValidationReceipt(options) {
+  emitValidationReceipt(options) {
+    return this._serialize(() => this._emitValidationReceiptUnlocked(options));
+  }
+
+  /** @private */
+  async _emitValidationReceiptUnlocked(options) {
     const outputHash = await this.computeOutputHash(options.validationState);
     const beforeHash = this.chain.getLast()?.receiptHash || null;
 
@@ -164,7 +202,7 @@ export class ReceiptGenerator {
       outputHash,
       toolchainVersion: this.getToolchainVersion(),
       beforeHash,
-      timestamp: options.timestamp,
+      timestamp: this._monotonicTimestamp(options.timestamp),
     });
 
     await this.chain.append(receipt);
@@ -182,7 +220,12 @@ export class ReceiptGenerator {
    * @param {Date} [options.timestamp] - Generation timestamp
    * @returns {Promise<Receipt>} Emitted receipt
    */
-  async emitProjectionReceipt(options) {
+  emitProjectionReceipt(options) {
+    return this._serialize(() => this._emitProjectionReceiptUnlocked(options));
+  }
+
+  /** @private */
+  async _emitProjectionReceiptUnlocked(options) {
     const outputHash = await this.computeOutputHash(options.projectionOutput);
     const beforeHash = this.chain.getLast()?.receiptHash || null;
 
@@ -195,7 +238,7 @@ export class ReceiptGenerator {
       outputHash,
       toolchainVersion: this.getToolchainVersion(),
       beforeHash,
-      timestamp: options.timestamp,
+      timestamp: this._monotonicTimestamp(options.timestamp),
     });
 
     await this.chain.append(receipt);
