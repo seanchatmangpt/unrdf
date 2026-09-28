@@ -63,8 +63,9 @@ describe('ML Inference Pipeline', () => {
     let runner;
     let pipeline;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       runner = new MockONNXRunner();
+      await runner.loadModel();
       pipeline = createStreamingInferencePipeline(runner, {
         batchSize: 4,
         batchTimeoutMs: 100,
