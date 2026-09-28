@@ -1314,12 +1314,18 @@ importers:
 
   packages/knowledge-engine:
     dependencies:
+      '@comunica/query-sparql':
+        specifier: ^4.5.0
+        version: 4.5.0(encoding@0.1.12)
       '@iarna/toml':
         specifier: ^2.2.5
         version: 2.2.5
       '@noble/hashes':
         specifier: ^1.5.0
         version: 1.8.0
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.1
       '@unrdf/core':
         specifier: workspace:*
         version: link:../core
@@ -1335,6 +1341,18 @@ importers:
       eyereasoner:
         specifier: ^18.23.0
         version: 18.23.2(@rdfjs/types@2.0.1)
+      lru-cache:
+        specifier: ^11.2.4
+        version: 11.3.6
+      rdf-canonize:
+        specifier: ^5.0.0
+        version: 5.0.0
+      rdf-ext:
+        specifier: ^2.6.0
+        version: 2.6.0
+      rdf-validate-shacl:
+        specifier: ^0.6.5
+        version: 0.6.5
       zod:
         specifier: ^4.1.13
         version: 4.4.3

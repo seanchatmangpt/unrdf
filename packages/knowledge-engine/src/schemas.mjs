@@ -1,53 +1,84 @@
-import { z } from 'zod';
+/**
+ * @file Zod schemas for knowledge hook validation - Main export file
+ * @module schemas
+ *
+ * @description
+ * Comprehensive Zod schemas for validating all knowledge hook components
+ * including hook definitions, conditions, events, and execution results.
+ */
 
-const nonNegative = z.number().finite().nonnegative();
+// Re-export hook schemas
+export {
+  HookMetaSchema,
+  FileRefSchema,
+  SparqlAskConditionSchema,
+  SparqlSelectConditionSchema,
+  ShaclConditionSchema,
+  DeltaConditionSchema,
+  ThresholdConditionSchema,
+  CountConditionSchema,
+  WindowConditionSchema,
+  ConditionSchema,
+  DeterminismSchema,
+  ReceiptSchema,
+  HookContextSchema,
+  HookEventSchema,
+  HookResultSchema,
+  HookChannelSchema,
+  KnowledgeHookSchema,
+} from './hook-schemas.mjs';
 
-export const ObservabilityConfigSchema = z
-  .object({
-    serviceName: z.string().min(1).default('unrdf-knowledge-engine'),
-    serviceVersion: z.string().min(1).default('0.0.0-agnostic'),
-    endpoint: z.string().url().optional(),
-    headers: z.record(z.string(), z.string()).default({}),
-    resourceAttributes: z.record(z.string(), z.unknown()).default({}),
-    enableTracing: z.boolean().default(true),
-    enableMetrics: z.boolean().default(true),
-    scheduledDelayMillis: z.number().int().positive().default(60000),
-    exportTimeoutMillis: z.number().int().positive().default(30000),
-    samplingRate: z.number().min(0).max(1).default(0.1),
-    logSamplingRate: z.number().min(0).max(1).default(0.01),
-    minSamples: z.number().int().nonnegative().default(10),
-    ewmaAlpha: z.number().positive().max(1).default(0.3),
-    cacheMaxSize: z.number().int().nonnegative().optional()
-  })
-  .passthrough();
+// Observability schemas (validated at runtime by observability.mjs; see observability-schemas.mjs)
+export { ObservabilityConfigSchema, PerformanceMetricsSchema } from './observability-schemas.mjs';
 
-export const PerformanceMetricsSchema = z.object({
-  transactionLatency: z.object({
-    p50: nonNegative,
-    p95: nonNegative,
-    p99: nonNegative,
-    max: nonNegative
-  }),
-  hookExecutionRate: nonNegative,
-  errorRate: z.number().min(0).max(1),
-  memoryUsage: z
-    .object({
-      rss: nonNegative,
-      heapTotal: nonNegative,
-      heapUsed: nonNegative,
-      external: nonNegative,
-      arrayBuffers: nonNegative.optional()
-    })
-    .passthrough(),
-  cacheStats: z.object({
-    hitRate: z.number().min(0).max(1),
-    size: nonNegative,
-    maxSize: nonNegative
-  }),
-  backpressure: z
-    .object({
-      queueDepth: nonNegative,
-      watermarks: z.object({ high: nonNegative, low: nonNegative })
-    })
-    .passthrough()
-});
+// Re-export config schemas
+export {
+  ManagerConfigSchema,
+  FileResolverConfigSchema,
+  ConditionEvaluatorConfigSchema,
+  HookExecutorConfigSchema,
+} from './config-schemas.mjs';
+
+// Re-export transaction schemas
+export {
+  TransactionDeltaSchema,
+  TransactionReceiptSchema,
+  QuadSchema,
+  DeltaSchema,
+  TransactionHookSchema,
+  TransactionHookResultSchema,
+  HashSchema,
+  TransactionReceiptSchemaNew,
+  TransactionOptionsSchema,
+  ManagerOptionsSchema,
+} from './transaction-schemas.mjs';
+
+// Re-export advanced schemas
+export {
+  QueryPlanSchema,
+  IndexSchema,
+  DeltaAwareContextSchema,
+  AgentProposalSchema,
+  ResolutionStrategySchema,
+  ResolutionResultSchema,
+  SandboxConfigSchema,
+  SandboxContextSchema,
+  SandboxResultSchema,
+  LockchainEntrySchema,
+  LockchainConfigSchema,
+  PolicyPackMetaSchema,
+  PolicyPackConfigSchema,
+  PolicyPackManifestSchema,
+} from './advanced-schemas.mjs';
+
+// Re-export validation functions
+export {
+  validateKnowledgeHook,
+  validateHookEvent,
+  validateCondition,
+  validateManagerConfig,
+  validateTransactionDelta,
+  createKnowledgeHook,
+  createHookEvent,
+  createCondition,
+} from './validation-functions.mjs';
