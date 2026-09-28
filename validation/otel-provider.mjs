@@ -10,7 +10,9 @@ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 
 let globalProvider = null;
 let processor = null;
-const pendingSpans = new Map(); // Map<validationId, Array<Span>>
+const pendingSpans = new Map(); // Map<validationId, Array<Span>> (used when no callback registered)
+const spanCollectors = new Map(); // Map<validationId, onSpanEnd|null> for validations in flight
+let spanExporter = null;
 let shutdownPromise = null;
 let exporterCalled = false;
 
@@ -27,91 +29,123 @@ function validateNonEmptyString(value, name) {
 }
 
 /**
+ * Route a converted span to the validation that is currently running.
+ * Validations run one at a time, so the most recently registered collector owns
+ * every span exported while it is active.
+ * @param {Object} spanData - Converted span data
+ */
+function dispatchSpan(spanData) {
+  const ids = [...spanCollectors.keys()];
+  const ownerId = ids[ids.length - 1];
+  if (ownerId === undefined) {
+    console.error(`[OTEL Exporter] Dropping span '${spanData.name}': no active validation`);
+    return;
+  }
+  const onSpanEnd = spanCollectors.get(ownerId);
+  if (typeof onSpanEnd === 'function') {
+    onSpanEnd(spanData);
+    return;
+  }
+  if (!pendingSpans.has(ownerId)) {
+    pendingSpans.set(ownerId, []);
+  }
+  pendingSpans.get(ownerId).push(spanData);
+}
+
+/**
+ * Create the span exporter shared by all validations.
+ * @returns {{export: Function, shutdown: Function}}
+ */
+function createSpanExporter() {
+  return {
+    export: (spans) => {
+      console.log(`[OTEL Exporter] export() called with ${spans?.length || 0} spans`);
+      if (!spans || !Array.isArray(spans) || spans.length === 0) {
+        console.log(`[OTEL Exporter] No spans to export`);
+        return Promise.resolve({ code: 0 });
+      }
+
+      console.log(`[OTEL Exporter] Processing ${spans.length} spans...`);
+
+      spans.forEach((span, index) => {
+        try {
+          console.log(`[OTEL Exporter] Processing span ${index + 1}/${spans.length}: ${span.name || 'unnamed'}`);
+
+          // Convert span data
+          const duration = span.duration
+            ? span.duration[0] * 1000 + span.duration[1] / 1000000
+            : 0;
+
+          const timestamp = span.startTime
+            ? span.startTime[0] * 1000 + span.startTime[1] / 1000000
+            : Date.now();
+
+          let status = 'unset';
+          if (span.status) {
+            if (span.status.code === 1) status = 'ok';
+            else if (span.status.code === 2) status = 'error';
+          }
+
+          const attributes = {};
+          if (span.attributes) {
+            if (span.attributes instanceof Map) {
+              span.attributes.forEach((value, key) => {
+                attributes[key] = value;
+              });
+            } else if (typeof span.attributes === 'object') {
+              Object.entries(span.attributes).forEach(([key, value]) => {
+                attributes[key] = value;
+              });
+            }
+          }
+
+          const spanCtx = typeof span.spanContext === 'function' ? span.spanContext() : span.spanContext;
+          const spanData = {
+            name: span.name,
+            status: status,
+            duration: duration,
+            attributes: attributes,
+            timestamp: timestamp,
+            spanId: spanCtx?.spanId || '',
+            traceId: spanCtx?.traceId || '',
+          };
+
+          console.log(`[OTEL Exporter] Converted span: ${spanData.name}`);
+
+          dispatchSpan(spanData);
+        } catch (error) {
+          console.error(`[OTEL Exporter] Error processing span:`, error);
+        }
+      });
+
+      return Promise.resolve({ code: 0 });
+    },
+    shutdown: () => Promise.resolve(),
+  };
+}
+
+/**
  * Initialize OTEL provider with span processor
  *
  * **Best Practice**: Creates NodeTracerProvider following SDK patterns.
  * The provider is registered globally, making spans available to all tracers.
  *
  * @param {string} validationId - Validation ID to track spans
- * @param {Function} onSpanEnd - Callback when span ends (receives span data object)
+ * @param {Function} [onSpanEnd] - Callback when span ends (receives span data object)
  * @returns {Promise<NodeTracerProvider>} The initialized provider
  * @throws {Error} If validationId is invalid
  */
-export async function ensureProviderInitialized(validationId) {
+export async function ensureProviderInitialized(validationId, onSpanEnd = null) {
   // Poka-yoke: Validate input
   validateNonEmptyString(validationId, 'validationId');
+  if (onSpanEnd !== null && typeof onSpanEnd !== 'function') {
+    throw new Error(`onSpanEnd must be a function or null, got: ${typeof onSpanEnd}`);
+  }
+  spanCollectors.set(validationId, onSpanEnd);
 
   // Create provider if not already initialized (lazy initialization)
   if (!globalProvider) {
-    // Create span exporter that collects spans for all validations
-    const spanExporter = {
-      export: (spans) => {
-        console.log(`[OTEL Exporter] export() called with ${spans?.length || 0} spans`);
-        if (!spans || !Array.isArray(spans) || spans.length === 0) {
-          console.log(`[OTEL Exporter] No spans to export`);
-          return Promise.resolve({ code: 0 });
-        }
-
-        console.log(`[OTEL Exporter] Processing ${spans.length} spans...`);
-
-        spans.forEach((span, index) => {
-          try {
-            console.log(`[OTEL Exporter] Processing span ${index + 1}/${spans.length}: ${span.name || 'unnamed'}`);
-
-            // Convert span data
-            const duration = span.duration
-              ? span.duration[0] * 1000 + span.duration[1] / 1000000
-              : 0;
-
-            const timestamp = span.startTime
-              ? span.startTime[0] * 1000 + span.startTime[1] / 1000000
-              : Date.now();
-
-            let status = 'unset';
-            if (span.status) {
-              if (span.status.code === 1) status = 'ok';
-              else if (span.status.code === 2) status = 'error';
-            }
-
-            const attributes = {};
-            if (span.attributes) {
-              if (span.attributes instanceof Map) {
-                span.attributes.forEach((value, key) => {
-                  attributes[key] = value;
-                });
-              } else if (typeof span.attributes === 'object') {
-                Object.entries(span.attributes).forEach(([key, value]) => {
-                  attributes[key] = value;
-                });
-              }
-            }
-
-            const spanData = {
-              name: span.name,
-              status: status,
-              duration: duration,
-              attributes: attributes,
-              timestamp: timestamp,
-              spanId: span.spanContext?.spanId || '',
-              traceId: span.spanContext?.traceId || '',
-            };
-
-            console.log(`[OTEL Exporter] Converted span: ${spanData.name}`);
-
-            // Store span data for this validation ID
-            if (!pendingSpans.has(validationId)) {
-              pendingSpans.set(validationId, []);
-            }
-            pendingSpans.get(validationId).push(spanData);
-          } catch (error) {
-            console.error(`[OTEL Exporter] Error processing span:`, error);
-          }
-        });
-
-        return Promise.resolve({ code: 0 });
-      },
-      shutdown: () => Promise.resolve(),
-    };
+    spanExporter = createSpanExporter();
 
     // Create and register provider
     // Use BatchSpanProcessor with immediate flush for synchronous span collection
