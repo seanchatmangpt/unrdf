@@ -8,5 +8,6 @@ export default defineConfig({
     exclude: ['node_modules/**', 'dist/**'],
     globals: false,
     isolate: true,
+    execArgv: ['--expose-gc'],
   },
 });
