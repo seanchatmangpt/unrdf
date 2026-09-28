@@ -5,13 +5,21 @@
   "private": true,
   "description": "Performance benchmarks for UNRDF Knowledge Hooks",
   "scripts": {
+    "test": "vitest run",
     "bench": "node --expose-gc runner.mjs && node generate-dashboard.mjs",
+    "bench:all": "node --expose-gc run-all.mjs",
     "bench:no-gc": "node runner.mjs && node generate-dashboard.mjs",
     "bench:metrics-only": "node --expose-gc runner.mjs",
     "dashboard": "node generate-dashboard.mjs",
     "open-dashboard": "node generate-dashboard.mjs && open dashboard.html || xdg-open dashboard.html || echo 'Open dashboard.html manually: file://$(pwd)/dashboard.html'"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*"
+  },
+  "devDependencies": {
+    "tinybench": "^6.0.0",
+    "vitest": "^4.0.16"
   }
 }

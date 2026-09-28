@@ -479,7 +479,7 @@ describe('Baseline Target Validation', () => {
  */
 describe('Tinybench Integration Validation', () => {
   it('should run simple benchmark with tinybench', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     let executionCount = 0;
 
@@ -495,12 +495,12 @@ describe('Tinybench Integration Validation', () => {
     const task = bench.tasks[0];
     expect(task.name).toBe('test-operation');
     expect(task.result).toBeDefined();
-    expect(task.result.mean).toBeGreaterThan(0);
+    expect(task.result.latency.mean).toBeGreaterThan(0);
     expect(executionCount).toBeGreaterThan(0);
   });
 
   it('should collect accurate timing samples', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     bench.add('timed-operation', () => {
       // Operation that takes ~1ms
@@ -513,12 +513,12 @@ describe('Tinybench Integration Validation', () => {
     await bench.run();
 
     const task = bench.tasks[0];
-    expect(task.result.samples.length).toBeGreaterThan(0);
-    expect(task.result.mean).toBeGreaterThan(0.5); // Should take at least 0.5ms
+    expect(task.result.latency.samples.length).toBeGreaterThan(0);
+    expect(task.result.latency.mean).toBeGreaterThan(0.5); // Should take at least 0.5ms
   });
 
   it('should provide statistical metrics', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     bench.add('math-operation', () => {
       return Math.pow(2, 16);
@@ -527,7 +527,7 @@ describe('Tinybench Integration Validation', () => {
     await bench.run();
 
     const task = bench.tasks[0];
-    const stats = task.result;
+    const stats = task.result.latency;
 
     expect(stats.mean).toBeDefined();
     expect(stats.variance).toBeDefined();
