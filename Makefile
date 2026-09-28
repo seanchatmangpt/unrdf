@@ -297,20 +297,20 @@ k8s-status:	## Show pod status
 k8s-logs:	## Tail all logs
 	kubectl -n unrdf-observability logs -f --all-containers --max-log-requests=20
 
-k8s-ports:	## Show all NodePorts
-	@echo "UNRDF API:     http://localhost:13000"
+k8s-ports:	## Show all host ports (see k8s/kind-config.yaml)
+	@echo "UNRDF API:     http://localhost:3000"
 	@echo "Grafana:       http://localhost:3001"
 	@echo "Prometheus:    http://localhost:9091"
-	@echo "Tempo API:     http://localhost:13200"
-	@echo "Loki:          http://localhost:13100"
-	@echo "Pyroscope:     http://localhost:14040"
+	@echo "Tempo API:     http://localhost:3200"
+	@echo "Loki:          http://localhost:3100"
+	@echo "Pyroscope:     http://localhost:4040"
 	@echo "HotROD:        http://localhost:8082"
 	@echo "Node Exporter: http://localhost:9100"
-	@echo "Alertmanager:  http://localhost:19093"
-	@echo "MinIO API:     http://localhost:19000"
-	@echo "MinIO Console: http://localhost:19001"
-	@echo "OTLP gRPC:     localhost:14317"
-	@echo "OTLP HTTP:     localhost:14318"
+	@echo "Alertmanager:  http://localhost:9093"
+	@echo "MinIO API:     http://localhost:9000"
+	@echo "MinIO Console: http://localhost:9001"
+	@echo "OTLP gRPC:     localhost:4317"
+	@echo "OTLP HTTP:     localhost:4318"
 
 # ============================================================================
 # OTEL TOOLING

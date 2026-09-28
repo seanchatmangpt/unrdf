@@ -13,7 +13,7 @@ spec:
           args:
             - |
               echo "Installing UNRDF CLI..."
-              npm install -g @unrdf/cli || true
+              npm install -g @unrdf/cli
 
               echo "Running UNRDF Doctor..."
               unrdf doctor --mode quick --format json
@@ -25,5 +25,5 @@ spec:
             - name: NPM_CONFIG_REGISTRY
               value: https://registry.npmjs.org/
       restartPolicy: Never
-      backoffLimit: 0
+  backoffLimit: 0
   activeDeadlineSeconds: 300
