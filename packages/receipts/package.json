@@ -33,7 +33,6 @@
     "@noble/hashes": "^2.0.1",
     "@unrdf/core": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/kgc-multiverse": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "dilithium-crystals": "^1.0.6",
     "hash-wasm": "^4.12.0",

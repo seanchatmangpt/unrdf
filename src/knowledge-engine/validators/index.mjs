@@ -282,7 +282,7 @@ export function validate(schema, data, _name = 'Data') {
       return {
         success: false,
         data: null,
-        errors: error.errors.map(err => ({
+        errors: (error.issues || error.errors || []).map(err => ({
           path: err.path.join('.'),
           message: err.message,
           code: err.code,

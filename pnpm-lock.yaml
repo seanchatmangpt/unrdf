@@ -1463,9 +1463,6 @@ importers:
 
   packages/oxigraph:
     dependencies:
-      '@unrdf/v6-core':
-        specifier: workspace:*
-        version: link:../v6-core
       oxigraph:
         specifier: ^0.5.2
         version: 0.5.8
@@ -1618,9 +1615,6 @@ importers:
       '@unrdf/kgc-4d':
         specifier: workspace:*
         version: link:../kgc-4d
-      '@unrdf/kgc-multiverse':
-        specifier: workspace:*
-        version: link:../kgc-multiverse
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:../oxigraph

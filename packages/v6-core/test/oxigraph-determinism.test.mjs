@@ -4,7 +4,7 @@
  * Validates that oxigraph operations produce identical receipts
  * for identical inputs across 100 iterations.
  *
- * @module @unrdf/oxigraph/test/determinism
+ * @module @unrdf/v6-core/test/oxigraph-determinism
  */
 
 import { describe, it, expect } from 'vitest';
@@ -15,8 +15,8 @@ import {
   testComposition,
   getStoreStateHash,
 } from '../src/store-receipts.mjs';
-import { createContext } from '@unrdf/v6-core/receipt-pattern';
-import { dataFactory } from '../src/index.mjs';
+import { createContext } from '../src/receipt-pattern.mjs';
+import { dataFactory } from '@unrdf/oxigraph';
 
 describe('Oxigraph L5 Determinism Tests', () => {
   describe('Operations: createStore & query', () => {

@@ -166,7 +166,7 @@ export class AllowedOntology {
     this.description = validated.description;
 
     /** @type {Array<OntologyRelease>} Available releases */
-    this.releases = validated.releases;
+    this.releases = config.releases; // validate-only: zod parse would strip class prototypes
 
     Object.freeze(this); // Immutable
   }

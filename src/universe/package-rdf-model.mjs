@@ -237,7 +237,7 @@ const RepositorySchema = z.union([
  */
 export const PackageJsonSchema = z.object({
   name: z.string(),
-  version: z.string().optional().default('[VERSION]'),
+  version: z.string().optional().default('0.0.0'),
   description: z.string().optional().default(''),
   type: z.string().optional().default('module'),
   main: z.string().optional(),
@@ -562,7 +562,7 @@ export function validatePackageJson(content) {
 
   return {
     valid: false,
-    errors: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`),
+    errors: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`),
   };
 }
 
