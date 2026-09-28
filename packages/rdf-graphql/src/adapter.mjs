@@ -54,7 +54,7 @@ export class RDFGraphQLAdapter {
    */
   async loadOntology(rdfData, format = 'text/turtle', baseIRI = 'http://example.org/') {
     await this.schemaGenerator.loadOntology(rdfData, baseIRI);
-    await this.store.load(rdfData, format, baseIRI, null);
+    await this.store.load(rdfData, { format, base_iri: baseIRI });
   }
 
   /**
@@ -65,7 +65,7 @@ export class RDFGraphQLAdapter {
    * @returns {Promise<void>}
    */
   async loadData(rdfData, format = 'text/turtle', baseIRI = 'http://example.org/') {
-    await this.store.load(rdfData, format, baseIRI, null);
+    await this.store.load(rdfData, { format, base_iri: baseIRI });
   }
 
   /**
@@ -101,12 +101,21 @@ export class RDFGraphQLAdapter {
       throw new Error('Schema not generated. Call generateSchema() first.');
     }
 
+    // graphql-js calls rootValue functions as (args, context, info), while the
+    // resolver factory produces (parent, args, context, info) resolvers.
+    const rootValue = Object.fromEntries(
+      Object.entries(this.resolvers.Query).map(([name, fn]) => [
+        name,
+        (args, ctx, info) => fn(null, args, ctx, info),
+      ])
+    );
+
     const result = await graphql({
       schema: this.schema,
       source: query,
       variableValues: variables,
       contextValue: context,
-      rootValue: this.resolvers.Query,
+      rootValue,
     });
 
     return result;
@@ -205,6 +214,7 @@ SELECT DISTINCT ?class ?label ?comment WHERE {
    */
   introspectProperties() {
     const query = `
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
