@@ -14,6 +14,8 @@
     "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
     "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs",
     "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs",
+    "./integrations/otel-sdk": "./src/integrations/otel-sdk.mjs",
+    "./integrations/otel-sdk.mjs": "./src/integrations/otel-sdk.mjs",
     "./integrations/kgc-4d-sourcing": "./src/integrations/kgc-4d-sourcing.mjs",
     "./integrations/kgc-4d-merkle": "./src/integrations/kgc-4d-merkle.mjs"
   },

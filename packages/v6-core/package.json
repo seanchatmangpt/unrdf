@@ -12,7 +12,6 @@
     "./browser": "./src/browser.mjs",
     "./browser/receipt-store": "./src/browser/receipt-store.mjs",
     "./deltagate": "./src/deltagate.mjs",
-    "./schemas": "./src/schemas.mjs",
     "./receipts": "./src/receipts.mjs",
     "./receipts/base-receipt": "./src/receipts/base-receipt.mjs",
     "./receipts/merkle": "./src/receipts/merkle/tree.mjs",

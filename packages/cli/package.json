@@ -9,8 +9,7 @@
   "main": "src/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.mjs",
-    "./commands": "./src/commands/index.mjs"
+    ".": "./src/index.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -55,7 +54,6 @@
     "@unrdf/project-engine": "workspace:*",
     "@unrdf/receipts": "workspace:*",
     "@unrdf/streaming": "workspace:*",
-    "archiver": "^7.0.1",
     "citty": "^0.1.6",
     "glob": "^10.3.10",
     "gray-matter": "^4.0.3",

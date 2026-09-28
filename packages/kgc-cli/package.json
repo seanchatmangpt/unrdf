@@ -10,9 +10,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./registry": "./src/lib/registry.mjs",
-    "./manifest": "./src/manifest/extensions.mjs",
-    "./latex": "./src/lib/latex/index.mjs",
-    "./latex/schemas": "./src/lib/latex/schemas.mjs"
+    "./manifest": "./src/manifest/extensions.mjs"
   },
   "sideEffects": false,
   "files": [
