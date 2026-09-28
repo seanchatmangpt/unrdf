@@ -1,7 +1,5 @@
-# Production Docker Compose configuration for UNRDF v6
+# Production Docker Compose configuration for UNRDF
 # Includes application, monitoring, and supporting services
-
-version: '3.8'
 
 services:
   # Main UNRDF application
@@ -10,9 +8,9 @@ services:
       context: .
       dockerfile: Dockerfile
       target: runner
-    image: unrdf:6.0.0-rc.1
+    image: unrdf:latest
     container_name: unrdf-app
-    restart: unless-stopped
+    restart: 'no' # CLI image exits after running its command (no long-running server yet)
     ports:
       - '3000:3000' # API
       - '9090:9090' # Metrics
@@ -25,18 +23,16 @@ services:
       - HEALTH_CHECK_PORT=8080
       - API_PORT=3000
     env_file:
-      - .env.production
+      - path: .env.production
+        required: false
     volumes:
       - unrdf-data:/app/data
       - unrdf-logs:/app/logs
     networks:
       - unrdf-network
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+    # The image is the UNRDF CLI (see Dockerfile). The CLI has no HTTP health or
+    # metrics endpoint yet (the MCP SSE transport is not implemented), so there is
+    # no healthcheck here and prometheus target unrdf:9090 stays down until one exists.
     deploy:
       resources:
         limits:
@@ -100,7 +96,8 @@ services:
     ports:
       - '4317:4317' # OTLP gRPC
       - '4318:4318' # OTLP HTTP
-      - '8888:8888' # Prometheus metrics
+      - '8888:8888' # Collector self-metrics
+      - '8889:8889' # Exported application metrics (prometheus exporter)
       - '13133:13133' # Health check
     networks:
       - unrdf-network
@@ -118,6 +115,9 @@ services:
     volumes:
       - ./monitoring/alertmanager/config.yml:/etc/alertmanager/config.yml:ro
       - alertmanager-data:/alertmanager
+    secrets:
+      - slack_webhook_url
+      - pagerduty_service_key
     networks:
       - unrdf-network
 
@@ -234,6 +234,14 @@ services:
       - '4040:4040'
     networks:
       - unrdf-network
+
+# Alertmanager reads these from files; values come from the environment
+# (SLACK_WEBHOOK_URL, PAGERDUTY_SERVICE_KEY, see .env.example).
+secrets:
+  slack_webhook_url:
+    environment: SLACK_WEBHOOK_URL
+  pagerduty_service_key:
+    environment: PAGERDUTY_SERVICE_KEY
 
 volumes:
   unrdf-data:

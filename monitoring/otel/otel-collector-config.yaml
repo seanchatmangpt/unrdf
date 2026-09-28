@@ -51,27 +51,28 @@ processors:
 
 exporters:
   # Prometheus exporter
+  # 8888 is the collector's own telemetry port (service.telemetry below), so the
+  # exporter for application metrics needs a different port.
   prometheus:
-    endpoint: "0.0.0.0:8888"
+    endpoint: "0.0.0.0:8889"
     namespace: unrdf
     const_labels:
       environment: production
 
-  # OTLP exporter (for external observability platforms)
+  # OTLP exporter to Tempo (native gRPC receiver, see otel/tempo.yaml)
   otlp:
-    endpoint: "otel-backend:4317"
+    endpoint: "tempo:4319"
     tls:
       insecure: true
 
   # Logging exporter for debugging
   logging:
-    loglevel: info
+    verbosity: normal
     sampling_initial: 5
     sampling_thereafter: 200
 
-  # File exporter for local storage
-  file:
-    path: /var/log/otel/traces.json
+  # (No file exporter: the container has no writable /var/log/otel and the
+  # collector refuses to start when the directory is missing.)
 
 extensions:
   health_check:
@@ -87,7 +88,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resourcedetection, attributes, probabilistic_sampler, batch]
-      exporters: [logging, otlp, file]
+      exporters: [logging, otlp]
 
     metrics:
       receivers: [otlp, prometheus]
@@ -97,7 +98,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, resourcedetection, attributes, batch]
-      exporters: [logging, file]
+      exporters: [logging]
 
   telemetry:
     logs:
