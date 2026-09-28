@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: '22'
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 10.15.0
       - name: Get pnpm store directory
@@ -177,7 +177,7 @@ jobs:
         with:
           node-version: '22'
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 10.15.0
       - name: Install dependencies
@@ -186,12 +186,7 @@ jobs:
       - name: Run integration tests
         env:
           TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
-        run: timeout 300s pnpm test:integration || echo "Integration tests not configured"
-
-      - name: Run E2E tests
-        env:
-          TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
-        run: timeout 300s pnpm test:e2e || echo "E2E tests not configured"
+        run: timeout 300s pnpm --filter @unrdf/integration-tests test
 
   notify:
     name: Notify
