@@ -8,8 +8,10 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
-const tracer = trace.getTracer('@unrdf/pictl-semantics', '[VERSION]');
+const tracer = trace.getTracer('@unrdf/pictl-semantics', PKG_VERSION);
 
 /**
  * PICTL Result Schema (comprehensive)

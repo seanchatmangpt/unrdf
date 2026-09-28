@@ -15,6 +15,8 @@ import { registerPrompts } from './prompts.mjs';
 import * as handlers from './handlers.mjs';
 import { withMcpSpan } from './otel-instrumentation.mjs';
 import * as ontoHandlers from './open-ontologies-handlers.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 
 /**
@@ -24,7 +26,7 @@ import * as ontoHandlers from './open-ontologies-handlers.mjs';
 export function createMCPServer() {
   const server = new McpServer({
     name: 'unrdf-daemon-mcp',
-    version: '[VERSION]',
+    version: PKG_VERSION,
   });
 
   // Register resources and prompts

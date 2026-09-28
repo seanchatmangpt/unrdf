@@ -7,9 +7,11 @@ import { trace, metrics, context } from '@opentelemetry/api';
 import { LatencyProfiler } from './latency-profiler.mjs';
 import { MemoryProfiler } from './memory-profiler.mjs';
 import { CpuProfiler } from './cpu-profiler.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
-const tracer = trace.getTracer('unrdf-profiler', '[VERSION]');
-const meter = metrics.getMeter('unrdf-profiler', '[VERSION]');
+const tracer = trace.getTracer('unrdf-profiler', PKG_VERSION);
+const meter = metrics.getMeter('unrdf-profiler', PKG_VERSION);
 
 /**
  * @typedef {Object} ProfilerOptions

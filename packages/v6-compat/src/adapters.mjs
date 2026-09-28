@@ -11,6 +11,8 @@
 
 import { createStore as createStoreV6 } from '@unrdf/oxigraph';
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Emit deprecation warning
@@ -108,7 +110,7 @@ export function wrapWorkflow(workflow) {
 
       // Generate receipt
       const receipt = {
-        version: '[VERSION]-alpha.1',
+        version: PKG_VERSION,
         operation: 'workflow.execute',
         task: task?.id || 'unknown',
         timestamp: Date.now(),
@@ -290,7 +292,7 @@ export function withReceipt(fn, options = {}) {
       : Date.now();
 
     const receipt = {
-      version: '[VERSION]-alpha.1',
+      version: PKG_VERSION,
       operation: options.operation || fn.name || 'anonymous',
       timestamp,
       duration: endTime - startTime,

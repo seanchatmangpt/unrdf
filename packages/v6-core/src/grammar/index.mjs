@@ -4,7 +4,7 @@
  * Unified grammar support with AOT complexity gating and denial receipts.
  *
  * @module @unrdf/v6-core/grammar
- * @version [VERSION]-alpha.1
+ * @version 6.0.0-alpha.1
  */
 
 // Parser exports
@@ -31,12 +31,14 @@ export {
   getRuntimeBounds,
   RUNTIME_BOUNDS,
 } from './runtime-gate.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * v6 Grammar version identifier
  * @constant {string}
  */
-export const GRAMMAR_VERSION = '[VERSION]-alpha.1';
+export const GRAMMAR_VERSION = PKG_VERSION;
 
 /**
  * Full grammar closure pipeline: parse → compile → execute

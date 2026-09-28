@@ -5,6 +5,8 @@
 
 import { trace } from '@opentelemetry/api';
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 const tracer = trace.getTracer('@unrdf/federation');
 
@@ -179,7 +181,7 @@ export function createPeerManager() {
           const response = await fetch(peer.endpoint, {
             method: 'HEAD',
             headers: {
-              'User-Agent': 'unrdf-federation/[VERSION] (https://github.com/unrdf/unrdf)',
+              'User-Agent': `unrdf-federation/${PKG_VERSION} (https://github.com/unrdf/unrdf)`,
             },
             signal: controller.signal,
           });

@@ -8,6 +8,8 @@ import { EventEmitter } from 'events';
 import { DaemonConfigSchema } from './schemas.mjs';
 import { initializeOTelSDK, shutdownOTelSDK } from './integrations/otel-sdk.mjs';
 import { SemanticSidecarManager } from './mcp/semantic-sidecar.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Simple LRU cache implementation for completed operations
@@ -120,7 +122,7 @@ export class Daemon extends EventEmitter {
       // Initialize OTEL SDK
       await initializeOTelSDK({
         serviceName: 'unrdf-daemon',
-        version: '[VERSION]',
+        version: PKG_VERSION,
         environment: process.env.NODE_ENV || 'development',
         otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
       });

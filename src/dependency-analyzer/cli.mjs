@@ -38,6 +38,8 @@ import {
   buildDependencyGraph,
   visualizeGraphAsText
 } from './index.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -46,7 +48,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  */
 const CLI_CONFIG = {
   name: 'dependency-analyzer',
-  version: '[VERSION]',
+  version: PKG_VERSION,
   description: 'Monorepo dependency analysis toolkit'
 };
 

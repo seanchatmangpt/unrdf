@@ -7,11 +7,13 @@
  */
 
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Schema for VERSION constant
  */
-export const VERSIONSchema = z.literal('[VERSION]-alpha.1');
+export const VERSIONSchema = z.literal(PKG_VERSION);
 
 /**
  * Schema for COMPAT_VERSION constant

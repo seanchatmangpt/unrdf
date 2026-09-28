@@ -13,6 +13,8 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 // ---------------------------------------------------------------------------
 // Tool definitions with Zod schemas
@@ -235,7 +237,7 @@ export async function startMCPServer({ transport = 'stdio', port = 3001 } = {}) 
   // Create SDK server
   const server = new McpServer({
     name: 'unrdf',
-    version: '[VERSION]',
+    version: PKG_VERSION,
   });
 
   // Register all tools with the SDK

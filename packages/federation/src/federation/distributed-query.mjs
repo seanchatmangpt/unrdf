@@ -4,6 +4,8 @@
  */
 
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * @typedef {Object} QueryResult
@@ -75,7 +77,7 @@ export async function executeFederatedQuery(peerId, endpoint, sparqlQuery, optio
       headers: {
         'Content-Type': 'application/sparql-query',
         'Accept': getAcceptHeader(config.format),
-        'User-Agent': 'unrdf-federation/[VERSION] (https://github.com/unrdf/unrdf)',
+        'User-Agent': `unrdf-federation/${PKG_VERSION} (https://github.com/unrdf/unrdf)`,
       },
       body: config.sparql,
       signal: controller.signal,

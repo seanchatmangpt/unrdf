@@ -10,7 +10,7 @@
  * - CloudFront CDN integration
  *
  * @module serverless
- * @version [VERSION]
+ * @version 1.0.0
  * @license MIT
  *
  * @example
@@ -56,6 +56,8 @@ export {
   createApiResponse,
   createErrorResponse,
 } from './api/api-gateway-config.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 // DynamoDB Storage
 export { DynamoDBAdapter, createAdapterFromEnv } from './storage/dynamodb-adapter.mjs';
@@ -64,7 +66,7 @@ export { DynamoDBAdapter, createAdapterFromEnv } from './storage/dynamodb-adapte
  * Package version
  * @constant {string}
  */
-export const VERSION = '[VERSION]';
+export const VERSION = PKG_VERSION;
 
 /**
  * Supported AWS regions

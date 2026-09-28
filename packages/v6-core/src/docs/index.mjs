@@ -5,6 +5,8 @@
  *
  * @module @unrdf/v6-core/docs
  */
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 export * from './pipeline.mjs';
 export * from './latex-generator.mjs';
@@ -66,7 +68,7 @@ export function listTopics() {
  * @property {Function} listTopics - List all available topics
  */
 export const V6_DOCS = {
-  version: '[VERSION]',
+  version: PKG_VERSION,
   topics: listTopics(),
   getDocumentation,
   listTopics,

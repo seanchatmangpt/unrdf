@@ -9,6 +9,8 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 const GenerateTypesOptionsSchema = z.object({
   namespace: z.string().default('ex:'),
@@ -301,7 +303,7 @@ function zodTypeToTS(zodType) {
  */
 export function createGenerationReceipt(result, store) {
   return {
-    version: '[VERSION]',
+    version: PKG_VERSION,
     operation: 'sparql-type-generation',
     timestamp: Date.now(),
     duration: 0, // Set by caller

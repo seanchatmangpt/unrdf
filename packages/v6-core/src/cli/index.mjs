@@ -18,6 +18,8 @@ import { deltaExtension } from './commands/delta.mjs';
 import { receiptExtension } from './commands/receipt.mjs';
 import { grammarExtension } from './commands/grammar.mjs';
 import { thesisExtension } from './commands/thesis.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * Initialize v6 registry and load extensions.
@@ -154,7 +156,7 @@ function buildV6CittyTree(registry, spine) {
         },
         async run(ctx) {
           const status = {
-            version: '[VERSION]-rc.1',
+            version: PKG_VERSION,
             features: {
               receipts: true,
               delta: true,
@@ -193,7 +195,7 @@ function buildV6CittyTree(registry, spine) {
     meta: {
       name: 'v6-cli',
       description: 'UNRDF v6 Core CLI - Receipts, Deltas, Grammar, and Docs',
-      version: '[VERSION]-rc.1'
+      version: PKG_VERSION
     },
     subcommands
   });
@@ -308,7 +310,7 @@ export const V6_COMMANDS = {
 export function buildCLISpine() {
   return {
     name: 'v6',
-    version: '[VERSION]-alpha.1',
+    version: PKG_VERSION,
     description: 'UNRDF v6 Core CLI',
     commands: V6_COMMANDS,
   };

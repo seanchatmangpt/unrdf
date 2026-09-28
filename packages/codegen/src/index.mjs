@@ -21,13 +21,15 @@ export {
   default as generatePropertyTests,
   generateFromSHACL,
 } from './property-test-generator.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Package metadata
  */
 export const metadata = {
   name: '@unrdf/codegen',
-  version: '[VERSION]',
+  version: PKG_VERSION,
   description: 'Code generation and metaprogramming tools for UNRDF',
   patterns: [
     'SPARQL Type Generator',

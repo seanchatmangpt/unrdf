@@ -5,15 +5,17 @@
  * CLI command to get details of a specific context.
  *
  * @module cli/commands/context/get
- * @version [VERSION]
+ * @version 2.4.0
  * @license MIT
  */
 
 import { defineCommand } from 'citty';
 import { ContextManager } from '../../core/context.mjs';
 import { trace } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../../../package.json').version;
 
-const tracer = trace.getTracer('unrdf-cli-context-get', '[VERSION]');
+const tracer = trace.getTracer('unrdf-cli-context-get', PKG_VERSION);
 
 /**
  * Get context command

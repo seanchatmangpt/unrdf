@@ -2,6 +2,8 @@
  * @file Health Endpoint - Kubernetes health and readiness probes
  * @module federation/health
  */
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * @typedef {Object} HealthStatus
@@ -53,7 +55,7 @@ export function createHealthEndpoint(coordinator) {
       return {
         status,
         uptime: Math.floor((Date.now() - startTime) / 1000),
-        version: '[VERSION]',
+        version: PKG_VERSION,
         peers: {
           healthy: stats.healthyPeers,
           total: stats.totalPeers,

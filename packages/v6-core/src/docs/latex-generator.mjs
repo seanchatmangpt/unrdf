@@ -11,6 +11,8 @@ import {
   WasmLatexOutputSchema,
   LatexCompilerOptionsSchema
 } from './latex-generator.schema.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * @typedef {Object} LatexOutput
@@ -267,7 +269,7 @@ function generateMainFile(docs, chapterFiles) {
          '\\begin{document}\n\n' +
          '% Title page\n' +
          '\\title{UNRDF Documentation\\\\\n' +
-         '       \\large Version [VERSION]-alpha.1}\n' +
+         '       \\large Version ' + PKG_VERSION + '}\n' +
          '\\author{UNRDF Contributors}\n' +
          '\\date{Generated: ' + new Date().toISOString() + '}\n' +
          '\\maketitle\n\n' +
@@ -428,7 +430,7 @@ function sanitizeLabel(name) {
  */
 function generateLockfile(docs, mainFile, chapterFiles, hashes) {
   return {
-    version: '[VERSION]-alpha.1',
+    version: PKG_VERSION,
     generatedAt: docs.generatedAt,
     merkleRoot: docs.merkleRoot,
     files: {
