@@ -150,13 +150,14 @@ export function projectWorkItemsToGraphQL(workItems, args = {}) {
     });
   }
 
-  // Apply GraphQL-style ordering
+  // Apply GraphQL-style ordering (GraphQL uses ASC/DESC; the projection schema uses asc/desc)
+  const orderDirection = String(args.orderBy?.direction || 'ASC').toLowerCase();
   if (args.orderBy) {
-    filtered = filtered.sort((a, b) => {
+    // Sort a copy: Array#sort mutates, and `filtered` may alias the caller's workItems
+    filtered = [...filtered].sort((a, b) => {
       const field = args.orderBy.field;
-      const direction = args.orderBy.direction || 'ASC';
       const comparison = a[field] < b[field] ? -1 : a[field] > b[field] ? 1 : 0;
-      return direction === 'ASC' ? comparison : -comparison;
+      return orderDirection === 'asc' ? comparison : -comparison;
     });
   }
 
@@ -187,7 +188,7 @@ export function projectWorkItemsToGraphQL(workItems, args = {}) {
     data,
     meta: {
       filters: args.where,
-      sort: args.orderBy ? [args.orderBy] : undefined,
+      sort: args.orderBy ? [{ field: args.orderBy.field, direction: orderDirection }] : undefined,
     },
   });
 }

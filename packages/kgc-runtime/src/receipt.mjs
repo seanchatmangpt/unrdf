@@ -31,6 +31,8 @@ export const ReceiptSchema = z.object({
  * @typedef {z.infer<typeof ReceiptSchema>} Receipt
  */
 
+let receiptSeq = 0;
+
 /**
  * Generate a receipt for an operation
  * @param {string} operation - Operation name
@@ -41,7 +43,8 @@ export const ReceiptSchema = z.object({
  */
 export async function generateReceipt(operation, inputs, outputs, parentHash) {
   const timestamp = now();
-  const id = `receipt-${timestamp}-${operation}`;
+  // Timestamps have 1ms resolution; a per-process sequence keeps ids unique within a millisecond
+  const id = `receipt-${timestamp}-${operation}-${++receiptSeq}`;
 
   // Create deterministic hash of operation
   const data = JSON.stringify({
