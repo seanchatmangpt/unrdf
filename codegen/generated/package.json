@@ -3,11 +3,11 @@
   "version": "0.0.0-agnostic",
   "description": "Auto-generated package registry and utilities",
   "type": "module",
-  "main": "index.js",
+  "main": "index.cjs",
   "module": "index.mjs",
   "exports": {
     ".": "./index.mjs",
-    "./cjs": "./index.js",
-    "./registry": "./registry.mjs"
+    "./cjs": "./index.cjs",
+    "./registry": "./index.mjs"
   }
 }

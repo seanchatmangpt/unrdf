@@ -1,27 +1,64 @@
 /**
  * UNRDF Package Registry
  * Auto-generated from package.json files
- * Generated: 2026-01-01T03:09:45.017Z
+ * Generated: 2026-09-28T23:33:20.839Z
  */
 
 const PACKAGES = {
-  "@unrdf/atomvm": {
-    "name": "@unrdf/atomvm",
-    "version": "latest",
-    "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+  "@unrdf/ai-ml-innovations": {
+    "name": "@unrdf/ai-ml-innovations",
+    "version": "0.0.0-agnostic",
+    "description": "Novel AI/ML integration patterns for UNRDF knowledge graphs",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./service-worker-manager": "./src/service-worker-manager.mjs"
+      "./temporal-gnn": "./src/temporal-gnn.mjs",
+      "./neural-symbolic": "./src/neural-symbolic-reasoner.mjs",
+      "./federated": "./src/federated-embeddings.mjs"
+    },
+    "path": "ai-ml-innovations",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/knowledge-engine",
+      "@unrdf/semantic-search",
+      "@unrdf/ml-inference",
+      "@unrdf/kgc-4d",
+      "@unrdf/v6-core",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
+  "@unrdf/atomvm": {
+    "name": "@unrdf/atomvm",
+    "version": "0.0.0-agnostic",
+    "description": "AtomVM runtimes, OTP patterns, and receipted swarm control planes for browser and Node.js",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./service-worker-manager": "./src/service-worker-manager.mjs",
+      "./assets": "./src/assets.mjs",
+      "./avm-packer": "./src/avm-packer.mjs",
+      "./continuum": "./src/continuum/index.mjs",
+      "./continuum/browser": "./src/continuum/browser-client.mjs"
     },
     "path": "atomvm",
     "dependencies": [
       "@opentelemetry/api",
       "@unrdf/core",
+      "@unrdf/hooks",
       "@unrdf/oxigraph",
+      "@unrdf/receipts",
       "@unrdf/streaming",
-      "coi-serviceworker"
+      "@unrdf/v6-core",
+      "coi-serviceworker",
+      "zod"
     ],
     "devDependencies": [
       "@playwright/test",
@@ -33,7 +70,7 @@ const PACKAGES = {
   },
   "@unrdf/blockchain": {
     "name": "@unrdf/blockchain",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -47,7 +84,6 @@ const PACKAGES = {
     "dependencies": [
       "@noble/hashes",
       "@unrdf/kgc-4d",
-      "@unrdf/yawl",
       "ethers",
       "merkletreejs",
       "zod"
@@ -58,7 +94,7 @@ const PACKAGES = {
   },
   "@unrdf/caching": {
     "name": "@unrdf/caching",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Multi-layer caching system for RDF queries with Redis and LRU",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -80,9 +116,37 @@ const PACKAGES = {
       "vitest"
     ]
   },
+  "@unrdf/chatman-equation": {
+    "name": "@unrdf/chatman-equation",
+    "version": "0.0.0-agnostic",
+    "description": "Chatman Equation documentation generation using Tera-compatible templates",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./template-engine": "./src/template-engine.mjs",
+      "./config": "./src/config-loader.mjs",
+      "./filters": "./src/filters.mjs"
+    },
+    "path": "chatman-equation",
+    "dependencies": [
+      "@iarna/toml",
+      "@unrdf/core",
+      "@unrdf/kgn",
+      "@unrdf/oxigraph",
+      "glob",
+      "nunjucks",
+      "smol-toml",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "vitest"
+    ]
+  },
   "@unrdf/cli": {
     "name": "@unrdf/cli",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -92,14 +156,27 @@ const PACKAGES = {
     },
     "path": "cli",
     "dependencies": [
+      "@iarna/toml",
+      "archiver",
       "@unrdf/core",
-      "@unrdf/decision-fabric",
+      "@unrdf/daemon",
       "@unrdf/federation",
       "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-swarm",
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "@unrdf/project-engine",
+      "@unrdf/receipts",
       "@unrdf/streaming",
       "citty",
+      "glob",
+      "gray-matter",
+      "js-yaml",
+      "nunjucks",
       "table",
-      "yaml"
+      "yaml",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -107,9 +184,31 @@ const PACKAGES = {
       "vitest"
     ]
   },
+  "@unrdf/codegen": {
+    "name": "@unrdf/codegen",
+    "version": "0.0.0-agnostic",
+    "description": "Code generation and metaprogramming tools for UNRDF",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./sparql-types": "./src/sparql-type-generator.mjs",
+      "./meta-templates": "./src/meta-template-engine.mjs",
+      "./property-tests": "./src/property-test-generator.mjs"
+    },
+    "path": "codegen",
+    "dependencies": [
+      "fast-check",
+      "zod"
+    ],
+    "devDependencies": [
+      "nunjucks",
+      "vitest"
+    ]
+  },
   "@unrdf/collab": {
     "name": "@unrdf/collab",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -132,12 +231,13 @@ const PACKAGES = {
     "devDependencies": [
       "@types/node",
       "@types/ws",
-      "vitest"
+      "vitest",
+      "vue"
     ]
   },
   "@unrdf/composables": {
     "name": "@unrdf/composables",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -149,7 +249,10 @@ const PACKAGES = {
     "path": "composables",
     "dependencies": [
       "@unrdf/core",
+      "@unrdf/oxigraph",
       "@unrdf/streaming",
+      "rdf-canonize",
+      "unctx",
       "vue"
     ],
     "devDependencies": [
@@ -159,7 +262,7 @@ const PACKAGES = {
   },
   "@unrdf/consensus": {
     "name": "@unrdf/consensus",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Production-grade Raft consensus for distributed workflow coordination",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -188,7 +291,7 @@ const PACKAGES = {
   },
   "@unrdf/core": {
     "name": "@unrdf/core",
-    "version": "latest-alpha.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -198,6 +301,10 @@ const PACKAGES = {
       "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
       "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
       "./sparql": "./src/sparql/index.mjs",
+      "./sparql/executor-sync": "./src/sparql/executor-sync.mjs",
+      "./sparql/embeddings": "./src/sparql/embeddings.mjs",
+      "./sparql/semantic-executor": "./src/sparql/semantic-executor.mjs",
+      "./index/hnsw": "./src/index/hnsw.mjs",
       "./types": "./src/types.mjs",
       "./constants": "./src/constants.mjs",
       "./validation": "./src/validation/index.mjs",
@@ -206,18 +313,38 @@ const PACKAGES = {
       "./metrics": "./src/metrics.mjs",
       "./security": "./src/security.mjs",
       "./security-schemas": "./src/security-schemas.mjs",
-      "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
+      "./utils/sparql-utils": "./src/utils/sparql-utils.mjs",
+      "./utils/semantic-bridge": "./src/utils/semantic-bridge.mjs",
+      "./utils/lockchain-writer": "./src/utils/lockchain-writer.mjs",
+      "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
+      "./viz/query-explainer": "./src/viz/query-explainer.mjs",
+      "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs",
+      "./capabilities": "./src/capability-ledger.mjs",
+      "./capability-graph": "./src/capability-graph.mjs",
+      "./evidence": "./src/evidence-store.mjs",
+      "./receipts": "./src/receipt-chain.mjs",
+      "./execution-plan": "./src/execution-plan.mjs",
+      "./admission": "./src/admission-boundary.mjs",
+      "./command-verifier": "./src/command-verifier.mjs",
+      "./replay": "./src/replay-runner.mjs",
+      "./transaction-core": "./src/utils/transaction-core.mjs"
     },
     "path": "core",
     "dependencies": [
+      "@noble/hashes",
+      "@opentelemetry/api",
       "@rdfjs/data-model",
       "@rdfjs/namespace",
       "@rdfjs/serializer-jsonld",
       "@rdfjs/serializer-turtle",
       "@rdfjs/to-ntriples",
       "@unrdf/oxigraph",
+      "async-mutex",
+      "hnswlib-node",
       "jsonld",
       "n3",
+      "onnxruntime-node",
+      "oxigraph",
       "rdf-canonize",
       "rdf-ext",
       "rdf-validate-shacl",
@@ -225,25 +352,72 @@ const PACKAGES = {
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  "@unrdf/daemon": {
+    "name": "@unrdf/daemon",
+    "version": "0.0.0-agnostic",
+    "description": "Background daemon for managing scheduled tasks and event-driven operations",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./daemon": "./src/daemon.mjs",
+      "./mcp": "./src/mcp/index.mjs",
+      "./schemas": "./src/schemas.mjs",
+      "./trigger-evaluator": "./src/trigger-evaluator.mjs",
+      "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
+      "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
+      "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs",
+      "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs",
+      "./integrations/kgc-4d-sourcing": "./src/integrations/kgc-4d-sourcing.mjs",
+      "./integrations/kgc-4d-merkle": "./src/integrations/kgc-4d-merkle.mjs"
+    },
+    "path": "daemon",
+    "dependencies": [
+      "@ai-sdk/groq",
+      "@grpc/grpc-js",
+      "@modelcontextprotocol/sdk",
+      "@opentelemetry/api",
+      "@opentelemetry/exporter-metrics-otlp-grpc",
+      "@opentelemetry/exporter-trace-otlp-grpc",
+      "@opentelemetry/resources",
+      "@opentelemetry/sdk-metrics",
+      "@opentelemetry/sdk-node",
+      "@opentelemetry/sdk-trace-node",
+      "@opentelemetry/semantic-conventions",
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/otel",
+      "ai",
+      "cron-parser",
+      "hash-wasm",
+      "nunjucks",
+      "zod"
+    ],
+    "devDependencies": [
       "vitest"
     ]
   },
   "@unrdf/dark-matter": {
     "name": "@unrdf/dark-matter",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./optimizer": "./src/optimizer.mjs",
-      "./analyzer": "./src/analyzer.mjs"
+      "./analyzer": "./src/dark-matter/query-analyzer.mjs"
     },
     "path": "dark-matter",
     "dependencies": [
       "@unrdf/core",
       "@unrdf/oxigraph",
-      "typhonjs-escomplex"
+      "typhonjs-escomplex",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -252,7 +426,7 @@ const PACKAGES = {
   },
   "@unrdf/decision-fabric": {
     "name": "@unrdf/decision-fabric",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -270,8 +444,10 @@ const PACKAGES = {
       "@unrdf/kgc-4d",
       "@unrdf/knowledge-engine",
       "@unrdf/oxigraph",
+      "@unrdf/project-engine",
       "@unrdf/streaming",
-      "@unrdf/validation"
+      "@unrdf/validation",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -281,7 +457,7 @@ const PACKAGES = {
   },
   "@unrdf/diataxis-kit": {
     "name": "@unrdf/diataxis-kit",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -298,55 +474,9 @@ const PACKAGES = {
     "dependencies": [],
     "devDependencies": []
   },
-  "docs": {
-    "name": "docs",
-    "version": "latest",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {},
-    "path": "docs",
-    "dependencies": [
-      "@ai-sdk/gateway",
-      "@ai-sdk/vue",
-      "@electric-sql/pglite",
-      "@iconify-json/logos",
-      "@iconify-json/lucide",
-      "@iconify-json/simple-icons",
-      "@iconify-json/vscode-icons",
-      "@nuxt/content",
-      "@nuxt/image",
-      "@nuxt/ui",
-      "@nuxtjs/mdc",
-      "ai",
-      "better-sqlite3",
-      "date-fns",
-      "drizzle-orm",
-      "nuxt",
-      "nuxt-auth-utils",
-      "nuxt-charts",
-      "nuxt-llms",
-      "nuxt-og-image",
-      "shiki-stream"
-    ],
-    "devDependencies": [
-      "@nuxt/eslint",
-      "@playwright/test",
-      "@types/node",
-      "@vitejs/plugin-vue",
-      "@vitest/ui",
-      "@vue/test-utils",
-      "drizzle-kit",
-      "eslint",
-      "happy-dom",
-      "msw",
-      "typescript",
-      "vitest",
-      "vue-tsc"
-    ]
-  },
   "@unrdf/domain": {
     "name": "@unrdf/domain",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Domain models and types for UNRDF",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -359,7 +489,7 @@ const PACKAGES = {
   },
   "@unrdf/engine-gateway": {
     "name": "@unrdf/engine-gateway",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -378,16 +508,47 @@ const PACKAGES = {
       "vitest"
     ]
   },
+  "@unrdf/event-automation": {
+    "name": "@unrdf/event-automation",
+    "version": "0.0.0-agnostic",
+    "description": "Event-driven automation for v6.1.0 - automatic delta processing with receipts",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/event-automation-engine.mjs",
+      "./delta-processor": "./src/delta-processor.mjs",
+      "./receipt-tracker": "./src/receipt-tracker.mjs",
+      "./policy-enforcer": "./src/policy-enforcer.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "event-automation",
+    "dependencies": [
+      "@unrdf/daemon",
+      "@unrdf/v6-core",
+      "@unrdf/hooks",
+      "@unrdf/receipts",
+      "@opentelemetry/api",
+      "hash-wasm",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
   "@unrdf/federation": {
     "name": "@unrdf/federation",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
     "tier": "extended",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./coordinator": "./src/coordinator.mjs",
-      "./advanced-sparql": "./src/advanced-sparql-federation.mjs"
+      "./coordinator": "./src/federation/coordinator.mjs",
+      "./advanced-sparql": "./src/advanced-sparql-federation.mjs",
+      "./ml/predictor": "./src/ml/predictor.mjs",
+      "./query-planner-core": "./src/federation/query-planner-core.mjs"
     },
     "path": "federation",
     "dependencies": [
@@ -399,13 +560,15 @@ const PACKAGES = {
       "zod"
     ],
     "devDependencies": [
+      "@opentelemetry/sdk-trace-base",
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   "@unrdf/fusion": {
     "name": "@unrdf/fusion",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -414,22 +577,51 @@ const PACKAGES = {
     },
     "path": "fusion",
     "dependencies": [
-      "@unrdf/oxigraph",
-      "@unrdf/kgc-4d",
       "@unrdf/blockchain",
-      "@unrdf/hooks",
       "@unrdf/caching",
-      "@unrdf/yawl",
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
       "graphql",
+      "hash-wasm",
       "zod"
     ],
     "devDependencies": [
       "vitest"
     ]
   },
+  "@unrdf/geosparql": {
+    "name": "@unrdf/geosparql",
+    "version": "0.0.0-agnostic",
+    "description": "OGC GeoSPARQL standard compliance for spatial RDF queries",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./geometry": "./src/geometry.mjs",
+      "./spatial-relations": "./src/spatial-relations.mjs",
+      "./distance": "./src/distance.mjs",
+      "./rtree-index": "./src/rtree-index.mjs",
+      "./crs": "./src/crs.mjs",
+      "./query-functions": "./src/query-functions.mjs"
+    },
+    "path": "geosparql",
+    "dependencies": [
+      "@turf/turf",
+      "rbush",
+      "@unrdf/oxigraph",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
   "@unrdf/graph-analytics": {
     "name": "@unrdf/graph-analytics",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -453,37 +645,47 @@ const PACKAGES = {
   },
   "@unrdf/hooks": {
     "name": "@unrdf/hooks",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./define": "./src/define.mjs",
-      "./executor": "./src/executor.mjs"
+      "./executor": "./src/executor.mjs",
+      "./parallel-executor": "./src/hooks/parallel-executor.mjs",
+      "./dependency-graph": "./src/hooks/dependency-graph.mjs",
+      "./worker-pool": "./src/hooks/worker-pool.mjs"
     },
     "path": "hooks",
     "dependencies": [
+      "@noble/hashes",
+      "@opentelemetry/api",
       "@unrdf/core",
+      "@unrdf/otel",
       "@unrdf/oxigraph",
       "citty",
+      "eyereasoner",
+      "oxigraph",
+      "rdf-validate-shacl",
+      "sparqljs",
       "zod"
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   "@unrdf/integration-tests": {
     "name": "@unrdf/integration-tests",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {},
     "path": "integration-tests",
     "dependencies": [
-      "@unrdf/yawl",
       "@unrdf/hooks",
       "@unrdf/kgc-4d",
       "@unrdf/kgc-multiverse",
@@ -502,7 +704,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-4d": {
     "name": "@unrdf/kgc-4d",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -515,8 +717,10 @@ const PACKAGES = {
     "dependencies": [
       "@unrdf/core",
       "@unrdf/oxigraph",
+      "async-mutex",
       "hash-wasm",
-      "isomorphic-git"
+      "isomorphic-git",
+      "zod"
     ],
     "devDependencies": [
       "comment-parser",
@@ -525,52 +729,52 @@ const PACKAGES = {
       "vitest"
     ]
   },
-  "@unrdf/kgc-claude": {
-    "name": "@unrdf/kgc-claude",
-    "version": "latest",
-    "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+  "@unrdf/kgc-4d-playground": {
+    "name": "@unrdf/kgc-4d-playground",
+    "version": "0.0.0-agnostic",
+    "description": "KGC-4D Playground - Shard-Based Architecture Demo with Perfect Client/Server Relationship",
     "tier": "optional",
-    "main": "./src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./run-capsule": "./src/run-capsule.mjs",
-      "./checkpoint": "./src/checkpoint.mjs",
-      "./autonomy-guard": "./src/autonomy-guard.mjs",
-      "./shard-merge": "./src/shard-merge.mjs",
-      "./async-workflow": "./src/async-workflow.mjs",
-      "./projection": "./src/projection.mjs",
-      "./swarm-orchestrator": "./src/swarm-orchestrator.mjs",
-      "./poka-yoke-guards": "./src/poka-yoke-guards.mjs",
-      "./observable-io": "./src/observable-io.mjs",
-      "./info-scheduler": "./src/info-scheduler.mjs",
-      "./drift-detector": "./src/drift-detector.mjs",
-      "./budget-enforcer": "./src/budget-enforcer.mjs",
-      "./agent-harness": "./src/agent-harness.mjs",
-      "./receipt-compositor": "./src/receipt-compositor.mjs",
-      "./mcp-server-builder": "./src/mcp-server-builder.mjs",
-      "./mcp-federation": "./src/mcp-federation.mjs",
-      "./mcp-bridge": "./src/mcp-bridge.mjs",
-      "./capabilities/ide-integration": "./src/capabilities/ide-integration.mjs",
-      "./capabilities/ui-components": "./src/capabilities/ui-components.mjs",
-      "./capabilities/editor-commands": "./src/capabilities/editor-commands.mjs"
-    },
-    "path": "kgc-claude",
+    "main": "src/index.mjs",
+    "exports": {},
+    "path": "kgc-4d-playground",
     "dependencies": [
+      "@monaco-editor/react",
       "@unrdf/core",
-      "@unrdf/oxigraph",
-      "@unrdf/kgc-4d",
-      "@unrdf/yawl",
       "@unrdf/hooks",
-      "hash-wasm",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/validation",
+      "@xyflow/react",
+      "clsx",
+      "d3-scale",
+      "elkjs",
+      "framer-motion",
+      "lucide-react",
+      "next",
+      "react",
+      "react-dom",
+      "react-force-graph-3d",
+      "tailwind-merge",
+      "three",
+      "ws",
       "zod"
     ],
     "devDependencies": [
+      "@playwright/test",
+      "@types/node",
+      "@types/react",
+      "@types/ws",
+      "autoprefixer",
+      "eslint",
+      "eslint-config-next",
+      "postcss",
+      "tailwindcss",
       "vitest"
     ]
   },
   "@unrdf/kgc-cli": {
     "name": "@unrdf/kgc-cli",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -593,7 +797,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-docs": {
     "name": "@unrdf/kgc-docs",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -608,6 +812,7 @@ const PACKAGES = {
     },
     "path": "kgc-docs",
     "dependencies": [
+      "@unrdf/kgc-runtime",
       "zod"
     ],
     "devDependencies": [
@@ -616,7 +821,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-multiverse": {
     "name": "@unrdf/kgc-multiverse",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -650,7 +855,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-probe": {
     "name": "@unrdf/kgc-probe",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -665,17 +870,19 @@ const PACKAGES = {
       "./cli": "./src/cli.mjs",
       "./utils": "./src/utils/index.mjs",
       "./utils/logger": "./src/utils/logger.mjs",
-      "./utils/errors": "./src/utils/errors.mjs"
+      "./utils/errors": "./src/utils/errors.mjs",
+      "./orchestration-core": "./src/orchestration-core.mjs"
     },
     "path": "kgc-probe",
     "dependencies": [
-      "@unrdf/kgc-substrate",
-      "@unrdf/kgc-4d",
-      "@unrdf/v6-core",
-      "@unrdf/oxigraph",
+      "@noble/hashes",
       "@unrdf/hooks",
-      "@unrdf/yawl",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-substrate",
+      "@unrdf/oxigraph",
+      "@unrdf/v6-core",
       "hash-wasm",
+      "n3",
       "zod"
     ],
     "devDependencies": [
@@ -686,7 +893,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-runtime": {
     "name": "@unrdf/kgc-runtime",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -710,7 +917,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-substrate": {
     "name": "@unrdf/kgc-substrate",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -735,7 +942,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-swarm": {
     "name": "@unrdf/kgc-swarm",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -746,7 +953,8 @@ const PACKAGES = {
       "./token-generator": "./src/token-generator.mjs",
       "./compressor": "./src/compressor.mjs",
       "./tracker": "./src/tracker.mjs",
-      "./guardian": "./src/guardian.mjs"
+      "./guardian": "./src/guardian.mjs",
+      "./transport": "./src/transport/hypercore-transport.mjs"
     },
     "path": "kgc-swarm",
     "dependencies": [
@@ -768,7 +976,7 @@ const PACKAGES = {
   },
   "@unrdf/kgc-tools": {
     "name": "@unrdf/kgc-tools",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Tools - Verification, freeze, and replay utilities for KGC capsules",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -794,13 +1002,14 @@ const PACKAGES = {
   },
   "@unrdf/kgn": {
     "name": "@unrdf/kgn",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
     "tier": "optional",
-    "main": "src/index.js",
+    "main": "dist/index.mjs",
     "exports": {
       ".": {
-        "import": "./src/index.js"
+        "import": "./dist/index.mjs",
+        "types": "./dist/index.d.ts"
       },
       "./engine": {
         "import": "./src/engine/index.js"
@@ -819,17 +1028,20 @@ const PACKAGES = {
     "path": "kgn",
     "dependencies": [
       "@unrdf/core",
-      "@unrdf/test-utils",
+      "consola",
       "fs-extra",
+      "glob",
       "gray-matter",
       "nunjucks",
-      "yaml"
+      "yaml",
+      "zod"
     ],
     "devDependencies": [
       "@amiceli/vitest-cucumber",
       "@babel/parser",
       "@babel/traverse",
       "comment-parser",
+      "cors",
       "eslint",
       "nodemon",
       "vitest"
@@ -837,7 +1049,7 @@ const PACKAGES = {
   },
   "@unrdf/knowledge-engine": {
     "name": "@unrdf/knowledge-engine",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -850,21 +1062,54 @@ const PACKAGES = {
     },
     "path": "knowledge-engine",
     "dependencies": [
+      "@comunica/query-sparql",
+      "@iarna/toml",
       "@noble/hashes",
+      "@opentelemetry/api",
       "@unrdf/core",
       "@unrdf/oxigraph",
       "@unrdf/streaming",
       "@xenova/transformers",
-      "eyereasoner"
+      "eyereasoner",
+      "lru-cache",
+      "rdf-canonize",
+      "rdf-ext",
+      "rdf-validate-shacl",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
       "vitest"
     ]
   },
+  "@unrdf/manufacturing": {
+    "name": "@unrdf/manufacturing",
+    "version": "0.0.0-agnostic",
+    "description": "μ(O) Manufacturing Operator Runtime — composable operators for deterministic artifact manufacturing",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./operators": "./src/operators/index.mjs",
+      "./pipeline": "./src/pipeline/index.mjs",
+      "./gate": "./src/gate/index.mjs",
+      "./causality": "./src/causality/index.mjs",
+      "./artifact": "./src/artifact/index.mjs",
+      "./repository-fact-accounting": "./src/repository-fact-accounting.mjs",
+      "./git-repository-facts": "./src/git-repository-facts.mjs"
+    },
+    "path": "manufacturing",
+    "dependencies": [
+      "@unrdf/core",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
   "@unrdf/ml-inference": {
     "name": "@unrdf/ml-inference",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -890,21 +1135,24 @@ const PACKAGES = {
   },
   "@unrdf/ml-versioning": {
     "name": "@unrdf/ml-versioning",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
     "tier": "optional",
     "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./version-store": "./src/version-store.mjs",
+      "./tf": "./src/tf.mjs",
       "./examples/image-classifier": "./src/examples/image-classifier.mjs"
     },
     "path": "ml-versioning",
     "dependencies": [
+      "@tensorflow/tfjs",
+      "@tensorflow/tfjs-backend-cpu",
       "@tensorflow/tfjs-node",
+      "@unrdf/core",
       "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
-      "@unrdf/core",
       "hash-wasm",
       "zod"
     ],
@@ -913,33 +1161,9 @@ const PACKAGES = {
       "vitest"
     ]
   },
-  "@unrdf/nextra-docs": {
-    "name": "@unrdf/nextra-docs",
-    "version": "latest",
-    "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {},
-    "path": "nextra",
-    "dependencies": [
-      "katex",
-      "next",
-      "nextra",
-      "nextra-theme-docs",
-      "react",
-      "react-dom",
-      "zod"
-    ],
-    "devDependencies": [
-      "@types/node",
-      "@types/react",
-      "@types/react-dom",
-      "typescript"
-    ]
-  },
   "@unrdf/observability": {
     "name": "@unrdf/observability",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -951,41 +1175,144 @@ const PACKAGES = {
     },
     "path": "observability",
     "dependencies": [
-      "prom-client",
       "@opentelemetry/api",
       "@opentelemetry/exporter-prometheus",
       "@opentelemetry/sdk-metrics",
       "express",
+      "hash-wasm",
+      "prom-client",
       "zod"
     ],
     "devDependencies": [
       "vitest"
     ]
   },
+  "@unrdf/otel": {
+    "name": "@unrdf/otel",
+    "version": "0.0.0-agnostic",
+    "description": "OpenTelemetry integration for UNRDF using pm4py-rust telemetry infrastructure",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./attributes": "./src/generated/attributes.mjs",
+      "./metrics": "./src/generated/metrics.mjs",
+      "./pm4py": "./src/pm4py.mjs",
+      "./monitoring": "./src/monitoring.mjs",
+      "./validation": "./src/validation/index.mjs",
+      "./collector-config": "./deploy/otel-collector-config.yaml",
+      "./ocel": "./src/ocel/index.mjs",
+      "./conformance": "./src/conformance/index.mjs"
+    },
+    "path": "otel",
+    "dependencies": [
+      "@opentelemetry/api",
+      "@opentelemetry/semantic-conventions",
+      "@unrdf/manufacturing"
+    ],
+    "devDependencies": []
+  },
   "@unrdf/oxigraph": {
     "name": "@unrdf/oxigraph",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./store": "./src/store.mjs",
-      "./types": "./src/types.mjs"
+      "./types": "./src/types.mjs",
+      "./query-cache": "./src/query-cache.mjs",
+      "./sparql-star": "./src/sparql-star.mjs",
+      "./store-receipts": "./src/store-receipts.mjs"
     },
     "path": "oxigraph",
     "dependencies": [
       "oxigraph",
+      "zod",
+      "@unrdf/v6-core"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  "@unrdf/pictl-algorithms": {
+    "name": "@unrdf/pictl-algorithms",
+    "version": "0.0.0-agnostic",
+    "description": "PICTL Process Mining Algorithms for UNRDF Federation - OCEL discovery, conformance, and prediction via WASM",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./pictl-wrapper": "./src/pictl-wrapper.mjs"
+    },
+    "path": "pictl-algorithms",
+    "dependencies": [
+      "@opentelemetry/api",
+      "@unrdf/core",
+      "@unrdf/pictl-semantics",
+      "zod"
+    ],
+    "devDependencies": [
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  "@unrdf/pictl-semantics": {
+    "name": "@unrdf/pictl-semantics",
+    "version": "0.0.0-agnostic",
+    "description": "PICTL Semantics Integration with @unrdf Federation - Ontology-driven process mining with cryptographic quorum consensus",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./quorum": "./src/quorum.mjs",
+      "./ontology-loader": "./src/ontology-loader.mjs",
+      "./result-validator": "./src/result-validator.mjs"
+    },
+    "path": "pictl-semantics",
+    "dependencies": [
+      "@comunica/query-sparql",
+      "@opentelemetry/api",
+      "@rdfjs/data-model",
+      "@unrdf/core",
+      "@unrdf/federation",
+      "hash-wasm",
+      "n3",
+      "rdf-canonize",
       "zod"
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/oxigraph",
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  "@unrdf/privacy": {
+    "name": "@unrdf/privacy",
+    "version": "0.0.0-agnostic",
+    "description": "Differential privacy for SPARQL queries: budget accounting, Laplace/Gaussian/exponential mechanisms",
+    "tier": "optional",
+    "main": "./src/differential-privacy-sparql.mjs",
+    "exports": {
+      ".": "./src/differential-privacy-sparql.mjs",
+      "./differential-privacy-sparql": "./src/differential-privacy-sparql.mjs"
+    },
+    "path": "privacy",
+    "dependencies": [
+      "hash-wasm",
+      "zod"
+    ],
+    "devDependencies": [
       "vitest"
     ]
   },
   "@unrdf/project-engine": {
     "name": "@unrdf/project-engine",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -994,8 +1321,11 @@ const PACKAGES = {
     },
     "path": "project-engine",
     "dependencies": [
+      "@opentelemetry/api",
       "@unrdf/core",
-      "@unrdf/knowledge-engine"
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -1004,7 +1334,7 @@ const PACKAGES = {
   },
   "@unrdf/rdf-graphql": {
     "name": "@unrdf/rdf-graphql",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -1025,17 +1355,14 @@ const PACKAGES = {
   },
   "@unrdf/react": {
     "name": "@unrdf/react",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./ai-semantic": "./src/ai-semantic/index.mjs",
-      "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs",
-      "./embeddings-manager": "./src/ai-semantic/embeddings-manager.mjs",
-      "./nlp-query-builder": "./src/ai-semantic/nlp-query-builder.mjs",
-      "./anomaly-detector": "./src/ai-semantic/anomaly-detector.mjs"
+      "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs"
     },
     "path": "react",
     "dependencies": [
@@ -1052,34 +1379,82 @@ const PACKAGES = {
   },
   "@unrdf/receipts": {
     "name": "@unrdf/receipts",
-    "version": "latest",
-    "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
+    "version": "0.0.0-agnostic",
+    "description": "KGC Receipts - Batch receipt generation with Merkle tree verification and post-quantum cryptography for knowledge graph operations",
     "tier": "extended",
     "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./batch-receipt-generator": "./src/batch-receipt-generator.mjs",
-      "./merkle-batcher": "./src/merkle-batcher.mjs"
+      "./merkle-batcher": "./src/merkle-batcher.mjs",
+      "./dilithium3": "./src/dilithium3.mjs",
+      "./hybrid-signature": "./src/hybrid-signature.mjs",
+      "./pq-signer": "./src/pq-signer.mjs",
+      "./pq-merkle": "./src/pq-merkle.mjs",
+      "./verifier": "./src/receipt-verifier.mjs"
     },
     "path": "receipts",
     "dependencies": [
+      "@noble/curves",
+      "@noble/hashes",
       "@unrdf/core",
-      "@unrdf/oxigraph",
       "@unrdf/kgc-4d",
       "@unrdf/kgc-multiverse",
+      "@unrdf/oxigraph",
+      "dilithium-crystals",
       "hash-wasm",
       "zod"
     ],
     "devDependencies": [
       "@vitest/coverage-v8",
-      "vitest",
       "eslint",
-      "unbuild"
+      "unbuild",
+      "vitest"
+    ]
+  },
+  "@unrdf/self-healing-workflows": {
+    "name": "@unrdf/self-healing-workflows",
+    "version": "0.0.0-agnostic",
+    "description": "Automatic error recovery system with 85-95% success rate using YAWL + Daemon + Hooks",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/self-healing-engine.mjs",
+      "./retry": "./src/retry-strategy.mjs",
+      "./circuit-breaker": "./src/circuit-breaker.mjs",
+      "./recovery": "./src/recovery-actions.mjs",
+      "./classifier": "./src/error-classifier.mjs",
+      "./health": "./src/health-monitor.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "self-healing-workflows",
+    "dependencies": [
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  "@unrdf/semantic-parts": {
+    "name": "@unrdf/semantic-parts",
+    "version": "0.0.0-agnostic",
+    "description": "Evidence-bounded semantic software-parts graph and cross-language substitution discovery",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs"
+    },
+    "path": "semantic-parts",
+    "dependencies": [],
+    "devDependencies": [
+      "vitest"
     ]
   },
   "@unrdf/semantic-search": {
     "name": "@unrdf/semantic-search",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1093,6 +1468,7 @@ const PACKAGES = {
     "dependencies": [
       "@unrdf/oxigraph",
       "@xenova/transformers",
+      "sharp",
       "vectra",
       "zod"
     ],
@@ -1103,7 +1479,7 @@ const PACKAGES = {
   },
   "@unrdf/serverless": {
     "name": "@unrdf/serverless",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -1112,7 +1488,9 @@ const PACKAGES = {
       "./cdk": "./src/cdk/index.mjs",
       "./deploy": "./src/deploy/index.mjs",
       "./api": "./src/api/index.mjs",
-      "./storage": "./src/storage/index.mjs"
+      "./storage": "./src/storage/index.mjs",
+      "./storage/dynamodb-core": "./src/storage/dynamodb-core.mjs",
+      "./storage/dynamodb-adapter": "./src/storage/dynamodb-adapter.mjs"
     },
     "path": "serverless",
     "dependencies": [
@@ -1131,15 +1509,49 @@ const PACKAGES = {
       "vitest"
     ]
   },
+  "@unrdf/spatial-kg": {
+    "name": "@unrdf/spatial-kg",
+    "version": "0.0.0-agnostic",
+    "description": "Spatial Knowledge Graphs - WebXR-enabled 3D visualization and navigation of RDF knowledge graphs",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/spatial-kg-engine.mjs",
+      "./layout": "./src/layout-3d.mjs",
+      "./renderer": "./src/webxr-renderer.mjs",
+      "./query": "./src/spatial-query.mjs",
+      "./gestures": "./src/gesture-controller.mjs",
+      "./collaboration": "./src/collaboration.mjs",
+      "./lod": "./src/lod-manager.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "spatial-kg",
+    "dependencies": [
+      "@unrdf/core",
+      "@opentelemetry/api",
+      "three",
+      "d3-force-3d",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@types/three",
+      "vitest"
+    ]
+  },
   "@unrdf/streaming": {
     "name": "@unrdf/streaming",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./processor": "./src/processor.mjs"
+      "./processor": "./src/processor.mjs",
+      "./shacl-core": "./src/shacl-core.mjs",
+      "./validate": "./src/validate.mjs",
+      "./checkpointed-pipeline": "./src/checkpointed-pipeline.mjs"
     },
     "path": "streaming",
     "dependencies": [
@@ -1148,6 +1560,7 @@ const PACKAGES = {
       "@unrdf/hooks",
       "@unrdf/oxigraph",
       "citty",
+      "hash-wasm",
       "lru-cache",
       "ws",
       "zod"
@@ -1155,23 +1568,51 @@ const PACKAGES = {
     "devDependencies": [
       "@rdfjs/data-model",
       "@types/node",
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  "@unrdf/temporal-discovery": {
+    "name": "@unrdf/temporal-discovery",
+    "version": "0.0.0-agnostic",
+    "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./pattern-miner": "./src/pattern-miner.mjs",
+      "./anomaly-detector": "./src/anomaly-detector.mjs",
+      "./trend-analyzer": "./src/trend-analyzer.mjs",
+      "./correlation-finder": "./src/correlation-finder.mjs",
+      "./changepoint-detector": "./src/changepoint-detector.mjs",
+      "./engine": "./src/temporal-discovery-engine.mjs"
+    },
+    "path": "temporal-discovery",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/semantic-search",
+      "@unrdf/graph-analytics",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
       "vitest"
     ]
   },
   "@unrdf/test-utils": {
     "name": "@unrdf/test-utils",
-    "version": "latest",
-    "description": "Testing utilities for UNRDF development",
+    "version": "0.0.0-agnostic",
+    "description": "Shared test utilities and fixtures for unrdf packages",
     "tier": "optional",
-    "main": "./src/index.mjs",
+    "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs"
     },
     "path": "test-utils",
     "dependencies": [
-      "@unrdf/oxigraph",
       "@opentelemetry/api",
-      "zod"
+      "@unrdf/oxigraph"
     ],
     "devDependencies": [
       "vitest"
@@ -1179,7 +1620,7 @@ const PACKAGES = {
   },
   "@unrdf/v6-compat": {
     "name": "@unrdf/v6-compat",
-    "version": "latest-rc.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1187,7 +1628,8 @@ const PACKAGES = {
       ".": "./src/index.mjs",
       "./adapters": "./src/adapters.mjs",
       "./lint-rules": "./src/lint-rules.mjs",
-      "./schema-generator": "./src/schema-generator.mjs"
+      "./schema-generator": "./src/schema-generator.mjs",
+      "./schema-codec": "./src/schema-codec.mjs"
     },
     "path": "v6-compat",
     "dependencies": [
@@ -1195,6 +1637,7 @@ const PACKAGES = {
       "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
       "@unrdf/v6-core",
+      "glob",
       "zod"
     ],
     "devDependencies": [
@@ -1205,7 +1648,7 @@ const PACKAGES = {
   },
   "@unrdf/v6-core": {
     "name": "@unrdf/v6-core",
-    "version": "latest-rc.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1218,6 +1661,7 @@ const PACKAGES = {
       "./receipts": "./src/receipts.mjs",
       "./receipts/base-receipt": "./src/receipts/base-receipt.mjs",
       "./receipts/merkle": "./src/receipts/merkle/tree.mjs",
+      "./receipt-pattern": "./src/receipt-pattern.mjs",
       "./delta": "./src/delta/index.mjs",
       "./delta/schema": "./src/delta/schema.mjs",
       "./delta/gate": "./src/delta/gate.mjs",
@@ -1232,7 +1676,6 @@ const PACKAGES = {
     "path": "v6-core",
     "dependencies": [
       "@unrdf/kgc-substrate",
-      "@unrdf/yawl",
       "@unrdf/kgc-cli",
       "@unrdf/kgc-4d",
       "@unrdf/hooks",
@@ -1251,7 +1694,7 @@ const PACKAGES = {
   },
   "@unrdf/validation": {
     "name": "@unrdf/validation",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "OTEL validation framework for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -1260,272 +1703,43 @@ const PACKAGES = {
     },
     "path": "validation",
     "dependencies": [
-      "@unrdf/knowledge-engine"
+      "@opentelemetry/api",
+      "@unrdf/knowledge-engine",
+      "zod"
     ],
     "devDependencies": []
   },
-  "@unrdf/yawl": {
-    "name": "@unrdf/yawl",
-    "version": "latest",
-    "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
-    "tier": "essential",
-    "main": "src/index.mjs",
+  "@unrdf/zkp": {
+    "name": "@unrdf/zkp",
+    "version": "0.0.0-agnostic",
+    "description": "Zero-Knowledge SPARQL - Privacy-preserving query proofs using zk-SNARKs",
+    "tier": "optional",
+    "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./api": "./src/api/workflow-api.mjs",
-      "./graphql-api": "./src/api/graphql-api.mjs",
-      "./ontology": "./src/ontology/yawl-ontology.mjs",
-      "./store": "./src/store/yawl-store.mjs",
-      "./types": "./src/types/yawl-types.mjs",
-      "./schemas": "./src/types/yawl-schemas.mjs",
-      "./hooks": "./src/hooks/yawl-hooks.mjs",
-      "./resources": "./src/resources/yawl-resources.mjs",
-      "./cancellation": "./src/cancellation/index.mjs",
-      "./receipt": "./src/receipt.mjs",
-      "./blockchain-receipts": "./src/blockchain-receipts.mjs",
-      "./visualization": "./src/visualization/live-workflow-viz.mjs"
-    },
-    "path": "yawl",
-    "dependencies": [
-      "@graphql-tools/schema",
-      "@noble/ed25519",
-      "@observablehq/plot",
-      "@unrdf/hooks",
-      "@unrdf/kgc-4d",
-      "@unrdf/oxigraph",
-      "d3",
-      "graphql",
-      "hash-wasm",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-ai": {
-    "name": "@unrdf/yawl-ai",
-    "version": "latest",
-    "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./predictor": "./src/ml/workflow-predictor.mjs",
-      "./optimizer": "./src/ml/performance-optimizer.mjs",
-      "./anomaly": "./src/ml/anomaly-detector.mjs",
-      "./adapter": "./src/integration/yawl-adapter.mjs"
-    },
-    "path": "yawl-ai",
-    "dependencies": [
-      "@tensorflow/tfjs-node",
-      "@tensorflow/tfjs-layers",
-      "ml-matrix",
-      "zod"
-    ],
-    "devDependencies": [
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-api": {
-    "name": "@unrdf/yawl-api",
-    "version": "latest",
-    "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
-    "tier": "optional",
-    "main": "src/server.mjs",
-    "exports": {
-      ".": "./src/server.mjs",
-      "./server": "./src/server.mjs"
-    },
-    "path": "yawl-api",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "fastify",
-      "@fastify/swagger",
-      "@fastify/swagger-ui",
-      "@fastify/cors",
-      "zod",
-      "zod-to-json-schema"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-durable": {
-    "name": "@unrdf/yawl-durable",
-    "version": "latest",
-    "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
-    "tier": "optional",
-    "main": "src/engine.mjs",
-    "exports": {
-      ".": "./src/engine.mjs",
-      "./saga": "./src/saga.mjs",
-      "./activity": "./src/activity.mjs",
-      "./replay": "./src/replay.mjs"
-    },
-    "path": "yawl-durable",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "hash-wasm",
-      "zod"
-    ],
-    "devDependencies": [
-      "@jest/globals",
-      "eslint",
-      "jest"
-    ]
-  },
-  "@unrdf/yawl-kafka": {
-    "name": "@unrdf/yawl-kafka",
-    "version": "latest",
-    "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./producer": "./src/producer.mjs",
-      "./consumer": "./src/consumer.mjs",
+      "./prover": "./src/sparql-zkp-prover.mjs",
+      "./circuit": "./src/circuit-compiler.mjs",
+      "./groth16": "./src/groth16-prover.mjs",
+      "./verifier": "./src/groth16-verifier.mjs",
       "./schemas": "./src/schemas.mjs"
     },
-    "path": "yawl-kafka",
+    "path": "zkp",
     "dependencies": [
       "@unrdf/core",
-      "avsc",
-      "kafkajs",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-langchain": {
-    "name": "@unrdf/yawl-langchain",
-    "version": "latest",
-    "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./adapter": "./src/adapter.mjs",
-      "./examples": "./examples/code-review-workflow.mjs"
-    },
-    "path": "yawl-langchain",
-    "dependencies": [
-      "@langchain/core",
-      "@langchain/openai",
-      "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
-      "@unrdf/yawl",
-      "langchain",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-observability": {
-    "name": "@unrdf/yawl-observability",
-    "version": "latest",
-    "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./metrics": "./src/metrics.mjs",
-      "./tracing": "./src/tracing.mjs",
-      "./sli": "./src/sli.mjs"
-    },
-    "path": "yawl-observability",
-    "dependencies": [
       "@opentelemetry/api",
-      "@opentelemetry/sdk-node",
-      "@opentelemetry/sdk-metrics",
-      "@unrdf/yawl",
-      "prom-client",
-      "zod"
+      "zod",
+      "hash-wasm",
+      "snarkjs",
+      "circomlibjs",
+      "sparqljs"
     ],
     "devDependencies": [
+      "@types/node",
       "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-queue": {
-    "name": "@unrdf/yawl-queue",
-    "version": "latest",
-    "description": "Distributed YAWL workflow execution using BullMQ and Redis",
-    "tier": "optional",
-    "main": "src/adapter.mjs",
-    "exports": {
-      ".": "./src/adapter.mjs",
-      "./adapter": "./src/adapter.mjs",
-      "./examples/data-pipeline": "./src/examples/data-pipeline.mjs"
-    },
-    "path": "yawl-queue",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "bullmq",
-      "ioredis",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  "@unrdf/yawl-realtime": {
-    "name": "@unrdf/yawl-realtime",
-    "version": "latest",
-    "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./server": "./src/server.mjs",
-      "./client": "./src/client.mjs"
-    },
-    "path": "yawl-realtime",
-    "dependencies": [
-      "@unrdf/yawl",
-      "socket.io",
-      "socket.io-client",
-      "zod"
-    ],
-    "devDependencies": [
+      "prettier",
       "vitest",
-      "eslint"
-    ]
-  },
-  "@unrdf/yawl-viz": {
-    "name": "@unrdf/yawl-viz",
-    "version": "latest",
-    "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
-    "tier": "optional",
-    "main": "src/visualizer.mjs",
-    "exports": {
-      ".": "./src/visualizer.mjs"
-    },
-    "path": "yawl-viz",
-    "dependencies": [
-      "@unrdf/yawl",
-      "d3",
-      "d3-graphviz",
-      "d3-selection",
-      "d3-zoom",
-      "d3-drag",
-      "d3-force",
-      "d3-hierarchy"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest",
-      "vite",
-      "jsdom"
+      "@vitest/coverage-v8"
     ]
   }
 };
@@ -1535,7 +1749,7 @@ const REGISTRY = {
   essential: [
   {
     "name": "@unrdf/core",
-    "version": "latest-alpha.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
     "tier": "essential",
     "main": "src/index.mjs",
@@ -1545,6 +1759,10 @@ const REGISTRY = {
       "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
       "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
       "./sparql": "./src/sparql/index.mjs",
+      "./sparql/executor-sync": "./src/sparql/executor-sync.mjs",
+      "./sparql/embeddings": "./src/sparql/embeddings.mjs",
+      "./sparql/semantic-executor": "./src/sparql/semantic-executor.mjs",
+      "./index/hnsw": "./src/index/hnsw.mjs",
       "./types": "./src/types.mjs",
       "./constants": "./src/constants.mjs",
       "./validation": "./src/validation/index.mjs",
@@ -1553,18 +1771,38 @@ const REGISTRY = {
       "./metrics": "./src/metrics.mjs",
       "./security": "./src/security.mjs",
       "./security-schemas": "./src/security-schemas.mjs",
-      "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
+      "./utils/sparql-utils": "./src/utils/sparql-utils.mjs",
+      "./utils/semantic-bridge": "./src/utils/semantic-bridge.mjs",
+      "./utils/lockchain-writer": "./src/utils/lockchain-writer.mjs",
+      "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
+      "./viz/query-explainer": "./src/viz/query-explainer.mjs",
+      "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs",
+      "./capabilities": "./src/capability-ledger.mjs",
+      "./capability-graph": "./src/capability-graph.mjs",
+      "./evidence": "./src/evidence-store.mjs",
+      "./receipts": "./src/receipt-chain.mjs",
+      "./execution-plan": "./src/execution-plan.mjs",
+      "./admission": "./src/admission-boundary.mjs",
+      "./command-verifier": "./src/command-verifier.mjs",
+      "./replay": "./src/replay-runner.mjs",
+      "./transaction-core": "./src/utils/transaction-core.mjs"
     },
     "path": "core",
     "dependencies": [
+      "@noble/hashes",
+      "@opentelemetry/api",
       "@rdfjs/data-model",
       "@rdfjs/namespace",
       "@rdfjs/serializer-jsonld",
       "@rdfjs/serializer-turtle",
       "@rdfjs/to-ntriples",
       "@unrdf/oxigraph",
+      "async-mutex",
+      "hnswlib-node",
       "jsonld",
       "n3",
+      "onnxruntime-node",
+      "oxigraph",
       "rdf-canonize",
       "rdf-ext",
       "rdf-validate-shacl",
@@ -1572,35 +1810,47 @@ const REGISTRY = {
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/hooks",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./define": "./src/define.mjs",
-      "./executor": "./src/executor.mjs"
+      "./executor": "./src/executor.mjs",
+      "./parallel-executor": "./src/hooks/parallel-executor.mjs",
+      "./dependency-graph": "./src/hooks/dependency-graph.mjs",
+      "./worker-pool": "./src/hooks/worker-pool.mjs"
     },
     "path": "hooks",
     "dependencies": [
+      "@noble/hashes",
+      "@opentelemetry/api",
       "@unrdf/core",
+      "@unrdf/otel",
       "@unrdf/oxigraph",
       "citty",
+      "eyereasoner",
+      "oxigraph",
+      "rdf-validate-shacl",
+      "sparqljs",
       "zod"
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/kgc-4d",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1613,8 +1863,10 @@ const REGISTRY = {
     "dependencies": [
       "@unrdf/core",
       "@unrdf/oxigraph",
+      "async-mutex",
       "hash-wasm",
-      "isomorphic-git"
+      "isomorphic-git",
+      "zod"
     ],
     "devDependencies": [
       "comment-parser",
@@ -1625,34 +1877,42 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/oxigraph",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./store": "./src/store.mjs",
-      "./types": "./src/types.mjs"
+      "./types": "./src/types.mjs",
+      "./query-cache": "./src/query-cache.mjs",
+      "./sparql-star": "./src/sparql-star.mjs",
+      "./store-receipts": "./src/store-receipts.mjs"
     },
     "path": "oxigraph",
     "dependencies": [
       "oxigraph",
-      "zod"
+      "zod",
+      "@unrdf/v6-core"
     ],
     "devDependencies": [
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/streaming",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
     "tier": "essential",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./processor": "./src/processor.mjs"
+      "./processor": "./src/processor.mjs",
+      "./shacl-core": "./src/shacl-core.mjs",
+      "./validate": "./src/validate.mjs",
+      "./checkpointed-pipeline": "./src/checkpointed-pipeline.mjs"
     },
     "path": "streaming",
     "dependencies": [
@@ -1661,6 +1921,7 @@ const REGISTRY = {
       "@unrdf/hooks",
       "@unrdf/oxigraph",
       "citty",
+      "hash-wasm",
       "lru-cache",
       "ws",
       "zod"
@@ -1668,12 +1929,13 @@ const REGISTRY = {
     "devDependencies": [
       "@rdfjs/data-model",
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/v6-core",
-    "version": "latest-rc.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
     "tier": "essential",
     "main": "./src/index.mjs",
@@ -1686,6 +1948,7 @@ const REGISTRY = {
       "./receipts": "./src/receipts.mjs",
       "./receipts/base-receipt": "./src/receipts/base-receipt.mjs",
       "./receipts/merkle": "./src/receipts/merkle/tree.mjs",
+      "./receipt-pattern": "./src/receipt-pattern.mjs",
       "./delta": "./src/delta/index.mjs",
       "./delta/schema": "./src/delta/schema.mjs",
       "./delta/gate": "./src/delta/gate.mjs",
@@ -1700,7 +1963,6 @@ const REGISTRY = {
     "path": "v6-core",
     "dependencies": [
       "@unrdf/kgc-substrate",
-      "@unrdf/yawl",
       "@unrdf/kgc-cli",
       "@unrdf/kgc-4d",
       "@unrdf/hooks",
@@ -1716,51 +1978,12 @@ const REGISTRY = {
       "eslint",
       "typescript"
     ]
-  },
-  {
-    "name": "@unrdf/yawl",
-    "version": "latest",
-    "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
-    "tier": "essential",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./api": "./src/api/workflow-api.mjs",
-      "./graphql-api": "./src/api/graphql-api.mjs",
-      "./ontology": "./src/ontology/yawl-ontology.mjs",
-      "./store": "./src/store/yawl-store.mjs",
-      "./types": "./src/types/yawl-types.mjs",
-      "./schemas": "./src/types/yawl-schemas.mjs",
-      "./hooks": "./src/hooks/yawl-hooks.mjs",
-      "./resources": "./src/resources/yawl-resources.mjs",
-      "./cancellation": "./src/cancellation/index.mjs",
-      "./receipt": "./src/receipt.mjs",
-      "./blockchain-receipts": "./src/blockchain-receipts.mjs",
-      "./visualization": "./src/visualization/live-workflow-viz.mjs"
-    },
-    "path": "yawl",
-    "dependencies": [
-      "@graphql-tools/schema",
-      "@noble/ed25519",
-      "@observablehq/plot",
-      "@unrdf/hooks",
-      "@unrdf/kgc-4d",
-      "@unrdf/oxigraph",
-      "d3",
-      "graphql",
-      "hash-wasm",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
   }
 ],
   extended: [
   {
     "name": "@unrdf/cli",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1770,14 +1993,27 @@ const REGISTRY = {
     },
     "path": "cli",
     "dependencies": [
+      "@iarna/toml",
+      "archiver",
       "@unrdf/core",
-      "@unrdf/decision-fabric",
+      "@unrdf/daemon",
       "@unrdf/federation",
       "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-swarm",
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "@unrdf/project-engine",
+      "@unrdf/receipts",
       "@unrdf/streaming",
       "citty",
+      "glob",
+      "gray-matter",
+      "js-yaml",
+      "nunjucks",
       "table",
-      "yaml"
+      "yaml",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -1787,7 +2023,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/consensus",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Production-grade Raft consensus for distributed workflow coordination",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1816,14 +2052,16 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/federation",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
     "tier": "extended",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./coordinator": "./src/coordinator.mjs",
-      "./advanced-sparql": "./src/advanced-sparql-federation.mjs"
+      "./coordinator": "./src/federation/coordinator.mjs",
+      "./advanced-sparql": "./src/advanced-sparql-federation.mjs",
+      "./ml/predictor": "./src/ml/predictor.mjs",
+      "./query-planner-core": "./src/federation/query-planner-core.mjs"
     },
     "path": "federation",
     "dependencies": [
@@ -1835,13 +2073,15 @@ const REGISTRY = {
       "zod"
     ],
     "devDependencies": [
+      "@opentelemetry/sdk-trace-base",
       "@types/node",
+      "@unrdf/test-utils",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/kgc-runtime",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1865,7 +2105,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-substrate",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
     "tier": "extended",
     "main": "./src/index.mjs",
@@ -1890,7 +2130,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/knowledge-engine",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1903,12 +2143,20 @@ const REGISTRY = {
     },
     "path": "knowledge-engine",
     "dependencies": [
+      "@comunica/query-sparql",
+      "@iarna/toml",
       "@noble/hashes",
+      "@opentelemetry/api",
       "@unrdf/core",
       "@unrdf/oxigraph",
       "@unrdf/streaming",
       "@xenova/transformers",
-      "eyereasoner"
+      "eyereasoner",
+      "lru-cache",
+      "rdf-canonize",
+      "rdf-ext",
+      "rdf-validate-shacl",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -1917,34 +2165,42 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/receipts",
-    "version": "latest",
-    "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
+    "version": "0.0.0-agnostic",
+    "description": "KGC Receipts - Batch receipt generation with Merkle tree verification and post-quantum cryptography for knowledge graph operations",
     "tier": "extended",
     "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./batch-receipt-generator": "./src/batch-receipt-generator.mjs",
-      "./merkle-batcher": "./src/merkle-batcher.mjs"
+      "./merkle-batcher": "./src/merkle-batcher.mjs",
+      "./dilithium3": "./src/dilithium3.mjs",
+      "./hybrid-signature": "./src/hybrid-signature.mjs",
+      "./pq-signer": "./src/pq-signer.mjs",
+      "./pq-merkle": "./src/pq-merkle.mjs",
+      "./verifier": "./src/receipt-verifier.mjs"
     },
     "path": "receipts",
     "dependencies": [
+      "@noble/curves",
+      "@noble/hashes",
       "@unrdf/core",
-      "@unrdf/oxigraph",
       "@unrdf/kgc-4d",
       "@unrdf/kgc-multiverse",
+      "@unrdf/oxigraph",
+      "dilithium-crystals",
       "hash-wasm",
       "zod"
     ],
     "devDependencies": [
       "@vitest/coverage-v8",
-      "vitest",
       "eslint",
-      "unbuild"
+      "unbuild",
+      "vitest"
     ]
   },
   {
     "name": "@unrdf/v6-compat",
-    "version": "latest-rc.1",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
     "tier": "extended",
     "main": "src/index.mjs",
@@ -1952,7 +2208,8 @@ const REGISTRY = {
       ".": "./src/index.mjs",
       "./adapters": "./src/adapters.mjs",
       "./lint-rules": "./src/lint-rules.mjs",
-      "./schema-generator": "./src/schema-generator.mjs"
+      "./schema-generator": "./src/schema-generator.mjs",
+      "./schema-codec": "./src/schema-codec.mjs"
     },
     "path": "v6-compat",
     "dependencies": [
@@ -1960,6 +2217,7 @@ const REGISTRY = {
       "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
       "@unrdf/v6-core",
+      "glob",
       "zod"
     ],
     "devDependencies": [
@@ -1971,22 +2229,59 @@ const REGISTRY = {
 ],
   optional: [
   {
-    "name": "@unrdf/atomvm",
-    "version": "latest",
-    "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
+    "name": "@unrdf/ai-ml-innovations",
+    "version": "0.0.0-agnostic",
+    "description": "Novel AI/ML integration patterns for UNRDF knowledge graphs",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./service-worker-manager": "./src/service-worker-manager.mjs"
+      "./temporal-gnn": "./src/temporal-gnn.mjs",
+      "./neural-symbolic": "./src/neural-symbolic-reasoner.mjs",
+      "./federated": "./src/federated-embeddings.mjs"
+    },
+    "path": "ai-ml-innovations",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/knowledge-engine",
+      "@unrdf/semantic-search",
+      "@unrdf/ml-inference",
+      "@unrdf/kgc-4d",
+      "@unrdf/v6-core",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
+  {
+    "name": "@unrdf/atomvm",
+    "version": "0.0.0-agnostic",
+    "description": "AtomVM runtimes, OTP patterns, and receipted swarm control planes for browser and Node.js",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./service-worker-manager": "./src/service-worker-manager.mjs",
+      "./assets": "./src/assets.mjs",
+      "./avm-packer": "./src/avm-packer.mjs",
+      "./continuum": "./src/continuum/index.mjs",
+      "./continuum/browser": "./src/continuum/browser-client.mjs"
     },
     "path": "atomvm",
     "dependencies": [
       "@opentelemetry/api",
       "@unrdf/core",
+      "@unrdf/hooks",
       "@unrdf/oxigraph",
+      "@unrdf/receipts",
       "@unrdf/streaming",
-      "coi-serviceworker"
+      "@unrdf/v6-core",
+      "coi-serviceworker",
+      "zod"
     ],
     "devDependencies": [
       "@playwright/test",
@@ -1998,7 +2293,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/blockchain",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2012,7 +2307,6 @@ const REGISTRY = {
     "dependencies": [
       "@noble/hashes",
       "@unrdf/kgc-4d",
-      "@unrdf/yawl",
       "ethers",
       "merkletreejs",
       "zod"
@@ -2023,7 +2317,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/caching",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Multi-layer caching system for RDF queries with Redis and LRU",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2046,8 +2340,58 @@ const REGISTRY = {
     ]
   },
   {
+    "name": "@unrdf/chatman-equation",
+    "version": "0.0.0-agnostic",
+    "description": "Chatman Equation documentation generation using Tera-compatible templates",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./template-engine": "./src/template-engine.mjs",
+      "./config": "./src/config-loader.mjs",
+      "./filters": "./src/filters.mjs"
+    },
+    "path": "chatman-equation",
+    "dependencies": [
+      "@iarna/toml",
+      "@unrdf/core",
+      "@unrdf/kgn",
+      "@unrdf/oxigraph",
+      "glob",
+      "nunjucks",
+      "smol-toml",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/codegen",
+    "version": "0.0.0-agnostic",
+    "description": "Code generation and metaprogramming tools for UNRDF",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./sparql-types": "./src/sparql-type-generator.mjs",
+      "./meta-templates": "./src/meta-template-engine.mjs",
+      "./property-tests": "./src/property-test-generator.mjs"
+    },
+    "path": "codegen",
+    "dependencies": [
+      "fast-check",
+      "zod"
+    ],
+    "devDependencies": [
+      "nunjucks",
+      "vitest"
+    ]
+  },
+  {
     "name": "@unrdf/collab",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2070,12 +2414,13 @@ const REGISTRY = {
     "devDependencies": [
       "@types/node",
       "@types/ws",
-      "vitest"
+      "vitest",
+      "vue"
     ]
   },
   {
     "name": "@unrdf/composables",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2087,7 +2432,10 @@ const REGISTRY = {
     "path": "composables",
     "dependencies": [
       "@unrdf/core",
+      "@unrdf/oxigraph",
       "@unrdf/streaming",
+      "rdf-canonize",
+      "unctx",
       "vue"
     ],
     "devDependencies": [
@@ -2096,21 +2444,67 @@ const REGISTRY = {
     ]
   },
   {
+    "name": "@unrdf/daemon",
+    "version": "0.0.0-agnostic",
+    "description": "Background daemon for managing scheduled tasks and event-driven operations",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./daemon": "./src/daemon.mjs",
+      "./mcp": "./src/mcp/index.mjs",
+      "./schemas": "./src/schemas.mjs",
+      "./trigger-evaluator": "./src/trigger-evaluator.mjs",
+      "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
+      "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
+      "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs",
+      "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs",
+      "./integrations/kgc-4d-sourcing": "./src/integrations/kgc-4d-sourcing.mjs",
+      "./integrations/kgc-4d-merkle": "./src/integrations/kgc-4d-merkle.mjs"
+    },
+    "path": "daemon",
+    "dependencies": [
+      "@ai-sdk/groq",
+      "@grpc/grpc-js",
+      "@modelcontextprotocol/sdk",
+      "@opentelemetry/api",
+      "@opentelemetry/exporter-metrics-otlp-grpc",
+      "@opentelemetry/exporter-trace-otlp-grpc",
+      "@opentelemetry/resources",
+      "@opentelemetry/sdk-metrics",
+      "@opentelemetry/sdk-node",
+      "@opentelemetry/sdk-trace-node",
+      "@opentelemetry/semantic-conventions",
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/otel",
+      "ai",
+      "cron-parser",
+      "hash-wasm",
+      "nunjucks",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  {
     "name": "@unrdf/dark-matter",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./optimizer": "./src/optimizer.mjs",
-      "./analyzer": "./src/analyzer.mjs"
+      "./analyzer": "./src/dark-matter/query-analyzer.mjs"
     },
     "path": "dark-matter",
     "dependencies": [
       "@unrdf/core",
       "@unrdf/oxigraph",
-      "typhonjs-escomplex"
+      "typhonjs-escomplex",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -2119,7 +2513,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/decision-fabric",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2137,8 +2531,10 @@ const REGISTRY = {
       "@unrdf/kgc-4d",
       "@unrdf/knowledge-engine",
       "@unrdf/oxigraph",
+      "@unrdf/project-engine",
       "@unrdf/streaming",
-      "@unrdf/validation"
+      "@unrdf/validation",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -2148,7 +2544,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/diataxis-kit",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2166,54 +2562,8 @@ const REGISTRY = {
     "devDependencies": []
   },
   {
-    "name": "docs",
-    "version": "latest",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {},
-    "path": "docs",
-    "dependencies": [
-      "@ai-sdk/gateway",
-      "@ai-sdk/vue",
-      "@electric-sql/pglite",
-      "@iconify-json/logos",
-      "@iconify-json/lucide",
-      "@iconify-json/simple-icons",
-      "@iconify-json/vscode-icons",
-      "@nuxt/content",
-      "@nuxt/image",
-      "@nuxt/ui",
-      "@nuxtjs/mdc",
-      "ai",
-      "better-sqlite3",
-      "date-fns",
-      "drizzle-orm",
-      "nuxt",
-      "nuxt-auth-utils",
-      "nuxt-charts",
-      "nuxt-llms",
-      "nuxt-og-image",
-      "shiki-stream"
-    ],
-    "devDependencies": [
-      "@nuxt/eslint",
-      "@playwright/test",
-      "@types/node",
-      "@vitejs/plugin-vue",
-      "@vitest/ui",
-      "@vue/test-utils",
-      "drizzle-kit",
-      "eslint",
-      "happy-dom",
-      "msw",
-      "typescript",
-      "vitest",
-      "vue-tsc"
-    ]
-  },
-  {
     "name": "@unrdf/domain",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Domain models and types for UNRDF",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2226,7 +2576,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/engine-gateway",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2246,8 +2596,37 @@ const REGISTRY = {
     ]
   },
   {
+    "name": "@unrdf/event-automation",
+    "version": "0.0.0-agnostic",
+    "description": "Event-driven automation for v6.1.0 - automatic delta processing with receipts",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/event-automation-engine.mjs",
+      "./delta-processor": "./src/delta-processor.mjs",
+      "./receipt-tracker": "./src/receipt-tracker.mjs",
+      "./policy-enforcer": "./src/policy-enforcer.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "event-automation",
+    "dependencies": [
+      "@unrdf/daemon",
+      "@unrdf/v6-core",
+      "@unrdf/hooks",
+      "@unrdf/receipts",
+      "@opentelemetry/api",
+      "hash-wasm",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
+  {
     "name": "@unrdf/fusion",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2256,13 +2635,14 @@ const REGISTRY = {
     },
     "path": "fusion",
     "dependencies": [
-      "@unrdf/oxigraph",
-      "@unrdf/kgc-4d",
       "@unrdf/blockchain",
-      "@unrdf/hooks",
       "@unrdf/caching",
-      "@unrdf/yawl",
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
       "graphql",
+      "hash-wasm",
       "zod"
     ],
     "devDependencies": [
@@ -2270,8 +2650,36 @@ const REGISTRY = {
     ]
   },
   {
+    "name": "@unrdf/geosparql",
+    "version": "0.0.0-agnostic",
+    "description": "OGC GeoSPARQL standard compliance for spatial RDF queries",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./geometry": "./src/geometry.mjs",
+      "./spatial-relations": "./src/spatial-relations.mjs",
+      "./distance": "./src/distance.mjs",
+      "./rtree-index": "./src/rtree-index.mjs",
+      "./crs": "./src/crs.mjs",
+      "./query-functions": "./src/query-functions.mjs"
+    },
+    "path": "geosparql",
+    "dependencies": [
+      "@turf/turf",
+      "rbush",
+      "@unrdf/oxigraph",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest",
+      "eslint"
+    ]
+  },
+  {
     "name": "@unrdf/graph-analytics",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Advanced graph analytics for RDF knowledge graphs using graphlib",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2295,14 +2703,13 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/integration-tests",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {},
     "path": "integration-tests",
     "dependencies": [
-      "@unrdf/yawl",
       "@unrdf/hooks",
       "@unrdf/kgc-4d",
       "@unrdf/kgc-multiverse",
@@ -2320,51 +2727,51 @@ const REGISTRY = {
     ]
   },
   {
-    "name": "@unrdf/kgc-claude",
-    "version": "latest",
-    "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
+    "name": "@unrdf/kgc-4d-playground",
+    "version": "0.0.0-agnostic",
+    "description": "KGC-4D Playground - Shard-Based Architecture Demo with Perfect Client/Server Relationship",
     "tier": "optional",
-    "main": "./src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./run-capsule": "./src/run-capsule.mjs",
-      "./checkpoint": "./src/checkpoint.mjs",
-      "./autonomy-guard": "./src/autonomy-guard.mjs",
-      "./shard-merge": "./src/shard-merge.mjs",
-      "./async-workflow": "./src/async-workflow.mjs",
-      "./projection": "./src/projection.mjs",
-      "./swarm-orchestrator": "./src/swarm-orchestrator.mjs",
-      "./poka-yoke-guards": "./src/poka-yoke-guards.mjs",
-      "./observable-io": "./src/observable-io.mjs",
-      "./info-scheduler": "./src/info-scheduler.mjs",
-      "./drift-detector": "./src/drift-detector.mjs",
-      "./budget-enforcer": "./src/budget-enforcer.mjs",
-      "./agent-harness": "./src/agent-harness.mjs",
-      "./receipt-compositor": "./src/receipt-compositor.mjs",
-      "./mcp-server-builder": "./src/mcp-server-builder.mjs",
-      "./mcp-federation": "./src/mcp-federation.mjs",
-      "./mcp-bridge": "./src/mcp-bridge.mjs",
-      "./capabilities/ide-integration": "./src/capabilities/ide-integration.mjs",
-      "./capabilities/ui-components": "./src/capabilities/ui-components.mjs",
-      "./capabilities/editor-commands": "./src/capabilities/editor-commands.mjs"
-    },
-    "path": "kgc-claude",
+    "main": "src/index.mjs",
+    "exports": {},
+    "path": "kgc-4d-playground",
     "dependencies": [
+      "@monaco-editor/react",
       "@unrdf/core",
-      "@unrdf/oxigraph",
-      "@unrdf/kgc-4d",
-      "@unrdf/yawl",
       "@unrdf/hooks",
-      "hash-wasm",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/validation",
+      "@xyflow/react",
+      "clsx",
+      "d3-scale",
+      "elkjs",
+      "framer-motion",
+      "lucide-react",
+      "next",
+      "react",
+      "react-dom",
+      "react-force-graph-3d",
+      "tailwind-merge",
+      "three",
+      "ws",
       "zod"
     ],
     "devDependencies": [
+      "@playwright/test",
+      "@types/node",
+      "@types/react",
+      "@types/ws",
+      "autoprefixer",
+      "eslint",
+      "eslint-config-next",
+      "postcss",
+      "tailwindcss",
       "vitest"
     ]
   },
   {
     "name": "@unrdf/kgc-cli",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2387,7 +2794,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-docs",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2402,6 +2809,7 @@ const REGISTRY = {
     },
     "path": "kgc-docs",
     "dependencies": [
+      "@unrdf/kgc-runtime",
       "zod"
     ],
     "devDependencies": [
@@ -2410,7 +2818,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-multiverse",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2444,7 +2852,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-probe",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2459,17 +2867,19 @@ const REGISTRY = {
       "./cli": "./src/cli.mjs",
       "./utils": "./src/utils/index.mjs",
       "./utils/logger": "./src/utils/logger.mjs",
-      "./utils/errors": "./src/utils/errors.mjs"
+      "./utils/errors": "./src/utils/errors.mjs",
+      "./orchestration-core": "./src/orchestration-core.mjs"
     },
     "path": "kgc-probe",
     "dependencies": [
-      "@unrdf/kgc-substrate",
-      "@unrdf/kgc-4d",
-      "@unrdf/v6-core",
-      "@unrdf/oxigraph",
+      "@noble/hashes",
       "@unrdf/hooks",
-      "@unrdf/yawl",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-substrate",
+      "@unrdf/oxigraph",
+      "@unrdf/v6-core",
       "hash-wasm",
+      "n3",
       "zod"
     ],
     "devDependencies": [
@@ -2480,7 +2890,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-swarm",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2491,7 +2901,8 @@ const REGISTRY = {
       "./token-generator": "./src/token-generator.mjs",
       "./compressor": "./src/compressor.mjs",
       "./tracker": "./src/tracker.mjs",
-      "./guardian": "./src/guardian.mjs"
+      "./guardian": "./src/guardian.mjs",
+      "./transport": "./src/transport/hypercore-transport.mjs"
     },
     "path": "kgc-swarm",
     "dependencies": [
@@ -2513,7 +2924,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgc-tools",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "KGC Tools - Verification, freeze, and replay utilities for KGC capsules",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2539,13 +2950,14 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/kgn",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
     "tier": "optional",
-    "main": "src/index.js",
+    "main": "dist/index.mjs",
     "exports": {
       ".": {
-        "import": "./src/index.js"
+        "import": "./dist/index.mjs",
+        "types": "./dist/index.d.ts"
       },
       "./engine": {
         "import": "./src/engine/index.js"
@@ -2564,25 +2976,53 @@ const REGISTRY = {
     "path": "kgn",
     "dependencies": [
       "@unrdf/core",
-      "@unrdf/test-utils",
+      "consola",
       "fs-extra",
+      "glob",
       "gray-matter",
       "nunjucks",
-      "yaml"
+      "yaml",
+      "zod"
     ],
     "devDependencies": [
       "@amiceli/vitest-cucumber",
       "@babel/parser",
       "@babel/traverse",
       "comment-parser",
+      "cors",
       "eslint",
       "nodemon",
       "vitest"
     ]
   },
   {
+    "name": "@unrdf/manufacturing",
+    "version": "0.0.0-agnostic",
+    "description": "μ(O) Manufacturing Operator Runtime — composable operators for deterministic artifact manufacturing",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./operators": "./src/operators/index.mjs",
+      "./pipeline": "./src/pipeline/index.mjs",
+      "./gate": "./src/gate/index.mjs",
+      "./causality": "./src/causality/index.mjs",
+      "./artifact": "./src/artifact/index.mjs",
+      "./repository-fact-accounting": "./src/repository-fact-accounting.mjs",
+      "./git-repository-facts": "./src/git-repository-facts.mjs"
+    },
+    "path": "manufacturing",
+    "dependencies": [
+      "@unrdf/core",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  {
     "name": "@unrdf/ml-inference",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2608,21 +3048,24 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/ml-versioning",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
     "tier": "optional",
     "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./version-store": "./src/version-store.mjs",
+      "./tf": "./src/tf.mjs",
       "./examples/image-classifier": "./src/examples/image-classifier.mjs"
     },
     "path": "ml-versioning",
     "dependencies": [
+      "@tensorflow/tfjs",
+      "@tensorflow/tfjs-backend-cpu",
       "@tensorflow/tfjs-node",
+      "@unrdf/core",
       "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
-      "@unrdf/core",
       "hash-wasm",
       "zod"
     ],
@@ -2632,32 +3075,8 @@ const REGISTRY = {
     ]
   },
   {
-    "name": "@unrdf/nextra-docs",
-    "version": "latest",
-    "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {},
-    "path": "nextra",
-    "dependencies": [
-      "katex",
-      "next",
-      "nextra",
-      "nextra-theme-docs",
-      "react",
-      "react-dom",
-      "zod"
-    ],
-    "devDependencies": [
-      "@types/node",
-      "@types/react",
-      "@types/react-dom",
-      "typescript"
-    ]
-  },
-  {
     "name": "@unrdf/observability",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2669,11 +3088,109 @@ const REGISTRY = {
     },
     "path": "observability",
     "dependencies": [
-      "prom-client",
       "@opentelemetry/api",
       "@opentelemetry/exporter-prometheus",
       "@opentelemetry/sdk-metrics",
       "express",
+      "hash-wasm",
+      "prom-client",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/otel",
+    "version": "0.0.0-agnostic",
+    "description": "OpenTelemetry integration for UNRDF using pm4py-rust telemetry infrastructure",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./attributes": "./src/generated/attributes.mjs",
+      "./metrics": "./src/generated/metrics.mjs",
+      "./pm4py": "./src/pm4py.mjs",
+      "./monitoring": "./src/monitoring.mjs",
+      "./validation": "./src/validation/index.mjs",
+      "./collector-config": "./deploy/otel-collector-config.yaml",
+      "./ocel": "./src/ocel/index.mjs",
+      "./conformance": "./src/conformance/index.mjs"
+    },
+    "path": "otel",
+    "dependencies": [
+      "@opentelemetry/api",
+      "@opentelemetry/semantic-conventions",
+      "@unrdf/manufacturing"
+    ],
+    "devDependencies": []
+  },
+  {
+    "name": "@unrdf/pictl-algorithms",
+    "version": "0.0.0-agnostic",
+    "description": "PICTL Process Mining Algorithms for UNRDF Federation - OCEL discovery, conformance, and prediction via WASM",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./pictl-wrapper": "./src/pictl-wrapper.mjs"
+    },
+    "path": "pictl-algorithms",
+    "dependencies": [
+      "@opentelemetry/api",
+      "@unrdf/core",
+      "@unrdf/pictl-semantics",
+      "zod"
+    ],
+    "devDependencies": [
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/pictl-semantics",
+    "version": "0.0.0-agnostic",
+    "description": "PICTL Semantics Integration with @unrdf Federation - Ontology-driven process mining with cryptographic quorum consensus",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./quorum": "./src/quorum.mjs",
+      "./ontology-loader": "./src/ontology-loader.mjs",
+      "./result-validator": "./src/result-validator.mjs"
+    },
+    "path": "pictl-semantics",
+    "dependencies": [
+      "@comunica/query-sparql",
+      "@opentelemetry/api",
+      "@rdfjs/data-model",
+      "@unrdf/core",
+      "@unrdf/federation",
+      "hash-wasm",
+      "n3",
+      "rdf-canonize",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@unrdf/oxigraph",
+      "@unrdf/test-utils",
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/privacy",
+    "version": "0.0.0-agnostic",
+    "description": "Differential privacy for SPARQL queries: budget accounting, Laplace/Gaussian/exponential mechanisms",
+    "tier": "optional",
+    "main": "./src/differential-privacy-sparql.mjs",
+    "exports": {
+      ".": "./src/differential-privacy-sparql.mjs",
+      "./differential-privacy-sparql": "./src/differential-privacy-sparql.mjs"
+    },
+    "path": "privacy",
+    "dependencies": [
+      "hash-wasm",
       "zod"
     ],
     "devDependencies": [
@@ -2682,7 +3199,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/project-engine",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2691,8 +3208,11 @@ const REGISTRY = {
     },
     "path": "project-engine",
     "dependencies": [
+      "@opentelemetry/api",
       "@unrdf/core",
-      "@unrdf/knowledge-engine"
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "zod"
     ],
     "devDependencies": [
       "@types/node",
@@ -2701,7 +3221,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/rdf-graphql",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
     "tier": "optional",
     "main": "src/adapter.mjs",
@@ -2722,17 +3242,14 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/react",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)",
     "tier": "optional",
     "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
       "./ai-semantic": "./src/ai-semantic/index.mjs",
-      "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs",
-      "./embeddings-manager": "./src/ai-semantic/embeddings-manager.mjs",
-      "./nlp-query-builder": "./src/ai-semantic/nlp-query-builder.mjs",
-      "./anomaly-detector": "./src/ai-semantic/anomaly-detector.mjs"
+      "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs"
     },
     "path": "react",
     "dependencies": [
@@ -2748,8 +3265,48 @@ const REGISTRY = {
     ]
   },
   {
+    "name": "@unrdf/self-healing-workflows",
+    "version": "0.0.0-agnostic",
+    "description": "Automatic error recovery system with 85-95% success rate using YAWL + Daemon + Hooks",
+    "tier": "optional",
+    "main": "./src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/self-healing-engine.mjs",
+      "./retry": "./src/retry-strategy.mjs",
+      "./circuit-breaker": "./src/circuit-breaker.mjs",
+      "./recovery": "./src/recovery-actions.mjs",
+      "./classifier": "./src/error-classifier.mjs",
+      "./health": "./src/health-monitor.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "self-healing-workflows",
+    "dependencies": [
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/semantic-parts",
+    "version": "0.0.0-agnostic",
+    "description": "Evidence-bounded semantic software-parts graph and cross-language substitution discovery",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs"
+    },
+    "path": "semantic-parts",
+    "dependencies": [],
+    "devDependencies": [
+      "vitest"
+    ]
+  },
+  {
     "name": "@unrdf/semantic-search",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2763,6 +3320,7 @@ const REGISTRY = {
     "dependencies": [
       "@unrdf/oxigraph",
       "@xenova/transformers",
+      "sharp",
       "vectra",
       "zod"
     ],
@@ -2773,7 +3331,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/serverless",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
     "tier": "optional",
     "main": "src/index.mjs",
@@ -2782,7 +3340,9 @@ const REGISTRY = {
       "./cdk": "./src/cdk/index.mjs",
       "./deploy": "./src/deploy/index.mjs",
       "./api": "./src/api/index.mjs",
-      "./storage": "./src/storage/index.mjs"
+      "./storage": "./src/storage/index.mjs",
+      "./storage/dynamodb-core": "./src/storage/dynamodb-core.mjs",
+      "./storage/dynamodb-adapter": "./src/storage/dynamodb-adapter.mjs"
     },
     "path": "serverless",
     "dependencies": [
@@ -2802,19 +3362,77 @@ const REGISTRY = {
     ]
   },
   {
-    "name": "@unrdf/test-utils",
-    "version": "latest",
-    "description": "Testing utilities for UNRDF development",
+    "name": "@unrdf/spatial-kg",
+    "version": "0.0.0-agnostic",
+    "description": "Spatial Knowledge Graphs - WebXR-enabled 3D visualization and navigation of RDF knowledge graphs",
     "tier": "optional",
-    "main": "./src/index.mjs",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./engine": "./src/spatial-kg-engine.mjs",
+      "./layout": "./src/layout-3d.mjs",
+      "./renderer": "./src/webxr-renderer.mjs",
+      "./query": "./src/spatial-query.mjs",
+      "./gestures": "./src/gesture-controller.mjs",
+      "./collaboration": "./src/collaboration.mjs",
+      "./lod": "./src/lod-manager.mjs",
+      "./schemas": "./src/schemas.mjs"
+    },
+    "path": "spatial-kg",
+    "dependencies": [
+      "@unrdf/core",
+      "@opentelemetry/api",
+      "three",
+      "d3-force-3d",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "@types/three",
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/temporal-discovery",
+    "version": "0.0.0-agnostic",
+    "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
+    "tier": "optional",
+    "main": "src/index.mjs",
+    "exports": {
+      ".": "./src/index.mjs",
+      "./pattern-miner": "./src/pattern-miner.mjs",
+      "./anomaly-detector": "./src/anomaly-detector.mjs",
+      "./trend-analyzer": "./src/trend-analyzer.mjs",
+      "./correlation-finder": "./src/correlation-finder.mjs",
+      "./changepoint-detector": "./src/changepoint-detector.mjs",
+      "./engine": "./src/temporal-discovery-engine.mjs"
+    },
+    "path": "temporal-discovery",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/semantic-search",
+      "@unrdf/graph-analytics",
+      "@opentelemetry/api",
+      "zod"
+    ],
+    "devDependencies": [
+      "@types/node",
+      "vitest"
+    ]
+  },
+  {
+    "name": "@unrdf/test-utils",
+    "version": "0.0.0-agnostic",
+    "description": "Shared test utilities and fixtures for unrdf packages",
+    "tier": "optional",
+    "main": "src/index.mjs",
     "exports": {
       ".": "./src/index.mjs"
     },
     "path": "test-utils",
     "dependencies": [
-      "@unrdf/oxigraph",
       "@opentelemetry/api",
-      "zod"
+      "@unrdf/oxigraph"
     ],
     "devDependencies": [
       "vitest"
@@ -2822,7 +3440,7 @@ const REGISTRY = {
   },
   {
     "name": "@unrdf/validation",
-    "version": "latest",
+    "version": "0.0.0-agnostic",
     "description": "OTEL validation framework for UNRDF development",
     "tier": "optional",
     "main": "./src/index.mjs",
@@ -2831,233 +3449,43 @@ const REGISTRY = {
     },
     "path": "validation",
     "dependencies": [
-      "@unrdf/knowledge-engine"
+      "@opentelemetry/api",
+      "@unrdf/knowledge-engine",
+      "zod"
     ],
     "devDependencies": []
   },
   {
-    "name": "@unrdf/yawl-ai",
-    "version": "latest",
-    "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
+    "name": "@unrdf/zkp",
+    "version": "0.0.0-agnostic",
+    "description": "Zero-Knowledge SPARQL - Privacy-preserving query proofs using zk-SNARKs",
     "tier": "optional",
-    "main": "src/index.mjs",
+    "main": "./src/index.mjs",
     "exports": {
       ".": "./src/index.mjs",
-      "./predictor": "./src/ml/workflow-predictor.mjs",
-      "./optimizer": "./src/ml/performance-optimizer.mjs",
-      "./anomaly": "./src/ml/anomaly-detector.mjs",
-      "./adapter": "./src/integration/yawl-adapter.mjs"
-    },
-    "path": "yawl-ai",
-    "dependencies": [
-      "@tensorflow/tfjs-node",
-      "@tensorflow/tfjs-layers",
-      "ml-matrix",
-      "zod"
-    ],
-    "devDependencies": [
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-api",
-    "version": "latest",
-    "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
-    "tier": "optional",
-    "main": "src/server.mjs",
-    "exports": {
-      ".": "./src/server.mjs",
-      "./server": "./src/server.mjs"
-    },
-    "path": "yawl-api",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "fastify",
-      "@fastify/swagger",
-      "@fastify/swagger-ui",
-      "@fastify/cors",
-      "zod",
-      "zod-to-json-schema"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-durable",
-    "version": "latest",
-    "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
-    "tier": "optional",
-    "main": "src/engine.mjs",
-    "exports": {
-      ".": "./src/engine.mjs",
-      "./saga": "./src/saga.mjs",
-      "./activity": "./src/activity.mjs",
-      "./replay": "./src/replay.mjs"
-    },
-    "path": "yawl-durable",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "hash-wasm",
-      "zod"
-    ],
-    "devDependencies": [
-      "@jest/globals",
-      "eslint",
-      "jest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-kafka",
-    "version": "latest",
-    "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./producer": "./src/producer.mjs",
-      "./consumer": "./src/consumer.mjs",
+      "./prover": "./src/sparql-zkp-prover.mjs",
+      "./circuit": "./src/circuit-compiler.mjs",
+      "./groth16": "./src/groth16-prover.mjs",
+      "./verifier": "./src/groth16-verifier.mjs",
       "./schemas": "./src/schemas.mjs"
     },
-    "path": "yawl-kafka",
+    "path": "zkp",
     "dependencies": [
       "@unrdf/core",
-      "avsc",
-      "kafkajs",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-langchain",
-    "version": "latest",
-    "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./adapter": "./src/adapter.mjs",
-      "./examples": "./examples/code-review-workflow.mjs"
-    },
-    "path": "yawl-langchain",
-    "dependencies": [
-      "@langchain/core",
-      "@langchain/openai",
-      "@unrdf/kgc-4d",
       "@unrdf/oxigraph",
-      "@unrdf/yawl",
-      "langchain",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-observability",
-    "version": "latest",
-    "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./metrics": "./src/metrics.mjs",
-      "./tracing": "./src/tracing.mjs",
-      "./sli": "./src/sli.mjs"
-    },
-    "path": "yawl-observability",
-    "dependencies": [
       "@opentelemetry/api",
-      "@opentelemetry/sdk-node",
-      "@opentelemetry/sdk-metrics",
-      "@unrdf/yawl",
-      "prom-client",
-      "zod"
+      "zod",
+      "hash-wasm",
+      "snarkjs",
+      "circomlibjs",
+      "sparqljs"
     ],
     "devDependencies": [
+      "@types/node",
       "eslint",
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-queue",
-    "version": "latest",
-    "description": "Distributed YAWL workflow execution using BullMQ and Redis",
-    "tier": "optional",
-    "main": "src/adapter.mjs",
-    "exports": {
-      ".": "./src/adapter.mjs",
-      "./adapter": "./src/adapter.mjs",
-      "./examples/data-pipeline": "./src/examples/data-pipeline.mjs"
-    },
-    "path": "yawl-queue",
-    "dependencies": [
-      "@unrdf/yawl",
-      "@unrdf/kgc-4d",
-      "bullmq",
-      "ioredis",
-      "zod"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-realtime",
-    "version": "latest",
-    "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
-    "tier": "optional",
-    "main": "src/index.mjs",
-    "exports": {
-      ".": "./src/index.mjs",
-      "./server": "./src/server.mjs",
-      "./client": "./src/client.mjs"
-    },
-    "path": "yawl-realtime",
-    "dependencies": [
-      "@unrdf/yawl",
-      "socket.io",
-      "socket.io-client",
-      "zod"
-    ],
-    "devDependencies": [
+      "prettier",
       "vitest",
-      "eslint"
-    ]
-  },
-  {
-    "name": "@unrdf/yawl-viz",
-    "version": "latest",
-    "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
-    "tier": "optional",
-    "main": "src/visualizer.mjs",
-    "exports": {
-      ".": "./src/visualizer.mjs"
-    },
-    "path": "yawl-viz",
-    "dependencies": [
-      "@unrdf/yawl",
-      "d3",
-      "d3-graphviz",
-      "d3-selection",
-      "d3-zoom",
-      "d3-drag",
-      "d3-force",
-      "d3-hierarchy"
-    ],
-    "devDependencies": [
-      "eslint",
-      "vitest",
-      "vite",
-      "jsdom"
+      "@vitest/coverage-v8"
     ]
   }
 ],
