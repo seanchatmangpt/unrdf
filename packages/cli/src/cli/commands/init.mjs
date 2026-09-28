@@ -16,7 +16,31 @@
 import { defineCommand } from 'citty';
 import { resolve } from 'path';
 import { cwd } from 'process';
-import { createProjectInitializationPipeline } from '@unrdf/project-engine';
+
+/**
+ * Load the initialization pipeline lazily so that `unrdf --help` and `unrdf init --help`
+ * never depend on @unrdf/project-engine's entrypoint loading. The package entry currently
+ * does not export createProjectInitializationPipeline (it lives in the legacy
+ * src/project-engine tree), so fail with an actionable message instead of a link error.
+ *
+ * @returns {Promise<Function>} createProjectInitializationPipeline
+ * @throws {Error} If @unrdf/project-engine cannot provide the pipeline
+ */
+async function loadInitializationPipeline() {
+  let mod;
+  try {
+    mod = await import('@unrdf/project-engine');
+  } catch (e) {
+    throw new Error(`@unrdf/project-engine could not be loaded: ${e.message}`);
+  }
+  if (typeof mod.createProjectInitializationPipeline !== 'function') {
+    throw new Error(
+      '@unrdf/project-engine does not export createProjectInitializationPipeline; ' +
+        '`unrdf init` is unavailable until the pipeline is ported into the package'
+    );
+  }
+  return mod.createProjectInitializationPipeline;
+}
 
 /**
  * Format duration in human-readable format
@@ -205,6 +229,7 @@ export const initCommand = defineCommand({
       }
 
       // Run initialization pipeline
+      const createProjectInitializationPipeline = await loadInitializationPipeline();
       const result = await createProjectInitializationPipeline(projectRoot, {
         dryRun,
         skipSnapshot,

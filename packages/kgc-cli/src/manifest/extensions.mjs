@@ -354,6 +354,7 @@ export const extensions = [
  * Collision override rules.
  *
  * Format: { rule: "noun:verb", package: "winner-package-id", reason: "why" }
+ * (`package` is the WINNER; the losing extension keeps its other verbs.)
  *
  * If two packages try to register the same noun:verb, the explicit override
  * determines the winner. If no override exists and failOnCollision=true,
@@ -362,11 +363,60 @@ export const extensions = [
  * @type {Array<{rule: string, package: string, reason?: string}>}
  */
 export const overrides = [
-  // Collision resolution for noun:verb conflicts
   {
     rule: 'store:create',
     package: '@unrdf/oxigraph',
-    reason: 'Oxigraph specializes in RDF store operations',
+    reason: 'Oxigraph is the canonical RDF store; core/substrate are aliases',
+  },
+  {
+    rule: 'store:stats',
+    package: '@unrdf/oxigraph',
+    reason: 'Oxigraph is the canonical store; substrate is an alias',
+  },
+  {
+    rule: 'query:execute',
+    package: '@unrdf/oxigraph',
+    reason: 'Oxigraph owns SPARQL execution; core/graphql are aliases',
+  },
+  {
+    rule: 'query:explain',
+    package: '@unrdf/oxigraph',
+    reason: 'Oxigraph owns SPARQL plans; graphql is an alias',
+  },
+  {
+    rule: 'snapshot:create',
+    package: '@unrdf/kgc-4d',
+    reason: 'KGC-4D owns universe snapshots; substrate is an alias',
+  },
+  {
+    rule: 'snapshot:restore',
+    package: '@unrdf/kgc-4d',
+    reason: 'KGC-4D owns universe snapshots; substrate is an alias',
+  },
+  {
+    rule: 'workflow:execute',
+    package: '@unrdf/yawl',
+    reason: 'YAWL is the workflow engine; claude is an alias',
+  },
+  {
+    rule: 'schema:validate',
+    package: '@unrdf/domain',
+    reason: 'Domain owns schema consistency; validation/graphql are aliases',
+  },
+  {
+    rule: 'schema:list',
+    package: '@unrdf/domain',
+    reason: 'Domain owns schema listing; validation is an alias',
+  },
+  {
+    rule: 'function:invoke',
+    package: '@unrdf/serverless',
+    reason: 'Serverless owns functions; deploy is an alias',
+  },
+  {
+    rule: 'function:logs',
+    package: '@unrdf/serverless',
+    reason: 'Serverless owns functions; deploy is an alias',
   },
 ];
 
@@ -379,6 +429,9 @@ export const overrides = [
  */
 export async function loadManifest(registry, options = {}) {
   const { failOnMissing = false } = options;
+
+  // Manifest overrides are authoritative: apply them before any extension registers.
+  registry.addOverrides(overrides);
 
   for (const entry of extensions) {
     if (!entry.enabled) {

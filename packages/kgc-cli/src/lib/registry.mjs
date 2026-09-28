@@ -74,10 +74,30 @@ export class Registry {
     this.ownership = new Map();
 
     /** @type {Array<{rule: string, package: string, winner: string}>} Override rules */
-    this.overrides = options.overrides || [];
+    this.overrides = [];
+    this.addOverrides(options.overrides || []);
 
     /** @type {boolean} Fail on unresolved collisions */
     this.failOnCollision = options.failOnCollision !== false;
+  }
+
+  /**
+   * Add collision override rules. A rule names the winning package either as
+   * `winner` or (manifest format) as `package`.
+   *
+   * @param {Array<{rule: string, package?: string, winner?: string}>} rules
+   */
+  addOverrides(rules) {
+    for (const r of rules) {
+      const winner = r.winner ?? r.package;
+      if (!r.rule || !winner) {
+        throw new Error(`Invalid override rule: ${JSON.stringify(r)}`);
+      }
+      const exists = this.overrides.some(o => o.rule === r.rule && o.winner === winner);
+      if (!exists) {
+        this.overrides.push({ ...r, winner });
+      }
+    }
   }
 
   /**
@@ -110,52 +130,50 @@ export class Registry {
       }
     }
 
-    // Check for collisions in noun/verb space. Ownership changes are staged and only
-    // committed once every verb passed, so a rejected extension leaves no orphan claims
-    // (which would otherwise cause spurious collisions for later extensions).
-    const stagedOwnership = new Map();
-    const stagedCollisions = [];
+    // Phase 1: plan ownership changes WITHOUT mutating state, so an extension that
+    // fails on an unresolved collision leaves no half-registered ownership behind.
+    const claims = new Map(); // key -> ext.id (ownership to set on commit)
+    const unresolved = [];
     for (const [noun, nounData] of Object.entries(ext.nouns)) {
       for (const verb of Object.keys(nounData.verbs)) {
         const key = `${noun}:${verb}`;
 
-        if (this.ownership.has(key)) {
-          const existing = this.ownership.get(key);
-          const collision = { key, existing, new: ext.id, newLoadOrder: loadOrder };
-
-          // Check if override rule exists
-          const override = this._findOverride(collision);
-          if (!override) {
-            if (this.failOnCollision) {
-              throw new Error(
-                `Collision: ${key} claimed by both ${existing} and ${ext.id}. ` +
-                  `Add override rule to manifest.`
-              );
-            } else {
-              // Track but don't fail
-              if (!this.collisions.has(key)) {
-                this.collisions.set(key, []);
-              }
-              stagedCollisions.push({ key, entry: { ext, noun, verb } });
-              continue;
-            }
-          }
-
-          // If override says new wins, update ownership
-          // (manifest overrides name the winner via `package`)
-          if ((override.winner ?? override.package) === ext.id) {
-            stagedOwnership.set(key, ext.id);
-          }
-        } else {
-          stagedOwnership.set(key, ext.id);
+        if (!this.ownership.has(key)) {
+          claims.set(key, ext.id);
+          continue;
         }
+
+        const existing = this.ownership.get(key);
+        const collision = { key, existing, new: ext.id, newLoadOrder: loadOrder };
+        const override = this._findOverride(collision);
+
+        if (override) {
+          // Winner keeps (or takes) ownership; the loser's verb is dropped from the tree.
+          if (override.winner === ext.id) {
+            claims.set(key, ext.id);
+          }
+          continue;
+        }
+
+        if (this.failOnCollision) {
+          throw new Error(
+            `Collision: ${key} claimed by both ${existing} and ${ext.id}. ` +
+              `Add override rule to manifest.`
+          );
+        }
+        unresolved.push({ key, noun, verb });
       }
     }
 
-    for (const [key, owner] of stagedOwnership) this.ownership.set(key, owner);
-    for (const { key, entry } of stagedCollisions) {
-      if (!this.collisions.has(key)) this.collisions.set(key, []);
-      this.collisions.get(key).push(entry);
+    // Phase 2: commit.
+    for (const [key, owner] of claims) {
+      this.ownership.set(key, owner);
+    }
+    for (const { key, noun, verb } of unresolved) {
+      if (!this.collisions.has(key)) {
+        this.collisions.set(key, []);
+      }
+      this.collisions.get(key).push({ ext, noun, verb });
     }
 
     // Store extension
@@ -170,7 +188,7 @@ export class Registry {
     return this.overrides.find(
       o =>
         o.rule === collision.key &&
-        (o.package === collision.existing || o.package === collision.new)
+        (o.winner === collision.existing || o.winner === collision.new)
     );
   }
 
@@ -204,14 +222,17 @@ export class Registry {
 
     for (const ext of sorted) {
       for (const [noun, nounData] of Object.entries(ext.nouns)) {
-        if (!tree.nouns[noun]) {
-          tree.nouns[noun] = {
-            description: nounData.description || `${noun} commands`,
-            verbs: {},
-          };
-        }
-
         for (const [verb, verbData] of Object.entries(nounData.verbs)) {
+          // Only the recorded owner of noun:verb contributes it (overridden losers are dropped)
+          if (this.ownership.get(`${noun}:${verb}`) !== ext.id) {
+            continue;
+          }
+          if (!tree.nouns[noun]) {
+            tree.nouns[noun] = {
+              description: nounData.description || `${noun} commands`,
+              verbs: {},
+            };
+          }
           tree.nouns[noun].verbs[verb] = {
             handler: verbData.handler,
             argsSchema: verbData.argsSchema,

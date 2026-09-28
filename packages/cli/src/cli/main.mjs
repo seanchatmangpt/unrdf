@@ -34,6 +34,7 @@ import { publishCommand } from './commands/publish.mjs';
 import { createRequire } from 'node:module';
 
 const { version: cliVersion } = createRequire(import.meta.url)('../../package.json');
+import { initCommand } from './commands/init.mjs';
 
 /**
  * Main CLI application
@@ -62,6 +63,9 @@ export const main = defineCommand({
     daemon: daemonCommand,
     mcp: mcpCommand,
     telco: telcoCommand,
+
+    // Project Setup
+    init: initCommand,
 
     // Code Generation
     sync: syncCommand,
