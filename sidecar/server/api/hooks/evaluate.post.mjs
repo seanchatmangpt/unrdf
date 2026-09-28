@@ -25,7 +25,7 @@ const EvaluateHookSchema = z.object({
   data: z.string().optional(), // RDF/Turtle data
   context: z.object({
     traceId: z.string().optional(),
-    metadata: z.record(z.any()).optional()
+    metadata: z.record(z.string(), z.any()).optional()
   }).optional()
 })
 
@@ -98,7 +98,7 @@ export default defineEventHandler(async (event) => {
     // Zod validation errors
     if (error.name === 'ZodError') {
       const validationError = new BadRequestError('Request validation failed')
-      validationError.issues = error.errors.map(err => ({
+      validationError.issues = error.issues.map(err => ({
         path: err.path.join('.'),
         message: err.message,
         code: err.code

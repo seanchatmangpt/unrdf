@@ -28,7 +28,7 @@ const SecretMetadataSchema = z.object({
   created_time: z.string(),
   deletion_time: z.string().optional(),
   destroyed: z.boolean().optional(),
-  custom_metadata: z.record(z.string()).optional()
+  custom_metadata: z.record(z.string(), z.string()).optional()
 })
 
 /**

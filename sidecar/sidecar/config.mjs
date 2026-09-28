@@ -30,7 +30,7 @@ const EndpointConfigSchema = z.object({
   address: z.string().min(1),
   port: z.number().int().min(1).max(65535).default(50051),
   tls: TLSConfigSchema.optional(),
-  metadata: z.record(z.string()).optional()
+  metadata: z.record(z.string(), z.string()).optional()
 });
 
 /**

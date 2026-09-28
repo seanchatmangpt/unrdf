@@ -428,8 +428,8 @@ function validateForm() {
     CreateHookSchema.parse(formData.value)
     return true
   } catch (err) {
-    if (err.errors) {
-      err.errors.forEach(error => {
+    if (err.issues) {
+      err.issues.forEach(error => {
         const path = error.path.join('.')
         errors.value[path] = error.message
       })

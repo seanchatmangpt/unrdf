@@ -61,7 +61,7 @@ export const DataSourceStatisticsSchema = z.object({
   active: z.number().int().nonnegative().optional(),
 
   /** Breakdown by type */
-  byType: z.record(z.number().int().nonnegative()).optional()
+  byType: z.record(z.string(), z.number().int().nonnegative()).optional()
 })
 
 /**
