@@ -76,8 +76,8 @@ export class MonitoringDashboard {
         // Subscribe to workflow changes
         if (this.orchestrator?.changeFeed) {
           this.changeFeed = this.orchestrator.changeFeed;
-          this.changeFeed.subscribe((changes) => {
-            this._handleWorkflowChanges(changes);
+          this.unsubscribeChangeFeed = this.changeFeed.subscribe((change) => {
+            this._handleWorkflowChanges([change]);
           });
         }
 
@@ -428,8 +428,9 @@ export class MonitoringDashboard {
         }
 
         // Unsubscribe from changes
-        if (this.changeFeed) {
-          this.changeFeed.unsubscribe();
+        if (this.unsubscribeChangeFeed) {
+          this.unsubscribeChangeFeed();
+          this.unsubscribeChangeFeed = null;
         }
 
         // Close all client connections

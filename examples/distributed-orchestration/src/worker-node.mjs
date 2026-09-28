@@ -4,7 +4,7 @@
  * @module distributed-orchestration/worker-node
  */
 
-import { FederationClient } from '@unrdf/federation';
+import { WorkerTransport } from './transport.mjs';
 import { trace } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('worker-node');
@@ -58,8 +58,16 @@ export class WorkerNode {
         span.setAttribute('worker.id', this.config.nodeId);
 
         // Connect to orchestrator
-        this.client = new FederationClient({
+        this.client = new WorkerTransport({
           serverUrl: this.config.orchestratorUrl,
+        });
+        this.client.on('error', (error) => console.error('Worker transport error:', error));
+
+        // Set up message handlers before connecting so no frame is missed
+        this.client.on('message', (msg) => {
+          this._handleMessage(msg).catch((error) => {
+            console.error('Failed to handle orchestrator message:', error);
+          });
         });
 
         await this.client.connect();
@@ -71,10 +79,8 @@ export class WorkerNode {
           capabilities: this.capabilities,
         });
 
-        // Set up message handlers
-        this.client.on('message', (msg) => this._handleMessage(msg));
-
         // Start heartbeat
+        this.startTime = Date.now();
         this.running = true;
         this._startHeartbeat();
 

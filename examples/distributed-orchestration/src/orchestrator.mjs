@@ -4,8 +4,9 @@
  * @module distributed-orchestration/orchestrator
  */
 
-import { createWorkflow, WorkflowEngine } from '@unrdf/yawl';
-import { FederationCoordinator } from '@unrdf/federation';
+import { createWorkflow, WorkflowEngine } from '../../lib/workflow-engine.mjs';
+import { createCoordinator } from '@unrdf/federation';
+import { OrchestratorTransport } from './transport.mjs';
 import { createChangeFeed } from '@unrdf/streaming';
 import { createStore } from '@unrdf/oxigraph';
 import { trace, context } from '@opentelemetry/api';
@@ -37,12 +38,17 @@ export class DistributedOrchestrator {
       peers: [],
       maxWorkers: 10,
       taskTimeout: 30000,
+      workerTimeout: 30000,
+      healthCheckInterval: 10000,
       ...config,
     };
 
     this.store = createStore();
     this.engine = new WorkflowEngine({ store: this.store });
     this.coordinator = null;
+    this.transport = null;
+    this.unsubscribeChangeFeed = null;
+    this.healthTimer = null;
     this.changeFeed = null;
     this.workers = new Map();
     this.taskQueue = [];
@@ -58,25 +64,28 @@ export class DistributedOrchestrator {
     return tracer.startActiveSpan('orchestrator.initialize', async (span) => {
       try {
         // Initialize federation coordinator
-        this.coordinator = new FederationCoordinator({
-          port: this.config.port,
-          peers: this.config.peers,
-          store: this.store,
+        // Federated SPARQL coordinator (peers are endpoint URLs)
+        this.coordinator = createCoordinator({
+          peers: this.config.peers.map(endpoint => ({ id: endpoint, endpoint })),
         });
-
-        await this.coordinator.start();
         span.setAttribute('peers.count', this.config.peers.length);
 
-        // Initialize change feed for real-time updates
-        this.changeFeed = await createChangeFeed({
-          store: this.store,
-          batchSize: 100,
-          throttleMs: 100,
+        // Worker messaging transport (WebSocket)
+        this.transport = new OrchestratorTransport({ port: this.config.port });
+        this.transport.on('message', message => {
+          this._handleWorkerMessage(message).catch(error => {
+            console.error(`Failed to handle worker message ${message?.type}:`, error);
+          });
         });
+        this.transport.on('error', error => console.error('Transport error:', error));
+        this.config.port = await this.transport.start();
+
+        // Initialize change feed for real-time updates
+        this.changeFeed = createChangeFeed(this.store);
 
         // Subscribe to workflow state changes
-        this.changeFeed.subscribe((changes) => {
-          this._handleWorkflowChanges(changes);
+        this.unsubscribeChangeFeed = this.changeFeed.subscribe((change) => {
+          this._handleWorkflowChanges([change]);
         });
 
         // Start worker health monitoring
@@ -151,7 +160,12 @@ export class DistributedOrchestrator {
 
     // Distribute tasks to workers
     for (const task of enabledTasks) {
-      await this._assignTask(workflowId, task);
+      const alreadyQueued = this.taskQueue.some(
+        (q) => q.workflowId === workflowId && q.task.id === task.id
+      );
+      if (!alreadyQueued) {
+        await this._assignTask(workflowId, task);
+      }
     }
   }
 
@@ -189,13 +203,24 @@ export class DistributedOrchestrator {
 
         worker.activeTasks.set(task.id, assignment);
 
-        // Send task to worker (via federation)
-        await this.coordinator.sendMessage(worker.nodeId, {
+        // Send task to worker over the transport
+        const delivered = await this.transport.sendMessage(worker.nodeId, {
           type: 'task_assignment',
           workflowId,
           task,
           timeout: this.config.taskTimeout,
         });
+
+        if (!delivered) {
+          // Worker is registered but has no live connection: keep the task queued
+          worker.activeTasks.delete(task.id);
+          this.taskQueue.push({ workflowId, task, queuedAt: Date.now() });
+          span.setAttribute('task.queued', true);
+          span.setStatus({ code: 1 });
+          return;
+        }
+
+        await this.engine.startTask(workflowId, task.id);
 
         span.setAttribute('worker.id', worker.nodeId);
         span.setStatus({ code: 1 });
@@ -256,6 +281,9 @@ export class DistributedOrchestrator {
             workflowData.status = 'completed';
             workflowData.completedAt = Date.now();
             span.setAttribute('workflow.completed', true);
+          } else {
+            // Dispatch tasks enabled by this completion
+            await this._executeWorkflow(workflowId);
           }
         }
 
@@ -279,7 +307,10 @@ export class DistributedOrchestrator {
    * @returns {Promise<void>}
    */
   async _processTaskQueue() {
-    while (this.taskQueue.length > 0) {
+    // Bounded pass: tasks that cannot be delivered are re-queued by _assignTask,
+    // so process at most the current queue length to avoid spinning forever.
+    let remaining = this.taskQueue.length;
+    while (remaining-- > 0 && this.taskQueue.length > 0) {
       const worker = await this._findAvailableWorker();
       if (!worker) break;
 
@@ -341,19 +372,25 @@ export class DistributedOrchestrator {
    * @returns {void}
    */
   _startHealthMonitoring() {
-    setInterval(() => {
+    if (this.healthTimer) {
+      clearInterval(this.healthTimer);
+    }
+    this.healthTimer = setInterval(() => {
       const now = Date.now();
-      const timeout = 30000; // 30 seconds
+      const timeout = this.config.workerTimeout;
 
       for (const [nodeId, worker] of this.workers.entries()) {
         if (now - worker.lastHeartbeat > timeout) {
           worker.status = 'unhealthy';
 
           // Reassign tasks from unhealthy worker
-          this._reassignWorkerTasks(nodeId);
+          this._reassignWorkerTasks(nodeId).catch(error => {
+            console.error(`Failed to reassign tasks from ${nodeId}:`, error);
+          });
         }
       }
-    }, 10000); // Check every 10 seconds
+    }, this.config.healthCheckInterval);
+    this.healthTimer.unref?.();
   }
 
   /**
@@ -382,6 +419,7 @@ export class DistributedOrchestrator {
         for (const assignment of tasksToReassign) {
           const workflowData = this.activeWorkflows.get(assignment.workflowId);
           if (workflowData) {
+            await this.engine.resetTask(assignment.workflowId, assignment.taskId);
             const task = await this.engine.getTask(
               assignment.workflowId,
               assignment.taskId
@@ -417,14 +455,60 @@ export class DistributedOrchestrator {
   _handleWorkflowChanges(changes) {
     // Broadcast workflow state changes to monitoring dashboards
     for (const change of changes) {
-      if (this.coordinator) {
-        this.coordinator.broadcast({
+      if (this.transport) {
+        this.transport.broadcast({
           type: 'workflow_change',
           change,
           timestamp: Date.now(),
         });
       }
     }
+  }
+
+  /**
+   * Handle a message received from a worker over the transport
+   *
+   * @private
+   * @param {object} message - Worker message
+   * @returns {Promise<void>}
+   */
+  async _handleWorkerMessage(message) {
+    switch (message?.type) {
+      case 'worker_registration':
+        await this.registerWorker(message.nodeId, message.capabilities);
+        break;
+      case 'heartbeat':
+        this.handleHeartbeat(message.nodeId);
+        break;
+      case 'task_completion':
+        await this.handleTaskCompletion(message.workflowId, message.taskId, message.result);
+        break;
+      case 'task_failure':
+        await this.handleTaskFailure(message.workflowId, message.taskId, message.error);
+        break;
+      default:
+        console.warn(`Unknown worker message type: ${message?.type}`);
+    }
+  }
+
+  /**
+   * Handle a task failure reported by a worker: free the slot and requeue.
+   *
+   * @param {string} workflowId - Workflow instance ID
+   * @param {string} taskId - Task ID
+   * @param {string} [reason] - Failure reason
+   * @returns {Promise<void>}
+   */
+  async handleTaskFailure(workflowId, taskId, reason) {
+    for (const worker of this.workers.values()) {
+      if (worker.activeTasks.delete(taskId)) break;
+    }
+    if (!this.activeWorkflows.has(workflowId)) return;
+    await this.engine.resetTask(workflowId, taskId);
+    const task = await this.engine.getTask(workflowId, taskId);
+    task.lastError = reason;
+    this.taskQueue.push({ workflowId, task, queuedAt: Date.now() });
+    await this._processTaskQueue();
   }
 
   /**
@@ -479,13 +563,25 @@ export class DistributedOrchestrator {
         this.activeWorkflows.clear();
 
         // Stop change feed
+        if (this.healthTimer) {
+          clearInterval(this.healthTimer);
+          this.healthTimer = null;
+        }
+        if (this.unsubscribeChangeFeed) {
+          this.unsubscribeChangeFeed();
+          this.unsubscribeChangeFeed = null;
+        }
         if (this.changeFeed) {
-          this.changeFeed.unsubscribe();
+          this.changeFeed.destroy();
         }
 
-        // Stop coordinator
+        // Stop transport and coordinator
+        if (this.transport) {
+          await this.transport.stop();
+          this.transport = null;
+        }
         if (this.coordinator) {
-          await this.coordinator.stop();
+          this.coordinator.destroy();
         }
 
         span.setStatus({ code: 1 });
