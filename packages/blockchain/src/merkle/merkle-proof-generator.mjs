@@ -322,7 +322,8 @@ export function calculateGasSavings(receiptCount, gasPrice) {
     merkleGas: merkleGas.toString(),
     savedGas: savedGas.toString(),
     savedCostWei: savedCostWei.toString(),
-    savingsPercentage: Number((savedGas * 100n) / individualGas),
+    // Two decimal places; whole-number BigInt division collapsed 500 and 1000 receipts to 99%
+    savingsPercentage: individualGas === 0n ? 0 : Number((savedGas * 10000n) / individualGas) / 100,
   };
 }
 

@@ -255,10 +255,10 @@ export class ApiGatewayConfig {
     }
 
     return {
-      openapi: '[VERSION]',
+      openapi: '3.0.0',
       info: {
         title: this.#config.apiName,
-        version: '[VERSION]',
+        version: '1.0.0',
         description: 'UNRDF Serverless API',
       },
       servers: [

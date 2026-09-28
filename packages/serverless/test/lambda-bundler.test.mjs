@@ -46,6 +46,7 @@ describe('LambdaBundler', () => {
       export function handler() {
         return { statusCode: 200, body: 'OK' };
       }
+      export const padding = '${'compressible '.repeat(50)}';
     `
     );
 

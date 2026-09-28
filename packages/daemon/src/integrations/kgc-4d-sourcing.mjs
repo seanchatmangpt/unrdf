@@ -366,8 +366,14 @@ export class DaemonEventStore {
   }
 
   async verifyProof(proof) {
-    validateMerkleProof(proof);
-    return verifyMerkleProof(proof);
+    // A malformed or tampered proof is an invalid proof, not an exception.
+    try {
+      validateMerkleProof(proof);
+      return await verifyMerkleProof(proof);
+    } catch (error) {
+      if (error instanceof TypeError || error?.name === 'ZodError') return false;
+      throw error;
+    }
   }
 
   async verifyTransitionChain() {

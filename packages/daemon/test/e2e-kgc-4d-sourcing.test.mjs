@@ -653,8 +653,9 @@ describe('DaemonEventStore - KGC-4D Event Sourcing', () => {
       expect(snapshot1.eventCount).toBe(2);
       expect(snapshot2.eventCount).toBe(2);
       expect(snapshot2.operations[0].status).toBe('success');
-      expect(state.eventCount).toBe(2);
-      // expect(proofValid).toBe(true); // TODO: FIX KGC-4D Merkle verification bug
+      // At the first event's timestamp only that event exists
+      expect(state.eventCount).toBe(1);
+      expect(proofValid).toBe(true);
     });
   });
 });

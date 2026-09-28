@@ -68,13 +68,13 @@ describe('Raft Coordinator', () => {
   it('should initialize coordinator', () => {
     expect(coordinator.config.nodeId).toBe('raft-test');
     expect(coordinator.transport).toBeDefined();
-    expect(coordinator.raft).toBeDefined();
+    expect(coordinator.stateMachine).toBeDefined();
   });
 
   it('should add peers', () => {
     coordinator.addPeer('peer-1', 'localhost', 10091);
-    const state = coordinator.getState();
-    expect(state.peers).toContain('peer-1');
+    expect(coordinator.peers.has('peer-1')).toBe(true);
+    expect(coordinator.transport.peers.has('peer-1')).toBe(true);
   });
 
   it('should get coordinator state', () => {
