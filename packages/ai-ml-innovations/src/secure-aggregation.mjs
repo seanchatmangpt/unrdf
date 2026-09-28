@@ -46,6 +46,9 @@ export class SecureAggregation {
     // Node shares (for masking)
     this.shares = new Map();
 
+    // Pairwise masks shared by both members of a pair (key: sorted "a|b")
+    this.pairMasks = new Map();
+
     // Round counter
     this.round = 0;
   }
@@ -72,7 +75,12 @@ export class SecureAggregation {
         for (let i = 0; i < this.totalNodes; i++) {
           const otherId = `node-${i}`;
           if (otherId !== nodeId) {
-            shares[otherId] = this._generateRandomVector(this.keySize / 32);
+            // Both members of a pair must hold the SAME mask so they cancel in the sum
+            const pairKey = [nodeId, otherId].sort().join('|');
+            if (!this.pairMasks.has(pairKey)) {
+              this.pairMasks.set(pairKey, this._generateRandomVector(this.keySize / 32));
+            }
+            shares[otherId] = this.pairMasks.get(pairKey);
           }
         }
 
@@ -121,12 +129,12 @@ export class SecureAggregation {
 
         for (const [key, gradient] of Object.entries(gradients)) {
           masked[key] = gradient.map((val, i) => {
-            // Add secret share
-            let maskedVal = val + nodeShares.secret[i % nodeShares.secret.length];
-
-            // Subtract shares from other nodes
-            for (const [_otherId, share] of Object.entries(nodeShares.shares)) {
-              maskedVal -= share[i % share.length];
+            // Pairwise masking: the lower id adds the shared mask, the higher id
+            // subtracts it, so every mask cancels when all nodes are summed.
+            let maskedVal = val;
+            for (const [otherId, share] of Object.entries(nodeShares.shares)) {
+              const sign = nodeId < otherId ? 1 : -1;
+              maskedVal += sign * share[i % share.length];
             }
 
             return maskedVal;
@@ -206,6 +214,7 @@ export class SecureAggregation {
   nextRound() {
     this.round++;
     this.shares.clear();
+    this.pairMasks.clear();
   }
 
   /**
