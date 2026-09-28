@@ -20,7 +20,9 @@
     "docs"
   ],
   "scripts": {
-    "test": "vitest run && node --test test/receipt-verifier.node.test.mjs",
+    "test": "vitest run && pnpm test:node",
+    "test:fast": "vitest run && pnpm test:node",
+    "test:node": "node --test test/receipt-verifier.node.test.mjs test/substitution-receipt.test.mjs",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",
@@ -33,7 +35,6 @@
     "@noble/hashes": "^2.0.1",
     "@unrdf/core": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/kgc-multiverse": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "dilithium-crystals": "^1.0.6",
     "hash-wasm": "^4.12.0",

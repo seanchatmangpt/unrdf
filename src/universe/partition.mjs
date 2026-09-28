@@ -148,6 +148,33 @@ export class Partition {
   }
 
   /**
+   * Compute the content hash (alias of getContentHash)
+   *
+   * @returns {Promise<string>} Content hash
+   */
+  async computeHash() {
+    return this.getContentHash();
+  }
+
+  /**
+   * Whether the partition rejects writes
+   *
+   * @returns {boolean} True if read-only
+   */
+  isReadOnly() {
+    return this.readOnly;
+  }
+
+  /**
+   * Protected namespace IRIs of this partition
+   *
+   * @returns {Set<string>} Protected namespaces
+   */
+  getProtectedNamespaces() {
+    return new Set(this.protectedNamespaces);
+  }
+
+  /**
    * Compute content hash for the partition
    *
    * @returns {Promise<string>} SHA256 content hash
@@ -359,7 +386,17 @@ export class SystemPolicyPartition extends Partition {
       description: 'System policies, access controls, and governance rules',
       readOnly: true,
       namespaceIris: [],
-      protectedNamespaces: [],
+      // Core W3C vocabularies that no overlay may redefine
+      protectedNamespaces: [
+        'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        'http://www.w3.org/2000/01/rdf-schema#',
+        'http://www.w3.org/2002/07/owl#',
+        'http://www.w3.org/2001/XMLSchema#',
+        'http://www.w3.org/ns/shacl#',
+        'http://www.w3.org/ns/prov#',
+        'http://www.w3.org/2004/02/skos/core#',
+        'http://www.w3.org/2006/time#',
+      ],
     });
   }
 }

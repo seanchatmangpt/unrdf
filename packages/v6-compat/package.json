@@ -18,8 +18,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage && node --test test/schema-codec.node.test.mjs",
-    "test:fast": "vitest run --coverage",
+    "test": "vitest run --coverage && pnpm test:node",
+    "test:fast": "vitest run --coverage && pnpm test:node",
+    "test:node": "node --test test/integration-node.test.mjs test/schema-codec.node.test.mjs",
     "test:watch": "vitest --coverage",
     "build": "node build.config.mjs",
     "lint": "eslint src/ --max-warnings=0",

@@ -49,7 +49,7 @@ export const CheckResultSchema = z.object({
   remediation: z.array(z.string()),
   duration: z.number(),
   timestamp: z.string().datetime(),
-  details: z.record(z.any()).optional()
+  details: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -94,7 +94,7 @@ export const ProductionReceiptSchema = z.object({
   overallScore: z.number().min(0).max(100),
   productionReady: z.boolean(),
   checkResults: z.array(CheckResultSchema),
-  categoryScores: z.record(z.number()),
+  categoryScores: z.record(z.string(), z.number()),
   topBlockers: z.array(z.object({
     category: z.string(),
     issue: z.string(),

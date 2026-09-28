@@ -241,13 +241,15 @@ describe('CoordinationHub', () => {
   it('should distribute work', () => {
     hub.registerSwarm('swarm-1', { domain: 'compression', capacity: 10 });
 
-    const swarmId = hub.distributeWork({
+    // distributeWork returns the work id (queen.mjs relies on this); the target swarm is
+    // recorded on the active-work entry
+    const workId = hub.distributeWork({
       type: 'compress',
       domain: 'compression',
       payload: { data: [] }
     });
 
-    expect(swarmId).toBe('swarm-1');
+    expect(hub.activeWork.get(workId).swarmId).toBe('swarm-1');
     expect(hub.activeWork.size).toBe(1);
   });
 

@@ -83,7 +83,7 @@ export const PackagePartitionConfigSchema = z.object({
   testCoverage: z.number().min(0).max(100).optional(),
   docCoverage: z.number().min(0).max(100).optional(),
   maintainers: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

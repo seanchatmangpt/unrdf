@@ -41,7 +41,7 @@ export const UniverseStateSchema = z.object({
   version: z.string(),
   contentHash: z.string(),
   partitionCount: z.number(),
-  categoryDistribution: z.record(z.number()),
+  categoryDistribution: z.record(z.string(), z.number()),
   lastAdmissionTime: z.string().datetime().nullable(),
   admissionCount: z.number()
 });
@@ -338,29 +338,28 @@ export class MonorepoUniverse {
       inDegree.set(name, 0);
     }
 
-    // Calculate in-degrees
-    for (const [name, deps] of this.dependencyGraph) {
-      for (const dep of deps) {
-        inDegree.set(dep, (inDegree.get(dep) || 0) + 1);
-      }
+    // In-degree = number of (known) dependencies; dependencies come first
+    for (const [name] of this.partitions) {
+      const deps = [...this.getDependencies(name)].filter((d) => this.partitions.has(d));
+      inDegree.set(name, deps.length);
     }
 
-    // Find nodes with no dependencies
+    // Start with nodes that have no dependencies
     for (const [name, degree] of inDegree) {
       if (degree === 0) {
         queue.push(name);
       }
     }
 
-    // Process queue
+    // Process queue: releasing a node unblocks its dependents
     while (queue.length > 0) {
       const node = queue.shift();
       result.push(node);
 
-      for (const dep of this.getDependencies(node)) {
-        inDegree.set(dep, inDegree.get(dep) - 1);
-        if (inDegree.get(dep) === 0) {
-          queue.push(dep);
+      for (const dependent of this.getDependents(node)) {
+        inDegree.set(dependent, inDegree.get(dependent) - 1);
+        if (inDegree.get(dependent) === 0) {
+          queue.push(dependent);
         }
       }
     }

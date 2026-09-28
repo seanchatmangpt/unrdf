@@ -458,7 +458,7 @@ const DeltaShardSchema = z.object({
   content: z.string(),
   weight: z.number().min(0).max(1).default(0.5),
   dependencies: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.string(), z.any()).default({}),
 });
 
 /**

@@ -170,32 +170,7 @@ export class MonorepoAdmissionEngine {
     // Capture universe state before
     const universeHashBefore = this.universe._contentHash;
 
-    // Step 1: Run local package checks (if enabled)
-    if (this.config.enableLocalChecks) {
-      const localResult = await this._runLocalChecks(delta);
-
-      if (!localResult.passed) {
-        this.stats.denied++;
-        this.stats.deniedByLocal++;
-
-        const result = this._buildResult({
-          admissionId,
-          timestamp,
-          admitted: false,
-          decision: 'DENY',
-          phase: 'PACKAGE_LOCAL',
-          reason: localResult.reason,
-          delta,
-          universeHashBefore,
-          localResult
-        });
-
-        this._logAdmission(result);
-        return result;
-      }
-    }
-
-    // Step 2: Run cross-package guards
+    // Step 1: Run cross-package guards
     const guardResults = checkAllCrossPackageGuards(
       this.universe.partitions,
       delta,
@@ -222,7 +197,7 @@ export class MonorepoAdmissionEngine {
       return result;
     }
 
-    // Step 3: Run cross-package invariants
+    // Step 2: Run cross-package invariants
     const invariantResults = checkAllCrossPackageInvariants(
       this.universe.partitions,
       delta,
@@ -250,7 +225,32 @@ export class MonorepoAdmissionEngine {
       return result;
     }
 
-    // Step 4: All checks passed - ALLOW
+    // Step 4: Run local package checks (if enabled) after cross-package authorities
+    if (this.config.enableLocalChecks) {
+      const localResult = await this._runLocalChecks(delta);
+
+      if (!localResult.passed) {
+        this.stats.denied++;
+        this.stats.deniedByLocal++;
+
+        const result = this._buildResult({
+          admissionId,
+          timestamp,
+          admitted: false,
+          decision: 'DENY',
+          phase: 'PACKAGE_LOCAL',
+          reason: localResult.reason,
+          delta,
+          universeHashBefore,
+          localResult
+        });
+
+        this._logAdmission(result);
+        return result;
+      }
+    }
+
+    // Step 5: All checks passed - ALLOW
     this.stats.allowed++;
 
     // Compute hypothetical new universe hash (if changes applied)

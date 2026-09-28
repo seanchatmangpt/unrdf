@@ -931,6 +931,9 @@ importers:
       '@unrdf/test-utils':
         specifier: workspace:*
         version: link:../test-utils
+      n3:
+        specifier: ^1.26.0
+        version: 1.26.0
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(yaml@2.8.4))
@@ -1580,9 +1583,6 @@ importers:
 
   packages/oxigraph:
     dependencies:
-      '@unrdf/v6-core':
-        specifier: workspace:*
-        version: link:../v6-core
       oxigraph:
         specifier: ^0.5.2
         version: 0.5.8
@@ -1760,9 +1760,6 @@ importers:
       '@unrdf/kgc-4d':
         specifier: workspace:*
         version: link:../kgc-4d
-      '@unrdf/kgc-multiverse':
-        specifier: workspace:*
-        version: link:../kgc-multiverse
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:../oxigraph
@@ -2061,6 +2058,9 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.0.15
+        version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(yaml@2.8.4))
 
   packages/validation:
     dependencies:

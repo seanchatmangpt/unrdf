@@ -197,20 +197,20 @@ export const PackageProperties = {
 /**
  * Package.json dependency schema
  */
-const DependencyMapSchema = z.record(z.string()).optional().default({});
+const DependencyMapSchema = z.record(z.string(), z.string()).optional().default({});
 
 /**
  * Package.json exports schema (simplified)
  */
 const ExportsSchema = z.union([
   z.string(),
-  z.record(z.string()),
+  z.record(z.string(), z.string()),
 ]).optional();
 
 /**
  * Package.json scripts schema
  */
-const ScriptsSchema = z.record(z.string()).optional().default({});
+const ScriptsSchema = z.record(z.string(), z.string()).optional().default({});
 
 /**
  * Package.json engines schema
@@ -562,7 +562,7 @@ export function validatePackageJson(content) {
 
   return {
     valid: false,
-    errors: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`),
+    errors: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`),
   };
 }
 

@@ -32,7 +32,7 @@ const StateEventSchema = z.object({
   partition: z.string(),
   state: z.union([z.number(), z.string()]),
   timestamp: z.string().datetime(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

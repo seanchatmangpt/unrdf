@@ -12,6 +12,7 @@
 
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { DPMechanismSchema } from './schemas.mjs';
+import { createRandom, standardNormal } from './rng.mjs';
 
 const tracer = trace.getTracer('@unrdf/ai-ml-innovations');
 
@@ -32,6 +33,7 @@ export class DPMechanism {
    * @param {number} config.sensitivity - L2 sensitivity (clipping norm)
    * @param {number} config.epsilon - Privacy parameter (ε)
    * @param {number} [config.delta=1e-5] - Failure probability (δ)
+   * @param {number} [config.seed] - Optional seed for a reproducible noise stream
    */
   constructor(config) {
     const validated = DPMechanismSchema.parse({
@@ -40,6 +42,7 @@ export class DPMechanism {
       epsilon: config.epsilon,
       delta: config.delta || 1e-5,
       clippingNorm: config.clippingNorm || config.sensitivity,
+      seed: config.seed,
     });
 
     this.mechanism = validated.mechanism;
@@ -47,6 +50,7 @@ export class DPMechanism {
     this.epsilon = validated.epsilon;
     this.delta = validated.delta;
     this.clippingNorm = validated.clippingNorm;
+    this._random = createRandom(validated.seed);
 
     // Calibrate noise scale
     this.noiseScale = this._calibrateNoise();
@@ -197,11 +201,7 @@ export class DPMechanism {
    * @private
    */
   _gaussianNoise(mean, std) {
-    // Box-Muller transform
-    const u1 = Math.random();
-    const u2 = Math.random();
-    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-    return mean + std * z0;
+    return mean + std * standardNormal(this._random);
   }
 
   /**
@@ -210,9 +210,10 @@ export class DPMechanism {
    */
   _laplaceNoise(mean, scale) {
     // Inverse CDF method
-    const u = Math.random() - 0.5;
+    const u = this._random() - 0.5;
     const sign = u < 0 ? -1 : 1;
-    return mean + sign * scale * Math.log(1 - 2 * Math.abs(u));
+    // Math.max guards log(0) when |u| reaches 0.5
+    return mean - sign * scale * Math.log(Math.max(1 - 2 * Math.abs(u), Number.MIN_VALUE));
   }
 }
 

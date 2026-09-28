@@ -38,7 +38,8 @@
   ],
   "scripts": {
     "test": "pnpm -r test",
-    "test:fast": "pnpm -r test:fast",
+    "test:fast": "pnpm -r test:fast && pnpm test:root",
+    "test:root": "vitest run --root . --dir ./src src/monorepo-admission src/universe src/resilience src/multi-swarm src/orchestration src/narrative-state-chain src/admission",
     "test:watch": "pnpm -r test:watch",
     "test:watch:pkg": "bash -c './scripts/dev-workflow.sh test:watch \"$@\"' _",
     "test:pkg": "bash -c 'pnpm -C packages/$1 test' _",

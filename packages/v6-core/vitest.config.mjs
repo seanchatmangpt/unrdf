@@ -9,6 +9,7 @@ export default defineConfig({
       'test/implementations.test.mjs',
       'test/docs/latex-generator.test.mjs',
       'test/docs/thesis-builder.test.mjs',
+      'test/oxigraph-determinism.test.mjs', // moved from @unrdf/oxigraph (its store-receipts now lives here)
     ],
   },
 });

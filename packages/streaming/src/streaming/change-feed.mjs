@@ -68,7 +68,17 @@ const ChangeFeedConfigSchema = z
 export function createChangeFeed(store, config = {}) {
   const validatedConfig = ChangeFeedConfigSchema.parse(config);
   let target = new EventTarget();
-  const changes = [];
+  // Ring buffer: `changes` holds entries from index `start`; evicting the oldest entry advances
+  // `start` (O(1)) instead of Array#shift (O(n)), and the dead prefix is compacted in bulk so
+  // total work stays amortized O(1) per change and memory stays bounded.
+  let changes = [];
+  let start = 0;
+  const historySize = () => changes.length - start;
+  const historyList = () => (start === 0 ? changes.slice() : changes.slice(start));
+  const clearHistory = () => {
+    changes = [];
+    start = 0;
+  };
   const subscribers = new Set();
 
   // Hook into store if provided
@@ -165,18 +175,23 @@ export function createChangeFeed(store, config = {}) {
           // Unbounded - store everything
           changes.push(validated);
           span.setAttributes({
-            'history.size': changes.length,
+            'history.size': historySize(),
             'history.trimmed': false,
           });
         } else {
           // Normal ring buffer with size limit
           changes.push(validated);
-          const trimmed = changes.length > maxSize;
+          const trimmed = historySize() > maxSize;
           if (trimmed) {
-            changes.shift();
+            changes[start] = undefined; // release the evicted entry
+            start++;
+            if (start >= maxSize) {
+              changes = changes.slice(start);
+              start = 0;
+            }
           }
           span.setAttributes({
-            'history.size': changes.length,
+            'history.size': historySize(),
             'history.trimmed': trimmed,
           });
         }
@@ -242,12 +257,12 @@ export function createChangeFeed(store, config = {}) {
       const span = tracer.startSpan('change-feed.getHistory');
       try {
         span.setAttributes({
-          'history.totalSize': changes.length,
+          'history.totalSize': historySize(),
           'history.hasSinceFilter': options.since !== undefined,
           'history.hasLimitFilter': options.limit !== undefined,
         });
 
-        let result = [...changes];
+        let result = historyList();
 
         if (options.since !== undefined) {
           result = result.filter(change => change.timestamp >= options.since);
@@ -304,14 +319,14 @@ export function createChangeFeed(store, config = {}) {
      * @returns {Array} All changes
      */
     getChanges() {
-      return [...changes];
+      return historyList();
     },
 
     /**
      * Clear all changes
      */
     clearChanges() {
-      changes.length = 0;
+      clearHistory();
     },
 
     /**
@@ -320,7 +335,7 @@ export function createChangeFeed(store, config = {}) {
      * @param {Function} callback - Callback to receive each change
      */
     replay(callback) {
-      for (const change of changes) {
+      for (const change of historyList()) {
         callback(change);
       }
     },
@@ -331,7 +346,7 @@ export function createChangeFeed(store, config = {}) {
      */
     destroy() {
       // Clear change history
-      changes.length = 0;
+      clearHistory();
 
       // Clear all subscribers
       subscribers.clear();

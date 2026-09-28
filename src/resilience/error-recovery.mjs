@@ -20,8 +20,8 @@ export const CheckpointSchema = z.object({
   id: z.string(),
   epoch: z.string(),
   timestamp: z.string(),
-  state: z.record(z.any()),
-  metadata: z.record(z.any()).optional(),
+  state: z.record(z.string(), z.any()),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -339,12 +339,16 @@ export class ErrorRecoveryManager {
 
     if (checkpoints.length === 0) return null;
 
-    // Sort by timestamp descending
-    checkpoints.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
+    // Latest by timestamp; the Map preserves insertion order, so on equal timestamps
+    // (same millisecond) the most recently created checkpoint wins.
+    let latest = checkpoints[0];
+    for (const cp of checkpoints) {
+      if (new Date(cp.timestamp).getTime() >= new Date(latest.timestamp).getTime()) {
+        latest = cp;
+      }
+    }
 
-    return checkpoints[0];
+    return latest;
   }
 
   /**

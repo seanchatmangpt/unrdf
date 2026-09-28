@@ -29,7 +29,7 @@ export const InvariantResultSchema = z.object({
   reason: z.string(),
   violations: z.array(z.any()).optional(),
   warnings: z.array(z.any()).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   severity: z.enum(['error', 'warning', 'info']).default('error')
 });
 

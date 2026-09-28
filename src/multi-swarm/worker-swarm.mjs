@@ -296,6 +296,12 @@ export class WorkerSwarm extends EventEmitter {
       const resultPromise = availableAgent.process(workItem);
       const result = await Promise.race([resultPromise, timeoutPromise]);
 
+      // Agent.process reports processor exceptions as { success: false, error }: route them
+      // through the retry / failure path instead of resolving the work with `undefined`
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
       // Generate receipt
       const receipt = await this.receiptGenerator.emitAdmissibilityReceipt({
         ontologyReleases: [`swarm:${this.id}`],
@@ -376,8 +382,9 @@ export class WorkerSwarm extends EventEmitter {
       this._updateStatus();
     }
 
-    // Continue processing queue
-    setImmediate(() => this._processQueue());
+    // Continue processing queue immediately (not on a later macrotask): the next queued item
+    // must start before the caller that awaited this item's result resumes.
+    this._processQueue();
   }
 
   /**

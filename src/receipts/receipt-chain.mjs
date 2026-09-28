@@ -18,6 +18,16 @@
 import { Receipt } from './receipt.mjs';
 
 /**
+ * Monotonic ordering key of a receipt: full ISO timestamp (lexicographically sortable),
+ * falling back to the epoch string when no timestamp is present.
+ * @param {Object} receipt - Receipt
+ * @returns {string} Ordering key
+ */
+function orderKey(receipt) {
+  return receipt.generatedAtTime ?? receipt.epoch;
+}
+
+/**
  * Receipt Chain - Ordered sequence of linked receipts
  *
  * @example
@@ -78,8 +88,12 @@ export class ReceiptChain {
 
     // Check epoch ordering (monotonic increase)
     if (this.receipts.length > 0) {
-      const lastEpoch = this.receipts[this.receipts.length - 1].epoch;
-      if (receipt.epoch <= lastEpoch) {
+      const lastReceipt = this.receipts[this.receipts.length - 1];
+      const lastEpoch = lastReceipt.epoch;
+      // The epoch string only resolves to the minute plus the millisecond field (seconds are
+      // dropped), so two receipts a few seconds apart can share an epoch: order by the full
+      // generation timestamp instead.
+      if (orderKey(receipt) <= orderKey(lastReceipt)) {
         throw new Error(
           `Epoch must increase: last=${lastEpoch}, current=${receipt.epoch}`
         );
@@ -131,7 +145,7 @@ export class ReceiptChain {
       // Verify epoch ordering
       if (i > 0) {
         const prevEpoch = this.receipts[i - 1].epoch;
-        if (receipt.epoch <= prevEpoch) {
+        if (orderKey(receipt) <= orderKey(this.receipts[i - 1])) {
           errors.push(
             `Receipt ${i} (${receipt.epoch}): epoch not increasing (previous: ${prevEpoch})`
           );

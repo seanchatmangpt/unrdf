@@ -43,7 +43,7 @@ const _TestContextSchema = z.object({
   policyPackManager: z.any().optional(), // PolicyPackManager instance
   lockchainWriter: z.any().optional(), // LockchainWriter instance
   sandbox: z.any().optional(), // EffectSandbox instance
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**

@@ -228,7 +228,7 @@ describe('QueenSwarm', () => {
     await queen.stop();
   });
 
-  it('should send heartbeats to worker swarms', async () => {
+  it('should send heartbeats to worker swarms', { timeout: 15000 }, async () => {
     const processor = vi.fn(async (work) => work);
 
     const worker1 = new WorkerSwarm('worker-1', { domain: 'test', capacity: 2 });

@@ -6,18 +6,18 @@
  * - query(): SPARQL query execution with query receipt
  * - addQuad(): Quad addition with modification receipt
  *
- * @module @unrdf/oxigraph/store-receipts
+ * @module @unrdf/v6-core/store-receipts
  */
 
 import { z } from 'zod';
-import { OxigraphStore } from './store.mjs';
-import { dataFactory } from './index.mjs';
+import { OxigraphStore } from '@unrdf/oxigraph/store';
+import { dataFactory } from '@unrdf/oxigraph';
 import {
   withReceipt,
   createContext,
   canonicalize,
   blake3Hash,
-} from '@unrdf/v6-core/receipt-pattern';
+} from './receipt-pattern.mjs';
 
 /**
  * Store Configuration Schema

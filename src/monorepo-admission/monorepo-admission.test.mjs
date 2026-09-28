@@ -321,8 +321,9 @@ describe('Q_dependency_acyclic', () => {
     });
 
     const result = Q_dependency_acyclic(partitions, delta);
-    // Note: The invariant checks for existing cycles plus proposed additions
-    expect(result.passed).toBe(true); // No existing cycle
+    // core -> yawl closes the existing yawl -> core edge, so the proposed addition must fail
+    expect(result.passed).toBe(false);
+    expect(result.reason).toContain('cycle');
   });
 });
 
