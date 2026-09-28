@@ -38,7 +38,7 @@ async function testProductionSequence() {
     const validationHook = createKnowledgeHook({
       meta: {
         name: 'data-validation',
-        version: 'latest',
+        version: '1.0.0',
         description: 'Validates incoming data',
       },
       when: {
@@ -64,7 +64,7 @@ async function testProductionSequence() {
     const auditHook = createKnowledgeHook({
       meta: {
         name: 'audit-trail',
-        version: 'latest',
+        version: '1.0.0',
         description: 'Creates audit trail',
       },
       when: {
@@ -83,7 +83,7 @@ async function testProductionSequence() {
     const manifest = createPolicyPackManifest('compliance-v1', [validationHook, auditHook], {
       description: 'Compliance and validation policy pack',
       author: 'test-user',
-      version: 'latest',
+      version: '1.0.0',
       enabled: true,
       priority: 50,
     });

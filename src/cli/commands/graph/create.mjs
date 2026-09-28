@@ -6,7 +6,7 @@
  * Instrumented with OpenTelemetry traces and metrics.
  *
  * @module cli/commands/graph/create
- * @version [VERSION]
+ * @version 2.4.0
  * @license MIT
  */
 

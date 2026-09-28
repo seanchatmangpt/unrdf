@@ -23,7 +23,7 @@ export default defineTask({
   meta: {
     name: 'lockchain:archive',
     description: 'Archive old lockchain entries with compression',
-    version: '[VERSION]'
+    version: '1.0.0'
   },
 
   async run({ payload, context: taskContext }) {

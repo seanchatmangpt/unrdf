@@ -144,7 +144,7 @@ function parsePackageJson(packageJsonPath) {
 
     return {
       name: pkg.name,
-      version: pkg.version || '[VERSION]',
+      version: pkg.version || '0.0.0',
       path: packageDir,
       packageJsonPath,
       workspaceDependencies: [...new Set(workspaceDependencies)],

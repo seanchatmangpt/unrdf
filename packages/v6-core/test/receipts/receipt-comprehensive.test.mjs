@@ -240,14 +240,14 @@ test('Receipt Types - compile receipt created', () => {
     eventType: 'GRAMMAR_COMPILED',
     inputHashes: ['abc', 'def'],
     outputHash: 'ghi',
-    compilerVersion: '[VERSION]',
+    compilerVersion: '1.0.0',
     payload: { status: 'SUCCESS' },
   };
 
   const receipt = createTestReceipt('compile', event);
 
   assert.strictEqual(receipt.receiptType, 'compile');
-  assert.strictEqual(receipt.compilerVersion, '[VERSION]');
+  assert.strictEqual(receipt.compilerVersion, '1.0.0');
 });
 
 test('Receipt Types - verification receipt created', () => {

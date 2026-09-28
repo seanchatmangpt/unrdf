@@ -4,7 +4,7 @@
  * This composable provides canonicalization and isomorphism checking capabilities.
  * It enforces the "One Canonicalization Rule" - URDNA2015 is the only method.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

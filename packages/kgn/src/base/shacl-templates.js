@@ -593,7 +593,7 @@ ex:{{ ruleName }}Rule
     
     const exported = {
       format: 'kgen-shacl-templates',
-      version: 'latest',
+      version: '1.0.0',
       generated: this.options.staticBuildTime,
       namespace: this.options.namespace,
       baseIRI: this.options.baseIRI,

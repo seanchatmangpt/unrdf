@@ -217,7 +217,7 @@ export const sampleHooks = {
     meta: {
       name: 'validation-hook',
       description: 'Validates data before processing',
-      version: 'latest',
+      version: '1.0.0',
     },
     when: {
       kind: 'sparql-ask',
@@ -239,7 +239,7 @@ export const sampleHooks = {
     meta: {
       name: 'logging-hook',
       description: 'Logs all transactions',
-      version: 'latest',
+      version: '1.0.0',
     },
     when: {
       kind: 'always',

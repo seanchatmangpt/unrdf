@@ -98,7 +98,7 @@ export class TemplateEngine {
    * const engine = new TemplateEngine();
    * const output = engine.render('equation-reference.tera', {
    *   title: 'Chatman Equation',
-   *   version: '[VERSION]',
+   *   version: '1.0.0',
    *   equations: [...]
    * });
    */
@@ -251,7 +251,7 @@ export class TemplateEngine {
    * @param {string} name - Global variable name
    * @param {*} value - Global variable value
    * @example
-   * engine.addGlobal('version', '[VERSION]');
+   * engine.addGlobal('version', '1.0.0');
    */
   addGlobal(name, value) {
     this.env.addGlobal(name, value);

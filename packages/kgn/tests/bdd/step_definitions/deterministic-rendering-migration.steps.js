@@ -194,7 +194,7 @@ Given('a mocked complex template with nested structures and loops', function() {
   // Set up complex data
   templateData = {
     title: 'Complex Template',
-    version: 'latest',
+    version: '2.0.0',
     items: Array.from({ length: 100 }, (_, i) => ({ name: `item-${i}` }))
   };
 });

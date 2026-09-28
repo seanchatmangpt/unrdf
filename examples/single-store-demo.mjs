@@ -4,7 +4,7 @@
  * This example shows how the RdfEngine now works with a single global store
  * using proper async context support with AsyncLocalStorage.
  *
- * @version latest
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

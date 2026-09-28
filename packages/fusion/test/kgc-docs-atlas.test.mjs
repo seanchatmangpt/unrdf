@@ -199,7 +199,7 @@ export default config;
       await mkdir(join(tmpPkg, 'src'), { recursive: true });
       await writeFile(join(tmpPkg, 'package.json'), JSON.stringify({
         name: '@test/empty',
-        version: 'latest',
+        version: '1.0.0',
       }));
       await writeFile(join(tmpPkg, 'src', 'index.mjs'), '// No exports\n');
 
@@ -216,7 +216,7 @@ export default config;
         {
           package: '@unrdf/test',
           path: '/test',
-          version: 'latest',
+          version: '1.0.0',
           exports: [
             { name: 'foo', type: 'function', jsdoc: '/** Foo */' },
             { name: 'bar', type: 'constant' },
@@ -266,7 +266,7 @@ export default config;
         packages: [
           {
             package: '@unrdf/test',
-            version: 'latest',
+            version: '1.0.0',
             exports: [
               {
                 name: 'add',

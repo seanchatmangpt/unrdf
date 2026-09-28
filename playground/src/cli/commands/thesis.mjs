@@ -7,7 +7,7 @@
  * Includes schedule and committee management.
  *
  * @module cli/commands/thesis
- * @version latest
+ * @version 2.0.0
  * @license MIT
  */
 

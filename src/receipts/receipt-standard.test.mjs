@@ -236,7 +236,7 @@ describe('Receipt Factories', () => {
       const receipt = await createDeploymentReceipt({
         pkg: '@unrdf/api',
         environment: 'production',
-        version: '[VERSION]',
+        version: '1.2.3',
         success: true,
         instances: 3,
         region: 'us-east-1',
@@ -247,7 +247,7 @@ describe('Receipt Factories', () => {
       expect(receipt.type).toBe('deployment');
       expect(receipt.decision).toBe('ALLOW');
       expect(receipt.extension.data.environment).toBe('production');
-      expect(receipt.extension.data.version).toBe('[VERSION]');
+      expect(receipt.extension.data.version).toBe('1.2.3');
     });
   });
 

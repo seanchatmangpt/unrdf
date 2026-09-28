@@ -6,7 +6,7 @@
  * named graphs, and error recovery. Fully instrumented with OpenTelemetry.
  *
  * @module cli/store-import
- * @version [VERSION]
+ * @version 2.1.1
  * @license MIT
  */
 

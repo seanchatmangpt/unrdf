@@ -465,7 +465,7 @@ class BundleAssembler {
       metadata: {
         requestedBy: context.metadata.requestedBy,
         processedAt: Date.now(),
-        version: 'latest',
+        version: '1.0.0',
       },
     };
 

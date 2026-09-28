@@ -243,7 +243,7 @@ const otlpPayload = {
   resourceSpans: traces.map(t => ({
     resource: t.resource,
     scopeSpans: [{
-      scope: { name: 'powl-simulate-spans', version: 'latest' },
+      scope: { name: 'powl-simulate-spans', version: '1.0.0' },
       spans: t.spans,
     }],
   })),

@@ -12,7 +12,7 @@
  * 5. Determines strategic next steps
  *
  * @module workflows/80-20-fill-gaps
- * @version latest
+ * @version 2.0.0
  * @license MIT
  */
 
@@ -35,7 +35,7 @@
 export const workflow = {
   id: '80-20-fill-gaps-workflow',
   name: '80/20 Fill Gaps - Capability Completion',
-  version: 'latest',
+  version: '2.0.0',
   description: `
     Comprehensive workflow for identifying and completing incomplete capabilities
     in a codebase using 80/20 thinking. Focuses on high-impact, quality-first

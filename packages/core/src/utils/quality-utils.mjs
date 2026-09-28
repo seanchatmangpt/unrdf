@@ -4,7 +4,7 @@
  * These utilities provide comprehensive data quality assessment, validation,
  * and improvement capabilities for RDF data.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

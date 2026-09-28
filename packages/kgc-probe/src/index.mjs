@@ -358,7 +358,7 @@ export {
  */
 export default {
   name: '@unrdf/kgc-probe',
-  version: '[VERSION]',
+  version: '1.0.0',
   description:
     'KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation',
 };

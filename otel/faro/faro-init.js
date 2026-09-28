@@ -11,7 +11,7 @@
  * Configuration:
  *   FARO_ENDPOINT — OTEL Collector OTLP HTTP endpoint (default: localhost:4318)
  *   APP_NAME      — Application identifier (default: unrdf-web)
- *   APP_VERSION   — Application version (default: latest)
+ *   APP_VERSION   — Application version (default: 1.0.0)
  *
  * Usage:
  *   <script src="path/to/faro-init.js"></script>
@@ -29,7 +29,7 @@
   const config = {
     endpoint: window.__FARO_CONFIG?.endpoint || 'http://localhost:4318/v1/logs',
     appName: window.__FARO_CONFIG?.appName || 'unrdf-web',
-    appVersion: window.__FARO_CONFIG?.appVersion || 'latest',
+    appVersion: window.__FARO_CONFIG?.appVersion || '1.0.0',
     environment: window.__FARO_CONFIG?.environment || 'development',
   };
 

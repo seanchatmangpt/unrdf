@@ -1,6 +1,6 @@
 export const config = {
   title: "KGen Project Configuration",
-  version: "latest",
+  version: "1.0.0",
   apiUrl: "https://api.example.com",
   timeout: 5000,
   environment: "production",

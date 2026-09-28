@@ -4,7 +4,7 @@
  * This example shows how the RdfEngine now works seamlessly with the store context
  * system, providing both traditional methods and context-aware convenience methods.
  *
- * @version latest
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

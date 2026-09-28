@@ -7,7 +7,7 @@
  * - Mandatory provenance on every write
  * - SHACL + reasoning optional but wired
  *
- * @version latest
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

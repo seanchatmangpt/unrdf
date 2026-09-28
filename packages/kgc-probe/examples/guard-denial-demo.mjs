@@ -85,7 +85,7 @@ orchestrator.registerAgentOutput('demo-agent', [
     data: { demo: true },
     metadata: {
       agentId: 'demo-agent',
-      probeVersion: '[VERSION]',
+      probeVersion: '1.0.0',
       budgetMs: 5000,
       actualMs: 10,
       timestamp: new Date().toISOString()

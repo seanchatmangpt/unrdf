@@ -5,7 +5,7 @@
  * It wraps a store with common graph operations like SPARQL queries,
  * set operations, and traversal utilities. Now uses unctx for store access.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

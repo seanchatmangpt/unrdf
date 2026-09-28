@@ -166,7 +166,7 @@ describe('Capabilities Manifest', () => {
   describe('Feature Flag Metadata', () => {
     it('should have version information', () => {
       const flag = CODE_COMPLEXITY_JS.featureFlag;
-      expect(flag.since).toBe('latest');
+      expect(flag.since).toBe('4.0.0');
     });
 
     it('should have status indicating stability', () => {

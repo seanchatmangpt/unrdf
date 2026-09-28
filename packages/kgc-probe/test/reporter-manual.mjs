@@ -18,8 +18,8 @@ const observations = [
     domain: 'runtime',
     timestamp: Date.now(),
     outputs: {
-      node: '[VERSION]',
-      v8: '[VERSION]',
+      node: 'v18.19.0',
+      v8: '11.3.244',
       worker_threads: true,
     },
   },

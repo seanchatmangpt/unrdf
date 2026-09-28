@@ -79,7 +79,7 @@ gov:Entity_002
  */
 function generateManifest(epoch, artifacts) {
   return JSON.stringify({
-    version: '[VERSION]',
+    version: '1.0.0',
     epoch: epoch || 'latest',
     timestamp: new Date().toISOString(),
     generator: 'governance-substrate-cli',
@@ -105,7 +105,7 @@ function generateSummary(epoch, artifacts) {
 
 **Epoch**: ${epoch || 'latest'}
 **Timestamp**: ${timestamp}
-**Generator**: governance-substrate-cli [VERSION]
+**Generator**: governance-substrate-cli v1.0.0
 
 ## Artifacts
 

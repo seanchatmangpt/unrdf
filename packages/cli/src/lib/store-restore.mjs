@@ -6,7 +6,7 @@
  * rollback support. Fully instrumented with OpenTelemetry.
  *
  * @module cli/store-restore
- * @version [VERSION]
+ * @version 2.1.1
  * @license MIT
  */
 

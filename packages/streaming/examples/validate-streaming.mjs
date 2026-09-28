@@ -19,7 +19,7 @@ const main = defineCommand({
   meta: {
     name: 'validate-streaming',
     description: 'Validate @unrdf/streaming package functionality',
-    version: '[VERSION]',
+    version: '1.0.0',
   },
   args: {
     verbose: {

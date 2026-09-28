@@ -301,7 +301,7 @@ export class ArchitectureProjector {
    * const result = await projector.project({
    *   partitions: [...],
    *   dependencies: [...],
-   *   metadata: { name: 'MyProject', version: '[VERSION]', description: 'Desc' }
+   *   metadata: { name: 'MyProject', version: '1.0.0', description: 'Desc' }
    * });
    */
   async project(input) {
@@ -394,7 +394,7 @@ export class ArchitectureProjector {
       namespaces,
       metadata: {
         name: 'UNRDF Universe',
-        version: '[VERSION]',
+        version: '1.0.0',
         description: 'RDF Universe partition architecture',
       },
     };

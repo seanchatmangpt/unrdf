@@ -20,7 +20,7 @@ import { z } from 'zod';
 const main = createCommand({
   meta: {
     name: 'unrdf-cli',
-    version: 'latest',
+    version: '1.0.0',
     description: 'UNRDF Command Line Interface for RDF operations'
   },
   subCommands: {

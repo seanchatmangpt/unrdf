@@ -1,12 +1,12 @@
 /**
- * @file Knowledge Engine OTEL Validation Suite ([VERSION])
+ * @file Knowledge Engine OTEL Validation Suite (v3.1.0)
  * @module validation/knowledge-engine
  *
  * @description
  * OTEL span-based validation for knowledge engine core features.
- * Updated for [VERSION] to remove CLI checks and focus on core RDF operations.
+ * Updated for v3.1.0 to remove CLI checks and focus on core RDF operations.
  *
- * [VERSION] Changes:
+ * v3.1.0 Changes:
  * - Removed CLI-specific validations (moved to CLI package)
  * - Enhanced core engine validations
  * - Added comprehensive RDF operation coverage
@@ -21,13 +21,13 @@ const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });
 
 /**
- * Knowledge Engine validation suite ([VERSION])
+ * Knowledge Engine validation suite (v3.1.0)
  * Validates core knowledge engine functionality using OTEL spans
  */
 const knowledgeEngineSuite = {
   name: "knowledge-engine-core",
   description:
-    "OTEL span-based validation for knowledge engine core functionality ([VERSION])",
+    "OTEL span-based validation for knowledge engine core functionality (v3.1.0)",
 
   features: [
     {
@@ -211,11 +211,11 @@ const knowledgeEngineSuite = {
 };
 
 /**
- * Run knowledge engine validation suite ([VERSION])
+ * Run knowledge engine validation suite (v3.1.0)
  * @returns {Promise<Object>} Validation report
  */
 export default async function runKnowledgeEngineValidation() {
-  console.log("🔍 Starting Knowledge Engine Core OTEL Validation ([VERSION])...");
+  console.log("🔍 Starting Knowledge Engine Core OTEL Validation (v3.1.0)...");
 
   try {
     const report = await runner.runSuite(knowledgeEngineSuite);

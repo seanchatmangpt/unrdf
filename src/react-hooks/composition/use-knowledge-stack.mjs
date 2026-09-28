@@ -1,7 +1,7 @@
 /**
  * @file use-knowledge-stack.mjs
  * @description Pre-configured hook composition for common use cases
- * @since [VERSION]
+ * @since 3.2.0
  *
  * Innovation: Combines multiple hooks into cohesive "stacks" for specific patterns,
  * reducing boilerplate and ensuring best practices are followed automatically.
@@ -32,7 +32,7 @@ import { useRecovery } from '../error-recovery/use-recovery.mjs';
 /**
  * Pre-configured hook composition for common knowledge graph patterns
  *
- * @since [VERSION]
+ * @since 3.2.0
  * @param {KnowledgeStackConfig} config - Stack configuration
  * @returns {Object} Combined hook interface
  * @throws {Error} When underlying engine initialization fails

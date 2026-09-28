@@ -84,7 +84,7 @@ describe('FM-CLI-012: Policy Schema Validation Guard', async () => {
   it('validates policy structure', async () => {
     const validPolicy = {
       name: 'test-policy',
-      version: 'latest',
+      version: '1.0.0',
       hooks: [],
       rules: []
     };

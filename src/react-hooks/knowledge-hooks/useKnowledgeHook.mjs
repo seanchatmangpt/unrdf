@@ -11,7 +11,7 @@
  *
  * function ValidationHook() {
  *   const { register, unregister, status } = useKnowledgeHook({
- *     meta: { name: 'validator', version: '[VERSION]' },
+ *     meta: { name: 'validator', version: '1.0.0' },
  *     when: { event: 'pre-transaction' },
  *     run: async (event) => {
  *       // Validation logic

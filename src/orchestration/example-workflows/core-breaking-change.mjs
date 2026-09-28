@@ -29,52 +29,52 @@ import {
 export const EXAMPLE_PACKAGES = {
   '@unrdf/core': {
     dependencies: [],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/core'
   },
   '@unrdf/types': {
     dependencies: ['@unrdf/core'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/types'
   },
   '@unrdf/utils': {
     dependencies: ['@unrdf/core', '@unrdf/types'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/utils'
   },
   '@unrdf/validation': {
     dependencies: ['@unrdf/core', '@unrdf/types'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/validation'
   },
   '@unrdf/oxigraph': {
     dependencies: ['@unrdf/core', '@unrdf/types'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/oxigraph'
   },
   '@unrdf/streaming': {
     dependencies: ['@unrdf/core', '@unrdf/utils'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/streaming'
   },
   '@unrdf/cli': {
     dependencies: ['@unrdf/core', '@unrdf/utils', '@unrdf/validation'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/cli'
   },
   '@unrdf/kgc-4d': {
     dependencies: ['@unrdf/core', '@unrdf/oxigraph', '@unrdf/streaming'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/kgc-4d'
   },
   '@unrdf/api': {
     dependencies: ['@unrdf/core', '@unrdf/validation', '@unrdf/kgc-4d'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/api'
   },
   '@unrdf/web': {
     dependencies: ['@unrdf/api', '@unrdf/streaming'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/web'
   },
   '@unrdf/integration-tests': {
@@ -85,7 +85,7 @@ export const EXAMPLE_PACKAGES = {
       '@unrdf/web'
     ],
     devDependencies: ['@unrdf/utils'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/integration-tests'
   }
 };

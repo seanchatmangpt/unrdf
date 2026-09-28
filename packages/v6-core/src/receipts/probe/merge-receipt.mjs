@@ -34,7 +34,7 @@ export const MERGE_ALGORITHM = 'merkle-tree-deterministic';
  * Merge algorithm version
  * @constant {string}
  */
-export const MERGE_ALGORITHM_VERSION = '[VERSION]';
+export const MERGE_ALGORITHM_VERSION = '1.0.0';
 
 /**
  * Leaf ordering for merkle tree

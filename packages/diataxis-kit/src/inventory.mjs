@@ -280,7 +280,7 @@ async function processPackage(pkgJsonPath) {
     return {
       name: pkg.name,
       dir: packageDir,
-      version: pkg.version || '[VERSION]',
+      version: pkg.version || '0.0.0',
       description: pkg.description || '',
       exports: pkg.exports || {},
       bin: pkg.bin || {},
