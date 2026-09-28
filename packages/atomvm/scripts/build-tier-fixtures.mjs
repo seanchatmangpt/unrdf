@@ -23,6 +23,8 @@ export const TIERS = Object.freeze(['browser', 'edge', 'fog', 'cloud']);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const source = join(root, 'src/erlang/tier_witness.erl');
 const outDir = join(root, 'test/fixtures/tiers');
+// spawn/1,3 live in estdlib's erlang.beam; programs that spawn must ship it.
+const ERLANG_STDLIB = join(root, 'test/fixtures/estdlib/erlang.beam');
 
 export function buildTierFixtures() {
   const erlc = process.env.ERLC_BIN || 'erlc';
@@ -36,29 +38,36 @@ export function buildTierFixtures() {
       const avmPath = join(outDir, `tier_${tier}.avm`);
       writeFileSync(
         avmPath,
-        packAvm([{ name: 'tier_witness.beam', data: new Uint8Array(beam), start: true }])
+        packAvm([
+          { name: 'tier_witness.beam', data: new Uint8Array(beam), start: true },
+          { name: 'erlang.beam', data: new Uint8Array(readFileSync(ERLANG_STDLIB)) },
+        ])
       );
       built.push(avmPath);
     }
     // Negative-test programs (crash, runaway).
     const programsDir = join(root, 'test/fixtures/programs');
     mkdirSync(programsDir, { recursive: true });
-    for (const name of ['loop_forever', 'crash_now']) {
+    for (const name of ['loop_forever', 'crash_now', 'spawn_workers', 'big_ints']) {
       execFileSync(erlc, ['-o', work, join(root, `test/fixtures/erlang/${name}.erl`)], {
         stdio: 'inherit',
       });
+      const program = {
+        name: `${name}.beam`,
+        data: new Uint8Array(readFileSync(join(work, `${name}.beam`))),
+        start: true,
+      };
+      const stdlib = { name: 'erlang.beam', data: new Uint8Array(readFileSync(ERLANG_STDLIB)) };
+      const spawns = name === 'spawn_workers';
       const avmPath = join(programsDir, `${name}.avm`);
-      writeFileSync(
-        avmPath,
-        packAvm([
-          {
-            name: `${name}.beam`,
-            data: new Uint8Array(readFileSync(join(work, `${name}.beam`))),
-            start: true,
-          },
-        ])
-      );
+      writeFileSync(avmPath, packAvm(spawns ? [program, stdlib] : [program]));
       built.push(avmPath);
+      if (spawns) {
+        // Same program WITHOUT estdlib: must fail fast with undef, never hang.
+        const bare = join(programsDir, `${name}_no_stdlib.avm`);
+        writeFileSync(bare, packAvm([program]));
+        built.push(bare);
+      }
     }
     // The published smoke-test application shipped in public/ and the playground.
     execFileSync(erlc, ['-o', work, join(root, 'src/erlang/hello_world.erl')], {

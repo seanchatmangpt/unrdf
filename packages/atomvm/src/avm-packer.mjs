@@ -6,9 +6,15 @@
  *
  *   header  : "#!/usr/bin/env AtomVM\n" + 2 NUL bytes (24 bytes)
  *   entry*  : size:u32be flags:u32be reserved:u32be name\0 (pad4) data (pad4)
- *   trailer : size 0 (4 bytes)
+ *   trailer : a full ZERO ENTRY - 12 zero bytes (size, flags, reserved)
  *
- * flags bit0 = BEAM module, bit1 = start module.
+ * flags (AtomVM avmpack.h): bit0 = BEAM_START_FLAG (the start module),
+ * bit1 = BEAM_CODE_FLAG (a BEAM code module). Plain files have flags 0.
+ *
+ * The trailer must be all 12 bytes: AtomVM's lookup loops read the flags word
+ * of the *next* entry, and a 4-byte trailer makes a lookup miss (e.g. a program
+ * that spawns without erlang.beam in the pack) read garbage past the buffer and
+ * spin forever instead of failing with `undef`.
  */
 
 export const AVM_HEADER = Uint8Array.from([
@@ -16,11 +22,12 @@ export const AVM_HEADER = Uint8Array.from([
   0,
   0,
 ]);
-export const AVM_FLAG_BEAM = 1;
-export const AVM_FLAG_START = 2;
+export const AVM_FLAG_START = 1;
+export const AVM_FLAG_CODE = 2;
 
 const HEADER_BYTES = AVM_HEADER.length;
 const ENTRY_HEADER_BYTES = 12;
+const TRAILER_BYTES = 12;
 
 const pad4 = length => (4 - (length % 4)) % 4;
 
@@ -43,7 +50,8 @@ function isBeam(bytes) {
 }
 
 /**
- * @param {{name: string, data: Uint8Array, start?: boolean}[]} modules - BEAM modules
+ * @param {{name: string, data: Uint8Array, start?: boolean, file?: boolean}[]} modules - BEAM modules
+ *   (`file: true` packs a plain data file such as priv/ content instead)
  * @returns {Uint8Array} .avm archive bytes
  */
 export function packAvm(modules) {
@@ -60,16 +68,18 @@ export function packAvm(modules) {
       throw new AvmFormatError(`invalid entry name: ${entry.name}`);
     }
     const data = entry.data;
-    if (!(data instanceof Uint8Array) || !isBeam(data)) {
+    if (!(data instanceof Uint8Array)) throw new AvmFormatError(`${entry.name} data must be a Uint8Array`);
+    if (!entry.file && !isBeam(data)) {
       throw new AvmFormatError(`${entry.name} is not a BEAM file (missing FOR1 header)`);
     }
+    if (entry.file && entry.start) throw new AvmFormatError(`${entry.name}: a plain file cannot be the start module`);
     const name = encoder.encode(`${entry.name}\0`);
     const namePad = pad4(name.length);
     const unpadded = ENTRY_HEADER_BYTES + name.length + namePad + data.length;
     const dataPad = pad4(unpadded);
     const header = new DataView(new ArrayBuffer(ENTRY_HEADER_BYTES));
     header.setUint32(0, unpadded + dataPad);
-    header.setUint32(4, AVM_FLAG_BEAM | (entry.start ? AVM_FLAG_START : 0));
+    header.setUint32(4, entry.file ? 0 : AVM_FLAG_CODE | (entry.start ? AVM_FLAG_START : 0));
     parts.push(
       new Uint8Array(header.buffer),
       name,
@@ -78,7 +88,7 @@ export function packAvm(modules) {
       new Uint8Array(dataPad)
     );
   }
-  parts.push(new Uint8Array(4));
+  parts.push(new Uint8Array(TRAILER_BYTES));
   const total = parts.reduce((sum, part) => sum + part.length, 0);
   const out = new Uint8Array(total);
   let offset = 0;
@@ -99,7 +109,7 @@ export function packAvm(modules) {
  */
 export function parseAvm(bytes) {
   if (!(bytes instanceof Uint8Array)) throw new AvmFormatError('input must be a Uint8Array');
-  if (bytes.length < HEADER_BYTES + 4)
+  if (bytes.length < HEADER_BYTES + TRAILER_BYTES)
     throw new AvmFormatError(`too small (${bytes.length} bytes)`);
   for (let i = 0; i < HEADER_BYTES; i++) {
     if (bytes[i] !== AVM_HEADER[i]) {
@@ -112,9 +122,16 @@ export function parseAvm(bytes) {
   const entries = [];
   let offset = HEADER_BYTES;
   for (;;) {
-    if (offset + 4 > bytes.length) throw new AvmFormatError('missing trailer');
+    if (offset + TRAILER_BYTES > bytes.length) {
+      throw new AvmFormatError('missing or truncated trailer (needs 12 zero bytes)');
+    }
     const size = view.getUint32(offset);
-    if (size === 0) break;
+    if (size === 0) {
+      if (view.getUint32(offset + 4) !== 0 || view.getUint32(offset + 8) !== 0) {
+        throw new AvmFormatError('malformed trailer (flags/reserved must be zero)');
+      }
+      break;
+    }
     if (size < ENTRY_HEADER_BYTES + 4 || offset + size > bytes.length || size % 4 !== 0) {
       throw new AvmFormatError(`entry at offset ${offset} has invalid size ${size}`);
     }
@@ -125,8 +142,8 @@ export function parseAvm(bytes) {
       throw new AvmFormatError('unterminated entry name');
     const name = decoder.decode(bytes.subarray(nameStart, nameEnd));
     const dataStart = nameStart + (nameEnd + 1 - nameStart) + pad4(nameEnd + 1 - nameStart);
-    if (flags & AVM_FLAG_BEAM && !isBeam(bytes.subarray(dataStart, offset + size))) {
-      throw new AvmFormatError(`${name} is flagged BEAM but has no FOR1 header`);
+    if (flags & AVM_FLAG_CODE && !isBeam(bytes.subarray(dataStart, offset + size))) {
+      throw new AvmFormatError(`${name} is flagged as code but has no FOR1 header`);
     }
     entries.push({ name, flags, size });
     offset += size;

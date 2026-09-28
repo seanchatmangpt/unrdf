@@ -1,12 +1,11 @@
 %% Tier witness: a real BEAM program each continuum tier (browser, edge, fog,
 %% cloud) executes on AtomVM. Compiled once per tier with -DTIER=<tier>.
 %%
-%% It proves three things a tier must be able to do: pass and selectively
-%% receive messages, compute over binaries with small-integer arithmetic, and
-%% report an identity a caller can check byte-for-byte. Only BIFs are used, so
-%% it runs on a bare AtomVM (no estdlib); integers stay below 2^27 because
-%% 32-bit WASM AtomVM cannot box larger ones; and it never calls spawn because
-%% spawn hangs in the shipped wasm build (see bin/atomvm-wasm.mjs).
+%% It proves three things a tier must be able to do: run a real second process
+%% and exchange messages with it, compute over binaries with small-integer
+%% arithmetic, and report an identity a caller can check byte-for-byte.
+%% spawn/1 is an Erlang wrapper in AtomVM's estdlib erlang.beam, so the tier
+%% packs (scripts/build-tier-fixtures.mjs) ship that module.
 -module(tier_witness).
 -export([start/0]).
 
@@ -22,12 +21,11 @@ level(fog) -> 2;
 level(cloud) -> 3.
 
 start() ->
-    self() ! {witness, other, 99},
-    self() ! {witness, self(), level(?TIER)},
     Me = self(),
+    Child = spawn(fun() -> Me ! {witness, self(), level(?TIER)} end),
     Level =
         receive
-            {witness, Me, L} -> L
+            {witness, Child, L} -> L
         after 1000 -> erlang:error(witness_timeout)
         end,
     {A, B, N} = adler(?CORPUS, 1, 0, 0),

@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { REQUIRED_ASSET_NAMES, ATOMVM_VERSION, atomvmAssetName } from '../../src/assets.mjs';
-import { packAvm, parseAvm, AvmFormatError, AVM_HEADER } from '../../src/avm-packer.mjs';
+import { packAvm, parseAvm, AvmFormatError, AVM_HEADER, AVM_FLAG_CODE, AVM_FLAG_START } from '../../src/avm-packer.mjs';
 import { AtomVMNodeRuntime } from '../../src/node-runtime.mjs';
 import { AtomVMProcessBroker, AtomVMProcessRefusal } from '../../src/process-broker.mjs';
 import { PACKAGE_ROOT, programAvm, tierAvm } from './helpers.mjs';
@@ -63,6 +63,25 @@ describe('AVM archive format', () => {
     expect(() => parseAvm(bytes)).toThrow(AvmFormatError);
   });
 
+  it('uses AtomVM\'s flag meanings and a full 12-byte zero-entry trailer', () => {
+    const bytes = packAvm([
+      { name: 'main.beam', data: beam, start: true },
+      { name: 'lib.beam', data: beam },
+      { name: 'main/priv/x.bin', data: new Uint8Array([1, 2, 3]), file: true },
+    ]);
+    const { entries } = parseAvm(bytes);
+    expect(entries.map(entry => entry.flags)).toEqual([AVM_FLAG_CODE | AVM_FLAG_START, AVM_FLAG_CODE, 0]);
+    expect([...bytes.subarray(-12)]).toEqual(new Array(12).fill(0));
+  });
+
+  it('refuses a 4-byte trailer: AtomVM spins forever on a lookup miss in such a pack', () => {
+    const good = packAvm([{ name: 'main.beam', data: beam, start: true }]);
+    expect(() => parseAvm(good.subarray(0, good.length - 8))).toThrow(/trailer/);
+    const junk = new Uint8Array(good);
+    junk[junk.length - 1] = 1; // non-zero reserved word in the end marker
+    expect(() => parseAvm(junk)).toThrow(/malformed trailer/);
+  });
+
   it('refuses an archive with no start module and one whose start module is not BEAM', () => {
     expect(() => parseAvm(packAvm([{ name: 'a.beam', data: beam }]))).toThrow(
       /exactly one start module/
@@ -100,6 +119,26 @@ describe('bin/atomvm-wasm launcher (real AtomVM on WebAssembly)', () => {
     const result = run(tierAvm('fog'));
     expect(result.status).toBe(0);
     expect(result.stdout).toContain(`{atomvm_tier_alive,fog,2,22,${a},${b}}`);
+  });
+
+  it('runs real multi-process programs: five spawned workers exchange messages with the parent', () => {
+    const result = run(programAvm('spawn_workers'));
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('{workers_sum,55}'); // 1+4+9+16+25
+  });
+
+  it('fails fast, never hangs, when a spawning program lacks estdlib erlang.beam', () => {
+    const started = Date.now();
+    const result = run(programAvm('spawn_workers_no_stdlib'));
+    expect(Date.now() - started).toBeLessThan(10_000);
+    expect(result.status).toBe(1);
+    expect(result.stdout + result.stderr).toContain('erlang.beam');
+  });
+
+  it('handles integers beyond 2^27 (boxed on 32-bit wasm) correctly', () => {
+    const result = run(programAvm('big_ints'));
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('{big,300000000,1000000000}');
   });
 
   it('surfaces a crashing program as a non-zero exit with a crash report, never as success', () => {
@@ -155,7 +194,8 @@ describe('AtomVMNodeRuntime', () => {
   });
 });
 
-describe('AtomVMProcessBroker safety net', () => {
+// Each spawning witness run costs ~1.5 s (scheduler thread wind-down), so allow headroom.
+describe('AtomVMProcessBroker safety net', { timeout: 60_000 }, () => {
   const broker = timeoutMs =>
     new AtomVMProcessBroker({
       atomvmBinary: LAUNCHER,

@@ -10,10 +10,15 @@
  * bytecode on machines without a native AtomVM installation (CI, fog/edge
  * nodes, containers). It never uses a shell.
  *
- * KNOWN LIMITATION (shipped wasm build): spawn/1,3 never returns - the VM
- * busy-waits at 100% CPU. Callers must bound execution (AtomVMProcessBroker
- * does via timeoutMs) and programs run here must not spawn processes.
- * Message passing to self(), receive/after and timers work.
+ * Programs that spawn processes take ~1.5 s wall time even when trivial: main
+ * only returns after the scheduler worker threads wind down (~1.2 s). Programs
+ * that do not spawn finish in ~0.1 s.
+ *
+ * NOTE: spawn/1,3 (and other estdlib functions) are Erlang wrappers in
+ * estdlib's erlang.beam, so an app that uses them must ship that module in its
+ * .avm. The AVM must also end with a full 12-byte zero entry (see
+ * src/avm-packer.mjs); a shorter trailer makes AtomVM spin forever on any
+ * module-lookup miss instead of reporting `undef`.
  */
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
@@ -64,6 +69,7 @@ globalThis.Module = {
   locateFile: () => wasmPath, // Emscripten hardcodes AtomVM.wasm
   onExit: code => process.exit(code),
 };
+
 globalThis.require = createRequire(jsPath);
 globalThis.__filename = jsPath;
 globalThis.__dirname = publicDir;

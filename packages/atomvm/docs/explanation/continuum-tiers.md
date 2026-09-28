@@ -40,6 +40,11 @@ pnpm --filter @unrdf/atomvm run build:fixtures   # rebuild .avm fixtures (needs 
 CHROMIUM_PATH=/path/to/chrome ...                # if Chromium is not at Playwright's default
 ```
 
-## Known limitation of the shipped WASM build
+## Authoring AVM programs for this runtime
 
-`spawn/1,3` never returns (the VM busy-waits at 100% CPU) in `public/AtomVM-{node,web}-agnostic.wasm`; adjusting the pthread pool or core count did not help. Programs run on it must not spawn processes (message passing to `self()`, `receive … after`, timers and binary arithmetic work). `AtomVMProcessBroker`'s `timeoutMs` kills a runaway program (tested). Integers ≥ 2^27 are not supported by this 32-bit build. `atomvm:read_priv/2` and `erlang:md5/1` also fail here. A rebuilt runtime is needed to lift these.
+- **The trailer must be a full 12-byte zero entry.** AtomVM's lookup loops read the flags word of the *next* entry; with a shorter trailer any module-lookup miss reads past the buffer and the VM spins at 100% CPU forever instead of failing with `undef`. `src/avm-packer.mjs` writes and validates the correct trailer and AtomVM's flag meanings (START=1, CODE=2); `bin/atomvm-wasm.mjs` refuses malformed packs before starting the VM.
+- **`spawn/1,3` need `erlang.beam` in the pack.** In AtomVM 0.6.x they are Erlang wrappers in estdlib's `erlang.erl` (`test/fixtures/estdlib/erlang.beam`). Forgetting it now fails fast with `Failed to open module: erlang.beam`; it is tested.
+- Still unsupported by this build: `atomvm:read_priv/2` aborts the VM (`term_from_int32: unimplemented: term should be moved to heap`), and `erlang:md5/1` needs `crypto.beam` plus a crypto NIF.
+- `AtomVMProcessBroker`'s `timeoutMs` still kills a genuinely runaway program (tested with `loop_forever`).
+
+History: an earlier version of this document blamed `spawn` hangs on the shipped WASM runtime. That was wrong - the hang was our own packer's 4-byte trailer, found by rebuilding AtomVM 0.6.6 from source and profiling it.
