@@ -86,6 +86,8 @@ export class AtomicAdmissionGate {
 
     /** @type {Map<string, any>} */
     this.admittedCapsules = new Map();
+    /** @type {string|null} Hash of the last committed transaction (parent of the next) */
+    this.lastCommittedHash = null;
   }
 
   /**
@@ -130,7 +132,8 @@ export class AtomicAdmissionGate {
         };
       });
 
-      const tx = this.txManager.begin(operations);
+      // Chain to the previous committed transaction so dependents can be found on rollback
+      const tx = this.txManager.begin(operations, this.lastCommittedHash ?? null);
 
       // Phase 3: Prepare transaction
       const prepareResult = await this.txManager.prepare(tx.id);
@@ -169,7 +172,10 @@ export class AtomicAdmissionGate {
         });
       }
 
-      // Success - store admitted capsules
+      // Success - remember this transaction's hash as the parent of the next one
+      this.lastCommittedHash = this.txManager.getTransaction(tx.id)?.hash ?? this.lastCommittedHash;
+
+      // Store admitted capsules
       for (const capsuleId of mergeResult.admitted) {
         const capsule = request.capsules.find(c => c.id === capsuleId);
         this.admittedCapsules.set(capsuleId, capsule);
@@ -260,6 +266,7 @@ export class AtomicAdmissionGate {
   reset() {
     this.txManager.reset();
     this.admittedCapsules.clear();
+    this.lastCommittedHash = null;
   }
 }
 
@@ -278,8 +285,16 @@ export async function cascadingRollback(gate, transactionId) {
   const rolledBack = [];
   const toRollback = [transactionId];
 
+  const seen = new Set();
+
   while (toRollback.length > 0) {
     const txId = toRollback.pop();
+    if (seen.has(txId)) continue;
+    seen.add(txId);
+
+    // Capture the hash before rollback: dependents reference their parent by hash
+    const parentTx = gate.txManager.getTransaction(txId);
+    const parentHash = parentTx?.hash;
 
     // Rollback this transaction
     const result = await gate.rollbackTransaction(txId);
@@ -287,9 +302,15 @@ export async function cascadingRollback(gate, transactionId) {
     if (result.success) {
       rolledBack.push(txId);
 
-      // Find dependent transactions (those with this tx as parent)
+      // Find dependent transactions (parentHash is the parent's hash; accept id for compatibility)
       const allTx = gate.txManager.getAllTransactions();
-      const dependents = allTx.filter(tx => tx.parentHash === txId);
+      const dependents = allTx.filter(
+        tx =>
+          tx.id !== txId &&
+          tx.status !== 'aborted' &&
+          tx.parentHash &&
+          (tx.parentHash === parentHash || tx.parentHash === txId)
+      );
 
       for (const depTx of dependents) {
         toRollback.push(depTx.id);

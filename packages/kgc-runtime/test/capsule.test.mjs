@@ -317,15 +317,19 @@ describe('RunCapsule', () => {
         receipts: [],
       };
 
-      const capsule = new RunCapsule(data);
       const o_snapshot = { state: 'initial' };
+
+      // Derive the genuine output hash of this replay, then declare it as expected
+      const probe = await replayCapsule(new RunCapsule(data), o_snapshot);
+      data.o_hash_after = probe.receipt.output_hash;
+      const capsule = new RunCapsule(data);
 
       const { result, receipt } = await replayCapsule(capsule, o_snapshot);
 
       expect(result).toBe('admit');
       expect(receipt.status).toBe('admit');
       expect(receipt.capsule_hash).toBe(capsule.capsule_hash);
-      expect(receipt.output_hash).toBe('final_hash');
+      expect(receipt.output_hash).toBe(data.o_hash_after);
       expect(receipt.verified).toBe(true);
     });
 

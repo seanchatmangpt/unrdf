@@ -212,9 +212,17 @@ export function getORSetValues(set) {
   const validated = ORSetSchema.parse(set);
 
   // Return values that are not removed
-  return validated.elements
-    .filter(elem => !elem.removeTimestamp)
-    .map(elem => elem.value);
+  // Concurrent adds of the same value carry distinct tags; a set yields each value once
+  const seen = new Set();
+  const values = [];
+  for (const elem of validated.elements) {
+    if (elem.removeTimestamp) continue;
+    const key = JSON.stringify(elem.value);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    values.push(elem.value);
+  }
+  return values;
 }
 
 /**
@@ -270,10 +278,11 @@ export function mergeORSets(s1, s2) {
     // Keep elements where add timestamp > remove timestamp
     for (const [, elem] of addTimestamps) {
       if (!latestRemove || compareTimestamps(elem.addTimestamp, latestRemove) > 0) {
+        // Added after the latest remove: the element is live
         mergedElements.push({
           value: elem.value,
           addTimestamp: elem.addTimestamp,
-          removeTimestamp: latestRemove,
+          removeTimestamp: null,
         });
       } else {
         // Element was removed after being added
