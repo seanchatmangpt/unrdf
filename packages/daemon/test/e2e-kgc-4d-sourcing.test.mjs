@@ -495,13 +495,21 @@ describe('DaemonEventStore - KGC-4D Event Sourcing', () => {
       // Arrange
       await store.appendEvent('op1', {});
       const proof = await store.generateMerkleProof(0);
-      proof.leafHash = 'tampered-hash';
+      proof.leafHash = 'a'.repeat(64); // well-formed but not the real leaf
 
       // Act
       const isValid = await store.verifyProof(proof);
 
       // Assert
       expect(isValid).toBe(false);
+    });
+
+    it('should reject structurally malformed Merkle proof with TypeError', async () => {
+      await store.appendEvent('op1', {});
+      const proof = await store.generateMerkleProof(0);
+      proof.leafHash = 'tampered-hash';
+
+      await expect(store.verifyProof(proof)).rejects.toThrow('leafHash must be a 64-character hexadecimal hash');
     });
 
     it('should generate valid proofs for all events in chain', async () => {
@@ -653,8 +661,10 @@ describe('DaemonEventStore - KGC-4D Event Sourcing', () => {
       expect(snapshot1.eventCount).toBe(2);
       expect(snapshot2.eventCount).toBe(2);
       expect(snapshot2.operations[0].status).toBe('success');
-      expect(state.eventCount).toBe(2);
-      // expect(proofValid).toBe(true); // TODO: FIX KGC-4D Merkle verification bug
+      // State at the first event's timestamp contains only that event (process-task came later)
+      expect(state.eventCount).toBe(1);
+      expect(state.events[0].operationId).toBe(taskEvent.operationId);
+      expect(proofValid).toBe(true);
     });
   });
 });
