@@ -9,7 +9,11 @@
  */
 
 import { z } from 'zod';
-import { v4 as uuidv4, validate as validateUuid } from 'uuid';
+import { randomUUID as uuidv4 } from 'node:crypto';
+
+/** RFC 4122 UUID v4 matcher (replaces the undeclared `uuid` package). */
+const validateUuid = (val) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
 
 // ============================================================================
 // CONSTANTS & ENUMS
@@ -192,7 +196,7 @@ function redactSecrets(input) {
  * Input validator with redaction
  * @type {z.ZodSchema}
  */
-const redactedInput = z.record(z.any())
+const redactedInput = z.record(z.string(), z.any())
   .transform(redactSecrets);
 
 // ============================================================================
@@ -204,7 +208,7 @@ const redactedInput = z.record(z.any())
  * Captures Node.js/JavaScript engine capabilities
  *
  * @typedef {object} RuntimeOutput
- * @property {string} nodeVersion - Semantic version (e.g., "latest")
+ * @property {string} nodeVersion - Semantic version (e.g., "20.10.0")
  * @property {string} jsEngine - JavaScript engine (v8|spidermonkey|jsc|chakra)
  * @property {boolean} wasm - WebAssembly support
  * @property {number} workers - Available worker threads (0-32768)
@@ -513,7 +517,7 @@ const Observation = z.object({
   timestamp_ns: bigintString,
   method: methodId,
   input: redactedInput,
-  output: z.record(z.any()), // Will be validated by domain schema
+  output: z.record(z.string(), z.any()), // Will be validated by domain schema
   hash: blake3Hash,
   guard: Guard,
   receipt: Receipt.nullable().default(null)

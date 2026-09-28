@@ -7,7 +7,7 @@
  * to calculate API coverage percentage.
  *
  * @module docs/tools/measure-coverage
- * @version latest
+ * @version 1.0.0
  * @license MIT
  */
 
@@ -29,7 +29,7 @@ const config = {
     '../../src/composables/index.mjs',
     '../../src/cli/index.mjs'
   ],
-  docsDirectory: '../reference/api/',
+  docsDirectory: '../reference/',
   reportsDirectory: './reports/',
   threshold: {
     critical: 80,
