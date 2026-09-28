@@ -3,7 +3,7 @@
  * Uses UNRDF KGC-4D for time-travel capabilities and BLAKE3 for hash chains
  */
 
-import * as tf from '@tensorflow/tfjs-node';
+import { tf } from './tf.mjs';
 import { KGCStore } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
 import { blake3 } from 'hash-wasm';

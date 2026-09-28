@@ -8,8 +8,11 @@
  * 4. Hash chain verification for provenance
  */
 
-import * as tf from '@tensorflow/tfjs-node';
+import { loadTensorFlow } from '../tf.mjs';
 import { MLVersionStore } from '../version-store.mjs';
+
+// Native tfjs-node when available, otherwise pure-JS CPU (with a warning)
+const tf = await loadTensorFlow();
 
 /**
  * Generate synthetic classification data (simulating images)
