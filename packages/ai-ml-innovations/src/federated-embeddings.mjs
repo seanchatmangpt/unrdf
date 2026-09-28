@@ -50,7 +50,25 @@ const FederatedConfigSchema = z.object({
   clippingNorm: z.number().min(0.1).max(10).default(1.0),
   minNodesPerRound: z.number().min(1).max(1000).default(2),
   enableDifferentialPrivacy: z.boolean().default(true),
+  seed: z.number().int().optional(),
 });
+
+/**
+ * Mulberry32 PRNG: small, fast, deterministic 32-bit seeded generator
+ *
+ * @param {number} seed - Integer seed
+ * @returns {() => number} Function returning floats in [0, 1)
+ */
+function createSeededRng(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 /**
  * Federated Embedding Trainer
@@ -74,6 +92,8 @@ export class FederatedEmbeddingTrainer {
 
     this.config = validated;
     this.nodes = config.nodes || [];
+    // Seeded RNG when config.seed is given (reproducible runs), Math.random otherwise
+    this._random = validated.seed === undefined ? Math.random : createSeededRng(validated.seed);
     this.globalModel = null;
     this.modelVersion = 0;
 
@@ -197,7 +217,7 @@ export class FederatedEmbeddingTrainer {
           });
 
           // Check convergence
-          if (lossDelta < convergenceThreshold && !this.stats.convergenceRound) {
+          if (lossDelta < convergenceThreshold && this.stats.convergenceRound === null) {
             this.stats.convergenceRound = epoch;
             span.addEvent('Convergence achieved', { epoch });
           }
@@ -498,10 +518,37 @@ export class FederatedEmbeddingTrainer {
    * @param {Object} model - Model to validate
    * @returns {Promise<Object>} Validation metrics
    */
-  async validateFederated(_model) {
-    // Simplified validation (would use actual validation set in production)
-    const loss = Math.random() * 0.5; // Placeholder
-    const accuracy = 0.8 + Math.random() * 0.15; // Placeholder
+  async validateFederated(model) {
+    // Loss: mean TransE distance ||h + r - t|| of the true triples held by the federated
+    // nodes. It is a pure function of the model, so convergence detection reflects training
+    // progress rather than sampling noise (the previous random placeholder loss made the
+    // |loss delta| < threshold check a coin flip, failing ~1 in 6 runs).
+    let distanceSum = 0;
+    let evaluated = 0;
+
+    for (const node of this.nodes) {
+      const triples = this._extractTriples(await this._fetchLocalGraph(node));
+
+      for (const { subject, predicate, object } of triples) {
+        const h = model.entityEmbeddings[subject];
+        const r = model.relationEmbeddings[predicate];
+        const t = model.entityEmbeddings[object];
+        if (!h || !r || !t) continue;
+
+        let sum = 0;
+        for (let i = 0; i < h.length; i++) {
+          const d = h[i] + r[i] - t[i];
+          sum += d * d;
+        }
+        distanceSum += Math.sqrt(sum);
+        evaluated++;
+      }
+    }
+
+    const loss = evaluated > 0 ? distanceSum / evaluated : Infinity;
+
+    // Accuracy remains a placeholder (no held-out set yet); it uses the trainer RNG
+    const accuracy = 0.8 + this._random() * 0.15;
 
     return { loss, accuracy };
   }
@@ -529,7 +576,7 @@ export class FederatedEmbeddingTrainer {
   _selectNodes() {
     // Simplified: select all nodes
     // In practice, would implement node sampling strategies
-    return this.nodes.filter(() => Math.random() > 0.1); // 90% participation
+    return this.nodes.filter(() => this._random() > 0.1); // 90% participation
   }
 
   /**
@@ -625,8 +672,8 @@ export class FederatedEmbeddingTrainer {
    */
   _gaussianNoise(mean, std) {
     // Box-Muller transform
-    const u1 = Math.random();
-    const u2 = Math.random();
+    const u1 = 1 - this._random(); // (0, 1] so log(u1) is finite
+    const u2 = this._random();
     const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
     return mean + std * z0;
   }
@@ -662,7 +709,7 @@ export class FederatedEmbeddingTrainer {
   _randomVector(dim) {
     const vec = new Array(dim);
     for (let i = 0; i < dim; i++) {
-      vec[i] = (Math.random() - 0.5) / Math.sqrt(dim);
+      vec[i] = (this._random() - 0.5) / Math.sqrt(dim);
     }
     return vec;
   }
@@ -674,7 +721,7 @@ export class FederatedEmbeddingTrainer {
   _shuffle(array) {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(this._random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
