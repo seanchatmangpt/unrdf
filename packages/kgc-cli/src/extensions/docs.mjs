@@ -30,7 +30,7 @@ const VerifySchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/diataxis-kit',
+  id: '@unrdf/docs',
   description: 'Diataxis documentation generation and management',
 
   nouns: {

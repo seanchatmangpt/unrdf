@@ -41,7 +41,8 @@ describe('Category 1: Extension Contract Tests', () => {
 
         beforeEach(async () => {
           try {
-            const module = await import(manifestEntry.path);
+            // manifest paths are relative to src/manifest/extensions.mjs, not this test file
+            const module = await import(new URL(manifestEntry.path, new URL('../src/manifest/extensions.mjs', import.meta.url)).href);
             extension = module.default || module.extension;
           } catch (e) {
             // Soft fail for missing extensions in test env
@@ -140,9 +141,10 @@ describe('Category 1: Extension Contract Tests', () => {
             return;
           }
 
-          // Invalid args should throw
+          // Non-object input must be rejected (an object with only optional/defaulted
+          // fields legitimately accepts unknown keys, so probe with a non-object)
           expect(() => {
-            testVerb.argsSchema.parse({ __invalid: true });
+            testVerb.argsSchema.parse('__invalid__');
           }).toThrow();
         });
 
