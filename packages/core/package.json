@@ -65,6 +65,8 @@
     "linked-data"
   ],
   "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "@opentelemetry/api": "^1.9.0",
     "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/namespace": "^2.0.1",
     "@rdfjs/serializer-jsonld": "^2.0.1",
@@ -76,6 +78,7 @@
     "jsonld": "^9.0.0",
     "n3": "^1.26.0",
     "onnxruntime-node": "^1.19.2",
+    "oxigraph": "^0.5.2",
     "rdf-canonize": "^5.0.0",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",

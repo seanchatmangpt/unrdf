@@ -47,9 +47,18 @@
     "@unrdf/daemon": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/kgc-swarm": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/project-engine": "workspace:*",
+    "@unrdf/receipts": "workspace:*",
     "@unrdf/streaming": "workspace:*",
+    "archiver": "^7.0.1",
     "citty": "^0.1.6",
+    "glob": "^13.0.0",
     "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
     "nunjucks": "^3.2.4",
     "table": "^6.9.0",
     "yaml": "^2.8.2",
@@ -75,5 +84,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "optionalDependencies": {
+    "check-disk-space": "^3.4.0"
   }
 }

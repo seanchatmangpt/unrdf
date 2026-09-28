@@ -66,5 +66,13 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "@unrdf/kgc-probe": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@unrdf/kgc-probe": {
+      "optional": true
+    }
   }
 }

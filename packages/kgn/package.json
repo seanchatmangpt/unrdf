@@ -42,7 +42,9 @@
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
+    "consola": "^3.2.3",
     "fs-extra": "^11.3.1",
+    "glob": "^13.0.0",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",
     "yaml": "^2.8.1",
@@ -53,6 +55,7 @@
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
     "comment-parser": "^1.4.1",
+    "cors": "^2.8.5",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.1",
     "vitest": "^4.0.16"
