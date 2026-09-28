@@ -3,7 +3,7 @@
  * @module observability/test/custom-events
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createCustomEvents, EventType, EventSeverity } from '../src/custom-events.mjs';
 
 describe('CustomEvents', () => {
@@ -365,6 +365,12 @@ describe('CustomEvents', () => {
     });
 
     it('should have minimal memory overhead', () => {
+      // The emitter's console fallback is captured/buffered by the test runner, which dominates
+      // the heap delta and is unrelated to event memory; silence it so we measure the emitter.
+      const spies = ['log', 'info', 'debug', 'warn', 'error'].map(m =>
+        vi.spyOn(console, m).mockImplementation(() => {})
+      );
+      if (globalThis.gc) globalThis.gc();
       const before = process.memoryUsage().heapUsed;
 
       // Emit 1000 events
@@ -379,6 +385,7 @@ describe('CustomEvents', () => {
       }
 
       const after = process.memoryUsage().heapUsed;
+      spies.forEach(spy => spy.mockRestore());
       const overhead = (after - before) / 1024 / 1024; // MB
 
       expect(overhead).toBeLessThan(5); // <5MB for 1000 events

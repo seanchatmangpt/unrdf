@@ -207,7 +207,13 @@ export class RaftCoordinator extends EventEmitter {
     });
 
     this.transport.on('error', error => {
-      this.emit('error', { source: 'transport', error });
+      // Transport errors (e.g. ECONNREFUSED to a peer that is not up yet) are connectivity
+      // events, not fatal: an unhandled EventEmitter 'error' would crash the process.
+      if (this.listenerCount('error') > 0) {
+        this.emit('error', { source: 'transport', error });
+      } else {
+        this.emit('transport_error', { source: 'transport', error });
+      }
     });
   }
 
@@ -492,7 +498,9 @@ export class RaftCoordinator extends EventEmitter {
       leaderId: this.leaderId,
       term: this.currentTerm,
       logLength: this.log.length,
-      peers: this.transport ? this.transport.getConnectedPeers() : [],
+      // Configured membership vs. currently connected transport peers are distinct
+      peers: [...this.peers.keys()],
+      connectedPeers: this.transport ? this.transport.getConnectedPeers() : [],
       stateMachineSize: this.stateMachine.size,
     };
   }

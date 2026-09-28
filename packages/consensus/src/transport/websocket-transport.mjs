@@ -88,6 +88,8 @@ export class WebSocketTransport extends EventEmitter {
     this.pendingMessages = new Map(); // messageId -> { resolve, reject, timeout }
     this.peers = new Map(); // nodeId -> { host, port }
     this.reconnectAttempts = new Map(); // nodeId -> attempts
+    this.reconnectTimers = new Map(); // nodeId -> Timeout
+    this.closed = false;
   }
 
   /**
@@ -110,7 +112,7 @@ export class WebSocketTransport extends EventEmitter {
         });
 
         this.server.on('error', error => {
-          this.emit('error', error);
+          this.reportError(error);
         });
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -152,7 +154,7 @@ export class WebSocketTransport extends EventEmitter {
           this.emit('message', message);
         }
       } catch (error) {
-        this.emit('error', { error, source: 'message_parse' });
+        this.reportError({ error, source: 'message_parse' });
       }
     });
 
@@ -165,7 +167,7 @@ export class WebSocketTransport extends EventEmitter {
     });
 
     ws.on('error', error => {
-      this.emit('error', { error, nodeId });
+      this.reportError({ error, nodeId });
     });
   }
 
@@ -224,7 +226,7 @@ export class WebSocketTransport extends EventEmitter {
             this.emit('message', message);
           }
         } catch (error) {
-          this.emit('error', { error, source: 'message_parse' });
+          this.reportError({ error, source: 'message_parse' });
         }
       });
 
@@ -235,10 +237,10 @@ export class WebSocketTransport extends EventEmitter {
       });
 
       ws.on('error', error => {
-        this.emit('error', { error, nodeId });
+        this.reportError({ error, nodeId });
       });
     } catch (error) {
-      this.emit('error', { error, nodeId, source: 'connect' });
+      this.reportError({ error, nodeId, source: 'connect' });
       this.scheduleReconnect(nodeId);
     }
   }
@@ -262,9 +264,13 @@ export class WebSocketTransport extends EventEmitter {
     // Exponential backoff
     const delay = this.config.reconnectInterval * Math.pow(2, attempts);
 
-    setTimeout(() => {
+    if (this.closed) return;
+
+    const timer = setTimeout(() => {
+      this.reconnectTimers.delete(nodeId);
       this.connectToPeer(nodeId);
     }, delay);
+    this.reconnectTimers.set(nodeId, timer);
   }
 
   /**
@@ -380,18 +386,44 @@ export class WebSocketTransport extends EventEmitter {
   }
 
   /**
+   * Report a transport error without crashing when no 'error' listener is attached
+   * @param {Object} payload - Error payload
+   * @private
+   */
+  reportError(payload) {
+    // Connectivity errors (e.g. ECONNREFUSED to a peer that is not up yet) must not crash the
+    // process via an unhandled EventEmitter 'error'; surface as 'transport_error' when nobody listens.
+    if (this.listenerCount('error') > 0) {
+      this.emit('error', payload);
+    } else {
+      this.emit('transport_error', payload);
+    }
+  }
+
+  /**
    * Shutdown the transport
    * @returns {Promise<void>}
    */
   async shutdown() {
+    this.closed = true;
+
+    // Cancel pending reconnects so no connection attempts happen after shutdown
+    for (const timer of this.reconnectTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.reconnectTimers.clear();
+
     // Close all peer connections
     for (const ws of this.connections.values()) {
       ws.close();
     }
     this.connections.clear();
 
-    // Close server
+    // Close server (terminate inbound clients so close() cannot hang on open sockets)
     if (this.server) {
+      for (const client of this.server.clients ?? []) {
+        client.terminate();
+      }
       await new Promise(resolve => {
         this.server.close(resolve);
       });
