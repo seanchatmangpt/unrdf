@@ -14,7 +14,7 @@
  * - MEASURE, don't claim
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createRequire } from 'module';
@@ -280,6 +280,11 @@ function generateReport() {
   const results = [];
 
   for (const [packageName, config] of Object.entries(PACKAGES)) {
+    if (!existsSync(join(rootDir, config.indexPath))) {
+      // Package was removed from the workspace: nothing to compare against
+      console.warn(`⚠️  Skipping ${packageName}: ${config.indexPath} does not exist`);
+      continue;
+    }
     const actualExports = extractActualExports(config.indexPath);
     const documented = documentedAPIs.get(packageName) || new Set();
     const result = comparePackage(
