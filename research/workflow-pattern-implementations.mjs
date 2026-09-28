@@ -11,7 +11,6 @@
 
 import { z } from 'zod';
 import { Daemon } from '../packages/daemon/src/daemon.mjs';
-import { YawlDaemonBridge } from '../packages/daemon/src/integrations/yawl.mjs';
 import { createChangeFeed } from '../packages/streaming/src/streaming/change-feed.mjs';
 import { WorkflowAdapter } from '../packages/v6-core/src/delta/adapters/workflow-adapter.mjs';
 

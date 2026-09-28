@@ -174,6 +174,23 @@ export class TemporalPolicyEngine {
    */
   async evaluate(policyId, context = {}, timestamp = null) {
     const evalTime = timestamp || BigInt(Date.now()) * 1_000_000n;
+    const outcome = await this._decide(policyId, context, evalTime);
+    return this._createDecision({ policyId, context, evalTime, ...outcome });
+  }
+
+  /**
+   * Compute a decision WITHOUT recording a receipt. Historical validation and
+   * time-travel queries are hypothetical re-evaluations: recording them would
+   * append out-of-order receipts to the hash chain (their timestamps are in the
+   * past) and break verifyChain().
+   *
+   * @private
+   * @param {string} policyId - Policy identifier
+   * @param {Object} context - Evaluation context
+   * @param {bigint} evalTime - Evaluation timestamp (nanoseconds)
+   * @returns {Promise<{decision: string, reason: string, windowMatched: boolean, windowId?: string}>}
+   */
+  async _decide(policyId, context, evalTime) {
     const policy = this.policies.get(policyId);
 
     if (!policy) {
@@ -185,15 +202,11 @@ export class TemporalPolicyEngine {
 
     // No active window → defer or deny based on historicalMode
     if (activeWindows.length === 0) {
-      const decision = policy.historicalMode === 'strict' ? 'deny' : 'defer';
-      return this._createDecision({
-        policyId,
-        decision,
+      return {
+        decision: policy.historicalMode === 'strict' ? 'deny' : 'defer',
         reason: 'No active temporal window',
-        context,
-        evalTime,
         windowMatched: false,
-      });
+      };
     }
 
     // Evaluate base policy
@@ -214,15 +227,12 @@ export class TemporalPolicyEngine {
       }
     }
 
-    return this._createDecision({
-      policyId,
+    return {
       decision: baseDecision,
       reason,
-      context,
-      evalTime,
       windowMatched: true,
       windowId: activeWindows[0].id,
-    });
+    };
   }
 
   /**
@@ -243,11 +253,7 @@ export class TemporalPolicyEngine {
     }
 
     // Re-evaluate policy at the historical timestamp
-    const historicalDecision = await this.evaluate(
-      receipt.policyId,
-      receipt.context,
-      atTime
-    );
+    const historicalDecision = await this._decide(receipt.policyId, receipt.context, atTime);
 
     // Compare decisions
     const consistent = historicalDecision.decision === receipt.decision;
@@ -280,7 +286,7 @@ export class TemporalPolicyEngine {
     }
 
     // Evaluate using current policy definition but at historical timestamp
-    const decision = await this.evaluate(policyId, context, atTime);
+    const decision = await this._decide(policyId, context, atTime);
 
     return {
       ...decision,
@@ -402,7 +408,9 @@ export class TemporalPolicyEngine {
       context,
       timestamp: evalTime,
     };
-    const payloadStr = JSON.stringify(payload);
+    const payloadStr = JSON.stringify(payload, (_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    );
     const payloadHash = await blake3(payloadStr);
 
     // Compute chain hash
@@ -470,11 +478,16 @@ export async function example() {
   console.log('Policy registered:', policy.id);
 
   // Evaluate during business hours
-  const decision1 = await engine.evaluate(policy.id, {
-    actor: 'user:alice',
-    resource: 'ontology:finance',
-    operation: 'read',
-  });
+  const businessHours = BigInt(Date.parse('2026-01-11T10:00:00Z')) * 1_000_000n;
+  const decision1 = await engine.evaluate(
+    policy.id,
+    {
+      actor: 'user:alice',
+      resource: 'ontology:finance',
+      operation: 'read',
+    },
+    businessHours
+  );
 
   console.log('Decision 1:', {
     decision: decision1.decision,
