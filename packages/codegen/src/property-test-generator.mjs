@@ -34,6 +34,11 @@ export async function generatePropertyTests(schema, options = {}) {
       code: '// No constraints found to generate property tests',
       testCount: 0,
       constraints: [],
+      metadata: {
+        framework: config.framework,
+        testCount: config.testCount,
+        generatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -58,6 +63,15 @@ export async function generatePropertyTests(schema, options = {}) {
 }
 
 /**
+ * Get the Zod v4 definition for a schema
+ * @param {z.ZodType} schema - Zod schema
+ * @returns {Object|undefined} Zod def (has `type`, `checks`, ...)
+ */
+function defOf(schema) {
+  return schema?._zod?.def;
+}
+
+/**
  * Extract constraints from Zod schema
  * @param {z.ZodSchema} schema - Zod schema
  * @returns {Array} Array of constraint objects
@@ -66,23 +80,21 @@ function extractConstraints(schema) {
   const constraints = [];
 
   // Handle ZodObject
-  if (schema._def?.typeName === 'ZodObject') {
-    const shape = schema._def.shape();
-
-    for (const [fieldName, fieldSchema] of Object.entries(shape)) {
-      const fieldConstraints = extractFieldConstraints(fieldName, fieldSchema);
-      constraints.push(...fieldConstraints);
+  if (defOf(schema)?.type === 'object') {
+    for (const [fieldName, fieldSchema] of Object.entries(schema.shape)) {
+      constraints.push(...extractFieldConstraints(fieldName, fieldSchema));
     }
   }
 
   // Handle direct schema
   else {
-    const directConstraints = extractFieldConstraints('value', schema);
-    constraints.push(...directConstraints);
+    constraints.push(...extractFieldConstraints('value', schema));
   }
 
   return constraints;
 }
+
+const INTEGER_FORMATS = new Set(['safeint', 'int32', 'uint32', 'int64', 'uint64']);
 
 /**
  * Extract constraints from a field schema
@@ -92,108 +104,66 @@ function extractConstraints(schema) {
  */
 function extractFieldConstraints(fieldName, fieldSchema) {
   const constraints = [];
-  const typeName = fieldSchema._def?.typeName;
+  const def = defOf(fieldSchema);
+  const type = def?.type;
+  const checks = (def?.checks || []).map(c => c._zod.def);
 
   // String constraints
-  if (typeName === 'ZodString') {
-    const checks = fieldSchema._def?.checks || [];
-
+  if (type === 'string') {
     for (const check of checks) {
-      if (check.kind === 'min') {
-        constraints.push({
-          field: fieldName,
-          type: 'minLength',
-          value: check.value,
-          message: check.message,
-        });
-      }
-      else if (check.kind === 'max') {
-        constraints.push({
-          field: fieldName,
-          type: 'maxLength',
-          value: check.value,
-          message: check.message,
-        });
-      }
-      else if (check.kind === 'email') {
-        constraints.push({
-          field: fieldName,
-          type: 'email',
-          message: check.message,
-        });
-      }
-      else if (check.kind === 'url') {
-        constraints.push({
-          field: fieldName,
-          type: 'url',
-          message: check.message,
-        });
-      }
-      else if (check.kind === 'regex') {
-        constraints.push({
-          field: fieldName,
-          type: 'pattern',
-          value: check.regex.source,
-          message: check.message,
-        });
+      if (check.check === 'min_length') {
+        constraints.push({ field: fieldName, type: 'minLength', value: check.minimum });
+      } else if (check.check === 'max_length') {
+        constraints.push({ field: fieldName, type: 'maxLength', value: check.maximum });
+      } else if (check.check === 'string_format') {
+        if (check.format === 'email') {
+          constraints.push({ field: fieldName, type: 'email' });
+        } else if (check.format === 'url') {
+          constraints.push({ field: fieldName, type: 'url' });
+        } else if (check.format === 'regex') {
+          constraints.push({ field: fieldName, type: 'pattern', value: check.pattern.source });
+        }
       }
     }
   }
 
   // Number constraints
-  else if (typeName === 'ZodNumber') {
-    const checks = fieldSchema._def?.checks || [];
-
+  else if (type === 'number') {
     for (const check of checks) {
-      if (check.kind === 'min') {
+      if (check.check === 'greater_than') {
         constraints.push({
           field: fieldName,
           type: 'min',
           value: check.value,
           inclusive: check.inclusive !== false,
         });
-      }
-      else if (check.kind === 'max') {
+      } else if (check.check === 'less_than') {
         constraints.push({
           field: fieldName,
           type: 'max',
           value: check.value,
           inclusive: check.inclusive !== false,
         });
-      }
-      else if (check.kind === 'int') {
-        constraints.push({
-          field: fieldName,
-          type: 'integer',
-        });
+      } else if (check.check === 'number_format' && INTEGER_FORMATS.has(check.format)) {
+        constraints.push({ field: fieldName, type: 'integer' });
       }
     }
   }
 
   // Array constraints
-  else if (typeName === 'ZodArray') {
-    if (fieldSchema._def?.minLength) {
-      constraints.push({
-        field: fieldName,
-        type: 'minItems',
-        value: fieldSchema._def.minLength.value,
-      });
-    }
-    if (fieldSchema._def?.maxLength) {
-      constraints.push({
-        field: fieldName,
-        type: 'maxItems',
-        value: fieldSchema._def.maxLength.value,
-      });
+  else if (type === 'array') {
+    for (const check of checks) {
+      if (check.check === 'min_length') {
+        constraints.push({ field: fieldName, type: 'minItems', value: check.minimum });
+      } else if (check.check === 'max_length') {
+        constraints.push({ field: fieldName, type: 'maxItems', value: check.maximum });
+      }
     }
   }
 
   // Optional check
-  if (typeName === 'ZodOptional') {
-    constraints.push({
-      field: fieldName,
-      type: 'optional',
-    });
+  if (type === 'optional') {
+    constraints.push({ field: fieldName, type: 'optional' });
   }
 
   return constraints;
@@ -372,7 +342,7 @@ function generateTestFromConstraint(constraint, config) {
  * @returns {string} Complete test file content
  */
 function generateTestFile(testCases, schema, config) {
-  const schemaName = schema._def?.description || 'Schema';
+  const schemaName = schema.description || 'Schema';
 
   return `
 /**
@@ -404,6 +374,12 @@ ${testCases.join('\n\n')}
 export async function generateFromSHACL(shaclStore, targetClass, options = {}) {
   const config = PropertyTestOptionsSchema.parse(options);
 
+  // targetClass is interpolated into an IRIREF below; reject characters that
+  // would terminate it and inject arbitrary SPARQL.
+  if (typeof targetClass !== 'string' || /[\s<>"{}|\\^`]/.test(targetClass) || !targetClass) {
+    throw new Error(`Invalid target class IRI: ${JSON.stringify(targetClass)}`);
+  }
+
   // Query SHACL constraints
   const constraintsQuery = `
     PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -429,7 +405,7 @@ export async function generateFromSHACL(shaclStore, targetClass, options = {}) {
     generateTestFromConstraint(constraint, config)
   );
 
-  const code = generateTestFile(testCases, { _def: { description: targetClass } }, config);
+  const code = generateTestFile(testCases, { description: targetClass }, config);
 
   return {
     code,

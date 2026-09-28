@@ -27,9 +27,10 @@
   "author": "UNRDF Team",
   "license": "MIT",
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
+    "nunjucks": "^3.2.4",
     "vitest": "^4.0.16"
   },
   "peerDependencies": {

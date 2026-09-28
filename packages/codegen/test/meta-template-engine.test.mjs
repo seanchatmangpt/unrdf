@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import nunjucks from 'nunjucks';
 import { MetaTemplateEngine, generateCRUDTemplate, generateTestTemplate } from '../src/meta-template-engine.mjs';
 
 // Mock renderer for testing
@@ -59,6 +60,16 @@ class MockRenderer {
   }
 }
 
+// Real Nunjucks renderer: the built-in generators emit loops/conditionals/filters
+// that the regex mock above cannot evaluate.
+class NunjucksRenderer {
+  async render(template, context, options = {}) {
+    const env = new nunjucks.Environment(null, { autoescape: false });
+    for (const [name, fn] of Object.entries(options.filters || {})) env.addFilter(name, fn);
+    return { content: env.renderString(template, context) };
+  }
+}
+
 describe('MetaTemplateEngine', () => {
   let engine;
   let renderer;
@@ -101,11 +112,13 @@ export const {{ entityName }}Schema = z.object({});
   });
 
   it('should render generated template with data', async () => {
+    // The generated template must keep its own placeholder, so the meta context
+    // supplies the literal placeholder text.
     const metaTemplate = 'Hello {{ name }}';
 
     await engine.generateTemplate(metaTemplate, {
       templateName: 'greeting',
-      name: 'placeholder',
+      name: '{{ name }}',
     });
 
     const result = await engine.renderGenerated('greeting', {
@@ -210,7 +223,7 @@ export const {{ entityName }}Schema = z.object({});
   });
 
   it('should generate CRUD template', async () => {
-    const result = await generateCRUDTemplate(engine, {
+    const result = await generateCRUDTemplate(new MetaTemplateEngine(new NunjucksRenderer()), {
       entityName: 'Product',
       operations: ['create', 'read', 'update', 'delete'],
     });
@@ -222,7 +235,7 @@ export const {{ entityName }}Schema = z.object({});
   });
 
   it('should generate test template', async () => {
-    const result = await generateTestTemplate(engine, {
+    const result = await generateTestTemplate(new MetaTemplateEngine(new NunjucksRenderer()), {
       moduleName: 'calculator',
       imports: ['add', 'subtract'],
       testCases: [
