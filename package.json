@@ -37,7 +37,6 @@
     "benchmarks"
   ],
   "scripts": {
-    "prepare": "husky install",
     "test": "pnpm -r test",
     "test:fast": "pnpm -r test:fast",
     "test:watch": "pnpm -r test:watch",
@@ -141,7 +140,6 @@
     "eslint-plugin-jsdoc": "^61.4.1",
     "glob": "^13.0.0",
     "globals": "^16.5.0",
-    "husky": "^9.1.7",
     "jsdom": "25.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
