@@ -480,7 +480,9 @@ describe('Receipt Property-Based Tests (fast-check)', () => {
             const originalRoot = chain.getMerkleRoot();
 
             // Anchor new receipt (doesn't modify chain)
-            const newRoot = chain.anchor(newReceipt);
+            // The anchored receipt must extend the chain (before === last.after)
+            const last = receipts[receipts.length - 1];
+            const newRoot = chain.anchor({ ...newReceipt, before: last.after });
 
             // Property: Original chain unchanged
             expect(chain.length).toBe(originalLength);

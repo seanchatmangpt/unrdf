@@ -438,7 +438,7 @@ LIMIT {{ limit }}
 
   it('should generate schema-driven RDF from data model', () => {
     const template = `
-{{ schema | toTurtle }}
+{{ schema | toTurtle({ prefixes: { ex: "http://example.org/" } }) }}
     `.trim();
 
     const schema = [

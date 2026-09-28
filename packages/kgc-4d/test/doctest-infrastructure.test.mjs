@@ -46,7 +46,7 @@ describe('Doctest Infrastructure', () => {
     });
 
     test('extracted code includes import statements', () => {
-      const examples = extractExamples('src/store.mjs');
+      const examples = extractExamples('src/time.mjs');
       const hasImports = examples.some(ex => ex.code.includes('import'));
       expect(hasImports).toBe(true);
     });
@@ -182,7 +182,7 @@ describe('Doctest Infrastructure', () => {
 
   describe('End-to-End', () => {
     test('extracted examples transform to valid test code', () => {
-      const examples = extractExamples('src/store.mjs');
+      const examples = extractExamples('src/time.mjs');
       expect(examples.length).toBeGreaterThan(0);
 
       const testCode = transformToVitest(examples, 'store.mjs');

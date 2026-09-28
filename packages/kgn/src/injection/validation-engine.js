@@ -398,15 +398,44 @@ export class ValidationEngine {
    *
    */
   _validateTypeScript(content) {
-    // TypeScript validation would require the TS compiler
-    // For now, just check basic syntax patterns
-    const hasBasicSyntaxErrors = /\b(interface|type|class)\s*\{/.test(content) &&
-                                !content.includes('}');
-
-    return {
-      valid: !hasBasicSyntaxErrors,
-      error: hasBasicSyntaxErrors ? 'Unbalanced braces detected' : null
-    };
+    // Without the TS compiler, check that brackets balance outside strings/comments.
+    // (The previous check only fired for `interface {` with no `}` anywhere, so e.g.
+    // `const invalid = {` passed validation.)
+    const pairs = { ')': '(', ']': '[', '}': '{' };
+    const stack = [];
+    let i = 0;
+    while (i < content.length) {
+      const c = content[i];
+      const n = content[i + 1];
+      if (c === '/' && n === '/') {
+        while (i < content.length && content[i] !== '\n') i++;
+        continue;
+      }
+      if (c === '/' && n === '*') {
+        const end = content.indexOf('*/', i + 2);
+        i = end === -1 ? content.length : end + 2;
+        continue;
+      }
+      if (c === '"' || c === "'" || c === '`') {
+        i++;
+        while (i < content.length && content[i] !== c) {
+          if (content[i] === '\\') i++;
+          i++;
+        }
+        i++;
+        continue;
+      }
+      if (c === '(' || c === '[' || c === '{') {
+        stack.push(c);
+      } else if (pairs[c] && stack.pop() !== pairs[c]) {
+        return { valid: false, error: `Unbalanced '${c}' detected` };
+      }
+      i++;
+    }
+    if (stack.length > 0) {
+      return { valid: false, error: `Unbalanced braces detected: unclosed '${stack[stack.length - 1]}'` };
+    }
+    return { valid: true, error: null };
   }
 
   /**

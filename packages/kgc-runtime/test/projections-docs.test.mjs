@@ -166,8 +166,8 @@ describe('Π_docs - Documentation Projections', () => {
 
       expect(toc).toContain('## Table of Contents');
       expect(toc).toContain('[Introduction](#introduction)');
-      expect(toc).toContain('  [Getting Started](#getting-started)');
-      expect(toc).toContain('    [Installation](#installation)');
+      expect(toc).toContain('  - [Getting Started](#getting-started)');
+      expect(toc).toContain('    - [Installation](#installation)');
     });
   });
 });

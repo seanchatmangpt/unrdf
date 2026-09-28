@@ -9,7 +9,7 @@
  * - State commitment: hash(store_state) → stable digest
  */
 
-import { KGCStore, freezeUniverse, GitBackbone } from '@unrdf/kgc-4d';
+import { KGCStore, freezeUniverse, GitBackbone, GRAPHS } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
 import { blake3 } from 'hash-wasm';
 import {
@@ -18,7 +18,7 @@ import {
   validateStateCommitment,
 } from './types.mjs';
 
-const UNIVERSE_GRAPH_IRI = 'http://kgc.io/graphs/universe';
+const UNIVERSE_GRAPH_IRI = GRAPHS.UNIVERSE;
 
 export class KnowledgeStore {
   constructor(options = {}) {
@@ -111,16 +111,37 @@ export class KnowledgeStore {
     try {
       const universeGraph = dataFactory.namedNode(UNIVERSE_GRAPH_IRI);
       const quads = [...this.store.match(null, null, null, universeGraph)];
-      quads.sort((a, b) => {
-        const subject = a.subject.value.localeCompare(b.subject.value);
-        if (subject !== 0) return subject;
-        const predicate = a.predicate.value.localeCompare(b.predicate.value);
-        if (predicate !== 0) return predicate;
-        return a.object.value.localeCompare(b.object.value);
-      });
-
+      // Must match freezeUniverse's canonical N-Quads serialization so a snapshot's
+      // quads_hash equals the state commitment for identical state (and so IRIs,
+      // literals and datatypes with equal lexical values do not collide).
+      const cmp = (x, y) => (x < y ? -1 : x > y ? 1 : 0);
+      quads.sort(
+        (a, b) =>
+          cmp(a.subject.value, b.subject.value) ||
+          cmp(a.predicate.value, b.predicate.value) ||
+          cmp(a.object.value, b.object.value)
+      );
+      const XSD_STRING = 'http://www.w3.org/2001/XMLSchema#string';
+      const esc = str =>
+        str
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/\t/g, '\\t')
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\f/g, '\\f')
+          .replace(/[\b]/g, '\\b');
+      const term = t => {
+        if (t.termType === 'NamedNode') return `<${t.value}>`;
+        if (t.termType === 'BlankNode') return `_:${t.value}`;
+        if (t.datatype && t.datatype.value !== XSD_STRING) {
+          return `"${esc(t.value)}"^^<${t.datatype.value}>`;
+        }
+        if (t.language) return `"${esc(t.value)}"@${t.language}`;
+        return `"${esc(t.value)}"`;
+      };
       const canonicalString = quads
-        .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
+        .map(q => `${term(q.subject)} <${q.predicate.value}> ${term(q.object)} <${q.graph.value}> .`)
         .join('\n');
       const commitment = {
         state_hash: await blake3(canonicalString),

@@ -18,7 +18,7 @@ const ObservationSchema = z.object({
   method: z.string(),
   domain: z.string().optional(),
   timestamp: z.number().optional(),
-  outputs: z.any(),
+  outputs: z.any().optional(),
   error: z.string().optional(),
   guardDecision: z.string().optional(),
   hash: z.string().optional(),

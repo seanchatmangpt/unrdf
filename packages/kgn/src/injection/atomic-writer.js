@@ -130,8 +130,11 @@ export class AtomicWriter {
   async _acquireLock(filePath) {
     const lockId = `${filePath}-${Date.now()}-${Math.random()}`;
     const startTime = Date.now();
+    // Honor per-instance lockConfig (was ignored: only the global LOCK_CONFIG applied)
+    const lockTimeout = this.config.lockConfig?.TIMEOUT ?? LOCK_CONFIG.TIMEOUT;
+    const retryDelay = this.config.lockConfig?.RETRY_DELAY ?? LOCK_CONFIG.RETRY_DELAY;
 
-    while (Date.now() - startTime < LOCK_CONFIG.TIMEOUT) {
+    while (Date.now() - startTime < lockTimeout) {
       // Simple file-based locking
       const lockFile = `${filePath}.kgen-lock`;
 
@@ -144,7 +147,7 @@ export class AtomicWriter {
           // Lock exists, check if stale
           try {
             const lockStat = await fs.stat(lockFile);
-            if (Date.now() - lockStat.mtime > LOCK_CONFIG.TIMEOUT) {
+            if (Date.now() - lockStat.mtime > lockTimeout) {
               // Stale lock, remove it
               await fs.unlink(lockFile);
             }
@@ -153,7 +156,7 @@ export class AtomicWriter {
           }
 
           // Wait and retry
-          await new Promise(resolve => setTimeout(resolve, LOCK_CONFIG.RETRY_DELAY));
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
           continue;
         }
         throw error;

@@ -87,7 +87,6 @@ export class GitBackbone {
     return this._mutex.runExclusive(async () => {
       await this._ensureInit();
 
-      console.log('nquads inside commitSnapshot:', nquads);
 
       // GAP-G2 fix: Validate message length (Git convention: first line max 72 chars, total max 100KB)
       if (typeof message !== 'string' || message.length === 0) {

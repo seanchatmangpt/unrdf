@@ -15,7 +15,7 @@
     "./transport": "./src/transport/hypercore-transport.mjs"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run && node --test src/receipts.test.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",

@@ -188,7 +188,8 @@ export const arbBrokenReceiptChain = () =>
       const broken = [...chain];
       broken[breakIndex] = {
         ...broken[breakIndex],
-        before: 'broken' + broken[breakIndex].before.slice(6), // Corrupt the link
+        // Corrupt the link with a still-valid hex hash that differs from the original
+        before: (broken[breakIndex].before[0] === 'f' ? '0' : 'f') + broken[breakIndex].before.slice(1),
       };
       return broken;
     });
@@ -409,10 +410,10 @@ export const arbCorruptedArchive = () =>
   arbArchive().chain(archive =>
     fc.oneof(
       // Corrupt hash
-      fc.record({
+      arbInvalidHash().map(hash => ({
         ...archive,
-        hash: arbInvalidHash(),
-      }),
+        hash,
+      })),
       // Corrupt compressed flag
       fc.constant({
         ...archive,

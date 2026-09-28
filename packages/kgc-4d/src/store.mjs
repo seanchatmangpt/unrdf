@@ -13,37 +13,40 @@ import { dataFactory } from '@unrdf/oxigraph';
 import { VectorClock, now, toISO } from './time.mjs';
 import { QueryCache } from './cache.mjs';
 import { reconstructState } from './freeze.mjs';
+import { GRAPHS, PREDICATES, EVENT_TYPES } from './constants.mjs';
 import { ValidationMode, guardDeltaValidation } from './guards.mjs';
 
 /**
  * Well-known graphs in the 4D store
  */
-export const GRAPHS = {
-  UNIVERSE: 'http://kgc.io/graphs/universe',
-  EVENT_LOG: 'http://kgc.io/graphs/event-log',
-  SYSTEM: 'http://kgc.io/graphs/system',
-};
+// Single source of truth: freeze/reconstruct/temporal modules use constants.mjs
+export { GRAPHS };
+
+// Single source of truth for predicates/event types (freeze.mjs reads via constants.mjs)
+export { PREDICATES, EVENT_TYPES };
 
 /**
- * Predicates for event metadata
+ * Serialize a delta to JSON so time-travel can replay it (see freeze.mjs deltaToQuad)
+ * @param {{type:string,subject:Object,predicate:Object,object:Object}} delta
+ * @returns {Object}
  */
-export const PREDICATES = {
-  T_NS: 'http://kgc.io/t_ns',
-  TYPE: 'http://kgc.io/type',
-  PAYLOAD: 'http://kgc.io/payload',
-  GIT_REF: 'http://kgc.io/git_ref',
-  VECTOR_CLOCK: 'http://kgc.io/vector_clock',
-};
-
-/**
- * Standard event types
- */
-export const EVENT_TYPES = {
-  CREATE: 'CREATE',
-  UPDATE: 'UPDATE',
-  DELETE: 'DELETE',
-  FREEZE: 'FREEZE',
-};
+function serializeDelta(delta) {
+  const o = delta.object;
+  const object = { type: o.termType === 'Literal' ? 'Literal' : o.termType, value: o.value };
+  if (o.termType === 'Literal') {
+    if (o.language) object.language = o.language;
+    else if (o.datatype && o.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
+      object.datatype = o.datatype.value;
+    }
+  }
+  return {
+    type: delta.type,
+    subject: delta.subject.value,
+    subjectType: delta.subject.termType,
+    predicate: delta.predicate.value,
+    object,
+  };
+}
 
 /**
  * KGCStore - Specialized 4D RDF Store
@@ -173,7 +176,7 @@ export class KGCStore extends UnrdfStore {
       id: eventId,
       t_ns,
       type: eventData.type || EVENT_TYPES.CREATE,
-      payload: eventData.payload || {},
+      payload: { ...(eventData.payload || {}), deltas: deltas.map(serializeDelta) },
       git_ref: eventData.git_ref || null,
       vector_clock: this.vectorClock.toJSON(),
     });

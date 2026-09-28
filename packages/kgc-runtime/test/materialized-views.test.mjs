@@ -41,10 +41,11 @@ describe('Materialized Views - Cached SPARQL Results', () => {
       cache.materialize('view-001', 'SELECT', { data: 'test' });
 
       const view1 = cache.get('view-001');
+      const hitsAfterFirst = view1.hits;
       const view2 = cache.get('view-001');
 
       expect(view1).toBeDefined();
-      expect(view1.hits).toBe(1);
+      expect(hitsAfterFirst).toBe(1);
       expect(view2.hits).toBe(2);
       expect(view2.lastAccessedAt).toBeDefined();
     });

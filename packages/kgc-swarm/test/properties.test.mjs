@@ -14,6 +14,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { KGCSwarm, createSwarm } from '../src/index.mjs';
 import { GuardSystem } from '../src/guards.mjs';
 import { ReceiptChain, hash } from '../src/receipts.mjs';
+import { canonicalStringify } from '../src/canonical.mjs';
 
 describe('KGC-SWARM Property-Based Tests', () => {
   let swarm;
@@ -128,7 +129,7 @@ describe('KGC-SWARM Property-Based Tests', () => {
       const receipt = await swarm.generateReceipt(agent.id, payload);
 
       // Property: Hash determinism
-      const payloadStr = JSON.stringify(payload, Object.keys(payload).sort());
+      const payloadStr = canonicalStringify(payload);
       const expectedPayloadHash = await (await import('hash-wasm')).blake3(payloadStr);
       expect(receipt.payloadHash).toBe(expectedPayloadHash);
 

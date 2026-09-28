@@ -7,11 +7,94 @@
 
 import { promises as fs } from 'fs';
 import { resolve, join as _join, relative, dirname as _dirname, basename } from 'path';
-// Simple glob implementation for basic pattern matching
-// In production, use a proper glob library like 'glob' or 'fast-glob'
-function simpleGlob(pattern, _options = {}) {
-  // Very basic glob implementation for demo purposes
-  return Promise.resolve([]);
+/**
+ * Convert a glob pattern (*, **, ?, {a,b}) to an anchored RegExp over '/'-separated paths
+ * @param {string} pattern - Glob pattern
+ * @returns {RegExp} Matching regex
+ */
+function globToRegExp(pattern) {
+  let re = '';
+  for (let i = 0; i < pattern.length; i++) {
+    const c = pattern[i];
+    if (c === '*') {
+      if (pattern[i + 1] === '*') {
+        i++;
+        if (pattern[i + 1] === '/') {
+          i++;
+          re += '(?:.*/)?';
+        } else {
+          re += '.*';
+        }
+      } else {
+        re += '[^/]*';
+      }
+    } else if (c === '?') {
+      re += '[^/]';
+    } else if (c === '{') {
+      const end = pattern.indexOf('}', i);
+      if (end === -1) {
+        re += '\\{';
+      } else {
+        const alts = pattern.slice(i + 1, end).split(',').map(a => a.replace(/[.+^$()|[\]\\]/g, '\\$&'));
+        re += `(?:${alts.join('|')})`;
+        i = end;
+      }
+    } else if (/[.+^$()|[\]\\}]/.test(c)) {
+      re += `\\${c}`;
+    } else {
+      re += c;
+    }
+  }
+  return new RegExp(`^${re}$`);
+}
+
+/**
+ * Minimal glob: resolve `pattern` under `options.cwd`, returning matching files
+ * (absolute paths when options.absolute). Previously a stub that always returned [],
+ * so glob targets silently matched nothing.
+ * @param {string} pattern - Glob pattern
+ * @param {{cwd?: string, absolute?: boolean, dot?: boolean}} [options] - Options
+ * @returns {Promise<string[]>} Matching file paths
+ */
+async function simpleGlob(pattern, options = {}) {
+  const cwd = resolve(options.cwd || process.cwd());
+  const normalized = pattern.replace(/\\/g, '/');
+  const absolutePattern = normalized.startsWith('/');
+  const regex = globToRegExp(absolutePattern ? normalized : normalized);
+
+  // Walk from the static (wildcard-free) directory prefix
+  const segments = normalized.split('/');
+  const staticSegs = [];
+  for (const seg of segments.slice(0, -1)) {
+    if (/[*?{}[\]]/.test(seg)) break;
+    staticSegs.push(seg);
+  }
+  const baseDir = absolutePattern ? staticSegs.join('/') || '/' : resolve(cwd, staticSegs.join('/'));
+
+  const results = [];
+  async function walk(dir) {
+    let entries;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (!options.dot && entry.name.startsWith('.')) continue;
+      const full = _join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === 'node_modules') continue;
+        await walk(full);
+      } else if (entry.isFile()) {
+        const candidate = absolutePattern ? full.replace(/\\/g, '/') : relative(cwd, full).replace(/\\/g, '/');
+        if (regex.test(candidate)) {
+          results.push(options.absolute ? full : candidate);
+        }
+      }
+    }
+  }
+  await walk(baseDir);
+  return results.sort();
 }
 const glob = simpleGlob;
 
@@ -37,15 +120,16 @@ export class TargetResolver {
 
     // Handle single target
     if (templateConfig.to) {
-      const target = await this._resolveSingleTarget(templateConfig, variables);
-      targets.push(target);
+      const resolved = await this._resolveSingleTarget(templateConfig, variables);
+      // Glob patterns resolve to an array; a false targetIf resolves to null
+      targets.push(...[resolved].flat().filter(Boolean));
     }
 
     // Handle multiple targets
     if (templateConfig.targets && Array.isArray(templateConfig.targets)) {
       for (const targetConfig of templateConfig.targets) {
-        const target = await this._resolveSingleTarget(targetConfig, variables);
-        targets.push(target);
+        const resolved = await this._resolveSingleTarget(targetConfig, variables);
+        targets.push(...[resolved].flat().filter(Boolean));
       }
     }
 
@@ -232,13 +316,11 @@ export class TargetResolver {
    *
    */
   _matchesGlob(path, pattern) {
-    // Simple glob matching - in production, use minimatch or similar
-    const regex = pattern
-      .replace(/\*\*/g, '.*')
-      .replace(/\*/g, '[^/]*')
-      .replace(/\?/g, '[^/]');
-
-    return new RegExp(`^${regex}$`).test(path);
+    // Match the full relative path, or (gitignore-style) just the file name for
+    // slash-less patterns like '*.test.ts'. Dots are escaped by globToRegExp.
+    const regex = globToRegExp(pattern);
+    if (regex.test(path)) return true;
+    return !pattern.includes('/') && regex.test(basename(path));
   }
 
   /**

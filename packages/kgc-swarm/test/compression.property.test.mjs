@@ -344,13 +344,11 @@ describe('Compression Property-Based Tests (fast-check)', () => {
     it('should handle empty observables gracefully', async () => {
       await fc.assert(
         fc.asyncProperty(fc.constant([]), async (empty) => {
-          try {
-            await compress(empty);
-            return false; // Should throw
-          } catch (error) {
-            // Expected to fail on empty input
-            return true;
-          }
+          // Empty input is handled gracefully: a valid empty archive (see compression.test.mjs)
+          const archive = await compress(empty);
+          expect(archive.compressed).toBe(true);
+          expect(archive.observables).toEqual([]);
+          return true;
         }),
         { numRuns: 10 },
       );

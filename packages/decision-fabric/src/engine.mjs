@@ -258,7 +258,7 @@ export class DecisionEngine {
 
     // Execute operators sequentially (cascade)
     for (const operatorName of operators) {
-      const result = await this.hookRegistry.validate(operatorName, intent);
+      const result = await this.hookRegistry.validateAsync(operatorName, intent);
 
       if (!result.valid) {
         // Early termination on failure

@@ -290,7 +290,7 @@ describe('ToolRegistry', () => {
     it('should load tools from registry file', () => {
       const registryPath = join(
         __dirname,
-        '../../../var/kgc/tool-registry.json',
+        'fixtures/tool-registry.json',
       );
       const fileRegistry = new ToolRegistry({ registryPath });
 
@@ -311,7 +311,7 @@ describe('ToolRegistry', () => {
     it('should validate loaded schemas work correctly', () => {
       const registryPath = join(
         __dirname,
-        '../../../var/kgc/tool-registry.json',
+        'fixtures/tool-registry.json',
       );
       const fileRegistry = new ToolRegistry({ registryPath });
 
@@ -330,7 +330,7 @@ describe('ToolRegistry', () => {
     it('should create registry with createRegistry', () => {
       const registryPath = join(
         __dirname,
-        '../../../var/kgc/tool-registry.json',
+        'fixtures/tool-registry.json',
       );
       const reg = createRegistry(registryPath);
 

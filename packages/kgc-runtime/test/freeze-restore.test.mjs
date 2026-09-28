@@ -164,7 +164,10 @@ describe('KGC Runtime Freeze-Restore', () => {
 
     it('should detect corrupted snapshot', async () => {
       const universe = { data: 'original' };
-      const manifest = await freezeUniverse(universe, { snapshotDir: TEST_SNAPSHOT_DIR });
+      const manifest = await freezeUniverse(universe, {
+        snapshotDir: TEST_SNAPSHOT_DIR,
+        compress: false, // default gzip removes state.json; corrupt the file verifyFreeze reads
+      });
 
       // Corrupt the state file
       const statePath = path.join(TEST_SNAPSHOT_DIR, manifest.timestamp_ns, 'state.json');

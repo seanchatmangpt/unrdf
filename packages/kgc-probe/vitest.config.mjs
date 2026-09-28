@@ -14,6 +14,7 @@ export default defineConfig({
     ],
     exclude: [
       '**/node_modules/**',
+      '**/*.node.test.mjs', // node:test files; run via test:node
       '**/dist/**',
       '**/build/**'
     ],
@@ -34,6 +35,7 @@ export default defineConfig({
         '**/*.test.mjs',
         '**/*.spec.mjs',
         '**/node_modules/**',
+      '**/*.node.test.mjs', // node:test files; run via test:node
         '**/dist/**',
         '**/coverage/**'
       ]

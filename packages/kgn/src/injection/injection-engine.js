@@ -50,9 +50,28 @@ export class InjectionEngine {
    * Main injection method - atomic, idempotent, deterministic
    */
   async inject(templateConfig, content, variables = {}) {
+    // Serialize injections on this engine: concurrent read-modify-write of the same target
+    // otherwise loses updates (each injection reads the file before the others have written)
+    const run = (this._injectQueue || Promise.resolve()).then(() =>
+      this._injectSerial(templateConfig, content, variables)
+    );
+    this._injectQueue = run.catch(() => {});
+    return run;
+  }
+
+  /**
+   * Inject implementation (call only via inject())
+   * @private
+   */
+  async _injectSerial(templateConfig, content, variables = {}) {
     const operationId = this._generateOperationId(templateConfig, content);
 
     try {
+      // Reject unknown modes before touching the filesystem
+      if (templateConfig.inject && templateConfig.mode && !Object.values(INJECTION_MODES).includes(templateConfig.mode)) {
+        throw new Error(`Unknown injection mode: ${templateConfig.mode}`);
+      }
+
       // Start atomic operation
       await this._beginOperation(operationId, templateConfig);
 
@@ -63,7 +82,10 @@ export class InjectionEngine {
       await this._validateAllTargets(targets);
 
       // Check idempotency for all targets
-      const filteredTargets = await this._filterIdempotentTargets(targets, content, variables);
+      // force overrides idempotency conditions (skipIf/skipIfLogic/...)
+      const filteredTargets = templateConfig.force
+        ? targets
+        : await this._filterIdempotentTargets(targets, content, variables);
 
       if (filteredTargets.length === 0) {
         return {
@@ -85,7 +107,8 @@ export class InjectionEngine {
         operationId,
         results,
         targets: filteredTargets.length,
-        skipped: targets.length - filteredTargets.length
+        skipped: filteredTargets.length < targets.length,
+        skippedTargets: targets.length - filteredTargets.length
       };
 
     } catch (error) {
