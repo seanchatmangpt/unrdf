@@ -13,7 +13,18 @@
  * Mathematical Guarantees:
  * - H_spec(P) ≥ 0.75 × H_spec(F) (Pareto entropy concentration)
  * - |P| ≈ 0.2 × |F| (size of Pareto frontier)
+ *
+ * Two distinct notions are used, do not conflate them:
+ * - Pareto frontier: features not dominated in (value, cost) space
+ *   (computeParetoFrontier). With a feature that has both the highest value and
+ *   the lowest cost the frontier is just that feature.
+ * - Core set: the fewest features, taken by descending value, that together
+ *   deliver CORE_VALUE_SHARE of the total value (computeCoreSet). This is what
+ *   the 80/20 rule and the implementation recommendation are measured on.
  */
+
+/** Share of total value the core set must deliver */
+export const CORE_VALUE_SHARE = 0.75;
 
 /**
  * Feature representation with value and cost
@@ -101,6 +112,31 @@ export class ParetoAnalyzer {
   }
 
   /**
+   * Compute the core set: features taken by descending value (cheaper first on
+   * ties) until they deliver at least `share` of the total value.
+   *
+   * @param {number} [share=CORE_VALUE_SHARE] - Required share of total value (0-1]
+   * @returns {Feature[]} Core features, highest value first
+   */
+  computeCoreSet(share = CORE_VALUE_SHARE) {
+    const totalValue = this.features.reduce((sum, f) => sum + f.value, 0);
+    if (totalValue === 0) return [];
+
+    const ranked = [...this.features].sort((a, b) => b.value - a.value || a.cost - b.cost);
+    const core = [];
+    let covered = 0;
+
+    for (const feature of ranked) {
+      core.push(feature);
+      covered += feature.value;
+      // Small epsilon: 0.75 of an integer total must not be missed by float error
+      if (covered / totalValue >= share - 1e-12) break;
+    }
+
+    return core;
+  }
+
+  /**
    * Compute specification entropy H_spec
    *
    * H_spec = -Σ p_i log₂(p_i)
@@ -128,12 +164,12 @@ export class ParetoAnalyzer {
    * Returns { valid, paretoPercentage, valuePercentage }
    */
   validate8020Rule() {
-    const frontier = this.computeParetoFrontier();
+    const core = this.computeCoreSet();
     const totalValue = this.features.reduce((sum, f) => sum + f.value, 0);
-    const frontierValue = frontier.reduce((sum, f) => sum + f.value, 0);
+    const coreValue = core.reduce((sum, f) => sum + f.value, 0);
 
-    const paretoPercentage = (frontier.length / this.features.length) * 100;
-    const valuePercentage = (frontierValue / totalValue) * 100;
+    const paretoPercentage = this.features.length > 0 ? (core.length / this.features.length) * 100 : 0;
+    const valuePercentage = totalValue > 0 ? (coreValue / totalValue) * 100 : 0;
 
     // Valid if ~20% of features deliver ~80% of value (with 20% tolerance)
     const valid = paretoPercentage <= 40 && valuePercentage >= 60;
@@ -142,7 +178,7 @@ export class ParetoAnalyzer {
       valid,
       paretoPercentage,
       valuePercentage,
-      paretoCount: frontier.length,
+      paretoCount: core.length,
       totalCount: this.features.length
     };
   }
@@ -169,13 +205,14 @@ export class ParetoAnalyzer {
    */
   generateRecommendation() {
     const frontier = this.computeParetoFrontier();
+    const core = this.computeCoreSet();
     const applicability = this.isBB8020Applicable();
     const rule8020 = this.validate8020Rule();
 
     const totalCost = this.features.reduce((sum, f) => sum + f.cost, 0);
-    const frontierCost = frontier.reduce((sum, f) => sum + f.cost, 0);
+    const coreCost = core.reduce((sum, f) => sum + f.cost, 0);
     const totalValue = this.features.reduce((sum, f) => sum + f.value, 0);
-    const frontierValue = frontier.reduce((sum, f) => sum + f.value, 0);
+    const coreValue = core.reduce((sum, f) => sum + f.value, 0);
 
     return {
       methodology: applicability.applicable ? 'Big Bang 80/20' : 'Iterative Development',
@@ -189,22 +226,33 @@ export class ParetoAnalyzer {
           efficiency: f.efficiency
         })),
         count: frontier.length,
+        percentage_of_total: (frontier.length / this.features.length) * 100
+      },
+      core_set: {
+        features: core.map(f => ({
+          id: f.id,
+          name: f.name,
+          value: f.value,
+          cost: f.cost,
+          efficiency: f.efficiency
+        })),
+        count: core.length,
         percentage_of_total: rule8020.paretoPercentage
       },
       value_analysis: {
-        frontier_value: frontierValue,
+        core_value: coreValue,
         total_value: totalValue,
         percentage: rule8020.valuePercentage,
         meets_8020: rule8020.valid
       },
       cost_analysis: {
-        frontier_cost: frontierCost,
+        core_cost: coreCost,
         total_cost: totalCost,
-        savings: totalCost - frontierCost,
-        efficiency_gain: ((totalCost - frontierCost) / totalCost * 100).toFixed(1) + '%'
+        savings: totalCost - coreCost,
+        efficiency_gain: totalCost > 0 ? ((totalCost - coreCost) / totalCost * 100).toFixed(1) + '%' : '0.0%'
       },
       recommendation: applicability.applicable
-        ? `Implement ${frontier.length} Pareto-optimal features using BB80/20 single-pass methodology. ` +
+        ? `Implement ${core.length} core features using BB80/20 single-pass methodology. ` +
           `Expected implementation time: 2-3 hours. Predicted correctness: ≥99.99%.`
         : `Domain entropy (${applicability.h_spec.toFixed(2)} bits) exceeds threshold. ` +
           `Use iterative development with 3-5 sprints.`

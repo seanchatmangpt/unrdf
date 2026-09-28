@@ -146,7 +146,7 @@ describe('KGEN Templates - Comprehensive BDD Test Suite', () => {
       expect(testResults.integration.rdfIntegration.passed).toBe(true);
     });
 
-    it('should pass cross-platform tests', async () => {
+    it('should pass cross-platform tests', { skip: process.env.ENABLE_CROSS_PLATFORM === 'false' }, async () => {
       if (!testResults || !testResults.integration.crossPlatform) {
         testResults = await bddRunner.runCompleteBDDSuite();
       }
@@ -155,7 +155,7 @@ describe('KGEN Templates - Comprehensive BDD Test Suite', () => {
         expect(testResults.integration.crossPlatform.compatibility.compatibilityScore)
           .toBeGreaterThanOrEqual(0.8);
       }
-    }, { skip: process.env.ENABLE_CROSS_PLATFORM === 'false' });
+    });
   });
 
   describe('Performance Tests', () => {
@@ -184,7 +184,7 @@ describe('KGEN Templates - Comprehensive BDD Test Suite', () => {
       expect(testResults.performance.largeDatasets.passed).toBe(true);
     });
 
-    it('should pass permutation tests', async () => {
+    it('should pass permutation tests', { skip: process.env.ENABLE_PERMUTATION === 'false' }, async () => {
       if (!testResults || !testResults.performance.permutation) {
         testResults = await bddRunner.runCompleteBDDSuite();
       }
@@ -193,7 +193,7 @@ describe('KGEN Templates - Comprehensive BDD Test Suite', () => {
         expect(testResults.performance.permutation.summary.successRate)
           .toBeGreaterThanOrEqual(0.9);
       }
-    }, { skip: process.env.ENABLE_PERMUTATION === 'false' });
+    });
   });
 
   describe('Golden Test Validation', () => {

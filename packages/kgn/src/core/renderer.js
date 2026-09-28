@@ -124,11 +124,8 @@ export class KGenRenderer {
   async processExpressions(template, context, filters, depth) {
     let processed = template;
 
-    // Process conditionals
-    processed = await this.processConditionals(processed, context, filters, depth);
-
-    // Process loops
-    processed = await this.processLoops(processed, context, filters, depth);
+    // Process conditionals and loops (nesting-aware, so inner blocks see loop scope)
+    processed = await this.processBlocks(processed, context, filters, depth);
 
     // Process includes
     if (this.options.enableIncludes) {
@@ -139,138 +136,142 @@ export class KGenRenderer {
   }
 
   /**
-   * Process conditional expressions
+   * Locate the top-level {% if %} / {% for %} blocks of a template.
+   * Nesting is tracked with a depth stack so blocks of either kind can contain
+   * each other; inner blocks are rendered later, in their own (loop) scope.
    * @param {string} template - Template content
-   * @param {Object} context - Context data
-   * @param {Object} filters - Filter instance
-   * @param {number} depth - Current recursion depth
-   * @returns {Promise<string>} Processed template with conditionals resolved
+   * @returns {Array<Object>} Top-level blocks in source order
    */
-  async processConditionals(template, context, filters, depth) {
-    const ifPattern = /\{\%\s*if\s+([^%]+)\s*\%\}([\s\S]*?)(\{\%\s*else\s*\%\}([\s\S]*?))?\{\%\s*endif\s*\%\}/g;
+  findBlocks(template) {
+    const tagPattern = /\{\%\s*(if|for|else|endif|endfor)\b([^%]*)\%\}/g;
+    const blocks = [];
+    const stack = [];
+    let m;
 
-    let match;
-    let processed = template;
+    while ((m = tagPattern.exec(template)) !== null) {
+      const [tag, keyword, rest] = m;
+      const tagEnd = m.index + tag.length;
 
-    // Process from end to start to avoid position shifts
-    const matches = [];
-    while ((match = ifPattern.exec(template)) !== null) {
-      matches.push(match);
-    }
-
-    for (let i = matches.length - 1; i >= 0; i--) {
-      match = matches[i];
-      const [fullMatch, condition, ifContent, elseBlock, elseContent] = match;
-
-      try {
-        const conditionResult = this.evaluateCondition(condition.trim(), context);
-        let replacement;
-
-        if (conditionResult) {
-          replacement = await this.processTemplate(ifContent, context, filters, depth + 1);
-        } else if (elseContent !== undefined) {
-          replacement = await this.processTemplate(elseContent, context, filters, depth + 1);
-        } else {
-          replacement = '';
+      if (keyword === 'if' || keyword === 'for') {
+        stack.push({ kind: keyword, expr: rest.trim(), start: m.index, bodyStart: tagEnd, elseStart: -1, elseBodyStart: -1 });
+      } else if (keyword === 'else') {
+        const top = stack[stack.length - 1];
+        if (top && top.kind === 'if' && top.elseStart === -1) {
+          top.elseStart = m.index;
+          top.elseBodyStart = tagEnd;
         }
-
-        processed = processed.substring(0, match.index) + replacement + processed.substring(match.index + fullMatch.length);
-      } catch (error) {
-        if (this.options.strictMode) {
-          throw new Error(`Conditional evaluation failed: ${error.message}`);
+      } else {
+        const kind = keyword === 'endif' ? 'if' : 'for';
+        const top = stack[stack.length - 1];
+        if (top && top.kind === kind) {
+          stack.pop();
+          if (stack.length === 0) {
+            blocks.push({
+              ...top,
+              end: tagEnd,
+              bodyEnd: top.elseStart === -1 ? m.index : top.elseStart,
+              elseBodyEnd: top.elseStart === -1 ? -1 : m.index
+            });
+          }
         }
-        // Replace with empty string in non-strict mode
-        const replacement = '';
-        processed = processed.substring(0, match.index) + replacement + processed.substring(match.index + fullMatch.length);
       }
     }
 
-    return processed;
+    return blocks;
   }
 
   /**
-   * Process loop expressions
+   * Process conditional and loop blocks (outermost first, recursively)
    * @param {string} template - Template content
    * @param {Object} context - Context data
    * @param {Object} filters - Filter instance
    * @param {number} depth - Current recursion depth
-   * @returns {Promise<string>} Processed template with loops expanded
+   * @returns {Promise<string>} Processed template with blocks expanded
    */
-  async processLoops(template, context, filters, depth) {
-    const forPattern = /\{\%\s*for\s+(\w+)\s+in\s+([^%]+)\s*\%\}([\s\S]*?)\{\%\s*endfor\s*\%\}/g;
+  async processBlocks(template, context, filters, depth) {
+    const blocks = this.findBlocks(template);
+    let out = '';
+    let cursor = 0;
 
-    let match;
-    let processed = template;
+    for (const block of blocks) {
+      out += template.slice(cursor, block.start);
+      cursor = block.end;
 
-    // Process from end to start to avoid position shifts
-    const matches = [];
-    while ((match = forPattern.exec(template)) !== null) {
-      matches.push(match);
-    }
-
-    for (let i = matches.length - 1; i >= 0; i--) {
-      match = matches[i];
-      const [fullMatch, itemVar, arrayExpr, loopContent] = match;
-
+      const errorPrefix = block.kind === 'if' ? 'Conditional evaluation failed' : 'Loop processing failed';
       try {
-        const array = this.evaluateExpression(arrayExpr.trim(), context);
-        let replacement = '';
-
-        if (Array.isArray(array)) {
-          for (let index = 0; index < array.length; index++) {
-            const item = array[index];
-
-            // Create loop context
-            const loopContext = {
-              ...context,
-              [itemVar]: item,
-              loop: {
-                index: index,
-                index0: index,
-                index1: index + 1,
-                first: index === 0,
-                last: index === array.length - 1,
-                length: array.length,
-                revindex: array.length - index,
-                revindex0: array.length - index - 1
-              }
-            };
-
-            const loopResult = await this.processTemplate(loopContent, loopContext, filters, depth + 1);
-            replacement += loopResult;
-          }
-        } else if (array) {
-          // Handle single item as array of one
-          const loopContext = {
-            ...context,
-            [itemVar]: array,
-            loop: {
-              index: 0,
-              index0: 0,
-              index1: 1,
-              first: true,
-              last: true,
-              length: 1,
-              revindex: 1,
-              revindex0: 0
-            }
-          };
-
-          replacement = await this.processTemplate(loopContent, loopContext, filters, depth + 1);
-        }
-
-        processed = processed.substring(0, match.index) + replacement + processed.substring(match.index + fullMatch.length);
+        out += block.kind === 'if'
+          ? await this.renderIfBlock(template, block, context, filters, depth)
+          : await this.renderForBlock(template, block, context, filters, depth);
       } catch (error) {
         if (this.options.strictMode) {
-          throw new Error(`Loop processing failed: ${error.message}`);
+          throw new Error(`${errorPrefix}: ${error.message}`);
         }
         // Replace with empty string in non-strict mode
-        const replacement = '';
-        processed = processed.substring(0, match.index) + replacement + processed.substring(match.index + fullMatch.length);
       }
     }
 
-    return processed;
+    return out + template.slice(cursor);
+  }
+
+  /**
+   * Render one {% if %} block
+   * @private
+   */
+  async renderIfBlock(template, block, context, filters, depth) {
+    if (this.evaluateCondition(block.expr, context)) {
+      return this.processTemplate(template.slice(block.bodyStart, block.bodyEnd), context, filters, depth + 1);
+    }
+    if (block.elseStart !== -1) {
+      return this.processTemplate(template.slice(block.elseBodyStart, block.elseBodyEnd), context, filters, depth + 1);
+    }
+    return '';
+  }
+
+  /**
+   * Render one {% for %} block
+   * @private
+   */
+  async renderForBlock(template, block, context, filters, depth) {
+    const header = block.expr.match(/^(\w+)\s+in\s+([\s\S]+)$/);
+    if (!header) {
+      throw new Error(`Invalid for syntax: ${block.expr}`);
+    }
+    const [, itemVar, arrayExpr] = header;
+    const body = template.slice(block.bodyStart, block.bodyEnd);
+    const value = this.evaluateForSource(arrayExpr.trim(), context, filters);
+    const array = Array.isArray(value) ? value : (value ? [value] : []);
+
+    let replacement = '';
+    for (let index = 0; index < array.length; index++) {
+      const loopContext = {
+        ...context,
+        [itemVar]: array[index],
+        loop: {
+          index: index,
+          index0: index,
+          index1: index + 1,
+          first: index === 0,
+          last: index === array.length - 1,
+          length: array.length,
+          revindex: array.length - index,
+          revindex0: array.length - index - 1
+        }
+      };
+      replacement += await this.processTemplate(body, loopContext, filters, depth + 1);
+    }
+    return replacement;
+  }
+
+  /**
+   * Evaluate the source of a for loop: a path or a (parenthesised) filter pipeline
+   * @private
+   */
+  evaluateForSource(expr, context, filters) {
+    let text = expr;
+    while (text.startsWith('(') && text.endsWith(')')) {
+      text = text.slice(1, -1).trim();
+    }
+    return this.evaluateFilterChain(text, context, filters);
   }
 
   /**
@@ -304,6 +305,55 @@ export class KGenRenderer {
   }
 
   /**
+   * Evaluate `path | filter1(args) | filter2 arg` against the context
+   * @param {string} trimmed - Expression text
+   * @param {Object} context - Context data
+   * @param {Object} filters - Filter instance
+   * @returns {*} Resulting value
+   */
+  evaluateFilterChain(trimmed, context, filters) {
+
+    // Check for filters: {{ variable | filter1 | filter2 }}
+    const parts = trimmed.split('|').map(p => p.trim());
+    let value = this.evaluateExpression(parts[0], context);
+
+    // Apply filters in sequence
+    for (let i = 1; i < parts.length; i++) {
+      const filterExpr = parts[i].trim();
+
+      // Parse filter with parentheses: filter(arg1, arg2) or filter arg1 arg2
+      let filterName, filterArgs = [];
+
+      if (filterExpr.includes('(')) {
+        // Handle filter(arg1, arg2) syntax
+        const match = filterExpr.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\((.*)\)$/);
+        if (match) {
+          filterName = match[1];
+          const argsStr = match[2].trim();
+          if (argsStr) {
+            // Split arguments by comma, respecting quotes
+            filterArgs = this.parseFilterArguments(argsStr);
+          }
+        } else {
+          throw new Error(`Invalid filter syntax: ${filterExpr}`);
+        }
+      } else {
+        // Handle filter arg1 arg2 syntax
+        const parts = filterExpr.split(/\s+/);
+        filterName = parts[0];
+        filterArgs = parts.slice(1);
+      }
+
+      // Parse filter arguments
+      const parsedArgs = filterArgs.map(arg => this.parseArgument(arg, context));
+
+      value = filters.apply(filterName, value, ...parsedArgs);
+    }
+
+    return value;
+  }
+
+  /**
    * Process variable interpolations and filters
    * @param {string} template - Template content
    * @param {Object} context - Context data
@@ -313,45 +363,7 @@ export class KGenRenderer {
   processVariables(template, context, filters) {
     return template.replace(this.patterns.variable, (match, expression) => {
       try {
-        const trimmed = expression.trim();
-
-        // Check for filters: {{ variable | filter1 | filter2 }}
-        const parts = trimmed.split('|').map(p => p.trim());
-        let value = this.evaluateExpression(parts[0], context);
-
-        // Apply filters in sequence
-        for (let i = 1; i < parts.length; i++) {
-          const filterExpr = parts[i].trim();
-
-          // Parse filter with parentheses: filter(arg1, arg2) or filter arg1 arg2
-          let filterName, filterArgs = [];
-
-          if (filterExpr.includes('(')) {
-            // Handle filter(arg1, arg2) syntax
-            const match = filterExpr.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\((.*)\)$/);
-            if (match) {
-              filterName = match[1];
-              const argsStr = match[2].trim();
-              if (argsStr) {
-                // Split arguments by comma, respecting quotes
-                filterArgs = this.parseFilterArguments(argsStr);
-              }
-            } else {
-              throw new Error(`Invalid filter syntax: ${filterExpr}`);
-            }
-          } else {
-            // Handle filter arg1 arg2 syntax
-            const parts = filterExpr.split(/\s+/);
-            filterName = parts[0];
-            filterArgs = parts.slice(1);
-          }
-
-          // Parse filter arguments
-          const parsedArgs = filterArgs.map(arg => this.parseArgument(arg, context));
-
-          value = filters.apply(filterName, value, ...parsedArgs);
-        }
-
+        const value = this.evaluateFilterChain(expression.trim(), context, filters);
         return String(value !== null && value !== undefined ? value : '');
       } catch (error) {
         if (this.options.strictMode) {
@@ -380,6 +392,10 @@ export class KGenRenderer {
     if (condition.includes('!=')) {
       const [left, right] = condition.split('!=').map(s => s.trim());
       return this.evaluateExpression(left, context) != this.parseValue(right, context);
+    }
+
+    if (/^not\s+/.test(condition)) {
+      return !this.isTruthy(this.evaluateExpression(condition.replace(/^not\s+/, '').trim(), context));
     }
 
     if (condition.startsWith('!')) {
@@ -419,7 +435,7 @@ export class KGenRenderer {
     if (expr === 'null') return null;
 
     // Handle object property access
-    const parts = expr.split('.');
+    const parts = expr.replace(/\[(\d+)\]/g, '.$1').split('.');
     let value = context;
 
     for (const part of parts) {

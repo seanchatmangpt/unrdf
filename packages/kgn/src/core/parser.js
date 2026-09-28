@@ -170,6 +170,9 @@ export class KGenParser {
     const optionalVariables = new Set();
     let match;
 
+    // Names bound by {% for x in ... %} are only in scope inside that loop body
+    const loopScopes = this.findLoopScopes(content);
+
     // Reset regex state
     this.patterns.variable.lastIndex = 0;
 
@@ -178,10 +181,15 @@ export class KGenParser {
 
       // Handle filtered variables: {{ variable | filter }}
       const parts = variableExpr.split('|');
-      const [variableName] = parts[0].trim().split('.');
+      // Root identifier of `a.b`, `a[0]`
+      const [variableName] = parts[0].trim().split(/[.\[]/);
+
+      const boundByLoop = loopScopes.some(
+        scope => scope.name === variableName && match.index >= scope.start && match.index < scope.end
+      );
 
       // Skip loop variables and built-ins
-      if (!this.isBuiltinVariable(variableName)) {
+      if (!boundByLoop && !this.isBuiltinVariable(variableName)) {
         variables.add(variableName);
 
         // Check if variable has default filter (makes it optional)
@@ -201,6 +209,32 @@ export class KGenParser {
     // Return only required variables (excluding optional ones)
     const required = Array.from(variables).filter(v => !optionalVariables.has(v));
     return required;
+  }
+
+  /**
+   * Find the source ranges in which each {% for x in ... %} variable is bound
+   * @param {string} content - Template content
+   * @returns {Array<{name: string, start: number, end: number}>} Loop scopes
+   */
+  findLoopScopes(content) {
+    const scopes = [];
+    const stack = [];
+    const tagPattern = /\{\%\s*(if|for|endif|endfor)\b([^%]*)\%\}/g;
+    let m;
+    while ((m = tagPattern.exec(content)) !== null) {
+      const [tag, keyword, rest] = m;
+      if (keyword === 'if' || keyword === 'for') {
+        const header = keyword === 'for' ? rest.trim().match(/^(\w+)\s+in\b/) : null;
+        stack.push({ kind: keyword, name: header ? header[1] : null, start: m.index + tag.length });
+      } else {
+        const top = stack[stack.length - 1];
+        if (top && top.kind === (keyword === 'endif' ? 'if' : 'for')) {
+          stack.pop();
+          if (top.name) scopes.push({ name: top.name, start: top.start, end: m.index });
+        }
+      }
+    }
+    return scopes;
   }
 
   /**

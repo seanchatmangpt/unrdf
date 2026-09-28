@@ -38,7 +38,9 @@ feature('Deterministic Template Rendering', () => {
     })
 
     await when('I render the template', async () => {
-      renderResult = await templateEngine.render('test-templates/hello.njk', testData)
+      const rendered = await templateEngine.render(path.resolve('test-templates/hello.njk'), testData)
+      expect(rendered.success, rendered.error).toBe(true)
+      renderResult = rendered.content
     })
 
     then('the output should be "Hello KGEN!"', () => {
@@ -61,8 +63,9 @@ feature('Deterministic Template Rendering', () => {
     
     await when('I render the template multiple times', async () => {
       for (let i = 0; i < 3; i++) {
-        const result = await templateEngine.render('test-templates/deterministic.njk', testData)
-        results.push(result)
+        const result = await templateEngine.render(path.resolve('test-templates/deterministic.njk'), testData)
+        expect(result.success, result.error).toBe(true)
+        results.push(result.content)
       }
     })
 
@@ -111,7 +114,7 @@ variables:
         
         // Render with combined data
         const combinedData = { ...parsedTemplate.frontmatter.variables, ...parsedTemplate.frontmatter }
-        renderResult = await templateEngine.render('test-templates/frontmatter.njk', combinedData)
+        renderResult = await templateEngine.render(path.resolve('test-templates/frontmatter.njk'), combinedData)
       }
     })
 

@@ -147,6 +147,7 @@ export async function createTestDataFactory() {
 
       instances: [
         {
+          name: 'John Doe',
           uri: 'http://example.org/persons/john',
           type: 'http://example.org/Person',
           properties: {

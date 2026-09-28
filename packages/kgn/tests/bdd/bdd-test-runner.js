@@ -4,6 +4,7 @@
  * Permutation Tests, and Cross-Platform Validation
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { renderText } from './fixtures/render-text.js';
 import { TemplateEngine } from '../../src/engine/template-engine.js';
 import { GoldenTestValidator } from './golden/golden-validator.js';
 import { PermutationTestRunner } from './permutation/permutation-test-runner.js';
@@ -13,6 +14,19 @@ import { createMockSPARQL } from './fixtures/mock-sparql.js';
 import { createTestDataFactory } from './fixtures/test-data-factory.js';
 import fs from 'fs/promises';
 import path from 'path';
+
+const REACT_COMPONENT_TEMPLATE = `import React from 'react';
+
+export const {{ componentName }} = ({ {{ props.join(', ') }} }) => {
+  return (
+    <div className="{{classPrefix}}-{{componentName|lower}}">
+      <h1>{{ title }}</h1>
+      {% for prop in props %}
+      <p>{{ prop }}: { {{ prop }} }</p>
+      {% endfor %}
+    </div>
+  );
+};`;
 
 export class BDDTestRunner {
   constructor(options = {}) {
@@ -112,7 +126,8 @@ export class BDDTestRunner {
       console.log(`📊 Test Summary: ${report.summary.totalTests} tests, ${report.summary.passedTests} passed, ${report.summary.failedTests} failed`);
       console.log(`⏱️  Total Duration: ${report.duration}ms`);
 
-      return report;
+      // Callers read categories directly (result.coreTemplates, ...) as well as result.results
+      return { ...report, ...this.results, summary: report.summary };
 
     } catch (error) {
       console.error('❌ BDD Test Suite failed:', error);
@@ -247,7 +262,7 @@ export class BDDTestRunner {
   async testFrontmatterParsing() {
     const templateWithFrontmatter = `---
 title: "Test Document"
-version: 1.0
+version: "1.0"
 variables:
   greeting: "Hello"
   audience: "World"
@@ -342,8 +357,8 @@ variables:
     const latexData = this.testDataFactory.latexDocuments.researchPaper;
 
     const template = `\\documentclass{article}
-\\title{{{ title }}}
-\\author{{{ authors | join(' \\and ') }}}
+\\title{ {{ title }} }
+\\author{ {{ authors | join(' \\and ') }} }
 
 \\begin{document}
 \\maketitle
@@ -408,18 +423,7 @@ Parameter & Value & Unit \\\\
   async testReactComponentGeneration() {
     const reactData = this.testDataFactory.reactComponents.simple;
 
-    const template = `import React from 'react';
-
-export const {{ componentName }} = ({ {{ props.join(', ') }} }) => {
-  return (
-    <div className="{{classPrefix}}-{{componentName|lower}}">
-      <h1>{{ title }}</h1>
-      {% for prop in props %}
-      <p>{{ prop }}: {{{ prop }}}</p>
-      {% endfor %}
-    </div>
-  );
-};`;
+    const template = REACT_COMPONENT_TEMPLATE;
 
     try {
       // Register required filters
@@ -427,7 +431,7 @@ export const {{ componentName }} = ({ {{ props.join(', ') }} }) => {
         lower: (str) => str.toLowerCase()
       });
 
-      const result = await this.templateEngine.render(template, reactData);
+      const result = await renderText(this.templateEngine, template, reactData);
 
       return {
         passed: result.includes('import React') && result.includes('export const UserProfile'),
@@ -450,12 +454,12 @@ export const {{ componentName }} = ({ {{ props.join(', ') }} }) => {
     const nestedData = this.testDataFactory.performanceData.complexNesting;
 
     const template = `
-{% for key, value in level1.level2.level3.level4.data %}
-  Item {{ loop.index }}: {{ value.value }}
+{% for item in level1.level2.level3.level4.data %}
+  Item {{ loop.index }}: {{ item.value }}
 {% endfor %}`;
 
     try {
-      const result = await this.templateEngine.render(template, nestedData);
+      const result = await renderText(this.templateEngine, template, nestedData);
 
       return {
         passed: result.includes('Item 1:') && result.includes('nested-0'),
@@ -478,7 +482,7 @@ export const {{ componentName }} = ({ {{ props.join(', ') }} }) => {
     const invalidTemplate = '{{ undefined_variable | nonexistent_filter }}';
 
     try {
-      const result = await this.templateEngine.render(invalidTemplate, {});
+      const result = await renderText(this.templateEngine, invalidTemplate, {});
 
       return {
         passed: false,
@@ -554,7 +558,7 @@ const {{ person.name|camelCase }} = {
         jsonStringify: (obj) => JSON.stringify(obj, null, 2)
       });
 
-      const result = await this.templateEngine.render(template, rdfData);
+      const result = await renderText(this.templateEngine, template, rdfData);
 
       return {
         passed: result.includes('const JohnDoe') && result.includes('http://example.org/Person'),
@@ -595,7 +599,7 @@ const {{ person.name|camelCase }} = {
 
     const renders = [];
     for (let i = 0; i < itemCount; i++) {
-      const result = await this.templateEngine.render(template, {
+      const result = await renderText(this.templateEngine, template, {
         message: 'Throughput test',
         index: i
       });
@@ -625,7 +629,7 @@ const {{ person.name|camelCase }} = {
     const largeData = this.testDataFactory.generateLargeDataset(10000);
     const template = '{% for item in items %}{{ item.data }}{% endfor %}';
 
-    await this.templateEngine.render(template, { items: largeData });
+    await renderText(this.templateEngine, template, { items: largeData });
 
     // Force garbage collection if available
     if (global.gc) {
@@ -659,7 +663,7 @@ Total items: {{ items.length }}
     const startTime = Date.now();
 
     try {
-      const result = await this.templateEngine.render(template, { items: largeDataset });
+      const result = await renderText(this.templateEngine, template, { items: largeDataset });
       const endTime = Date.now();
 
       return {
@@ -719,7 +723,7 @@ Total items: {{ items.length }}
       },
 
       reactComponent: {
-        template: this.testDataFactory.reactComponents.simple,
+        template: REACT_COMPONENT_TEMPLATE,
         dataVariations: {
           simple: this.testDataFactory.reactComponents.simple,
           complex: this.testDataFactory.reactComponents.complex
@@ -741,7 +745,7 @@ Total items: {{ items.length }}
       Object.entries(category).forEach(([testName, result]) => {
         allTests.push({
           name: testName,
-          passed: result.passed || result.valid || false,
+          passed: this.resultPassed(result),
           category: this.getCategoryName(category),
           result
         });
@@ -783,6 +787,25 @@ Total items: {{ items.length }}
   /**
    * Get category name for test
    */
+  /**
+   * Whether a test result counts as passed. Plain tests report `passed`/`valid`;
+   * golden, cross-platform and permutation runs report aggregates instead.
+   */
+  resultPassed(result) {
+    if (result.passed !== undefined || result.valid !== undefined) {
+      return Boolean(result.passed || result.valid);
+    }
+    if (result.summary && typeof result.summary.failedTests === 'number') {
+      return result.summary.failedTests === 0; // cross-platform matrix
+    }
+    if (result.summary && typeof result.summary.successRate === 'number') {
+      return result.summary.successRate === 1; // permutation runner
+    }
+    const entries = Object.values(result);
+    // golden validations: { name: { valid } }
+    return entries.length > 0 && entries.every(v => v && typeof v === 'object' && v.valid === true);
+  }
+
   getCategoryName(category) {
     // This is a simple implementation - could be more sophisticated
     return Object.keys(category)[0] || 'Unknown';
@@ -806,7 +829,7 @@ Total items: {{ items.length }}
     };
 
     // Save report to file
-    const reportPath = path.join(__dirname, `../../../coverage/bdd/test-report-${Date.now()}.json`);
+    const reportPath = path.join(__dirname, `../../coverage/bdd/test-report-${Date.now()}.json`);
     await fs.mkdir(path.dirname(reportPath), { recursive: true });
     await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
 

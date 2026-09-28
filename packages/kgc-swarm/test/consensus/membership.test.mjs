@@ -96,6 +96,9 @@ describe('Membership Management', () => {
       manager.on('memberSuspect', suspectSpy);
       manager.on('memberFailed', failedSpy);
 
+      // Deterministic time: fake timers also mock Date.now()
+      vi.useFakeTimers();
+
       // Add a member
       manager._addMember({
         nodeId: 'node-2',
@@ -109,7 +112,7 @@ describe('Membership Management', () => {
       await manager.start();
 
       // Wait for suspect timeout (300ms)
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      await vi.advanceTimersByTimeAsync(350);
 
       expect(suspectSpy).toHaveBeenCalled();
 
@@ -117,16 +120,27 @@ describe('Membership Management', () => {
       expect(member.status).toBe(NodeStatus.SUSPECT);
 
       // Wait for failure timeout (500ms total)
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await vi.advanceTimersByTimeAsync(200);
 
       expect(failedSpy).toHaveBeenCalled();
       expect(member.status).toBe(NodeStatus.DEAD);
 
       await manager.stop();
+      vi.useRealTimers();
     });
 
     it('should refute suspicions by incrementing incarnation', () => {
       expect(manager.incarnation).toBe(0);
+
+      // The accuser is an alive peer; refutations are broadcast to alive peers
+      manager._addMember({
+        nodeId: 'node-2',
+        host: 'localhost',
+        port: 7002,
+        status: NodeStatus.ALIVE,
+        incarnation: 0,
+        lastSeen: Date.now(),
+      });
 
       // Receive suspicion about self
       const suspicionMessage = {
@@ -158,6 +172,13 @@ describe('Membership Management', () => {
 
       // Should broadcast alive status with new incarnation
       expect(broadcasts.length).toBeGreaterThan(0);
+      const [{ peer, message }] = broadcasts;
+      expect(peer).toBe('node-2');
+      expect(message.members[0]).toMatchObject({
+        nodeId: 'node-1',
+        status: NodeStatus.ALIVE,
+        incarnation: 1,
+      });
     });
 
     it('should gossip member updates periodically', async () => {
