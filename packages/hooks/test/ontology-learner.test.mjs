@@ -3,8 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Store  } from 'n3';
-import { DataFactory  } from 'n3';
+import { createStore, dataFactory as DataFactory } from '@unrdf/oxigraph';
 import { OntologyLearner } from '../src/hooks/ontology-learner.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
@@ -15,7 +14,7 @@ describe('OntologyLearner', () => {
 
   beforeEach(() => {
     learner = new OntologyLearner();
-    store = new Store();
+    store = createStore();
   });
 
   it('should create learner instance', () => {

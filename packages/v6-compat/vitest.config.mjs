@@ -16,6 +16,7 @@ export default defineConfig({
     exclude: [
       'node_modules/**',
       'dist/**',
+      'test/schema-codec.node.test.mjs', // node:test, run via node --test
       'test/integration-node.test.mjs', // Uses Node.js native test runner
       'test/batch-1-validation.test.mjs', // Tests generated schemas (optional)
     ],

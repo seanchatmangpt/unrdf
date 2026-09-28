@@ -16,7 +16,7 @@ describe('Semantic Inference Hooks (Vision 2030)', () => {
     const hook = {
       id: 'test-semantic-hook',
       name: 'Test Semantic Hook',
-      version: '[VERSION]',
+      version: '1.0.0',
       trigger: 'after-add',
       enabled: true,
       description: 'Test autonomic trigger based on inference',

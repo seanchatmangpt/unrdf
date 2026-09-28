@@ -13,7 +13,7 @@ import {
   OntologyRenderResultSchema,
   DocTemplateSchema
 } from './thesis-builder.schema.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import * as TemplateRenderer from './template-renderer.mjs';
 
 /**
@@ -203,7 +203,7 @@ export async function executeSparqlConstruct(store, query, options = {}) {
     };
 
     const mimeType = formatMap[validated.outputFormat] || 'text/turtle';
-    const serialized = resultStore.dump({ format: mimeType });
+    const serialized = resultStore.dump({ format: mimeType, from_graph_name: dataFactory.defaultGraph() });
 
     return serialized;
   } catch (error) {
@@ -422,10 +422,7 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
           size: doc.content.length
         });
       } catch (error) {
-        errors.push({
-          classUri,
-          error: error.message
-        });
+        errors.push(`${classUri}: ${error.message}`);
       }
     }
 
@@ -447,10 +444,7 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
             size: result.length
           });
         } catch (error) {
-          errors.push({
-            query: queryConfig.query.substring(0, 100),
-            error: error.message
-          });
+          errors.push(`query ${queryConfig.query.substring(0, 100)}: ${error.message}`);
         }
       }
     }
@@ -471,10 +465,7 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
 
     return OntologyRenderResultSchema.parse(result);
   } catch (error) {
-    errors.push({
-      stage: 'initialization',
-      error: error.message
-    });
+    errors.push(`initialization: ${error.message}`);
 
     const result = {
       status: 'error',

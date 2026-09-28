@@ -73,11 +73,18 @@ export const OntologyRenderResultSchema = z.object({
   outputDir: z.string(),
   generatedDocs: z.array(z.object({
     path: z.string(),
-    type: z.enum(['tutorial', 'howto', 'reference', 'explanation']),
+    type: z.enum(['tutorial', 'howto', 'reference', 'explanation', 'construct-result']),
     sourceQuery: z.string().optional(),
   })).default([]),
   errors: z.array(z.string()).default([]),
   warnings: z.array(z.string()).default([]),
+  stats: z
+    .object({
+      totalDocs: z.number(),
+      totalErrors: z.number(),
+      totalClasses: z.number(),
+    })
+    .optional(),
 }).strict();
 
 /**
