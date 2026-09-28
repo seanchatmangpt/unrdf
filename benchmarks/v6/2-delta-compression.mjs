@@ -77,7 +77,7 @@ function estimateQuadSize(quads) {
  * @returns {number} Size in bytes
  */
 function estimateDeltaSize(delta) {
-  const serialized = JSON.stringify(delta);
+  const serialized = JSON.stringify(delta, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
   return Buffer.byteLength(serialized, 'utf8');
 }
 
