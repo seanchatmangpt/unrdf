@@ -26,10 +26,12 @@ import { z } from 'zod';
  * @property {number} timestamp - Unix timestamp of receipt creation
  * @property {string} [id] - Optional receipt identifier
  */
+const HASH_HEX = /^[0-9a-fA-F]{64}$/; // SHA-256 hex; whitespace/garbage of length 64 is not a hash
+
 export const ReceiptSchema = z.object({
-  before: z.string().length(64), // SHA-256 hex = 64 chars
-  after: z.string().length(64),
-  delta: z.string().length(64),
+  before: z.string().regex(HASH_HEX, 'Must be 64 hex characters'), // SHA-256 hex = 64 chars
+  after: z.string().regex(HASH_HEX, 'Must be 64 hex characters'),
+  delta: z.string().regex(HASH_HEX, 'Must be 64 hex characters'),
   timestamp: z.number().int().positive(),
   id: z.string().optional(),
 });
@@ -55,7 +57,7 @@ export const ReceiptChainSchema = z.object({
  * @returns {string} Hex-encoded hash (64 chars)
  */
 export function hash(input) {
-  const data = typeof input === 'string' ? input : JSON.stringify(input);
+  const data = typeof input === 'string' ? input : (JSON.stringify(input) ?? String(input));
   return createHash('sha256').update(data).digest('hex');
 }
 

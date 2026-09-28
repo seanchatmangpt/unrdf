@@ -16,6 +16,7 @@
 
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
+import { canonicalStringify } from './canonical.mjs';
 
 // Export orchestrator and token generator
 export {
@@ -164,7 +165,7 @@ export class KGCSwarm {
       : null;
 
     // Hash the payload
-    const payloadStr = JSON.stringify(payload, Object.keys(payload).sort());
+    const payloadStr = canonicalStringify(payload);
     const payloadHash = await blake3(payloadStr);
 
     // Chain the hashes: receiptHash = BLAKE3(previousHash || "GENESIS" : payloadHash)
@@ -200,7 +201,7 @@ export class KGCSwarm {
       ReceiptSchema.parse(receipt);
 
       // Recompute payload hash
-      const payloadStr = JSON.stringify(receipt.payload, Object.keys(receipt.payload).sort());
+      const payloadStr = canonicalStringify(receipt.payload);
       const computedPayloadHash = await blake3(payloadStr);
 
       if (computedPayloadHash !== receipt.payloadHash) {

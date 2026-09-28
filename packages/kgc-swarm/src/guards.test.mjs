@@ -549,8 +549,8 @@ describe('GuardSystem', () => {
     const result = await guardSystem.validate(operation);
 
     expect(result.allowed).toBe(false);
-    // Could be blocked by PathGuard or PrivilegeGuard
-    expect(['PathGuard', 'PrivilegeGuard']).toContain(result.guard);
+    // Blocked by whichever guard fires first: SecretGuard (sensitive file), PathGuard or PrivilegeGuard
+    expect(['SecretGuard', 'PathGuard', 'PrivilegeGuard']).toContain(result.guard);
   });
 
   it('should block non-allowlisted network requests', async () => {

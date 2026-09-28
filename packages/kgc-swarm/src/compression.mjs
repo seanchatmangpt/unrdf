@@ -18,6 +18,7 @@
 
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
+import { canonicalStringify } from './canonical.mjs';
 
 /**
  * Observable schema - represents temporal observations
@@ -46,7 +47,7 @@ const ArchiveSchema = z.object({
  * @returns {Promise<string>} Hash string
  */
 async function computeHash(data) {
-  const normalized = JSON.stringify(data, Object.keys(data).sort());
+  const normalized = canonicalStringify(data);
   return blake3(normalized);
 }
 
@@ -212,7 +213,15 @@ export async function compress(input) {
   const deduplicated = await deduplicate(validated);
 
   // Step 2: Sort by timestamp for deterministic ordering
-  const sorted = deduplicated.sort((a, b) => a.timestamp - b.timestamp);
+  // Ties on timestamp are broken by canonical content so the result (and hash, and the
+  // index-based glue) does not depend on input order: O1 ⊔ O2 = O2 ⊔ O1
+  const keyed = deduplicated.map(obs => ({ obs, key: canonicalStringify(obs) }));
+  keyed.sort((a, b) =>
+    a.obs.timestamp !== b.obs.timestamp
+      ? a.obs.timestamp - b.obs.timestamp
+      : a.key < b.key ? -1 : a.key > b.key ? 1 : 0
+  );
+  const sorted = keyed.map(k => k.obs);
 
   // Step 3: Compute cover and glue (Γ operation)
   const { cover: coverSet, glue: glueMap } = gamma(sorted);
