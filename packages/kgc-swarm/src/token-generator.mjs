@@ -168,7 +168,8 @@ export class TokenGenerator {
     const probabilities = this._computeProbabilities(
       context,
       vocab,
-      κ.temperature
+      κ.temperature,
+      rng
     );
 
     // Apply top-k filtering
@@ -214,12 +215,14 @@ export class TokenGenerator {
    * @param {string} context - Generation context
    * @param {string[]} vocab - Vocabulary
    * @param {number} temperature - Temperature parameter
+   * @param {Function} [rng] - Random number generator
    * @returns {number[]} Probability distribution
    */
-  _computeProbabilities(context, vocab, temperature) {
+  _computeProbabilities(context, vocab, temperature, rng = Math.random) {
     // Simplified: uniform distribution with temperature
     // In production, use actual language model
-    const logits = vocab.map(() => Math.random());
+    // Must use the injected (seeded) rng, otherwise a seed cannot make emit() deterministic
+    const logits = vocab.map(() => rng());
 
     // Apply temperature scaling
     const scaledLogits = logits.map(l => l / temperature);

@@ -53,7 +53,8 @@ describe('CRDT Data Types', () => {
       clock2.increment(); // node-2: 2
 
       clock1.merge(clock2); // node-1: 1, node-2: 2
-      clock2.increment(); // node-2: 3
+      clock2.merge(clock1); // node-2 has seen node-1's event too: node-1: 1, node-2: 2
+      clock2.increment(); // node-1: 1, node-2: 3 (strictly after clock1)
 
       expect(clock1.compare(clock2)).toBe('before');
     });

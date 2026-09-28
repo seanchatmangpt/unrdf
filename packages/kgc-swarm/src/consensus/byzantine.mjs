@@ -17,7 +17,8 @@
 
 import { z } from 'zod';
 import { EventEmitter } from 'node:events';
-import { createSign, createVerify, generateKeyPairSync } from 'node:crypto';
+import { createHash, sign as cryptoSign, verify as cryptoVerify, generateKeyPairSync } from 'node:crypto';
+import { canonicalStringify } from '../canonical.mjs';
 
 /**
  * Node phase in consensus
@@ -225,6 +226,8 @@ export class ByzantineNode extends EventEmitter {
 
     /** @type {Map<string, KeyObject>} - Peer public keys */
     this.peerKeys = new Map();
+    // A node can verify its own messages
+    this.peerKeys.set(this.nodeId, publicKey);
 
     // View change state
     /** @type {NodeJS.Timeout | null} */
@@ -475,10 +478,9 @@ export class ByzantineNode extends EventEmitter {
    * @returns {string} Hex digest
    */
   _computeDigest(request) {
-    const json = JSON.stringify(request, Object.keys(request).sort());
-    const hash = createSign('sha256');
-    hash.update(json);
-    return hash.sign(this.privateKey, 'hex');
+    // A digest must be a deterministic hash of the request; an Ed25519 signature is neither
+    // (and createSign('sha256') is unsupported for Ed25519 keys)
+    return createHash('sha256').update(canonicalStringify(request)).digest('hex');
   }
 
   /**
@@ -488,10 +490,9 @@ export class ByzantineNode extends EventEmitter {
    * @returns {SignedMessage} Signed message
    */
   _signMessage(message) {
-    const json = JSON.stringify(message, Object.keys(message).sort());
-    const sign = createSign('sha256');
-    sign.update(json);
-    const signature = sign.sign(this.privateKey, 'hex');
+    const json = canonicalStringify(message);
+    // Ed25519 signs the message directly (algorithm must be null)
+    const signature = cryptoSign(null, Buffer.from(json), this.privateKey).toString('hex');
 
     return {
       message,
@@ -517,11 +518,12 @@ export class ByzantineNode extends EventEmitter {
       return false;
     }
 
-    const json = JSON.stringify(message, Object.keys(message).sort());
-    const verify = createVerify('sha256');
-    verify.update(json);
-
-    return verify.verify(peerKey, signature, 'hex');
+    const json = canonicalStringify(message);
+    try {
+      return cryptoVerify(null, Buffer.from(json), peerKey, Buffer.from(signature, 'hex'));
+    } catch {
+      return false;
+    }
   }
 
   /**
