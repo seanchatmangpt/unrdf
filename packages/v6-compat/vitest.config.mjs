@@ -17,6 +17,7 @@ export default defineConfig({
       'node_modules/**',
       'dist/**',
       'test/integration-node.test.mjs', // Uses Node.js native test runner
+      'test/schema-codec.node.test.mjs', // Uses Node.js native test runner
       'test/batch-1-validation.test.mjs', // Tests generated schemas (optional)
     ],
     reporter: ['verbose'],

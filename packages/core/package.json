@@ -45,9 +45,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --no-coverage",
+    "test": "vitest run --no-coverage && pnpm test:node",
+    "test:node": "node --test test/capability-control-plane.test.mjs test/capability-runtime.test.mjs test/state-primitives.test.mjs test/transaction-core.node.test.mjs test/interchangeable-part.test.mjs test/interchangeable-part-canonical.test.mjs",
     "test:coverage": "vitest run --coverage",
-    "test:fast": "vitest run --no-coverage",
+    "test:fast": "vitest run --no-coverage && pnpm test:node",
     "test:watch": "vitest --no-coverage",
     "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",

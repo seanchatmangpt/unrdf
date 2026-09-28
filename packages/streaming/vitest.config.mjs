@@ -5,8 +5,11 @@ export default defineConfig({
     environment: 'node',
     testTimeout: 10000,
     include: ['test/**/*.test.mjs'],
-    exclude: ['node_modules/**', 'dist/**'],
+    // node:test suites run via `pnpm test:node`
+    exclude: ['node_modules/**', 'dist/**', 'test/**/*.node.test.mjs'],
     globals: false,
     isolate: true,
+    pool: 'forks',
+    execArgv: ['--expose-gc'], // memory-bound tests call global.gc()
   },
 });

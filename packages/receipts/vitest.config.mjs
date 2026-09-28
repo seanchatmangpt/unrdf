@@ -5,7 +5,11 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     // node:test suites run by scripts/test-interchangeable-parts.mjs (vitest cannot collect them)
-    exclude: [...configDefaults.exclude, 'test/substitution-receipt.test.mjs'],
+    exclude: [
+      ...configDefaults.exclude,
+      'test/substitution-receipt.test.mjs',
+      'test/receipt-verifier.node.test.mjs',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
