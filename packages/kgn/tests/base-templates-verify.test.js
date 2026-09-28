@@ -46,7 +46,7 @@ describe('KGEN Base Templates Verification', () => {
   });
 
   it('should export base templates from main index', async () => {
-    const { BaseTemplates } = await import('../src/index.js');
+    const { BaseTemplates } = await import('../src/index.mjs');
 
     expect(BaseTemplates).toBeDefined();
     expect(BaseTemplates.KGenTemplateBase).toBeDefined();

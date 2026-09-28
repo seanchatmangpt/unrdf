@@ -4,6 +4,7 @@
  */
 import path from 'path';
 import os from 'os';
+import { renderText } from '../fixtures/render-text.js';
 import { TemplateEngine } from '../../../src/engine/template-engine.js';
 import { GoldenTestValidator } from '../golden/golden-validator.js';
 import { createTestDataFactory } from '../fixtures/test-data-factory.js';
@@ -108,7 +109,7 @@ export const paths = {
       appName: 'MyApp'
     };
 
-    const result = await this.templateEngine.render(template, testData);
+    const result = await renderText(this.templateEngine, template, testData);
 
     // Validate against platform-specific golden file
     const goldenFile = `paths-${this.currentPlatform}.golden.js`;
@@ -145,7 +146,7 @@ Final line: {{ finalMessage }}`;
       finalMessage: 'End of file'
     };
 
-    const result = await this.templateEngine.render(template, testData);
+    const result = await renderText(this.templateEngine, template, testData);
 
     // Normalize line endings for cross-platform golden test
     const normalizedResult = result.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -225,7 +226,7 @@ export class FileManager {
       directories: ['src', 'lib', 'tests', 'docs', 'config']
     };
 
-    const result = await this.templateEngine.render(template, testData);
+    const result = await renderText(this.templateEngine, template, testData);
 
     // Validate cross-platform compatibility
     const validation = await this.goldenValidator.validate(
@@ -309,7 +310,7 @@ export const {{ name|camelCase }} = {
       ]
     };
 
-    const result = await this.templateEngine.render(complexTemplate, testData);
+    const result = await renderText(this.templateEngine, complexTemplate, testData);
 
     // This should be identical across platforms (no platform-specific elements in output)
     const validation = await this.goldenValidator.validate(
@@ -371,7 +372,7 @@ export const paths = {
       }
     };
 
-    const result = await this.templateEngine.render(template, testData);
+    const result = await renderText(this.templateEngine, template, testData);
 
     const validation = await this.goldenValidator.validate(
       result,
@@ -397,7 +398,7 @@ export const paths = {
 // Environment configuration for {{ platform }}
 export const environment = {
   platform: "{{ platform }}",
-  nodeEnv: "{{ env.NODE_ENV || 'development' }}",
+  nodeEnv: "{{ env.NODE_ENV or 'development' }}",
 
   // Platform-specific environment handling
   {% if platform === 'win32' %}
@@ -427,12 +428,20 @@ export const paths = {
         : '/usr/local/bin:/usr/bin:/bin'
     };
 
+    // The template's `paths` block reads `environment.*`, which must come from the
+    // render context (the `environment` const in the template's output is not a variable).
+    const isWin = this.currentPlatform === 'win32';
     const testData = {
       platform: this.currentPlatform,
-      env: mockEnv
+      env: mockEnv,
+      environment: {
+        pathSeparator: isWin ? ';' : ':',
+        homeVar: isWin ? 'USERPROFILE' : 'HOME',
+        tempVar: isWin ? 'TEMP' : 'TMPDIR'
+      }
     };
 
-    const result = await this.templateEngine.render(template, testData);
+    const result = await renderText(this.templateEngine, template, testData);
 
     const validation = await this.goldenValidator.validate(
       result,

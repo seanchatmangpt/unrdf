@@ -1,1 +1,1 @@
-Hello World! This is Test Document v1.
+Hello World! This is Test Document v1.0.
