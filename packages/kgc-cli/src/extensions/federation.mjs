@@ -54,7 +54,8 @@ const extension = {
     query: {
       description: 'Distributed query execution',
       verbs: {
-        execute: {
+        // Named "federated" (not "execute") so it does not collide with oxigraph query:execute
+        federated: {
           description: 'Execute query across federated peers',
           argsSchema: z.object({
             query: z.string().describe('SPARQL query'),

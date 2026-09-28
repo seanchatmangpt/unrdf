@@ -14,7 +14,7 @@
 
 import { defineCommand, runMain } from 'citty';
 import { Registry, createEnvelope } from './lib/registry.mjs';
-import { loadManifest } from './manifest/extensions.mjs';
+import { loadManifest, overrides } from './manifest/extensions.mjs';
 
 /**
  * Initialize registry and load extensions.
@@ -24,6 +24,7 @@ import { loadManifest } from './manifest/extensions.mjs';
 async function initializeRegistry() {
   const registry = new Registry({
     failOnCollision: true,
+    overrides,
   });
 
   try {
@@ -127,7 +128,7 @@ function buildCittyTree(registry, tree) {
       meta: {
         description: nounData.description || `${noun} commands`,
       },
-      subcommands: verbCommands,
+      subCommands: verbCommands,
     });
   }
 
@@ -138,7 +139,7 @@ function buildCittyTree(registry, tree) {
       description: 'KGC CLI - Deterministic extension registry for UNRDF workspace',
       version: '[VERSION]',
     },
-    subcommands,
+    subCommands: subcommands,
   });
 }
 
@@ -181,10 +182,7 @@ async function main() {
     const command = buildCittyTree(registry, tree);
 
     // Run Citty main loop
-    await runMain({
-      command,
-      args: process.argv.slice(2),
-    });
+    await runMain(command, { rawArgs: process.argv.slice(2) });
   } catch (e) {
     console.error(`[kgc-cli] Fatal error: ${e.message}`);
     console.error(e.stack);
