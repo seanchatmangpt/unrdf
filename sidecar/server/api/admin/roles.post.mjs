@@ -7,6 +7,7 @@
  * Assign or revoke roles for users (admin only)
  */
 
+import { defineEventHandler, readBody, setResponseStatus } from '#imports';
 import { z } from 'zod';
 import { trace } from '@opentelemetry/api';
 import { getRBACEngine, Roles } from '../../utils/rbac.mjs';
@@ -20,10 +21,10 @@ const tracer = trace.getTracer('admin-roles-api');
 const RoleAssignmentSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
   role: z.enum([Roles.ADMIN, Roles.AGENT, Roles.WRITER, Roles.READER], {
-    errorMap: () => ({ message: 'Invalid role' })
+    message: 'Invalid role'
   }),
   action: z.enum(['assign', 'revoke'], {
-    errorMap: () => ({ message: 'Action must be "assign" or "revoke"' })
+    message: 'Action must be "assign" or "revoke"'
   })
 });
 
@@ -31,21 +32,28 @@ const RoleAssignmentSchema = z.object({
  * POST /api/admin/roles
  * Assign or revoke user roles
  *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
+ * @param {import("h3").H3Event} event
  */
-export default async function rolesPost(req, res) {
+export default defineEventHandler(async (event) => {
+  const adminId = event.context.auth?.userId;
+  const rawBody = await readBody(event);
+  /** @param {number} code @param {Object} body */
+  const reply = (code, body) => {
+    setResponseStatus(event, code);
+    return body;
+  };
+
   return tracer.startActiveSpan('admin.roles.post', async (span) => {
     try {
       // Validate request body
-      const validation = RoleAssignmentSchema.safeParse(req.body);
+      const validation = RoleAssignmentSchema.safeParse(rawBody);
 
       if (!validation.success) {
         span.setAttribute('validation.failed', true);
-        return res.status(400).json({
+        return reply(400, {
           error: 'Bad Request',
           message: 'Invalid request body',
-          details: validation.error.errors
+          details: validation.error.issues
         });
       }
 
@@ -55,38 +63,38 @@ export default async function rolesPost(req, res) {
         'admin.target_user_id': userId,
         'admin.role': role,
         'admin.action': action,
-        'admin.admin_user_id': req.user?.id
+        'admin.admin_user_id': adminId
       });
 
       // Get RBAC engine
       const rbac = getRBACEngine();
 
       // Verify requester is admin (middleware should have checked this)
-      if (!rbac.hasRole(req.user.id, Roles.ADMIN)) {
+      if (!rbac.hasRole(adminId, Roles.ADMIN)) {
         span.setAttribute('authorization.failed', true);
 
         logger.warn('Non-admin attempted role assignment', {
-          adminUserId: req.user.id,
+          adminUserId: adminId,
           targetUserId: userId,
           role,
           action
         });
 
-        return res.status(403).json({
+        return reply(403, {
           error: 'Forbidden',
           message: 'Admin role required for role management'
         });
       }
 
       // Prevent self-demotion from admin
-      if (userId === req.user.id && role === Roles.ADMIN && action === 'revoke') {
+      if (userId === adminId && role === Roles.ADMIN && action === 'revoke') {
         span.setAttribute('self_demotion.prevented', true);
 
         logger.warn('Admin attempted self-demotion', {
-          userId: req.user.id
+          userId: adminId
         });
 
-        return res.status(400).json({
+        return reply(400, {
           error: 'Bad Request',
           message: 'Cannot revoke your own admin role'
         });
@@ -97,14 +105,14 @@ export default async function rolesPost(req, res) {
         rbac.assignRole(userId, role);
 
         logger.info('Role assigned', {
-          adminUserId: req.user.id,
+          adminUserId: adminId,
           targetUserId: userId,
           role
         });
 
         span.setAttribute('role.assigned', true);
 
-        return res.status(200).json({
+        return reply(200, {
           success: true,
           message: `Role "${role}" assigned to user ${userId}`,
           userId,
@@ -115,14 +123,14 @@ export default async function rolesPost(req, res) {
         rbac.revokeRole(userId, role);
 
         logger.info('Role revoked', {
-          adminUserId: req.user.id,
+          adminUserId: adminId,
           targetUserId: userId,
           role
         });
 
         span.setAttribute('role.revoked', true);
 
-        return res.status(200).json({
+        return reply(200, {
           success: true,
           message: `Role "${role}" revoked from user ${userId}`,
           userId,
@@ -135,11 +143,11 @@ export default async function rolesPost(req, res) {
 
       logger.error('Role assignment error', {
         error: error.message,
-        adminUserId: req.user?.id,
-        body: req.body
+        adminUserId: adminId,
+        body: rawBody
       });
 
-      return res.status(500).json({
+      return reply(500, {
         error: 'Internal Server Error',
         message: 'Failed to process role assignment'
       });
@@ -147,4 +155,4 @@ export default async function rolesPost(req, res) {
       span.end();
     }
   });
-}
+});

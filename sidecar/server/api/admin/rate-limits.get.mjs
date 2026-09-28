@@ -10,7 +10,8 @@
  * @module sidecar/api/admin/rate-limits
  */
 
-import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+import { defineEventHandler, getQuery, setResponseStatus } from '#imports';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
 import {
   getRateLimitStatus,
   resetRateLimit,
@@ -30,24 +31,29 @@ const tracer = trace.getTracer('sidecar-admin-rate-limits');
  *
  * Get comprehensive rate limiting status
  */
-export default async function handler(req, res) {
+export default defineEventHandler(async (event) => {
+  /** @param {number} code @param {Object} body */
+  const reply = (code, body) => {
+    setResponseStatus(event, code);
+    return body;
+  };
   const span = tracer.startSpan('admin-get-rate-limits');
 
   try {
     // Get query parameters
-    const { action, key, type, ip, reason, duration } = req.query;
+    const { action, key, type, ip, reason, duration } = getQuery(event);
 
     // Handle different actions
     if (action === 'check' && key) {
       // Check specific rate limit key
       const status = await getRateLimitStatus(key, type || 'unauthenticated');
-      return res.json({ status });
+      return reply(200, { status });
     }
 
     if (action === 'reset' && key) {
       // Reset rate limit for specific key
       const success = await resetRateLimit(key, type || 'unauthenticated');
-      return res.json({
+      return reply(200, {
         success,
         message: success ? 'Rate limit reset successfully' : 'Failed to reset rate limit',
         key,
@@ -59,7 +65,7 @@ export default async function handler(req, res) {
       // Add IP to blacklist
       const durationMs = duration ? parseInt(duration, 10) * 1000 : 3600000;
       manualBlacklist(ip, reason || 'Manual blacklist', durationMs);
-      return res.json({
+      return reply(200, {
         success: true,
         message: 'IP blacklisted successfully',
         ip,
@@ -71,7 +77,7 @@ export default async function handler(req, res) {
     if (action === 'unblacklist' && ip) {
       // Remove IP from blacklist
       const success = removeFromBlacklist(ip);
-      return res.json({
+      return reply(200, {
         success,
         message: success ? 'IP removed from blacklist' : 'IP not found in blacklist',
         ip,
@@ -91,7 +97,7 @@ export default async function handler(req, res) {
 
     span.setStatus({ code: SpanStatusCode.OK });
 
-    res.json({
+    return reply(200, {
       config,
       ddos: {
         status: ddosStatus.status,
@@ -113,7 +119,7 @@ export default async function handler(req, res) {
     span.recordException(err);
     span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
 
-    res.status(500).json({
+    return reply(500, {
       error: 'Internal Server Error',
       message: 'Failed to retrieve rate limit status',
       details: err.message,
@@ -121,4 +127,4 @@ export default async function handler(req, res) {
   } finally {
     span.end();
   }
-}
+});
