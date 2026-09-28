@@ -207,7 +207,7 @@ export class RaftCoordinator extends EventEmitter {
     });
 
     this.transport.on('error', error => {
-      this.emit('error', { source: 'transport', error });
+      if (this.listenerCount('error') > 0) this.emit('error', { source: 'transport', error });
     });
   }
 
