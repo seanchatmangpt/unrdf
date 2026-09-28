@@ -38,7 +38,7 @@ export function executeLensToGraph(payload, compiledLens, store, entityType) {
     entityType = mappingKeys[0]; // Default to first mapping
 
     // Check if payload has a type field
-    if (payload.type &amp;&amp; compiledLens.compiledMappings[payload.type]) {
+    if (payload.type && compiledLens.compiledMappings[payload.type]) {
       entityType = payload.type;
     }
   }
