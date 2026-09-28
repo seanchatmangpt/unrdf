@@ -5,6 +5,7 @@
  * document without re-interpreting it.
  */
 import { namedNode, literal, quad } from '@unrdf/core';
+import { admitSwarmIdentity, bindExactSwarmSubject } from './swarm-contracts.mjs';
 
 export const OCEL2_CONTEXT = 'https://ocelstandard.org/ocel2.0/context.json';
 export const GIT_SWARM_NS = 'https://unrdf.dev/ns/git-swarm#';
@@ -16,6 +17,7 @@ const OBJECT_TYPES = [
   ['Commit', ['sha', 'role']],
   ['CodeSurface', ['path']],
   ['ToolEdge', ['name']],
+  ['Task', ['id']],
 ];
 
 const EVENT_TYPES = [
@@ -77,6 +79,11 @@ export function createGitSwarmOcel(input) {
   const branch = requireString(input.branch, 'branch');
   const baseCommit = requireString(input.baseCommit, 'baseCommit');
   const commit = requireString(input.commit, 'commit');
+  const task = requireString(input.task, 'task');
+  const tool = requireString(input.tool, 'tool');
+  const admission = admitSwarmIdentity({ repository, branch, commit, baseCommit, task, tool, sequence: 1 });
+  if (!admission.admitted) throw new TypeError(`Git swarm subject refused: ${admission.refusals.map(r => r.code).join(',')}`);
+  const exactSubject = bindExactSwarmSubject({ repository, branch, commit, task, tool });
   const time = requireString(input.time, 'time');
   const surfaces = [...new Set(input.surfaces ?? [])].sort();
   const suppliedEvents = input.events ?? [];
@@ -87,18 +94,22 @@ export function createGitSwarmOcel(input) {
     branch: `branch:${repository}:${branch}`,
     base: `commit:${baseCommit}`,
     commit: `commit:${commit}`,
+    task: `task:${task}`,
+    tool: `tool:${tool}`,
   };
 
   const objects = [
-    object(ids.run, 'Run', [valueAttr('lane', lane, time)]),
+    object(ids.run, 'Run', [valueAttr('lane', lane, time), valueAttr('exactSubject', exactSubject, time)]),
     object(ids.repo, 'Repository', [valueAttr('fullName', repository, time)]),
     object(ids.branch, 'Branch', [valueAttr('name', branch, time)]),
     object(ids.base, 'Commit', [valueAttr('sha', baseCommit, time), valueAttr('role', 'base', time)]),
     object(ids.commit, 'Commit', [valueAttr('sha', commit, time), valueAttr('role', 'produced', time)]),
+    object(ids.task, 'Task', [valueAttr('id', task, time)]),
+    object(ids.tool, 'ToolEdge', [valueAttr('name', tool, time)]),
     ...surfaces.map(path => object(`surface:${repository}:${path}`, 'CodeSurface', [valueAttr('path', path, time)])),
   ];
 
-  const toolNames = [...new Set(suppliedEvents.map(e => e.tool).filter(Boolean))].sort();
+  const toolNames = [...new Set(suppliedEvents.map(e => e.tool).filter(Boolean).filter(name => name !== tool))].sort();
   for (const tool of toolNames) {
     objects.push(object(`tool:${tool}`, 'ToolEdge', [valueAttr('name', tool, time)]));
   }
@@ -112,6 +123,8 @@ export function createGitSwarmOcel(input) {
         relationship(ids.repo, 'repository'),
         relationship(ids.branch, 'branch'),
         relationship(ids.commit, 'commit'),
+        relationship(ids.task, 'task'),
+        relationship(ids.tool, 'admitted-tool'),
       ];
       if (event.surface) relationships.push(relationship(`surface:${repository}:${event.surface}`, 'surface'));
       if (event.tool) relationships.push(relationship(`tool:${event.tool}`, 'edge'));

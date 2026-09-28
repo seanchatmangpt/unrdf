@@ -1,0 +1,14 @@
+{
+  "name": "missing-branch",
+  "input": {
+    "repository": "seanchatmangpt/unrdf",
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "baseCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "T002",
+    "tool": "github.create_tree"
+  },
+  "expected": {
+    "admitted": false,
+    "refusal": "branch_identity_missing"
+  }
+}
