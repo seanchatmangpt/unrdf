@@ -25,7 +25,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
+    "test": "vitest run --coverage && node --test test/orchestration-core.node.test.mjs",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
     "lint": "eslint src/ test/ --max-warnings=0",
