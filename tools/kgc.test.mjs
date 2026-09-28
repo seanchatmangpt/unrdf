@@ -27,7 +27,7 @@ async function execCLI(args, stdin = null) {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [CLI_PATH, ...args], {
       cwd: __dirname,
-      env: { ...process.env, NODE_ENV: 'test' },
+      env: { ...process.env, NODE_ENV: 'test', KGC_WORKSPACE_ROOT: TEST_WORKSPACE },
     });
 
     let stdout = '';
@@ -92,6 +92,7 @@ describe('KGC CLI - New Commands', () => {
     if (existsSync(TEST_WORKSPACE)) {
       await rm(TEST_WORKSPACE, { recursive: true, force: true });
     }
+    await mkdir(TEST_WORKSPACE, { recursive: true });
   });
 
   afterEach(async () => {
@@ -151,8 +152,8 @@ describe('KGC CLI - New Commands', () => {
       assert.match(data.summary, /initialized successfully/);
 
       // Verify files were created
-      const configPath = join(__dirname, '..', 'var', 'kgc', 'config.json');
-      const registryPath = join(__dirname, '..', 'var', 'kgc', 'tool-registry.json');
+      const configPath = join(TEST_WORKSPACE, 'var', 'kgc', 'config.json');
+      const registryPath = join(TEST_WORKSPACE, 'var', 'kgc', 'tool-registry.json');
       assert.ok(existsSync(configPath));
       assert.ok(existsSync(registryPath));
 
@@ -193,7 +194,7 @@ describe('KGC CLI - New Commands', () => {
       assert.equal(data.initialized, false);
 
       // Verify files were NOT created
-      const configPath = join(__dirname, '..', 'var', 'kgc', 'config.json');
+      const configPath = join(TEST_WORKSPACE, 'var', 'kgc', 'config.json');
       assert.ok(!existsSync(configPath));
     });
   });
@@ -255,7 +256,7 @@ describe('KGC CLI - New Commands', () => {
   describe('validate command', () => {
     it('should validate valid RDF from file', async () => {
       // Create test RDF file
-      const testFile = join(__dirname, 'test-data.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-data.ttl');
       const validRDF = `
         @prefix ex: <http://example.org/> .
         ex:subject ex:predicate ex:object .
@@ -291,7 +292,7 @@ describe('KGC CLI - New Commands', () => {
 
     it('should detect validation errors', async () => {
       // Create invalid RDF file (incomplete triples)
-      const testFile = join(__dirname, 'test-invalid.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-invalid.ttl');
       const invalidRDF = `
         @prefix ex: <http://example.org/> .
         ex:subject ex:predicate
@@ -311,7 +312,7 @@ describe('KGC CLI - New Commands', () => {
 
     it('should fail in strict mode with warnings', async () => {
       // Create RDF with warnings (missing terminator)
-      const testFile = join(__dirname, 'test-warnings.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-warnings.ttl');
       const rdfWithWarnings = `
         @prefix ex: <http://example.org/> .
         ex:subject ex:predicate ex:object
@@ -340,7 +341,7 @@ describe('KGC CLI - New Commands', () => {
   describe('stats command', () => {
     it('should compute graph statistics from file', async () => {
       // Create test RDF file
-      const testFile = join(__dirname, 'test-stats.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-stats.ttl');
       const rdfData = `
         @prefix ex: <http://example.org/> .
         @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -387,7 +388,7 @@ describe('KGC CLI - New Commands', () => {
     });
 
     it('should show detailed statistics with --detailed flag', async () => {
-      const testFile = join(__dirname, 'test-detailed.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-detailed.ttl');
       const rdfData = `
         @prefix ex: <http://example.org/> .
         ex:alice ex:knows ex:bob .
@@ -410,7 +411,7 @@ describe('KGC CLI - New Commands', () => {
     });
 
     it('should handle empty input', async () => {
-      const testFile = join(__dirname, 'test-empty.ttl');
+      const testFile = join(TEST_WORKSPACE, 'test-empty.ttl');
       await writeFile(testFile, '');
 
       const result = await execCLI(['stats', testFile, '--json']);
