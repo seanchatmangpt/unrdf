@@ -13,16 +13,14 @@ import { dataFactory } from '@unrdf/oxigraph';
 import { VectorClock, now, toISO } from './time.mjs';
 import { QueryCache } from './cache.mjs';
 import { reconstructState } from './freeze.mjs';
+import { GRAPHS } from './constants.mjs';
 import { ValidationMode, guardDeltaValidation } from './guards.mjs';
 
 /**
  * Well-known graphs in the 4D store
  */
-export const GRAPHS = {
-  UNIVERSE: 'http://kgc.io/graphs/universe',
-  EVENT_LOG: 'http://kgc.io/graphs/event-log',
-  SYSTEM: 'http://kgc.io/graphs/system',
-};
+// Single source of truth: freeze/reconstruct/temporal modules use constants.mjs
+export { GRAPHS };
 
 /**
  * Predicates for event metadata

@@ -305,8 +305,8 @@ export function validateAllocation(workItems, agents, allocation) {
       continue;
     }
 
-    for (const requiredCap of item.requiredCapabilities) {
-      if (!agent.capabilities.includes(requiredCap)) {
+    for (const requiredCap of item.requiredCapabilities ?? []) {
+      if (!(agent.capabilities ?? []).includes(requiredCap)) {
         errors.push(
           `Agent ${agent.id} missing capability ${requiredCap} for item ${item.id}`
         );
