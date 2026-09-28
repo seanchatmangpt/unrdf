@@ -47,6 +47,7 @@
     "@unrdf/hooks": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "citty": "^0.1.6",
+    "hash-wasm": "^4.12.0",
     "lru-cache": "^10.0.0",
     "ws": "^8.18.3",
     "zod": "^4.3.6"

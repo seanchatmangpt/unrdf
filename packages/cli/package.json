@@ -55,9 +55,11 @@
     "@unrdf/project-engine": "workspace:*",
     "@unrdf/receipts": "workspace:*",
     "@unrdf/streaming": "workspace:*",
+    "archiver": "^7.0.1",
     "citty": "^0.1.6",
     "glob": "^10.3.10",
     "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
     "nunjucks": "^3.2.4",
     "table": "^6.9.0",
     "yaml": "^2.8.2",
@@ -83,5 +85,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "optionalDependencies": {
+    "check-disk-space": "^3.4.0"
   }
 }

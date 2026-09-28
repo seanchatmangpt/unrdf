@@ -57,7 +57,8 @@
     "@unrdf/receipts": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "@unrdf/v6-core": "workspace:*",
-    "coi-serviceworker": "^0.1.7"
+    "coi-serviceworker": "^0.1.7",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

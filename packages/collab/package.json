@@ -50,7 +50,8 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/ws": "^8.5.12",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.15",
+    "vue": "^3.5.25"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -67,5 +68,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.25"
   }
 }

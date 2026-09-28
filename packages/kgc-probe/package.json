@@ -47,12 +47,14 @@
     "artifact-verification"
   ],
   "dependencies": {
-    "@unrdf/kgc-substrate": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/v6-core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
+    "@noble/hashes": "^2.0.1",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/kgc-substrate": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
     "hash-wasm": "^4.12.0",
+    "n3": "^1.26.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {

@@ -39,7 +39,11 @@
   ],
   "dependencies": {
     "@unrdf/core": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/streaming": "workspace:*",
+    "rdf-canonize": "^5.0.0",
+    "unctx": "^2.4.1",
     "vue": "^3.5.25"
   },
   "peerDependencies": {
