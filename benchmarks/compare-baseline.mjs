@@ -304,7 +304,7 @@ async function main() {
     // Parse arguments
     const args = process.argv.slice(2);
     const baselineVersion = args[0] || 'v6.0.0';
-    const resultsPath = args[1] || '/home/user/unrdf/benchmarks/results/benchmark-results.json';
+    const resultsPath = args[1] || path.join(__dirname, 'results', 'benchmark-results.json');
 
     log('🔍 Performance Regression Detector', 'bold');
     log(`Baseline: ${baselineVersion}`, 'cyan');
