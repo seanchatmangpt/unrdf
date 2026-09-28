@@ -498,12 +498,14 @@ export class ComplianceReceiptFramework {
       return null;
     }
 
-    const maxRetention = Math.max(
-      ...receipt.rulesEvaluated.map(ruleId => {
-        const rule = this.ruleEngine.rules.get(ruleId);
-        return rule?.retentionYears || this.retentionPolicy.defaultYears;
-      })
-    );
+    // Events no rule applies to still fall under the default retention period
+    // (Math.max() of an empty list would be -Infinity).
+    const ruleRetention = receipt.rulesEvaluated.map(ruleId => {
+      const rule = this.ruleEngine.rules.get(ruleId);
+      return rule?.retentionYears || this.retentionPolicy.defaultYears;
+    });
+    const maxRetention =
+      ruleRetention.length > 0 ? Math.max(...ruleRetention) : this.retentionPolicy.defaultYears;
 
     const deleteAfter = receipt.timestamp + BigInt(maxRetention * 365 * 24 * 60 * 60) * 1_000_000_000n;
 
