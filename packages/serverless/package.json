@@ -21,7 +21,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --no-coverage",
+    "test": "vitest run --no-coverage && node --test test/dynamodb-core.node.test.mjs",
     "test:coverage": "vitest run --coverage",
     "test:fast": "vitest run --no-coverage",
     "test:watch": "vitest --no-coverage",

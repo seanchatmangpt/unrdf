@@ -18,8 +18,8 @@ import { pipeline } from 'node:stream/promises';
 import { z } from 'zod';
 
 const BundlerConfigSchema = z.object({
-  entryPoint: z.string(),
-  outDir: z.string(),
+  entryPoint: z.string().min(1),
+  outDir: z.string().min(1),
   minify: z.boolean().default(true),
   sourcemap: z.boolean().default(false),
   external: z.array(z.string()).default(['@aws-sdk/*']),
