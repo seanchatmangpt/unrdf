@@ -230,17 +230,22 @@ async function setupTestInventories() {
     }
   };
 
+  // bin/run.mjs writes one diataxis.json per package under ARTIFACTS/diataxis/<name>/
+  for (const n of [1, 2, 3]) {
+    await mkdir(join(diataxisDir, '@unrdf', `test-pkg-${n}`), { recursive: true });
+  }
+
   // Write inventory files
   await writeFile(
-    join(diataxisDir, 'test-pkg-1.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-1', 'diataxis.json'),
     JSON.stringify(inventory1, null, 2)
   );
   await writeFile(
-    join(diataxisDir, 'test-pkg-2.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-2', 'diataxis.json'),
     JSON.stringify(inventory2, null, 2)
   );
   await writeFile(
-    join(diataxisDir, 'test-pkg-3.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-3', 'diataxis.json'),
     JSON.stringify(inventory3, null, 2)
   );
 }
