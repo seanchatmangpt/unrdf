@@ -340,6 +340,9 @@ importers:
       '@unrdf/hooks':
         specifier: workspace:*
         version: link:../hooks
+      '@unrdf/project-engine':
+        specifier: workspace:*
+        version: link:../project-engine
       '@unrdf/streaming':
         specifier: workspace:*
         version: link:../streaming
@@ -381,6 +384,9 @@ importers:
         specifier: ^4.1.13
         version: 4.4.3
     devDependencies:
+      nunjucks:
+        specifier: ^3.2.4
+        version: 3.2.4(chokidar@3.6.0)
       vitest:
         specifier: ^4.0.16
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.4))
@@ -1547,12 +1553,21 @@ importers:
 
   packages/project-engine:
     dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.1
       '@unrdf/core':
         specifier: workspace:*
         version: link:../core
       '@unrdf/knowledge-engine':
         specifier: workspace:*
         version: link:../knowledge-engine
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: ^24.10.1

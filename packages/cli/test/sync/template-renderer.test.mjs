@@ -320,7 +320,7 @@ Content`);
     expect(shouldSkip({ skipIf: '/prod/' }, { env: 'development' })).toBe(false);
     expect(shouldSkip({ skipIf: '/^test/' }, { mode: 'test-value' })).toBe(true);
     expect(shouldSkip({ skipIf: '/^test/' }, { mode: 'production' })).toBe(false);
-    expect(shouldSkip({ skipIf: '/\\d+/' }, { version: '[VERSION]' })).toBe(true);
+    expect(shouldSkip({ skipIf: '/\\d+/' }, { version: 'v1.2.3' })).toBe(true);
     expect(shouldSkip({ skipIf: '/\\d+/' }, { version: 'stable' })).toBe(false);
 
     // Legacy equality still works

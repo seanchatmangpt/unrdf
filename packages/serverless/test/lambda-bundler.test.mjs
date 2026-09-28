@@ -46,6 +46,12 @@ describe('LambdaBundler', () => {
       export function handler() {
         return { statusCode: 200, body: 'OK' };
       }
+${Array.from(
+  { length: 20 },
+  (_, i) => `      export function handler${i}(event) {
+        return { statusCode: 200, body: JSON.stringify({ route: 'route-${i}', event }) };
+      }`
+).join('\n')}
     `
     );
 

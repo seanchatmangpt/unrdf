@@ -15,7 +15,7 @@ import { basename, dirname, resolve, isAbsolute } from 'node:path';
 import matter from 'gray-matter';
 import { table } from 'table';
 import { COMMON_PREFIXES } from '@unrdf/core';
-import * as yaml from 'js-yaml';
+import * as yaml from 'yaml';
 
 import { RdfTemplateLoader, extractPrefixesFromTurtle } from '../../lib/rdf-template-loader.mjs';
 import { executeSparqlQuery } from './sync/sparql-executor.mjs';
@@ -70,7 +70,7 @@ function loadLocalCatalog(cwd = process.cwd()) {
 
   try {
     const catalogContent = readFileSync(localCatalogPath, 'utf-8');
-    return yaml.load(catalogContent);
+    return yaml.parse(catalogContent);
   } catch (error) {
     console.error(`Warning: Failed to load local template catalog: ${error.message}`);
     return { templates: {}, categories: {} };
@@ -87,7 +87,7 @@ function loadTemplateCatalog() {
       return { templates: {}, categories: {}, frontmatter_schema: {} };
     }
     const catalogContent = readFileSync(TEMPLATE_CATALOG_PATH, 'utf-8');
-    return yaml.load(catalogContent);
+    return yaml.parse(catalogContent);
   } catch (error) {
     console.error(`Warning: Failed to load template catalog: ${error.message}`);
     return { templates: {}, categories: {}, frontmatter_schema: {} };

@@ -16,3 +16,14 @@ export {
   previewPlan,
   checkPlanApplicability,
 } from './materialize-apply.mjs';
+
+// Project initialization pipeline (used by `unrdf init`)
+export { createProjectInitializationPipeline, inferEntityName } from './initialize.mjs';
+
+// Building blocks
+export { scanFileSystemToStore, DEFAULT_IGNORE_PATTERNS } from './fs-scan.mjs';
+export { detectStackFromFs } from './stack-detect.mjs';
+export { buildProjectModelFromFs } from './project-model.mjs';
+export { classifyFiles, classifyPath, ROLE_PATTERNS } from './file-roles.mjs';
+export { diffProjectStructure } from './project-diff.mjs';
+export { ProjectStructureLens } from './lens/project-structure.mjs';

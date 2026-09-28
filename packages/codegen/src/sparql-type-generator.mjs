@@ -70,15 +70,16 @@ export async function generateTypesFromSPARQL(store, options = {}) {
     const classIRI = classBinding.get('class')?.value;
     if (!classIRI) continue;
 
-    const className = extractLocalName(classIRI);
+    const className = extractLocalName(classIRI, true);
     const comment = classBinding.get('comment')?.value;
 
     // Query properties for this class
     const propQuery = `
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
       SELECT ?prop ?propComment ?range ?minCardinality ?maxCardinality WHERE {
-        ?prop rdfs:domain <${classIRI}> .
+        ?prop rdfs:domain <${assertSafeIri(classIRI)}> .
         OPTIONAL { ?prop rdfs:comment ?propComment }
         OPTIONAL { ?prop rdfs:range ?range }
         OPTIONAL { ?prop owl:minCardinality ?minCardinality }
@@ -202,7 +203,7 @@ function mapXSDToZod(rangeIRI) {
 
   // Check if it's a reference to another class
   if (rangeIRI.includes('#') || rangeIRI.includes('/')) {
-    const className = extractLocalName(rangeIRI);
+    const className = extractLocalName(rangeIRI, true);
     return `z.lazy(() => ${className}Schema)`;
   }
 
@@ -210,21 +211,32 @@ function mapXSDToZod(rangeIRI) {
 }
 
 /**
- * Extract local name from IRI
+ * Guard an IRI before it is placed inside `<...>` in a SPARQL query.
+ * The IRI comes from query results (untrusted data), so anything that could
+ * terminate the IRI reference or inject query syntax is rejected.
+ * @param {string} iri - IRI text
+ * @returns {string} The same IRI when safe
+ * @throws {Error} If the IRI contains forbidden characters
+ */
+function assertSafeIri(iri) {
+  if (/[\s<>"{}|^`\\]/.test(iri)) {
+    throw new Error(`Unsafe IRI rejected for SPARQL interpolation: ${JSON.stringify(iri)}`);
+  }
+  return iri;
+}
+
+/**
+ * Extract local name from IRI.
+ * Class names are PascalCase (type identifiers); property names keep their
+ * original casing (they are object keys such as `isActive`).
  * @param {string} iri - Full IRI
+ * @param {boolean} [pascalCase=false] - Upper-case the first character
  * @returns {string} Local name
  */
-function extractLocalName(iri) {
+function extractLocalName(iri, pascalCase = false) {
   const match = iri.match(/[#/]([^#/]+)$/);
-  if (!match) {
-    // Fallback: use last segment
-    const parts = iri.split('/');
-    return parts[parts.length - 1] || iri;
-  }
-
-  // Convert to PascalCase
-  const name = match[1];
-  return name.charAt(0).toUpperCase() + name.slice(1);
+  const name = match ? match[1] : iri.split('/').pop() || iri;
+  return pascalCase ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 }
 
 /**

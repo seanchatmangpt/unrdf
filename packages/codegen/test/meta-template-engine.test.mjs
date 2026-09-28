@@ -3,58 +3,19 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import nunjucks from 'nunjucks';
 import { MetaTemplateEngine, generateCRUDTemplate, generateTestTemplate } from '../src/meta-template-engine.mjs';
 
-// Mock renderer for testing
-class MockRenderer {
-  async render(template, context, options) {
-    // Simple variable replacement
-    let result = template;
-
-    // Replace {{ variable }}
-    result = result.replace(/\{\{\s*(\w+)\s*\}\}/g, (match, name) => {
-      return context[name] || '';
-    });
-
-    // Replace {{ variable | filter }}
-    result = result.replace(/\{\{\s*(\w+)\s*\|\s*(\w+)\s*\}\}/g, (match, name, filter) => {
-      const value = context[name] || '';
-      if (filter === 'lower') return String(value).toLowerCase();
-      if (filter === 'capitalize') return String(value).charAt(0).toUpperCase() + String(value).slice(1);
-      return value;
-    });
-
-    // Handle loops: {% for item in items %}...{% endfor %}
-    result = result.replace(/\{%\s*for\s+(\w+)\s+in\s+(\w+)\s*%\}([\s\S]*?)\{%\s*endfor\s*%\}/g,
-      (match, itemVar, arrayName, loopContent) => {
-        const array = context[arrayName] || [];
-        return array.map((item, index) => {
-          let itemContent = loopContent;
-          itemContent = itemContent.replace(/\{\{\s*(\w+)\s*\}\}/g, (m, prop) => {
-            if (prop === itemVar) return item;
-            if (prop === 'loop.last') return index === array.length - 1 ? 'true' : '';
-            return context[prop] || '';
-          });
-          return itemContent;
-        }).join('\n');
-      }
-    );
-
-    // Handle conditionals: {% if condition %}...{% endif %}
-    result = result.replace(/\{%\s*if\s+(\w+)\s*%\}([\s\S]*?)\{%\s*endif\s*%\}/g,
-      (match, condVar, content) => {
-        return context[condVar] ? content : '';
-      }
-    );
-
-    // Remove comments: {# comment #}
-    result = result.replace(/\{#[\s\S]*?#\}/g, '');
-
+// Real Nunjucks renderer (the engine's templates use Nunjucks syntax: elif, ===, ternaries, filters)
+class NunjucksRenderer {
+  async render(template, context, options = {}) {
+    const env = new nunjucks.Environment(null, { autoescape: false });
+    for (const [name, fn] of Object.entries(options.filters || {})) {
+      env.addFilter(name, fn);
+    }
     return {
-      content: result,
-      metadata: {
-        renderTime: new Date().toISOString(),
-      },
+      content: env.renderString(template, context),
+      metadata: { renderTime: new Date().toISOString() },
     };
   }
 }
@@ -64,7 +25,7 @@ describe('MetaTemplateEngine', () => {
   let renderer;
 
   beforeEach(() => {
-    renderer = new MockRenderer();
+    renderer = new NunjucksRenderer();
     engine = new MetaTemplateEngine(renderer);
   });
 
@@ -101,7 +62,8 @@ export const {{ entityName }}Schema = z.object({});
   });
 
   it('should render generated template with data', async () => {
-    const metaTemplate = 'Hello {{ name }}';
+    // Stage 1 renders the meta-template; {% raw %} keeps {{ name }} as a stage-2 placeholder
+    const metaTemplate = 'Hello {% raw %}{{ name }}{% endraw %}';
 
     await engine.generateTemplate(metaTemplate, {
       templateName: 'greeting',

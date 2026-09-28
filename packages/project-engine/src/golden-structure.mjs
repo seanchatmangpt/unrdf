@@ -5,7 +5,6 @@
 
 import { promises as _fs } from 'fs';
 import { createStore as _createStore } from '@unrdf/oxigraph';
-import { parseTurtle } from '@unrdf/knowledge-engine';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';
 
@@ -37,6 +36,8 @@ export async function generateGoldenStructure(options) {
       span.setAttribute('golden.profile', profile);
 
       const ttl = getGoldenStructureTtl(profile);
+      // Lazy: the knowledge-engine barrel is heavy; only golden-structure needs it
+      const { parseTurtle } = await import('@unrdf/knowledge-engine');
       const store = await parseTurtle(ttl, 'http://example.org/unrdf/golden#');
 
       span.setAttribute('golden.store_size', store.size);

@@ -47,6 +47,7 @@
     "@unrdf/daemon": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/project-engine": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "gray-matter": "^4.0.3",
