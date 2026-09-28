@@ -14,10 +14,10 @@
  * 5. Forensic Analysis Support (5% of use cases)
  */
 
-import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
+import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
 import { randomUUID } from 'crypto';
-import { _writeFile, mkdir } from 'node:fs/promises';
-import { _join } from 'node:path';
+import { writeFile as _writeFile, mkdir } from 'node:fs/promises';
+import { join as _join } from 'node:path';
 
 console.log('🌌 Lockchain Dark Matter Test\n');
 
@@ -33,7 +33,7 @@ async function testDarkMatterUseCases() {
     // === Dark Matter Use Case 1: Audit Trail for Compliance (40% of use cases) ===
     console.log('📋 Dark Matter 1: Audit Trail for Compliance (40% of use cases)');
 
-    const complianceLockchain = createRealLockchainWriter({
+    const complianceLockchain = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/compliance-audit',
       batchSize: 1, // Immediate commit for compliance
@@ -89,7 +89,7 @@ async function testDarkMatterUseCases() {
     // === Dark Matter Use Case 2: Data Integrity Verification (25% of use cases) ===
     console.log('\n🔐 Dark Matter 2: Data Integrity Verification (25% of use cases)');
 
-    const integrityLockchain = createRealLockchainWriter({
+    const integrityLockchain = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/data-integrity',
       batchSize: 5,
@@ -159,7 +159,7 @@ async function testDarkMatterUseCases() {
     // === Dark Matter Use Case 3: Immutable Event Logging (20% of use cases) ===
     console.log('\n📝 Dark Matter 3: Immutable Event Logging (20% of use cases)');
 
-    const eventLockchain = createRealLockchainWriter({
+    const eventLockchain = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/event-logging',
       batchSize: 10,
@@ -232,7 +232,7 @@ async function testDarkMatterUseCases() {
     // === Dark Matter Use Case 4: Cross-System Reconciliation (10% of use cases) ===
     console.log('\n🔄 Dark Matter 4: Cross-System Reconciliation (10% of use cases)');
 
-    const reconciliationLockchain = createRealLockchainWriter({
+    const reconciliationLockchain = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/reconciliation',
       batchSize: 2,
@@ -307,7 +307,7 @@ async function testDarkMatterUseCases() {
     // === Dark Matter Use Case 5: Forensic Analysis Support (5% of use cases) ===
     console.log('\n🔍 Dark Matter 5: Forensic Analysis Support (5% of use cases)');
 
-    const forensicLockchain = createRealLockchainWriter({
+    const forensicLockchain = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/forensic-analysis',
       batchSize: 1, // Immediate commit for forensic evidence

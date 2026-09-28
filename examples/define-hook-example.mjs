@@ -5,7 +5,7 @@
  */
 
 import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
-import { namedNode, literal, quad } from '../packages/rdf/quad-utils.mjs';
+import { namedNode, literal, quad } from '../packages/test-utils/src/index.mjs';
 
 /**
  * Example hook for parliamentary motion compliance.

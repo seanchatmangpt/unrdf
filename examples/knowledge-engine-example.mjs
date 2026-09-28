@@ -19,9 +19,9 @@ import {
   reason,
   TransactionManager,
   createKnowledgeEngine,
-} from '../packages/knowledge-engine.mjs';
+} from '../packages/knowledge-engine/src/index.mjs';
 import { createStore } from '../packages/oxigraph/src/index.mjs';
-import { namedNode, quad } from '../packages/rdf/quad-utils.mjs';
+import { namedNode, quad } from '../packages/test-utils/src/index.mjs';
 
 /**
  * Main example function demonstrating all Knowledge Engine capabilities.

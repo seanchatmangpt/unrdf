@@ -9,7 +9,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { initStore } from '../packages/composables/src/context/index.mjs';
 
 // Example Turtle data

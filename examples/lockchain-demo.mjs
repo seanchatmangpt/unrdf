@@ -7,8 +7,8 @@
  * and verifiable audit trails.
  */
 
-import { createStore } from '../packages/oxigraph/src/index.mjs';
-import { _createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { createLockchainWriter as _createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
 import { TransactionManager } from '../packages/knowledge-engine/src/transaction.mjs';
 
 console.log('🔗 Lockchain Demo\n');
@@ -33,9 +33,11 @@ async function demonstrateLockchain() {
 
     // Add some initial data
     store.add(
-      { value: 'ex:alice', termType: 'NamedNode' },
-      { value: 'ex:hasRole', termType: 'NamedNode' },
-      { value: 'ex:admin', termType: 'NamedNode' }
+      dataFactory.quad(
+        dataFactory.namedNode('ex:alice'),
+        dataFactory.namedNode('ex:hasRole'),
+        dataFactory.namedNode('ex:admin')
+      )
     );
 
     console.log('📊 Initial store size:', store.size);

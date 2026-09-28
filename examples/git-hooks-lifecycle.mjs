@@ -12,7 +12,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { registerHook } from '../packages/knowledge-engine/src/engines/minimal-hook-manager.mjs';
 import { ingress, egress } from '../packages/knowledge-engine/src/engines/deterministic-adapters.mjs';
 import { writeWithProv } from '../packages/knowledge-engine/src/engines/mandatory-provenance.mjs';

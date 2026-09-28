@@ -8,8 +8,8 @@ import {
   usePiProfile,
   useGammaChecker,
   useHTFFramework,
-  _DeltaFamilies,
-  _StandardInvariants,
+  DeltaFamilies as _DeltaFamilies,
+  StandardInvariants as _StandardInvariants,
 } from '../packages/react-hooks/htf/index.mjs';
 
 // ============================================

@@ -90,7 +90,7 @@ rdf load examples/fibo-ontology-snippet.nt
 
 **Structure:**
 ```yaml
-version: "latest"
+version: "1.0.0"
 global:
   receipts:
     enabled: true

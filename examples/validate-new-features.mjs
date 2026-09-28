@@ -22,7 +22,7 @@ import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchai
 import { createEffectSandbox } from '../packages/knowledge-engine/src/effect-sandbox.mjs';
 import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
 import { createQueryOptimizer } from '../packages/knowledge-engine/src/query-optimizer.mjs';
-import { scenario, _expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
+import { scenario, expect as _expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
 
 console.log('🚀 UNRDF New Features Validation\n');
 
