@@ -8,6 +8,14 @@ let lastTime = 0n;
 let clockJumpDetected = false;  // Track if monotonic clock had to auto-increment
 const CLOCK_JUMP_THRESHOLD = 1_000_000_000_000n;  // 1 second in nanoseconds
 
+// process.hrtime.bigint() has an arbitrary origin (roughly system uptime), so raw values
+// are not timestamps: toISO() rendered them as 1970-01-01T00:14:17. Anchor it to wall-clock
+// epoch once at load so values are real Unix-epoch nanoseconds and still strictly monotonic.
+const HRTIME_EPOCH_OFFSET_NS =
+  typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function'
+    ? BigInt(Date.now()) * 1_000_000n - process.hrtime.bigint()
+    : 0n;
+
 // Deterministic mode: Fixed start time (2024-01-01T00:00:00.000Z)
 const DETERMINISTIC_START = 1704067200000000000n; // Nanoseconds
 
@@ -32,7 +40,7 @@ export function now() {
     current = lastTime === 0n ? DETERMINISTIC_START : lastTime + 1n;
   } else if (typeof process !== 'undefined' && process.hrtime && typeof process.hrtime.bigint === 'function') {
     // Node.js: Use nanosecond-precision hrtime
-    current = process.hrtime.bigint();
+    current = process.hrtime.bigint() + HRTIME_EPOCH_OFFSET_NS;
   } else {
     // Browser: Convert milliseconds to nanoseconds
     current = BigInt(Math.floor(performance.now() * 1_000_000));
@@ -41,7 +49,8 @@ export function now() {
   // Detect large time jumps (skip in deterministic mode)
   if (typeof process === 'undefined' || process.env?.DETERMINISTIC !== '1') {
     const jump = current - lastTime;
-    if (jump < -CLOCK_JUMP_THRESHOLD || jump > CLOCK_JUMP_THRESHOLD) {
+    // The first call has no predecessor (lastTime is 0n), so it is not a jump
+    if (lastTime !== 0n && (jump < -CLOCK_JUMP_THRESHOLD || jump > CLOCK_JUMP_THRESHOLD)) {
       clockJumpDetected = true;
       if (typeof console !== 'undefined' && console.warn) {
         console.warn(`[KGC Time] Clock jump detected: ${Number(jump / 1_000_000_000n).toFixed(2)}s`);
