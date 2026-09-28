@@ -15,7 +15,7 @@
  */
 
 import { z } from 'zod';
-import { trace } from '@opentelemetry/api';
+import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 const tracer = trace.getTracer('@unrdf/federation/predictor');
 
@@ -75,11 +75,15 @@ const HistoricalSampleSchema = z.object({
     success: z.boolean(),
     latency: z.number().nonnegative(),
     strategy: z.string(),
-    peerResults: z.array(z.object({
-      peerId: z.string(),
-      success: z.boolean(),
-      latency: z.number().nonnegative(),
-    })).optional(),
+    peerResults: z
+      .array(
+        z.object({
+          peerId: z.string(),
+          success: z.boolean(),
+          latency: z.number().nonnegative(),
+        })
+      )
+      .optional(),
   }),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
@@ -119,8 +123,8 @@ const DEFAULT_FEATURE_WEIGHTS = {
   recentSuccessRate: 0.13,
 
   // Historical performance (20%)
-  recentAvgLatency: 0.10,
-  recentErrorRate: 0.10,
+  recentAvgLatency: 0.1,
+  recentErrorRate: 0.1,
 
   // System state (10%)
   currentConcurrency: 0.05,
@@ -197,7 +201,13 @@ export function createPredictor(config = {}) {
    * @returns {Object} Prediction result
    */
   function predict(features) {
-    const span = tracer.startSpan('predictor.predict');
+    const span = tracer.startSpan('federation.predictor_predict', {
+      attributes: {
+        'federation.node_id': process.env.FEDERATION_NODE_ID || `node-${process.pid}`,
+        'federation.peer_count': 0,
+        'federation.receipt_count': 0,
+      },
+    });
 
     try {
       const validatedFeatures = FeatureVectorSchema.parse(features);
@@ -247,12 +257,12 @@ export function createPredictor(config = {}) {
         'prediction.latency_ms': predictedLatency,
       });
 
-      span.setStatus({ code: 0 }); // OK
+      span.setStatus({ code: SpanStatusCode.OK });
 
       return PredictionResultSchema.parse(result);
     } catch (error) {
       span.recordException(error);
-      span.setStatus({ code: 1, message: error.message });
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
       throw new Error(`Prediction failed: ${error.message}`, { cause: error });
     } finally {
       span.end();
@@ -270,16 +280,22 @@ export function createPredictor(config = {}) {
     const sample = {
       timestamp: Date.now(),
       features: FeatureVectorSchema.parse(features),
-      outcome: z.object({
-        success: z.boolean(),
-        latency: z.number().nonnegative(),
-        strategy: z.string(),
-        peerResults: z.array(z.object({
-          peerId: z.string(),
+      outcome: z
+        .object({
           success: z.boolean(),
           latency: z.number().nonnegative(),
-        })).optional(),
-      }).parse(outcome),
+          strategy: z.string(),
+          peerResults: z
+            .array(
+              z.object({
+                peerId: z.string(),
+                success: z.boolean(),
+                latency: z.number().nonnegative(),
+              })
+            )
+            .optional(),
+        })
+        .parse(outcome),
       metadata,
     };
 
@@ -310,13 +326,19 @@ export function createPredictor(config = {}) {
    * @returns {Object} Training metrics
    */
   function train() {
-    const span = tracer.startSpan('predictor.train');
+    const span = tracer.startSpan('federation.predictor_train', {
+      attributes: {
+        'federation.node_id': process.env.FEDERATION_NODE_ID || `node-${process.pid}`,
+        'federation.peer_count': 0,
+        'federation.receipt_count': 0,
+      },
+    });
 
     try {
       if (history.length < validatedConfig.minSamplesForTraining) {
         span.setAttribute('training.skipped', true);
         span.setAttribute('training.reason', 'insufficient_samples');
-        span.setStatus({ code: 0 });
+        span.setStatus({ code: SpanStatusCode.OK });
 
         return {
           trained: false,
@@ -345,7 +367,7 @@ export function createPredictor(config = {}) {
         'training.bypass_rate': metrics.bypassRate,
       });
 
-      span.setStatus({ code: 0 });
+      span.setStatus({ code: SpanStatusCode.OK });
 
       return {
         trained: true,
@@ -354,7 +376,7 @@ export function createPredictor(config = {}) {
       };
     } catch (error) {
       span.recordException(error);
-      span.setStatus({ code: 1, message: error.message });
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
       throw error;
     } finally {
       span.end();
@@ -505,9 +527,10 @@ export function createPredictor(config = {}) {
    */
   function getStats() {
     const successSamples = history.filter(s => s.outcome.success);
-    const avgLatency = successSamples.length > 0
-      ? successSamples.reduce((sum, s) => sum + s.outcome.latency, 0) / successSamples.length
-      : 0;
+    const avgLatency =
+      successSamples.length > 0
+        ? successSamples.reduce((sum, s) => sum + s.outcome.latency, 0) / successSamples.length
+        : 0;
 
     return {
       historySize: history.length,
@@ -724,7 +747,7 @@ function calculatePredictionScoreFromHistory(sample) {
 
   score += (sample.features.healthyPeerCount / Math.max(sample.features.totalPeerCount, 1)) * 0.2;
   score += sample.features.recentSuccessRate * 0.3;
-  score -= (sample.features.variableCount * 0.02);
+  score -= sample.features.variableCount * 0.02;
 
   return Math.max(0, Math.min(1, score));
 }

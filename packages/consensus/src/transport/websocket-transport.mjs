@@ -41,7 +41,7 @@ const MessageSchema = z.object({
 const TransportConfigSchema = z.object({
   nodeId: z.string(),
   port: z.number().int().positive(),
-  host: z.string().default('0.0.0.0'),
+  host: z.string().default('latest.0'),
   reconnectInterval: z.number().positive().default(1000),
   reconnectMaxRetries: z.number().int().positive().default(10),
   messageTimeout: z.number().positive().default(5000),
@@ -88,17 +88,8 @@ export class WebSocketTransport extends EventEmitter {
     this.pendingMessages = new Map(); // messageId -> { resolve, reject, timeout }
     this.peers = new Map(); // nodeId -> { host, port }
     this.reconnectAttempts = new Map(); // nodeId -> attempts
-    this.reconnectTimers = new Set();
-  }
-
-  /**
-   * Emit 'error' without crashing the process when nobody listens
-   * (EventEmitter throws on unhandled 'error'; a refused peer connection must not).
-   * @param {*} payload
-   * @private
-   */
-  emitError(payload) {
-    if (this.listenerCount('error') > 0) this.emit('error', payload);
+    this.reconnectTimers = new Map(); // nodeId -> Timeout
+    this.closed = false;
   }
 
   /**
@@ -121,13 +112,7 @@ export class WebSocketTransport extends EventEmitter {
         });
 
         this.server.on('error', error => {
-          this.emitError(error);
-        });
-
-        // Resolve only once the socket is bound (or fail on bind errors such as EADDRINUSE)
-        await new Promise((resolve, reject) => {
-          this.server.once('listening', resolve);
-          this.server.once('error', reject);
+          this.reportError(error);
         });
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -169,7 +154,7 @@ export class WebSocketTransport extends EventEmitter {
           this.emit('message', message);
         }
       } catch (error) {
-        this.emitError({ error, source: 'message_parse' });
+        this.reportError({ error, source: 'message_parse' });
       }
     });
 
@@ -182,7 +167,7 @@ export class WebSocketTransport extends EventEmitter {
     });
 
     ws.on('error', error => {
-      this.emitError({ error, nodeId });
+      this.reportError({ error, nodeId });
     });
   }
 
@@ -241,7 +226,7 @@ export class WebSocketTransport extends EventEmitter {
             this.emit('message', message);
           }
         } catch (error) {
-          this.emitError({ error, source: 'message_parse' });
+          this.reportError({ error, source: 'message_parse' });
         }
       });
 
@@ -252,10 +237,10 @@ export class WebSocketTransport extends EventEmitter {
       });
 
       ws.on('error', error => {
-        this.emitError({ error, nodeId });
+        this.reportError({ error, nodeId });
       });
     } catch (error) {
-      this.emitError({ error, nodeId, source: 'connect' });
+      this.reportError({ error, nodeId, source: 'connect' });
       this.scheduleReconnect(nodeId);
     }
   }
@@ -279,11 +264,13 @@ export class WebSocketTransport extends EventEmitter {
     // Exponential backoff
     const delay = this.config.reconnectInterval * Math.pow(2, attempts);
 
+    if (this.closed) return;
+
     const timer = setTimeout(() => {
-      this.reconnectTimers.delete(timer);
+      this.reconnectTimers.delete(nodeId);
       this.connectToPeer(nodeId);
     }, delay);
-    this.reconnectTimers.add(timer);
+    this.reconnectTimers.set(nodeId, timer);
   }
 
   /**
@@ -399,14 +386,32 @@ export class WebSocketTransport extends EventEmitter {
   }
 
   /**
+   * Report a transport error without crashing when no 'error' listener is attached
+   * @param {Object} payload - Error payload
+   * @private
+   */
+  reportError(payload) {
+    // Connectivity errors (e.g. ECONNREFUSED to a peer that is not up yet) must not crash the
+    // process via an unhandled EventEmitter 'error'; surface as 'transport_error' when nobody listens.
+    if (this.listenerCount('error') > 0) {
+      this.emit('error', payload);
+    } else {
+      this.emit('transport_error', payload);
+    }
+  }
+
+  /**
    * Shutdown the transport
    * @returns {Promise<void>}
    */
   async shutdown() {
-    // Stop pending reconnect attempts
-    for (const timer of this.reconnectTimers) clearTimeout(timer);
+    this.closed = true;
+
+    // Cancel pending reconnects so no connection attempts happen after shutdown
+    for (const timer of this.reconnectTimers.values()) {
+      clearTimeout(timer);
+    }
     this.reconnectTimers.clear();
-    this.peers.clear();
 
     // Close all peer connections
     for (const ws of this.connections.values()) {
@@ -414,10 +419,11 @@ export class WebSocketTransport extends EventEmitter {
     }
     this.connections.clear();
 
-    // Close server
+    // Close server (terminate inbound clients so close() cannot hang on open sockets)
     if (this.server) {
-      // server.close() waits for inbound clients; terminate them so shutdown cannot hang
-      for (const client of this.server.clients) client.terminate();
+      for (const client of this.server.clients ?? []) {
+        client.terminate();
+      }
       await new Promise(resolve => {
         this.server.close(resolve);
       });

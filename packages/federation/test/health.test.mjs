@@ -3,12 +3,9 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { createRequire } from 'node:module';
 import { createMockFetch } from '../../test-utils/src/index.mjs';
 import { createCoordinator } from '../src/federation/coordinator.mjs';
 import { createHealthEndpoint } from '../src/federation/health.mjs';
-
-const pkg = createRequire(import.meta.url)('../package.json');
 
 /* ========================================================================= */
 /* Mock Setup                                                               */
@@ -50,8 +47,7 @@ describe('Health Endpoint', () => {
 
     expect(status.status).toBe('healthy');
     expect(status.uptime).toBeGreaterThanOrEqual(0);
-    expect(status.version).toBe(pkg.version);
-    expect(status.version).not.toContain('[');
+    expect(status.version).toBe('5.0.1');
     expect(status.peers.healthy).toBe(0);
     expect(status.peers.total).toBe(0);
     expect(status.queries.total).toBe(0);

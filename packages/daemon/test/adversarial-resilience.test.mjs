@@ -1,10 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { executeSemanticQuery } from '@unrdf/core/utils/semantic-bridge';
 
 /**
  * Adversarial Testing Suite: Stress-testing the autonomic loop.
  */
 describe('Vision 2030: Adversarial Resilience', () => {
+  beforeAll(() => {
+    requireOpenOntologies();
+  });
+
 
   it('should recover when semantic reasoner returns malformed data', async () => {
     // Malformed RDF - missing period at the end

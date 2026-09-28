@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { 
   onto_clear, onto_load, onto_stats, onto_query, 
   onto_reason, onto_shacl, onto_save, onto_version,
@@ -8,6 +9,10 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Vision 2030: Full Spectrum Open Ontologies Capabilities', { timeout: 60000 }, () => {
+  beforeAll(() => {
+    requireOpenOntologies();
+  });
+
   const testDir = path.join(process.cwd(), '.tmp-oo-test');
   const dataFile = path.join(testDir, 'data.ttl');
   const shapesFile = path.join(testDir, 'shapes.ttl');

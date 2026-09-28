@@ -5,10 +5,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createMCPServer } from '../index.mjs';
-import { mcpGeneratedTools } from '../tools-generated.mjs';
-import { mcpResources } from '../resources.mjs';
-import { mcpPrompts } from '../prompts.mjs';
+import { createMCPServer } from '../../src/mcp/index.mjs';
+import { mcpGeneratedTools } from '../../src/mcp/tools-generated.mjs';
+import { mcpResources } from '../../src/mcp/resources.mjs';
+import { mcpPrompts } from '../../src/mcp/prompts.mjs';
 
 describe('MCP Server', () => {
   describe('createMCPServer', () => {

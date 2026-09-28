@@ -20,6 +20,7 @@ import { EventEmitter } from 'events';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 import { trace, SpanStatusCode, metrics } from '@opentelemetry/api';
+import { spanAttributes } from './tracing.mjs';
 
 const tracer = trace.getTracer('unrdf-federation');
 const meter = metrics.getMeter('unrdf-federation');
@@ -165,30 +166,34 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('replication.initialize', async span => {
-      try {
-        span.setAttribute('replication.topology', this.config.topology);
-        span.setAttribute('replication.mode', this.config.mode);
+    return tracer.startActiveSpan(
+      'federation.replication_initialize',
+      { attributes: spanAttributes({ nodeId: this.hlc?.nodeId, peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('replication.topology', this.config.topology);
+          span.setAttribute('replication.mode', this.config.mode);
 
-        // Initialize version vectors for all stores
-        const stores = this.coordinator.getStores();
-        for (const store of stores) {
-          this.versionVectors.set(store.storeId, {});
+          // Initialize version vectors for all stores
+          const stores = this.coordinator.getStores();
+          for (const store of stores) {
+            this.versionVectors.set(store.storeId, {});
+          }
+
+          // Start batch processing
+          this.startBatchProcessing();
+
+          this.emit('initialized');
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Start batch processing
-        this.startBatchProcessing();
-
-        this.emit('initialized');
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -197,63 +202,67 @@ export class DataReplicationManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async replicate(change) {
-    return tracer.startActiveSpan('replication.replicate', async span => {
-      const startTime = Date.now();
+    return tracer.startActiveSpan(
+      'federation.replication_replicate',
+      { attributes: spanAttributes({ nodeId: this.hlc?.nodeId, peerCount: 0 }) },
+      async span => {
+        const startTime = Date.now();
 
-      try {
-        const operation = ChangeOperationSchema.parse(change);
-        span.setAttribute('change.id', operation.changeId);
-        span.setAttribute('change.operation', operation.operation);
-        span.setAttribute('change.store', operation.storeId);
+        try {
+          const operation = ChangeOperationSchema.parse(change);
+          span.setAttribute('change.id', operation.changeId);
+          span.setAttribute('change.operation', operation.operation);
+          span.setAttribute('change.store', operation.storeId);
 
-        // Update version vector
-        this.incrementVersion(operation.storeId);
-        operation.version = this.versionVectors.get(operation.storeId);
+          // Update version vector
+          this.incrementVersion(operation.storeId);
+          operation.version = this.versionVectors.get(operation.storeId);
 
-        // Add to change log
-        this.changeLog.push(operation);
+          // Add to change log
+          this.changeLog.push(operation);
 
-        // Check queue size before adding (backpressure)
-        if (this.replicationQueue.length >= this.config.maxQueueSize) {
-          this.queueOverflowCount++;
-          this.emit('queueOverflow', {
-            queueSize: this.replicationQueue.length,
-            maxSize: this.config.maxQueueSize,
-            droppedOperation: operation.changeId,
-            overflowCount: this.queueOverflowCount,
-          });
+          // Check queue size before adding (backpressure)
+          if (this.replicationQueue.length >= this.config.maxQueueSize) {
+            this.queueOverflowCount++;
+            this.emit('queueOverflow', {
+              queueSize: this.replicationQueue.length,
+              maxSize: this.config.maxQueueSize,
+              droppedOperation: operation.changeId,
+              overflowCount: this.queueOverflowCount,
+            });
 
-          // Drop oldest entries to make room (FIFO overflow handling)
-          const dropCount = Math.ceil(this.config.maxQueueSize * 0.1); // Drop 10%
-          const dropped = this.replicationQueue.splice(0, dropCount);
-          this.emit('queueEntriesDropped', {
-            count: dropped.length,
-            oldestDropped: dropped[0]?.changeId,
-            newestDropped: dropped[dropped.length - 1]?.changeId,
-          });
+            // Drop oldest entries to make room (FIFO overflow handling)
+            const dropCount = Math.ceil(this.config.maxQueueSize * 0.1); // Drop 10%
+            const dropped = this.replicationQueue.splice(0, dropCount);
+            this.emit('queueEntriesDropped', {
+              count: dropped.length,
+              oldestDropped: dropped[0]?.changeId,
+              newestDropped: dropped[dropped.length - 1]?.changeId,
+            });
+          }
+
+          // Add to replication queue
+          this.replicationQueue.push(operation);
+
+          // Process immediately if streaming is enabled
+          if (this.config.enableStreaming) {
+            await this.processReplication(operation);
+          }
+
+          const latency = Date.now() - startTime;
+          this.replicationLatency.record(latency);
+
+          this.emit('changeReplicated', operation);
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Add to replication queue
-        this.replicationQueue.push(operation);
-
-        // Process immediately if streaming is enabled
-        if (this.config.enableStreaming) {
-          await this.processReplication(operation);
-        }
-
-        const latency = Date.now() - startTime;
-        this.replicationLatency.record(latency);
-
-        this.emit('changeReplicated', operation);
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -263,70 +272,74 @@ export class DataReplicationManager extends EventEmitter {
    * @private
    */
   async processReplication(operation) {
-    return tracer.startActiveSpan('replication.process', async span => {
-      try {
-        span.setAttribute('operation.id', operation.changeId);
+    return tracer.startActiveSpan(
+      'federation.replication_process',
+      { attributes: spanAttributes({ nodeId: this.hlc?.nodeId, peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('operation.id', operation.changeId);
 
-        // Determine target stores based on topology
-        const targets = this.getReplicationTargets(operation.storeId);
-        span.setAttribute('replication.targets', targets.length);
+          // Determine target stores based on topology
+          const targets = this.getReplicationTargets(operation.storeId);
+          span.setAttribute('replication.targets', targets.length);
 
-        // Replicate to each target using Promise.allSettled for partial failure handling
-        const replicationPromises = targets.map(async targetId => {
-          return this.replicateToStore(targetId, operation)
-            .then(() => ({ targetId, success: true }))
-            .catch(error => ({ targetId, success: false, error }));
-        });
-
-        const results = await Promise.allSettled(replicationPromises);
-
-        // Aggregate results
-        const succeeded = [];
-        const failed = [];
-
-        for (const result of results) {
-          if (result.status === 'fulfilled') {
-            const value = result.value;
-            if (value.success) {
-              succeeded.push(value.targetId);
-            } else {
-              failed.push({ targetId: value.targetId, error: value.error });
-              this.emit('replicationError', {
-                targetId: value.targetId,
-                operation,
-                error: value.error,
-              });
-            }
-          } else {
-            // Promise itself rejected (shouldn't happen with our wrapper, but handle it)
-            failed.push({ targetId: 'unknown', error: result.reason });
-          }
-        }
-
-        // Emit aggregated result
-        if (failed.length > 0) {
-          this.emit('partialReplicationFailure', {
-            operation: operation.changeId,
-            succeeded,
-            failed,
-            totalTargets: targets.length,
+          // Replicate to each target using Promise.allSettled for partial failure handling
+          const replicationPromises = targets.map(async targetId => {
+            return this.replicateToStore(targetId, operation)
+              .then(() => ({ targetId, success: true }))
+              .catch(error => ({ targetId, success: false, error }));
           });
+
+          const results = await Promise.allSettled(replicationPromises);
+
+          // Aggregate results
+          const succeeded = [];
+          const failed = [];
+
+          for (const result of results) {
+            if (result.status === 'fulfilled') {
+              const value = result.value;
+              if (value.success) {
+                succeeded.push(value.targetId);
+              } else {
+                failed.push({ targetId: value.targetId, error: value.error });
+                this.emit('replicationError', {
+                  targetId: value.targetId,
+                  operation,
+                  error: value.error,
+                });
+              }
+            } else {
+              // Promise itself rejected (shouldn't happen with our wrapper, but handle it)
+              failed.push({ targetId: 'unknown', error: result.reason });
+            }
+          }
+
+          // Emit aggregated result
+          if (failed.length > 0) {
+            this.emit('partialReplicationFailure', {
+              operation: operation.changeId,
+              succeeded,
+              failed,
+              totalTargets: targets.length,
+            });
+          }
+
+          this.replicationCounter.add(1, {
+            operation: operation.operation,
+            source: operation.storeId,
+          });
+
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        this.replicationCounter.add(1, {
-          operation: operation.operation,
-          source: operation.storeId,
-        });
-
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -337,39 +350,43 @@ export class DataReplicationManager extends EventEmitter {
    * @private
    */
   async replicateToStore(targetStoreId, operation) {
-    return tracer.startActiveSpan('replication.toStore', async span => {
-      try {
-        span.setAttribute('target.store', targetStoreId);
-        span.setAttribute('operation.id', operation.changeId);
+    return tracer.startActiveSpan(
+      'federation.replication_to_store',
+      { attributes: spanAttributes({ nodeId: this.hlc?.nodeId, peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('target.store', targetStoreId);
+          span.setAttribute('operation.id', operation.changeId);
 
-        // Check for conflicts
-        const conflict = this.detectConflict(targetStoreId, operation);
+          // Check for conflicts
+          const conflict = this.detectConflict(targetStoreId, operation);
 
-        if (conflict) {
-          this.conflictCounter.add(1);
-          const resolved = await this.resolveConflict(conflict, operation);
+          if (conflict) {
+            this.conflictCounter.add(1);
+            const resolved = await this.resolveConflict(conflict, operation);
 
-          if (!resolved) {
-            throw new Error(`Failed to resolve conflict for operation ${operation.changeId}`);
+            if (!resolved) {
+              throw new Error(`Failed to resolve conflict for operation ${operation.changeId}`);
+            }
           }
+
+          // In production, make actual request to target store
+          // For now, simulate replication
+          await this.simulateStoreReplication(targetStoreId, operation);
+
+          // Update target's version vector
+          this.mergeVersionVector(targetStoreId, operation.version);
+
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // In production, make actual request to target store
-        // For now, simulate replication
-        await this.simulateStoreReplication(targetStoreId, operation);
-
-        // Update target's version vector
-        this.mergeVersionVector(targetStoreId, operation.version);
-
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -634,22 +651,26 @@ export class DataReplicationManager extends EventEmitter {
 
     if (batch.length === 0) return;
 
-    return tracer.startActiveSpan('replication.batch', async span => {
-      try {
-        span.setAttribute('batch.size', batch.length);
+    return tracer.startActiveSpan(
+      'federation.replication_batch',
+      { attributes: spanAttributes({ nodeId: this.hlc?.nodeId, peerCount: 0 }) },
+      async span => {
+        try {
+          span.setAttribute('batch.size', batch.length);
 
-        const processingPromises = batch.map(op => this.processReplication(op));
-        await Promise.all(processingPromises);
+          const processingPromises = batch.map(op => this.processReplication(op));
+          await Promise.all(processingPromises);
 
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
+        }
       }
-    });
+    );
   }
 
   /**

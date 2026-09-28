@@ -3,12 +3,9 @@
  * @module federation/peer-manager
  */
 
-import { trace } from '@opentelemetry/api';
 import { z } from 'zod';
-import { createRequire as __createRequire } from 'node:module';
-const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
-
-const tracer = trace.getTracer('@unrdf/federation');
+import { SpanStatusCode } from '@opentelemetry/api';
+import { withSpan } from './tracing.mjs';
 
 /**
  * @typedef {Object} PeerInfo
@@ -59,39 +56,36 @@ export function createPeerManager() {
      * @returns {PeerInfo} Registered peer info
      */
     registerPeer(id, endpoint, metadata = {}) {
-      const span = tracer.startSpan('peer-manager.registerPeer');
-      try {
-        span.setAttributes({
+      return withSpan(
+        'federation.register_peer',
+        {
           'peer.id': id,
           'peer.endpoint': endpoint,
           'peer.isUpdate': peers.has(id),
-        });
+        },
+        span => {
+          const config = PeerConfigSchema.parse({ id, endpoint, metadata });
 
-        const config = PeerConfigSchema.parse({ id, endpoint, metadata });
+          const now = Date.now();
+          const peerInfo = {
+            id: config.id,
+            endpoint: config.endpoint,
+            metadata: config.metadata || {},
+            registeredAt: peers.has(id) ? peers.get(id).registeredAt : now,
+            lastSeen: now,
+            status: 'healthy',
+          };
 
-        const now = Date.now();
-        const peerInfo = {
-          id: config.id,
-          endpoint: config.endpoint,
-          metadata: config.metadata || {},
-          registeredAt: peers.has(id) ? peers.get(id).registeredAt : now,
-          lastSeen: now,
-          status: 'healthy',
-        };
+          peers.set(id, peerInfo);
 
-        peers.set(id, peerInfo);
+          span.setAttributes({
+            'peer.total': peers.size,
+            'federation.peer_count': peers.size,
+          });
 
-        span.setAttributes({
-          'peer.total': peers.size,
-        });
-
-        return peerInfo;
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+          return peerInfo;
+        }
+      );
     },
 
     /**
@@ -101,26 +95,17 @@ export function createPeerManager() {
      * @returns {boolean} True if peer was removed, false if not found
      */
     unregisterPeer(id) {
-      const span = tracer.startSpan('peer-manager.unregisterPeer');
-      try {
-        span.setAttributes({
-          'peer.id': id,
-        });
-
+      return withSpan('federation.unregister_peer', { 'peer.id': id }, span => {
         const removed = peers.delete(id);
 
         span.setAttributes({
           'peer.removed': removed,
           'peer.total': peers.size,
+          'federation.peer_count': peers.size,
         });
 
         return removed;
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      });
     },
 
     /**
@@ -158,72 +143,72 @@ export function createPeerManager() {
      * @returns {Promise<boolean>} True if peer is reachable
      */
     async ping(id, timeout = 5000) {
-      const span = tracer.startSpan('peer-manager.ping');
-      try {
-        span.setAttributes({
+      return withSpan(
+        'federation.ping_peer',
+        {
           'peer.id': id,
           'ping.timeout': timeout,
-        });
+          'federation.peer_count': 1,
+        },
+        async span => {
+          const peer = peers.get(id);
+          if (!peer) {
+            span.setAttributes({
+              'peer.found': false,
+            });
+            return false;
+          }
 
-        const peer = peers.get(id);
-        if (!peer) {
-          span.setAttributes({
-            'peer.found': false,
-          });
-          return false;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
+          const startTime = Date.now();
+
+          try {
+            const response = await fetch(peer.endpoint, {
+              method: 'HEAD',
+              headers: {
+                'User-Agent': 'unrdf-federation/6.0.0 (https://github.com/unrdf/unrdf)',
+              },
+              signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            const isHealthy = response.ok;
+            const now = Date.now();
+            const duration = now - startTime;
+
+            peer.lastSeen = now;
+            peer.status = isHealthy ? 'healthy' : 'degraded';
+
+            span.setAttributes({
+              'peer.found': true,
+              'peer.healthy': isHealthy,
+              'peer.status': peer.status,
+              'ping.duration': duration,
+              'http.status': response.status,
+            });
+
+            return isHealthy;
+          } catch (error) {
+            clearTimeout(timeoutId);
+            peer.status = 'unreachable';
+            const duration = Date.now() - startTime;
+
+            span.setAttributes({
+              'peer.found': true,
+              'peer.healthy': false,
+              'peer.status': 'unreachable',
+              'ping.duration': duration,
+              'ping.error': error.message,
+            });
+            span.recordException(error);
+            span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+
+            return false;
+          }
         }
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        const startTime = Date.now();
-
-        try {
-          const response = await fetch(peer.endpoint, {
-            method: 'HEAD',
-            headers: {
-              'User-Agent': `unrdf-federation/${PKG_VERSION} (https://github.com/unrdf/unrdf)`,
-            },
-            signal: controller.signal,
-          });
-
-          clearTimeout(timeoutId);
-
-          const isHealthy = response.ok;
-          const now = Date.now();
-          const duration = now - startTime;
-
-          peer.lastSeen = now;
-          peer.status = isHealthy ? 'healthy' : 'degraded';
-
-          span.setAttributes({
-            'peer.found': true,
-            'peer.healthy': isHealthy,
-            'peer.status': peer.status,
-            'ping.duration': duration,
-            'http.status': response.status,
-          });
-
-          return isHealthy;
-        } catch (error) {
-          peer.status = 'unreachable';
-          const duration = Date.now() - startTime;
-
-          span.setAttributes({
-            'peer.found': true,
-            'peer.healthy': false,
-            'peer.status': 'unreachable',
-            'ping.duration': duration,
-            'ping.error': error.message,
-          });
-
-          return false;
-        }
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      );
     },
 
     /**
@@ -234,37 +219,33 @@ export function createPeerManager() {
      * @returns {boolean} True if status was updated
      */
     updateStatus(id, status) {
-      const span = tracer.startSpan('peer-manager.updateStatus');
-      try {
-        span.setAttributes({
+      return withSpan(
+        'federation.update_peer_status',
+        {
           'peer.id': id,
           'peer.status': status,
-        });
+        },
+        span => {
+          const peer = peers.get(id);
+          if (!peer) {
+            span.setAttributes({
+              'peer.found': false,
+            });
+            return false;
+          }
 
-        const peer = peers.get(id);
-        if (!peer) {
+          const oldStatus = peer.status;
+          peer.status = status;
+          peer.lastSeen = Date.now();
+
           span.setAttributes({
-            'peer.found': false,
+            'peer.found': true,
+            'peer.oldStatus': oldStatus,
           });
-          return false;
+
+          return true;
         }
-
-        const oldStatus = peer.status;
-        peer.status = status;
-        peer.lastSeen = Date.now();
-
-        span.setAttributes({
-          'peer.found': true,
-          'peer.oldStatus': oldStatus,
-        });
-
-        return true;
-      } catch (error) {
-        span.recordException(error);
-        throw error;
-      } finally {
-        span.end();
-      }
+      );
     },
 
     /**

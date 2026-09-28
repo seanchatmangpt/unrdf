@@ -4,10 +4,10 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { ontoRegistry, getOntoCommand, getOntoMetadata, getToolsByPhase } from '../open-ontologies-registry.mjs';
+import { ontoRegistry, getOntoCommand, getOntoMetadata, getToolsByPhase } from '../../src/mcp/open-ontologies-registry.mjs';
 
 // Mock the helpers to avoid actual CLI calls
-vi.mock('../open-ontologies-helpers.mjs', () => ({
+vi.mock('../../src/mcp/open-ontologies-helpers.mjs', () => ({
   runOntoCommand: vi.fn(() => Promise.resolve({ success: true })),
   validateOntoInstallation: vi.fn(() => Promise.resolve(true)),
   ensureDataDir: vi.fn(() => Promise.resolve('/tmp/test-onto')),
@@ -119,7 +119,7 @@ describe('open-ontologies-registry', () => {
   });
 
   it('should export ONTO_BINARY and ONTO_DATA_DIR constants', async () => {
-    const { ONTO_BINARY, ONTO_DATA_DIR } = await import('../open-ontologies-registry.mjs');
+    const { ONTO_BINARY, ONTO_DATA_DIR } = await import('../../src/mcp/open-ontologies-registry.mjs');
     expect(ONTO_BINARY).toBeDefined();
     expect(ONTO_BINARY).toContain('open-ontologies');
     expect(ONTO_DATA_DIR).toBeDefined();

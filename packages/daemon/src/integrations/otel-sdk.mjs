@@ -14,8 +14,6 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { trace, metrics } from '@opentelemetry/api';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
-import { createRequire as __createRequire } from 'node:module';
-const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 let sdk = null;
 let tracer = null;
@@ -41,7 +39,7 @@ export async function initializeOTelSDK(config = {}) {
   const resource = Resource.default().merge(
     new Resource({
       [ATTR_SERVICE_NAME]: config.serviceName || 'unrdf-daemon',
-      [ATTR_SERVICE_VERSION]: config.version || PKG_VERSION,
+      [ATTR_SERVICE_VERSION]: config.version || '26.4.23',
       [ATTR_DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
     })
   );
@@ -81,8 +79,8 @@ export async function initializeOTelSDK(config = {}) {
   await sdk.start();
 
   // Export tracer and meter for cross-package use
-  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || PKG_VERSION);
-  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || PKG_VERSION);
+  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
+  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
 
   console.log('[OTEL SDK] OpenTelemetry SDK initialized successfully');
   console.log(`[OTEL SDK] Service: ${config.serviceName || 'unrdf-daemon'}`);

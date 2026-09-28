@@ -1,10 +1,15 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { Daemon } from '../src/daemon.mjs';
 
 /**
  * Chaos Engineering Suite: Stress-testing the Daemon's autonomic resilience.
  */
 describe('Vision 2030: Autonomic Chaos Engineering', { timeout: 30000 }, () => {
+  beforeAll(() => {
+    requireOpenOntologies();
+  });
+
 
   const createResilientDaemon = () => new Daemon({ 
     nodeId: 'chaos-node', 

@@ -9,15 +9,13 @@
 
 import { metrics } from '@opentelemetry/api';
 import { z } from 'zod';
-import { createRequire as __createRequire } from 'node:module';
-const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Advanced metrics configuration schema
  */
 export const AdvancedMetricsConfigSchema = z.object({
   serviceName: z.string().default('unrdf'),
-  serviceVersion: z.string().default(PKG_VERSION),
+  serviceVersion: z.string().default('6.0.0'),
   enabled: z.boolean().default(true),
   samplingRate: z.number().min(0).max(1).default(0.01),
   buckets: z
