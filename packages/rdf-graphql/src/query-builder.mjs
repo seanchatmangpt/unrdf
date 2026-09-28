@@ -13,6 +13,74 @@ const GraphQLFieldSchema = z.object({
   selectionSet: z.any().optional(),
 });
 
+// =============================================================================
+// Injection-safe term helpers (see .claude/rules/scoped/p1-sparql-injection.md)
+// =============================================================================
+
+const VAR_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const PREFIX_RE = /^[A-Za-z][A-Za-z0-9_-]*$|^$/;
+// Characters that may never appear inside an IRIREF (SPARQL 1.1 grammar rule [139])
+// eslint-disable-next-line no-control-regex
+const IRI_FORBIDDEN_RE = /[\u0000- <>"{}|^`\\]/;
+
+/**
+ * Validate an IRI so it is safe inside <...>.
+ * @param {string} iri - Candidate IRI
+ * @returns {string} The same IRI
+ * @throws {Error} If the IRI could break out of the IRIREF
+ */
+export function assertSafeIRI(iri) {
+  if (typeof iri !== 'string' || iri.length === 0 || IRI_FORBIDDEN_RE.test(iri)) {
+    throw new Error(`Invalid IRI: ${JSON.stringify(iri)}`);
+  }
+  return iri;
+}
+
+/**
+ * Validate a SPARQL variable name (without the leading ?).
+ * @param {string} name - Candidate variable name
+ * @returns {string} The same name
+ * @throws {Error} If the name is not a plain identifier
+ */
+export function assertSafeVarName(name) {
+  if (typeof name !== 'string' || !VAR_NAME_RE.test(name)) {
+    throw new Error(`Invalid variable name: ${JSON.stringify(name)}`);
+  }
+  return name;
+}
+
+/**
+ * Coerce a value to a non-negative integer for LIMIT/OFFSET.
+ * @param {unknown} value - Candidate value
+ * @param {string} label - Name used in the error message
+ * @returns {number} Integer
+ * @throws {Error} If the value is not a non-negative integer
+ */
+export function assertNonNegativeInteger(value, label) {
+  const n = typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+  if (typeof n !== 'number' || !Number.isSafeInteger(n) || n < 0) {
+    throw new Error(`${label} must be a non-negative integer`);
+  }
+  return n;
+}
+
+/**
+ * Coerce a value to a numeric SPARQL literal (rejects expressions).
+ * @param {unknown} value - Candidate value
+ * @returns {string} Canonical numeric lexical form
+ * @throws {Error} If the value is not a finite number
+ */
+export function toNumericLiteral(value) {
+  const n =
+    typeof value === 'string' && /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(value.trim())
+      ? Number(value)
+      : value;
+  if (typeof n !== 'number' || !Number.isFinite(n)) {
+    throw new Error(`Filter operand must be a finite numeric value, got ${JSON.stringify(value)}`);
+  }
+  return String(n);
+}
+
 /**
  * SPARQL Query Builder - Converts GraphQL queries to SPARQL
  */
@@ -38,6 +106,8 @@ export class SPARQLQueryBuilder {
    * @returns {string} SPARQL query
    */
   buildQueryForResource(info, resourceIRI, typeIRI) {
+    assertSafeIRI(resourceIRI);
+    assertSafeIRI(typeIRI);
     const prefixes = this.buildPrefixes();
     const patterns = this.buildGraphPatterns(info, '?s', typeIRI);
     const projection = this.buildProjection(info);
@@ -60,7 +130,9 @@ SELECT ${projection} WHERE {
    * @returns {string} SPARQL query
    */
   buildListQuery(info, typeIRI, args = {}) {
-    const { limit = 10, offset = 0 } = args;
+    const limit = assertNonNegativeInteger(args.limit ?? 10, 'limit');
+    const offset = assertNonNegativeInteger(args.offset ?? 0, 'offset');
+    assertSafeIRI(typeIRI);
     const prefixes = this.buildPrefixes();
     const patterns = this.buildGraphPatterns(info, '?s', typeIRI);
     const projection = this.buildProjection(info);
@@ -85,6 +157,7 @@ OFFSET ${offset}
    * @returns {string} SPARQL query
    */
   buildFilteredQuery(info, typeIRI, filters = {}) {
+    assertSafeIRI(typeIRI);
     const prefixes = this.buildPrefixes();
     const patterns = this.buildGraphPatterns(info, '?s', typeIRI);
     const projection = this.buildProjection(info);
@@ -108,7 +181,12 @@ SELECT ${projection} WHERE {
    */
   buildPrefixes() {
     return Object.entries(this.namespaces)
-      .map(([prefix, uri]) => `PREFIX ${prefix}: <${uri}>`)
+      .map(([prefix, uri]) => {
+        if (!PREFIX_RE.test(prefix)) {
+          throw new Error(`Invalid prefix name: ${JSON.stringify(prefix)}`);
+        }
+        return `PREFIX ${prefix}: <${assertSafeIRI(uri)}>`;
+      })
       .join('\n');
   }
 
@@ -128,7 +206,7 @@ SELECT ${projection} WHERE {
       if (field.name === 'id') continue; // ID is the subject IRI
 
       const propertyIRI = this.fieldNameToPropertyIRI(field.name, typeIRI);
-      const varName = `?${field.alias || field.name}`;
+      const varName = `?${assertSafeVarName(field.alias || field.name)}`;
 
       if (field.selectionSet) {
         // Nested object - follow the relationship
@@ -153,7 +231,7 @@ SELECT ${projection} WHERE {
     const fields = this.extractFields(info);
     const vars = fields
       .filter(f => f.name !== 'id')
-      .map(f => `?${f.alias || f.name}`);
+      .map(f => `?${assertSafeVarName(f.alias || f.name)}`);
 
     return `?s ${vars.join(' ')}`;
   }
@@ -168,22 +246,28 @@ SELECT ${projection} WHERE {
     const clauses = [];
 
     for (const [field, value] of Object.entries(filters)) {
-      const varName = `?${field}`;
+      const varName = `?${assertSafeVarName(field)}`;
 
       if (typeof value === 'string') {
         clauses.push(`FILTER(${varName} = "${this.escapeSPARQL(value)}")`);
       } else if (typeof value === 'number') {
-        clauses.push(`FILTER(${varName} = ${value})`);
+        clauses.push(`FILTER(${varName} = ${toNumericLiteral(value)})`);
       } else if (typeof value === 'boolean') {
         clauses.push(`FILTER(${varName} = ${value})`);
       } else if (value && typeof value === 'object') {
         // Handle complex filters (gt, lt, contains, etc.)
-        if (value.eq) clauses.push(`FILTER(${varName} = "${this.escapeSPARQL(value.eq)}")`);
-        if (value.ne) clauses.push(`FILTER(${varName} != "${this.escapeSPARQL(value.ne)}")`);
-        if (value.gt) clauses.push(`FILTER(${varName} > ${value.gt})`);
-        if (value.lt) clauses.push(`FILTER(${varName} < ${value.lt})`);
+        if (value.eq) clauses.push(`FILTER(${varName} = "${this.escapeSPARQL(String(value.eq))}")`);
+        if (value.ne) clauses.push(`FILTER(${varName} != "${this.escapeSPARQL(String(value.ne))}")`);
+        if (value.gt !== undefined && value.gt !== null) {
+          clauses.push(`FILTER(${varName} > ${toNumericLiteral(value.gt)})`);
+        }
+        if (value.lt !== undefined && value.lt !== null) {
+          clauses.push(`FILTER(${varName} < ${toNumericLiteral(value.lt)})`);
+        }
         if (value.contains) {
-          clauses.push(`FILTER(CONTAINS(LCASE(STR(${varName})), LCASE("${this.escapeSPARQL(value.contains)}")))`);
+          clauses.push(
+            `FILTER(CONTAINS(LCASE(STR(${varName})), LCASE("${this.escapeSPARQL(String(value.contains))}")))`
+          );
         }
       }
     }
@@ -270,7 +354,7 @@ SELECT ${projection} WHERE {
     const namespace = match ? match[1] : typeIRI + '#';
 
     // Construct property IRI (assumes same namespace as class)
-    return namespace + fieldName;
+    return assertSafeIRI(namespace + fieldName);
   }
 
   /**
@@ -284,7 +368,8 @@ SELECT ${projection} WHERE {
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
       .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r');
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t');
   }
 
   /**
@@ -308,11 +393,24 @@ SELECT ${projection} WHERE {
  */
 export function buildSimpleQuery(options) {
   const { subject, predicate, object = '?o', limit } = options;
-  const limitClause = limit ? `LIMIT ${limit}` : '';
+  const limitClause =
+    limit === undefined || limit === null || limit === ''
+      ? ''
+      : `LIMIT ${assertNonNegativeInteger(limit, 'limit')}`;
+
+  const term = (value, position) => {
+    if (typeof value !== 'string') throw new Error(`Invalid ${position}`);
+    if (/^[?$]/.test(value)) return `?${assertSafeVarName(value.slice(1))}`;
+    if (/^<.*>$/.test(value)) return `<${assertSafeIRI(value.slice(1, -1))}>`;
+    if (position === 'object') {
+      return `"${new SPARQLQueryBuilder().escapeSPARQL(value)}"`; // plain literal
+    }
+    return `<${assertSafeIRI(value)}>`;
+  };
 
   return `
 SELECT * WHERE {
-  ${subject} <${predicate}> ${object} .
+  ${term(subject, 'subject')} <${assertSafeIRI(predicate)}> ${term(object, 'object')} .
 }
 ${limitClause}
   `.trim();

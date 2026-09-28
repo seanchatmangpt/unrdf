@@ -32,8 +32,10 @@
   "dependencies": {
     "@unrdf/kgn": "workspace:*",
     "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "@iarna/toml": "^2.2.5",
-    "zod": "^3.25.76",
+    "zod": "^4.1.13",
+    "nunjucks": "^3.2.4",
     "glob": "^10.3.10"
   },
   "devDependencies": {

@@ -91,6 +91,32 @@ function extract(observation, delta, operator) {
 }
 
 /**
+ * Escape a JS string as a Turtle STRING_LITERAL_QUOTE body
+ * @param {string} str - Raw string
+ * @returns {string} Escaped string (without surrounding quotes)
+ */
+function escapeTurtleString(str) {
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
+/**
+ * Render a JS value as a Turtle object term
+ * @param {*} value - State value
+ * @returns {string} Turtle literal
+ */
+function turtleObject(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  if (typeof value === 'boolean') return String(value);
+  const text = typeof value === 'string' ? value : JSON.stringify(value);
+  return `"${escapeTurtleString(text)}"`;
+}
+
+/**
  * Stage 3: Emit - Generate Turtle RDF representation
  * @param {Object} observation - Original observation
  * @param {Object} delta - Applied delta
@@ -117,14 +143,13 @@ function emit(observation, delta, result, operator) {
     `ex:result a chatman:Artifact ;`,
     `    chatman:sourceObservation ex:observation_${observation.id.substring(0, 8)} ;`,
     `    chatman:appliedDelta ex:delta_${delta.id.substring(0, 8)} ;`,
-    `    chatman:operator "${operator.name}" ;`,
+    `    chatman:operator "${escapeTurtleString(operator.name)}" ;`,
   ];
 
   // Add result state properties
   Object.entries(result).forEach(([key, value]) => {
     const safeKey = key.replace(/[^a-zA-Z0-9_]/g, '_');
-    const safeValue = JSON.stringify(value).replace(/"/g, '\\"');
-    lines.push(`    ex:${safeKey} ${safeValue} ;`);
+    lines.push(`    ex:${safeKey} ${turtleObject(value)} ;`);
   });
 
   // Remove trailing semicolon and add period

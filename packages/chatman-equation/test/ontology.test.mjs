@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { Parser, Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,27 +15,48 @@ const __dirname = dirname(__filename);
 const ONTOLOGY_DIR = join(__dirname, '..', 'ontology');
 
 /**
- * Load Turtle file into N3 Store
+ * Thin RDF/JS-style view over an Oxigraph store (N3 Store is forbidden outside
+ * @unrdf/core/rdf/n3-justified-only; see .claude/rules/scoped/p0-rdf-imports.md).
+ * String arguments are treated as IRIs, null as wildcard - same as N3's getQuads().
+ */
+class TurtleStore {
+  constructor() {
+    this.inner = createStore();
+  }
+
+  static term(value) {
+    return typeof value === 'string' ? dataFactory.namedNode(value) : (value ?? undefined);
+  }
+
+  getQuads(s = null, p = null, o = null, g = null) {
+    const t = TurtleStore.term;
+    return this.inner.match(t(s), t(p), t(o), t(g));
+  }
+
+  addQuad(quad) {
+    this.inner.add(quad);
+  }
+
+  forEach(callback) {
+    this.getQuads().forEach(callback);
+  }
+
+  get size() {
+    return this.inner.size;
+  }
+}
+
+/**
+ * Load Turtle file into a store
  * @param {string} filename - Turtle file name
- * @returns {Promise<Store>} N3 Store with loaded triples
+ * @returns {Promise<TurtleStore>} Store with loaded triples
  */
 async function loadTurtle(filename) {
   const path = join(ONTOLOGY_DIR, filename);
   const content = readFileSync(path, 'utf-8');
-  const parser = new Parser({ format: 'text/turtle' });
-  const store = new Store();
-
-  return new Promise((resolve, reject) => {
-    parser.parse(content, (error, quad, _prefixes) => {
-      if (error) {
-        reject(error);
-      } else if (quad) {
-        store.addQuad(quad);
-      } else {
-        resolve(store);
-      }
-    });
-  });
+  const store = new TurtleStore();
+  store.inner.load(content, { format: 'text/turtle' });
+  return store;
 }
 
 describe('Chatman Equation Ontology', () => {
@@ -342,7 +363,7 @@ describe('Chatman Equation Ontology', () => {
         loadTurtle('shapes.ttl')
       ]);
 
-      const combinedStore = new Store();
+      const combinedStore = new TurtleStore();
       ontology.forEach(quad => combinedStore.addQuad(quad));
       examples.forEach(quad => combinedStore.addQuad(quad));
       shapes.forEach(quad => combinedStore.addQuad(quad));

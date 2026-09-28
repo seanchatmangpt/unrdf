@@ -116,6 +116,19 @@ describe('DeltaSchema', () => {
     // Assert
     expect(result.operations).toHaveLength(3);
   });
+
+  it('accepts a delete operation without a value (Zod v4 z.any() is required by default)', () => {
+    const delta = {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      domain: 'product',
+      operations: [{ op: 'delete', field: 'legacy_api' }],
+    };
+
+    const result = validateDelta(delta);
+
+    expect(result.operations[0]).toMatchObject({ op: 'delete', field: 'legacy_api' });
+  });
 });
 
 describe('ClosureOperatorSchema', () => {

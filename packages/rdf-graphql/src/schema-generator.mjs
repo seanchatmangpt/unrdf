@@ -67,7 +67,7 @@ export class RDFSchemaGenerator {
    * @returns {Promise<void>}
    */
   async loadOntology(rdfData, baseIRI = 'http://example.org/') {
-    await this.store.load(rdfData, 'text/turtle', baseIRI, null);
+    await this.store.load(rdfData, { format: 'text/turtle', base_iri: baseIRI });
   }
 
   /**

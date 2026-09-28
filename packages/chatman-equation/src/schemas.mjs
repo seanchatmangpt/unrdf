@@ -108,7 +108,7 @@ export const ClosureOperatorSchema = z.object({
 export const DeltaOperationSchema = z.object({
   op: z.enum(['add', 'update', 'delete']),
   field: z.string().min(1),
-  value: z.any(),
+  value: z.any().optional(), // Zod v4: bare z.any() is required; delete ops carry no value
   reason: z.string().optional(),
 });
 

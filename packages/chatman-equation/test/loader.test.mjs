@@ -33,7 +33,7 @@ describe('loadEquationSchema', () => {
     // Assert
     expect(schema).toBeDefined();
     expect(schema.metadata).toBeDefined();
-    expect(schema.metadata.version).toBe('[VERSION]');
+    expect(schema.metadata.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(schema.observations).toBeDefined();
     expect(schema.closure_operator).toBeDefined();
     expect(schema.artifacts).toBeDefined();
@@ -71,7 +71,7 @@ describe('extractObservation', () => {
 
     // Assert
     expect(result.success).toBe(true);
-    expect(result.data.id).toBe('obs-market-001');
+    expect(result.data.id).toBe('46bb9140-6d27-50c2-af6a-e733440a9439');
     expect(result.data.domain).toBe('market');
     expect(result.data.state.supply).toBe(10000);
   });
@@ -88,7 +88,7 @@ describe('extractDelta', () => {
 
     // Assert
     expect(result.success).toBe(true);
-    expect(result.data.id).toBe('delta-market-001');
+    expect(result.data.id).toBe('6c2b9ffb-e4f0-537f-8b6f-5690585911f4');
     expect(result.data.domain).toBe('market');
     expect(result.data.operations.length).toBeGreaterThan(0);
   });
@@ -122,8 +122,8 @@ describe('extractArtifact', () => {
 
     // Assert
     expect(result.success).toBe(true);
-    expect(result.data.id).toBe('artifact-market-001');
-    expect(result.data.source_observation).toBe('obs-market-001');
+    expect(result.data.id).toBe('500cb33f-1da0-5608-baa1-844337e94418');
+    expect(result.data.source_observation).toBe('46bb9140-6d27-50c2-af6a-e733440a9439');
     expect(result.data.operator).toBe('market_equilibrium');
   });
 });

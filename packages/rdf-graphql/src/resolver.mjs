@@ -3,7 +3,7 @@
  * @module @unrdf/rdf-graphql/resolver
  */
 
-import { SPARQLQueryBuilder } from './query-builder.mjs';
+import { SPARQLQueryBuilder, assertSafeIRI } from './query-builder.mjs';
 import { z } from 'zod';
 
 // Zod schemas for validation
@@ -11,6 +11,7 @@ const ResolverConfigSchema = z.object({
   namespaces: z.record(z.string()).optional(),
   typeMapping: z.record(z.string()).optional(),
   enableCache: z.boolean().optional(),
+  maxCacheSize: z.number().int().positive().optional(),
 });
 
 /**
@@ -32,6 +33,7 @@ export class RDFResolverFactory {
     });
     this.typeMapping = config.typeMapping || new Map();
     this.cache = config.enableCache ? new Map() : null;
+    this.maxCacheSize = config.maxCacheSize ?? 1000;
   }
 
   /**
@@ -100,7 +102,7 @@ export class RDFResolverFactory {
 
       // Cache result
       if (this.cache) {
-        this.cache.set(cacheKey, result);
+        this.setCache(cacheKey, result);
       }
 
       return result;
@@ -136,7 +138,7 @@ export class RDFResolverFactory {
 
       // Cache results
       if (this.cache) {
-        this.cache.set(cacheKey, results);
+        this.setCache(cacheKey, results);
       }
 
       return results;
@@ -318,6 +320,20 @@ export class RDFResolverFactory {
   }
 
   /**
+   * Insert into the bounded cache (evicts oldest entries beyond maxCacheSize)
+   * @param {string} key - Cache key
+   * @param {any} value - Value to cache
+   */
+  setCache(key, value) {
+    if (!this.cache) return;
+    this.cache.delete(key); // refresh insertion order
+    this.cache.set(key, value);
+    while (this.cache.size > this.maxCacheSize) {
+      this.cache.delete(this.cache.keys().next().value);
+    }
+  }
+
+  /**
    * Clear resolver cache
    */
   clearCache() {
@@ -346,7 +362,8 @@ export class RDFResolverFactory {
  */
 export function createRelationshipResolver(store, propertyIRI) {
   return async (parent, args, context, info) => {
-    const subjectIRI = parent.id;
+    const subjectIRI = assertSafeIRI(parent.id);
+    assertSafeIRI(propertyIRI);
 
     const query = `
 SELECT ?o WHERE {

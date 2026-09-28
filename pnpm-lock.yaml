@@ -309,9 +309,15 @@ importers:
       '@unrdf/kgn':
         specifier: workspace:*
         version: link:../kgn
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
       glob:
         specifier: ^10.3.10
         version: 10.5.0
+      nunjucks:
+        specifier: ^3.2.4
+        version: 3.2.4(chokidar@3.6.0)
       zod:
         specifier: ^4.1.13
         version: 4.4.3
