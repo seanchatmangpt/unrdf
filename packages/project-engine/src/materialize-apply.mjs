@@ -9,7 +9,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { createStore } from '@unrdf/oxigraph';
 import { scanFileSystemToStore } from './fs-scan.mjs';
-import { diffProjectStructure } from './project-diff.mjs';
+import { diffFsPaths } from './fs-path-diff.mjs';
 
 /**
  * @typedef {import('./materialize-plan.mjs').MaterializationPlan} MaterializationPlan
@@ -328,7 +328,7 @@ async function snapshotFileSystem(root) {
  *    - Validate hash matches
  *    - Delete file
  * 6. Snapshot after with scanFileSystemToStore
- * 7. Compute diff using diffProjectStructure
+ * 7. Compute diff using diffFsPaths
  * 8. Return result + receipt
  *
  * @param {MaterializationPlan} plan - The plan to apply
@@ -406,7 +406,7 @@ export async function applyMaterializationPlan(plan, options = {}) {
     // Compute diff if we have both snapshots
     if (beforeSnapshot && afterSnapshot) {
       try {
-        fsDiff = diffProjectStructure({
+        fsDiff = diffFsPaths({
           actualStore: afterSnapshot.store,
           goldenStore: beforeSnapshot.store,
         });

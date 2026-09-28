@@ -36,7 +36,7 @@ export async function generateGoldenStructure(options) {
       span.setAttribute('golden.profile', profile);
 
       const ttl = getGoldenStructureTtl(profile);
-      // Lazy: knowledge-engine is heavy and only needed for this call
+      // Lazy: the knowledge-engine barrel is heavy; only golden-structure needs it
       const { parseTurtle } = await import('@unrdf/knowledge-engine');
       const store = await parseTurtle(ttl, 'http://example.org/unrdf/golden#');
 

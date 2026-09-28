@@ -1,38 +1,29 @@
 /**
- * @file Project structure diff between two file system snapshots
+ * @file Project structure diff - convenience wrapper over the core ontology diff
  * @module project-engine/project-diff
  */
 
-const REL_PATH = 'http://example.org/unrdf/fs#relativePath';
+import { z } from 'zod';
+import { diffGraphFromStores, diffOntologyFromGraphDiff } from '@unrdf/core';
+import { ProjectStructureLens } from './lens/project-structure.mjs';
+
+const ProjectDiffOptionsSchema = z.object({
+  actualStore: z.object({}).passthrough(),
+  goldenStore: z.object({}).passthrough(),
+});
 
 /**
- * Collect the relative paths recorded in a snapshot store.
- * @param {Object} store
- * @returns {Set<string>}
- */
-function collectPaths(store) {
-  const paths = new Set();
-  for (const q of store.match(null, { termType: 'NamedNode', value: REL_PATH }, null, null)) {
-    paths.add(q.object.value);
-  }
-  return paths;
-}
-
-/**
- * Diff two snapshots produced by scanFileSystemToStore.
- *
- * `added` are paths present in `actualStore` but not in `goldenStore`;
- * `removed` are paths present in `goldenStore` but not in `actualStore`.
+ * Compute project structure diff (golden -> actual).
  *
  * @param {Object} options
- * @param {Object} options.actualStore - Snapshot of the current state
- * @param {Object} options.goldenStore - Snapshot to compare against
- * @returns {{added: string[], removed: string[], unchanged: number}}
+ * @param {Object} options.actualStore - Current project graph
+ * @param {Object} options.goldenStore - Expected golden structure
+ * @returns {Object} OntologyDiff
  */
-export function diffProjectStructure({ actualStore, goldenStore }) {
-  const actual = collectPaths(actualStore);
-  const golden = collectPaths(goldenStore);
-  const added = [...actual].filter(p => !golden.has(p)).sort();
-  const removed = [...golden].filter(p => !actual.has(p)).sort();
-  return { added, removed, unchanged: actual.size - added.length };
+export function diffProjectStructure(options) {
+  // Validate only: parse() would return plain copies that lose the stores' prototype methods
+  ProjectDiffOptionsSchema.parse(options);
+  const { actualStore, goldenStore } = options;
+  const graphDiff = diffGraphFromStores(goldenStore, actualStore);
+  return diffOntologyFromGraphDiff(graphDiff, ProjectStructureLens);
 }
