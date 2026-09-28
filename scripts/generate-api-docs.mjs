@@ -67,10 +67,10 @@ const capMapDocs = {
 // Generate OpenAPI 3.0 schema
 function generateOpenAPISchema() {
   const schema = {
-    openapi: 'latest',
+    openapi: '3.0.0',
     info: {
       title: 'UNRDF API Reference',
-      version: 'latest',
+      version: '6.0.0',
       description: 'Complete API reference for all UNRDF packages - RDF processing, SPARQL execution, workflow orchestration, and knowledge graph management',
       contact: {
         name: 'UNRDF Team',
@@ -165,7 +165,7 @@ function generateOpenAPISchema() {
 function generateMasterAPIReference() {
   let md = `# UNRDF API Reference
 
-**Version**: latest
+**Version**: 6.0.0
 **Last Updated**: ${new Date().toISOString().split('T')[0]}
 **Total Packages**: ${capabilityMap.totalPackages}
 

@@ -9,7 +9,7 @@
  * for observability and monitoring.
  *
  * @module cli
- * @version [VERSION]
+ * @version 2.1.1
  * @license MIT
  */
 
@@ -17,6 +17,8 @@ import { defineCommand, runMain } from 'citty';
 import { storeCommand } from './commands/store.mjs';
 import { initCommand } from './commands/init.mjs';
 import { autonomicCommand } from './commands/autonomic.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * Main CLI application
@@ -24,7 +26,7 @@ import { autonomicCommand } from './commands/autonomic.mjs';
 const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '[VERSION]',
+    version: PKG_VERSION,
     description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails',
   },
   subCommands: {

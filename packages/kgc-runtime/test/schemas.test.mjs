@@ -28,7 +28,7 @@ import {
 describe('ReceiptSchema', () => {
   it('should validate a complete receipt', () => {
     const receipt = {
-      version: '[VERSION]',
+      version: '1.0.0',
       id: '550e8400-e29b-41d4-a716-446655440000',
       timestamp: 1703001600000,
       runId: 'run-2024-001',
@@ -52,7 +52,7 @@ describe('ReceiptSchema', () => {
     const result = validateReceipt(receipt);
     expect(result.success).toBe(true);
     expect(result.data).toBeDefined();
-    expect(result.data.version).toBe('[VERSION]');
+    expect(result.data.version).toBe('1.0.0');
   });
 
   it('should validate minimal receipt', () => {
@@ -67,7 +67,7 @@ describe('ReceiptSchema', () => {
 
     const result = validateReceipt(receipt);
     expect(result.success).toBe(true);
-    expect(result.data.version).toBe('[VERSION]'); // Default
+    expect(result.data.version).toBe('1.0.0'); // Default
   });
 
   it('should reject invalid actor format', () => {
@@ -186,7 +186,7 @@ describe('RunCapsuleSchema', () => {
   it('should validate a complete run capsule', () => {
     const capsule = {
       id: 'run-2024-12-26-001',
-      version: '[VERSION]',
+      version: '1.0.0',
       startTime: 1703001600000,
       endTime: 1703001620000,
       status: 'completed',
@@ -251,7 +251,7 @@ describe('RunCapsuleSchema', () => {
 
     const result = validateRunCapsule(capsule);
     expect(result.success).toBe(true);
-    expect(result.data.version).toBe('[VERSION]'); // Default
+    expect(result.data.version).toBe('1.0.0'); // Default
   });
 
   it('should validate failed run with error', () => {
@@ -438,7 +438,7 @@ describe('WorkItemSchema', () => {
 describe('ProjectionManifestSchema', () => {
   it('should validate complete projection manifest', () => {
     const manifest = {
-      version: '[VERSION]',
+      version: '1.0.0',
       surfaces: {
         cli: {
           commands: [
@@ -493,7 +493,7 @@ describe('ProjectionManifestSchema', () => {
 
     const result = validateProjectionManifest(manifest);
     expect(result.success).toBe(true);
-    expect(result.data.version).toBe('[VERSION]'); // Default
+    expect(result.data.version).toBe('1.0.0'); // Default
   });
 
   it('should validate API surface', () => {
@@ -511,7 +511,7 @@ describe('ProjectionManifestSchema', () => {
           ],
           versioning: {
             strategy: 'url',
-            current: '[VERSION]',
+            current: '1.0.0',
           },
         },
       },
@@ -532,7 +532,7 @@ describe('KGCMarkdownSchema', () => {
       type: 'document',
       frontMatter: {
         title: 'KGC Example',
-        version: '[VERSION]',
+        version: '1.0.0',
         author: 'Test Author',
         date: new Date('2024-12-26'),
         ontology: ['http://schema.org/'],

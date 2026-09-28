@@ -29,9 +29,11 @@
  */
 
 import { trace, SpanStatusCode, SpanKind } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 const TRACER_NAME = 'unrdf-pipeline';
-const TRACER_VERSION = '[VERSION]';
+const TRACER_VERSION = PKG_VERSION;
 
 /**
  * Get (or create) the UNRDF pipeline tracer.

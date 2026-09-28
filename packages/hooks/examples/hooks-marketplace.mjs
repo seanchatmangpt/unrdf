@@ -176,8 +176,8 @@ async function main() {
 
   const demoHooks = [
     createHook('550e8400-e29b-41d4-a716-446655440010', 'Hook Alpha', '1.0.0', []),
-    createHook('550e8400-e29b-41d4-a716-446655440011', 'Hook Beta', '1.0.0', []),
-    createHook('550e8400-e29b-41d4-a716-446655440012', 'Hook Gamma', '1.0.0', []),
+    createHook('550e8400-e29b-41d4-a716-446655440011', 'Hook Beta', '2.0.0', []),
+    createHook('550e8400-e29b-41d4-a716-446655440012', 'Hook Gamma', '1.5.0', []),
   ];
 
   demoHooks.forEach(h => queryMarketplace.admitHook(h));

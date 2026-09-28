@@ -342,7 +342,7 @@ async function simulateCommit() {
 // Run all examples
 async function runAllExamples() {
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
-  console.log('║  UNRDF latest - Performance Profiling Examples           ║');
+  console.log('║  UNRDF v3.1.0 - Performance Profiling Examples           ║');
   console.log('╚═══════════════════════════════════════════════════════════╝');
 
   try {

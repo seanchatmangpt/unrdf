@@ -10,7 +10,7 @@ import { parseFrontmatter } from './parser.mjs';
 
 /**
  * Semver comparison function
- * @param {string} v1 - First version (e.g., "[VERSION]")
+ * @param {string} v1 - First version (e.g., "1.2.3")
  * @param {string} v2 - Second version
  * @returns {number} -1 if v1 < v2, 0 if equal, 1 if v1 > v2
  */
@@ -47,7 +47,7 @@ export function parseVersionInfo(filePath) {
   const frontmatter = parseFrontmatter(content);
 
   return {
-    version: frontmatter.version || '[VERSION]',
+    version: frontmatter.version || '0.0.0',
     author: frontmatter.author || 'Unknown',
     created: frontmatter.created || null,
     updated: frontmatter.updated || null,

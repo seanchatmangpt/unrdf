@@ -77,7 +77,7 @@
     },
     "package": {
       "name": "@unrdf/kgc-substrate",
-      "version": "[VERSION]",
+      "version": "5.0.0",
       "exports": ["./allocator", "."],
       "dependencies": [
         "@unrdf/core",

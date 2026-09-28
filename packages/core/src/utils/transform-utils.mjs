@@ -5,7 +5,7 @@
  * for RDF data, including format conversions, data reshaping, and
  * structural transformations.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

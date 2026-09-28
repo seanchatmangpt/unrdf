@@ -31,9 +31,8 @@ import { telcoCommand } from './commands/telco.mjs';
 import { validateCommand } from './commands/validate.mjs';
 import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
-import { createRequire } from 'node:module';
-
-const { version: cliVersion } = createRequire(import.meta.url)('../../package.json');
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 import { initCommand } from './commands/init.mjs';
 
 /**
@@ -42,7 +41,7 @@ import { initCommand } from './commands/init.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: cliVersion,
+    version: PKG_VERSION,
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {

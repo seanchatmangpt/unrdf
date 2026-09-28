@@ -148,7 +148,7 @@ The benefits of forensic analysis and debugging typically outweigh these costs i
 
 const apiManifest = {
   name: '@unrdf/kgc-4d',
-  version: 'latest',
+  version: '1.0.0',
   functions: [
     {
       name: 'freezeUniverse',

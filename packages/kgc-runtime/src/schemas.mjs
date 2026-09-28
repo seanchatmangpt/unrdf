@@ -18,7 +18,7 @@
  * import { ReceiptSchema, RunCapsuleSchema } from '@unrdf/kgc-runtime/schemas';
  *
  * const receipt = ReceiptSchema.parse({
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   id: crypto.randomUUID(),
  *   timestamp: Date.now(),
  *   runId: 'run-001',
@@ -82,12 +82,12 @@ const ActorIdSchema = z
  * - Immutable event log (never modified, only appended)
  * - Content-addressable storage (hash-based retrieval)
  * - Cryptographic verification (signatures + merkle proofs)
- * - Version-aware format ([VERSION] schema)
+ * - Version-aware format (v1.0.0 schema)
  * - Actor attribution (who executed what when)
  *
  * @example
  * {
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   id: '550e8400-e29b-41d4-a716-446655440000',
  *   timestamp: 1703001600000,
  *   runId: 'run-2024-001',
@@ -109,7 +109,7 @@ const ActorIdSchema = z
  */
 export const ReceiptSchema = z.object({
   /** Schema version for forward compatibility */
-  version: SemanticVersionSchema.default('[VERSION]'),
+  version: SemanticVersionSchema.default('1.0.0'),
   /** Unique receipt identifier (UUID v4) */
   id: UUIDSchema,
   /** Receipt creation timestamp (Unix epoch ms) */
@@ -264,7 +264,7 @@ export const ToolTraceEntrySchema = z.object({
  * @example
  * {
  *   id: 'run-2024-12-26-001',
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   startTime: 1703001600000,
  *   endTime: 1703001620000,
  *   status: 'completed',
@@ -301,7 +301,7 @@ export const RunCapsuleSchema = z.object({
   /** Unique run identifier */
   id: z.string().min(1).max(200),
   /** Schema version */
-  version: SemanticVersionSchema.default('[VERSION]'),
+  version: SemanticVersionSchema.default('1.0.0'),
   /** Run start timestamp (Unix epoch ms) */
   startTime: z.number().int().positive(),
   /** Run end timestamp (Unix epoch ms, null if in progress) */
@@ -602,7 +602,7 @@ export const WorkItemSchema = z.object({
  *
  * @example
  * {
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   surfaces: {
  *     cli: {
  *       commands: [
@@ -633,7 +633,7 @@ export const WorkItemSchema = z.object({
  */
 export const ProjectionManifestSchema = z.object({
   /** Schema version */
-  version: SemanticVersionSchema.default('[VERSION]'),
+  version: SemanticVersionSchema.default('1.0.0'),
   /** Surface definitions */
   surfaces: z.object({
     /** CLI surface configuration */
@@ -799,7 +799,7 @@ export const ProjectionManifestSchema = z.object({
  *   type: 'document',
  *   frontMatter: {
  *     title: 'KGC Example',
- *     version: '[VERSION]',
+ *     version: '1.0.0',
  *     ontology: ['http://schema.org/']
  *   },
  *   children: [
@@ -1137,11 +1137,11 @@ export function validateKGCMarkdown(ast) {
  * @example
  * {
  *   name: 'custom-receipt',
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   description: 'Custom receipt type plugin',
  *   entryPoint: './plugin.mjs',
  *   capabilities: ['custom-receipt', 'receipt:validate'],
- *   api_version: '[VERSION]',
+ *   api_version: '5.0.1',
  *   author: 'Plugin Developer',
  *   license: 'MIT'
  * }
@@ -1219,17 +1219,17 @@ export const PluginCapabilitySchema = z
  *
  * @example
  * {
- *   version: '[VERSION]',
+ *   version: '1.0.0',
  *   id: '550e8400-e29b-41d4-a716-446655440000',
  *   timestamp: 1703001600000,
  *   runId: 'run-001',
- *   actor: 'plugin:custom-receipt@[VERSION]',
+ *   actor: 'plugin:custom-receipt@1.0.0',
  *   action: 'custom_action',
  *   payload: { customData: 'value' },
  *   result: { success: true },
  *   pluginMetadata: {
  *     pluginName: 'custom-receipt',
- *     pluginVersion: '[VERSION]',
+ *     pluginVersion: '1.0.0',
  *     receiptType: 'custom'
  *   }
  * }

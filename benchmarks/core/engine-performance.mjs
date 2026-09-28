@@ -49,7 +49,7 @@ function createSequentialWorkflow(taskCount = 3) {
   return new YawlWorkflow(
     `workflow_${randomString(8)}`,
     'Sequential Workflow',
-    'latest',
+    '1.0.0',
     tasks,
     flows,
     [],

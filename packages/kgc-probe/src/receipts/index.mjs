@@ -21,7 +21,7 @@ import { randomUUID, createHash } from 'crypto';
 export const HASH_ALGORITHM = 'sha256';
 
 /** Receipt version */
-export const RECEIPT_VERSION = '[VERSION]';
+export const RECEIPT_VERSION = '1.0.0';
 
 /** Receipt types */
 export const RECEIPT_TYPES = Object.freeze({
@@ -302,7 +302,7 @@ export function createMergeReceipt({
     proofPath,
     mergeAlgorithm: {
       algorithm: 'lww-deterministic',
-      version: '[VERSION]',
+      version: '1.0.0',
       parameters: {
         leafOrder: 'agentId-ascending',
         hashFunction: HASH_ALGORITHM,

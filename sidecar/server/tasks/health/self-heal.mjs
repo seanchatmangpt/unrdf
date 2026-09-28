@@ -21,7 +21,7 @@ export default defineTask({
   meta: {
     name: 'health:self-heal',
     description: 'SAFLA self-healing autonomic health monitoring',
-    version: '[VERSION]'
+    version: '1.0.0'
   },
 
   async run({ payload, context: taskContext }) {

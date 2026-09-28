@@ -52,7 +52,7 @@ export async function validatePolicy(store, policyPackName, options = {}) {
             id: randomUUID(),
             meta: {
               name: policyData.name || 'applied-policy',
-              version: policyData.version || 'latest',
+              version: policyData.version || '1.0.0',
               description: policyData.description || 'Applied policy',
             },
             config: {

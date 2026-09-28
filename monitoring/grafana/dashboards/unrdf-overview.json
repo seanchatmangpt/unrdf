@@ -77,7 +77,7 @@
           "mode": "single"
         }
       },
-      "pluginVersion": "[VERSION]",
+      "pluginVersion": "8.0.0",
       "targets": [
         {
           "expr": "rate(unrdf_api_requests_total[5m])",
@@ -138,7 +138,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "[VERSION]",
+      "pluginVersion": "8.0.0",
       "targets": [
         {
           "expr": "histogram_quantile(0.95, rate(unrdf_api_duration_seconds_bucket[5m]))",
@@ -209,7 +209,7 @@
           "mode": "single"
         }
       },
-      "pluginVersion": "[VERSION]",
+      "pluginVersion": "8.0.0",
       "targets": [
         {
           "expr": "rate(unrdf_receipt_created_total[5m])",
@@ -280,7 +280,7 @@
           "mode": "single"
         }
       },
-      "pluginVersion": "[VERSION]",
+      "pluginVersion": "8.0.0",
       "targets": [
         {
           "expr": "process_resident_memory_bytes{job=\"unrdf-app\"}",
@@ -339,7 +339,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "[VERSION]",
+      "pluginVersion": "8.0.0",
       "targets": [
         {
           "expr": "up{job=\"unrdf-app\"}",

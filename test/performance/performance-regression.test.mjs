@@ -3,8 +3,8 @@
  * @module test/performance/performance-regression
  *
  * @description
- * Performance regression testing for UNRDF latest.
- * Validates performance targets against latest baseline.
+ * Performance regression testing for UNRDF v3.1.0.
+ * Validates performance targets against v3.0.0 baseline.
  * Tests parsing, querying, validation, and storage operations.
  */
 
@@ -14,7 +14,7 @@ describe('Performance Regression Tests', () => {
   let performanceBaseline;
 
   beforeEach(() => {
-    // latest performance baseline
+    // v3.0.0 performance baseline
     performanceBaseline = {
       parse: {
         '1k-triples': 500, // ms
@@ -67,7 +67,7 @@ describe('Performance Regression Tests', () => {
       expect(duration).toBeLessThan(regressionThreshold);
     });
 
-    it('should show no more than 10% regression vs latest', () => {
+    it('should show no more than 10% regression vs v3.0.0', () => {
       const turtle = generateTurtle(1000);
 
       const start = performance.now();
@@ -316,7 +316,7 @@ describe('Performance Regression Tests', () => {
     });
   });
 
-  describe('latest Specific Performance', () => {
+  describe('v3.1.0 Specific Performance', () => {
     // REMOVED: isolated-vm test - feature was never implemented, only mocked with eval()
     // If isolated-vm support is added in the future, add real test with actual isolated-vm package
 
@@ -330,7 +330,7 @@ describe('Performance Regression Tests', () => {
       expect(duration, 'IndexedDB query should be fast').toBeLessThan(200);
     });
 
-    it('should show performance improvements vs latest', () => {
+    it('should show performance improvements vs v3.0.0', () => {
       const turtle = generateTurtle(1000);
 
       const start = performance.now();
@@ -339,8 +339,8 @@ describe('Performance Regression Tests', () => {
 
       const baseline = performanceBaseline.parse['1k-triples'];
 
-      // latest should be faster or same as latest
-      expect(duration, 'Should not regress from latest').toBeLessThanOrEqual(baseline);
+      // v3.1.0 should be faster or same as v3.0.0
+      expect(duration, 'Should not regress from v3.0.0').toBeLessThanOrEqual(baseline);
     });
   });
 });

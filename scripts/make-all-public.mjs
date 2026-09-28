@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { glob } from 'glob';
 
-const NEW_VERSION = 'latest';
+const NEW_VERSION = '5.0.1';
 
 async function makeAllPublic() {
   const packageFiles = await glob('packages/*/package.json');

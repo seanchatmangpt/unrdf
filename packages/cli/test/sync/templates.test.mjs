@@ -89,8 +89,8 @@ function extractFrontmatter(content) {
 }
 
 const SAMPLE_CONTEXT = {
-  output_dir: TEST_OUTPUT_DIR, api_version: 'v1', version: '[VERSION]',
-  project: { name: 'Test API', version: '[VERSION]', description: 'Test API from RDF', contact: { name: 'Test', email: 'test@example.com' } },
+  output_dir: TEST_OUTPUT_DIR, api_version: 'v1', version: '1.0.0',
+  project: { name: 'Test API', version: '1.0.0', description: 'Test API from RDF', contact: { name: 'Test', email: 'test@example.com' } },
   sparql_results: [], results: [], entities: ['User'], operations: ['createUser'], now: new Date(), timestamp: new Date().toISOString(),
 };
 

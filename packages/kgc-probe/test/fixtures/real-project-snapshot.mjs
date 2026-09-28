@@ -20,7 +20,7 @@ import { FROZEN_TIMESTAMP } from './frozen-environment.mjs';
  */
 export const PROJECT_STRUCTURE = {
   name: 'sample-rdf-project',
-  version: '[VERSION]',
+  version: '1.0.0',
   type: 'module',
   rootDir: '/home/user/sample-project',
 
@@ -44,7 +44,7 @@ export const PROJECT_STRUCTURE = {
       size: 1240,
       content: {
         name: 'sample-rdf-project',
-        version: '[VERSION]',
+        version: '1.0.0',
         type: 'module',
         main: './src/index.mjs',
         scripts: {
@@ -55,11 +55,11 @@ export const PROJECT_STRUCTURE = {
         dependencies: {
           '@unrdf/oxigraph': 'workspace:*',
           '@unrdf/kgc-4d': 'workspace:*',
-          'zod': '^[VERSION]'
+          'zod': '^4.1.13'
         },
         devDependencies: {
-          'vitest': '^[VERSION]',
-          'eslint': '^[VERSION]'
+          'vitest': '^4.0.15',
+          'eslint': '^9.17.0'
         }
       }
     },

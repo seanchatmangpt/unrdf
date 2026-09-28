@@ -1,12 +1,12 @@
 /**
- * @file Run All OTEL Validations ([VERSION])
+ * @file Run All OTEL Validations (v3.1.0)
  * @module validation/run-all
  *
  * @description
  * Main entry point for running all OTEL span-based validations.
- * Updated for [VERSION] to focus on core features and remove legacy CLI checks.
+ * Updated for v3.1.0 to focus on core features and remove legacy CLI checks.
  *
- * Features validated ([VERSION]):
+ * Features validated (v3.1.0):
  * - Knowledge Engine Core (30%)
  * - Knowledge Hooks API (20%)
  * - Policy Packs (15%)
@@ -22,13 +22,13 @@ import { createValidationRunner } from "../packages/validation/src/index.mjs";
 const runner = createValidationRunner({ verbose: true });
 
 /**
- * Comprehensive validation suite for [VERSION]
+ * Comprehensive validation suite for v3.1.0
  * Focuses on production-ready core features
  */
 const comprehensiveSuite = {
-  name: "comprehensive-[VERSION]",
+  name: "comprehensive-v3.1.0",
   description:
-    "Comprehensive OTEL span-based validation for UNRDF [VERSION] core features",
+    "Comprehensive OTEL span-based validation for UNRDF v3.1.0 core features",
 
   features: [
     // ========================================
@@ -213,11 +213,11 @@ const comprehensiveSuite = {
 };
 
 /**
- * Run comprehensive validation suite for [VERSION]
+ * Run comprehensive validation suite for v3.1.0
  * @returns {Promise<Object>} Validation report
  */
 export async function runComprehensiveValidation() {
-  console.log("🚀 Starting Comprehensive OTEL Validation ([VERSION])...");
+  console.log("🚀 Starting Comprehensive OTEL Validation (v3.1.0)...");
   console.log(
     "   This replaces traditional unit tests with span-based validation",
   );
@@ -280,7 +280,7 @@ export async function runComprehensiveValidation() {
  * @returns {Promise<Object>} Combined validation results
  */
 export async function runIndividualSuites() {
-  console.log("🔍 Running Individual Validation Suites ([VERSION])...\n");
+  console.log("🔍 Running Individual Validation Suites (v3.1.0)...\n");
 
   const results = {
     features: [],
@@ -379,7 +379,7 @@ export async function runIndividualSuites() {
 export async function runAllValidations(options = {}) {
   const { mode = "comprehensive", verbose = true } = options;
 
-  console.log("🎯 UNRDF OTEL Span-Based Validation ([VERSION])");
+  console.log("🎯 UNRDF OTEL Span-Based Validation (v3.1.0)");
   console.log(
     "   Replacing traditional unit tests with OpenTelemetry span analysis",
   );
@@ -460,14 +460,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 function captureConsoleSummary(results) {
   const lines = [];
-  lines.push("🎯 UNRDF OTEL Span-Based Validation ([VERSION])");
+  lines.push("🎯 UNRDF OTEL Span-Based Validation (v3.1.0)");
   lines.push(
     "   Replacing traditional unit tests with OpenTelemetry span analysis",
   );
   lines.push("");
   if (results.summary) {
     lines.push("📊 Validation Results:");
-    lines.push(`   Suite: ${results.suite || "comprehensive-[VERSION]"}`);
+    lines.push(`   Suite: ${results.suite || "comprehensive-v3.1.0"}`);
     lines.push(`   Duration: ${results.summary.duration}ms`);
     lines.push(`   Score: ${results.summary.score}/100`);
     lines.push(

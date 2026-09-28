@@ -1,7 +1,7 @@
 /**
  * @file use-stream-processor.mjs
  * @description React hook for window/aggregation operations on streams
- * @since [VERSION]
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useChangeFeed } from './use-change-feed.mjs';
 /**
  * Hook for processing change streams with windowing and aggregation
  *
- * @since [VERSION]
+ * @since 3.2.0
  * @param {Object} config - Stream processor configuration
  * @param {string} [config.windowType='tumbling'] - Window type: 'tumbling', 'sliding', 'session'
  * @param {number} [config.windowSize=5000] - Window size (ms)

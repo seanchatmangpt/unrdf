@@ -290,7 +290,7 @@ describe('applyDocTemplate', () => {
       template: '# {{title}}',
       frontmatter: {
         author: 'Test Author',
-        version: '[VERSION]'
+        version: '1.0.0'
       }
     };
 
@@ -298,6 +298,6 @@ describe('applyDocTemplate', () => {
     const result = await applyDocTemplate(template, data);
 
     expect(result).toContain('author: Test Author');
-    expect(result).toContain('version: [VERSION]');
+    expect(result).toContain('version: 1.0.0');
   });
 });

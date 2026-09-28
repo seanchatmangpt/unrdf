@@ -6,7 +6,7 @@
  * editing, and validating configuration.
  *
  * @module cli/commands/config
- * @version latest
+ * @version 2.0.0
  * @license MIT
  */
 

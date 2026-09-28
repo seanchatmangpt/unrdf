@@ -278,7 +278,7 @@ export class PolicyPack {
     // Check version compatibility
     if (this.manifest.config.conditions?.version) {
       const requiredVersion = this.manifest.config.conditions.version;
-      const currentVersion = environment.version || '[VERSION]';
+      const currentVersion = environment.version || '1.0.0';
 
       if (!this._isVersionCompatible(currentVersion, requiredVersion)) {
         result.compatible = false;
@@ -541,7 +541,7 @@ export function createPolicyPackManifest(name, hooks, options = {}) {
     id: randomUUID(),
     meta: {
       name: name,
-      version: options.version || '[VERSION]',
+      version: options.version || '1.0.0',
       description: options.description,
       author: options.author,
       license: options.license || 'MIT',

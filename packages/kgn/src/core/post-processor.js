@@ -282,7 +282,7 @@ export class KGenPostProcessor {
   getStats() {
     return {
       ...this.options,
-      version: 'latest-kgen-native',
+      version: '2.0.0-kgen-native',
       supportedOperations: [
         'normalize-line-endings',
         'trim-lines',

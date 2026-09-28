@@ -9,6 +9,8 @@
  *
  * @module @unrdf/v6-compat
  */
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 export * from './adapters.mjs';
 export * from './lint-rules.mjs';
@@ -18,7 +20,7 @@ export * from './schema-codec.mjs';
 /**
  * Version information
  */
-export const VERSION = '[VERSION]-alpha.1';
+export const VERSION = PKG_VERSION;
 export const COMPAT_VERSION = '5.0.x';
 
 /**

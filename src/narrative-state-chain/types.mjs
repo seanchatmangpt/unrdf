@@ -22,7 +22,7 @@ import { z } from 'zod';
 export const UniverseMetadataSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  version: z.string().default('[VERSION]'),
+  version: z.string().default('1.0.0'),
   created: z.date().default(() => new Date()),
   updated: z.date().default(() => new Date()),
 });

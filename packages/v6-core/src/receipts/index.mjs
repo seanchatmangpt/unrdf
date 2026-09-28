@@ -115,7 +115,7 @@ export const ReceiptSchema = z.discriminatedUnion('receiptType', [
  *   eventType: 'GRAMMAR_COMPILED',
  *   inputHashes: ['abc...', 'def...'],
  *   outputHash: 'ghi...',
- *   compilerVersion: '[VERSION]',
+ *   compilerVersion: '1.0.0',
  *   grammarType: 'SPARQL',
  *   payload: { result: 'SUCCESS', metadata: { inputCount: 2, outputCount: 1 } }
  * });

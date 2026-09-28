@@ -4,7 +4,7 @@
  * This module creates the root context that should be used at the application
  * level to provide store access to all composables.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

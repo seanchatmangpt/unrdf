@@ -5,6 +5,8 @@
  *
  * @module @unrdf/v6-compat/lint-rules
  */
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * ESLint rule: no-n3-imports
@@ -263,7 +265,7 @@ export const noDateNow = {
 export const plugin = {
   meta: {
     name: '@unrdf/v6-compat',
-    version: '[VERSION]-alpha.1',
+    version: PKG_VERSION,
   },
   rules: {
     'no-n3-imports': noN3Imports,

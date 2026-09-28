@@ -75,7 +75,7 @@ async function demonstrateTestUtils() {
           meta: {
             name: 'test-hook',
             description: 'Test hook for validation',
-            version: 'latest',
+            version: '1.0.0',
           },
           when: {
             kind: 'sparql-ask',
@@ -154,7 +154,7 @@ async function demonstrateTestUtils() {
             meta: {
               name: 'validation-hook',
               description: 'Validates data',
-              version: 'latest',
+              version: '1.0.0',
             },
             when: {
               kind: 'sparql-ask',
@@ -170,7 +170,7 @@ async function demonstrateTestUtils() {
             meta: {
               name: 'audit-hook',
               description: 'Audits changes',
-              version: 'latest',
+              version: '1.0.0',
             },
             when: {
               kind: 'sparql-ask',

@@ -609,7 +609,7 @@ describe('HooksMarketplace - RDF Store Integration', () => {
 
   it('should query hook version from RDF store', () => {
     const hook = createValidHook({
-      version: '1.0.0',
+      version: '2.5.3',
     });
 
     marketplace.admitHook(hook);
@@ -623,7 +623,7 @@ describe('HooksMarketplace - RDF Store Integration', () => {
 
     const results = marketplace.query(query);
     expect(results.length).toBeGreaterThan(0);
-    expect(results[0].version).toBe('1.0.0');
+    expect(results[0].version).toBe('2.5.3');
   });
 
   it('should handle invalid SPARQL query gracefully', () => {

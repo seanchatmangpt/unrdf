@@ -318,6 +318,6 @@
       "description": "Validate data completeness, accuracy, and schema compliance"
     }
   ],
-  "version": "latest",
+  "version": "1.0.0",
   "description": "Pre-built Knowledge Hook templates for common enterprise use cases"
 }

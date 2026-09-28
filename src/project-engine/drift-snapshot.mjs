@@ -736,7 +736,7 @@ export async function createEmptyBaseline() {
 export async function serializeSnapshot(snapshotStore, receipt) {
   const quads = snapshotStore.getQuads(null, null, null, null);
   const serialized = {
-    version: '[VERSION]',
+    version: '1.0.0',
     receipt,
     quads: quads.map(q => ({
       subject: q.subject.value,

@@ -117,7 +117,7 @@ export const hookMetaValidator = z
 
     version: z
       .string()
-      .regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version (e.g., [VERSION])')
+      .regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version (e.g., 1.0.0)')
       .optional(),
 
     author: z.string().min(1).max(100).optional(),

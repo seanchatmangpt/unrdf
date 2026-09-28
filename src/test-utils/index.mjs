@@ -557,7 +557,7 @@ export const TestHelpers = {
       meta: {
         name,
         description: options.description || `Test hook ${name}`,
-        version: options.version || '[VERSION]',
+        version: options.version || '1.0.0',
       },
       when: when || {
         kind: 'sparql-ask',
@@ -580,7 +580,7 @@ export const TestHelpers = {
       id: `test-${name}-${Date.now()}`,
       meta: {
         name,
-        version: options.version || '[VERSION]',
+        version: options.version || '1.0.0',
         description: options.description || `Test policy pack ${name}`,
         author: options.author || 'test',
         license: options.license || 'MIT',

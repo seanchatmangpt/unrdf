@@ -5,6 +5,8 @@
  *
  * @module @unrdf/v6-core
  */
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 // Version and Feature Flags
 
@@ -12,7 +14,7 @@
  * UNRDF v6 version identifier
  * @constant {string}
  */
-export const V6_VERSION = '[VERSION]-alpha.1';
+export const V6_VERSION = PKG_VERSION;
 
 /**
  * UNRDF v6 feature flags
