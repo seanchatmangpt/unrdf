@@ -9,6 +9,8 @@ describe('git swarm OCEL 2.0', () => {
     branch: 'feat/swarm',
     baseCommit: 'a'.repeat(40),
     commit: 'b'.repeat(40),
+    task: 'T001',
+    tool: 'github.create_tree',
     time: '2026-09-26T19:00:00.000Z',
     surfaces: ['src/swarm/receipt-service.mjs'],
     events: [
@@ -23,6 +25,19 @@ describe('git swarm OCEL 2.0', () => {
     expect(validateOcel2Document(doc)).toEqual({ valid: true, errors: [] });
     expect(doc.events).toHaveLength(3);
     expect(doc.objects.some(o => o.type === 'Commit' && o.id === `commit:${input.commit}`)).toBe(true);
+  });
+
+  it('refuses construction before OCEL materialization when exact task/tool identity is missing', () => {
+    expect(() => createGitSwarmOcel({ ...input, task: '' })).toThrow('task must be a non-empty string');
+    expect(() => createGitSwarmOcel({ ...input, tool: '' })).toThrow('tool must be a non-empty string');
+    expect(() => createGitSwarmOcel({ ...input, commit: 'abc123' })).toThrow('commit_not_full_sha');
+  });
+
+  it('binds task and admitted tool into every event', () => {
+    const doc = createGitSwarmOcel(input);
+    expect(doc.objects.some(o => o.type === 'Task' && o.id === 'task:T001')).toBe(true);
+    expect(doc.events.every(e => e.relationships.some(r => r.qualifier === 'task'))).toBe(true);
+    expect(doc.events.every(e => e.relationships.some(r => r.qualifier === 'admitted-tool'))).toBe(true);
   });
 
   it('projects the same evidence into RDF quads', () => {
