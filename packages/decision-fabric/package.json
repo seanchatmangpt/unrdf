@@ -16,6 +16,12 @@
     "test:watch": "npm test -- --watch",
     "lint": "eslint src/"
   },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*.test.mjs"
+    ],
+    "transform": {}
+  },
   "keywords": [
     "rdf",
     "knowledge-graph",
