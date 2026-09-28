@@ -47,8 +47,7 @@ const ArchiveSchema = z.object({
  * @returns {Promise<string>} Hash string
  */
 async function computeHash(data) {
-  const normalized = canonicalStringify(data);
-  return blake3(normalized);
+  return blake3(canonicalStringify(data));
 }
 
 /**
@@ -122,14 +121,17 @@ export function gamma(observables) {
  * @param {Array<object>} observables - Array of observable objects
  * @returns {Promise<Array<object>>} Deduplicated observables
  */
-async function deduplicate(observables) {
+async function deduplicate(observables, canonical = new Map()) {
   const seen = new Map();
   const unique = [];
 
   for (const obs of observables) {
-    const hash = await computeHash(obs);
+    // Serialize once per call; the caller reuses it for deterministic ordering
+    const key = canonicalStringify(obs);
+    const hash = await blake3(key);
     if (!seen.has(hash)) {
       seen.set(hash, true);
+      canonical.set(obs, key);
       unique.push(obs);
     }
   }
@@ -210,12 +212,13 @@ export async function compress(input) {
   });
 
   // Step 1: Deduplicate
-  const deduplicated = await deduplicate(validated);
+  const canonical = new Map();
+  const deduplicated = await deduplicate(validated, canonical);
 
   // Step 2: Sort by timestamp for deterministic ordering
   // Ties on timestamp are broken by canonical content so the result (and hash, and the
   // index-based glue) does not depend on input order: O1 ⊔ O2 = O2 ⊔ O1
-  const keyed = deduplicated.map(obs => ({ obs, key: canonicalStringify(obs) }));
+  const keyed = deduplicated.map(obs => ({ obs, key: canonical.get(obs) }));
   keyed.sort((a, b) =>
     a.obs.timestamp !== b.obs.timestamp
       ? a.obs.timestamp - b.obs.timestamp
