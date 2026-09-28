@@ -7,7 +7,7 @@
  * Reports broken links, redirects, and accessibility issues.
  *
  * @module docs/tools/check-links
- * @version latest
+ * @version 1.0.0
  * @license MIT
  */
 

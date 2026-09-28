@@ -7,7 +7,7 @@
  * that they compile and execute correctly.
  *
  * @module docs/tools/validate-examples
- * @version latest
+ * @version 1.0.0
  * @license MIT
  */
 
