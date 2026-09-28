@@ -7,10 +7,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./ai-semantic": "./src/ai-semantic/index.mjs",
-    "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs",
-    "./embeddings-manager": "./src/ai-semantic/embeddings-manager.mjs",
-    "./nlp-query-builder": "./src/ai-semantic/nlp-query-builder.mjs",
-    "./anomaly-detector": "./src/ai-semantic/anomaly-detector.mjs"
+    "./semantic-analyzer": "./src/ai-semantic/semantic-analyzer.mjs"
   },
   "sideEffects": false,
   "files": [

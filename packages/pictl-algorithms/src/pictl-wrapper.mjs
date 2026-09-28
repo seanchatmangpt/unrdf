@@ -8,6 +8,9 @@
  * @module pictl-wrapper
  */
 
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
 // pictl WASM module cache
 let pictlWasm = null;
 let pictlModule = null;
@@ -40,7 +43,8 @@ export async function loadPictlWasm(options = {}) {
     } catch (importError) {
       if (wasmPath) {
         // Load from custom path
-        const { loadPictlWasm: loadCustom } = await import(`file://${wasmPath}`);
+        // pathToFileURL handles relative paths, spaces and Windows drive letters
+        const { loadPictlWasm: loadCustom } = await import(pathToFileURL(resolve(wasmPath)).href);
         pictlModule = await loadCustom({ profile });
       } else {
         throw importError;
@@ -58,14 +62,15 @@ export async function loadPictlWasm(options = {}) {
 /**
  * Get pictl kernel instance
  *
+ * @param {Object} [options] - Options forwarded to loadPictlWasm (wasmPath, profile)
  * @returns {Promise<Object>} pictl kernel
  *
  * @example
  * const kernel = await getKernel();
  * const result = await kernel.discoverDFG(eventLogHandle);
  */
-export async function getKernel() {
-  const pictl = await loadPictlWasm();
+export async function getKernel(options = {}) {
+  const pictl = await loadPictlWasm(options);
 
   if (pictlWasm) {
     return pictlWasm;
@@ -113,14 +118,15 @@ export async function resetKernel() {
 /**
  * Get pictl kernel info
  *
+ * @param {Object} [options] - Options forwarded to getKernel
  * @returns {Promise<Object>} Kernel information
  *
  * @example
  * const info = await getKernelInfo();
  * console.log(info.version);
  */
-export async function getKernelInfo() {
-  const kernel = await getKernel();
+export async function getKernelInfo(options = {}) {
+  const kernel = await getKernel(options);
 
   if (kernel.version) {
     return {

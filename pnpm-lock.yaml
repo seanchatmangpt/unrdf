@@ -430,9 +430,18 @@ importers:
       '@unrdf/core':
         specifier: workspace:*
         version: link:../core
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
       '@unrdf/streaming':
         specifier: workspace:*
         version: link:../streaming
+      rdf-canonize:
+        specifier: ^5.0.0
+        version: 5.0.0
+      unctx:
+        specifier: ^3.0.1
+        version: 3.0.1(magic-string@0.30.21)
       vue:
         specifier: ^3.5.25
         version: 3.5.33(typescript@5.9.3)
@@ -611,6 +620,9 @@ importers:
       typhonjs-escomplex:
         specifier: ^0.1.0
         version: 0.1.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -1544,6 +1556,9 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
       '@unrdf/test-utils':
         specifier: workspace:*
         version: link:../test-utils
@@ -12745,6 +12760,23 @@ packages:
       typescript: ^5.9.2
     peerDependenciesMeta:
       typescript:
+        optional: true
+
+  unctx@3.0.1:
+    resolution: {integrity: sha512-5RAt2etv7g362RXyd33R82gm9u/kbtQlpoaOs9Bgm4E32GRMJ0xjbZyvdxUTmiuHk3V1IQb1aUNrp5IWY+JaWw==}
+    peerDependencies:
+      magic-string: '>=0.30.21'
+      oxc-parser: '>=0.140.0'
+      rolldown: ^1.1.5
+      unplugin: ^3.3.0
+    peerDependenciesMeta:
+      magic-string:
+        optional: true
+      oxc-parser:
+        optional: true
+      rolldown:
+        optional: true
+      unplugin:
         optional: true
 
   undefsafe@2.0.5:
@@ -29907,6 +29939,10 @@ snapshots:
       - vue
       - vue-sfc-transformer
       - vue-tsc
+
+  unctx@3.0.1(magic-string@0.30.21):
+    optionalDependencies:
+      magic-string: 0.30.21
 
   undefsafe@2.0.5: {}
 

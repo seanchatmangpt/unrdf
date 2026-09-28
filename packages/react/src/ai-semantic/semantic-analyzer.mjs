@@ -11,10 +11,23 @@
  */
 
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import LRUCache from 'lru-cache';
+import { createHash } from 'node:crypto';
+import { LRUCache } from 'lru-cache';
 import { z } from 'zod';
 
 const tracer = trace.getTracer('unrdf-ai-semantic');
+
+/**
+ * Iterate the quads of a store. Accepts any iterable store, or a store exposing match()
+ * (e.g. the Oxigraph-backed store from @unrdf/oxigraph).
+ * @param {Object} store - RDF store
+ * @returns {Iterable<Object>} Quads
+ */
+function quadsOf(store) {
+  if (store && typeof store[Symbol.iterator] === 'function') return store;
+  if (store && typeof store.match === 'function') return store.match();
+  throw new TypeError('store must be iterable or provide match()');
+}
 
 /**
  * Semantic analysis result schema
@@ -209,7 +222,7 @@ export class SemanticAnalyzer {
         const conceptMap = new Map();
 
         // Count subject occurrences
-        for (const quad of store) {
+        for (const quad of quadsOf(store)) {
           const subject = quad.subject.value;
           if (!conceptMap.has(subject)) {
             conceptMap.set(subject, {
@@ -284,7 +297,7 @@ export class SemanticAnalyzer {
     const outLinks = new Map();
     const inLinks = new Map();
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       const subj = quad.subject.value;
       const obj = quad.object.value;
 
@@ -334,7 +347,7 @@ export class SemanticAnalyzer {
       try {
         const relationshipMap = new Map();
 
-        for (const quad of store) {
+        for (const quad of quadsOf(store)) {
           const key = `${quad.subject.value}|${quad.predicate.value}|${quad.object.value}`;
           if (!relationshipMap.has(key)) {
             relationshipMap.set(key, {
@@ -387,7 +400,7 @@ export class SemanticAnalyzer {
         const predicateCount = new Map();
 
         // Count predicate usage
-        for (const quad of store) {
+        for (const quad of quadsOf(store)) {
           const pred = quad.predicate.value;
           predicateCount.set(pred, (predicateCount.get(pred) || 0) + 1);
         }
@@ -433,7 +446,7 @@ export class SemanticAnalyzer {
     const typeCount = new Map();
     const RDF_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.predicate.value === RDF_TYPE) {
         const type = quad.object.value;
         typeCount.set(type, (typeCount.get(type) || 0) + 1);
@@ -533,14 +546,14 @@ export class SemanticAnalyzer {
     // This is a simplified check - a full implementation would be more comprehensive
     const domainMap = new Map();
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.predicate.value === RDFS_DOMAIN) {
         domainMap.set(quad.subject.value, quad.object.value);
       }
     }
 
     // Check for predicates used with entities outside their declared domain
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       const expectedDomain = domainMap.get(quad.predicate.value);
       if (expectedDomain) {
         // Would need to check actual types - simplified here
@@ -565,7 +578,7 @@ export class SemanticAnalyzer {
     // Find entities with multiple types that might indicate subclass relationships
     const entityTypes = new Map();
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.predicate.value === RDF_TYPE) {
         if (!entityTypes.has(quad.subject.value)) {
           entityTypes.set(quad.subject.value, new Set());
@@ -600,7 +613,7 @@ export class SemanticAnalyzer {
     const predicates = new Set();
     const objects = new Set();
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       subjects.add(quad.subject.value);
       predicates.add(quad.predicate.value);
       objects.add(quad.object.value);
@@ -701,7 +714,7 @@ export class SemanticAnalyzer {
    */
   _getConceptProperties(store, conceptUri) {
     const properties = [];
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.subject.value === conceptUri) {
         properties.push(quad.predicate.value);
       }
@@ -718,7 +731,7 @@ export class SemanticAnalyzer {
    */
   _getConceptNeighbors(store, conceptUri) {
     const neighbors = [];
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.subject.value === conceptUri) {
         neighbors.push(quad.object.value);
       }
@@ -737,11 +750,14 @@ export class SemanticAnalyzer {
    */
   _getCacheKey(store) {
     // Simple hash based on size and a sample of quads
-    const sample = Array.from(store)
-      .slice(0, 10)
-      .map(q => `${q.subject.value}|${q.predicate.value}|${q.object.value}`)
-      .join('::');
-    return `${store.size}:${sample}`;
+    // Digest of every quad (order independent): a size + first-N-quads key would collide for
+    // distinct stores sharing a prefix and serve another graph's analysis.
+    const lines = Array.from(quadsOf(store), q =>
+      [q.subject, q.predicate, q.object, q.graph]
+        .map(t => `${t?.termType ?? ''}:${t?.value ?? ''}`)
+        .join('|')
+    ).sort();
+    return `${store.size}:${createHash('sha256').update(lines.join('\n')).digest('hex')}`;
   }
 
   /**
@@ -754,6 +770,15 @@ export class SemanticAnalyzer {
   }
 
   /**
+   * Total cache lookups (hits + misses)
+   * @returns {number} Lookup count
+   * @private
+   */
+  _lookups() {
+    return this.stats.cacheHits + this.stats.cacheMisses;
+  }
+
+  /**
    * Get analyzer statistics
    * @returns {Object} Statistics
    */
@@ -761,7 +786,7 @@ export class SemanticAnalyzer {
     return {
       ...this.stats,
       cacheSize: this.cache ? this.cache.size : 0,
-      cacheHitRate: this.stats.analyses > 0 ? this.stats.cacheHits / this.stats.analyses : 0,
+      cacheHitRate: this._lookups() > 0 ? this.stats.cacheHits / this._lookups() : 0,
     };
   }
 }
