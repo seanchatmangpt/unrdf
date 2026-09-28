@@ -1,0 +1,13 @@
+{
+  "case": "commit-positive",
+  "dimension": "commit",
+  "expected": "ADMIT",
+  "commitSha": "commit:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

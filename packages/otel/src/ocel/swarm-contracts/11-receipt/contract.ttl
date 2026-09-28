@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:receiptContract a sw:AdmissionContract ; sw:dimension "receipt" ; sw:law "Receipt identity binds produced commit, run, task and tool edges." ; sw:requiredField "receiptId" ; sw:failureCode "receipt_commit_mismatch" .

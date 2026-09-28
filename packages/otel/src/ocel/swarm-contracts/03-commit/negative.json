@@ -1,0 +1,8 @@
+{
+  "case": "commit-negative",
+  "dimension": "commit",
+  "expected": "REFUSE",
+  "refusalCode": "abbreviated_or_unknown_commit",
+  "missingOrInvalid": "commitSha",
+  "assertion": "must refuse commit when commitSha is absent, stale, or mismatched"
+}

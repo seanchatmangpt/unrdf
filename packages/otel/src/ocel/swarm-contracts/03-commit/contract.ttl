@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:commitContract a sw:AdmissionContract ; sw:dimension "commit" ; sw:law "Commit identity requires full immutable SHA and parent relation." ; sw:requiredField "commitSha" ; sw:failureCode "abbreviated_or_unknown_commit" .

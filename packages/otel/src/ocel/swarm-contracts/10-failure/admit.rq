@@ -1,0 +1,6 @@
+PREFIX sw: <https://unrdf.dev/ns/git-swarm#>
+ASK WHERE {
+ ?receipt a sw:SwarmReceipt ; sw:failureClass ?value .
+ FILTER(BOUND(?value))
+ FILTER NOT EXISTS { ?receipt sw:refusalCode "global_stop_from_local_failure" }
+}

@@ -1,0 +1,8 @@
+{
+  "case": "consumer-negative",
+  "dimension": "consumer",
+  "expected": "REFUSE",
+  "refusalCode": "unvalidated_consumer",
+  "missingOrInvalid": "consumer",
+  "assertion": "must refuse consumer when consumer is absent, stale, or mismatched"
+}

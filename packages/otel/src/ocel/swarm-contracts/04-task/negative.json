@@ -1,0 +1,8 @@
+{
+  "case": "task-negative",
+  "dimension": "task",
+  "expected": "REFUSE",
+  "refusalCode": "task_subject_mismatch",
+  "missingOrInvalid": "taskId",
+  "assertion": "must refuse task when taskId is absent, stale, or mismatched"
+}

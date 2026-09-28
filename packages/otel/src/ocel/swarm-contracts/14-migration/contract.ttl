@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:migrationContract a sw:AdmissionContract ; sw:dimension "migration" ; sw:law "Migration preserves v1 receipt identity while adding typed exact-subject relations." ; sw:requiredField "migrationVersion" ; sw:failureCode "identity_loss" .

@@ -1,0 +1,8 @@
+{
+  "case": "failure-negative",
+  "dimension": "failure",
+  "expected": "REFUSE",
+  "refusalCode": "global_stop_from_local_failure",
+  "missingOrInvalid": "failureClass",
+  "assertion": "must refuse failure when failureClass is absent, stale, or mismatched"
+}

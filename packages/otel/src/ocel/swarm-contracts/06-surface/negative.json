@@ -1,0 +1,8 @@
+{
+  "case": "surface-negative",
+  "dimension": "surface",
+  "expected": "REFUSE",
+  "refusalCode": "surface_blob_mismatch",
+  "missingOrInvalid": "surfacePath",
+  "assertion": "must refuse surface when surfacePath is absent, stale, or mismatched"
+}

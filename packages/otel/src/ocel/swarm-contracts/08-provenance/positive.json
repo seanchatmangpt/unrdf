@@ -1,0 +1,13 @@
+{
+  "case": "provenance-positive",
+  "dimension": "provenance",
+  "expected": "ADMIT",
+  "sourceIdentity": "provenance:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

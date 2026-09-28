@@ -1,0 +1,8 @@
+{
+  "case": "authority-negative",
+  "dimension": "authority",
+  "expected": "REFUSE",
+  "refusalCode": "authority_absent",
+  "missingOrInvalid": "authority",
+  "assertion": "must refuse authority when authority is absent, stale, or mismatched"
+}

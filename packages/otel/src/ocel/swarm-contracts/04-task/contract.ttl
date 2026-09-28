@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:taskContract a sw:AdmissionContract ; sw:dimension "task" ; sw:law "Task identity binds run, sequence, intent digest, and selected subject." ; sw:requiredField "taskId" ; sw:failureCode "task_subject_mismatch" .

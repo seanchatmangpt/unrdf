@@ -1,0 +1,8 @@
+{
+  "case": "migration-negative",
+  "dimension": "migration",
+  "expected": "REFUSE",
+  "refusalCode": "identity_loss",
+  "missingOrInvalid": "migrationVersion",
+  "assertion": "must refuse migration when migrationVersion is absent, stale, or mismatched"
+}

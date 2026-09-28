@@ -1,0 +1,8 @@
+{
+  "case": "receipt-negative",
+  "dimension": "receipt",
+  "expected": "REFUSE",
+  "refusalCode": "receipt_commit_mismatch",
+  "missingOrInvalid": "receiptId",
+  "assertion": "must refuse receipt when receiptId is absent, stale, or mismatched"
+}

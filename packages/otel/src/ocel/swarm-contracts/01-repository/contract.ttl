@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:repositoryContract a sw:AdmissionContract ; sw:dimension "repository" ; sw:law "Repository identity must bind owner/name and observed repository id; aliases cannot substitute." ; sw:requiredField "repoFullName" ; sw:failureCode "repository_id_mismatch" .

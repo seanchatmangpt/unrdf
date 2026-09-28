@@ -1,0 +1,8 @@
+{
+  "case": "tool-negative",
+  "dimension": "tool",
+  "expected": "REFUSE",
+  "refusalCode": "tool_schema_drift",
+  "missingOrInvalid": "toolEdge",
+  "assertion": "must refuse tool when toolEdge is absent, stale, or mismatched"
+}

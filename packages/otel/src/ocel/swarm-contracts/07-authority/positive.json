@@ -1,0 +1,13 @@
+{
+  "case": "authority-positive",
+  "dimension": "authority",
+  "expected": "ADMIT",
+  "authority": "authority:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "case": "replay-negative",
+  "dimension": "replay",
+  "expected": "REFUSE",
+  "refusalCode": "replay_divergence",
+  "missingOrInvalid": "replaySeed",
+  "assertion": "must refuse replay when replaySeed is absent, stale, or mismatched"
+}

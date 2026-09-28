@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:consumerContract a sw:AdmissionContract ; sw:dimension "consumer" ; sw:law "Consumer admission must validate OCEL before RDF projection or persistence." ; sw:requiredField "consumer" ; sw:failureCode "unvalidated_consumer" .

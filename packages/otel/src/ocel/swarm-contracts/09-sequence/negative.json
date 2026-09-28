@@ -1,0 +1,8 @@
+{
+  "case": "sequence-negative",
+  "dimension": "sequence",
+  "expected": "REFUSE",
+  "refusalCode": "non_monotonic_sequence",
+  "missingOrInvalid": "sequence",
+  "assertion": "must refuse sequence when sequence is absent, stale, or mismatched"
+}

@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:sequenceContract a sw:AdmissionContract ; sw:dimension "sequence" ; sw:law "Event order uses monotonic integer sequence independent of wall-clock resolution." ; sw:requiredField "sequence" ; sw:failureCode "non_monotonic_sequence" .

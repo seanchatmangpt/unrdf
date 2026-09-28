@@ -1,0 +1,6 @@
+PREFIX sw: <https://unrdf.dev/ns/git-swarm#>
+ASK WHERE {
+ ?receipt a sw:SwarmReceipt ; sw:sequence ?value .
+ FILTER(BOUND(?value))
+ FILTER NOT EXISTS { ?receipt sw:refusalCode "non_monotonic_sequence" }
+}

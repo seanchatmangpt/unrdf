@@ -1,0 +1,8 @@
+{
+  "case": "provenance-negative",
+  "dimension": "provenance",
+  "expected": "REFUSE",
+  "refusalCode": "provenance_missing",
+  "missingOrInvalid": "sourceIdentity",
+  "assertion": "must refuse provenance when sourceIdentity is absent, stale, or mismatched"
+}

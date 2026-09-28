@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:surfaceContract a sw:AdmissionContract ; sw:dimension "surface" ; sw:law "Code surface binds repository-relative path plus content blob SHA." ; sw:requiredField "surfacePath" ; sw:failureCode "surface_blob_mismatch" .

@@ -1,0 +1,13 @@
+{
+  "case": "consumer-positive",
+  "dimension": "consumer",
+  "expected": "ADMIT",
+  "consumer": "consumer:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "case": "repository-negative",
+  "dimension": "repository",
+  "expected": "REFUSE",
+  "refusalCode": "repository_id_mismatch",
+  "missingOrInvalid": "repoFullName",
+  "assertion": "must refuse repository when repoFullName is absent, stale, or mismatched"
+}

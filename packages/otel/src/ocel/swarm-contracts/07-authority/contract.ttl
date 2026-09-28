@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:authorityContract a sw:AdmissionContract ; sw:dimension "authority" ; sw:law "Authority is explicit per consequential operation and never inferred from capability." ; sw:requiredField "authority" ; sw:failureCode "authority_absent" .

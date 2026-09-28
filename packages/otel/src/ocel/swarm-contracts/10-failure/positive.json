@@ -1,0 +1,13 @@
+{
+  "case": "failure-positive",
+  "dimension": "failure",
+  "expected": "ADMIT",
+  "failureClass": "failure:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

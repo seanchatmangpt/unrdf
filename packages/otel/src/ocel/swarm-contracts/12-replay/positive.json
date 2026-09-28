@@ -1,0 +1,13 @@
+{
+  "case": "replay-positive",
+  "dimension": "replay",
+  "expected": "ADMIT",
+  "replaySeed": "replay:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}

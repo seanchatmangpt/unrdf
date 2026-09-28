@@ -1,0 +1,3 @@
+@prefix sw: <https://unrdf.dev/ns/git-swarm#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+sw:replayContract a sw:AdmissionContract ; sw:dimension "replay" ; sw:law "Replay requires deterministic ordering and exact object references." ; sw:requiredField "replaySeed" ; sw:failureCode "replay_divergence" .

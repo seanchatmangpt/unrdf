@@ -1,0 +1,8 @@
+{
+  "case": "branch-negative",
+  "dimension": "branch",
+  "expected": "REFUSE",
+  "refusalCode": "branch_head_drift",
+  "missingOrInvalid": "branch",
+  "assertion": "must refuse branch when branch is absent, stale, or mismatched"
+}

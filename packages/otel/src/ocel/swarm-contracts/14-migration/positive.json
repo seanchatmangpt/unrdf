@@ -1,0 +1,13 @@
+{
+  "case": "migration-positive",
+  "dimension": "migration",
+  "expected": "ADMIT",
+  "migrationVersion": "migration:exact",
+  "objects": {
+    "repository": "seanchatmangpt/unrdf",
+    "branch": "feat/example",
+    "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task": "task:001",
+    "tool": "github"
+  }
+}
