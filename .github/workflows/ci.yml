@@ -357,7 +357,7 @@ jobs:
         run: |
           echo "Running integration tests..."
           # Run comprehensive integration tests
-          pnpm test -- --reporter=verbose --testNamePattern="Integration"
+          pnpm --filter @unrdf/integration-tests test
           echo "✅ Integration tests completed"
 
   # CLI Sync Command Tests
@@ -386,19 +386,19 @@ jobs:
       - name: Run sync-specific unit tests
         run: |
           echo "Running sync command unit tests..."
-          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="sync|Sync"
+          timeout 30s pnpm -C packages/cli exec vitest run --reporter=verbose -t "sync|Sync"
           echo "✅ Sync unit tests passed"
 
       - name: Run sync E2E integration tests
         run: |
           echo "Running sync E2E integration tests..."
-          timeout 60s pnpm -C packages/cli test -- --reporter=verbose test/e2e/sync-e2e.test.mjs
+          timeout 60s pnpm -C packages/cli exec vitest run --reporter=verbose test/e2e/sync-e2e.test.mjs
           echo "✅ Sync E2E tests passed"
 
       - name: Test sync command components
         run: |
           echo "Testing individual sync components..."
-          timeout 30s pnpm -C packages/cli test -- --reporter=verbose test/sync/
+          timeout 30s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/
           echo "✅ Component tests passed"
 
       - name: Verify example configs (if present)
@@ -503,19 +503,19 @@ jobs:
       - name: Test SPARQL query execution
         run: |
           echo "Testing SPARQL executor component..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/sparql-executor.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/sparql-executor.test.mjs
           echo "✅ SPARQL executor tests passed"
 
       - name: Test template rendering
         run: |
           echo "Testing template renderer component..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/template-renderer.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/template-renderer.test.mjs
           echo "✅ Template renderer tests passed"
 
       - name: Test config parser
         run: |
           echo "Testing config parser component..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/config-parser.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/config-parser.test.mjs
           echo "✅ Config parser tests passed"
 
       - name: Verify sync command exit codes

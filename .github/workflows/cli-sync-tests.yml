@@ -38,43 +38,43 @@ jobs:
       - name: Run sync command unit tests
         run: |
           echo "Running sync command unit tests..."
-          timeout 30s pnpm -C packages/cli test -- --reporter=verbose test/cli/sync.test.mjs
+          timeout 30s pnpm -C packages/cli exec vitest run --reporter=verbose test/cli/sync.test.mjs
           echo "✅ Sync unit tests passed"
 
       - name: Run config parser tests
         run: |
           echo "Testing TOML config parser..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/config-parser.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/config-parser.test.mjs
           echo "✅ Config parser tests passed"
 
       - name: Run ontology loader tests
         run: |
           echo "Testing ontology loader..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/ontology-loader.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/ontology-loader.test.mjs
           echo "✅ Ontology loader tests passed"
 
       - name: Run SPARQL executor tests
         run: |
           echo "Testing SPARQL executor..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/sparql-executor.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/sparql-executor.test.mjs
           echo "✅ SPARQL executor tests passed"
 
       - name: Run template renderer tests
         run: |
           echo "Testing Nunjucks template renderer..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/template-renderer.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/template-renderer.test.mjs
           echo "✅ Template renderer tests passed"
 
       - name: Run template filter tests
         run: |
           echo "Testing custom template filters..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/templates.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/templates.test.mjs
           echo "✅ Template filter tests passed"
 
       - name: Run orchestrator tests
         run: |
           echo "Testing sync orchestrator..."
-          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/orchestrator.test.mjs
+          timeout 10s pnpm -C packages/cli exec vitest run --reporter=verbose test/sync/orchestrator.test.mjs
           echo "✅ Orchestrator tests passed"
 
   sync-e2e-tests:
@@ -108,7 +108,7 @@ jobs:
       - name: Run E2E tests - Full pipeline
         run: |
           echo "Running full sync pipeline E2E tests..."
-          timeout 60s pnpm -C packages/cli test -- --reporter=verbose test/e2e/sync-e2e.test.mjs
+          timeout 60s pnpm -C packages/cli exec vitest run --reporter=verbose test/e2e/sync-e2e.test.mjs
           echo "✅ E2E tests passed on Node ${{ matrix.node-version }}"
 
       - name: Test full pipeline integration
@@ -116,7 +116,7 @@ jobs:
           echo "Testing config → ontology → SPARQL → template → output pipeline..."
 
           # This runs all E2E tests that verify the complete workflow
-          timeout 60s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="Full Pipeline Integration"
+          timeout 60s pnpm -C packages/cli exec vitest run --reporter=verbose -t "process full pipeline"
           echo "✅ Full pipeline integration verified"
 
       - name: Test error handling
@@ -124,7 +124,7 @@ jobs:
           echo "Testing error handling for sync command..."
 
           # Run error handling E2E tests
-          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="Error Handling"
+          timeout 30s pnpm -C packages/cli exec vitest run --reporter=verbose -t "should fail for missing"
           echo "✅ Error handling tests passed"
 
   example-configs:
@@ -156,7 +156,7 @@ jobs:
           echo "Searching for example configurations..."
 
           # Look for example TOML configs
-          EXAMPLE_CONFIGS=$(find packages/cli -name "*.toml" -o -path "*/examples/*" -name "*.toml" 2>/dev/null || true)
+          EXAMPLE_CONFIGS=$(find packages/cli/examples -name "*.toml" 2>/dev/null || true)
 
           if [ -z "$EXAMPLE_CONFIGS" ]; then
             echo "No example configs found in packages/cli"
@@ -446,7 +446,7 @@ jobs:
       - name: Test dry-run mode
         run: |
           echo "Testing --dry-run flag..."
-          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="dry-run|Dry-run"
+          timeout 30s pnpm -C packages/cli exec vitest run --reporter=verbose -t "dry-run|Dry-run"
           echo "✅ Dry-run mode tests passed"
 
   report:

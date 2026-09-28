@@ -44,19 +44,19 @@ jobs:
         run: |
           echo "Running core package benchmarks..."
           set -o pipefail
-          timeout 120s pnpm -C packages/core test -- --run --reporter=verbose 2>&1 | tee benchmark-core.log
+          timeout 120s pnpm -C packages/core test 2>&1 | tee benchmark-core.log
 
       - name: Run streaming benchmarks
         run: |
           echo "Running streaming package benchmarks..."
           set -o pipefail
-          timeout 120s pnpm -C packages/streaming test -- --run --reporter=verbose 2>&1 | tee benchmark-streaming.log
+          timeout 120s pnpm -C packages/streaming test 2>&1 | tee benchmark-streaming.log
 
       - name: Run federation benchmarks
         run: |
           echo "Running federation package benchmarks..."
           set -o pipefail
-          timeout 120s pnpm -C packages/federation test -- --run --reporter=verbose 2>&1 | tee benchmark-federation.log
+          timeout 120s pnpm -C packages/federation test 2>&1 | tee benchmark-federation.log
 
       - name: Collect benchmark metrics
         run: |
