@@ -34,7 +34,7 @@ import { z } from 'zod';
  * Cache configuration schema
  */
 const CacheConfigSchema = z.object({
-  store: z.any(), // OxigraphStore instance
+  store: z.any().optional(), // OxigraphStore instance
   redisUrl: z.string().optional().default('redis://localhost:6379'),
   l1MaxSize: z.number().int().positive().default(1000),
   l1TtlMs: z.number().int().positive().default(60000), // 1 minute
