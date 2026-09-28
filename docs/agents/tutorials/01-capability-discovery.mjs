@@ -89,12 +89,13 @@ export async function verifyPreconditions(capabilityUri) {
         satisfied = typeof globalThis !== 'undefined';
         actualValue = typeof globalThis;
         break;
-      case 'nodeVersion':
+      case 'nodeVersion': {
         const required = parseFloat(value);
         const actual = parseFloat(process.versions.node.split('.')[0]);
         satisfied = actual >= required;
         actualValue = actual;
         break;
+      }
       case 'module':
         try {
           await import(value);
@@ -105,12 +106,13 @@ export async function verifyPreconditions(capabilityUri) {
           actualValue = 'not-found';
         }
         break;
-      case 'memory':
+      case 'memory': {
         const required = parseInt(value);
         const actual = process.memoryUsage().heapUsed;
         satisfied = actual < required;
         actualValue = actual;
         break;
+      }
     }
     
     results.push({
