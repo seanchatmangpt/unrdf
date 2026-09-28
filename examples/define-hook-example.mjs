@@ -25,7 +25,7 @@ export const motionComplianceHook = defineHook({
     kind: 'sparql-ask',
     ref: {
       uri: 'file://hooks/parliamentary/motion-compliance.ask.rq',
-      sha256: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456', // Example hash
+      sha256: '23e6491f00f136d30b585cc307a26b38031312774d455840f87e0676c999b75f', // sha256 of hooks/parliamentary/motion-compliance.ask.rq
       mediaType: 'application/sparql-query',
     },
   },
@@ -130,7 +130,7 @@ export const financialMonitoringHook = defineHook({
     kind: 'sparql-select',
     ref: {
       uri: 'file://hooks/financial/large-transaction.select.rq',
-      sha256: 'b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567', // Example hash
+      sha256: '1c0cfc6b8c5155fc48f6bface12d7bf6159f32a7278c2799239ececccf90e6ca', // sha256 of hooks/financial/large-transaction.select.rq
       mediaType: 'application/sparql-query',
     },
   },
@@ -215,7 +215,7 @@ export const dataQualityHook = defineHook({
     kind: 'shacl',
     ref: {
       uri: 'file://hooks/quality/data-quality.shacl.ttl',
-      sha256: 'c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345678', // Example hash
+      sha256: '2b0a97f686330663d9a59bb005b22ea7b7c84362a64af37104767ae43caace21', // sha256 of hooks/quality/data-quality.shacl.ttl
       mediaType: 'text/turtle',
     },
   },

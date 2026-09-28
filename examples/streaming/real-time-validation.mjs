@@ -5,12 +5,12 @@
  * and integrate it with the transaction system.
  */
 
-import { createStore } from '@unrdf/oxigraph';
-import { TransactionManager } from '../../packages/knowledge-engine/transaction.mjs';
+import { createStore, dataFactory as DataFactory } from '@unrdf/oxigraph';
+import { TransactionManager } from '../../packages/knowledge-engine/src/transaction.mjs';
 import {
   createRealTimeValidator,
   ValidationMode,
-} from '../../packages/knowledge-engine/streaming/index.mjs';
+} from '../../packages/streaming/src/index.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 

@@ -379,7 +379,7 @@ async function validateIntegratedFeatures() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test.rq',
-          sha256: 'test-hash',
+          sha256: 'd6672ee3a93d0d6e3c30bdef89f310799c2f3ab781098a9792040d5541ce3ed3',
           mediaType: 'application/sparql-query',
         },
       },

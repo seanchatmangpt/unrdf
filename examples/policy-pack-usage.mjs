@@ -45,7 +45,7 @@ const largeTxHook = defineHook({
     kind: 'sparql-ask',
     ref: {
       uri: 'file://policy-packs/compliance-v1/large-transaction.ask.rq',
-      sha256: 'mock-hash-123',
+      sha256: 'a0500efc50feb91b5b88bb5b7f3f1d209f3661c51c6b35500d72f72e3fbd16cb',
       mediaType: 'application/sparql-query',
     },
   },
@@ -82,7 +82,7 @@ const qualityHook = defineHook({
     kind: 'sparql-ask',
     ref: {
       uri: 'file://policy-packs/compliance-v1/data-quality.ask.rq',
-      sha256: 'mock-hash-456',
+      sha256: '81b908092ef9d8ddb95a4dda6f77310dfb47c27c98b0619d424456fe24cc5346',
       mediaType: 'application/sparql-query',
     },
   },
@@ -141,19 +141,12 @@ await writeFile(resolve(policyPackDir, 'shapes.ttl'), shaclShapes, 'utf-8');
 console.log('✓ Created SHACL shapes\n');
 
 // Step 3: Create policy pack manifest
-const manifest = createPolicyPackManifest({
-  name: 'compliance-v1',
+const manifest = createPolicyPackManifest('compliance-v1', [largeTxHook, qualityHook], {
   version: '1.0.0',
   description: 'Enterprise compliance policy pack',
   author: 'Compliance Team',
-  hooks: [largeTxHook, qualityHook],
-  shapes: ['policy-packs/compliance-v1/shapes.ttl'],
-  metadata: {
-    category: 'compliance',
-    industry: 'financial-services',
-    regulation: ['SOX', 'GDPR'],
-    created: new Date().toISOString(),
-  },
+  tags: ['compliance', 'financial-services', 'SOX', 'GDPR'],
+  resources: [{ name: 'compliance-shapes', file: 'shapes.ttl', type: 'other' }],
 });
 
 await writeFile(
