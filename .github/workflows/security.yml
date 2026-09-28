@@ -324,7 +324,11 @@ jobs:
         id: secrets
         run: |
           echo "Running custom secret detection..."
-          node src/security/cli.mjs secrets . --json > secrets-report.json || true
+          # The CLI prints a progress banner on stdout before the JSON document and exits
+          # non-zero when it finds issues; keep only the JSON body (write to a file first:
+          # piping stdout truncates at 64KB because the CLI calls process.exit).
+          node src/security/cli.mjs secrets . --json > secrets-report.json.raw || true
+          sed -n '/^{/,$p' secrets-report.json.raw > secrets-report.json
 
           # Check for critical findings
           CRITICAL=$(cat secrets-report.json | jq '.summary.bySeverity.critical // 0')
@@ -342,7 +346,11 @@ jobs:
         id: injection
         run: |
           echo "Running injection vulnerability analysis..."
-          node src/security/cli.mjs injection . --json > injection-report.json || true
+          # The CLI prints a progress banner on stdout before the JSON document and exits
+          # non-zero when it finds issues; keep only the JSON body (write to a file first:
+          # piping stdout truncates at 64KB because the CLI calls process.exit).
+          node src/security/cli.mjs injection . --json > injection-report.json.raw || true
+          sed -n '/^{/,$p' injection-report.json.raw > injection-report.json
 
           CRITICAL=$(cat injection-report.json | jq '.summary.bySeverity.critical // 0')
           HIGH=$(cat injection-report.json | jq '.summary.bySeverity.high // 0')
@@ -358,7 +366,11 @@ jobs:
       - name: Run Full Security Check
         run: |
           echo "Running full security invariants check..."
-          node src/security/cli.mjs full-check . --json > full-security-report.json || true
+          # The CLI prints a progress banner on stdout before the JSON document and exits
+          # non-zero when it finds issues; keep only the JSON body (write to a file first:
+          # piping stdout truncates at 64KB because the CLI calls process.exit).
+          node src/security/cli.mjs full-check . --json > full-security-report.json.raw || true
+          sed -n '/^{/,$p' full-security-report.json.raw > full-security-report.json
 
           # Display summary
           cat full-security-report.json | jq '{

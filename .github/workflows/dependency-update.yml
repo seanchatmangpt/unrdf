@@ -97,12 +97,14 @@ jobs:
       - name: Update patch dependencies
         run: |
           echo "Updating patch dependencies..."
-          pnpm update --latest --filter "*" --depth Infinity || echo "Update completed"
+          # In-range update (respects the semver ranges in package.json); --latest would
+          # rewrite ranges to new major versions, which is not a "patch" update.
+          pnpm update -r
 
       - name: Run tests
         run: |
           echo "Running tests after update..."
-          timeout 300s pnpm test || echo "Tests completed"
+          timeout 300s pnpm test
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -157,14 +159,14 @@ jobs:
       - name: Update minor dependencies
         run: |
           echo "Updating minor dependencies..."
-          # Update dependencies with caret ranges
-          pnpm update --latest --filter "*" || echo "Update completed"
+          # Update dependencies within their caret ranges (new minor/patch releases)
+          pnpm update -r
 
       - name: Run full test suite
         run: |
           echo "Running full test suite..."
-          timeout 300s pnpm test || echo "Tests completed"
-          timeout 60s pnpm lint || echo "Lint completed"
+          timeout 300s pnpm test
+          timeout 60s pnpm lint
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -228,7 +230,7 @@ jobs:
           echo "Checking for security vulnerabilities..."
           pnpm audit --json > audit.json || true
 
-          VULNERABILITIES=$(cat audit.json | jq '.metadata.vulnerabilities.total // 0')
+          VULNERABILITIES=$(cat audit.json | jq '[.metadata.vulnerabilities // {} | .[]] | add // 0')
           echo "vulnerabilities=$VULNERABILITIES" >> $GITHUB_OUTPUT
 
           if [ "$VULNERABILITIES" -gt 0 ]; then
@@ -241,13 +243,13 @@ jobs:
         if: steps.audit.outputs.vulnerabilities != '0'
         run: |
           echo "Attempting to auto-fix vulnerabilities..."
-          pnpm audit --fix || echo "Auto-fix completed"
+          pnpm audit --fix || echo "::warning::pnpm audit --fix left unresolved vulnerabilities"
 
       - name: Run tests after security fixes
         if: steps.audit.outputs.vulnerabilities != '0'
         run: |
           echo "Running tests after security fixes..."
-          timeout 300s pnpm test || echo "Tests completed"
+          timeout 300s pnpm test
 
       - name: Create Pull Request for security fixes
         if: steps.audit.outputs.vulnerabilities != '0'
