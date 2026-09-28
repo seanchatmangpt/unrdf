@@ -31,6 +31,7 @@ import { telcoCommand } from './commands/telco.mjs';
 import { validateCommand } from './commands/validate.mjs';
 import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
+import { initCommand } from './commands/init.mjs';
 
 /**
  * Main CLI application
@@ -59,6 +60,9 @@ export const main = defineCommand({
     daemon: daemonCommand,
     mcp: mcpCommand,
     telco: telcoCommand,
+
+    // Project Setup
+    init: initCommand,
 
     // Code Generation
     sync: syncCommand,

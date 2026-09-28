@@ -14,6 +14,7 @@ export {
 } from './trigger-evaluator.mjs';
 
 // MCP exports
+export { SemanticSidecarManager } from './mcp/semantic-sidecar.mjs';
 export { createMCPServer, startMCPServer } from './mcp/index.mjs';
 
 export {
