@@ -107,7 +107,8 @@ list-private-packages:
 version-bump:
 	@echo "$(BLUE)Bumping all packages to v$(VERSION)...$(NC)"
 	@find packages -maxdepth 2 -name "package.json" ! -path "*/node_modules/*" \
-		-exec sed -i '' 's/"version": "[^"]*"/"version": "$(VERSION)"/g' {} \;
+		-exec sed -i.bak 's/"version": "[^"]*"/"version": "$(VERSION)"/g' {} \;
+	@find packages -maxdepth 2 -name "package.json.bak" ! -path "*/node_modules/*" -delete
 	@echo "$(GREEN)✓ Version bumped to $(VERSION)$(NC)"
 	@git diff packages/*/package.json | head -20
 
