@@ -64,7 +64,7 @@ jobs:
         id: run-benchmarks
         run: |
           # Run benchmark suite with 10% regression threshold
-          node scripts/bench-all.mjs --threshold 10 --format markdown > benchmark-results.md
+          node scripts/bench-all.mjs --threshold=10 --format=markdown > benchmark-results.md
           echo "exit_code=$?" >> $GITHUB_OUTPUT
 
       - name: Upload benchmark results
