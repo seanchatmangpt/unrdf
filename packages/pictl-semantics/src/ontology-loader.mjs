@@ -330,7 +330,14 @@ class PictlOntologyGraph {
    */
   exportNTriples() {
     return this.triples.map(t => {
-      const obj = t.objectType === 'literal' ? `"${t.object}"` : `<${t.object}>`;
+      const obj =
+        t.objectType === 'literal'
+          ? `"${String(t.object)
+              .replace(/\\/g, '\\\\')
+              .replace(/"/g, '\\"')
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r')}"`
+          : `<${t.object}>`;
       return `<${t.subject}> <${t.predicate}> ${obj} .`;
     });
   }

@@ -147,7 +147,7 @@ export function validatePictlResult(result) {
     const parsed = PictlResultSchema.safeParse(result);
 
     if (!parsed.success) {
-      const errors = parsed.error.errors.map(e => ({
+      const errors = parsed.error.issues.map(e => ({
         path: e.path.join('.'),
         message: e.message,
         code: e.code,

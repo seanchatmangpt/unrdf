@@ -4,30 +4,19 @@
  * This module creates the root context that should be used at the application
  * level to provide store access to all composables.
  *
- * @version 1.0.0
- * @author GitVan Team
  * @license MIT
  */
 
 import { createContext } from 'unctx';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory as DataFactory } from '@unrdf/oxigraph';
 import crypto from 'node:crypto';
 import * as rdfCanonizeModule from 'rdf-canonize';
-import {
-  query as _keQuery,
-  select as _keSelect,
-  ask as _keAsk,
-  construct as _keConstruct,
-  describe as _keDescribe,
-  update as _keUpdate,
-} from '@unrdf/knowledge-engine/query';
-import {
-  canonicalize as _keCanonicalize,
-  isIsomorphic as _keIsomorphic,
-  getCanonicalHash as _getCanonicalHash,
-} from '@unrdf/knowledge-engine/canonicalize';
+
+const SERIALIZATION_FORMATS = {
+  Turtle: 'text/turtle',
+  'N-Quads': 'application/n-quads',
+};
 
 const rdfCanonize = rdfCanonizeModule.default || rdfCanonizeModule;
 
@@ -74,6 +63,25 @@ export const storeContext = createContext({
 export const useStoreContext = storeContext.use;
 
 /**
+ * Serialize an Oxigraph store in a supported format
+ * @param {Object} targetStore - Oxigraph store
+ * @param {string} format - 'Turtle' or 'N-Quads'
+ * @param {string} label - Error prefix
+ * @returns {string} Serialized RDF
+ * @private
+ */
+function serializeWith(targetStore, format, label) {
+  const mime = SERIALIZATION_FORMATS[format];
+  if (!mime) {
+    throw new Error(`${label} Unsupported serialization format: ${format}`);
+  }
+  // Triple formats (Turtle) can only carry one graph: dump the default graph
+  return format === 'Turtle'
+    ? targetStore.dump({ format: mime, from_graph_name: DataFactory.defaultGraph() })
+    : targetStore.dump({ format: mime });
+}
+
+/**
  * Create a store context instance
  * @param {Array<Quad>} [initialQuads=[]] - Initial quads
  * @param {Object} [options] - Store options
@@ -92,9 +100,9 @@ export function createStoreContext(initialQuads = [], options = {}) {
   const store = createStore();
   const prefixRegistry = new Map();
 
-  // Add initial quads to the engine's store
-  if (initialQuads.length > 0) {
-    store.addAll(initialQuads);
+  // Add initial quads to the store
+  for (const q of initialQuads) {
+    store.add(q);
   }
 
   const context = {
@@ -224,16 +232,8 @@ export function createStoreContext(initialQuads = [], options = {}) {
         throw new TypeError('[StoreContext] serialize options must be an object');
       }
 
-      const { format = 'Turtle', prefixes } = options;
-
-      if (format === 'Turtle') {
-        return this.engine.serializeTurtle(store, { prefixes });
-      }
-      if (format === 'N-Quads') {
-        return this.engine.serializeNQuads(store);
-      }
-
-      throw new Error(`[StoreContext] Unsupported serialization format: ${format}`);
+      const { format = 'Turtle' } = options;
+      return serializeWith(store, format, '[StoreContext]');
     },
 
     /**
@@ -287,10 +287,6 @@ export function createStoreContext(initialQuads = [], options = {}) {
         throw new Error('query: non-empty SPARQL required');
       }
 
-      // In sender-only mode, we can only support basic queries
-      // For full SPARQL support, this would need to access the engine
-      // Since we're in sender-only mode, we'll provide a simplified implementation
-
       // Remove PREFIX declarations to find the actual query type
       const queryWithoutPrefixes = q.replace(/^PREFIX\s+[^\s]+\s+<[^>]+>\s*/gm, '').trim();
       const kind = queryWithoutPrefixes
@@ -307,24 +303,21 @@ export function createStoreContext(initialQuads = [], options = {}) {
 
       // SPARQL UPDATE operations (can modify store - SENDER)
       if (/^(WITH|INSERT|DELETE|LOAD|CREATE|DROP|CLEAR|MOVE|COPY|ADD)$/i.test(kind)) {
-        // Execute UPDATE operations using the engine's update method
-        // Pass the original query (with PREFIXes) to the engine
+        // Execute UPDATE operations directly against the store
         try {
-          const result = await this.engine.update(q);
-          return result;
+          store.update(q);
+          return { type: 'update', ok: true };
         } catch (error) {
           throw new Error(`UPDATE operation failed: ${error.message}`);
         }
       }
 
-      // For SELECT, ASK, CONSTRUCT, DESCRIBE - we need to use the engine
-      // This is a READER operation
+      // SELECT, ASK, CONSTRUCT, DESCRIBE - READER operation
       const _limit = Number.isFinite(options._limit) ? options._limit : Infinity;
       const _deterministic = options._deterministic ?? false;
 
-      // Use the engine's query method - it handles all query types
       try {
-        return await this.engine.query(sparql, options);
+        return store.query(sparql, options);
       } catch (error) {
         throw new Error(`Query failed: ${error.message}`);
       }
@@ -349,6 +342,7 @@ export function createStoreContext(initialQuads = [], options = {}) {
         const nquads = this.serialize({ format: 'N-Quads' });
         const canonical = await canonize(nquads, {
           algorithm: 'URDNA2015',
+          inputFormat: 'application/n-quads',
           format: 'application/n-quads',
           produceGeneralizedRdf: false,
         });
@@ -418,17 +412,9 @@ export function createStoreContext(initialQuads = [], options = {}) {
      * Helper to serialize a different store
      * @private
      */
-    serializeStore(store, options = {}) {
-      const { format = 'Turtle', prefixes } = options;
-
-      if (format === 'Turtle') {
-        return this.engine.serializeTurtle(store, { prefixes });
-      }
-      if (format === 'N-Quads') {
-        return this.engine.serializeNQuads(store);
-      }
-
-      throw new Error(`Unsupported serialization format: ${format}`);
+    serializeStore(otherStore, options = {}) {
+      const { format = 'Turtle' } = options;
+      return serializeWith(otherStore, format, 'StoreContext');
     },
   };
 

@@ -33,6 +33,7 @@
     "@iarna/toml": "^2.2.5",
     "@unrdf/core": "workspace:*",
     "@unrdf/kgn": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "glob": "^10.3.10",
     "nunjucks": "^3.2.4",
     "smol-toml": "^1.3.1",

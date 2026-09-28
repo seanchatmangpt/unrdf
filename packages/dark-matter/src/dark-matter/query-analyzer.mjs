@@ -52,6 +52,7 @@ const QueryAnalysisSchema = z.object({
     })
   ),
   timestamp: z.number(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -153,7 +154,18 @@ export class QueryAnalyzer {
     const whereClause = whereMatch[1];
 
     // Simple pattern extraction (s p o .)
-    const triplePattern = /(\??\w+|<[^>]+>)\s+(\??\w+|<[^>]+>)\s+(\??\w+|<[^>]+>|"[^"]*")\s*\./g;
+    // Terms: ?var, <iri>, prefix:name (subject/predicate/object), "literal"(@lang|^^type), numbers, a, true/false
+    const iri = '<[^>]+>';
+    const pname = '[A-Za-z][\\w-]*:[\\w-]*';
+    const variable = '[?$]\\w+';
+    const literal = `"[^"]*"(?:@[\\w-]+|\\^\\^(?:${iri}|${pname}))?`;
+    const subjectTerm = `${variable}|${iri}|${pname}`;
+    const predicateTerm = `${variable}|${iri}|${pname}|a`;
+    const objectTerm = `${variable}|${iri}|${pname}|${literal}|-?\\d+(?:\\.\\d+)?|true|false`;
+    const triplePattern = new RegExp(
+      `(${subjectTerm})\\s+(${predicateTerm})\\s+(${objectTerm})\\s*(?:\\.|$)`,
+      'g'
+    );
     let match;
 
     while ((match = triplePattern.exec(whereClause)) !== null) {
@@ -163,13 +175,13 @@ export class QueryAnalyzer {
       let complexity = 1;
 
       // Variable in subject position = join likely
-      if (subject.startsWith('?')) complexity += 5;
+      if (/^[?$]/.test(subject)) complexity += 5;
 
       // Variable in predicate position = very expensive
-      if (predicate.startsWith('?')) complexity += 10;
+      if (/^[?$]/.test(predicate)) complexity += 10;
 
       // Variable in object position = filter likely
-      if (object.startsWith('?')) complexity += 3;
+      if (/^[?$]/.test(object)) complexity += 3;
 
       patterns.push({
         type: 'triple',
@@ -216,9 +228,13 @@ export class QueryAnalyzer {
     // Simple heuristic: if a variable appears multiple times, it's a join
     const variableCounts = new Map();
 
-    for (const variable of variables) {
-      const regex = new RegExp(`\\?${variable}`, 'g');
-      const matches = query.match(regex);
+    // Count occurrences inside the group graph pattern only (the SELECT projection is not a join),
+    // and match whole variable names so that ?s does not count occurrences of ?street.
+    const braceAt = query.indexOf('{');
+    const body = braceAt >= 0 ? query.slice(braceAt) : query;
+    for (const variable of new Set(variables)) {
+      const regex = new RegExp(`\\?${variable}\\b`, 'g');
+      const matches = body.match(regex);
       variableCounts.set(variable, matches ? matches.length : 0);
     }
 

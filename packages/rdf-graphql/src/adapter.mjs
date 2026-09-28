@@ -101,14 +101,12 @@ export class RDFGraphQLAdapter {
       throw new Error('Schema not generated. Call generateSchema() first.');
     }
 
-    // graphql-js calls rootValue functions as (args, context, info), while the
-    // resolver factory produces (parent, args, context, info) resolvers.
-    const rootValue = Object.fromEntries(
-      Object.entries(this.resolvers.Query).map(([name, fn]) => [
-        name,
-        (args, ctx, info) => fn(null, args, ctx, info),
-      ])
-    );
+    // graphql-js invokes rootValue functions as (args, context, info), whereas the
+    // resolver factory produces (parent, args, context, info) resolvers - adapt them.
+    const rootValue = {};
+    for (const [name, resolver] of Object.entries(this.resolvers.Query)) {
+      rootValue[name] = (args, ctx, info) => resolver(null, args, ctx, info);
+    }
 
     const result = await graphql({
       schema: this.schema,

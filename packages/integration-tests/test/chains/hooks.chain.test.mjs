@@ -11,6 +11,7 @@ import {
   isValidHook,
   executeHook,
   executeHookChain,
+  validateOnly,
   createHookRegistry,
   registerHook,
   unregisterHook,
@@ -170,10 +171,13 @@ describe('Hooks Chain Integration Tests', () => {
 
     const quad = createMockQuad();
 
-    // Crashing hook should return error result (executeHook catches errors)
-    const crashResult = executeHook(crashingHook, quad);
+    // executeHook deliberately lets hook errors propagate (see hook-executor.mjs); the
+    // containing API is validateOnly, which converts a crash into an invalid result.
+    expect(() => executeHook(crashingHook, quad)).toThrow('Intentional crash');
+    const crashResult = validateOnly([crashingHook], quad);
     expect(crashResult.valid).toBe(false);
     expect(crashResult.error).toContain('Intentional crash');
+    expect(crashResult.hookName).toBe('crashing-hook');
 
     // Success hook should still work (main process survives)
     const result = executeHook(successHook, quad);

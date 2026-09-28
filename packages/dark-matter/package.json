@@ -6,8 +6,7 @@
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./optimizer": "./src/optimizer.mjs",
-    "./analyzer": "./src/analyzer.mjs"
+    "./analyzer": "./src/dark-matter/query-analyzer.mjs"
   },
   "sideEffects": false,
   "files": [

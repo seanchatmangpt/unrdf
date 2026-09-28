@@ -4,7 +4,7 @@
 # Chatman Equation API Reference
 
 > **Module**: `@unrdf/chatman-equation`
-> **Version**: [VERSION]
+> **Version**: 1.0.0
 > **Updated**: 2026-01-18
 
 ---

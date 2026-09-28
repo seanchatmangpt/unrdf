@@ -6,10 +6,6 @@
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./discovery": "./src/discovery.mjs",
-    "./conformance": "./src/conformance.mjs",
-    "./prediction": "./src/prediction.mjs",
-    "./ocel": "./src/ocel.mjs",
     "./pictl-wrapper": "./src/pictl-wrapper.mjs"
   },
   "sideEffects": false,

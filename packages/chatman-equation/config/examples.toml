@@ -8,7 +8,7 @@
 description = "Market finding equilibrium after supply shock"
 
 [market_equilibrium.observation]
-id = "obs-market-001"
+id = "46bb9140-6d27-50c2-af6a-e733440a9439"
 timestamp = "2026-01-15T10:00:00Z"
 domain = "market"
 
@@ -24,7 +24,7 @@ region = "North America"
 product_category = "SaaS Tools"
 
 [market_equilibrium.delta]
-id = "delta-market-001"
+id = "6c2b9ffb-e4f0-537f-8b6f-5690585911f4"
 timestamp = "2026-01-15T10:30:00Z"
 domain = "market"
 
@@ -48,10 +48,10 @@ conflict_resolution = "delta_wins"
 policies = ["supply_demand_balance", "price_elasticity"]
 
 [market_equilibrium.expected_artifact]
-id = "artifact-market-001"
+id = "500cb33f-1da0-5608-baa1-844337e94418"
 timestamp = "2026-01-15T10:30:01Z"
-source_observation = "obs-market-001"
-applied_deltas = ["delta-market-001"]
+source_observation = "46bb9140-6d27-50c2-af6a-e733440a9439"
+applied_deltas = ["6c2b9ffb-e4f0-537f-8b6f-5690585911f4"]
 operator = "market_equilibrium"
 
 [market_equilibrium.expected_artifact.result]
@@ -69,7 +69,7 @@ market_saturation = 0.78
 description = "Organization restructuring to improve agility"
 
 [org_restructuring.observation]
-id = "obs-org-001"
+id = "ade5396a-0c0d-5662-a540-e2e63c9485aa"
 timestamp = "2026-01-10T09:00:00Z"
 domain = "organization"
 
@@ -86,7 +86,7 @@ company_size = "medium"
 industry = "technology"
 
 [org_restructuring.delta]
-id = "delta-org-001"
+id = "7775e6b5-08aa-5820-8937-d81f4fcdf336"
 timestamp = "2026-01-10T09:30:00Z"
 domain = "organization"
 
@@ -116,10 +116,10 @@ policies = ["resource_conservation", "capability_preservation"]
 invariants = ["headcount_stable", "no_skill_loss"]
 
 [org_restructuring.expected_artifact]
-id = "artifact-org-001"
+id = "df4e9a0e-9b20-5eb3-bb81-df51b5601623"
 timestamp = "2026-01-10T09:30:01Z"
-source_observation = "obs-org-001"
-applied_deltas = ["delta-org-001"]
+source_observation = "ade5396a-0c0d-5662-a540-e2e63c9485aa"
+applied_deltas = ["7775e6b5-08aa-5820-8937-d81f4fcdf336"]
 operator = "org_transformation"
 
 [org_restructuring.expected_artifact.result]
@@ -139,7 +139,7 @@ collaboration_index = 0.78
 description = "Strategic pivot to new market segment"
 
 [strategy_pivot.observation]
-id = "obs-strategy-001"
+id = "6a63185f-c3f9-5f9c-8d53-495e06b04f6d"
 timestamp = "2026-01-12T14:00:00Z"
 domain = "strategy"
 
@@ -156,7 +156,7 @@ product = "Analytics Platform"
 geography = "Global"
 
 [strategy_pivot.delta]
-id = "delta-strategy-001"
+id = "61afe492-4cf2-5474-8752-36febace4520"
 timestamp = "2026-01-12T14:30:00Z"
 domain = "strategy"
 
@@ -186,10 +186,10 @@ conflict_resolution = "merge"
 policies = ["resource_alignment", "capability_fit", "market_timing"]
 
 [strategy_pivot.expected_artifact]
-id = "artifact-strategy-001"
+id = "de48bcf5-007c-5afd-b667-abb5f2366695"
 timestamp = "2026-01-12T14:30:01Z"
-source_observation = "obs-strategy-001"
-applied_deltas = ["delta-strategy-001"]
+source_observation = "6a63185f-c3f9-5f9c-8d53-495e06b04f6d"
+applied_deltas = ["61afe492-4cf2-5474-8752-36febace4520"]
 operator = "strategy_synthesis"
 
 [strategy_pivot.expected_artifact.result]
@@ -209,7 +209,7 @@ execution_risk = 0.35
 description = "Creating blue ocean through ERRC framework"
 
 [blue_ocean_creation.observation]
-id = "obs-blueocean-001"
+id = "db612433-ba63-5979-8b07-1d5aa5882766"
 timestamp = "2026-01-14T11:00:00Z"
 domain = "blue_ocean"
 
@@ -224,7 +224,7 @@ differentiation_low = true
 context = "Traditional gym market highly competitive"
 
 [blue_ocean_creation.delta]
-id = "delta-blueocean-001"
+id = "d1383e1c-1fae-5ce2-82e1-bd758754a060"
 timestamp = "2026-01-14T11:30:00Z"
 domain = "blue_ocean"
 
@@ -260,10 +260,10 @@ policies = ["simultaneous_differentiation_cost", "buyer_value_leap"]
 invariants = ["cost_reduction", "value_increase"]
 
 [blue_ocean_creation.expected_artifact]
-id = "artifact-blueocean-001"
+id = "519b6ac9-a511-5b85-8cd5-66df4ddb5c92"
 timestamp = "2026-01-14T11:30:01Z"
-source_observation = "obs-blueocean-001"
-applied_deltas = ["delta-blueocean-001"]
+source_observation = "db612433-ba63-5979-8b07-1d5aa5882766"
+applied_deltas = ["d1383e1c-1fae-5ce2-82e1-bd758754a060"]
 operator = "blue_ocean_formation"
 
 [blue_ocean_creation.expected_artifact.result]
@@ -283,7 +283,7 @@ differentiation_score = 0.92
 description = "Product evolution with new features and deprecations"
 
 [product_feature_release.observation]
-id = "obs-product-001"
+id = "1df44ac2-f966-5224-9d63-49ef9e9ee952"
 timestamp = "2026-01-16T08:00:00Z"
 domain = "product"
 
@@ -299,7 +299,7 @@ platform = "web"
 language = "javascript"
 
 [product_feature_release.delta]
-id = "delta-product-001"
+id = "14f43ea4-82d7-537b-be6a-a8a7bc290120"
 timestamp = "2026-01-16T08:30:00Z"
 domain = "product"
 
@@ -330,10 +330,10 @@ policies = ["backward_compatibility", "quality_threshold"]
 invariants = ["test_coverage_maintained", "no_regression"]
 
 [product_feature_release.expected_artifact]
-id = "artifact-product-001"
+id = "0ce4a4f2-fccd-51a9-9080-eefc7fb61aec"
 timestamp = "2026-01-16T08:30:01Z"
-source_observation = "obs-product-001"
-applied_deltas = ["delta-product-001"]
+source_observation = "1df44ac2-f966-5224-9d63-49ef9e9ee952"
+applied_deltas = ["14f43ea4-82d7-537b-be6a-a8a7bc290120"]
 operator = "product_evolution"
 
 [product_feature_release.expected_artifact.result]
@@ -353,7 +353,7 @@ breaking_changes = ["api_v1_removed"]
 description = "Optimizing customer onboarding journey"
 
 [customer_experience.observation]
-id = "obs-customer-001"
+id = "0268b447-1db2-5d3a-b221-3b48d2771052"
 timestamp = "2026-01-17T10:00:00Z"
 domain = "customer"
 
@@ -369,7 +369,7 @@ customer_segment = "freemium"
 cohort = "2026-Q1"
 
 [customer_experience.delta]
-id = "delta-customer-001"
+id = "98289bc4-d6d6-5614-b5fb-978f3a20189e"
 timestamp = "2026-01-17T10:30:00Z"
 domain = "customer"
 
@@ -405,10 +405,10 @@ policies = ["friction_reduction", "value_delivery"]
 invariants = ["data_quality_maintained", "privacy_preserved"]
 
 [customer_experience.expected_artifact]
-id = "artifact-customer-001"
+id = "b17597b5-960a-55d1-9113-d805968eb8d9"
 timestamp = "2026-01-17T10:30:01Z"
-source_observation = "obs-customer-001"
-applied_deltas = ["delta-customer-001"]
+source_observation = "0268b447-1db2-5d3a-b221-3b48d2771052"
+applied_deltas = ["98289bc4-d6d6-5614-b5fb-978f3a20189e"]
 operator = "experience_optimization"
 
 [customer_experience.expected_artifact.result]
