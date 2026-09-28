@@ -35,22 +35,22 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install OpenTelemetry Weaver CLI
         run: |
-          # Install weaver-cli (when available)
-          # For now, validate YAML syntax manually
-          npm install -g js-yaml
+          # weaver-cli is not available yet; YAML validity is checked with the js-yaml
+          # devDependency of the workspace root (installed above).
+          pnpm exec js-yaml --version
 
       - name: Validate weaver.yaml syntax
         run: |
-          npx js-yaml weaver.yaml > /dev/null
+          pnpm exec js-yaml weaver.yaml > /dev/null
           echo "✅ weaver.yaml is valid YAML"
 
       - name: Validate custom-conventions.yaml syntax
         run: |
-          npx js-yaml custom-conventions.yaml > /dev/null
+          pnpm exec js-yaml custom-conventions.yaml > /dev/null
           echo "✅ custom-conventions.yaml is valid YAML"
 
       - name: Check semantic convention completeness
@@ -228,18 +228,18 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-workspace --frozen-lockfile --dir sidecar
 
       - name: Run instrumentation tests
         run: |
           # Test that OTEL utilities work correctly
           cd sidecar
-          pnpm test -- --run --reporter=verbose otel
+          pnpm exec vitest run --reporter=verbose otel
 
       - name: Generate coverage report
         run: |
           cd sidecar
-          pnpm test:coverage
+          pnpm exec vitest run --coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

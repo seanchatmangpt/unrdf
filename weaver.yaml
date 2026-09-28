@@ -145,6 +145,7 @@ slo:
     - name: error_rate
       target: 0.99  # 99% success rate
       threshold: 0.01  # <1% errors
+      error_budget: 0.01  # 1% error budget
 
   # Alert on SLO violations
   alerts:

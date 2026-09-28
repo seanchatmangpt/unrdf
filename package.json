@@ -18,22 +18,17 @@
   },
   "homepage": "https://github.com/unrdf/unrdf#readme",
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=8.0.0",
     "pnpm": ">=7.0.0"
   },
   "workspaces": [
     "packages/*",
-    "packages/kgc-4d/playground",
     "packages/cli/examples/*",
     "packages/hooks/examples/*",
     "packages/federation/examples/*",
     "packages/streaming/examples/*",
-    "playground/full-stack-example/apps/*",
-    "apps/*",
     "examples",
-    "AUTONOMIC_INNOVATION/agent-*",
-    "exploration/agents/agent-*",
     "benchmarks"
   ],
   "scripts": {
@@ -138,6 +133,7 @@
     "eslint-plugin-jsdoc": "^61.4.1",
     "glob": "^13.0.0",
     "globals": "^16.5.0",
+    "js-yaml": "^4.1.0",
     "jsdom": "25.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
