@@ -12,6 +12,7 @@
  */
 
 import { randomBytes } from 'crypto';
+import { createRandom } from './rng.mjs';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { SecureAggregationConfigSchema } from './schemas.mjs';
 
@@ -34,6 +35,8 @@ export class SecureAggregation {
    * @param {number} config.totalNodes - Total number of nodes
    * @param {number} [config.keySize=256] - Key size in bits
    * @param {boolean} [config.enableEncryption=true] - Enable encryption
+   * @param {number} [config.seed] - Optional seed for reproducible masks (tests only;
+   *   without a seed masks come from crypto.randomBytes)
    */
   constructor(config) {
     const validated = SecureAggregationConfigSchema.parse(config);
@@ -45,6 +48,12 @@ export class SecureAggregation {
 
     // Node shares (for masking)
     this.shares = new Map();
+
+    // Pairwise masks shared by the two members of each node pair (unordered)
+    this.pairMasks = new Map();
+
+    // Seeded uniform source, or null => crypto randomness
+    this._seeded = validated.seed === undefined ? null : createRandom(validated.seed);
 
     // Round counter
     this.round = 0;
@@ -67,12 +76,13 @@ export class SecureAggregation {
         // Generate random secret
         const secret = this._generateRandomVector(this.keySize / 32);
 
-        // Generate shares for other nodes (simplified)
+        // Pairwise masks: the mask for (nodeId, otherId) is the SAME vector on both
+        // sides of the pair, so that it cancels in the sum (see maskGradients).
         const shares = {};
         for (let i = 0; i < this.totalNodes; i++) {
           const otherId = `node-${i}`;
           if (otherId !== nodeId) {
-            shares[otherId] = this._generateRandomVector(this.keySize / 32);
+            shares[otherId] = this._pairMask(nodeId, otherId);
           }
         }
 
@@ -121,12 +131,13 @@ export class SecureAggregation {
 
         for (const [key, gradient] of Object.entries(gradients)) {
           masked[key] = gradient.map((val, i) => {
-            // Add secret share
-            let maskedVal = val + nodeShares.secret[i % nodeShares.secret.length];
+            // Pairwise masking: the lexicographically smaller node adds the pair mask,
+            // the larger one subtracts it, so each pair cancels in the sum.
+            let maskedVal = val;
 
-            // Subtract shares from other nodes
-            for (const [_otherId, share] of Object.entries(nodeShares.shares)) {
-              maskedVal -= share[i % share.length];
+            for (const [otherId, share] of Object.entries(nodeShares.shares)) {
+              const sign = nodeId < otherId ? 1 : -1;
+              maskedVal += sign * share[i % share.length];
             }
 
             return maskedVal;
@@ -168,6 +179,7 @@ export class SecureAggregation {
 
         // Sum all masked gradients (masks cancel out in sum)
         const aggregated = {};
+        const participants = new Set(maskedUpdates.map((u) => u.nodeId));
 
         for (const update of maskedUpdates) {
           for (const [key, gradient] of Object.entries(update.gradients)) {
@@ -177,6 +189,26 @@ export class SecureAggregation {
 
             for (let i = 0; i < gradient.length; i++) {
               aggregated[key][i] += gradient[i];
+            }
+          }
+        }
+
+        // Dropout recovery: a participant's pair masks with nodes that did NOT submit an
+        // update have no counterpart in the sum, so remove that residual.
+        if (this.enableEncryption) {
+          for (const update of maskedUpdates) {
+            const nodeShares = this.shares.get(update.nodeId);
+            if (!nodeShares) continue;
+
+            for (const [otherId, share] of Object.entries(nodeShares.shares)) {
+              if (participants.has(otherId)) continue;
+              const sign = update.nodeId < otherId ? 1 : -1;
+
+              for (const [key, values] of Object.entries(aggregated)) {
+                for (let i = 0; i < values.length; i++) {
+                  values[i] -= sign * share[i % share.length];
+                }
+              }
             }
           }
         }
@@ -206,6 +238,7 @@ export class SecureAggregation {
   nextRound() {
     this.round++;
     this.shares.clear();
+    this.pairMasks.clear();
   }
 
   /**
@@ -215,12 +248,30 @@ export class SecureAggregation {
   _generateRandomVector(length) {
     const vec = new Array(length);
     for (let i = 0; i < length; i++) {
-      // Use crypto random for security
-      const bytes = randomBytes(4);
-      const uint = bytes.readUInt32BE(0);
-      vec[i] = (uint / 0xffffffff - 0.5) * 2; // Range [-1, 1]
+      if (this._seeded) {
+        vec[i] = (this._seeded() - 0.5) * 2; // Range [-1, 1), reproducible
+      } else {
+        // Use crypto random for security
+        const bytes = randomBytes(4);
+        const uint = bytes.readUInt32BE(0);
+        vec[i] = (uint / 0xffffffff - 0.5) * 2; // Range [-1, 1]
+      }
     }
     return vec;
+  }
+
+  /**
+   * Get (creating on first use) the mask shared by an unordered node pair
+   * @private
+   */
+  _pairMask(a, b) {
+    const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+    let mask = this.pairMasks.get(key);
+    if (!mask) {
+      mask = this._generateRandomVector(this.keySize / 32);
+      this.pairMasks.set(key, mask);
+    }
+    return mask;
   }
 
   /**

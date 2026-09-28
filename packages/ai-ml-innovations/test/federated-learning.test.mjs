@@ -187,11 +187,20 @@ describe('Federated Learning', () => {
     });
 
     it('should add Gaussian noise', () => {
+      // Seeded (reproducible) mechanism and a 2000-dim gradient: the sample mean of N draws
+      // has std sigma/sqrt(N) (~0.11 here), so the |mean| < 1 bound is sound, not a coin flip.
+      const seeded = new DPMechanism({
+        epsilon: 1.0,
+        delta: 1e-5,
+        sensitivity: 1.0,
+        clippingNorm: 1.0,
+        seed: 20260928,
+      });
       const gradients = {
-        'entity_A': [0, 0, 0, 0, 0],
+        'entity_A': new Array(2000).fill(0),
       };
 
-      const noised = mechanism.addNoise(gradients);
+      const noised = seeded.addNoise(gradients);
 
       // Noise should be non-zero
       const hasNoise = noised['entity_A'].some((val) => Math.abs(val) > 0);
@@ -269,10 +278,10 @@ describe('Federated Learning', () => {
     });
 
     it('should throw when budget exhausted', () => {
-      // Use high noise (low privacy cost) for first rounds
+      // Use high noise (low privacy cost: ~0.097 epsilon/round) for first rounds
       for (let i = 0; i < 5; i++) {
         tracker.accountRound({
-          noiseMultiplier: 0.5,
+          noiseMultiplier: 50,
           samplingRate: 1.0,
           steps: 1,
         });
@@ -282,7 +291,7 @@ describe('Federated Learning', () => {
       expect(() => {
         for (let i = 0; i < 100; i++) {
           tracker.accountRound({
-            noiseMultiplier: 0.5,
+            noiseMultiplier: 50,
             samplingRate: 1.0,
             steps: 1,
           });
@@ -324,7 +333,7 @@ describe('Federated Learning', () => {
       expect(tracker.canContinue(0.1)).toBe(true);
 
       tracker.accountRound({
-        noiseMultiplier: 0.5,
+        noiseMultiplier: 50,
         samplingRate: 1.0,
         steps: 1,
       });
@@ -655,7 +664,7 @@ describe('Federated Learning', () => {
       const rounds = 10;
       for (let i = 0; i < rounds; i++) {
         tracker.accountRound({
-          noiseMultiplier: 2.0, // High noise for low privacy cost
+          noiseMultiplier: 20.0, // High noise for low privacy cost (~0.024 epsilon/round)
           samplingRate: 0.1,
           steps: 1,
         });

@@ -19,6 +19,14 @@ import { PrivacyBudgetSchema } from './schemas.mjs';
 const tracer = trace.getTracer('@unrdf/ai-ml-innovations');
 
 /**
+ * Rényi orders used by the moments accountant (fine near 1, geometric out to 512)
+ */
+const RDP_ORDERS = [
+  1.25, 1.5, 1.75, 2, 2.25, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 28, 32,
+  48, 64, 96, 128, 192, 256, 384, 512,
+];
+
+/**
  * Privacy Budget Tracker
  *
  * Tracks and composes privacy costs across multiple rounds
@@ -54,15 +62,25 @@ export class PrivacyBudgetTracker {
     // Track per-round costs
     this.history = [];
 
-    // RDP orders for moments accountant
+    // RDP orders for moments accountant. The grid must reach large orders: for small
+    // per-step RDP the optimal order is ~sqrt(log(1/delta) / rdp_rate), well beyond 10.
     this.rdpOrders = (this.composition === 'rdp' || this.composition === 'moments')
-      ? Array.from({ length: 99 }, (_, i) => 1 + (i + 1) / 10)
+      ? RDP_ORDERS.slice()
       : [];
     this.rdpEpsilons = new Array(this.rdpOrders.length).fill(0);
+
+    // Accumulators for basic / advanced composition
+    this._sumEpsilon = 0;
+    this._sumEpsilonSq = 0;
+    this._sumEpsilonExp = 0;
   }
 
   /**
-   * Compute privacy cost for a training round
+   * Compute the (marginal) privacy cost of a training round.
+   *
+   * Pure: does not change the tracker. The returned epsilon is the increase of the
+   * total composed epsilon if this round were accounted next, so that
+   * `spent += cost.epsilon` equals the composed total under every composition mode.
    *
    * @param {Object} params - Round parameters
    * @param {number} params.noiseMultiplier - Noise multiplier (σ)
@@ -89,15 +107,7 @@ export class PrivacyBudgetTracker {
           'privacy.composition': this.composition,
         });
 
-        let cost;
-
-        if (this.composition === 'moments' || this.composition === 'rdp') {
-          cost = this._momentsAccountant(noiseMultiplier, samplingRate, steps);
-        } else if (this.composition === 'advanced') {
-          cost = this._advancedComposition(noiseMultiplier, samplingRate, steps);
-        } else {
-          cost = this._basicComposition(noiseMultiplier, samplingRate, steps);
-        }
+        const cost = this._marginalCost(noiseMultiplier, samplingRate, steps).cost;
 
         span.setAttribute('privacy.cost_epsilon', cost.epsilon);
         span.setStatus({ code: SpanStatusCode.OK });
@@ -124,9 +134,19 @@ export class PrivacyBudgetTracker {
    * @throws {Error} If privacy budget exhausted
    */
   accountRound(params) {
-    const cost = this.computeRoundCost(params);
+    const { noiseMultiplier, samplingRate, steps = 1 } = params;
+    const { cost, commit } = this._marginalCost(noiseMultiplier, samplingRate, steps);
+    const newSpent = this.spent + cost.epsilon;
 
-    this.spent += cost.epsilon;
+    // Refuse (without consuming budget) any round that would exceed the total budget
+    if (newSpent > this.epsilon) {
+      throw new Error(
+        `Privacy budget exhausted: ${newSpent.toFixed(4)}ε > ${this.epsilon}ε`
+      );
+    }
+
+    commit();
+    this.spent = newSpent;
     this.rounds++;
 
     this.history.push({
@@ -136,12 +156,6 @@ export class PrivacyBudgetTracker {
       totalSpent: this.spent,
       timestamp: Date.now(),
     });
-
-    if (this.spent > this.epsilon) {
-      throw new Error(
-        `Privacy budget exhausted: ${this.spent.toFixed(4)}ε > ${this.epsilon}ε`
-      );
-    }
 
     return this.getStatus();
   }
@@ -181,54 +195,60 @@ export class PrivacyBudgetTracker {
     this.rounds = 0;
     this.history = [];
     this.rdpEpsilons = new Array(this.rdpOrders.length).fill(0);
+    this._sumEpsilon = 0;
+    this._sumEpsilonSq = 0;
+    this._sumEpsilonExp = 0;
   }
 
   /**
-   * Basic composition (ε accumulation)
+   * Compute the marginal cost of `steps` more steps without mutating state.
+   * Returns the cost plus a `commit` closure that applies the accumulator update.
    * @private
    */
-  _basicComposition(sigma, q, steps) {
-    // For Gaussian mechanism: ε ≈ q * sqrt(2 * ln(1.25/δ)) / σ
-    const epsilon = (q * Math.sqrt(2 * Math.log(1.25 / this.delta))) / sigma;
-    return { epsilon: epsilon * steps, delta: this.delta };
-  }
+  _marginalCost(sigma, q, steps) {
+    // Per-step epsilon of the Gaussian mechanism with subsampling rate q
+    const stepEpsilon = (q * Math.sqrt(2 * Math.log(1.25 / this.delta))) / sigma;
 
-  /**
-   * Advanced composition (optimal bounds)
-   * @private
-   */
-  _advancedComposition(sigma, q, steps) {
-    // Advanced composition theorem
-    const epsilonPrime = (q * Math.sqrt(2 * Math.log(1.25 / this.delta))) / sigma;
-    const k = this.rounds + steps;
+    const sumEpsilon = this._sumEpsilon + stepEpsilon * steps;
+    const sumEpsilonSq = this._sumEpsilonSq + stepEpsilon * stepEpsilon * steps;
+    const sumEpsilonExp =
+      this._sumEpsilonExp + stepEpsilon * (Math.exp(stepEpsilon) - 1) * steps;
 
-    // ε' = sqrt(2k * ln(1/δ')) * ε + k * ε * (e^ε - 1)
-    const epsilon =
-      Math.sqrt(2 * k * Math.log(1 / this.delta)) * epsilonPrime +
-      k * epsilonPrime * (Math.exp(epsilonPrime) - 1);
+    let total;
+    let commit = () => {};
 
-    return { epsilon, delta: this.delta };
-  }
-
-  /**
-   * Moments accountant (tight bounds for SGD)
-   * @private
-   */
-  _momentsAccountant(sigma, q, steps) {
-    // Simplified moments accountant
-    // In practice, use precomputed RDP tables or autodp library
-
-    // Compute RDP at different orders
-    for (let i = 0; i < this.rdpOrders.length; i++) {
-      const alpha = this.rdpOrders[i];
-      const rdp = this._computeRDP(alpha, sigma, q);
-      this.rdpEpsilons[i] += rdp * steps;
+    if (this.composition === 'moments' || this.composition === 'rdp') {
+      const newRdp = this.rdpEpsilons.map(
+        (acc, i) => acc + this._computeRDP(this.rdpOrders[i], sigma, q) * steps
+      );
+      // Both are valid bounds; the tighter one is reported
+      total = Math.min(this._rdpToDP(newRdp, this.rdpOrders, this.delta), sumEpsilon);
+      commit = () => {
+        this.rdpEpsilons = newRdp;
+        this._sumEpsilon = sumEpsilon;
+      };
+    } else if (this.composition === 'advanced') {
+      // Advanced composition for heterogeneous steps:
+      // ε_total = sqrt(2 ln(1/δ) Σε²) + Σ ε (e^ε - 1), never worse than basic composition
+      const advanced =
+        Math.sqrt(2 * Math.log(1 / this.delta) * sumEpsilonSq) + sumEpsilonExp;
+      total = Math.min(advanced, sumEpsilon);
+      commit = () => {
+        this._sumEpsilon = sumEpsilon;
+        this._sumEpsilonSq = sumEpsilonSq;
+        this._sumEpsilonExp = sumEpsilonExp;
+      };
+    } else {
+      total = sumEpsilon;
+      commit = () => {
+        this._sumEpsilon = sumEpsilon;
+      };
     }
 
-    // Convert RDP to (ε, δ)-DP
-    const epsilon = this._rdpToDP(this.rdpEpsilons, this.rdpOrders, this.delta);
-
-    return { epsilon, delta: this.delta };
+    return {
+      cost: { epsilon: Math.max(0, total - this.spent), delta: this.delta },
+      commit,
+    };
   }
 
   /**
@@ -253,18 +273,22 @@ export class PrivacyBudgetTracker {
    * @private
    */
   _rdpToDP(rdpEpsilons, orders, delta) {
-    // ε(δ) = min_α [rdp_α + log(1/δ) / (α - 1)]
+    // Balle et al. (2020): ε(δ) = min_α [rdp_α + log((α-1)/α) - (log δ + log α) / (α - 1)]
+    // (tighter than the classic rdp_α + log(1/δ)/(α-1))
     let minEpsilon = Infinity;
 
     for (let i = 0; i < orders.length; i++) {
       const alpha = orders[i];
-      if (alpha === 1) continue;
+      if (alpha <= 1) continue;
 
-      const epsilon = rdpEpsilons[i] + Math.log(1 / delta) / (alpha - 1);
+      const epsilon =
+        rdpEpsilons[i] +
+        Math.log((alpha - 1) / alpha) -
+        (Math.log(delta) + Math.log(alpha)) / (alpha - 1);
       minEpsilon = Math.min(minEpsilon, epsilon);
     }
 
-    return minEpsilon;
+    return Math.max(0, minEpsilon);
   }
 }
 

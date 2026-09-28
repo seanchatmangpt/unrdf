@@ -40,6 +40,8 @@ export const FederatedConfigSchema = z.object({
   enableDifferentialPrivacy: z.boolean().default(true),
   secureAggregation: z.boolean().default(false),
   convergenceThreshold: z.number().min(0).max(1).default(0.001),
+  /** Optional integer seed for reproducible sampling/noise (tests, experiments) */
+  seed: z.number().int().optional(),
 });
 
 export const PrivacyBudgetSchema = z.object({
@@ -57,6 +59,8 @@ export const DPMechanismSchema = z.object({
   epsilon: z.number().positive(),
   delta: z.number().min(0).max(1).default(1e-5),
   clippingNorm: z.number().positive(),
+  /** Optional integer seed for reproducible noise (tests, experiments) */
+  seed: z.number().int().optional(),
 });
 
 export const SecureAggregationConfigSchema = z.object({
@@ -64,6 +68,8 @@ export const SecureAggregationConfigSchema = z.object({
   totalNodes: z.number().int().min(1),
   keySize: z.number().int().min(128).max(4096).default(256),
   enableEncryption: z.boolean().default(true),
+  /** Optional integer seed for reproducible masks (tests, experiments) */
+  seed: z.number().int().optional(),
 });
 
 export const TrainingMetricsSchema = z.object({

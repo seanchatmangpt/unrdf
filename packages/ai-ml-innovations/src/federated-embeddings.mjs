@@ -16,6 +16,8 @@
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
+import { createRandom, standardNormal } from './rng.mjs';
+
 const tracer = trace.getTracer('@unrdf/ai-ml-innovations');
 
 /**
@@ -50,6 +52,8 @@ const FederatedConfigSchema = z.object({
   clippingNorm: z.number().min(0.1).max(10).default(1.0),
   minNodesPerRound: z.number().min(1).max(1000).default(2),
   enableDifferentialPrivacy: z.boolean().default(true),
+  /** Optional integer seed for reproducible sampling, init and noise (tests, experiments) */
+  seed: z.number().int().optional(),
 });
 
 /**
@@ -68,11 +72,13 @@ export class FederatedEmbeddingTrainer {
    * @param {Array<Object>} config.nodes - Federated node connections
    * @param {string} [config.aggregationStrategy='fedavg'] - Aggregation strategy
    * @param {number} [config.privacyBudget=1.0] - Privacy budget (epsilon)
+   * @param {number} [config.seed] - Optional seed making sampling/init/noise reproducible
    */
   constructor(config = {}) {
     const validated = FederatedConfigSchema.parse(config);
 
     this.config = validated;
+    this._random = createRandom(validated.seed);
     this.nodes = config.nodes || [];
     this.globalModel = null;
     this.modelVersion = 0;
@@ -135,6 +141,18 @@ export class FederatedEmbeddingTrainer {
 
           // Select nodes for this round (simplified: use all nodes)
           const selectedNodes = this._selectNodes();
+
+          // Never run a round whose privacy cost would exceed the budget
+          if (this.config.enableDifferentialPrivacy) {
+            const roundCost = this._computePrivacyCost(selectedNodes.length);
+            if (this.privacySpent + roundCost > this.config.privacyBudget + 1e-9) {
+              console.warn(
+                `Privacy budget exhausted: next round would spend ` +
+                `${(this.privacySpent + roundCost).toFixed(3)}ε > ${this.config.privacyBudget}ε`
+              );
+              break;
+            }
+          }
 
           span.addEvent('Round started', {
             epoch,
@@ -200,12 +218,6 @@ export class FederatedEmbeddingTrainer {
           if (lossDelta < convergenceThreshold && !this.stats.convergenceRound) {
             this.stats.convergenceRound = epoch;
             span.addEvent('Convergence achieved', { epoch });
-          }
-
-          // Privacy budget check
-          if (this.config.enableDifferentialPrivacy && this.privacySpent > this.config.privacyBudget) {
-            console.warn(`Privacy budget exhausted: ${this.privacySpent.toFixed(3)}ε > ${this.config.privacyBudget}ε`);
-            break;
           }
         }
 
@@ -498,10 +510,38 @@ export class FederatedEmbeddingTrainer {
    * @param {Object} model - Model to validate
    * @returns {Promise<Object>} Validation metrics
    */
-  async validateFederated(_model) {
-    // Simplified validation (would use actual validation set in production)
-    const loss = Math.random() * 0.5; // Placeholder
-    const accuracy = 0.8 + Math.random() * 0.15; // Placeholder
+  async validateFederated(model) {
+    // Loss is a real, federated metric: each node scores its own triples locally with the
+    // global model (TransE distance ||h + r - t||) and only (sum, count) leave the node.
+    let distanceSum = 0;
+    let scored = 0;
+
+    for (const node of this.nodes) {
+      const triples = this._extractTriples(await this._fetchLocalGraph(node));
+
+      for (const { subject, predicate, object } of triples) {
+        const h = model.entityEmbeddings[subject];
+        const r = model.relationEmbeddings[predicate];
+        const t = model.entityEmbeddings[object];
+        if (!h || !r || !t) continue;
+
+        let sumSq = 0;
+        for (let i = 0; i < h.length; i++) {
+          const d = h[i] + r[i] - t[i];
+          sumSq += d * d;
+        }
+        distanceSum += Math.sqrt(sumSq);
+        scored++;
+      }
+    }
+
+    // No triples scored yet (untrained model): fall back to the maximal placeholder loss so
+    // that the first delta is never mistaken for convergence.
+    const loss = scored > 0 ? distanceSum / scored : 0.5;
+
+    // PLACEHOLDER accuracy (NOT derived from the model): seeded when config.seed is set.
+    // A real metric (e.g. hits@k link prediction) is not implemented.
+    const accuracy = 0.8 + this._random() * 0.15;
 
     return { loss, accuracy };
   }
@@ -527,9 +567,20 @@ export class FederatedEmbeddingTrainer {
    * @private
    */
   _selectNodes() {
-    // Simplified: select all nodes
-    // In practice, would implement node sampling strategies
-    return this.nodes.filter(() => Math.random() > 0.1); // 90% participation
+    // 90% participation per node, but never fewer than minNodesPerRound (bounded by the
+    // number of nodes): an empty round would aggregate nothing and make the per-round
+    // privacy cost (noise / sqrt(numNodes)) infinite.
+    const minNodes = Math.min(this.config.minNodesPerRound, this.nodes.length);
+    const selected = this.nodes.filter(() => this._random() > 0.1);
+
+    if (selected.length < minNodes) {
+      for (const node of this.nodes) {
+        if (selected.length >= minNodes) break;
+        if (!selected.includes(node)) selected.push(node);
+      }
+    }
+
+    return selected;
   }
 
   /**
@@ -624,11 +675,7 @@ export class FederatedEmbeddingTrainer {
    * @private
    */
   _gaussianNoise(mean, std) {
-    // Box-Muller transform
-    const u1 = Math.random();
-    const u2 = Math.random();
-    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-    return mean + std * z0;
+    return mean + std * standardNormal(this._random);
   }
 
   /**
@@ -662,7 +709,7 @@ export class FederatedEmbeddingTrainer {
   _randomVector(dim) {
     const vec = new Array(dim);
     for (let i = 0; i < dim; i++) {
-      vec[i] = (Math.random() - 0.5) / Math.sqrt(dim);
+      vec[i] = (this._random() - 0.5) / Math.sqrt(dim);
     }
     return vec;
   }
@@ -674,7 +721,7 @@ export class FederatedEmbeddingTrainer {
   _shuffle(array) {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(this._random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
