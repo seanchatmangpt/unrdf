@@ -82,6 +82,17 @@ function checkFile(path, description) {
  * @param {string} description
  * @returns {boolean}
  */
+/**
+ * Read a project file, returning null when it does not exist (missing files are
+ * reported as failed checks, they must not crash the run).
+ * @param {string} path - Path relative to project root
+ * @returns {string|null}
+ */
+function readIfExists(path) {
+  const fullPath = join(projectRoot, path)
+  return existsSync(fullPath) ? readFileSync(fullPath, 'utf-8') : null
+}
+
 function checkFileContains(path, pattern, description) {
   results.total++
   const fullPath = join(projectRoot, path)
@@ -314,8 +325,7 @@ async function runChecks() {
   checkFile('sidecar/server/tasks/health/self-heal.mjs', 'Self-heal task exists')
 
   checkWarning(
-    existsSync(join(projectRoot, 'sidecar/nuxt.config.ts')) &&
-    readFileSync(join(projectRoot, 'sidecar/nuxt.config.ts'), 'utf-8').includes('tasks: true'),
+    (readIfExists('sidecar/nuxt.config.ts') ?? '').includes('tasks: true'),
     'Nitro tasks enabled in nuxt.config.ts'
   )
 
@@ -334,7 +344,7 @@ async function runChecks() {
   checkFileContains('terraform/variables.tf', 'vault', 'Vault variables defined')
 
   checkWarning(
-    readFileSync(join(projectRoot, 'terraform/main.tf'), 'utf-8').includes('backend "s3"'),
+    (readIfExists('terraform/main.tf') ?? '').includes('backend "s3"'),
     'Remote Terraform state backend configured (S3)'
   )
 
@@ -343,7 +353,7 @@ async function runChecks() {
   // ==========================================================================
   printSection('11. SECURITY DEPENDENCIES')
 
-  const packageJson = JSON.parse(readFileSync(join(projectRoot, 'sidecar/package.json'), 'utf-8'))
+  const packageJson = JSON.parse(readIfExists('sidecar/package.json') ?? '{}')
   const deps = { ...packageJson.dependencies, ...packageJson.devDependencies }
 
   checkWarning(deps['bcrypt'] !== undefined, 'bcrypt package installed')
@@ -368,9 +378,9 @@ async function runChecks() {
   )
 
   // Check for hardcoded secrets in Terraform
-  const varContent = readFileSync(join(projectRoot, 'terraform/variables.tf'), 'utf-8')
+  const varContent = readIfExists('terraform/variables.tf')
   checkWarning(
-    !varContent.includes('default     = "test:test"'),
+    varContent !== null && !varContent.includes('default     = "test:test"'),
     'No hardcoded test credentials in Terraform variables'
   )
 
