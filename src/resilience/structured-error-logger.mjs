@@ -55,11 +55,11 @@ export const StructuredErrorSchema = z.object({
   message: z.string(),
   code: z.string().optional(),
   stack: z.string().optional(),
-  context: z.record(z.any()).optional(),
-  agentId: z.string().optional(),
-  agentType: z.string().optional(),
-  operation: z.string().optional(),
-  correlationId: z.string().optional(),
+  context: z.record(z.string(), z.any()).optional(),
+  agentId: z.string().nullish(), // logError defaults these to null
+  agentType: z.string().nullish(), // logError defaults these to null
+  operation: z.string().nullish(), // logError defaults these to null
+  correlationId: z.string().nullish(), // logError defaults these to null
 });
 
 /**

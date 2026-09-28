@@ -43,7 +43,7 @@ export const AgentRegistrationSchema = z.object({
   capabilities: z.array(z.string()).min(1),
   priority: z.number().default(0),
   maxConcurrent: z.number().default(1),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

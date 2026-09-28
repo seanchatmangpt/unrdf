@@ -40,7 +40,7 @@ export const DecisionResultSchema = z.object({
       failedInvariants: z.array(z.string()).optional()
     })
   }),
-  details: z.record(z.any()).optional()
+  details: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -49,7 +49,7 @@ export const DecisionResultSchema = z.object({
 export const AdmissionConfigSchema = z.object({
   strictMode: z.boolean().default(true),
   allowWarnings: z.boolean().default(true),
-  customBounds: z.record(z.number()).optional(),
+  customBounds: z.record(z.string(), z.number()).optional(),
   customInvariants: z.array(z.function()).optional(),
   auditLog: z.boolean().default(true)
 });

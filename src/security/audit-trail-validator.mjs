@@ -26,7 +26,7 @@ export const ReceiptSchema = z.object({
   actor: z.string().min(1).optional(),
   status: z.enum(['success', 'failure', 'pending', 'completed', 'error']).optional(),
   result: z.any().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   hash: z.string().optional(),
   parentId: z.string().optional(),
   sequence: z.number().optional()

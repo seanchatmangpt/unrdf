@@ -46,15 +46,9 @@ export const GuardSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
-  condition: z.function()
-    .args(
-      z.object({
-        agent: z.string(),
-        action: z.string(),
-        target: z.any(),
-      })
-    )
-    .returns(z.promise(z.boolean())),
+  // Zod v4 removed z.function().args()/.returns(): signature is documented, not schema-enforced
+  // (agent, action, target) => Promise<boolean>
+  condition: z.function(),
 });
 
 /**
@@ -64,13 +58,8 @@ export const GuardSchema = z.object({
 export const UniverseSchema = z.object({
   id: z.string().uuid(),
   schema: z.string().min(1), // RDF schema IRI or identifier
-  reconcile: z.function()
-    .args(z.any(), z.array(z.any()))
-    .returns(z.promise(z.object({
-      consequences: z.array(z.any()),
-      artifacts: z.record(z.any()),
-      errors: z.array(z.string()).default([]),
-    }))),
+  // (state, deltas) => Promise<{ consequences, artifacts, errors }>
+  reconcile: z.function(),
   invariants: z.array(InvariantSchema).default([]),
   guards: z.array(GuardSchema).default([]),
   metadata: UniverseMetadataSchema,
@@ -111,9 +100,9 @@ export const SceneSchema = z.object({
   id: z.string().uuid(),
   universeId: z.string().uuid(),
   observations: z.array(z.any()), // RDF quads or domain objects
-  delta: z.record(z.any()), // State change (JSON-serializable)
+  delta: z.record(z.string(), z.any()), // State change (JSON-serializable)
   consequences: z.array(z.any()).default([]), // Derived effects from reconciliation
-  artifacts: z.record(z.any()).default({}), // Side products (logs, metrics, etc.)
+  artifacts: z.record(z.string(), z.any()).default({}), // Side products (logs, metrics, etc.)
   receipts: z.array(ReceiptSchema).default([]), // Receipt chain
   timestamp: z.date().default(() => new Date()),
   previousSceneId: z.string().uuid().optional(), // Link to previous scene (linear history)
@@ -127,12 +116,8 @@ export const BridgeSchema = z.object({
   id: z.string().uuid(),
   sourceUniverseId: z.string().uuid(),
   targetUniverseId: z.string().uuid(),
-  typeCoercion: z.function()
-    .args(z.any())
-    .returns(z.any()), // Type transformation function
-  invariantPreservation: z.function()
-    .args(z.any())
-    .returns(z.promise(z.boolean())), // Verify invariants hold post-coercion
+  typeCoercion: z.function(), // (value) => any: type transformation
+  invariantPreservation: z.function(), // (value) => Promise<boolean>: verify invariants post-coercion
   accessGrants: z.array(z.object({
     agent: z.string(),
     permission: z.enum(['read', 'write', 'execute']),

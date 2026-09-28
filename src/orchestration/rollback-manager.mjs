@@ -29,7 +29,7 @@ export const CheckpointSchema = z.object({
   stage: z.string(),
   state: z.any(),
   hash: z.string(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

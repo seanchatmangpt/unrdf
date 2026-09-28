@@ -88,7 +88,7 @@ export const DeltaCapsuleSchema = z.object({
   changes: z.array(ProposedChangeSchema).min(1),
   invariants: z.array(InvariantRefSchema).min(1),
   provenance: ProvenanceSchema,
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

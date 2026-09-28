@@ -34,7 +34,7 @@ export const ObservableUpdateSchema = z.object({
   timestamp: z.number(),
   data: z.any(),
   delta: z.any().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

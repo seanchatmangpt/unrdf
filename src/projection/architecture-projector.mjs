@@ -48,7 +48,7 @@ const DependencyEdgeSchema = z.object({
 const ArchitectureInputSchema = z.object({
   partitions: z.array(PartitionMetadataSchema),
   dependencies: z.array(DependencyEdgeSchema).default([]),
-  namespaces: z.record(z.array(z.string())).default({}),
+  namespaces: z.record(z.string(), z.array(z.string())).default({}),
   metadata: z.object({
     name: z.string(),
     version: z.string(),

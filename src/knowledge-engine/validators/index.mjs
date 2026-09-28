@@ -142,7 +142,7 @@ export const sparqlAskConditionValidator = z
       .object({
         timeout: z.number().int().positive().max(30000).optional(),
         strict: z.boolean().optional(),
-        variables: z.record(z.string()).optional(),
+        variables: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   })
@@ -161,7 +161,7 @@ export const sparqlSelectConditionValidator = z
         limit: z.number().int().positive().max(10000).optional(),
         offset: z.number().int().nonnegative().optional(),
         strict: z.boolean().optional(),
-        variables: z.record(z.string()).optional(),
+        variables: z.record(z.string(), z.string()).optional(),
       })
       .optional(),
   })
@@ -237,8 +237,8 @@ export const deltaValidator = z
 export const hookContextValidator = z
   .object({
     graph: z.any(), // RDF Store - validated at runtime
-    env: z.record(z.any()).optional(),
-    metadata: z.record(z.any()).optional(),
+    env: z.record(z.string(), z.any()).optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
     transactionId: z.string().uuid().optional(),
     timestamp: z.coerce.date().optional(),
   })

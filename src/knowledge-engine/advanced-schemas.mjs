@@ -72,12 +72,12 @@ export const AgentProposalSchema = z.object({
   delta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   priority: z.number().int().min(0).max(100).default(50),
   timestamp: z.number(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   dependencies: z.array(z.string()).optional(),
   conflicts: z.array(z.string()).optional(),
 });
@@ -87,7 +87,7 @@ export const AgentProposalSchema = z.object({
  */
 export const ResolutionStrategySchema = z.object({
   type: z.enum(['voting', 'merging', 'crdt', 'consensus', 'priority', 'random']),
-  parameters: z.record(z.any()).optional(),
+  parameters: z.record(z.string(), z.any()).optional(),
   timeout: z.number().int().positive().max(300000).default(30000),
   quorum: z.number().min(0).max(1).default(0.5),
   maxRetries: z.number().int().nonnegative().max(10).default(3),
@@ -103,7 +103,7 @@ export const ResolutionResultSchema = z.object({
   resolvedDelta: z.object({
     additions: z.array(z.any()),
     removals: z.array(z.any()),
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
   }),
   confidence: z.number().min(0).max(1),
   consensus: z.boolean(),
@@ -148,7 +148,7 @@ export const SandboxContextSchema = z.object({
   event: z.any(),
   store: z.any(),
   delta: z.any(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   allowedFunctions: z.array(z.string()).default(['emitEvent', 'log', 'assert']),
 });
 

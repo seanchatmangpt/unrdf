@@ -29,13 +29,13 @@ import { blake3 } from 'hash-wasm';
 const MeasurementSnapshotSchema = z.object({
   dimension: z.object({
     systemDimension: z.number(),
-    partitionDimensions: z.record(z.number()),
+    partitionDimensions: z.record(z.string(), z.number()),
     utilizationRatio: z.number()
   }),
   correlation: z.object({
     totalCorrelation: z.number(),
     normalizedTC: z.number(),
-    partitionEntropies: z.record(z.number())
+    partitionEntropies: z.record(z.string(), z.number())
   }),
   transferEntropy: z.object({
     causalEdges: z.array(z.object({

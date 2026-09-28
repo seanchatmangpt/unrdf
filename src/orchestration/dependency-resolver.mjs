@@ -28,7 +28,7 @@ export const PackageDependencySchema = z.object({
   devDependencies: z.array(z.string()).default([]),
   peerDependencies: z.array(z.string()).default([]),
   optionalDependencies: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

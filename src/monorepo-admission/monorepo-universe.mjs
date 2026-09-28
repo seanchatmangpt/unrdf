@@ -41,7 +41,7 @@ export const UniverseStateSchema = z.object({
   version: z.string(),
   contentHash: z.string(),
   partitionCount: z.number(),
-  categoryDistribution: z.record(z.number()),
+  categoryDistribution: z.record(z.string(), z.number()),
   lastAdmissionTime: z.string().datetime().nullable(),
   admissionCount: z.number()
 });

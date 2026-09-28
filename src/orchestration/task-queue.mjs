@@ -60,7 +60,7 @@ export const TaskSchema = z.object({
   completedAt: z.number().optional(),
   result: z.any().optional(),
   error: z.string().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

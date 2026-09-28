@@ -35,7 +35,7 @@ const InputHashesSchema = z.object({
  */
 const ToolchainVersionSchema = z.object({
   node: z.string(),
-  packages: z.record(z.string()),
+  packages: z.record(z.string(), z.string()),
 });
 
 /**

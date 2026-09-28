@@ -60,7 +60,7 @@ export const StageResultSchema = z.object({
   error: z.string().optional(),
   output: z.any().optional(),
   artifacts: z.array(z.string()).optional(),
-  metrics: z.record(z.any()).optional(),
+  metrics: z.record(z.string(), z.any()).optional(),
   receipt: z.any().optional()
 });
 
