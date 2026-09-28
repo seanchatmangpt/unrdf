@@ -2,7 +2,10 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { glob } from 'glob';
 
-const NEW_VERSION = '5.0.1';
+// Target version: first CLI argument, else the workspace root package.json (never hardcoded)
+const NEW_VERSION =
+  process.argv[2] ||
+  JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 // Private packages that should NOT be published
 const PRIVATE_PACKAGES = new Set([
@@ -59,4 +62,7 @@ async function updatePackages() {
   console.log(`\n✓ All packages updated to v${NEW_VERSION}`);
 }
 
-updatePackages().catch(console.error);
+updatePackages().catch(error => {
+  console.error(error);
+  process.exit(1);
+});
