@@ -1,6 +1,6 @@
 /**
  * Optimization Benchmarks Suite
- * Comprehensive benchmarks for all 4 optimization modules
+ * Comprehensive benchmarks for the snapshot cache, query cache and policy compiler optimization modules
  */
 import { performance } from 'perf_hooks';
 
@@ -154,65 +154,12 @@ async function benchmarkQueryCache() {
 }
 
 // =============================================================================
-// 3. Receipt Batch Benchmark
-// =============================================================================
-
-async function benchmarkReceiptBatch() {
-  console.log('\n' + '='.repeat(60));
-  console.log('3. RECEIPT BATCH BENCHMARK');
-  console.log('='.repeat(60));
-
-  const { generateReceiptBatch, verifyReceiptBatch, resetPool } = await import('../packages/yawl/src/receipt-batch.mjs');
-  const { RECEIPT_EVENT_TYPES } = await import('../packages/yawl/src/receipt.mjs');
-
-  resetPool(1000);
-
-  const batchSizes = [10, 100, 1000, 10000];
-  const results = [];
-
-  for (const size of batchSizes) {
-    const events = Array(size).fill({
-      eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-      caseId: 'case1',
-      taskId: 'task1',
-      payload: { data: 'test' },
-    });
-
-    const start = performance.now();
-    const result = await generateReceiptBatch(events, { workers: 4, usePool: true });
-    const elapsed = performance.now() - start;
-
-    console.log(`\nBatch Size: ${size}`);
-    console.log(`  Duration:     ${result.duration.toFixed(2)} ms`);
-    console.log(`  Throughput:   ${result.throughput.toFixed(0)} receipts/sec`);
-    console.log(`  Pool Reuse:   ${(result.stats.poolStats?.reuseRate * 100 || 0).toFixed(1)}%`);
-
-    results.push({
-      size,
-      duration: result.duration,
-      throughput: result.throughput,
-      poolStats: result.stats.poolStats,
-    });
-
-    // Benchmark verification
-    const verifyStart = performance.now();
-    const verification = await verifyReceiptBatch(result.receipts, 4);
-    const verifyElapsed = performance.now() - verifyStart;
-
-    console.log(`  Verify Time:  ${verifyElapsed.toFixed(2)} ms`);
-    console.log(`  Verify Valid: ${verification.valid}`);
-  }
-
-  return results;
-}
-
-// =============================================================================
 // 4. Policy Compiler Benchmark
 // =============================================================================
 
 async function benchmarkPolicyCompiler() {
   console.log('\n' + '='.repeat(60));
-  console.log('4. POLICY COMPILER BENCHMARK');
+  console.log('3. POLICY COMPILER BENCHMARK');
   console.log('='.repeat(60));
 
   const {
@@ -323,13 +270,6 @@ async function main() {
   }
 
   try {
-    results.benchmarks.receiptBatch = await benchmarkReceiptBatch();
-  } catch (error) {
-    console.error('\n❌ Receipt Batch benchmark failed:', error.message);
-    results.benchmarks.receiptBatch = { error: error.message };
-  }
-
-  try {
     results.benchmarks.policyCompiler = await benchmarkPolicyCompiler();
   } catch (error) {
     console.error('\n❌ Policy Compiler benchmark failed:', error.message);
@@ -349,12 +289,6 @@ async function main() {
   if (results.benchmarks.queryCache?.normStats) {
     console.log(`\n✅ Query Cache: ${results.benchmarks.queryCache.normStats.p95.toFixed(3)} ms P95 normalization`);
     console.log(`   Target: <5ms for indexed queries`);
-  }
-
-  if (results.benchmarks.receiptBatch && Array.isArray(results.benchmarks.receiptBatch)) {
-    const largest = results.benchmarks.receiptBatch[results.benchmarks.receiptBatch.length - 1];
-    console.log(`\n✅ Receipt Batch: ${largest?.throughput?.toFixed(0) || 'N/A'} receipts/sec`);
-    console.log(`   Target: 100K receipts/sec`);
   }
 
   if (results.benchmarks.policyCompiler?.compilerStats) {
