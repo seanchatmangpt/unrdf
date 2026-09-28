@@ -27,7 +27,7 @@ const semanticCondition = createSemanticCondition(sparqlQuery, ontologyFiles);
 manager.registerHook({
   id: 'semantic-pizza-detector',
   name: 'Semantic Pizza Detector',
-  version: '[VERSION]',
+  version: '1.0.0',
   trigger: 'after-add',
   enabled: true,
   description: 'Triggers autonomically when the Open Ontologies graph proves Margherita exists',
