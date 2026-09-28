@@ -10,9 +10,14 @@
  * bytecode on machines without a native AtomVM installation (CI, fog/edge
  * nodes, containers). It never uses a shell.
  *
- * Programs that spawn processes take ~1.5 s wall time even when trivial: main
- * only returns after the scheduler worker threads wind down (~1.2 s). Programs
- * that do not spawn finish in ~0.1 s.
+ * Exit latency: the shipped build is pthread-enabled, so Node runs it with
+ * Worker isolates. V8 tiers the (large) wasm module up with TurboFan in
+ * background threads, and Node cannot tear a Worker isolate down until those
+ * compile jobs finish, so process exit stalled ~0.7-2 s after the program's
+ * output was complete (measured: `node --liftoff-only` 0.3 s vs 1.1-2.3 s; a
+ * 60M-iteration Erlang loop runs at the same speed with either). We therefore
+ * enable Liftoff-only wasm compilation before the module is compiled. Exit
+ * codes and output are untouched (no exit-path hacks).
  *
  * NOTE: spawn/1,3 (and other estdlib functions) are Erlang wrappers in
  * estdlib's erlang.beam, so an app that uses them must ship that module in its
@@ -21,6 +26,7 @@
  * module-lookup miss instead of reporting `undef`.
  */
 import vm from 'node:vm';
+import v8 from 'node:v8';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -61,6 +67,9 @@ for (const path of avmPaths) {
     refuse(`${path}: ${error.message}`);
   }
 }
+
+// Must run before the wasm module is compiled (see header comment).
+v8.setFlagsFromString('--liftoff-only');
 
 // The Emscripten prologue is `var Module = typeof Module != "undefined" ? ...`,
 // which only honours a pre-set Module when evaluated as a global script.

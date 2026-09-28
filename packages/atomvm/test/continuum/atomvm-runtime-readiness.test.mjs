@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { REQUIRED_ASSET_NAMES, ATOMVM_VERSION, atomvmAssetName } from '../../src/assets.mjs';
-import { packAvm, parseAvm, AvmFormatError, AVM_HEADER, AVM_FLAG_CODE, AVM_FLAG_START } from '../../src/avm-packer.mjs';
+import { packAvm, parseAvm, AvmFormatError, AVM_HEADER, AVM_FLAG_CODE, AVM_FLAG_START, AVM_FLAG_FILE } from '../../src/avm-packer.mjs';
 import { AtomVMNodeRuntime } from '../../src/node-runtime.mjs';
 import { AtomVMProcessBroker, AtomVMProcessRefusal } from '../../src/process-broker.mjs';
 import { PACKAGE_ROOT, programAvm, tierAvm } from './helpers.mjs';
@@ -70,7 +70,8 @@ describe('AVM archive format', () => {
       { name: 'main/priv/x.bin', data: new Uint8Array([1, 2, 3]), file: true },
     ]);
     const { entries } = parseAvm(bytes);
-    expect(entries.map(entry => entry.flags)).toEqual([AVM_FLAG_CODE | AVM_FLAG_START, AVM_FLAG_CODE, 0]);
+    expect(entries.map(entry => entry.flags)).toEqual([AVM_FLAG_CODE | AVM_FLAG_START, AVM_FLAG_CODE, AVM_FLAG_FILE]);
+    expect(entries[2].fileSize).toBe(3);
     expect([...bytes.subarray(-12)]).toEqual(new Array(12).fill(0));
   });
 
@@ -141,6 +142,37 @@ describe('bin/atomvm-wasm launcher (real AtomVM on WebAssembly)', () => {
     expect(result.stdout).toContain('{big,300000000,1000000000}');
   });
 
+  it('a spawning program exits promptly after its output (no V8 TurboFan worker teardown stall)', () => {
+    const started = Date.now();
+    const result = run(programAvm('spawn_workers'));
+    const elapsed = Date.now() - started;
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Return value: ok');
+    // Was 1.8-2.3 s before --liftoff-only; generous bound for loaded CI machines.
+    expect(elapsed).toBeLessThan(1500);
+  });
+
+  it('reads priv files with atomvm:read_priv/2 (packer writes the u32be length prefix)', () => {
+    const result = run(programAvm('read_priv'));
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('{priv,11,<<104,101,108,108,111,32,112,114,105,118,10>>,4,<<0,1,2,255>>,undefined}');
+    expect(result.stdout).toContain('Return value: ok');
+  });
+
+  it('a priv file packed WITHOUT the length prefix is what aborts the VM (regression evidence)', () => {
+    // Hand-built legacy layout: same entries, content not prefixed.
+    const good = new Uint8Array(readFileSync(programAvm('read_priv')));
+    const marker = new TextEncoder().encode('hello priv\n');
+    const at = good.findIndex((_, i) => marker.every((b, j) => good[i + j] === b));
+    const broken = new Uint8Array(good);
+    broken.set([0x68, 0x65, 0x6c, 0x6c], at - 4); // first content bytes where the length belongs
+    const dir = mkdtempSync(join(tmpdir(), 'avm-priv-'));
+    const path = join(dir, 'broken.avm');
+    writeFileSync(path, broken);
+    expect(() => parseAvm(broken)).toThrow(/length prefix/); // our validator refuses it before the VM aborts
+    expect(run(path).status).toBe(2);
+  });
+
   it('surfaces a crashing program as a non-zero exit with a crash report, never as success', () => {
     const result = run(programAvm('crash_now'));
     expect(result.status).toBe(1);
@@ -194,7 +226,7 @@ describe('AtomVMNodeRuntime', () => {
   });
 });
 
-// Each spawning witness run costs ~1.5 s (scheduler thread wind-down), so allow headroom.
+// Spawning witness runs take ~0.3-0.5 s (launcher enables Liftoff-only wasm); keep headroom for slow CI.
 describe('AtomVMProcessBroker safety net', { timeout: 60_000 }, () => {
   const broker = timeoutMs =>
     new AtomVMProcessBroker({

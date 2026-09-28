@@ -48,7 +48,7 @@ export function buildTierFixtures() {
     // Negative-test programs (crash, runaway).
     const programsDir = join(root, 'test/fixtures/programs');
     mkdirSync(programsDir, { recursive: true });
-    for (const name of ['loop_forever', 'crash_now', 'spawn_workers', 'big_ints']) {
+    for (const name of ['loop_forever', 'crash_now', 'spawn_workers', 'big_ints', 'read_priv']) {
       execFileSync(erlc, ['-o', work, join(root, `test/fixtures/erlang/${name}.erl`)], {
         stdio: 'inherit',
       });
@@ -60,7 +60,14 @@ export function buildTierFixtures() {
       const stdlib = { name: 'erlang.beam', data: new Uint8Array(readFileSync(ERLANG_STDLIB)) };
       const spawns = name === 'spawn_workers';
       const avmPath = join(programsDir, `${name}.avm`);
-      writeFileSync(avmPath, packAvm(spawns ? [program, stdlib] : [program]));
+      const extras =
+        name === 'read_priv'
+          ? [
+              { name: 'read_priv/priv/hello.txt', data: new TextEncoder().encode('hello priv\n'), file: true },
+              { name: 'read_priv/priv/sub/blob.bin', data: Uint8Array.from([0, 1, 2, 255]), file: true },
+            ]
+          : [];
+      writeFileSync(avmPath, packAvm(spawns ? [program, stdlib] : [program, ...extras]));
       built.push(avmPath);
       if (spawns) {
         // Same program WITHOUT estdlib: must fail fast with undef, never hang.
