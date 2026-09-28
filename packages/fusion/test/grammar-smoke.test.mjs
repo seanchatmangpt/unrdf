@@ -15,8 +15,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import { streamingParse, streamingWrite } from '@unrdf/core/rdf/n3-justified-only.mjs';
-import { KGenSHACLTemplates } from '../../../kgn/src/base/shacl-templates.js';
+import { streamingParse, streamingWrite } from '@unrdf/core/rdf/n3-justified-only';
+import { KGenSHACLTemplates } from '../../kgn/src/base/shacl-templates.js';
 
 describe('Grammar Smoke Suite', () => {
   describe('1. SPARQL - Query Compilation', () => {
