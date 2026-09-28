@@ -3,6 +3,8 @@
  * @module sidecar
  */
 
+import { createSidecarClient } from './client.mjs';
+
 export { SidecarClient, createSidecarClient } from './client.mjs';
 export { SidecarConfig, createSidecarConfig } from './config.mjs';
 export { CircuitBreaker, createCircuitBreaker, CircuitState } from './circuit-breaker.mjs';

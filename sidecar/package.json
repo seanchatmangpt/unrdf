@@ -22,13 +22,15 @@
     "load:test": "k6 run scripts/load-test.mjs",
     "load:sustained": "k6 run --scenarios sustained_load scripts/load-test.mjs",
     "load:spike": "k6 run --scenarios spike_test scripts/load-test.mjs",
-    "profile:doctor": "clinic doctor -- node server/index.mjs",
-    "profile:flame": "clinic flame -- node server/index.mjs",
-    "profile:bubbleprof": "clinic bubbleprof -- node server/index.mjs",
-    "profile:heap": "clinic heapprofiler -- node server/index.mjs",
+    "profile:doctor": "clinic doctor -- node .output/server/index.mjs",
+    "profile:flame": "clinic flame -- node .output/server/index.mjs",
+    "profile:bubbleprof": "clinic bubbleprof -- node .output/server/index.mjs",
+    "profile:heap": "clinic heapprofiler -- node .output/server/index.mjs",
     "benchmark": "autocannon -c 100 -d 30 http://localhost:3456/api/transaction"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.14.0",
+    "@grpc/proto-loader": "^0.8.0",
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
     "@opentelemetry/api": "^1.7.0",
@@ -44,13 +46,15 @@
     "elliptic": "^6.6.1",
     "helmet": "^8.1.0",
     "ioredis": "^5.8.0",
+    "isolated-vm": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
-    "n3": "^1.17.0",
     "node-vault": "^0.10.5",
     "nuxt": "^4.1.2",
     "nuxt-monaco-editor": "^1.4.0",
-    "vue": "latest",
-    "zod": "^3.22.0"
+    "rate-limiter-flexible": "^11.2.1",
+    "vue": "^3.5.22",
+    "winston": "^3.19.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.11.0",

@@ -128,3 +128,18 @@ export class InternalError extends ApiError {
     this.cause = cause
   }
 }
+
+/**
+ * Sandbox error (500) - isolate creation, effect registration/execution and threat analysis failures
+ */
+export class SandboxError extends ApiError {
+  /**
+   * @param {string} message - Error message
+   * @param {{cause?: Error}} [options] - Original error
+   */
+  constructor(message, options = {}) {
+    super(message, 500, 'SANDBOX_ERROR')
+    this.name = 'SandboxError'
+    if (options.cause) this.cause = options.cause
+  }
+}

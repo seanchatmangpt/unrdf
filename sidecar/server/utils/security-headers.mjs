@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 const SecurityConfigSchema = z.object({
   contentSecurityPolicy: z.object({
-    directives: z.record(z.array(z.string()))
+    directives: z.record(z.string(), z.array(z.string()))
   }).optional(),
   hsts: z.object({
     maxAge: z.number(),
@@ -106,11 +106,3 @@ export function buildSecurityHeaders(config) {
 
   return headers;
 }
-
-/**
- * Security headers middleware
- * @param {import('h3').H3Event} event - H3 event
- */
-export default defineEventHandler((event) => {
-  applySecurityHeaders(event);
-});
