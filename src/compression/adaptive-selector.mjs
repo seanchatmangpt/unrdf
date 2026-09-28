@@ -105,6 +105,7 @@ export class AdaptiveCompressionSelector {
       this.stats.algorithmUsage[result.selectedAlgorithm || algorithm]++;
 
       result.dataCharacteristics = characteristics;
+      result.inputEncoding = this._inputEncoding(data);
 
       return result;
     } catch (error) {
@@ -112,6 +113,7 @@ export class AdaptiveCompressionSelector {
       result = await this.compressors.lz4.compress(data);
       result.selectedAlgorithm = 'lz4';
       result.fallbackReason = `${algorithm} failed: ${error.message}`;
+      result.inputEncoding = this._inputEncoding(data);
       return result;
     }
   }
@@ -129,7 +131,26 @@ export class AdaptiveCompressionSelector {
       throw new Error(`Unknown compression algorithm: ${algorithm}`);
     }
 
-    return this.compressors[algorithm].decompress(compressedData);
+    const decompressed = await this.compressors[algorithm].decompress(compressedData);
+
+    // Byte-level compressors return a Buffer; restore structured inputs that were
+    // JSON-serialized on the way in so that decompress(compress(x)) is x
+    if (compressedData.inputEncoding === 'json' && Buffer.isBuffer(decompressed)) {
+      return JSON.parse(decompressed.toString('utf-8'));
+    }
+
+    return decompressed;
+  }
+
+  /**
+   * How the input was turned into bytes by the underlying compressors
+   * @private
+   */
+  _inputEncoding(data) {
+    if (typeof data === 'string' || Buffer.isBuffer(data) || data instanceof Uint8Array) {
+      return 'bytes';
+    }
+    return 'json';
   }
 
   /**

@@ -112,18 +112,6 @@ export function generateQuads(count, { base = TEST_BASE, predicates = 10 } = {})
 // ============================================================================
 
 /**
- * Create a fresh empty Oxigraph-backed RDF store.
- *
- * @returns {import('@unrdf/oxigraph').OxigraphStore}
- *
- * @example
- * const store = createTestStore();
- */
-export function createTestStore() {
-  return createStore();
-}
-
-/**
  * Create an Oxigraph store pre-loaded with the given quads.
  *
  * @param {object[]} quads - Quads to add on creation
@@ -178,3 +166,16 @@ export {
   assertThrowsCode, assertRejects,
   assertStoreSize, assertStoreContains, assertRollback, assertBindingContains,
 } from './assertions.mjs';
+
+export {
+  // Store/workflow/OTEL helpers. createTestStore() with no arguments returns a fresh empty
+  // Oxigraph store; options add initial quads and metrics tracking.
+  createTestStore, createTestWorkflow, mockOTEL, waitForCondition,
+  createQuad, measureTime, testBatch, snapshotStore, assertSnapshotsEqual,
+} from './helpers.mjs';
+
+export {
+  // Shared fixtures
+  sampleRDF, sampleWorkflows, sampleCaseData, sampleHooks, sampleQueries,
+  performanceFixtures, errorScenarios,
+} from './fixtures.mjs';

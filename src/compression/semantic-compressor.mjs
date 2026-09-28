@@ -174,7 +174,9 @@ export class SemanticCompressor {
 
     // For arrays of objects, we can omit field names (schema provides them)
     if (Array.isArray(validated) && validated.length > 0 && typeof validated[0] === 'object') {
-      const shape = schema._def.type?._def.shape || schema.shape || {};
+      // Zod v4: z.array(...).element is the item schema (v3 kept it in _def.type)
+      const itemSchema = schema.element ?? schema._def?.type;
+      const shape = itemSchema?.shape || schema.shape || {};
       const fields = Object.keys(shape);
 
       const compressedArray = validated.map(item => {

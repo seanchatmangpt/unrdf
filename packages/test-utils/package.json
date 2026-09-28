@@ -8,6 +8,10 @@
   "exports": {
     ".": "./src/index.mjs"
   },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run"
+  },
   "dependencies": {
     "@unrdf/oxigraph": "workspace:*"
   },
