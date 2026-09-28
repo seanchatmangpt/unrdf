@@ -100,7 +100,6 @@ export function toISO(t_ns) {
   const iso = d.toISOString();
   const nsStr = ns.toString().padStart(9, '0');
   const result = iso.replace(/\.\d{3}Z$/, `.${ns.toString().padStart(9, '0')}Z`);
-  console.log(`[toISO] input: ${t_ns}, ms: ${ms}, iso: ${iso}, result: ${result}`);
   return result;
 }
 
@@ -113,7 +112,6 @@ export function fromISO(iso) {
     /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?Z?$/
   );
 
-  console.log(`[fromISO] input: ${iso}, matched: ${!!match}`);
 
   if (!match) {
     // Fallback to standard parsing (loses precision but handles edge cases)

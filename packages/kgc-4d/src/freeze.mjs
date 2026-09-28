@@ -279,7 +279,6 @@ export async function reconstructState(store, gitBackbone, targetTime) {
       const snapshotQuads = [
         ...store.match(null, typePredi, dataFactory.literal('SNAPSHOT'), eventLogGraph)
       ];
-      console.log('SNAPSHOT QUADS LENGTH:', snapshotQuads.length);
 
       if (snapshotQuads.length === 0) {
         // Edge case 2: No snapshots created yet - check if targetTime is before all events
@@ -307,7 +306,6 @@ export async function reconstructState(store, gitBackbone, targetTime) {
 
         if (timeQuads.length > 0 && gitRefQuads.length > 0) {
           const time = BigInt(timeQuads[0].object.value);
-          console.log(`Snapshot time: ${time}, targetTime: ${targetTime}, <=: ${time <= targetTime}, >: ${time > bestTime}`);
           if (time <= targetTime && time > bestTime) {
             bestTime = time;
             bestSnapshot = {
@@ -360,7 +358,7 @@ export async function reconstructState(store, gitBackbone, targetTime) {
     // Map results and prepare for sorting
     const eventsToReplay = queryResults.map(row => ({
       subject: dataFactory.namedNode(row.event.value),
-      t_ns: BigInt(row.t_ns.value),
+      t_ns: BigInt(row.t.value),
       vectorClock: VectorClock.fromJSON(JSON.parse(row.vc.value)),
       payload: JSON.parse(row.payload.value)
     }));
