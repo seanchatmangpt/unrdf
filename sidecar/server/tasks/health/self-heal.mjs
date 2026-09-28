@@ -2,7 +2,7 @@
 /**
  * SAFLA Self-Healing Health Check Task
  *
- * Scheduled: Every minute (*/1 * * * *)
+ * Scheduled: Every minute (cron: * * * * *)
  *
  * Self-healing autonomic system that:
  * - Monitors all circuit breakers
