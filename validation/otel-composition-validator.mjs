@@ -11,6 +11,9 @@
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { execSync } from 'node:child_process';
 import { join } from 'node:path';
 
@@ -198,7 +201,7 @@ async function runCompositionTest(composition) {
 
     try {
       output = execSync(composition.testCommand, {
-        cwd: '/home/user/unrdf',
+        cwd: `${REPO_ROOT}`,
         encoding: 'utf8',
         timeout: 20000, // 20s max
         maxBuffer: 10 * 1024 * 1024, // 10MB
@@ -398,7 +401,7 @@ async function main() {
     const results = await runAllCompositionValidations();
 
     // Write results to file
-    const outputPath = '/home/user/unrdf/validation/otel-composition-scores.json';
+    const outputPath = `${REPO_ROOT}/validation/otel-composition-scores.json`;
     await writeFile(outputPath, JSON.stringify(results, null, 2));
     console.log(`\n💾 Results saved to: ${outputPath}`);
 

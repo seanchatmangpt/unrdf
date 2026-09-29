@@ -7,6 +7,9 @@
  */
 
 import { performance } from 'node:perf_hooks';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { writeFileSync } from 'node:fs';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import {
@@ -444,8 +447,8 @@ async function main() {
   const report = generatePerformanceReport(results);
 
   // Save results
-  const resultsPath = '/Users/sac/unrdf/reports/hook-performance-benchmarks.json';
-  const reportPath = '/Users/sac/unrdf/docs/benchmarks/KNOWLEDGE-HOOKS-PERFORMANCE.md';
+  const resultsPath = `${REPO_ROOT}/reports/hook-performance-benchmarks.json`;
+  const reportPath = `${REPO_ROOT}/docs/benchmarks/KNOWLEDGE-HOOKS-PERFORMANCE.md`;
 
   const resultsData = {
     timestamp: new Date().toISOString(),

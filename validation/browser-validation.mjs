@@ -17,9 +17,9 @@ import { trace, context } from '@opentelemetry/api';
 import { IndexedDBQuadStore } from '../src/browser/indexeddb-store.mjs';
 import { BrowserQueryExecutor } from '../src/browser/comunica-browser-adapter.mjs';
 import { BrowserLockchainWriter } from '../src/browser/browser-lockchain-writer.mjs';
-import { DataFactory } from '@rdfjs/data-model';
+import { dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 // Mock IndexedDB for Node.js testing
 if (typeof indexedDB === 'undefined') {

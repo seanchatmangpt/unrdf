@@ -56,6 +56,11 @@ function verifyAllPackagesUsed(inventory, snapshot) {
     return {
       valid: false,
       error: 'Registry snapshot not found',
+      inventory: inventory.length,
+      registered: 0,
+      missing: inventory.map(p => p.name),
+      extra: [],
+      matchRate: '0.0',
       message: '❌ Run demo first: node AUTONOMIC_ALLPACKAGES/demo.mjs'
     };
   }

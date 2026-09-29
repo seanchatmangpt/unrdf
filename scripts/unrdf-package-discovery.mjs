@@ -225,7 +225,9 @@ function main() {
   console.log(`  3. Generate: pnpm run unrdf:generate`);
 }
 
-main().catch(error => {
+try {
+  main();
+} catch (error) {
   console.error('❌ Error:', error.message);
   process.exit(1);
-});
+}

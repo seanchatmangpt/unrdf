@@ -15,7 +15,7 @@
 set -euo pipefail
 
 TEMPO_URL="${TEMPO_URL:-http://localhost:3200}"
-BASELINE_DIR="${BASELINE_DIR:-/Users/sac/unrdf/otel/baselines}"
+BASELINE_DIR="${BASELINE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/baselines}"
 HOURS="${HOURS:-24}"
 LIMIT="${LIMIT:-1000}"
 

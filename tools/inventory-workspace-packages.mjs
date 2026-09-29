@@ -6,8 +6,8 @@
  * @file tools/inventory-workspace-packages.mjs
  */
 
-import { readdirSync, statSync, readFileSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { readdirSync, statSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join, resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 
@@ -109,6 +109,7 @@ function writeInventory(packages) {
     packages
   };
 
+  mkdirSync(dirname(inventoryPath), { recursive: true });
   writeFileSync(inventoryPath, JSON.stringify(inventory, null, 2));
   console.log(`✅ Inventory written to ${inventoryPath}`);
   console.log(`   Total packages: ${packages.length}`);

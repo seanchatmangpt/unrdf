@@ -17,8 +17,8 @@
  * Output: Score (0-100) and detailed report
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const args = process.argv.slice(2);
 const packageDir = args[0];

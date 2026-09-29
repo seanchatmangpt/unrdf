@@ -5,9 +5,12 @@
  */
 
 import { readFileSync, readdirSync, statSync } from 'fs';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { join } from 'path';
 
-const PACKAGES_DIR = '/home/user/unrdf/packages';
+const PACKAGES_DIR = `${REPO_ROOT}/packages`;
 
 // Layer definitions from CLAUDE.md
 const LAYERS = {

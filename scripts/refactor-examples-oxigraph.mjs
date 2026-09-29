@@ -8,6 +8,9 @@
  */
 
 import { readFileSync, writeFileSync } from 'fs';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 import { execSync } from 'child_process';
 
 const filesToRefactor = [
@@ -68,7 +71,7 @@ const stats = {
  * Refactor a single file to use Oxigraph patterns
  */
 function refactorFile(filePath) {
-  const fullPath = `/Users/sac/unrdf/${filePath}`;
+  const fullPath = `${REPO_ROOT}/${filePath}`;
 
   try {
     let content = readFileSync(fullPath, 'utf-8');
