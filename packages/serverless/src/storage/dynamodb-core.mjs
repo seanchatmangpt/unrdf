@@ -10,6 +10,13 @@ const DEFAULT_INDEXES = Object.freeze({ predicate: 'predicate-index', object: 'o
 const DEFAULT_LIMIT = 100;
 const MAX_BATCH_WRITE = 25;
 
+/**
+ * Validates a triple and returns a normalized copy.
+ *
+ * @param {Object} triple - Candidate triple.
+ * @returns {{subject: string, predicate: string, object: string, graph?: string}} Normalized triple; `graph` is included only when non-empty.
+ * @throws {TypeError} If the triple or any field has the wrong type or is empty.
+ */
 export function assertTriple(triple) {
   if (!triple || typeof triple !== 'object') throw new TypeError('Triple must be an object');
   for (const field of ['subject', 'predicate', 'object']) {
@@ -21,6 +28,13 @@ export function assertTriple(triple) {
 
 function s(value) { return { S: value }; }
 
+/**
+ * Encodes a triple as a DynamoDB item with composite sort-key attributes.
+ *
+ * @param {Object} triple - Triple to encode.
+ * @returns {Object} DynamoDB attribute map (subject, predicate, object, composite keys, optional graph).
+ * @throws {TypeError} If the triple is invalid.
+ */
 export function encodeTriple(triple) {
   const value = assertTriple(triple);
   return {
@@ -34,6 +48,13 @@ export function encodeTriple(triple) {
   };
 }
 
+/**
+ * Decodes a DynamoDB item into a triple.
+ *
+ * @param {Object} item - DynamoDB attribute map.
+ * @returns {{subject: string, predicate: string, object: string, graph?: string}} Decoded triple.
+ * @throws {Error} If subject, predicate or object is missing.
+ */
 export function decodeTriple(item) {
   if (!item?.subject?.S || !item?.predicate?.S || !item?.object?.S) throw new Error('Malformed DynamoDB triple item');
   return {
@@ -44,21 +65,45 @@ export function decodeTriple(item) {
   };
 }
 
+/**
+ * Encodes a DynamoDB LastEvaluatedKey as an opaque base64url continuation token.
+ *
+ * @param {Object} [lastEvaluatedKey] - Key returned by DynamoDB, if any.
+ * @returns {string|null} Token, or null when there is no further page.
+ */
 export function encodeToken(lastEvaluatedKey) {
   if (!lastEvaluatedKey) return null;
   return Buffer.from(JSON.stringify(lastEvaluatedKey), 'utf8').toString('base64url');
 }
 
+/**
+ * Decodes a continuation token produced by `encodeToken`.
+ *
+ * @param {string} [token] - Continuation token.
+ * @returns {Object|undefined} ExclusiveStartKey, or undefined for an empty token.
+ * @throws {TypeError} If the token cannot be decoded.
+ */
 export function decodeToken(token) {
   if (!token) return undefined;
   try { return JSON.parse(Buffer.from(token, 'base64url').toString('utf8')); }
   catch (error) { throw new TypeError(`Invalid DynamoDB continuation token: ${error.message}`); }
 }
 
+/**
+ * Creates a command factory that returns plain `{operation, input}` objects (for tests and emulators).
+ *
+ * @returns {(operation: string, input: Object) => {operation: string, input: Object}} Command factory.
+ */
 export function createPlainCommandFactory() {
   return (operation, input) => ({ operation, input });
 }
 
+/**
+ * Creates a command factory that instantiates AWS SDK command classes.
+ *
+ * @param {Object} sdk - The `@aws-sdk/client-dynamodb` module.
+ * @returns {(operation: string, input: Object) => Object} Factory that throws for unsupported operations.
+ */
 export function createAwsCommandFactory(sdk) {
   const commands = {
     PutItem: sdk.PutItemCommand,
@@ -100,6 +145,16 @@ function expressionBuilder() {
   };
 }
 
+/**
+ * Chooses the DynamoDB operation, index and filters for a triple pattern.
+ *
+ * @param {string} tableName - Table name.
+ * @param {{predicate: string, object: string}} indexes - Global secondary index names.
+ * @param {Object} pattern - Subject/predicate/object/graph filters.
+ * @param {number} pageLimit - Maximum items per page.
+ * @param {Object} [startKey] - ExclusiveStartKey for continuation.
+ * @returns {{operation: 'Query'|'Scan', input: Object}} Operation name and command input.
+ */
 function planPattern(tableName, indexes, pattern, pageLimit, startKey) {
   const { subject, predicate, object, graph } = pattern;
   let operation;
@@ -156,6 +211,9 @@ function planPattern(tableName, indexes, pattern, pageLimit, startKey) {
   return { operation, input };
 }
 
+/**
+ * DynamoDB-backed RDF triple store with subject, predicate and object access paths; has no AWS SDK dependency.
+ */
 export class DynamoRdfStore {
   #client;
   #tableName;
@@ -164,6 +222,18 @@ export class DynamoRdfStore {
   #sleep;
   #maxRetries;
 
+  /**
+   * Creates a store.
+   *
+   * @param {{send: Function}} client - Client exposing `send(command)`.
+   * @param {string} tableName - Triples table name.
+   * @param {Object} [options={}] - Options.
+   * @param {Object} [options.indexes] - Overrides for the predicate/object index names.
+   * @param {Function} [options.commandFactory] - Maps operation name and input to a command.
+   * @param {(ms: number) => Promise<void>} [options.sleep] - Delay function used between retries.
+   * @param {number} [options.maxRetries=8] - Retries for unprocessed batch items.
+   * @throws {TypeError} If the client or table name is invalid.
+   */
   constructor(client, tableName, options = {}) {
     if (!client || typeof client.send !== 'function') throw new TypeError('DynamoDB client must implement send(command)');
     if (typeof tableName !== 'string' || !tableName) throw new TypeError('DynamoDB table name is required');
@@ -175,12 +245,24 @@ export class DynamoRdfStore {
     this.#maxRetries = options.maxRetries ?? 8;
   }
 
+  /**
+   * Name of the backing table.
+   *
+   * @returns {string} Table name.
+   */
   get tableName() { return this.#tableName; }
 
   async #send(operation, input) {
     return this.#client.send(this.#commandFactory(operation, input));
   }
 
+  /**
+   * Stores one triple.
+   *
+   * @param {Object} triple - Triple to store.
+   * @param {{ifAbsent?: boolean}} [options={}] - With `ifAbsent`, fail if the subject and predicate/object key already exist.
+   * @returns {Promise<void>}
+   */
   async addTriple(triple, options = {}) {
     const input = {
       TableName: this.#tableName,
@@ -190,6 +272,14 @@ export class DynamoRdfStore {
     await this.#send('PutItem', input);
   }
 
+  /**
+   * Stores triples in batches, retrying unprocessed items with exponential backoff.
+   *
+   * @param {Iterable<Object>} triples - Triples to store.
+   * @param {{batchSize?: number}} [options={}] - Batch size, capped at 25.
+   * @returns {Promise<{written: number, retries: number}>} Items written and retries performed.
+   * @throws {Error} If items stay unprocessed after `maxRetries`.
+   */
   async addTriples(triples, options = {}) {
     const values = Array.from(triples || [], assertTriple);
     const batchSize = Math.min(MAX_BATCH_WRITE, Math.max(1, options.batchSize ?? MAX_BATCH_WRITE));
@@ -214,6 +304,13 @@ export class DynamoRdfStore {
     return { written, retries };
   }
 
+  /**
+   * Fetches one page of triples matching a pattern.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @param {{limit?: number, token?: string}} [options={}] - Page size and continuation token.
+   * @returns {Promise<{triples: Object[], token: string|null, scannedCount: number, count: number, operation: string, indexName: string|null}>} Page and query metadata.
+   */
   async queryPage(pattern = {}, options = {}) {
     const limit = Math.max(1, options.limit ?? DEFAULT_LIMIT);
     const startKey = decodeToken(options.token);
@@ -229,6 +326,14 @@ export class DynamoRdfStore {
     };
   }
 
+  /**
+   * Collects up to `limit` triples matching a pattern across pages.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @param {number} [limit=100] - Maximum triples to return.
+   * @returns {Promise<Object[]>} Matching triples.
+   * @throws {TypeError} If `limit` is not a positive finite number.
+   */
   async queryTriples(pattern = {}, limit = DEFAULT_LIMIT) {
     if (!Number.isFinite(limit) || limit <= 0) throw new TypeError('Query limit must be a positive finite number');
     const triples = [];
@@ -241,6 +346,13 @@ export class DynamoRdfStore {
     return triples.slice(0, limit);
   }
 
+  /**
+   * Lazily yields matching triples, fetching pages as needed.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @param {{pageSize?: number, limit?: number, token?: string}} [options={}] - Page size, total limit, and starting token.
+   * @returns {AsyncGenerator<Object>} Async generator of triples.
+   */
   async *iterateTriples(pattern = {}, options = {}) {
     const pageSize = Math.max(1, options.pageSize ?? DEFAULT_LIMIT);
     const limit = options.limit ?? Number.POSITIVE_INFINITY;
@@ -257,6 +369,12 @@ export class DynamoRdfStore {
     } while (token && yielded < limit);
   }
 
+  /**
+   * Deletes one triple.
+   *
+   * @param {Object} triple - Triple to delete.
+   * @returns {Promise<boolean>} True if an item existed and was deleted.
+   */
   async deleteTriple(triple) {
     const value = assertTriple(triple);
     const output = await this.#send('DeleteItem', {
@@ -267,6 +385,14 @@ export class DynamoRdfStore {
     return Boolean(output?.Attributes);
   }
 
+  /**
+   * Deletes triples in batches, retrying unprocessed items with exponential backoff.
+   *
+   * @param {Iterable<Object>} triples - Triples to delete.
+   * @param {{batchSize?: number}} [options={}] - Batch size, capped at 25.
+   * @returns {Promise<{deleted: number, retries: number}>} Items deleted and retries performed.
+   * @throws {Error} If items stay unprocessed after `maxRetries`.
+   */
   async deleteTriples(triples, options = {}) {
     const values = Array.from(triples || [], assertTriple);
     const batchSize = Math.min(MAX_BATCH_WRITE, Math.max(1, options.batchSize ?? MAX_BATCH_WRITE));
@@ -290,6 +416,13 @@ export class DynamoRdfStore {
     return { deleted, retries };
   }
 
+  /**
+   * Deletes all triples matching a pattern.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @param {{pageSize?: number, batchSize?: number}} [options={}] - Paging and batch options.
+   * @returns {Promise<number>} Number of triples deleted.
+   */
   async deletePattern(pattern = {}, options = {}) {
     let deleted = 0;
     const buffer = [];
@@ -303,17 +436,37 @@ export class DynamoRdfStore {
     return deleted;
   }
 
+  /**
+   * Counts triples matching a pattern.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @returns {Promise<number>} Number of matches.
+   */
   async countTriples(pattern = {}) {
     let count = 0;
     for await (const _triple of this.iterateTriples(pattern, { pageSize: 1000 })) count += 1;
     return count;
   }
 
+  /**
+   * Deletes all triples in a graph.
+   *
+   * @param {string} graph - Graph IRI.
+   * @param {Object} [options={}] - Options passed to `deletePattern`.
+   * @returns {Promise<number>} Number of triples deleted.
+   * @throws {TypeError} If `graph` is not a non-empty string.
+   */
   async clearGraph(graph, options = {}) {
     if (typeof graph !== 'string' || !graph) throw new TypeError('Graph IRI is required');
     return this.deletePattern({ graph }, options);
   }
 
+  /**
+   * Computes statistics over matching triples.
+   *
+   * @param {Object} [pattern={}] - Subject/predicate/object/graph filters.
+   * @returns {Promise<{count: number, distinctSubjects: number, distinctObjects: number, byPredicate: Object, byGraph: Object}>} Totals, distinct counts, and per-predicate and per-graph counts (sorted by key).
+   */
   async statistics(pattern = {}) {
     const byPredicate = new Map();
     const byGraph = new Map();
