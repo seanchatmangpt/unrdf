@@ -2,6 +2,18 @@
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 
+/**
+ * Run a command and report its outcome with a digest of combined output.
+ * @param {string} command - Executable to run.
+ * @param {string[]} [args] - Arguments.
+ * @param {Object} [options] - Run options.
+ * @param {string} [options.cwd] - Working directory.
+ * @param {Object} [options.env] - Environment overrides merged over process.env.
+ * @param {number} [options.timeoutMs] - Milliseconds before SIGTERM is sent.
+ * @param {number} [options.maxOutputBytes] - Trailing bytes of each output stream kept.
+ * @returns {Promise<Object>} Result with exitCode, timedOut, spawnError, durationMs, stdout, stderr, outputDigest and state (ALIVE, BLOCKED or BUILD_BROKEN).
+ * @throws {TypeError} If `command` is empty.
+ */
 export async function verifyCommand(command, args = [], options = {}) {
   if (!command) throw new TypeError('command is required');
   const { cwd = process.cwd(), env = {}, timeoutMs = 300000, maxOutputBytes = 1024 * 1024 } = options;
@@ -37,6 +49,13 @@ export async function verifyCommand(command, args = [], options = {}) {
   };
 }
 
+/**
+ * Build an async verifier that runs a command and throws unless it is ALIVE.
+ * @param {string} command - Executable to run.
+ * @param {string[]} [args] - Arguments.
+ * @param {Object} [options] - Options forwarded to verifyCommand.
+ * @returns {Function} Async function resolving to the verifyCommand result, or rejecting with an Error (message COMMAND_FAILED) carrying `result`.
+ */
 export function commandVerifier(command, args = [], options = {}) {
   return async () => {
     const result = await verifyCommand(command, args, options);
