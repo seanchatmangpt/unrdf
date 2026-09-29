@@ -25,7 +25,7 @@ security:
 unrdf:
   enabled: false
   imageRepo: unrdf
-  imageTag: 6.0.0-rc.1
+  imageTag: latest
   replicas: 1
   resources:
     requests:
@@ -93,7 +93,7 @@ alertmanager:
 
 nodeExporter:
   imageRepo: prom/node-exporter
-  imageTag: latest
+  imageTag: v1.7.0
   securityContext:
     runAsNonRoot: false   # must access /proc, /sys
     runAsUser: 0
@@ -201,7 +201,7 @@ storage:
 alloy:
   enabled: false
   imageRepo: grafana/alloy
-  imageTag: latest
+  imageTag: v1.3.0
   replicas: 1
   resources:
     requests:

@@ -8,47 +8,41 @@ nodes:
         \ \"ingress-ready=true\"\n"
     extraPortMappings:
       - containerPort: 30000
-        hostPort: 7001
+        hostPort: 3000
         protocol: TCP
       - containerPort: 30001
-        hostPort: 7002
+        hostPort: 3001
         protocol: TCP
       - containerPort: 30002
-        hostPort: 7003
+        hostPort: 9091
         protocol: TCP
       - containerPort: 30437
-        hostPort: 7004
+        hostPort: 4317
         protocol: TCP
       - containerPort: 30438
-        hostPort: 7005
+        hostPort: 4318
         protocol: TCP
       - containerPort: 30200
-        hostPort: 7006
+        hostPort: 3200
         protocol: TCP
       - containerPort: 30040
-        hostPort: 7007
+        hostPort: 4040
         protocol: TCP
       - containerPort: 30082
-        hostPort: 7008
+        hostPort: 8082
         protocol: TCP
       - containerPort: 30100
-        hostPort: 7009
+        hostPort: 9100
         protocol: TCP
       - containerPort: 30093
-        hostPort: 7010
+        hostPort: 9093
         protocol: TCP
-      - containerPort: 30100
-        hostPort: 7011
+      - containerPort: 30110
+        hostPort: 3100
         protocol: TCP
       - containerPort: 30090
-        hostPort: 7012
+        hostPort: 9000
         protocol: TCP
       - containerPort: 30091
-        hostPort: 7013
-        protocol: TCP
-      - containerPort: 30050
-        hostPort: 7014
-        protocol: TCP
-      - containerPort: 30051
-        hostPort: 7015
+        hostPort: 9001
         protocol: TCP

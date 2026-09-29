@@ -34,13 +34,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
+          node-version: '22'
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8.15.0
-
+          version: 10.15.0
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
@@ -177,25 +175,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
+          node-version: '22'
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8.15.0
-
+          version: 10.15.0
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run integration tests
         env:
           TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
-        run: timeout 300s pnpm test:integration || echo "Integration tests not configured"
+        run: timeout 300s pnpm --filter @unrdf/integration-tests test
 
       - name: Run E2E tests
         env:
           TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
-        run: timeout 300s pnpm test:e2e || echo "E2E tests not configured"
+        run: timeout 300s pnpm --filter @unrdf/integration-tests test:workflows
 
   notify:
     name: Notify

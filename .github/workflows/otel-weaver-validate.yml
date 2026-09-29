@@ -24,34 +24,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Install OpenTelemetry Weaver CLI
         run: |
-          # Install weaver-cli (when available)
-          # For now, validate YAML syntax manually
-          npm install -g js-yaml
+          # weaver-cli is not available yet; YAML validity is checked with the js-yaml
+          # devDependency of the workspace root (installed above).
+          pnpm exec js-yaml --version
 
       - name: Validate weaver.yaml syntax
         run: |
-          npx js-yaml weaver.yaml > /dev/null
+          pnpm exec js-yaml weaver.yaml > /dev/null
           echo "✅ weaver.yaml is valid YAML"
 
       - name: Validate custom-conventions.yaml syntax
         run: |
-          npx js-yaml custom-conventions.yaml > /dev/null
+          pnpm exec js-yaml custom-conventions.yaml > /dev/null
           echo "✅ custom-conventions.yaml is valid YAML"
 
       - name: Check semantic convention completeness
@@ -218,33 +217,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-workspace --frozen-lockfile --dir sidecar
 
       - name: Run instrumentation tests
         run: |
           # Test that OTEL utilities work correctly
           cd sidecar
-          pnpm test -- --run --reporter=verbose otel
+          pnpm exec vitest run --reporter=verbose otel
 
       - name: Generate coverage report
         run: |
           cd sidecar
-          pnpm test:coverage
+          pnpm exec vitest run --coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./sidecar/coverage/lcov.info
           flags: otel-instrumentation
@@ -313,7 +311,7 @@ jobs:
           "
 
       - name: Upload dashboards as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: grafana-dashboards
           path: grafana/dashboards/*.json

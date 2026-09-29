@@ -44,6 +44,12 @@ scrape_configs:
       - targets: ['otel-collector:8888']
     scrape_interval: 15s
 
+  # Application metrics exported by the collector's prometheus exporter
+  - job_name: 'otel-collector-exported'
+    static_configs:
+      - targets: ['otel-collector:8889']
+    scrape_interval: 15s
+
   # Grafana metrics
   - job_name: 'grafana'
     static_configs:

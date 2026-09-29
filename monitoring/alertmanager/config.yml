@@ -2,7 +2,9 @@
 
 global:
   resolve_timeout: 5m
-  slack_api_url: '${SLACK_WEBHOOK_URL}'
+  # Alertmanager does not expand ${ENV} in its config; secrets are read from
+  # files (docker-compose mounts them at /run/secrets from the environment).
+  slack_api_url_file: '/run/secrets/slack_webhook_url'
   pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
 
 # Templates for alert notifications
@@ -61,7 +63,7 @@ receivers:
   # PagerDuty for critical alerts
   - name: 'pagerduty'
     pagerduty_configs:
-      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+      - service_key_file: '/run/secrets/pagerduty_service_key'
         description: '{{ .GroupLabels.alertname }}: {{ .Annotations.summary }}'
         details:
           firing: '{{ .Alerts.Firing | len }}'

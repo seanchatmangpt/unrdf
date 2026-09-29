@@ -7,15 +7,17 @@ metadata:
     {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
   {{- $component := "otel-collector" }}
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: otlp-grpc
       port: 4317
       targetPort: 4317
+      nodePort: 30437
       protocol: TCP
     - name: otlp-http
       port: 4318
       targetPort: 4318
+      nodePort: 30438
       protocol: TCP
     - name: prometheus
       port: 8888
