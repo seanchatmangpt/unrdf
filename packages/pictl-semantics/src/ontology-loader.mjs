@@ -6,8 +6,6 @@
  * into an RDF graph for SPARQL querying with Comunica.
  */
 
-import { z } from 'zod';
-import { DataFactory } from '@rdfjs/data-model';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { createRequire as __createRequire } from 'node:module';
 const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
@@ -25,28 +23,6 @@ const NAMESPACES = {
   schema: 'http://schema.org/',
   xsd: 'http://www.w3.org/2001/XMLSchema#',
 };
-
-/**
- * Schema for SPARQL query results
- */
-const SparqlResultSchema = z.object({
-  head: z.object({
-    vars: z.array(z.string()),
-  }),
-  results: z.object({
-    bindings: z.array(
-      z.record(
-        z.string(),
-        z.object({
-          type: z.enum(['uri', 'literal', 'bnode']).optional(),
-          value: z.string(),
-          datatype: z.string().optional(),
-          'xml:lang': z.string().optional(),
-        })
-      )
-    ),
-  }),
-});
 
 /**
  * PICTL Ontology Classes (memory-resident)
@@ -286,10 +262,10 @@ class PictlOntologyGraph {
    *
    * @private
    * @param {string} pattern - Triple pattern from WHERE clause
-   * @param {Array<string>} variables - Variables to extract
+   * @param {Array<string>} _variables - Variables to extract (currently unused; all bound variables are returned)
    * @returns {Array<Object>} Bindings
    */
-  _matchTriples(pattern, variables) {
+  _matchTriples(pattern, _variables) {
     const results = [];
 
     // Extract subject, predicate, object from pattern
