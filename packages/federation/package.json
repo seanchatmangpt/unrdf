@@ -19,7 +19,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage && node --test test/query-planner-core.node.test.mjs",
+    "test": "vitest run --coverage && node ../../scripts/run-node-tests.mjs test/query-planner-core.node.test.mjs",
     "test:fast": "vitest run && node --test test/query-planner-core.node.test.mjs",
     "test:watch": "vitest --coverage",
     "build": "unbuild || true",

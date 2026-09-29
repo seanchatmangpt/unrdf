@@ -11,7 +11,7 @@
     "./resolver": "./src/resolver.mjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs",
+    "test": "node ../../scripts/run-node-tests.mjs test/*.test.mjs",
     "test:watch": "node --test --watch test/*.test.mjs",
     "lint": "eslint src/**/*.mjs test/**/*.mjs"
   },

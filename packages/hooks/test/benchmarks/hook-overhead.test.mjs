@@ -51,6 +51,15 @@ function benchmarkSync(fn) {
 }
 
 /**
+ * Best of several runs after a warm-up. A single wall-clock sample on a shared CI
+ * runner is dominated by scheduler noise; the fastest run reflects the code's cost.
+ */
+function benchmarkSyncBest(fn, runs = 7) {
+  fn(); // warm-up (JIT)
+  return Math.min(...Array.from({ length: runs }, () => benchmarkSync(fn)));
+}
+
+/**
  * Fast benchmark with stats
  */
 function benchmarkWithStats(fn, iterations = FAST_ITERATIONS) {
@@ -195,7 +204,7 @@ describe('Knowledge Hook Overhead Benchmarks', () => {
         builtinHooks.trimLiterals,
       ];
 
-      const duration = benchmarkSync(() => {
+      const duration = benchmarkSyncBest(() => {
         for (const q of quads) executeHookChain(hooks, q);
       });
 
@@ -212,7 +221,7 @@ describe('Knowledge Hook Overhead Benchmarks', () => {
         builtinHooks.normalizeLanguageTag,
       ];
 
-      const duration = benchmarkSync(() => {
+      const duration = benchmarkSyncBest(() => {
         for (const q of quads) executeHookChain(hooks, q);
       });
 
@@ -240,7 +249,7 @@ describe('Knowledge Hook Overhead Benchmarks', () => {
         builtinHooks.normalizeNamespace,
       ];
 
-      const duration = benchmarkSync(() => {
+      const duration = benchmarkSyncBest(() => {
         for (const q of quads) executeHookChain(hooks, q);
       });
 

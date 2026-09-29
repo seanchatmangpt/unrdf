@@ -21,7 +21,7 @@
     "run": "node bin/run.mjs",
     "verify": "node bin/verify.mjs",
     "report": "node bin/report.mjs",
-    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "test": "node ../../scripts/run-node-tests.mjs --test-concurrency=1 test/*.test.mjs",
     "test:determinism": "node test/determinism.test.mjs",
     "test:inventory": "node test/inventory.test.mjs",
     "test:verify": "node test/verify-gate.test.mjs",

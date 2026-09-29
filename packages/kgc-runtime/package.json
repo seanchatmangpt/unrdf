@@ -13,7 +13,7 @@
     "./api-version": "./src/api-version.mjs"
   },
   "scripts": {
-    "test": "vitest run && node --test test/bounds.test.mjs test/enhanced-bounds.test.mjs test/validators.test.mjs",
+    "test": "vitest run && node ../../scripts/run-node-tests.mjs test/bounds.test.mjs test/enhanced-bounds.test.mjs test/validators.test.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },

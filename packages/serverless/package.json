@@ -21,7 +21,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --no-coverage && node --test test/*.node.test.mjs",
+    "test": "vitest run --no-coverage && node ../../scripts/run-node-tests.mjs test/*.node.test.mjs",
     "test:coverage": "vitest run --coverage",
     "test:fast": "vitest run --no-coverage && node --test test/*.node.test.mjs",
     "test:watch": "vitest --no-coverage",
