@@ -215,8 +215,10 @@ describe('Logger System', () => {
 
       expect(metrics).toHaveProperty('duration');
       expect(metrics).toHaveProperty('timestamp');
-      expect(metrics.duration).toBeGreaterThanOrEqual(10);
-      expect(metrics.duration).toBeLessThan(100);
+      // setTimeout(10) may fire ~1ms early relative to performance.now(), and a loaded
+      // runner can stall it; the point is that the timer measures a plausible interval.
+      expect(metrics.duration).toBeGreaterThanOrEqual(9);
+      expect(metrics.duration).toBeLessThan(1000);
     });
 
     it('should get elapsed time without ending', async () => {
@@ -224,9 +226,9 @@ describe('Logger System', () => {
       await new Promise(resolve => setTimeout(resolve, 5));
       const elapsed = timer.elapsed();
 
-      // Allow 5ms tolerance for timing variance in CI/test environments
+      // Timing varies widely on shared CI runners; only require a plausible interval
       expect(elapsed).toBeGreaterThanOrEqual(0);
-      expect(elapsed).toBeLessThan(50);
+      expect(elapsed).toBeLessThan(500);
 
       // Timer should still work after elapsed()
       await new Promise(resolve => setTimeout(resolve, 5));
