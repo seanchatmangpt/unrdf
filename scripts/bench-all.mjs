@@ -42,8 +42,6 @@ function discoverBenchmarks(filter = null) {
     { name: 'hook-execution', file: 'hook-execution-bench.mjs', priority: 1 },
     { name: 'receipt-generation', file: 'receipt-generation-bench.mjs', priority: 1 },
     { name: 'sparql-query', file: 'sparql-query-bench.mjs', priority: 1 },
-    { name: 'task-activation', file: 'task-activation-bench.mjs', priority: 2 },
-    { name: 'workflow-e2e', file: 'workflow-e2e-bench.mjs', priority: 2 },
     { name: 'optimization-suite', file: 'optimization-suite.mjs', priority: 3 },
   ];
 

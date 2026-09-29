@@ -68,8 +68,6 @@
     "bench:hooks": "node benchmarks/hook-execution-bench.mjs",
     "bench:receipts": "node benchmarks/receipt-generation-bench.mjs",
     "bench:sparql": "node benchmarks/sparql-query-bench.mjs",
-    "bench:tasks": "node benchmarks/task-activation-bench.mjs",
-    "bench:workflow": "node benchmarks/workflow-e2e-bench.mjs",
     "benchmark": "node benchmarks/run-all.mjs all",
     "benchmark:core": "node benchmarks/run-all.mjs core",
     "benchmark:integration": "node benchmarks/run-all.mjs integration",

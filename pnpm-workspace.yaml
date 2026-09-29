@@ -5,4 +5,6 @@ packages:
   - 'packages/federation/examples/*'
   - 'packages/streaming/examples/*'
   - 'examples'
+  - 'examples/*'
+  - 'playground'
   - 'benchmarks'
