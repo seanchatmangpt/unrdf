@@ -242,7 +242,7 @@ jobs:
           pnpm exec vitest run --coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./sidecar/coverage/lcov.info
           flags: otel-instrumentation
@@ -311,7 +311,7 @@ jobs:
           "
 
       - name: Upload dashboards as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: grafana-dashboards
           path: grafana/dashboards/*.json
