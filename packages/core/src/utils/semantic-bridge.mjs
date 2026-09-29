@@ -1,7 +1,6 @@
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 import { Mutex } from 'async-mutex';
 
 const bridgeMutex = new Mutex();

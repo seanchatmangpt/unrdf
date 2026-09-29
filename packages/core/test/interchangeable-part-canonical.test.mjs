@@ -278,7 +278,7 @@ test('the digest is injective: values JSON would collapse are refused at manufac
     { note: undefined },
     { note: new Date(0) },
     { note: new Tag() },
-    { note: [1, , 3] }, // eslint-disable-line no-sparse-arrays
+    { note: [1, , 3] },
     { note: () => 1 },
     { note: 1n },
   ]) {
