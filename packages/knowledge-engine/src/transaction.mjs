@@ -18,9 +18,7 @@ import { trace, SpanStatusCode } from '@opentelemetry/api';
 const tracer = trace.getTracer('unrdf');
 
 // Import consolidated schemas
-import {
-  TransactionDeltaSchema as DeltaSchema,
-} from './schemas.mjs';
+import { TransactionDeltaSchema as DeltaSchema } from './schemas.mjs';
 
 // Define missing schemas locally
 const TransactionHookSchema = z.any();
