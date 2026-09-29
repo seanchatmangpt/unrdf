@@ -64,6 +64,7 @@
     "@playwright/test": "^1.57.0",
     "@vitest/browser": "^4.0.15",
     "jsdom": "^24.0.0",
+    "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vitest": "^4.0.15"
   },

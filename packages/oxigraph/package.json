@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@unrdf/test-utils": "workspace:*",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   },
   "engines": {

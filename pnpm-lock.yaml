@@ -379,6 +379,9 @@ importers:
       jsdom:
         specifier: 25.0.1
         version: 25.0.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vite:
         specifier: ^7.3.0
         version: 7.3.2(@types/node@25.6.0)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4)
@@ -536,6 +539,9 @@ importers:
       citty-test-utils:
         specifier: ^0.1.0
         version: 0.1.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.16
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -624,6 +630,9 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -1014,6 +1023,9 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -1178,6 +1190,9 @@ importers:
       tinybench:
         specifier: ^6.0.0
         version: 6.0.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@25.6.0)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -1338,6 +1353,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4(jiti@2.7.0)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       unbuild:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.9.3)
@@ -1731,6 +1749,9 @@ importers:
       '@unrdf/test-utils':
         specifier: workspace:*
         version: link:../test-utils
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -1914,6 +1935,9 @@ importers:
       eslint:
         specifier: ^9.39.1
         version: 9.39.4(jiti@2.7.0)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       unbuild:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.9.3)
@@ -2100,6 +2124,9 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.12.2
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^4.0.15
         version: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@25.0.1)(vite@7.3.2(@types/node@24.12.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.8.4))
@@ -2208,6 +2235,10 @@ importers:
       zod:
         specifier: ^4.1.13
         version: 4.4.3
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/zkp:
     dependencies:
