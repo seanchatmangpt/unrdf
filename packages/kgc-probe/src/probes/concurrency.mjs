@@ -608,7 +608,7 @@ async function probeParallelIOContention(numReaders, timeout, testDir) {
     // Spawn N parallel readers
     const start = performance.now();
 
-    const readPromises = Array.from({ length: numReaders }, async (_, i) => {
+    const readPromises = Array.from({ length: numReaders }, async () => {
       const readStart = performance.now();
       await readFile(testFile);
       const readEnd = performance.now();
@@ -860,9 +860,9 @@ async function probeMicrotaskQueueDepth(maxMicrotasks = 1000) {
   const timestamp = Date.now();
   const outputs = {};
   const metadata = {};
+  let executed = 0;
 
   try {
-    let executed = 0;
     const promises = [];
 
     // Queue N microtasks
@@ -914,11 +914,11 @@ async function probeMaxConcurrentPromises(maxPromises = 1000, timeout = 5000) {
   const timestamp = Date.now();
   const outputs = {};
   const metadata = {};
+  let resolved = 0;
+  let rejected = 0;
 
   try {
     const start = performance.now();
-    let resolved = 0;
-    let rejected = 0;
 
     // Create N promises that resolve after random delay
     const promises = Array.from({ length: maxPromises }, (_, i) =>

@@ -20,9 +20,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createProbeOrchestrator } from '../../src/orchestrator.mjs';
 import { createMemoryStorage } from '../../src/storage/index.mjs';
 import { createAgentRegistry } from '../../src/agents/index.mjs';
-import { createGuardRegistry } from '../../src/guards.mjs';
 import { hashObservations, verifyArtifact, mergeShards } from '../../src/artifact.mjs';
-import { runProbe } from '../../src/probe.mjs';
 import {
   FORBIDDEN_ENV_VARS,
   validateObservationGuard,

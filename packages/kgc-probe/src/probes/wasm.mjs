@@ -448,10 +448,10 @@ async function probeGlobalSupport(timeout) {
 
 /**
  * Probe SIMD support
- * @param {number} timeout - Timeout in milliseconds
+ * @param {number} _timeout - Timeout in milliseconds (currently unused)
  * @returns {Promise<Object>} Observation
  */
-async function probeSIMDSupport(timeout) {
+async function probeSIMDSupport(_timeout) {
   try {
     guardWasmSupport();
 
@@ -476,10 +476,10 @@ async function probeSIMDSupport(timeout) {
 
 /**
  * Probe threads support
- * @param {number} timeout - Timeout in milliseconds
+ * @param {number} _timeout - Timeout in milliseconds (currently unused)
  * @returns {Promise<Object>} Observation
  */
-async function probeThreadsSupport(timeout) {
+async function probeThreadsSupport(_timeout) {
   try {
     guardWasmSupport();
 

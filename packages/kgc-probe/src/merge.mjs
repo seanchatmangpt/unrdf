@@ -84,7 +84,7 @@ export function mergeObservations(observations) {
 export function mergeShards(shards) {
   const allObservations = [];
 
-  for (const [agentId, observations] of shards.entries()) {
+  for (const observations of shards.values()) {
     allObservations.push(...observations);
   }
 

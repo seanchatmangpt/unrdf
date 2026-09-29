@@ -44,7 +44,7 @@ const ProbeConfigSchema = z.object({
 /**
  * Zod schema for observation
  */
-const ObservationSchema = z.object({
+const _ObservationSchema = z.object({
   capability: z.string(),
   available: z.boolean(),
   guardDecision: z.enum(['allowed', 'denied']),
@@ -508,6 +508,6 @@ export async function probeNetwork(config = {}) {
 
   // Validate all observations
   // Note: Validation disabled temporarily due to Zod v4 schema issues
-  // return observations.map(obs => ObservationSchema.parse(obs));
+  // return observations.map(obs => _ObservationSchema.parse(obs));
   return observations;
 }

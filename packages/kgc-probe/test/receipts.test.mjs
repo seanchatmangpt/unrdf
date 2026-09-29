@@ -35,7 +35,6 @@ import {
   summarizeVerification,
 
   // Chain builder
-  ReceiptChainBuilder,
   createReceiptChainBuilder
 } from '../src/receipts/index.mjs';
 

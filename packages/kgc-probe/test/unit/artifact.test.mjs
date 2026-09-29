@@ -11,12 +11,9 @@ import {
   hashObservations,
   mergeShards,
   diffArtifacts,
-  verifyArtifact,
   computeArtifactSummary,
   serializeArtifact,
-  deserializeArtifact,
   createObservationValidator,
-  ObservationValidator
 } from '../../src/artifact.mjs';
 import { FROZEN_TIMESTAMP } from '../fixtures/frozen-environment.mjs';
 import { ALL_SHARDS } from '../fixtures/precalculated-shards.mjs';

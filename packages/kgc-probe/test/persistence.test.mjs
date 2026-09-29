@@ -131,8 +131,6 @@ describe('Persistence Probe', () => {
   });
 
   it('should respect guard constraints', async () => {
-    // Try to use a path outside the allowed directory
-    const outsideDir = '/tmp/outside';
     const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
