@@ -269,4 +269,4 @@ export async function generateSystemReport(deltas) {
 }
 
 // Export version
-export const VERSION = '1.0.0';
+export const VERSION = 'latest';

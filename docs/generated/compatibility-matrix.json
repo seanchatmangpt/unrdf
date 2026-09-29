@@ -5,37 +5,37 @@
     "essential": {
       "count": 7,
       "versions": [
-        "6.0.0-alpha.1",
-        "5.0.1",
-        "6.0.0-rc.1",
-        "6.0.0"
+        "latest-alpha.1",
+        "latest",
+        "latest-rc.1",
+        "latest"
       ],
       "allVersionCompatible": true
     },
     "extended": {
       "count": 8,
       "versions": [
-        "5.0.1",
-        "1.0.0",
-        "6.0.0",
-        "6.0.0-rc.1"
+        "latest",
+        "latest",
+        "latest",
+        "latest-rc.1"
       ],
       "allVersionCompatible": true
     },
     "optional": {
       "count": 42,
       "versions": [
-        "5.0.1",
-        "1.0.0",
-        "0.1.0",
-        "5.1.0",
-        "5.0.0"
+        "latest",
+        "latest",
+        "latest",
+        "latest",
+        "latest"
       ],
       "allVersionCompatible": false
     }
   },
   "versionMatrix": {
-    "5.0.1": {
+    "latest": {
       "packages": [
         "@unrdf/atomvm",
         "@unrdf/cli",
@@ -64,7 +64,7 @@
         "optional": 13
       }
     },
-    "1.0.0": {
+    "latest": {
       "packages": [
         "@unrdf/blockchain",
         "@unrdf/caching",
@@ -102,7 +102,7 @@
         "optional": 24
       }
     },
-    "6.0.0-alpha.1": {
+    "latest-alpha.1": {
       "packages": [
         "@unrdf/core"
       ],
@@ -113,7 +113,7 @@
         "optional": 0
       }
     },
-    "0.1.0": {
+    "latest": {
       "packages": [
         "@unrdf/decision-fabric",
         "@unrdf/yawl-durable"
@@ -125,7 +125,7 @@
         "optional": 2
       }
     },
-    "6.0.0": {
+    "latest": {
       "packages": [
         "@unrdf/federation",
         "@unrdf/yawl"
@@ -137,7 +137,7 @@
         "optional": 0
       }
     },
-    "5.1.0": {
+    "latest": {
       "packages": [
         "@unrdf/integration-tests"
       ],
@@ -148,7 +148,7 @@
         "optional": 1
       }
     },
-    "5.0.0": {
+    "latest": {
       "packages": [
         "@unrdf/kgc-claude",
         "@unrdf/react"
@@ -160,7 +160,7 @@
         "optional": 2
       }
     },
-    "6.0.0-rc.1": {
+    "latest-rc.1": {
       "packages": [
         "@unrdf/v6-compat",
         "@unrdf/v6-core"

@@ -5,9 +5,9 @@
     "slo": "urn:unrdf:slo:",
     "schema": "http://schema.org/"
   },
-  "@id": "urn:unrdf:capabilities:v4.0.0",
+  "@id": "urn:unrdf:capabilities:vlatest",
   "@type": "cap:CapabilityRegistry",
-  "version": "4.0.0",
+  "version": "latest",
   "capabilities": [
     {
       "@id": "cap:parseTurtle",

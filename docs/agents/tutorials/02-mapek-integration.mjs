@@ -11,6 +11,9 @@
  * @format machine-executable
  */
 
+// NOTE: the MAPEK symbols imported below (runMapekIteration, runContinuousMapekLoop,
+// createAutonomicHooks, reportMapekStatus) are not exported by any current @unrdf/* package;
+// this example documents the intended API and is not runnable as-is.
 import { runMapekIteration, createAutonomicHooks, reportMapekStatus } from '@unrdf/project-engine';
 import { buildProjectModelFromFs, inferDomainModel } from '@unrdf/project-engine';
 import { createDarkMatterCore, defineHook } from '@unrdf/knowledge-engine';

@@ -5,9 +5,9 @@
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "xsd": "http://www.w3.org/2001/XMLSchema#"
   },
-  "@id": "urn:unrdf:api-contracts:v4.0.0",
+  "@id": "urn:unrdf:api-contracts:vlatest",
   "@type": "api:ContractRegistry",
-  "version": "4.0.0",
+  "version": "latest",
   "contracts": {
     "mapek:runIteration": {
       "@type": "api:FunctionContract",

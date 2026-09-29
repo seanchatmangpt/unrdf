@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "1.0.0",
+    "version": "latest",
     "generated": "2025-10-01T00:00:00Z",
     "agent": "CODE-GOAL-PLANNER",
     "project": "UNRDF Dashboard Completion",

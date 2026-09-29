@@ -7,14 +7,14 @@
     "optional": 42
   },
   "versions": {
-    "5.0.1": 19,
-    "1.0.0": 28,
-    "6.0.0-alpha.1": 1,
-    "0.1.0": 2,
-    "6.0.0": 2,
-    "5.1.0": 1,
-    "5.0.0": 2,
-    "6.0.0-rc.1": 2
+    "latest": 19,
+    "latest": 28,
+    "latest-alpha.1": 1,
+    "latest": 2,
+    "latest": 2,
+    "latest": 1,
+    "latest": 2,
+    "latest-rc.1": 2
   },
   "dependencies": {
     "internal": 20,
