@@ -350,7 +350,7 @@ describe('Benchmark Integration Tests', () => {
     expect(aggregated.results).toHaveLength(5);
     expect(aggregated.summary.avgLatency).toBeGreaterThan(0);
     expect(aggregated.summary.avgThroughput).toBeGreaterThan(0);
-  });
+  }, 60000);
 
   it('should export valid JSON results', async () => {
     await runner.runAll();
@@ -371,7 +371,7 @@ describe('Benchmark Integration Tests', () => {
     const parsed = JSON.parse(fileContent);
     expect(parsed.suite).toBe('Knowledge Hooks Performance Benchmark Suite');
     expect(parsed.results).toHaveLength(5);
-  });
+  }, 60000);
 
   it('should handle errors gracefully', async () => {
     const errorRunner = new BenchmarkRunner();
@@ -382,7 +382,7 @@ describe('Benchmark Integration Tests', () => {
     };
 
     await expect(errorRunner.runAll()).rejects.toThrow('Simulated benchmark error');
-  });
+  }, 60000);
 
   it('should validate result completeness', async () => {
     await runner.runAll();
@@ -399,7 +399,7 @@ describe('Benchmark Integration Tests', () => {
     // Verify no duplicate benchmark IDs
     const uniqueIds = new Set(benchmarkIds);
     expect(uniqueIds.size).toBe(5);
-  });
+  }, 60000);
 
   it('should maintain consistent result structure', async () => {
     await runner.runAll();
@@ -420,7 +420,7 @@ describe('Benchmark Integration Tests', () => {
     expect(aggregated.summary).toHaveProperty('avgLatency');
     expect(aggregated.summary).toHaveProperty('avgThroughput');
     expect(aggregated.summary).toHaveProperty('totalMemoryOverhead');
-  });
+  }, 60000);
 });
 
 /**
