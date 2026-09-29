@@ -11,7 +11,11 @@ export default defineConfig({
     testTimeout: 30_000, // 30 seconds for CLI operations
     hookTimeout: 30_000,
     teardownTimeout: 30_000,
-    reporters: ['verbose'],
+    reporters: ['verbose', 'json', 'html'],
+    outputFile: {
+      json: './test-results.json',
+      html: './test-results.html'
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

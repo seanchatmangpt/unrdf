@@ -51,6 +51,7 @@ temp/
 test-results.json
 test-results.html
 html.meta.json.gz
-assets/
+/assets/index-*.js
+/assets/index-*.css
 .nitro/
 .output/

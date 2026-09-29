@@ -207,6 +207,12 @@ async function demo() {
       {
         type: 'add',
         subject: ex('Alice'),
+        predicate: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        object: foaf('Person')
+      },
+      {
+        type: 'add',
+        subject: ex('Alice'),
         predicate: foaf('name'),
         object: literal('Alice Smith')
       },
@@ -256,6 +262,12 @@ async function demo() {
   await store.appendEvent(
     { type: EVENT_TYPES.CREATE, payload: { entity: 'Bob' } },
     [
+      {
+        type: 'add',
+        subject: ex('Bob'),
+        predicate: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        object: foaf('Person')
+      },
       {
         type: 'add',
         subject: ex('Bob'),
@@ -338,9 +350,9 @@ async function demo() {
   console.log('5. Count people at each snapshot:\n');
   const { timeSeries } = await engine.queryAcrossTime(
     `
-    SELECT (COUNT(DISTINCT ?person) AS ?count) WHERE {
+    SELECT (COUNT(?person) AS ?count) WHERE {
       GRAPH <${GRAPHS.UNIVERSE}> {
-        ?person <http://xmlns.com/foaf/0.1/name> ?name .
+        ?person a <http://xmlns.com/foaf/0.1/Person> .
       }
     }
     `,
