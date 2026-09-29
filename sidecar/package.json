@@ -48,6 +48,7 @@
     "ioredis": "^5.8.0",
     "isolated-vm": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
+    "n3": "^1.17.0",
     "node-vault": "^0.10.5",
     "nuxt": "^4.1.2",
     "nuxt-monaco-editor": "^1.4.0",

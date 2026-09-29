@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod';
+import { defineEventHandler } from '#imports';
 
 const SecurityConfigSchema = z.object({
   contentSecurityPolicy: z.object({
@@ -106,3 +107,11 @@ export function buildSecurityHeaders(config) {
 
   return headers;
 }
+
+/**
+ * Security headers middleware
+ * @param {import('h3').H3Event} event - H3 event
+ */
+export default defineEventHandler((event) => {
+  applySecurityHeaders(event);
+});

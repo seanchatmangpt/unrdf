@@ -181,7 +181,7 @@ function getRateLimitKey(event, type) {
 /**
  * Rate limiting middleware (h3 event handler)
  */
-export default defineEventHandler(async (event) => {
+const rateLimitHandler = defineEventHandler(async (event) => {
   const path = (event.path || event.node.req.url || '').split('?')[0];
   const span = tracer.startSpan('rate-limit-check', {
     attributes: {
@@ -349,4 +349,7 @@ process.on('SIGTERM', () => {
   }
 });
 
+/** Named export retained for backward compatibility (same h3 handler as the default export). */
+export const rateLimitMiddleware = rateLimitHandler;
 
+export default rateLimitHandler;
