@@ -9,13 +9,11 @@ import {
   createStore,
   wrapWorkflow,
   wrapFederation,
-  streamToAsync,
   withReceipt,
   validateSchema,
   MigrationTracker,
 } from '../src/adapters.mjs';
 import { z } from 'zod';
-import { computeBlake3 } from '@unrdf/v6-core/receipts/base-receipt';
 
 describe('P0-003: v6-compat Integration', () => {
   describe('Adapters', () => {
@@ -41,7 +39,7 @@ describe('P0-003: v6-compat Integration', () => {
 
     it('wrapFederation adds timeout', async () => {
       const mockFederation = {
-        query: async (q) => [{ s: 'subject', p: 'predicate', o: 'object' }],
+        query: async (_q) => [{ s: 'subject', p: 'predicate', o: 'object' }],
       };
 
       const wrapped = wrapFederation(mockFederation);
