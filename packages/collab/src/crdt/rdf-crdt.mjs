@@ -13,8 +13,10 @@
  */
 
 import * as Y from 'yjs';
-import { dataFactory } from '@unrdf/core';
+import { namedNode, literal, blankNode, quad } from '@unrdf/core';
 import { z } from 'zod';
+
+const dataFactory = { namedNode, literal, blankNode, quad };
 
 /**
  * @typedef {Object} RDFTriple

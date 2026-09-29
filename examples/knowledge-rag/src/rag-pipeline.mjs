@@ -4,8 +4,7 @@
  * @module knowledge-rag/rag-pipeline
  */
 
-import { createStore, query } from '@unrdf/oxigraph';
-import { KnowledgeEngine } from '@unrdf/knowledge-engine';
+import { createStore } from '@unrdf/oxigraph';
 import { trace } from '@opentelemetry/api';
 import { z } from 'zod';
 
@@ -40,7 +39,6 @@ export class RAGPipeline {
    */
   constructor(config = {}) {
     this.store = config.store || createStore();
-    this.knowledgeEngine = new KnowledgeEngine({ store: this.store });
     this.llmConfig = {
       model: 'gpt-4',
       apiKey: process.env.OPENAI_API_KEY,

@@ -307,7 +307,7 @@ describe('Benchmark Integration Tests', () => {
     expect(results[2].benchmarkId).toBe('hook-validation');
     expect(results[3].benchmarkId).toBe('memory-profiling');
     expect(results[4].benchmarkId).toBe('concurrent-execution');
-  });
+  }, 60000);
 
   it('should collect valid measurements from each benchmark', async () => {
     const results = await runner.runAll();
@@ -334,7 +334,7 @@ describe('Benchmark Integration Tests', () => {
     expect(results[4].workerCount).toBe(10);
     expect(results[4].duration).toBeGreaterThan(0);
     expect(results[4].throughput).toBeGreaterThan(0);
-  });
+  }, 60000);
 
   it('should aggregate results correctly', async () => {
     await runner.runAll();

@@ -5,7 +5,6 @@
 
 import { Writer } from '@unrdf/core/rdf/n3-justified-only';
 import rdfCanonize from 'rdf-canonize';
-import { createStore } from '@unrdf/oxigraph';
 
 /**
  * Canonicalize a store into URDNA2015 canonical N-Quads.
