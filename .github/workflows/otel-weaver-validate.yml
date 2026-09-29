@@ -143,7 +143,7 @@ jobs:
           # Check that all gRPC calls propagate trace context
           echo "🔍 Checking trace context propagation..."
 
-          if ! grep -q "traceparent" src/sidecar/client.mjs; then
+          if ! grep -q "traceparent" sidecar/sidecar/client.mjs; then
             echo "❌ gRPC client missing W3C traceparent propagation"
             exit 1
           fi

@@ -20,6 +20,10 @@ jobs:
   discover-and-generate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -129,9 +133,9 @@ jobs:
             - Tier Summary: ${stats.generated_files.tier_summary}
             - Exports Manifest: ${stats.generated_files.exports_manifest}
 
-            Generated at: ${stats.timestamp}`;
+            Generated at: ${stats.timestamp ?? new Date().toISOString()}`;
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
