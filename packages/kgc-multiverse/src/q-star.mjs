@@ -95,16 +95,6 @@ export const QStarSnapshotSchema = z.object({
 });
 
 /**
- * Validation Result Schema
- */
-const ValidationResultSchema = z.object({
-  valid: z.boolean(),
-  errorCode: z.nativeEnum(QStarErrorCode).optional(),
-  message: z.string().optional(),
-  details: z.record(z.any()).optional(),
-});
-
-/**
  * Extract IRIs from quads
  * Collects all named nodes (subjects, predicates, objects, graphs)
  *
@@ -628,7 +618,7 @@ export class QStarValidator {
    * @param {Object} snapshot_j - Target snapshot
    * @returns {Array<Object>} Array of conflicts
    */
-  _detectIRIConflicts(snapshot_i, snapshot_j) {
+  _detectIRIConflicts(_snapshot_i, _snapshot_j) {
     // Placeholder for conflict detection
     // In full implementation, would compare quad semantics for same IRIs
     return [];

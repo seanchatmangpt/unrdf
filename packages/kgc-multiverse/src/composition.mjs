@@ -143,7 +143,7 @@ export class CompositionEngine {
    * const composed = await engine.compose(phi1, phi2);
    * const deltas = composed.transform(quads);
    */
-  async compose(phi1, phi2, options = {}) {
+  async compose(phi1, phi2, _options = {}) {
     // Validate morphisms
     this._validateMorphism(phi1, 'phi1');
     this._validateMorphism(phi2, 'phi2');

@@ -6,7 +6,6 @@
  */
 
 import { blake3 } from 'hash-wasm';
-import { dataFactory } from '@unrdf/oxigraph';
 import { z } from 'zod';
 import { guardStateTransition, guardUniverseState } from './guards.mjs';
 

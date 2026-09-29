@@ -148,8 +148,8 @@ export class ParallelExecutor {
    * @private
    */
   _gcHint() {
-    if (global.gc) {
-      global.gc();
+    if (globalThis.gc) {
+      globalThis.gc();
     }
   }
 
@@ -544,7 +544,8 @@ export async function benchmark10k(options = {}) {
   const startTime = Date.now();
   let created = 0;
 
-  for await (const _universe of executor.createUniverses(count)) {
+  const universeStream = executor.createUniverses(count);
+  while (!(await universeStream.next()).done) {
     created++;
   }
 
