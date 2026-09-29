@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { Daemon } from '../src/daemon.mjs';
 
