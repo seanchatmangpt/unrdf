@@ -224,7 +224,7 @@ describe('UniverseManager', () => {
     });
 
     it('filters by state', async () => {
-      const u1 = await manager.createUniverse();
+      await manager.createUniverse();
       const u2 = await manager.createUniverse();
       manager.transitionState(u2.id.Q_ID, UniverseState.ACTIVE);
 

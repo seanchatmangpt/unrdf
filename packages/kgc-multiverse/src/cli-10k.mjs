@@ -11,7 +11,6 @@
 
 import { performance } from 'node:perf_hooks';
 import { createParallelExecutor } from './parallel-executor.mjs';
-import { TaskType } from './worker-task.mjs';
 
 /**
  * CLI Configuration
@@ -254,7 +253,7 @@ ${colors.bold}╔═════════════════════
       let frozen = 0;
       let peakMemory = 0;
 
-      for await (const _frozenUniverse of executor.freezeUniversesParallel(universes, {
+      const frozenStream = executor.freezeUniversesParallel(universes, {
         batchSize: CLI_CONFIG.batchSize,
         onProgress: (current) => {
           frozen = current;
@@ -264,8 +263,10 @@ ${colors.bold}╔═════════════════════
             renderProgress('Freezing universes', current, count, startTime, '❄️');
           }
         },
-      })) {
-        // Just count, don't store to save memory
+      });
+      // Just drain the stream, don't store results to save memory
+      while (!(await frozenStream.next()).done) {
+        // progress is reported via onProgress
       }
 
       const duration = Date.now() - startTime;
