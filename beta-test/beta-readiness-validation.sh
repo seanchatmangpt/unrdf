@@ -45,8 +45,8 @@ fi
 # Test 4: 10k Benchmark
 echo "[4/5] 10k universe benchmark..."
 if timeout 60s node benchmarks/10k-system.mjs > /tmp/beta-10k.log 2>&1; then
-  TOTAL_TIME=$(grep "Total time:" /tmp/beta-10k.log | grep -oP '\d+\.?\d*s' || echo "N/A")
-  PEAK_MEM=$(grep "Peak memory:" /tmp/beta-10k.log | tail -1 | grep -oP '\d+\.?\d* MB' || echo "N/A")
+  TOTAL_TIME=$(grep "Total time:" /tmp/beta-10k.log | grep -oP '\d+\.?\d*s' | head -1 || echo "N/A")
+  PEAK_MEM=$(grep "Peak memory:" /tmp/beta-10k.log | tail -1 | grep -oP '\d+\.?\d* MB' | head -1 || echo "N/A")
   echo "  ✅ PASS - Time: ${TOTAL_TIME}, Memory: ${PEAK_MEM}"
 else
   echo "  ❌ FAIL - 10k benchmark failed"
@@ -55,18 +55,16 @@ fi
 
 # Test 5: Unit Tests
 echo "[5/5] Unit test suite..."
-if timeout 5s npm test > /tmp/beta-unit.log 2>&1; then
+UNIT_EXIT=0
+timeout 5s npm test > /tmp/beta-unit.log 2>&1 || UNIT_EXIT=$?
+if [ $UNIT_EXIT -eq 0 ]; then
   echo "  ✅ PASS - All unit tests passed"
 else
-  # Check if mostly passed
-  PASSING=$(grep -oP '\d+ passing' /tmp/beta-unit.log || echo "0 passing")
-  FAILING=$(grep -oP '\d+ failing' /tmp/beta-unit.log || echo "unknown")
-  if [[ "$FAILING" == "unknown" ]] || [[ "$FAILING" == "0 failing" ]]; then
-    echo "  ✅ PASS - Unit tests: $PASSING"
-  else
-    echo "  ⚠️  PARTIAL - $PASSING, $FAILING"
-    # Don't fail on unit tests for now - beta focuses on integration
-  fi
+  PASSING=$(grep -oP '\d+ passing' /tmp/beta-unit.log || echo "unknown passing")
+  FAILING=$(grep -oP '\d+ failing' /tmp/beta-unit.log || echo "unknown failing")
+  # Unit tests are not a critical gate (beta focuses on integration), but a
+  # non-zero exit (failure or the 5s timeout) must never be reported as PASS.
+  echo "  ⚠️  UNVERIFIED - npm test exited $UNIT_EXIT ($PASSING, $FAILING); see /tmp/beta-unit.log"
 fi
 
 END_TIME=$(date +%s)

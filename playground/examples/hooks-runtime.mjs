@@ -6,10 +6,8 @@
  * This demonstrates how to use the hooks engine with Nitro runtime.
  */
 
-import { defineHook, evaluateHook, planHook, registerPredicate } from '../../src/hooks.mjs'
-import { initStore } from '../../src/context/index.mjs'
-import { useTurtle } from '../../src/composables/use-turtle.mjs'
-import { useGraph } from '../../src/composables/use-graph.mjs'
+import { defineHook, evaluateHook, planHook, registerPredicate } from '../src/hooks.mjs'
+import { createTurtleStore } from '../server/lib/store.mjs'
 
 // Sample RDF data
 const sampleData = `
@@ -82,13 +80,10 @@ async function demonstrateHooksRuntime() {
   console.log('🚀 UNRDF Hooks Runtime Demo')
   console.log('============================\n')
   
-  // Initialize store with composable architecture
-  const runApp = initStore()
-  
-  await runApp(async () => {
-    const turtle = await useTurtle()
-    await turtle.parse(sampleData)
-    
+  // Load the sample data into an in-memory Oxigraph store
+  const store = createTurtleStore(sampleData)
+
+  {
     console.log('📊 Loaded sample data with services and people\n')
     
     // Define various hooks
@@ -161,6 +156,7 @@ async function demonstrateHooksRuntime() {
     console.log(`🔧 Created ${hooks.length} hooks\n`)
     
     // Evaluate each hook
+    const receipts = []
     for (const hook of hooks) {
       console.log(`\n📋 Evaluating Hook: ${hook.id}`)
       console.log(`   Name: ${hook.name}`)
@@ -171,7 +167,8 @@ async function demonstrateHooksRuntime() {
       console.log(`   Plan: ${plan.queryPlan} query with ${plan.predicatePlan.length} predicates (${plan.combine})`)
       
       // Evaluate the hook
-      const receipt = await evaluateHook(hook)
+      const receipt = await evaluateHook(hook, store)
+      receipts.push(receipt)
       
       console.log(`   Result: ${receipt.fired ? '🔥 FIRED' : '— No trigger'}`)
       console.log(`   Duration: ${receipt.durations.totalMs}ms`)
@@ -194,10 +191,7 @@ async function demonstrateHooksRuntime() {
     console.log('\n🎯 Runtime Summary')
     console.log('==================')
     
-    const firedHooks = hooks.filter(hook => {
-      // We'd need to track results in a real runtime
-      return true // Simplified for demo
-    })
+    const firedHooks = receipts.filter(receipt => receipt.fired)
     
     console.log(`Total Hooks: ${hooks.length}`)
     console.log(`Fired Hooks: ${firedHooks.length}`)
@@ -207,7 +201,7 @@ async function demonstrateHooksRuntime() {
     console.log('\nTo run the Nitro web interface:')
     console.log('  cd playground && pnpm nitro:dev')
     console.log('  Then open http://localhost:3000')
-  })
+  }
 }
 
 // Run the demo

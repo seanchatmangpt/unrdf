@@ -7,12 +7,12 @@
  * Includes schedule and committee management.
  *
  * @module cli/commands/thesis
- * @version 2.0.0
  * @license MIT
  */
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { renderTemplate, renderMarkdown, writeOutput } from '../../render.mjs';
 
 // =============================================================================
 // Constants
@@ -142,7 +142,7 @@ function toSimpleYaml(obj, indent = 0) {
 // In-Memory State (would be persisted in production)
 // =============================================================================
 
-let currentSchedule = {
+const currentSchedule = {
   defenseDate: null,
   milestones: [
     { name: 'Thesis Proposal', date: '2024-09-01', status: 'completed' },
@@ -153,7 +153,7 @@ let currentSchedule = {
   ]
 };
 
-let committee = [];
+const committee = [];
 
 // =============================================================================
 // Generate Command
@@ -257,9 +257,15 @@ const generateCommand = defineCommand({
         printProgress(`  Title: ${input.title}`, 'info');
         printProgress(`  Author: ${input.author}`, 'info');
         printProgress(`  Degree: ${input.degree}`, 'info');
-        if (input.institution) printProgress(`  Institution: ${input.institution}`, 'info');
-        if (input.department) printProgress(`  Department: ${input.department}`, 'info');
-        if (input.supervisor) printProgress(`  Supervisor: ${input.supervisor}`, 'info');
+        if (input.institution) {
+printProgress(`  Institution: ${input.institution}`, 'info');
+}
+        if (input.department) {
+printProgress(`  Department: ${input.department}`, 'info');
+}
+        if (input.supervisor) {
+printProgress(`  Supervisor: ${input.supervisor}`, 'info');
+}
         printProgress(`  Type: ${typeConfig.name}`, 'info');
         printProgress(`  Chapters: ${typeConfig.chapters.join(', ')}`, 'info');
       }
@@ -293,14 +299,39 @@ const generateCommand = defineCommand({
         }
       };
 
+      let rendered;
+      let extension;
       if (args.format === 'json') {
-        console.log(JSON.stringify(thesis, null, 2));
+        rendered = JSON.stringify(thesis, null, 2);
+        extension = 'json';
       } else if (args.format === 'yaml') {
-        console.log(toSimpleYaml(thesis));
+        rendered = toSimpleYaml(thesis);
+        extension = 'yaml';
+      } else if (args.format === 'markdown') {
+        rendered = renderMarkdown(
+          { title: thesis.title, sections: thesis.chapters },
+          `*${thesis.author.name}, ${thesis.degree}, ${thesis.author.institution}*`
+        );
+        extension = 'md';
+      } else if (args.format === 'latex') {
+        rendered = renderTemplate(
+          `${input.type}.tex.njk`,
+          { title: thesis.title, author: thesis.author.name, sections: thesis.chapters },
+          { family: typeConfig.name }
+        );
+        extension = 'tex';
       } else {
+        throw new Error(`Unsupported output format: ${args.format}`);
+      }
+
+      const toStdout = (args.format === 'json' || args.format === 'yaml') && !args.output;
+      if (toStdout) {
+        console.log(rendered);
+      } else {
+        const written = writeOutput(args.output || `./output/${thesis.id}.${extension}`, rendered);
         if (!args.quiet) {
-          printProgress('Thesis structure generated successfully!', 'success');
-          printProgress(`Output: ${args.output || `./output/${thesis.id}.tex`}`, 'info');
+          printProgress('Thesis generated successfully!', 'success');
+          printProgress(`Output: ${written}`, 'info');
         }
       }
 
@@ -309,7 +340,7 @@ const generateCommand = defineCommand({
     } catch (error) {
       if (error instanceof z.ZodError) {
         printProgress('Validation error:', 'error');
-        error.errors.forEach(err => {
+        error.issues.forEach(err => {
           console.error(`  - ${err.path.join('.')}: ${err.message}`);
         });
       } else {
@@ -475,7 +506,7 @@ const scheduleAddCommand = defineCommand({
     } catch (error) {
       if (error instanceof z.ZodError) {
         printProgress('Validation error:', 'error');
-        error.errors.forEach(err => {
+        error.issues.forEach(err => {
           console.error(`  - ${err.path.join('.')}: ${err.message}`);
         });
       } else {
@@ -589,8 +620,12 @@ const defenseCommand = defineCommand({
     }
 
     printProgress(`Defense date set: ${args.date}`, 'success');
-    if (args.time) printProgress(`Time: ${args.time}`, 'info');
-    if (args.location) printProgress(`Location: ${args.location}`, 'info');
+    if (args.time) {
+printProgress(`Time: ${args.time}`, 'info');
+}
+    if (args.location) {
+printProgress(`Location: ${args.location}`, 'info');
+}
 
     return { date: args.date, time: args.time, location: args.location };
   }
@@ -662,7 +697,7 @@ const committeeCommand = defineCommand({
     } catch (error) {
       if (error instanceof z.ZodError) {
         printProgress('Validation error:', 'error');
-        error.errors.forEach(err => {
+        error.issues.forEach(err => {
           console.error(`  - ${err.path.join('.')}: ${err.message}`);
         });
         console.log(`\nValid roles: ${COMMITTEE_ROLES.join(', ')}`);

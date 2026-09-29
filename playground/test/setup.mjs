@@ -16,58 +16,59 @@ const __dirname = dirname(__filename);
 
 let serverProcess;
 
+const PORT = process.env.PORT || '3000';
+const BASE_URL = `http://localhost:${PORT}`;
+
 /**
- * Start the playground server for testing
+ * Start the playground Nitro server for testing.
+ *
+ * Resolves once /api/runtime/status answers; rejects if the process exits or
+ * does not become ready in time.
+ *
  * @returns {Promise<void>}
  */
 async function startTestServer() {
-  return new Promise((resolve, reject) => {
-    const serverPath = join(__dirname, '..', 'server.mjs');
+  const nitroBin = join(__dirname, '..', 'node_modules', '.bin', 'nitropack');
 
-    console.log('Starting playground server for integration tests...');
+  console.log('Starting playground Nitro server for tests...');
 
-    serverProcess = spawn('node', [serverPath], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        NODE_ENV: 'test',
-        PORT: '3000',
-      },
-    });
-
-    // Handle server output
-    serverProcess.stdout.on('data', (data) => {
-      const output = data.toString();
-      console.log('Server:', output.trim());
-
-      // Check if server is ready
-      if (output.includes('UNRDF Hooks Runtime Server running on http://localhost:3000')) {
-        console.log('Test server started successfully');
-        resolve();
-      }
-    });
-
-    serverProcess.stderr.on('data', (data) => {
-      console.error('Server Error:', data.toString());
-    });
-
-    serverProcess.on('error', (error) => {
-      console.error('Failed to start server:', error);
-      reject(error);
-    });
-
-    serverProcess.on('close', (code) => {
-      if (code !== 0) {
-        console.error(`Server exited with code ${code}`);
-        reject(new Error(`Server exited with code ${code}`));
-      }
-    });
-
-    // Timeout after 30 seconds
-    setTimeout(() => {
-      reject(new Error('Server startup timeout'));
-    }, 30000);
+  serverProcess = spawn(nitroBin, ['dev', '--port', PORT], {
+    cwd: join(__dirname, '..'),
+    // Own process group so the whole nitro worker tree can be killed on teardown
+    detached: true,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: {
+      ...process.env,
+      NODE_ENV: 'test',
+    },
   });
+
+  let output = '';
+  serverProcess.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  serverProcess.stderr.on('data', (data) => {
+    output += data.toString();
+  });
+
+  const exited = new Promise((_, reject) => {
+    serverProcess.on('error', reject);
+    serverProcess.on('close', (code) => {
+      reject(new Error(`Nitro exited with code ${code} before becoming ready:\n${output}`));
+    });
+  });
+
+  const ready = (async () => {
+    const deadline = Date.now() + 30000;
+    while (Date.now() < deadline) {
+      if (await isServerReady()) return;
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+    throw new Error(`Server startup timeout after 30s:\n${output}`);
+  })();
+
+  await Promise.race([ready, exited]);
+  console.log('Test server started successfully');
 }
 
 /**
@@ -75,19 +76,18 @@ async function startTestServer() {
  * @returns {Promise<void>}
  */
 async function stopTestServer() {
-  return new Promise((resolve) => {
-    if (serverProcess) {
-      console.log('Stopping test server...');
-      serverProcess.kill('SIGTERM');
+  if (!serverProcess) return;
 
-      serverProcess.on('close', () => {
-        console.log('Test server stopped');
-        resolve();
-      });
-    } else {
-      resolve();
-    }
-  });
+  console.log('Stopping test server...');
+  const closed = new Promise((resolve) => serverProcess.once('close', resolve));
+  try {
+    process.kill(-serverProcess.pid, 'SIGTERM');
+  } catch {
+    // Already gone
+  }
+  await Promise.race([closed, new Promise((resolve) => setTimeout(resolve, 5000))]);
+  serverProcess = undefined;
+  console.log('Test server stopped');
 }
 
 /**
@@ -96,7 +96,7 @@ async function stopTestServer() {
  */
 async function isServerReady() {
   try {
-    const response = await fetch('http://localhost:3000/api/runtime/status');
+    const response = await fetch(`${BASE_URL}/api/runtime/status`);
     return response.ok;
   } catch {
     return false;
@@ -116,41 +116,40 @@ export const mochaHooks = {
 };
 
 /**
- * Vitest global setup function
+ * Cleanup: stop the server if this process started it
  * @returns {Promise<void>}
  */
+async function teardown() {
+  console.log('Cleaning up test environment...');
+
+  await stopTestServer();
+
+  console.log('Test environment cleaned up');
+}
+
+/**
+ * Vitest global setup function; the returned function is vitest's teardown.
+ * @returns {Promise<() => Promise<void>>}
+ */
 export default async function globalSetup() {
-  console.log('Setting up integration test environment...');
+  console.log('Setting up test environment...');
 
   try {
     // Check if server is already running
     if (await isServerReady()) {
       console.log('Server already running, using existing instance');
-      return;
+      return teardown;
     }
 
     // Start server for testing
     await startTestServer();
 
-    // Wait a bit more for full initialization
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    console.log('Integration test environment ready');
-
+    console.log('Test environment ready');
+    return teardown;
   } catch (error) {
-    console.error('Failed to setup integration test environment:', error);
+    // Do not leave a half-started server behind
+    await stopTestServer();
+    console.error('Failed to set up test environment:', error);
     process.exit(1);
   }
-}
-
-/**
- * Cleanup function for Vitest
- * @returns {Promise<void>}
- */
-export async function teardown() {
-  console.log('Cleaning up integration test environment...');
-
-  await stopTestServer();
-
-  console.log('Integration test environment cleaned up');
 }

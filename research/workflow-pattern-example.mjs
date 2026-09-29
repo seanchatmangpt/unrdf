@@ -9,6 +9,7 @@
  * - Distributed: Parallel processing across nodes
  */
 
+import { randomUUID } from 'node:crypto';
 import { Daemon } from '../packages/daemon/src/daemon.mjs';
 import { createChangeFeed } from '../packages/streaming/src/streaming/change-feed.mjs';
 import { WorkflowAdapter } from '../packages/v6-core/src/delta/adapters/workflow-adapter.mjs';
@@ -123,7 +124,7 @@ class MockDaemonCluster {
     this.daemons = new Map();
 
     nodeIds.forEach((nodeId) => {
-      this.daemons.set(nodeId, new Daemon({ daemonId: nodeId }));
+      this.daemons.set(nodeId, new Daemon({ daemonId: randomUUID(), name: nodeId, nodeId }));
     });
   }
 
@@ -223,7 +224,7 @@ async function runCompleteExample() {
   const cluster = new MockDaemonCluster(['node-1', 'node-2', 'node-3', 'node-4', 'node-5']);
   const deltaGate = new MockDeltaGate();
   const llmClient = new MockLLMClient();
-  const mainDaemon = new Daemon({ daemonId: 'main-daemon' });
+  const mainDaemon = new Daemon({ daemonId: randomUUID(), name: 'main-daemon', nodeId: 'main-daemon' });
 
   await mainDaemon.start();
   await cluster.startAll();
@@ -254,6 +255,7 @@ async function runCompleteExample() {
   const aiRouter = new AIAssistedRouter(yawlEngine, changeFeed, llmClient, deltaGate);
 
   await aiRouter.registerRouting({
+    workflowId: 'order-processing-v1',
     taskId: 'fraud-check',
     candidateTasks: ['manual-review', 'automated-review', 'process-payment'],
     promptTemplate: `

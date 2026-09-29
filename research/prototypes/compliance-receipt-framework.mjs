@@ -57,6 +57,7 @@ export const ComplianceRuleSchema = z.object({
   standard: z.enum(['GDPR', 'SOX', 'HIPAA', 'CUSTOM']),
   description: z.string(),
   condition: z.function(), // (event) => boolean
+  appliesTo: z.function().optional(), // (event) => boolean; omitted = applies to every event
   severity: z.enum(['critical', 'high', 'medium', 'low']),
   requiresReceipt: z.boolean().default(true),
   retentionYears: z.number().int().positive().optional(),
@@ -185,9 +186,13 @@ export class ComplianceRuleEngine {
    * @private
    */
   _getApplicableRules(event) {
-    // For now, return all rules
-    // In production, filter by event type, standard, etc.
-    return Array.from(this.rules.values());
+    // A rule is evaluated only when it applies to the event; rules without an
+    // appliesTo predicate apply to every event. Reports filter by standard on
+    // rulesEvaluated, so listing rules that do not apply made every report
+    // contain every event.
+    return Array.from(this.rules.values()).filter(
+      rule => typeof rule.appliesTo !== 'function' || rule.appliesTo(event)
+    );
   }
 
   /**
@@ -199,6 +204,7 @@ export class ComplianceRuleEngine {
     // GDPR: Right to Erasure
     this.registerRule({
       name: 'GDPR Right to Erasure',
+      appliesTo: (event) => event.eventType === 'data-deletion',
       standard: 'GDPR',
       description: 'Data deletion must be logged',
       condition: (event) => {
@@ -214,6 +220,7 @@ export class ComplianceRuleEngine {
     // GDPR: Consent Management
     this.registerRule({
       name: 'GDPR Consent Requirement',
+      appliesTo: (event) => event.eventType === 'data-access',
       standard: 'GDPR',
       description: 'Data access requires valid consent',
       condition: (event) => {
@@ -230,6 +237,7 @@ export class ComplianceRuleEngine {
     // SOX: Audit Trail
     this.registerRule({
       name: 'SOX Audit Trail',
+      appliesTo: (event) => event.eventType === 'data-modification' && event.resource.includes('finance'),
       standard: 'SOX',
       description: 'All financial data modifications must be logged',
       condition: (event) => {
@@ -248,6 +256,7 @@ export class ComplianceRuleEngine {
     // HIPAA: Access Logging
     this.registerRule({
       name: 'HIPAA Access Logging',
+      appliesTo: (event) => event.eventType === 'data-access' && (event.resource.includes('patient') || event.resource.includes('medical')),
       standard: 'HIPAA',
       description: 'PHI access must be logged with justification',
       condition: (event) => {
@@ -266,6 +275,7 @@ export class ComplianceRuleEngine {
     // HIPAA: Minimum Necessary
     this.registerRule({
       name: 'HIPAA Minimum Necessary',
+      appliesTo: (event) => event.eventType === 'data-access' && (event.resource.includes('patient') || event.resource.includes('medical')),
       standard: 'HIPAA',
       description: 'PHI access must be minimum necessary',
       condition: (event) => {
@@ -306,6 +316,22 @@ export class ComplianceReceiptFramework {
     this.merkleRoots = [];
     this.batchSize = options.batchSize || 100;
     this.retentionPolicy = options.retentionPolicy || { defaultYears: 7 };
+    this.lastTimestamp = 0n;
+  }
+
+  /**
+   * Next receipt timestamp in nanoseconds. Date.now() only has millisecond
+   * resolution, so events recorded within the same millisecond would share a
+   * timestamp and fail verifyChain()'s strict monotonic check; force strictly
+   * increasing values.
+   *
+   * @private
+   * @returns {bigint} Strictly increasing timestamp (ns)
+   */
+  _nextTimestamp() {
+    const wallClock = BigInt(Date.now()) * 1_000_000n;
+    this.lastTimestamp = wallClock > this.lastTimestamp ? wallClock : this.lastTimestamp + 1n;
+    return this.lastTimestamp;
   }
 
   /**
@@ -318,7 +344,7 @@ export class ComplianceReceiptFramework {
     const event = ComplianceEventSchema.parse({
       ...eventDef,
       eventId: eventDef.eventId || randomUUID(),
-      timestamp: eventDef.timestamp || BigInt(Date.now()) * 1_000_000n,
+      timestamp: eventDef.timestamp || this._nextTimestamp(),
     });
 
     // Evaluate compliance rules
@@ -472,12 +498,14 @@ export class ComplianceReceiptFramework {
       return null;
     }
 
-    const maxRetention = Math.max(
-      ...receipt.rulesEvaluated.map(ruleId => {
-        const rule = this.ruleEngine.rules.get(ruleId);
-        return rule?.retentionYears || this.retentionPolicy.defaultYears;
-      })
-    );
+    // Events no rule applies to still fall under the default retention period
+    // (Math.max() of an empty list would be -Infinity).
+    const ruleRetention = receipt.rulesEvaluated.map(ruleId => {
+      const rule = this.ruleEngine.rules.get(ruleId);
+      return rule?.retentionYears || this.retentionPolicy.defaultYears;
+    });
+    const maxRetention =
+      ruleRetention.length > 0 ? Math.max(...ruleRetention) : this.retentionPolicy.defaultYears;
 
     const deleteAfter = receipt.timestamp + BigInt(maxRetention * 365 * 24 * 60 * 60) * 1_000_000_000n;
 
@@ -518,7 +546,9 @@ export class ComplianceReceiptFramework {
   async _createReceipt(event, evaluation) {
     // Compute payload hash
     const payload = { event, compliance: evaluation };
-    const payloadStr = JSON.stringify(payload);
+    const payloadStr = JSON.stringify(payload, (_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    );
     const payloadHash = await blake3(payloadStr);
 
     // Compute chain hash
@@ -655,7 +685,7 @@ export async function example() {
     resource: 'data:patient-123-medical-records',
     operation: 'read',
     justification: 'Reviewing patient history for diagnosis appointment',
-    metadata: { minimumNecessary: true },
+    metadata: { consentGranted: true, minimumNecessary: true },
   });
 
   console.log('Event 4 (HIPAA PHI Access):', {

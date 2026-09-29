@@ -2,19 +2,17 @@
  * @fileoverview Data source query API endpoint
  */
 
-import { initStore } from '../../../../src/context/index.mjs'
-import { useTurtle } from '../../../../src/composables/use-turtle.mjs'
-import { useGraph } from '../../../../src/composables/use-graph.mjs'
+import { createTurtleStore, termToJSON } from '../../../../lib/store.mjs'
 
 /**
  * POST /api/data/[id]/query - Query data source
  */
 export default defineEventHandler(async (event) => {
-  const { requireAuth } = await import('../../_auth.mjs')
+  const { requireAuth } = await import('../../../../lib/auth.mjs')
   requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  const { dataStore } = await import('../_shared.mjs')
+  const { dataStore } = await import('../../../../lib/data-state.mjs')
   
   if (!dataStore.has(id)) {
     throw createError({
@@ -34,24 +32,21 @@ export default defineEventHandler(async (event) => {
       })
     }
     
-    // Initialize store with composable architecture
-    const runApp = initStore()
-    
-    const result = await runApp(async () => {
-      const turtle = await useTurtle()
-      await turtle.parse(dataSource.content)
-      
-      const graph = await useGraph()
-      
-      if (body.query.trim().toUpperCase().startsWith('SELECT')) {
-        return await graph.select(body.query)
-      } else if (body.query.trim().toUpperCase().startsWith('ASK')) {
-        return await graph.ask(body.query)
-      } else {
-        throw new Error('Only SELECT and ASK queries are supported')
-      }
-    })
-    
+    const kind = body.query.trim().toUpperCase()
+    if (!kind.startsWith('SELECT') && !kind.startsWith('ASK')) {
+      throw new Error('Only SELECT and ASK queries are supported')
+    }
+
+    const store = createTurtleStore(dataSource.content)
+    const raw = store.query(body.query)
+    const result = Array.isArray(raw)
+      ? raw.map(binding => {
+          const row = {}
+          for (const [name, term] of binding.entries()) row[name] = termToJSON(term)
+          return row
+        })
+      : raw
+
     return {
       success: true,
       query: body.query,

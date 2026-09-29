@@ -603,14 +603,18 @@ export class ConsensusGovernanceCluster extends EventEmitter {
    */
   async _generateConsensusReceipt(policyId, decision) {
     // Collect node receipts
-    const nodeReceipts = decision.votes.map(vote => ({
-      nodeId: vote.nodeId,
-      localReceiptId: randomUUID(),
-      localHash: blake3(`${vote.nodeId}:${vote.decision}`),
-    }));
+    // hash-wasm's blake3 is async: the hash must be awaited before the receipt
+    // is validated (a pending Promise is not a string).
+    const nodeReceipts = await Promise.all(
+      decision.votes.map(async vote => ({
+        nodeId: vote.nodeId,
+        localReceiptId: randomUUID(),
+        localHash: await blake3(`${vote.nodeId}:${vote.decision}`),
+      }))
+    );
 
     // Compute consensus hash (BLAKE3 of all node receipts)
-    const receiptHashes = await Promise.all(nodeReceipts.map(nr => nr.localHash));
+    const receiptHashes = nodeReceipts.map(nr => nr.localHash);
     const combined = receiptHashes.join(':');
     const consensusHash = await blake3(combined);
 

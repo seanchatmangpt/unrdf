@@ -15,12 +15,13 @@ import { createCommand, runMain } from 'citty';
 import { useStore, useGraph, useTurtle, useValidator, useReasoner, useZod } from 'unrdf';
 import { readFile, writeFile } from 'node:fs/promises';
 import { z } from 'zod';
+import { VERSION } from './version.mjs';
 
 // Initialize the main command
 const main = createCommand({
   meta: {
     name: 'unrdf-cli',
-    version: '1.0.0',
+    version: VERSION,
     description: 'UNRDF Command Line Interface for RDF operations'
   },
   subCommands: {
