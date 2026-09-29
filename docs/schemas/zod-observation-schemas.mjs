@@ -11,9 +11,13 @@
 import { z } from 'zod';
 import { randomUUID as uuidv4 } from 'node:crypto';
 
-/** RFC 4122 UUID v4 matcher (replaces the undeclared `uuid` package). */
+/**
+ * UUID matcher equivalent to `validate` from the (undeclared) `uuid` package:
+ * accepts any RFC 9562 version 1-8 plus the nil and max UUIDs.
+ */
 const validateUuid = (val) =>
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+  typeof val === 'string' &&
+  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i.test(val);
 
 // ============================================================================
 // CONSTANTS & ENUMS

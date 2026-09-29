@@ -86,7 +86,7 @@ async function analyzePackage(pkg) {
 
 console.log('Analyzing imports across all packages...\n');
 
-const results = (await Promise.all(packages.map(analyzePackage))).filter(Boolean);
+const results = await Promise.all(packages.map(analyzePackage));
 
 console.log('=== UNUSED DEPENDENCIES REPORT ===\n');
 
