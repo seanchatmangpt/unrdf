@@ -9,6 +9,7 @@
     "./rdf": "./src/rdf/index.mjs",
     "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
     "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
+    "./rdf/n3-justified-only.mjs": "./src/rdf/n3-justified-only.mjs",
     "./sparql": "./src/sparql/index.mjs",
     "./sparql/executor-sync": "./src/sparql/executor-sync.mjs",
     "./sparql/embeddings": "./src/sparql/embeddings.mjs",

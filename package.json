@@ -95,6 +95,7 @@
     "new:package": "bash -c './scripts/common-tasks.sh new:package \"$@\"' _",
     "clean:all": "./scripts/common-tasks.sh clean:all",
     "update:deps": "./scripts/common-tasks.sh update:deps",
+    "check:integrity": "node scripts/check-package-integrity.mjs",
     "check:health": "./scripts/common-tasks.sh check:health",
     "help": "node scripts/help.mjs",
     "list:packages": "./scripts/common-tasks.sh list:packages",
