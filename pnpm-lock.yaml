@@ -167,6 +167,9 @@ importers:
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:../packages/oxigraph
+      '@unrdf/receipts':
+        specifier: workspace:*
+        version: link:../packages/receipts
     devDependencies:
       tinybench:
         specifier: ^6.0.0

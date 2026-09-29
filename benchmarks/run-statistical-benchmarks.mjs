@@ -17,7 +17,6 @@ import { dirname, join } from 'path';
 const BENCH_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(BENCH_DIR, '..');
 
-
 const BENCHMARK_RUNS = 10;
 const BENCHMARKS = [
   { name: 'hook-execution', file: 'hook-execution-bench.mjs', timeout: 30000 },
