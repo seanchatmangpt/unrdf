@@ -175,7 +175,7 @@ export const ResourceValueSchema = z.object({
 export const ResourceSchema = z.object({
   id: z.string().min(1),
   type: z.array(z.string()),
-  properties: z.record(z.array(ResourceValueSchema)),
+  properties: z.record(z.string(), z.array(ResourceValueSchema)),
   updated_at_ns: z.number().positive().int(),
   version: z.number().positive().int(),
   agent_id: z.string().min(1),
@@ -194,7 +194,7 @@ export const MetricValueSchema = z.object({
   timestamp_ns: z.number().positive().int(),
   value: z.number(),
   agent_id: z.string(),
-  tags: z.record(z.string()).optional(),
+  tags: z.record(z.string(), z.string()).optional(),
 });
 
 /** Complete universe (RDF + metrics) */
@@ -207,9 +207,9 @@ export const ProbeUniverseSchema = z.object({
   }),
 
   rdf_quads: z.array(RDFQuadSchema),
-  metrics_store: z.record(z.array(MetricValueSchema)),
-  resource_index: z.record(ResourceSchema),
-  agent_contributions: z.record(AgentContributionSchema),
+  metrics_store: z.record(z.string(), z.array(MetricValueSchema)),
+  resource_index: z.record(z.string(), ResourceSchema),
+  agent_contributions: z.record(z.string(), AgentContributionSchema),
 });
 
 // ============================================================================
@@ -234,7 +234,7 @@ export const MerkleTreeSchema = z.object({
 export const MerkleReceiptSchema = z.object({
   algorithm_version: z.string(),
 
-  input_shards: z.record(ReceiptShardInfoSchema),
+  input_shards: z.record(z.string(), ReceiptShardInfoSchema),
 
   merge_tree: MerkleTreeSchema,
 
@@ -280,7 +280,7 @@ export const PerformanceMetricsSchema = z.object({
 
 /** Merged world model (main result) */
 export const MergedWorldModelSchema = z.object({
-  claims: z.record(MergedClaimEntrySchema),
+  claims: z.record(z.string(), MergedClaimEntrySchema),
   universe: ProbeUniverseSchema,
   conflicts: z.array(ConflictRecordSchema),
   receipt: MerkleReceiptSchema,
@@ -344,32 +344,48 @@ export const SortKeySchema = z.object({
 // EXPORTS: Type inferences from Zod schemas
 // ============================================================================
 
-export type Claim = z.infer<typeof ClaimSchema>;
-export type AgentShard = z.infer<typeof AgentShardSchema>;
-export type ConflictRecord = z.infer<typeof ConflictRecordSchema>;
-export type ProbeUniverse = z.infer<typeof ProbeUniverseSchema>;
-export type MerkleReceipt = z.infer<typeof MerkleReceiptSchema>;
-export type MergedWorldModel = z.infer<typeof MergedWorldModelSchema>;
-export type MergeOutput = z.infer<typeof MergeOutputSchema>;
-export type MergeConfig = z.infer<typeof MergeConfigSchema>;
-export type RDFQuad = z.infer<typeof RDFQuadSchema>;
+/** @typedef {z.infer<typeof ClaimSchema>} Claim */
+/** @typedef {z.infer<typeof AgentShardSchema>} AgentShard */
+/** @typedef {z.infer<typeof ConflictRecordSchema>} ConflictRecord */
+/** @typedef {z.infer<typeof ProbeUniverseSchema>} ProbeUniverse */
+/** @typedef {z.infer<typeof MerkleReceiptSchema>} MerkleReceipt */
+/** @typedef {z.infer<typeof MergedWorldModelSchema>} MergedWorldModel */
+/** @typedef {z.infer<typeof MergeOutputSchema>} MergeOutput */
+/** @typedef {z.infer<typeof MergeConfigSchema>} MergeConfig */
+/** @typedef {z.infer<typeof RDFQuadSchema>} RDFQuad */
 
 /**
  * Validation helper function
  */
-export function validateShard(shard: unknown): AgentShard {
+/**
+ * @param {unknown} shard
+ * @returns {AgentShard}
+ */
+export function validateShard(shard) {
   return AgentShardSchema.parse(shard);
 }
 
-export function validateClaim(claim: unknown): Claim {
+/**
+ * @param {unknown} claim
+ * @returns {Claim}
+ */
+export function validateClaim(claim) {
   return ClaimSchema.parse(claim);
 }
 
-export function validateOutput(output: unknown): MergeOutput {
+/**
+ * @param {unknown} output
+ * @returns {MergeOutput}
+ */
+export function validateOutput(output) {
   return MergeOutputSchema.parse(output);
 }
 
-export function validateConfig(config: unknown): MergeConfig {
+/**
+ * @param {unknown} config
+ * @returns {MergeConfig}
+ */
+export function validateConfig(config) {
   return MergeConfigSchema.parse(config);
 }
 
