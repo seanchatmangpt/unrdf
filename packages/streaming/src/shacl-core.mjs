@@ -128,6 +128,11 @@ function asTerm(value) {
   return namedNode(String(value));
 }
 
+/**
+ * Builds a string key that uniquely identifies an RDF term by type, value, language and datatype.
+ * @param {object|null} term - RDF/JS term.
+ * @returns {string} The key, or an empty string for a missing term.
+ */
 export function termKey(term) {
   if (!term) return '';
   const datatype = term.datatype?.value || '';
@@ -135,6 +140,12 @@ export function termKey(term) {
   return `${term.termType || ''}|${term.value ?? ''}|${language}|${datatype}`;
 }
 
+/**
+ * Tells whether two RDF terms are equal (same type, value, language and datatype).
+ * @param {object|null} left - First term.
+ * @param {object|null} right - Second term.
+ * @returns {boolean} True if the terms are equal.
+ */
 export function termEquals(left, right) {
   return termKey(left) === termKey(right);
 }
@@ -194,6 +205,15 @@ function isRdfListHead(store, term) {
   return Boolean(term && firstObject(store, term, RDF.first));
 }
 
+/**
+ * Reads an RDF collection (rdf:first/rdf:rest chain) into an array.
+ * @param {object} store - RDF/JS store exposing getQuads() or match().
+ * @param {object|null} head - First list node; rdf:nil or a missing head yields an empty list.
+ * @param {object} [options] - Read options.
+ * @param {number} [options.maxItems] - Maximum number of list items allowed.
+ * @returns {object[]} The list members in order.
+ * @throws {Error} If the list is cyclic, malformed or longer than maxItems.
+ */
 export function readRdfList(store, head, { maxItems = 10_000 } = {}) {
   if (!head || head.value === RDF.nil) return [];
   const result = [];
@@ -241,6 +261,17 @@ function compilePath(store, pathTerm, stack = new Set()) {
   }
 }
 
+/**
+ * Evaluates a compiled SHACL property path from a set of start nodes.
+ * @param {object} store - RDF/JS store exposing getQuads() or match().
+ * @param {object|object[]} startNodes - Start term or terms.
+ * @param {object|null} path - Compiled path expression; null returns the start nodes.
+ * @param {object} [options] - Evaluation limits.
+ * @param {number} [options.maxDepth] - Maximum path nesting depth.
+ * @param {number} [options.maxNodes] - Maximum number of distinct nodes.
+ * @returns {object[]} Distinct terms reached by the path.
+ * @throws {Error} If a limit is exceeded or the path kind is unsupported.
+ */
 export function evaluatePath(store, startNodes, path, { maxDepth = 64, maxNodes = 100_000 } = {}) {
   const starts = uniqueTerms(Array.isArray(startNodes) ? startNodes : [startNodes]);
   if (!path) return starts;
@@ -359,6 +390,13 @@ function shapeMetadata(store, shapeId) {
   };
 }
 
+/**
+ * Compiles a SHACL shapes graph into node shapes, property shapes, a lookup map
+ * and the set of predicates that validation depends on.
+ * @param {object} shapesStore - RDF/JS store holding the shapes graph.
+ * @returns {object} Frozen compiled shapes: nodeShapes, propertyShapes, shapesById, dependencyPredicates.
+ * @throws {Error} If a property path or RDF list in the shapes graph is invalid.
+ */
 export function compileShacl(shapesStore) {
   const nodeIds = uniqueTerms(subjects(shapesStore, RDF.type, SH.NodeShape));
   const propertyIds = uniqueTerms([
@@ -670,6 +708,15 @@ function validateShape(dataStore, compiled, shape, focusNode, context) {
   }
 }
 
+/**
+ * Validates a data store against already compiled SHACL shapes.
+ * @param {object} dataStore - RDF/JS store holding the data graph.
+ * @param {object} compiled - Result of compileShacl().
+ * @param {object} [options] - Validation options.
+ * @param {number} [options.maxViolations] - Stop after this many results.
+ * @param {object[]} [options.focusNodes] - Restrict validation to these focus nodes.
+ * @returns {{conforms: boolean, results: object[], checkedShapes: number, checkedFocusNodes: number}} Validation report.
+ */
 export function validateCompiledShacl(dataStore, compiled, options = {}) {
   const maxViolations = options.maxViolations ?? Number.POSITIVE_INFINITY;
   const selectedFocus = options.focusNodes ? new Set(options.focusNodes.map(termKey)) : null;
@@ -694,6 +741,13 @@ export function validateCompiledShacl(dataStore, compiled, options = {}) {
   };
 }
 
+/**
+ * Compiles a shapes store and validates a data store against it.
+ * @param {object} dataStore - RDF/JS store holding the data graph.
+ * @param {object} shapesStore - RDF/JS store holding the shapes graph.
+ * @param {object} [options] - Options passed to validateCompiledShacl().
+ * @returns {{conforms: boolean, results: object[], checkedShapes: number, checkedFocusNodes: number}} Validation report.
+ */
 export function validateShaclCore(dataStore, shapesStore, options = {}) {
   return validateCompiledShacl(dataStore, compileShacl(shapesStore), options);
 }
@@ -715,6 +769,14 @@ export function affectedFocusNodes(delta, compiled) {
   return uniqueTerms(nodes);
 }
 
+/**
+ * Validates only the focus nodes affected by a streaming delta.
+ * @param {object} dataStore - RDF/JS store holding the data graph.
+ * @param {object} compiledOrShapesStore - Compiled shapes, or a shapes store to compile first.
+ * @param {object} delta - Change set with additions/added and deletions/removed quads.
+ * @param {object} [options] - Options passed to validateCompiledShacl().
+ * @returns {object} Validation report; `skipped: true` when the delta touches no shape-relevant predicate.
+ */
 export function validateShaclDelta(dataStore, compiledOrShapesStore, delta, options = {}) {
   const compiled = compiledOrShapesStore?.shapesById ? compiledOrShapesStore : compileShacl(compiledOrShapesStore);
   const focusNodes = affectedFocusNodes(delta, compiled);
