@@ -12,7 +12,14 @@ export const PART_REQUIREMENT_SCHEMA = 'unrdf.part-requirement/1';
 export const PART_PASSPORT_SCHEMA = 'unrdf.part-passport/1';
 export const SUBSTITUTION_JUDGEMENT_SCHEMA = 'unrdf.part-substitution-judgement/1';
 
+/**
+ * Error thrown when a candidate part is refused as a substitute; carries the refusing judgement.
+ */
 export class PartSubstitutionRefusal extends Error {
+  /**
+   * Create the refusal.
+   * @param {Object} judgement - Substitution judgement whose `reasons` (each with a `code`) explain the refusal.
+   */
   constructor(judgement) {
     super(`Part substitution refused: ${judgement.reasons.map(reason => reason.code).join(', ')}`);
     this.name = 'PartSubstitutionRefusal';
@@ -21,6 +28,11 @@ export class PartSubstitutionRefusal extends Error {
   }
 }
 
+/**
+ * Recursively freeze arrays and plain objects.
+ * @param {*} value - Value to freeze.
+ * @returns {*} The same value, frozen if it was an array or object.
+ */
 function deepFreeze(value) {
   if (Array.isArray(value)) {
     value.forEach(deepFreeze);
@@ -300,14 +312,31 @@ export function createPartPassport(input = {}) {
   return deepFreeze({ ...body, digest: digest(body) });
 }
 
+/**
+ * Check that a part requirement's digest matches its content.
+ * @param {Object} requirement - Requirement produced by createPartRequirement.
+ * @returns {Object} Digest verification result.
+ */
 export function verifyPartRequirement(requirement) {
   return verifyDigest(requirement, PART_REQUIREMENT_SCHEMA, createPartRequirement);
 }
 
+/**
+ * Check that a part passport's digest matches its content.
+ * @param {Object} passport - Passport produced by createPartPassport.
+ * @returns {Object} Digest verification result.
+ */
 export function verifyPartPassport(passport) {
   return verifyDigest(passport, PART_PASSPORT_SCHEMA, createPartPassport);
 }
 
+/**
+ * Build a frozen, digested REFUSED judgement for inputs that fail integrity checks.
+ * @param {Object[]} reasons - Refusal reasons; the first becomes the falsifier.
+ * @param {Object} requirement - Requirement being judged (its digest is recorded when it is a string).
+ * @param {Object} candidate - Candidate part (currently unused).
+ * @returns {Object} Frozen refusal judgement.
+ */
 function integrityRefusal(reasons, requirement, candidate) {
   const body = canonical({
     schema: SUBSTITUTION_JUDGEMENT_SCHEMA,
@@ -484,6 +513,14 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
   return deepFreeze({ ...body, digest: digest(body) });
 }
 
+/**
+ * Evaluate a substitution and throw unless it is admitted.
+ * @param {Object} requirement - Part requirement.
+ * @param {Object} candidate - Candidate part passport.
+ * @param {Object} [context] - Extra evaluation context passed to evaluateSubstitution.
+ * @returns {Object} The ADMITTED judgement.
+ * @throws {PartSubstitutionRefusal} If the judgement state is not ADMITTED.
+ */
 export function assertSubstitutable(requirement, candidate, context = {}) {
   const judgement = evaluateSubstitution(requirement, candidate, context);
   if (judgement.state !== 'ADMITTED') throw new PartSubstitutionRefusal(judgement);

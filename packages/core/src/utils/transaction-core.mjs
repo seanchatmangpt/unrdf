@@ -15,19 +15,40 @@ function canonical(value) {
   return out;
 }
 
+/**
+ * Serialize a value to deterministic JSON (sorted keys; bigint, non-finite numbers and bytes get tagged encodings).
+ * @param {*} value - Value to serialize.
+ * @returns {string} Canonical JSON string.
+ */
 export function canonicalJson(value) {
   return JSON.stringify(canonical(value));
 }
 
+/**
+ * SHA-256 of a string, or of the canonical JSON of any other value.
+ * @param {string|*} value - Input to hash.
+ * @returns {string} Hex digest.
+ */
 export function sha256(value) {
   return createHash('sha256').update(typeof value === 'string' ? value : canonicalJson(value)).digest('hex');
 }
 
+/**
+ * Build a stable string key for an RDF/JS term.
+ * @param {Object|null|undefined} term - RDF/JS term (termType, value, language, datatype).
+ * @returns {string} Key, or an empty string when no term is given.
+ */
 export function termKey(term) {
   if (!term) return '';
   return `${term.termType || ''}|${term.value ?? ''}|${term.language || ''}|${term.datatype?.value || ''}`;
 }
 
+/**
+ * Build a stable string key for an RDF/JS quad from its four terms.
+ * @param {Object} quad - RDF/JS quad with subject, predicate, object and graph.
+ * @returns {string} Quad key.
+ * @throws {TypeError} If subject, predicate or object is missing.
+ */
 export function quadKey(quad) {
   if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError('quadKey requires an RDF/JS quad');
   return [quad.subject, quad.predicate, quad.object, quad.graph].map(termKey).join('||');
@@ -42,7 +63,15 @@ function cloneQuad(quad) {
   };
 }
 
+/**
+ * Error thrown when a commit conflicts with changes committed after the transaction's snapshot.
+ */
 export class TransactionConflict extends Error {
+  /**
+   * Create the error.
+   * @param {string} message - Error message.
+   * @param {Object} [details] - Conflict details (for example the conflicting keys).
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'TransactionConflict';
@@ -51,7 +80,15 @@ export class TransactionConflict extends Error {
   }
 }
 
+/**
+ * Error thrown when a transaction operation is refused (closed transaction, failed assertion, unknown savepoint).
+ */
 export class TransactionRefusal extends Error {
+  /**
+   * Create the error.
+   * @param {string} message - Error message.
+   * @param {Object} [details] - Refusal details.
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'TransactionRefusal';
@@ -60,7 +97,14 @@ export class TransactionRefusal extends Error {
   }
 }
 
+/**
+ * In-memory quad store with per-key version tracking and idempotency records, used by QuadTransaction.
+ */
 export class MemoryQuadStore {
+  /**
+   * Create a store.
+   * @param {Object[]} [quads] - Initial RDF/JS quads (copied).
+   */
   constructor(quads = []) {
     this.quads = new Map();
     this.keyVersions = new Map();
@@ -69,6 +113,10 @@ export class MemoryQuadStore {
     for (const quad of quads) this.quads.set(quadKey(quad), cloneQuad(quad));
   }
 
+  /**
+   * Capture the store version and copies of its quad and key-version maps.
+   * @returns {{version: number, quads: Map, keyVersions: Map}} Snapshot.
+   */
   snapshot() {
     return {
       version: this.version,
@@ -77,14 +125,28 @@ export class MemoryQuadStore {
     };
   }
 
+  /**
+   * Look up a quad by key.
+   * @param {string} key - Key from quadKey.
+   * @returns {Object|null} The stored quad, or null.
+   */
   get(key) {
     return this.quads.get(key) || null;
   }
 
+  /**
+   * List all stored quads.
+   * @returns {Object[]} Quads in insertion order.
+   */
   values() {
     return [...this.quads.values()];
   }
 
+  /**
+   * Find quads matching a term pattern; omitted fields match anything.
+   * @param {Object} [pattern] - Optional subject, predicate, object and graph terms.
+   * @returns {Object[]} Matching quads.
+   */
   match(pattern = {}) {
     return this.values().filter(quad => {
       for (const field of ['subject', 'predicate', 'object', 'graph']) {
@@ -94,6 +156,10 @@ export class MemoryQuadStore {
     });
   }
 
+  /**
+   * Digest of the sorted quad keys, identifying the store's content.
+   * @returns {string} Hex digest.
+   */
   digest() {
     return sha256([...this.quads.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key]) => key));
   }
@@ -105,7 +171,20 @@ function normalizeOperation(operation) {
   return { type: operation.type, key, quad: cloneQuad(operation.quad) };
 }
 
+/**
+ * Optimistic transaction over a MemoryQuadStore with snapshot or serializable isolation, assertions, savepoints and receipts.
+ */
 export class QuadTransaction {
+  /**
+   * Begin a transaction on a store's current snapshot.
+   * @param {MemoryQuadStore} store - Target store.
+   * @param {Object} [options] - Options.
+   * @param {string} [options.id] - Transaction id; random UUID by default.
+   * @param {string} [options.actor] - Actor name; defaults to anonymous.
+   * @param {string} [options.isolation] - 'snapshot' or 'serializable'.
+   * @param {string} [options.idempotencyKey] - Key making commit replay-safe.
+   * @throws {TypeError} If the store is not a MemoryQuadStore or isolation is unsupported.
+   */
   constructor(store, options = {}) {
     if (!(store instanceof MemoryQuadStore)) throw new TypeError('QuadTransaction requires MemoryQuadStore');
     this.store = store;
@@ -122,10 +201,20 @@ export class QuadTransaction {
     this.state = 'OPEN';
   }
 
+  /**
+   * Assert that the transaction is still open.
+   * @throws {TransactionRefusal} If the transaction is committed or rolled back.
+   */
   ensureOpen() {
     if (this.state !== 'OPEN') throw new TransactionRefusal(`Transaction is ${this.state}`);
   }
 
+  /**
+   * Read quads matching a pattern from the snapshot plus pending operations, recording them in the read set.
+   * @param {Object} [pattern] - Optional subject, predicate, object and graph terms.
+   * @returns {Object[]} Matching quads.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   read(pattern = {}) {
     this.ensureOpen();
     const base = new Map(this.snapshot.quads);
@@ -143,6 +232,11 @@ export class QuadTransaction {
     return results.map(([, quad]) => quad);
   }
 
+  /**
+   * Check whether a quad is present in the transaction's view, recording it in the read set.
+   * @param {Object} quad - RDF/JS quad.
+   * @returns {boolean} True if present.
+   */
   has(quad) {
     const key = quadKey(quad);
     this.readSet.add(key);
@@ -151,6 +245,12 @@ export class QuadTransaction {
     return this.snapshot.quads.has(key);
   }
 
+  /**
+   * Queue a quad addition.
+   * @param {Object} quad - RDF/JS quad.
+   * @returns {QuadTransaction} This transaction, for chaining.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   add(quad) {
     this.ensureOpen();
     const operation = normalizeOperation({ type: 'add', quad });
@@ -158,6 +258,12 @@ export class QuadTransaction {
     return this;
   }
 
+  /**
+   * Queue a quad deletion.
+   * @param {Object} quad - RDF/JS quad.
+   * @returns {QuadTransaction} This transaction, for chaining.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   delete(quad) {
     this.ensureOpen();
     const operation = normalizeOperation({ type: 'delete', quad });
@@ -165,6 +271,11 @@ export class QuadTransaction {
     return this;
   }
 
+  /**
+   * Queue a list of add/delete operations.
+   * @param {Array<{type: string, quad: Object}>} operations - Operations with type 'add' or anything else treated as delete.
+   * @returns {QuadTransaction} This transaction, for chaining.
+   */
   apply(operations) {
     for (const operation of operations) {
       if (operation.type === 'add') this.add(operation.quad);
@@ -173,6 +284,15 @@ export class QuadTransaction {
     return this;
   }
 
+  /**
+   * Register an assertion checked against the preview at commit time.
+   * @param {Function} predicate - Function `(view, transaction)` returning true when satisfied.
+   * @param {string} [message] - Refusal message on failure.
+   * @param {Object} [details] - Refusal details on failure.
+   * @returns {QuadTransaction} This transaction, for chaining.
+   * @throws {TypeError} If predicate is not a function.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   assert(predicate, message = 'Transaction assertion failed', details = {}) {
     this.ensureOpen();
     if (typeof predicate !== 'function') throw new TypeError('assert predicate must be a function');
@@ -180,6 +300,12 @@ export class QuadTransaction {
     return this;
   }
 
+  /**
+   * Record a savepoint of pending operations, read set and assertion count.
+   * @param {string} [name] - Savepoint name; auto-numbered by default.
+   * @returns {string} The savepoint name.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   savepoint(name = `savepoint-${this.savepoints.length + 1}`) {
     this.ensureOpen();
     const point = {
@@ -192,6 +318,12 @@ export class QuadTransaction {
     return name;
   }
 
+  /**
+   * Restore the state recorded at the most recent savepoint with this name, discarding later savepoints.
+   * @param {string} name - Savepoint name.
+   * @returns {QuadTransaction} This transaction, for chaining.
+   * @throws {TransactionRefusal} If the transaction is not open or the savepoint is unknown.
+   */
   rollbackTo(name) {
     this.ensureOpen();
     const index = this.savepoints.map(point => point.name).lastIndexOf(name);
@@ -204,12 +336,22 @@ export class QuadTransaction {
     return this;
   }
 
+  /**
+   * Abort the transaction.
+   * @param {string} [reason] - Reason recorded in the result.
+   * @returns {{transactionId: string, state: string, reason: string}} Rollback result.
+   * @throws {TransactionRefusal} If the transaction is not open.
+   */
   rollback(reason = 'explicit rollback') {
     this.ensureOpen();
     this.state = 'ROLLED_BACK';
     return { transactionId: this.id, state: this.state, reason };
   }
 
+  /**
+   * Find keys changed in the store since the snapshot, among written keys (and read keys under serializable isolation).
+   * @returns {Array<{key: string, changedAt: number, snapshotVersion: number}>} Conflicts.
+   */
   detectConflicts() {
     const keys = new Set(this.operations.keys());
     if (this.isolation === 'serializable') for (const key of this.readSet) keys.add(key);
@@ -221,6 +363,10 @@ export class QuadTransaction {
     return conflicts;
   }
 
+  /**
+   * Compute the quads the store would hold if the pending operations were applied to its current state.
+   * @returns {Object[]} Resulting quads.
+   */
   preview() {
     const map = new Map(this.store.quads);
     for (const operation of this.operations.values()) {
@@ -230,6 +376,14 @@ export class QuadTransaction {
     return [...map.values()];
   }
 
+  /**
+   * Commit pending operations: replays idempotent commits, rejects conflicts and failed assertions, applies operations in key order and issues a hashed receipt.
+   * @param {Object} [options] - Commit options.
+   * @param {Object} [options.metadata] - Metadata included in the receipt.
+   * @returns {Object} Receipt with hashes, applied operations and `replayed` flag.
+   * @throws {TransactionRefusal} If the transaction is not open or an assertion fails.
+   * @throws {TransactionConflict} If conflicting changes were committed.
+   */
   commit(options = {}) {
     this.ensureOpen();
     if (this.idempotencyKey && this.store.idempotency.has(this.idempotencyKey)) {
@@ -278,10 +432,21 @@ export class QuadTransaction {
   }
 }
 
+/**
+ * Begin a transaction on a store.
+ * @param {MemoryQuadStore} store - Target store.
+ * @param {Object} [options] - Options passed to the QuadTransaction constructor.
+ * @returns {QuadTransaction} The open transaction.
+ */
 export function beginTransaction(store, options) {
   return new QuadTransaction(store, options);
 }
 
+/**
+ * Check that a receipt's hash matches its body (ignoring the `replayed` flag).
+ * @param {Object} receipt - Receipt from commit.
+ * @returns {{valid: boolean, reason: string|null}} Verification result.
+ */
 export function verifyTransactionReceipt(receipt) {
   if (!receipt || typeof receipt !== 'object') return { valid: false, reason: 'receipt missing' };
   const { receiptHash, replayed: _replayed, ...body } = receipt;
@@ -289,6 +454,12 @@ export function verifyTransactionReceipt(receipt) {
   return { valid, reason: valid ? null : 'receipt digest mismatch' };
 }
 
+/**
+ * Apply recorded operations to a fresh store seeded with the initial quads and commit them.
+ * @param {Object[]} initialQuads - Starting quads.
+ * @param {Array<{type: string, quad: Object}>} operations - Operations to replay.
+ * @returns {{store: MemoryQuadStore, receipt: Object}} Resulting store and commit receipt.
+ */
 export function replayOperations(initialQuads, operations) {
   const store = new MemoryQuadStore(initialQuads);
   const transaction = beginTransaction(store, { id: 'replay', actor: 'replay' });
