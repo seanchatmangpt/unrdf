@@ -120,6 +120,7 @@ const QUERIES = {
   `,
 
   complex: `
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     SELECT ?category (COUNT(?entity) as ?count) (AVG(xsd:integer(?value)) as ?avgValue)
     WHERE {
       ?entity <http://example.org/category> ?category .

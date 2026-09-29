@@ -8,8 +8,8 @@
  */
 
 import { defineCommand } from 'citty';
-import { formatOutput } from '../../formatters/index.mjs';
-import { createSidecarConfig } from '../../../sidecar/config.mjs';
+import { formatOutput } from '../../../src/domain/formatters/index.mjs';
+import { createSidecarConfig } from '../../../src/sidecar/config.mjs';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { homedir } from 'os';
 import { join, dirname } from 'path';

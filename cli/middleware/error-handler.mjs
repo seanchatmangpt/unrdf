@@ -9,7 +9,7 @@ import {
   getErrorRecoveryGuide,
   WorkflowError,
   ImportError
-} from '@unrdf/core/utils/enhanced-errors';
+} from '../../packages/core/src/utils/enhanced-errors.mjs';
 
 /**
  * Global error handler for CLI

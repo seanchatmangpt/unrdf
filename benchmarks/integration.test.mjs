@@ -12,7 +12,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { Bench } from 'tinybench';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdtempSync } from 'fs';
+import { tmpdir } from 'os';
 import { join } from 'path';
 
 /**
@@ -29,7 +30,7 @@ class BenchmarkRunner {
    */
   async runHookRegistrationBenchmark() {
     return await this.tracer.startActiveSpan('benchmark.hook-registration', async (span) => {
-      const bench = new Bench({ time: 50 });
+      const bench = new Bench({ time: 50, retainSamples: true });
 
       // Simulate hook registration
       const hooks = Array.from({ length: 100 }, (_, i) => ({
@@ -47,9 +48,9 @@ class BenchmarkRunner {
       const task = bench.tasks[0];
       const results = {
         benchmarkId: 'hook-registration',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: task.result.latency.mean,
+        throughput: 1000 / task.result.latency.mean,
+        samples: task.result.latency.samples.length,
       };
 
       span.setAttribute('benchmark.id', 'hook-registration');
@@ -66,7 +67,7 @@ class BenchmarkRunner {
    */
   async runHookExecutionBenchmark() {
     return await this.tracer.startActiveSpan('benchmark.hook-execution', async (span) => {
-      const bench = new Bench({ time: 50 });
+      const bench = new Bench({ time: 50, retainSamples: true });
 
       const hook = {
         id: 'test-hook',
@@ -84,9 +85,9 @@ class BenchmarkRunner {
       const task = bench.tasks[0];
       const results = {
         benchmarkId: 'hook-execution',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: task.result.latency.mean,
+        throughput: 1000 / task.result.latency.mean,
+        samples: task.result.latency.samples.length,
       };
 
       span.setAttribute('benchmark.id', 'hook-execution');
@@ -103,7 +104,7 @@ class BenchmarkRunner {
    */
   async runValidationBenchmark() {
     return await this.tracer.startActiveSpan('benchmark.hook-validation', async (span) => {
-      const bench = new Bench({ time: 50 });
+      const bench = new Bench({ time: 50, retainSamples: true });
 
       // Simple validation function
       const validate = (value) => {
@@ -119,9 +120,9 @@ class BenchmarkRunner {
       const task = bench.tasks[0];
       const results = {
         benchmarkId: 'hook-validation',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: task.result.latency.mean,
+        throughput: 1000 / task.result.latency.mean,
+        samples: task.result.latency.samples.length,
       };
 
       span.setAttribute('benchmark.id', 'hook-validation');
@@ -294,7 +295,7 @@ describe('Benchmark Integration Tests', () => {
 
   beforeAll(() => {
     runner = new BenchmarkRunner();
-    testOutputDir = join(process.cwd(), 'benchmarks', 'test-output');
+    testOutputDir = mkdtempSync(join(tmpdir(), 'unrdf-bench-test-'));
   });
 
   it('should run all 5 benchmarks successfully', async () => {

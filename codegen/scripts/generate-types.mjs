@@ -54,8 +54,9 @@ function parseOntology(filePath) {
       }
 
       // End of package definition
-      if (line === '.') {
+      if (line === '.' || (line.endsWith(' .') && !line.endsWith('" ;'))) {
         if (currentPkg.name) {
+          currentPkg.label = currentPkg.label || currentPkg.name;
           packages.push(currentPkg);
         }
         currentPkg = null;
@@ -93,14 +94,14 @@ export interface PackageRegistry {
 }
 
 export const PACKAGES: Record<string, Package> = {
-${packages.map(pkg => `  '${pkg.name}': {
-    name: '${pkg.name}',
-    version: '${pkg.version}',
-    description: '${pkg.description}',
-    tier: '${pkg.tier}',
-    mainExport: '${pkg.mainExport}',
+${packages.map(pkg => `  ${JSON.stringify(pkg.name)}: {
+    name: ${JSON.stringify(pkg.name)},
+    version: ${JSON.stringify(pkg.version)},
+    description: ${JSON.stringify(pkg.description)},
+    tier: ${JSON.stringify(pkg.tier)},
+    mainExport: ${JSON.stringify(pkg.mainExport)},
     testCoverage: ${pkg.testCoverage},
-    label: '${pkg.label}'
+    label: ${JSON.stringify(pkg.label)}
   }`).join(',\n')}
 };
 
@@ -126,6 +127,16 @@ export function findByTier(tier: 'essential' | 'extended' | 'optional'): Package
   return ts;
 }
 
+// Strip TypeScript-only syntax so the output is valid JavaScript
+function toEsm(ts) {
+  return ts
+    .replace(/export interface \w+ \{[^}]*\}\n\n?/g, '')
+    .replace(/: Record<string, Package>/g, '')
+    .replace(/\(name: string\): Package \| undefined/g, '(name)')
+    .replace(/\(tier: [^)]*\): Package\[\]/g, '(tier)')
+    .replace(/\(\): PackageRegistry/g, '()');
+}
+
 // Main
 async function main() {
   const ontologyPath = path.join(projectRoot, 'schemas', 'unrdf-packages.ttl');
@@ -146,7 +157,7 @@ async function main() {
 
   // Generate ESM version
   const esmPath = path.join(projectRoot, 'codegen', 'generated', 'packages.mjs');
-  const esm = typeScript.replace(/export interface/g, 'export').replace(': Package\[]/g', '');
+  const esm = toEsm(typeScript);
   fs.writeFileSync(esmPath, esm);
   console.log(`   Written: ${esmPath}`);
 

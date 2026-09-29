@@ -12,8 +12,6 @@ import { join } from 'node:path';
 import { formatMarkdownTable, formatDetailedReport } from './framework.mjs';
 
 // Import all benchmark suites
-import { workflowBenchmarks } from './core/workflow-performance.mjs';
-import { engineBenchmarks } from './core/engine-performance.mjs';
 import { sparqlBenchmarks } from './core/sparql-performance.mjs';
 import { federationBenchmarks } from './integration/federation-benchmark.mjs';
 import { streamingBenchmarks } from './integration/streaming-benchmark.mjs';
@@ -28,8 +26,6 @@ import { baselineTestBenchmarks, loadBaseline, saveBaseline, compareToBaseline, 
 
 const BENCHMARK_SUITES = {
   core: [
-    { name: 'Workflow Performance', fn: workflowBenchmarks },
-    { name: 'Engine Performance', fn: engineBenchmarks },
     { name: 'SPARQL Performance', fn: sparqlBenchmarks }
   ],
   integration: [

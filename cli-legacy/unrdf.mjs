@@ -1,1 +1,1 @@
-../src/cli-new.mjs
+../packages/cli/src/cli/main.mjs
