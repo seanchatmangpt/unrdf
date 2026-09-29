@@ -90,7 +90,7 @@ describe('Doctor Auto-Fixes', () => {
     await applyAutoFix({ name: 'N3 import violations' });
     
     expect(fs.writeFileSync).toHaveBeenCalled();
-    const [path, content] = fs.writeFileSync.mock.calls[0];
+    const [, content] = fs.writeFileSync.mock.calls[0];
     expect(content).toContain("import { Parser  } from '@unrdf/core/rdf/n3-justified-only.mjs'");
     expect(content).toContain("import * as N3 from '@unrdf/core/rdf/n3-justified-only.mjs'");
   });
@@ -110,7 +110,7 @@ describe('Doctor Auto-Fixes', () => {
     await applyAutoFix({ name: 'Skipped tests' });
     
     expect(fs.writeFileSync).toHaveBeenCalled();
-    const [path, content] = fs.writeFileSync.mock.calls[0];
+    const [, content] = fs.writeFileSync.mock.calls[0];
     expect(content).toBe("describe('test', () => {}); it('test'); test('test'); it('test');");
   });
 });

@@ -8,7 +8,6 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { checkQuality } from '../../../src/cli/commands/doctor/checks/quality.mjs';
 
 describe('Quality Health Checks', () => {
   let testDir;
