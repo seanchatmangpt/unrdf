@@ -1,6 +1,13 @@
 import { createHash } from 'node:crypto';
 
+/**
+ * Error thrown when a bounded queue using the 'refuse' policy is at capacity.
+ */
 export class BackpressureRefusal extends Error {
+  /**
+   * @param {string} message - Human-readable error message.
+   * @param {object} [details] - Extra context (for example the queue capacity).
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'BackpressureRefusal';
@@ -9,7 +16,14 @@ export class BackpressureRefusal extends Error {
   }
 }
 
+/**
+ * Error signalling that a pipeline or its queue was aborted or closed.
+ */
 export class PipelineAbort extends Error {
+  /**
+   * @param {string} message - Human-readable error message.
+   * @param {object} [details] - Extra context about the abort.
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'PipelineAbort';
@@ -18,37 +32,83 @@ export class PipelineAbort extends Error {
   }
 }
 
+/**
+ * Derives a stable identifier for a stream item: its `id` property when present,
+ * otherwise the SHA-256 hex digest of its JSON serialisation.
+ * @param {*} item - The stream item.
+ * @returns {string} The item identifier.
+ */
 export function itemId(item) {
   if (item && typeof item === 'object' && item.id != null) return String(item.id);
   return createHash('sha256').update(JSON.stringify(item)).digest('hex');
 }
 
+/**
+ * In-memory checkpoint store holding the last checkpoint and the set of
+ * processed item ids per stream.
+ */
 export class MemoryCheckpointStore {
+  /**
+   * @param {Object<string, object>} [initial] - Initial checkpoints keyed by stream id.
+   */
   constructor(initial = {}) {
     this.values = new Map(Object.entries(initial));
     this.seen = new Map();
   }
 
+  /**
+   * Loads the last saved checkpoint for a stream.
+   * @param {string} streamId - Stream identifier.
+   * @returns {Promise<object|null>} The checkpoint, or null when none exists.
+   */
   async load(streamId) {
     return this.values.get(streamId) || null;
   }
 
+  /**
+   * Saves a structured clone of a checkpoint for a stream.
+   * @param {string} streamId - Stream identifier.
+   * @param {object} checkpoint - Checkpoint to store.
+   * @returns {Promise<object>} The checkpoint that was passed in.
+   */
   async save(streamId, checkpoint) {
     this.values.set(streamId, structuredClone(checkpoint));
     return checkpoint;
   }
 
+  /**
+   * Tells whether an item id was already marked as processed for a stream.
+   * @param {string} streamId - Stream identifier.
+   * @param {string} id - Item identifier.
+   * @returns {Promise<boolean>} True if the id was marked seen.
+   */
   async hasSeen(streamId, id) {
     return this.seen.get(streamId)?.has(id) || false;
   }
 
+  /**
+   * Records an item id as processed for a stream.
+   * @param {string} streamId - Stream identifier.
+   * @param {string} id - Item identifier.
+   * @returns {Promise<void>}
+   */
   async markSeen(streamId, id) {
     if (!this.seen.has(streamId)) this.seen.set(streamId, new Set());
     this.seen.get(streamId).add(id);
   }
 }
 
+/**
+ * Bounded async queue with a configurable backpressure policy
+ * ('wait', 'drop-oldest', 'drop-newest' or 'refuse'). Also an async iterator.
+ */
 export class BoundedAsyncQueue {
+  /**
+   * @param {object} [options] - Queue options.
+   * @param {number} [options.capacity] - Maximum buffered items (positive integer).
+   * @param {string} [options.policy] - Behaviour when full: 'wait', 'drop-oldest', 'drop-newest' or 'refuse'.
+   * @throws {TypeError} If capacity or policy is invalid.
+   */
   constructor({ capacity = 100, policy = 'wait' } = {}) {
     if (!Number.isInteger(capacity) || capacity < 1) throw new TypeError('capacity must be a positive integer');
     if (!['wait', 'drop-oldest', 'drop-newest', 'refuse'].includes(policy)) throw new TypeError(`Unknown backpressure policy: ${policy}`);
@@ -61,8 +121,19 @@ export class BoundedAsyncQueue {
     this.stats = { accepted: 0, dropped: 0, refused: 0, peakDepth: 0 };
   }
 
+  /**
+   * Number of items currently buffered.
+   * @returns {number} Buffered item count.
+   */
   get size() { return this.items.length; }
 
+  /**
+   * Adds a value to the queue, applying the backpressure policy when full.
+   * @param {*} value - Value to enqueue.
+   * @returns {Promise<{accepted: boolean, dropped: *}>} Admission result; `dropped` holds a value discarded by the policy, or null.
+   * @throws {PipelineAbort} If the queue is closed.
+   * @throws {BackpressureRefusal} If the queue is full and the policy is 'refuse'.
+   */
   async push(value) {
     if (this.closed) throw new PipelineAbort('queue is closed');
     if (this.readers.length) {
@@ -95,6 +166,10 @@ export class BoundedAsyncQueue {
     return new Promise((resolve, reject) => this.writers.push({ value, resolve, reject }));
   }
 
+  /**
+   * Takes the next value, waiting for one if the queue is empty.
+   * @returns {Promise<{value: *, done: boolean}>} Iterator result; done is true once the queue is closed and drained.
+   */
   shift() {
     if (this.items.length) {
       const value = this.items.shift();
@@ -105,6 +180,11 @@ export class BoundedAsyncQueue {
     return new Promise((resolve, reject) => this.readers.push({ resolve, reject }));
   }
 
+  /**
+   * Admits the oldest waiting writer (from the 'wait' policy) into the freed slot,
+   * or hands its value straight to a waiting reader.
+   * @returns {void}
+   */
   drainWriter() {
     if (!this.writers.length || this.closed) return;
     const writer = this.writers.shift();
@@ -121,6 +201,11 @@ export class BoundedAsyncQueue {
     writer.resolve({ accepted: true, dropped: null });
   }
 
+  /**
+   * Closes the queue, releasing waiting readers and rejecting waiting writers.
+   * @param {Error|null} [error] - If given, waiting readers and writers are rejected with it.
+   * @returns {void}
+   */
   close(error = null) {
     if (this.closed) return;
     this.closed = true;
@@ -134,7 +219,15 @@ export class BoundedAsyncQueue {
     }
   }
 
+  /**
+   * Makes the queue usable in `for await` loops.
+   * @returns {BoundedAsyncQueue} The queue itself.
+   */
   [Symbol.asyncIterator]() { return this; }
+  /**
+   * Async iterator step; equivalent to {@link BoundedAsyncQueue#shift}.
+   * @returns {Promise<{value: *, done: boolean}>} Iterator result.
+   */
   next() { return this.shift(); }
 }
 
@@ -167,6 +260,13 @@ async function executeWithRetry(item, handler, options, signal) {
   throw Object.assign(lastError || new Error('handler failed'), { attempts: attempt + 1 });
 }
 
+/**
+ * Splits an array into consecutive batches of at most `size` items.
+ * @param {Array} items - Items to split.
+ * @param {number} size - Maximum batch size (positive integer).
+ * @returns {Array<Array>} The batches.
+ * @throws {TypeError} If size is not a positive integer.
+ */
 export function batchBySize(items, size) {
   if (!Number.isInteger(size) || size < 1) throw new TypeError('batch size must be positive');
   const batches = [];
@@ -174,6 +274,18 @@ export function batchBySize(items, size) {
   return batches;
 }
 
+/**
+ * Runs a source through a handler with bounded concurrency, retries with
+ * exponential backoff, backpressure, optional exactly-once de-duplication,
+ * in-order checkpoint commits and a dead-letter callback.
+ * @param {AsyncIterable|Iterable} source - Items to process.
+ * @param {Function} handler - Async function `(item, {attempt, signal}) => value` applied to each item.
+ * @param {object} [options] - Pipeline options (streamId, concurrency, capacity, backpressure, retries,
+ *   retryDelayMs, maxRetryDelayMs, exactlyOnce, failFast, checkpointStore, signal, id, offset, deadLetter, now).
+ * @returns {Promise<{streamId: string, processed: number, failures: Array, committed: Array, checkpoint: object|null, queue: object}>} Run summary.
+ * @throws {TypeError} If concurrency is not a positive integer.
+ * @throws {Error} The source error, a worker error, or the item error when failFast is set.
+ */
 export async function runCheckpointedPipeline(source, handler, options = {}) {
   const config = {
     streamId: options.streamId || 'default',
