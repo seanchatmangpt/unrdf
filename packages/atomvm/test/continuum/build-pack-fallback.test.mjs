@@ -1,29 +1,18 @@
 /**
- * scripts/build.mjs must produce a runnable .avm on a machine that has erlc but
- * no PackBEAM, by falling back to the JS packer. Real erlc, real packer, real
- * AtomVM (wasm launcher) - no mocks. Skipped when erlc is not installed.
+ * scripts/build.mjs and scripts/pack-beam.mjs must produce a runnable .avm on a machine
+ * without PackBEAM by falling back to the JS packer. Real packer, real AtomVM (wasm
+ * launcher), no mocks and no compiler needed: the beam is a committed fixture.
  */
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { buildModule } from '../../scripts/build.mjs';
 import { resolvePacker, packBeamFile } from '../../scripts/pack-beam.mjs';
 import { parseAvm } from '../../src/avm-packer.mjs';
 import { PACKAGE_ROOT } from './helpers.mjs';
 
-const erlc = spawnSync('sh', ['-c', 'command -v erlc'], { encoding: 'utf8' }).stdout.trim();
 const LAUNCHER = join(PACKAGE_ROOT, 'bin/atomvm-wasm.mjs');
-const saved = { PATH: process.env.PATH, PACKBEAM_BIN: process.env.PACKBEAM_BIN, ERLC_BIN: process.env.ERLC_BIN };
-
-afterEach(() => {
-  for (const [key, value] of Object.entries(saved)) {
-    if (value === undefined) delete process.env[key];
-    else process.env[key] = value;
-  }
-});
-
 describe('resolvePacker', () => {
   it('falls back to the JS packer when PackBEAM is not on PATH', () => {
     const empty = mkdtempSync(join(tmpdir(), 'no-packbeam-'));
@@ -44,24 +33,20 @@ describe('resolvePacker', () => {
   });
 });
 
-describe.skipIf(!erlc)('scripts/build.mjs without PackBEAM', () => {
-  it('compiles with erlc, packs with the JS packer, and the result runs on AtomVM', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'build-fallback-'));
-    const srcDir = join(dir, 'erl');
-    const publicDir = join(dir, 'out');
-    mkdirSync(srcDir);
+describe('packing without PackBEAM', () => {
+  it('packs a precompiled beam with the JS packer and the result runs on AtomVM', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'pack-fallback-'));
+    const avmFile = join(dir, 'fallback_probe.avm');
     const empty = mkdtempSync(join(tmpdir(), 'empty-path-'));
-    process.env.ERLC_BIN = erlc; // absolute, so an empty PATH still finds it
-    delete process.env.PACKBEAM_BIN;
-    process.env.PATH = empty;
 
-    const built = await buildModule('fallback_probe', { srcDir, publicDir });
-    process.env.PATH = saved.PATH;
+    const packed = packBeamFile(avmFile, join(PACKAGE_ROOT, 'test/fixtures/beams/fallback_probe.beam'), {
+      PATH: empty, // no PackBEAM reachable
+    });
 
-    expect(built.packer).toBe('js');
-    const parsed = parseAvm(new Uint8Array(readFileSync(built.avmFile)));
+    expect(packed.kind).toBe('js');
+    const parsed = parseAvm(new Uint8Array(readFileSync(avmFile)));
     expect(parsed.startModule).toBe('fallback_probe.beam');
-    const run = spawnSync(process.execPath, [LAUNCHER, built.avmFile], { encoding: 'utf8', timeout: 15_000 });
+    const run = spawnSync(process.execPath, [LAUNCHER, avmFile], { encoding: 'utf8', timeout: 15_000 });
     expect(run.status).toBe(0);
     expect(run.stdout).toContain('{atomvm_module_alive,fallback_probe}');
     expect(run.stdout).toContain('Return value: ok');
