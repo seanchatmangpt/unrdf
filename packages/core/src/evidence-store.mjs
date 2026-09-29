@@ -38,7 +38,7 @@ export class EvidenceStore {
   verify() {
     const failures = [];
     for (const [digest, record] of this.#records) {
-      const { digest: ignored, ...body } = record;
+      const { digest: _ignored, ...body } = record;
       if (hashCanonical(body) !== digest) failures.push({ digest, code: 'EVIDENCE_DIGEST_MISMATCH' });
     }
     return { valid: failures.length === 0, count: this.#records.size, failures, root: this.root() };

@@ -6,12 +6,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { executeQuerySync } from '@unrdf/core/sparql/executor-sync';
 import {
-  initializeEmbeddings,
   generateEmbedding,
   generateEmbeddingsBatch,
   cosineSimilarity,
-  generateQueryEmbedding,
-  generateQuadEmbedding,
   clearEmbeddingCache,
   getCacheStats,
 } from '@unrdf/core/sparql/embeddings';
@@ -27,7 +24,7 @@ import {
   clearSemanticIndex,
   getSemanticIndexStats,
 } from '@unrdf/core/sparql/semantic-executor';
-import { namedNode, literal, quad, blankNode } from '@unrdf/test-utils';
+import { namedNode, literal, quad } from '@unrdf/test-utils';
 import { OxigraphStore } from '@unrdf/oxigraph';
 
 describe('Semantic Query Engine', () => {
@@ -322,7 +319,7 @@ describe('Semantic Query Engine', () => {
         WHERE { ?s rdf:type ex:Person }
       `;
       const startExact = performance.now();
-      const exactResults = executeQuerySync(store, sparql);
+      executeQuerySync(store, sparql);
       const exactTime = performance.now() - startExact;
       const startSemantic = performance.now();
       const semanticResults = await executeSemanticQuery(store, sparql, {
