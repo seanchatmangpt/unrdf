@@ -12,7 +12,7 @@ const nextConfig = {
   trailingSlash: true,
 
   // External packages for server components
-  serverExternalPackages: ['@unrdf/oxigraph', 'isomorphic-git'],
+  serverExternalPackages: ['@unrdf/oxigraph', 'oxigraph', 'isomorphic-git'],
 
   // Webpack configuration for WASM support (Oxigraph)
   webpack: (config, { isServer }) => {

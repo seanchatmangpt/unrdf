@@ -58,3 +58,4 @@ generated/
 # Local/CI build receipts (atomvm pattern gates, interchangeable-parts)
 .build/
 **/.build/
+.artifacts/
