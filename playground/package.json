@@ -31,7 +31,7 @@
     "test:integration:watch": "vitest --config test/integration.config.mjs --watch",
     "test:integration:coverage": "vitest run --config test/integration.config.mjs --coverage",
     "test:integration:ui": "vitest --config test/integration.config.mjs --ui",
-    "lint": "eslint src/ --ext .mjs",
+    "lint": "eslint src/",
     "typecheck": "tsc --noEmit --allowJs src/",
     "gen:completions": "node scripts/generate-completions.mjs",
     "gen:ontology": "node scripts/generate-ontology.mjs"
