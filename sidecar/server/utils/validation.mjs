@@ -60,7 +60,7 @@ export const rdfQuadSchema = z.object({
 export const applyTransactionSchema = z.object({
   delta: z.array(rdfQuadSchema).min(1, 'Delta must contain at least one quad'),
   author: z.string().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 })
 
 /**
@@ -108,7 +108,7 @@ export const executeEffectSchema = z.object({
   effectId: z.string()
     .min(1, 'Effect ID is required')
     .max(100, 'Effect ID too long'),
-  input: z.record(z.any())
+  input: z.record(z.string(), z.any())
     .optional()
     .default({})
 })
@@ -119,7 +119,7 @@ export const executeEffectSchema = z.object({
 export const initLockchainSchema = z.object({
   repoUrl: z.string().url('Invalid repository URL'),
   branch: z.string().optional(),
-  credentials: z.record(z.any()).optional()
+  credentials: z.record(z.string(), z.any()).optional()
 })
 
 /**

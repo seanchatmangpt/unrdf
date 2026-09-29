@@ -87,7 +87,7 @@ export class SidecarClient extends EventEmitter {
     const sidecarAddress = address || this.options.address || this.config.getAddress();
 
     // Load proto file
-    const protoPath = this.options.protoPath || join(__dirname, '../../proto/kgc-sidecar.proto');
+    const protoPath = this.options.protoPath || join(__dirname, '../proto/kgc-sidecar.proto');
     const packageDefinition = protoLoader.loadSync(protoPath, {
       keepCase: true,
       longs: String,

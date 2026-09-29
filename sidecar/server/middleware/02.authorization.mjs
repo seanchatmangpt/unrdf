@@ -9,6 +9,7 @@
  * - Logs denied access attempts
  */
 
+import { defineEventHandler, createError, getMethod, getRequestHeader, getQuery, getRequestIP } from '#imports';
 import { trace } from '@opentelemetry/api';
 import { getRBACEngine, Resources, Actions } from '../utils/rbac.mjs';
 import logger from '../utils/logger.mjs';
@@ -43,8 +44,8 @@ function pathToResource(path) {
   // Extract resource from path
   if (path.startsWith('/api/hooks')) return Resources.KNOWLEDGE_HOOK;
   if (path.startsWith('/api/effects')) return Resources.EFFECT;
-  if (path.startsWith('/api/transactions')) return Resources.TRANSACTION;
-  if (path.startsWith('/api/policies')) return Resources.POLICY;
+  if (path.startsWith('/api/transaction')) return Resources.TRANSACTION;
+  if (path.startsWith('/api/policy') || path.startsWith('/api/policies')) return Resources.POLICY;
   if (path.startsWith('/api/admin/roles')) return Resources.ROLE;
   if (path.startsWith('/api/admin')) return Resources.SYSTEM;
   if (path.startsWith('/api/audit')) return Resources.AUDIT_LOG;
@@ -53,248 +54,190 @@ function pathToResource(path) {
 }
 
 /**
- * Authorization middleware
- * Validates user permissions using RBAC
+ * Public endpoints that skip authorization (authentication is skipped for the same set in 00.auth)
  */
-export default async function authorizationMiddleware(req, res, next) {
+const PUBLIC_PATHS = [
+  '/api/health',
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/refresh',
+  '/metrics',
+  '/docs',
+  '/openapi.json',
+  '/_nuxt',
+  '/favicon.ico'
+];
+
+/**
+ * Build an h3 error
+ * @param {number} statusCode
+ * @param {string} statusText
+ * @param {string} message
+ * @param {Object} [data]
+ * @returns {Error}
+ */
+function httpError(statusCode, statusText, message, data) {
+  return createError({ statusCode, statusMessage: statusText, message, data });
+}
+
+/**
+ * Authorization middleware (h3 event handler)
+ * Validates user permissions using RBAC. Requires 00.auth to have set event.context.auth.
+ */
+export default defineEventHandler(async (event) => {
   return tracer.startActiveSpan('authorization.middleware', async (span) => {
     try {
-      // Skip authorization for public endpoints
-      const publicPaths = [
-        '/health',
-        '/metrics',
-        '/api/auth/login',
-        '/api/auth/register',
-        '/docs',
-        '/openapi.json'
-      ];
+      const path = (event.path || event.node.req.url || '').split('?')[0];
+      const method = getMethod(event);
 
-      if (publicPaths.some(path => req.path.startsWith(path))) {
+      // Only API routes are subject to RBAC; pages/assets are not
+      if (!path.startsWith('/api/') || PUBLIC_PATHS.some(p => path.startsWith(p))) {
         span.setAttribute('authorization.skipped', true);
-        span.setAttribute('authorization.reason', 'public_endpoint');
-        return next();
+        return;
       }
 
-      // Check if user is authenticated
-      if (!req.user || !req.user.id) {
+      const auth = event.context.auth;
+      if (!auth || !auth.userId) {
         span.setAttribute('authorization.failed', true);
         span.setAttribute('authorization.reason', 'not_authenticated');
-
-        logger.warn('Authorization failed: Not authenticated', {
-          path: req.path,
-          method: req.method,
-          ip: req.ip
-        });
-
-        return res.status(401).json({
-          error: 'Unauthorized',
-          message: 'Authentication required'
-        });
+        logger.warn('Authorization failed: Not authenticated', { path, method });
+        throw httpError(401, 'Unauthorized', 'Authentication required');
       }
 
-      const userId = req.user.id;
-      const roles = req.user.roles || [];
+      const userId = auth.userId;
+      const roles = auth.roles || [];
 
       span.setAttributes({
         'authorization.user_id': userId,
         'authorization.roles': roles.join(','),
-        'authorization.path': req.path,
-        'authorization.method': req.method
+        'authorization.path': path,
+        'authorization.method': method
       });
 
-      // Get RBAC engine
       const rbac = getRBACEngine();
 
-      // Ensure user has roles assigned
-      const userRoles = rbac.getUserRoles(userId);
-      if (userRoles.length === 0 && roles.length > 0) {
-        // Auto-assign roles from JWT if not already in RBAC
+      // Auto-assign roles from the JWT if the RBAC engine does not know the user yet
+      if (rbac.getUserRoles(userId).length === 0) {
         for (const role of roles) {
           rbac.assignRole(userId, role);
         }
       }
 
-      // Determine resource and action
-      const resource = pathToResource(req.path);
-      const action = methodToAction(req.method);
+      const resource = pathToResource(path);
+      const action = methodToAction(method);
 
       span.setAttributes({
         'authorization.resource': resource,
         'authorization.action': action
       });
 
-      // Collect attributes for ABAC
       const attributes = {
-        path: req.path,
-        method: req.method,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'],
-        // Add any additional context
-        body: req.body,
-        query: req.query,
-        params: req.params
+        path,
+        method,
+        ip: getRequestIP(event),
+        userAgent: getRequestHeader(event, 'user-agent'),
+        query: getQuery(event)
       };
 
-      // Evaluate authorization
+      let decision;
       try {
-        const decision = await rbac.evaluate(userId, resource, action, attributes);
-
-        span.setAttribute('authorization.decision', decision.allowed ? 'allow' : 'deny');
-        span.setAttribute('authorization.decision_id', decision.decisionId);
-
-        if (!decision.allowed) {
-          // Log denied access
-          logger.warn('Authorization denied', {
-            userId,
-            resource,
-            action,
-            path: req.path,
-            method: req.method,
-            reason: decision.reason,
-            decisionId: decision.decisionId,
-            ip: req.ip
-          });
-
-          // Attach decision to response for audit
-          res.locals.authDecision = decision;
-
-          return res.status(403).json({
-            error: 'Forbidden',
-            message: decision.reason,
-            decisionId: decision.decisionId
-          });
-        }
-
-        // Access granted
-        logger.debug('Authorization granted', {
-          userId,
-          resource,
-          action,
-          path: req.path,
-          decisionId: decision.decisionId
-        });
-
-        // Attach decision to request for downstream use
-        req.authDecision = decision;
-        res.locals.authDecision = decision;
-
-        next();
+        decision = await rbac.evaluate(userId, resource, action, attributes);
       } catch (error) {
         span.recordException(error);
-
         logger.error('Authorization evaluation error', {
           error: error.message,
           userId,
           resource,
           action,
-          path: req.path
+          path
         });
-
-        return res.status(500).json({
-          error: 'Internal Server Error',
-          message: 'Authorization evaluation failed'
-        });
+        throw httpError(500, 'Internal Server Error', 'Authorization evaluation failed');
       }
-    } catch (error) {
-      span.recordException(error);
-      logger.error('Authorization middleware error', { error: error.message });
 
-      return res.status(500).json({
-        error: 'Internal Server Error',
-        message: 'Authorization failed'
+      span.setAttribute('authorization.decision', decision.allowed ? 'allow' : 'deny');
+      span.setAttribute('authorization.decision_id', decision.decisionId);
+      event.context.authDecision = decision;
+
+      if (!decision.allowed) {
+        logger.warn('Authorization denied', {
+          userId,
+          resource,
+          action,
+          path,
+          method,
+          reason: decision.reason,
+          decisionId: decision.decisionId
+        });
+        throw httpError(403, 'Forbidden', decision.reason, { decisionId: decision.decisionId });
+      }
+
+      logger.debug('Authorization granted', {
+        userId,
+        resource,
+        action,
+        path,
+        decisionId: decision.decisionId
       });
+    } catch (error) {
+      if (!error.statusCode) {
+        span.recordException(error);
+        logger.error('Authorization middleware error', { error: error.message });
+        throw httpError(500, 'Internal Server Error', 'Authorization failed');
+      }
+      throw error;
     } finally {
       span.end();
     }
   });
-}
+});
 
 /**
- * Create role-checking middleware
- * @param {string[]} requiredRoles
- * @returns {Function}
+ * Assert that the authenticated user holds at least one of the roles.
+ * Call from inside an h3 handler.
+ * @param {import('h3').H3Event} event
+ * @param {...string} requiredRoles
+ * @throws {Error} h3 401/403 error
  */
-export function requireRoles(...requiredRoles) {
-  return async (req, res, next) => {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Authentication required'
-      });
-    }
+export function requireRoles(event, ...requiredRoles) {
+  const userId = event.context.auth?.userId;
+  if (!userId) {
+    throw httpError(401, 'Unauthorized', 'Authentication required');
+  }
 
-    const rbac = getRBACEngine();
-    const userRoles = rbac.getUserRoles(req.user.id);
-
-    const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
-
-    if (!hasRequiredRole) {
-      logger.warn('Role check failed', {
-        userId: req.user.id,
-        requiredRoles,
-        userRoles,
-        path: req.path
-      });
-
-      return res.status(403).json({
-        error: 'Forbidden',
-        message: `Required role: ${requiredRoles.join(' or ')}`
-      });
-    }
-
-    next();
-  };
+  const userRoles = getRBACEngine().getUserRoles(userId);
+  if (!requiredRoles.some(role => userRoles.includes(role))) {
+    logger.warn('Role check failed', { userId, requiredRoles, userRoles, path: event.path });
+    throw httpError(403, 'Forbidden', `Required role: ${requiredRoles.join(' or ')}`);
+  }
 }
 
 /**
- * Create permission-checking middleware
+ * Assert that the authenticated user holds a permission.
+ * Call from inside an h3 handler.
+ * @param {import('h3').H3Event} event
  * @param {string} resource
  * @param {string} action
- * @returns {Function}
+ * @returns {Promise<Object>} the RBAC decision
+ * @throws {Error} h3 401/403/500 error
  */
-export function requirePermission(resource, action) {
-  return async (req, res, next) => {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Authentication required'
-      });
-    }
+export async function requirePermission(event, resource, action) {
+  const userId = event.context.auth?.userId;
+  if (!userId) {
+    throw httpError(401, 'Unauthorized', 'Authentication required');
+  }
 
-    const rbac = getRBACEngine();
+  let decision;
+  try {
+    decision = await getRBACEngine().evaluate(userId, resource, action);
+  } catch (error) {
+    logger.error('Permission check error', { error: error.message, userId, resource, action });
+    throw httpError(500, 'Internal Server Error', 'Permission check failed');
+  }
 
-    try {
-      const decision = await rbac.evaluate(req.user.id, resource, action);
-
-      if (!decision.allowed) {
-        logger.warn('Permission check failed', {
-          userId: req.user.id,
-          resource,
-          action,
-          reason: decision.reason
-        });
-
-        return res.status(403).json({
-          error: 'Forbidden',
-          message: decision.reason,
-          decisionId: decision.decisionId
-        });
-      }
-
-      req.authDecision = decision;
-      next();
-    } catch (error) {
-      logger.error('Permission check error', {
-        error: error.message,
-        userId: req.user.id,
-        resource,
-        action
-      });
-
-      return res.status(500).json({
-        error: 'Internal Server Error',
-        message: 'Permission check failed'
-      });
-    }
-  };
+  if (!decision.allowed) {
+    logger.warn('Permission check failed', { userId, resource, action, reason: decision.reason });
+    throw httpError(403, 'Forbidden', decision.reason, { decisionId: decision.decisionId });
+  }
+  event.context.authDecision = decision;
+  return decision;
 }

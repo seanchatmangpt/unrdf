@@ -10,6 +10,7 @@
  * @module sidecar/middleware/rate-limit
  */
 
+import { defineEventHandler, createError, getMethod, getRequestHeader, getRequestIP, setResponseHeaders } from '#imports';
 import { RateLimiterRedis, RateLimiterMemory } from 'rate-limiter-flexible';
 import Redis from 'ioredis';
 import { trace, context, SpanStatusCode } from '@opentelemetry/api';
@@ -138,20 +139,22 @@ function getAdaptiveLimit(basePoints, systemLoad) {
 
 /**
  * Determine rate limiter type based on request
+ * @param {string} path - Request path
+ * @param {boolean} authenticated - Whether the request carries credentials
  */
-function getRateLimiterType(req) {
+function getRateLimiterType(path, authenticated) {
   // Admin endpoints
-  if (req.path.startsWith('/api/admin')) {
+  if (path.startsWith('/api/admin')) {
     return 'admin';
   }
 
   // SPARQL query endpoints
-  if (req.path.includes('/sparql') || req.path.includes('/query')) {
+  if (path.includes('/sparql') || path.includes('/query')) {
     return 'sparql';
   }
 
   // Authenticated vs unauthenticated
-  if (req.user || req.headers.authorization) {
+  if (authenticated) {
     return 'authenticated';
   }
 
@@ -160,42 +163,43 @@ function getRateLimiterType(req) {
 
 /**
  * Get rate limit key (user ID or IP address)
+ * @param {import('h3').H3Event} event
+ * @param {string} type
  */
-function getRateLimitKey(req, type) {
-  if (type === 'authenticated' && req.user?.id) {
-    return `user:${req.user.id}`;
+function getRateLimitKey(event, type) {
+  const userId = event.context.auth?.userId;
+  if (type === 'authenticated' && userId) {
+    return `user:${userId}`;
   }
 
   // Get IP from various headers (considering proxies)
-  const ip = req.headers['x-forwarded-for']?.split(',')[0].trim()
-    || req.headers['x-real-ip']
-    || req.connection?.remoteAddress
-    || req.socket?.remoteAddress
-    || 'unknown';
+  const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown';
 
   return `ip:${ip}`;
 }
 
 /**
- * Rate limiting middleware
+ * Rate limiting middleware (h3 event handler)
  */
-export async function rateLimitMiddleware(req, res, next) {
+const rateLimitHandler = defineEventHandler(async (event) => {
+  const path = (event.path || event.node.req.url || '').split('?')[0];
   const span = tracer.startSpan('rate-limit-check', {
     attributes: {
-      'http.method': req.method,
-      'http.url': req.path,
+      'http.method': getMethod(event),
+      'http.url': path,
     },
   });
 
   try {
     // Determine limiter type and key
-    const limiterType = getRateLimiterType(req);
-    const rateLimitKey = getRateLimitKey(req, limiterType);
+    const authenticated = Boolean(event.context.auth || getRequestHeader(event, 'authorization'));
+    const limiterType = getRateLimiterType(path, authenticated);
+    const rateLimitKey = getRateLimitKey(event, limiterType);
     const limiter = rateLimiters[limiterType];
 
     if (!limiter) {
       span.setStatus({ code: SpanStatusCode.ERROR, message: 'Rate limiter not configured' });
-      return next();
+      return;
     }
 
     // Get system load for adaptive limiting
@@ -211,38 +215,22 @@ export async function rateLimitMiddleware(req, res, next) {
       'rate_limit.system_load': systemLoad,
     });
 
+    let rateLimitResult;
     try {
       // Consume 1 point
-      const rateLimitResult = await limiter.consume(rateLimitKey, 1);
-
-      // Add rate limit headers
-      res.setHeader('X-RateLimit-Limit', adaptivePoints);
-      res.setHeader('X-RateLimit-Remaining', rateLimitResult.remainingPoints);
-      res.setHeader('X-RateLimit-Reset', new Date(Date.now() + rateLimitResult.msBeforeNext).toISOString());
-
-      // Record metrics
-      if (metrics?.rateLimitCounter) {
-        metrics.rateLimitCounter.add(1, {
-          type: limiterType,
-          status: 'allowed',
-          adaptive: systemLoad > LOAD_THRESHOLDS.normal,
-        });
-      }
-
-      span.setStatus({ code: SpanStatusCode.OK });
-      next();
-
+      rateLimitResult = await limiter.consume(rateLimitKey, 1);
     } catch (rateLimitError) {
-      if (rateLimitError instanceof Error && rateLimitError.remainingPoints !== undefined) {
-        // Rate limit exceeded
+      // rate-limiter-flexible rejects with a RateLimiterRes (not an Error) when the limit is exceeded
+      if (!(rateLimitError instanceof Error) && rateLimitError?.remainingPoints !== undefined) {
         const retryAfter = Math.ceil(rateLimitError.msBeforeNext / 1000);
 
-        res.setHeader('X-RateLimit-Limit', adaptivePoints);
-        res.setHeader('X-RateLimit-Remaining', 0);
-        res.setHeader('X-RateLimit-Reset', new Date(Date.now() + rateLimitError.msBeforeNext).toISOString());
-        res.setHeader('Retry-After', retryAfter);
+        setResponseHeaders(event, {
+          'X-RateLimit-Limit': String(adaptivePoints),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': new Date(Date.now() + rateLimitError.msBeforeNext).toISOString(),
+          'Retry-After': String(retryAfter),
+        });
 
-        // Record metrics
         if (metrics?.rateLimitCounter) {
           metrics.rateLimitCounter.add(1, {
             type: limiterType,
@@ -257,31 +245,47 @@ export async function rateLimitMiddleware(req, res, next) {
         });
         span.setStatus({ code: SpanStatusCode.OK, message: 'Rate limit exceeded' });
 
-        return res.status(429).json({
-          error: 'Too Many Requests',
+        throw createError({
+          statusCode: 429,
+          statusMessage: 'Too Many Requests',
           message: `Rate limit exceeded for ${limiterType} requests`,
-          retryAfter,
-          limit: adaptivePoints,
-          type: limiterType,
+          data: { retryAfter, limit: adaptivePoints, type: limiterType },
         });
       }
 
-      // Other errors - allow request to proceed
+      // Limiter backend failure (e.g. Redis down) - fail open, but not silently
       console.error('[RateLimit] Error checking rate limit:', rateLimitError);
       span.recordException(rateLimitError);
-      next();
+      return;
     }
 
+    setResponseHeaders(event, {
+      'X-RateLimit-Limit': String(adaptivePoints),
+      'X-RateLimit-Remaining': String(rateLimitResult.remainingPoints),
+      'X-RateLimit-Reset': new Date(Date.now() + rateLimitResult.msBeforeNext).toISOString(),
+    });
+
+    if (metrics?.rateLimitCounter) {
+      metrics.rateLimitCounter.add(1, {
+        type: limiterType,
+        status: 'allowed',
+        adaptive: systemLoad > LOAD_THRESHOLDS.normal,
+      });
+    }
+
+    span.setStatus({ code: SpanStatusCode.OK });
   } catch (err) {
+    if (err.statusCode === 429) {
+      throw err;
+    }
+    // Unexpected error - fail open, but log
     console.error('[RateLimit] Unexpected error:', err);
     span.recordException(err);
     span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
-    // On error, allow request to proceed
-    next();
   } finally {
     span.end();
   }
-}
+});
 
 /**
  * Get rate limit status for a key (used by admin endpoints)
@@ -345,4 +349,7 @@ process.on('SIGTERM', () => {
   }
 });
 
-export default rateLimitMiddleware;
+/** Named export retained for backward compatibility (same h3 handler as the default export). */
+export const rateLimitMiddleware = rateLimitHandler;
+
+export default rateLimitHandler;

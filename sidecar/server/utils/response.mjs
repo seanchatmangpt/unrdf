@@ -78,7 +78,7 @@ export function sendValidationError(event, zodError) {
     error: {
       code: 'VALIDATION_ERROR',
       message: 'Request validation failed',
-      issues: zodError.errors.map(err => ({
+      issues: zodError.issues.map(err => ({
         path: err.path.join('.'),
         message: err.message,
         code: err.code

@@ -19,7 +19,7 @@ const tracer = trace.getTracer('unrdf-sidecar-admin')
  */
 const byzantineOperationSchema = z.object({
   operation: z.string().min(1, 'Operation identifier required'),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   requireConsensus: z.boolean().optional().default(true)
 })
 
