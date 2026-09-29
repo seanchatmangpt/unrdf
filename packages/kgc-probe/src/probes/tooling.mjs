@@ -298,10 +298,10 @@ async function probeShells(timeout) {
 
 /**
  * Probes for build tools (make, cmake)
- * @param {number} timeout - Timeout in milliseconds
+ * @param {number} _timeout - Timeout in milliseconds (currently unused)
  * @returns {Promise<Observation[]>}
  */
-async function probeBuildTools(timeout) {
+async function probeBuildTools(_timeout) {
   // NOTE: make and cmake are NOT in allowlist
   // Return observations with guardDecision: "denied"
   const tools = ['make', 'cmake'];

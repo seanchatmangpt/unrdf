@@ -2,6 +2,15 @@
 
 import { createHash } from 'node:crypto';
 
+/**
+ * Convert a value into a JSON-safe, key-sorted canonical form so equal values serialize identically.
+ * Non-JSON values are tagged ($number, $bigint, $undefined, $date, $bytes, $set, $map); functions,
+ * symbols and cyclic structures throw a TypeError.
+ * @param {*} value - Value to canonicalize
+ * @param {Set<object>} [active] - Objects currently being visited (used for cycle detection)
+ * @returns {*} Canonical JSON-serializable representation
+ * @throws {TypeError} If the value is a function, symbol, or contains a cycle
+ */
 export function canonicalize(value, active = new Set()) {
   if (value === null || ['string', 'boolean'].includes(typeof value)) return value;
   if (typeof value === 'number') {
@@ -31,17 +40,40 @@ export function canonicalize(value, active = new Set()) {
   }
 }
 
+/**
+ * Serialize a value to its canonical JSON string.
+ * @param {*} value - Value to serialize
+ * @returns {string} Canonical JSON text
+ */
 export function canonicalJson(value) { return JSON.stringify(canonicalize(value)); }
 
+/**
+ * Hash the canonical JSON form of a value.
+ * @param {*} value - Value to hash
+ * @param {string} [algorithm] - Node crypto hash algorithm name
+ * @returns {string} Hex digest
+ */
 export function digest(value, algorithm = 'sha256') {
   return createHash(algorithm).update(canonicalJson(value)).digest('hex');
 }
 
+/**
+ * Derive a UUID-shaped identifier, prefixed with the namespace, from the hash of (namespace, value).
+ * @param {string} namespace - Namespace prefix for the identifier
+ * @param {*} value - Value the identifier is derived from
+ * @returns {string} Deterministic identifier of the form `namespace-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+ */
 export function deterministicId(namespace, value) {
   const hash = digest({ namespace, value });
   return `${namespace}-${hash.slice(0, 8)}-${hash.slice(8, 12)}-${hash.slice(12, 16)}-${hash.slice(16, 20)}-${hash.slice(20, 32)}`;
 }
 
+/**
+ * Compute the identity hash of an observation from its agent, kind, severity, subject,
+ * predicate, object and evidence (timestamp and id are excluded).
+ * @param {Object} observation - Observation to identify
+ * @returns {string} Hex digest identifying the observation
+ */
 export function observationIdentity(observation) {
   return digest({
     agent: observation.agent,
@@ -54,6 +86,11 @@ export function observationIdentity(observation) {
   });
 }
 
+/**
+ * Return a copy of the observations sorted by agent, kind, subject, predicate, object, timestamp and id.
+ * @param {Iterable<Object>} observations - Observations to sort (input is not mutated)
+ * @returns {Object[]} New sorted array
+ */
 export function sortObservations(observations) {
   return [...observations].sort((left, right) => {
     const a = `${left.agent || ''}|${left.kind || ''}|${left.subject || ''}|${left.predicate || ''}|${left.object || ''}|${left.timestamp || ''}|${left.id || ''}`;
@@ -62,6 +99,17 @@ export function sortObservations(observations) {
   });
 }
 
+/**
+ * Merge observations from several shards (plus optional additions), de-duplicating by identity and
+ * resolving conflicting duplicates according to the conflict policy.
+ * @param {Array<{observations: Object[]}>} shards - Shards holding observations
+ * @param {Object[]} [additions] - Extra observations merged after the shards
+ * @param {Object} [options] - Merge options
+ * @param {string} [options.conflictPolicy] - 'latest' keeps the newest timestamp, 'right' keeps the
+ *   later-seen observation, 'error' throws, any other value keeps the first seen (default 'latest')
+ * @returns {{observations: Object[], conflicts: Object[], digest: string, sources: Object[]}} Merged result
+ * @throws {Error} If a conflict is found and the policy is 'error'
+ */
 export function mergeObservations(shards, additions = [], options = {}) {
   const conflictPolicy = options.conflictPolicy || 'latest';
   const byIdentity = new Map();
@@ -91,6 +139,11 @@ export function mergeObservations(shards, additions = [], options = {}) {
   return { observations, conflicts, digest: digest(observations), sources };
 }
 
+/**
+ * Build an integrity manifest (per-section digests and a root digest) for an artifact.
+ * @param {Object} artifact - Artifact with observations, summary, metadata, shard_count and shard_hash
+ * @returns {{algorithm: string, observationCount: number, sections: Object<string,string>, root: string}} Manifest
+ */
 export function createArtifactManifest(artifact) {
   const observations = sortObservations(artifact.observations || []);
   const sections = {
@@ -107,11 +160,21 @@ export function createArtifactManifest(artifact) {
   };
 }
 
+/**
+ * Return a copy of the artifact with sorted observations and an attached integrity manifest.
+ * @param {Object} artifact - Artifact to seal
+ * @returns {Object} New artifact including an `integrity` manifest
+ */
 export function sealArtifact(artifact) {
   const normalized = { ...artifact, observations: sortObservations(artifact.observations || []) };
   return { ...normalized, integrity: createArtifactManifest(normalized) };
 }
 
+/**
+ * Recompute an artifact's manifest and compare it with its stored `integrity` field.
+ * @param {Object} artifact - Artifact to verify
+ * @returns {{valid: boolean, differences: Object[], expected: Object}} Verification result listing each mismatch
+ */
 export function verifyArtifact(artifact) {
   const expected = createArtifactManifest(artifact);
   const actual = artifact?.integrity;
@@ -127,6 +190,12 @@ export function verifyArtifact(artifact) {
   return { valid: differences.length === 0, differences, expected };
 }
 
+/**
+ * Compare two artifacts by sealed integrity root, ignoring any stored integrity fields.
+ * @param {Object} expected - Reference artifact
+ * @param {Object} actual - Artifact produced by the replay
+ * @returns {{state: string, expectedRoot: string, actualRoot: string, same: boolean}} 'REPLAY_MATCH' or 'REPLAY_DIFFERENCE' plus both roots
+ */
 export function replayArtifacts(expected, actual) {
   const expectedSealed = sealArtifact({ ...expected, integrity: undefined });
   const actualSealed = sealArtifact({ ...actual, integrity: undefined });
@@ -139,6 +208,11 @@ export function replayArtifacts(expected, actual) {
   };
 }
 
+/**
+ * Create an Error marked as an abort (name 'AbortError', code 'ABORT_ERR').
+ * @param {string} [message] - Error message
+ * @returns {Error} Abort error
+ */
 function abortError(message = 'Operation aborted') {
   const error = new Error(message);
   error.name = 'AbortError';
@@ -146,6 +220,15 @@ function abortError(message = 'Operation aborted') {
   return error;
 }
 
+/**
+ * Run a task with an optional timeout and optional external abort signal. The task receives an
+ * AbortSignal that is aborted on timeout or when the external signal aborts.
+ * @param {(signal: AbortSignal) => *} task - Task to run
+ * @param {number|null|undefined} timeoutMs - Timeout in milliseconds; null, undefined or non-finite disables it
+ * @param {AbortSignal} [signal] - External abort signal
+ * @returns {Promise<*>} The task's result
+ * @throws {Error} AbortError if aborted, or TimeoutError (code 'ETIMEDOUT') if the timeout elapses first
+ */
 export async function withTimeout(task, timeoutMs, signal) {
   if (signal?.aborted) throw abortError(signal.reason?.message || 'Operation aborted');
   const controller = new AbortController();
@@ -173,6 +256,17 @@ export async function withTimeout(task, timeoutMs, signal) {
   }
 }
 
+/**
+ * Run agent entries with bounded concurrency, capturing each outcome without throwing.
+ * @param {Array<{id: string, run: (signal: AbortSignal) => *, timeoutMs?: number}>} agentEntries - Agents to run
+ * @param {Object} [options] - Pool options
+ * @param {number} [options.concurrency] - Maximum parallel agents (default 4, minimum 1)
+ * @param {boolean} [options.failFast] - Stop starting new agents after the first failure
+ * @param {number} [options.timeoutMs] - Default per-agent timeout
+ * @param {AbortSignal} [options.signal] - External abort signal
+ * @param {() => number} [options.now] - Clock function for durations (default Date.now)
+ * @returns {Promise<{results: Object[], errors: Object[], aborted: boolean, stoppedEarly: boolean}>} Pool outcome
+ */
 export async function runAgentPool(agentEntries, options = {}) {
   const concurrency = Math.max(1, options.concurrency ?? 4);
   const failFast = options.failFast === true;

@@ -24,7 +24,6 @@ import { promises as fs } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { ObservationSchema, ProbeConfigSchema } from '../types.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -585,10 +584,10 @@ async function probeAtomicOperations(config) {
 
 /**
  * Test temp directory behavior
- * @param {Object} config - Probe configuration
+ * @param {Object} _config - Probe configuration (currently unused)
  * @returns {Promise<Object[]>} Observations
  */
-async function probeTempDirectory(config) {
+async function probeTempDirectory(_config) {
   const observations = [];
 
   try {
