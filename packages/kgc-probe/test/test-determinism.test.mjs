@@ -15,11 +15,9 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { hashObservations, mergeShards, computeArtifactSummary } from '../src/artifact.mjs';
 import { createProbeOrchestrator } from '../src/orchestrator.mjs';
 import { createMemoryStorage } from '../src/storage/index.mjs';
-import { createAgentRegistry } from '../src/agents/index.mjs';
 import {
   FROZEN_TIMESTAMP,
   createFrozenDateMock,
-  createDeterministicUUID
 } from './fixtures/frozen-environment.mjs';
 import { ALL_SHARDS } from './fixtures/precalculated-shards.mjs';
 
@@ -29,7 +27,6 @@ import { ALL_SHARDS } from './fixtures/precalculated-shards.mjs';
 
 describe('Determinism', () => {
   let originalDate;
-  let originalRandomUUID;
 
   beforeEach(() => {
     // Save originals

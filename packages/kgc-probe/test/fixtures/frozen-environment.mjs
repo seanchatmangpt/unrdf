@@ -210,7 +210,7 @@ export const mockFs = {
     return file.content;
   },
 
-  writeFile: async (path, content) => {
+  writeFile: async (_path, _content) => {
     // Mock write - doesn't actually write
     return undefined;
   },

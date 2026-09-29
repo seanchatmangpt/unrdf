@@ -12,25 +12,16 @@
  * @module @unrdf/kgc-probe/test/test-merge-correctness
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { mergeShards, diffArtifacts, hashObservations, computeArtifactSummary } from '../src/artifact.mjs';
 import {
   ALL_SHARDS,
   SHARD_RUNTIME,
   SHARD_FS,
-  SHARD_WASM,
-  SHARD_PERF,
-  SHARD_NET,
-  SHARD_TOOLING,
-  SHARD_STORAGE,
-  SHARD_CONCURRENCY,
-  SHARD_LIMITS,
-  SHARD_SYSTEM,
   EXPECTED_MERGED,
   EXPECTED_CONFLICTS,
   createObservation
 } from './fixtures/precalculated-shards.mjs';
-import { FROZEN_TIMESTAMP } from './fixtures/frozen-environment.mjs';
 
 // ============================================================================
 // MERGE CORRECTNESS TESTS
@@ -402,7 +393,7 @@ describe('Merge Correctness Summary', () => {
     }));
 
     const merged = await mergeShards(artifacts);
-    const summary = computeArtifactSummary(merged);
+    computeArtifactSummary(merged);
     const hash = await hashObservations(merged);
 
     console.log('[PROOF] === MERGE CORRECTNESS SUMMARY ===');

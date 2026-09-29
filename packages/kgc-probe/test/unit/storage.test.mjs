@@ -13,10 +13,7 @@ import { tmpdir } from 'os';
 import {
   createMemoryStorage,
   createFileStorage,
-  MemoryStorage,
-  FileStorage
 } from '../../src/storage/index.mjs';
-import { FROZEN_TIMESTAMP } from '../fixtures/frozen-environment.mjs';
 
 describe('Storage Module', () => {
   describe('MemoryStorage', () => {

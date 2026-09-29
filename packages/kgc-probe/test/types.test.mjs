@@ -26,16 +26,10 @@ import {
 
   // Block Metadata Schemas
   BlockTypeSchema,
-  OutputFormatSchema,
-  DeterminismLevelSchema,
   BlockMetadataSchema,
-  QueryTypeSchema,
-  ResultBoundsSchema,
   QueryMetadataSchema,
-  ExtractionTypeSchema,
   ExtractMetadataSchema,
   RenderMetadataSchema,
-  ProofTypeSchema,
   ProofMetadataSchema,
 
   // Receipt Schemas
@@ -47,8 +41,6 @@ import {
   DynamicSectionSchema,
 
   // Error Schemas
-  ErrorSeveritySchema,
-  ErrorTypeSchema,
   ProbeErrorSchema,
   ProbeWarningSchema,
 
