@@ -34,7 +34,7 @@ describe('Semantic Inference Hooks (Vision 2030)', () => {
       },
       effect: {
         kind: 'function',
-        inline: async (context) => {
+        inline: async (_context) => {
           return { status: 'success', semanticHit: true };
         }
       }

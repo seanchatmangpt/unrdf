@@ -15,6 +15,7 @@ import { createStore, dataFactory } from '../../../oxigraph/src/index.mjs';
 import reasoner from 'eyereasoner';
 import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs';
 import { z } from 'zod';
+import { executeSemanticQuery } from '@unrdf/core/utils/semantic-bridge';
 
 // ─── SPARQL Injection Prevention ────────────────────────────────────────────
 const sparqlParser = new SparqlParser();
@@ -1292,6 +1293,38 @@ async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) 
  * @param {Object} env - Environment variables
  * @returns {Promise<boolean>} N3 condition result
  */
+/**
+ * Evaluate a semantic-inference condition by running a SPARQL query through the
+ * Open Ontologies reasoner over the configured ontology files plus the current graph.
+ * @param {Object} condition - Condition with `query` (SPARQL string) and optional `ontologyFiles` (string[])
+ * @param {Store} graph - The RDF graph, serialized to N-Triples and loaded alongside the ontologies
+ * @param {Object} _resolver - File resolver (unused; ontology paths are passed through as given)
+ * @param {Object} _env - Environment variables (unused)
+ * @returns {Promise<boolean>} True if the inference query yields at least one result
+ * @throws {Error} If the query is missing or the reasoner reports an engine-level error
+ */
+async function evaluateSemanticInference(condition, graph, _resolver, _env) {
+  const { query, ontologyFiles = [] } = condition;
+
+  if (typeof query !== 'string' || query.length === 0) {
+    throw new Error('semantic-inference condition requires a query string');
+  }
+
+  const dataNt = await graph.dump({ format: 'application/n-triples' });
+  const rawTriples = dataNt && dataNt.trim() ? [dataNt] : [];
+
+  const result = await executeSemanticQuery(query, { ontologyFiles, rawTriples });
+
+  if (result && result.error) {
+    throw new Error(`Semantic inference failed: ${result.error}`);
+  }
+
+  const rows = Array.isArray(result)
+    ? result
+    : (result?.results ?? result?.bindings ?? result?.rows);
+  return Array.isArray(rows) ? rows.length > 0 : Boolean(result && Object.keys(result).length > 0);
+}
+
 async function evaluateN3(condition, graph, resolver, env) {
   const { rules, askQuery } = condition;
 

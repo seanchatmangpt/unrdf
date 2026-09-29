@@ -13,7 +13,6 @@ import {
   ParallelHookExecutor,
   executeHooksParallel,
 } from '../src/hooks/parallel-executor.mjs';
-import { quad, namedNode, literal } from '../../test-utils/src/index.mjs';
 
 describe('Dependency Graph', () => {
   let graph;
@@ -352,21 +351,21 @@ describe('Parallel Hook Executor', () => {
         {
           id: 'hook1',
           dependsOn: [],
-          run: async ({ store }) => {
+          run: async () => {
             return { result: 'hook1' };
           },
         },
         {
           id: 'hook2',
           dependsOn: ['hook1'],
-          run: async ({ store }) => {
+          run: async () => {
             return { result: 'hook2' };
           },
         },
         {
           id: 'hook3',
           dependsOn: ['hook1'],
-          run: async ({ store }) => {
+          run: async () => {
             return { result: 'hook3' };
           },
         },
