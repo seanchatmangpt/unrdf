@@ -1,5 +1,4 @@
 import { defineCommand } from 'citty';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 

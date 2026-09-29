@@ -1,6 +1,5 @@
 import { defineCommand } from 'citty';
 import { createWriteStream, existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
 import { resolve, basename, dirname } from 'node:path';
 import archiver from 'archiver';
 import { parseConfig } from './sync/config-parser.mjs';

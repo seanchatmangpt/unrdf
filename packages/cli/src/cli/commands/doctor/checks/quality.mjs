@@ -318,6 +318,12 @@ function checkDefinitionOfDone() {
   }
 }
 
+/**
+ * Run all code-quality health checks (coverage, lint, file size, TypeScript
+ * contamination, N3 imports, skipped tests, Definition of Done).
+ * @returns {Promise<{category: string, checks: Array<{name: string, status: string}>}>}
+ *   Category label plus one named result object per check.
+ */
 export async function checkQuality() {
   return {
     category: 'Code Quality',
