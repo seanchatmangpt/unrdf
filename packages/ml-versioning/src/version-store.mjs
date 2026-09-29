@@ -179,9 +179,9 @@ export class MLVersionStore {
       model,
       metadata,
       metrics,
-      hash: result.hash.value,
-      previousHash: result.previousHash?.value || null,
-      timestamp: parseInt(result.timestamp.value),
+      hash,
+      previousHash,
+      timestamp,
       versionId,
     };
   }
