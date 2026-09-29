@@ -36,7 +36,7 @@ async function demonstratePolicyPacks() {
             kind: 'sparql-ask',
             ref: {
               uri: 'file://audit-trail.rq',
-              sha256: 'audit-hash',
+              sha256: 'a2efb2ac72e337593e1fe7c99eef92f6e6fc78ec491ed348c3b8c7068d332c9a',
               mediaType: 'application/sparql-query',
             },
           },
@@ -55,7 +55,7 @@ async function demonstratePolicyPacks() {
             kind: 'shacl',
             ref: {
               uri: 'file://retention.shacl',
-              sha256: 'retention-hash',
+              sha256: '721d5a768bb7698eb378fd4f56f1ce302e1ddf85d4104c2ca5baf66590b74adf',
               mediaType: 'text/turtle',
             },
           },
@@ -94,7 +94,7 @@ async function demonstratePolicyPacks() {
             kind: 'sparql-ask',
             ref: {
               uri: 'file://privacy.rq',
-              sha256: 'privacy-hash',
+              sha256: '38061af0c86fcf57ecc39ff378d50465ed206d74d0b091f04c3caa5fe00cd149',
               mediaType: 'application/sparql-query',
             },
           },

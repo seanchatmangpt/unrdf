@@ -11,7 +11,7 @@
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { registerHook } from '../packages/knowledge-engine/src/engines/hook-manager.mjs';
 import {
   defineHook,

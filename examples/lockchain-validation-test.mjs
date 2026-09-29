@@ -7,7 +7,7 @@
  * receipt writing, batch committing, Git integration, and integrity verification.
  */
 
-import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
+import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
 import { randomUUID } from 'crypto';
 
 console.log('🔗 Lockchain Validation Test\n');
@@ -20,7 +20,7 @@ async function testLockchain() {
     // === Test 1: Basic Lockchain Writer Creation ===
     console.log('🔧 Test 1: Basic Lockchain Writer Creation');
 
-    const lockchainWriter = createRealLockchainWriter({
+    const lockchainWriter = createLockchainWriter({
       gitRepo: process.cwd(),
       refName: 'refs/notes/lockchain-test',
       batchSize: 3,

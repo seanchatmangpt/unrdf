@@ -9,16 +9,17 @@
  */
 
 import {
-  _parseTurtle,
-  _toTurtle,
-  _query,
-  _validateShacl,
-  _reason,
-  _canonicalize,
-  _isIsomorphic,
+  parseTurtle as _parseTurtle,
+  toTurtle as _toTurtle,
+  query as _query,
+  validateShacl as _validateShacl,
+  reason as _reason,
+  canonicalize as _canonicalize,
+  isIsomorphic as _isIsomorphic,
   TransactionManager,
-} from '../packages/knowledge-engine.mjs';
+} from '../packages/knowledge-engine/src/index.mjs';
 
+import { createStore } from '@unrdf/oxigraph';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 // import assert from 'assert'; // Unused
 const { namedNode, literal, quad } = DataFactory;

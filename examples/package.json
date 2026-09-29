@@ -6,7 +6,10 @@
   "description": "UNRDF usage examples",
   "dependencies": {
     "@unrdf/core": "workspace:*",
-    "@unrdf/hooks": "workspace:*"
+    "@unrdf/daemon": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "zod": "^4.1.13"
   },
   "scripts": {
     "test": "echo 'Examples are executable scripts, not tests'"

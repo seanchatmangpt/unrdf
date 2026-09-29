@@ -167,9 +167,18 @@ importers:
       '@unrdf/core':
         specifier: workspace:*
         version: link:../packages/core
+      '@unrdf/daemon':
+        specifier: workspace:*
+        version: link:../packages/daemon
       '@unrdf/hooks':
         specifier: workspace:*
         version: link:../packages/hooks
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../packages/oxigraph
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
 
   packages/ai-ml-innovations:
     dependencies:

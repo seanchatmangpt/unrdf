@@ -81,7 +81,7 @@ async function demonstrateTestUtils() {
             kind: 'sparql-ask',
             ref: {
               uri: 'file://test.rq',
-              sha256: 'test-hash',
+              sha256: 'd6672ee3a93d0d6e3c30bdef89f310799c2f3ab781098a9792040d5541ce3ed3',
               mediaType: 'application/sparql-query',
             },
           },
@@ -160,7 +160,7 @@ async function demonstrateTestUtils() {
               kind: 'sparql-ask',
               ref: {
                 uri: 'file://validate.rq',
-                sha256: 'val-hash',
+                sha256: 'db03037d59b6924a94c2d91604950243e9b8475e2e3cc33e3f03f9e93c1bb583',
                 mediaType: 'application/sparql-query',
               },
             },
@@ -176,7 +176,7 @@ async function demonstrateTestUtils() {
               kind: 'sparql-ask',
               ref: {
                 uri: 'file://audit.rq',
-                sha256: 'audit-hash',
+                sha256: 'a2efb2ac72e337593e1fe7c99eef92f6e6fc78ec491ed348c3b8c7068d332c9a',
                 mediaType: 'application/sparql-query',
               },
             },

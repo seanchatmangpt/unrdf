@@ -8,11 +8,11 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { RealKnowledgeHookManager } from '../packages/knowledge-engine/src/real-knowledge-hooks.mjs';
-import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
-import { createRealResolutionLayer } from '../packages/knowledge-engine/src/real-resolution-layer.mjs';
-import { createRealEffectSandbox } from '../packages/knowledge-engine/src/real-effect-sandbox.mjs';
-import { createRealQueryOptimizer } from '../packages/knowledge-engine/src/real-query-optimizer.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
+import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
+import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
+import { createEffectSandbox } from '../packages/knowledge-engine/src/effect-sandbox.mjs';
+import { createQueryOptimizer } from '../packages/knowledge-engine/src/query-optimizer.mjs';
 import { TransactionManager } from '../packages/knowledge-engine/src/transaction.mjs';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -62,7 +62,7 @@ async function testAllFeatures() {
     // === Feature 2: Knowledge Hooks ===
     console.log('\n📋 Feature 2: Knowledge Hooks');
 
-    const knowledgeManager = new RealKnowledgeHookManager({
+    const knowledgeManager = new KnowledgeHookManager({
       basePath: tempDir,
     });
 
@@ -95,7 +95,7 @@ async function testAllFeatures() {
     // === Feature 3: Lockchain Integration ===
     console.log('\n🔗 Feature 3: Lockchain Integration');
 
-    const lockchainWriter = createRealLockchainWriter({
+    const lockchainWriter = createLockchainWriter({
       gitRepo: process.cwd(), // Use current directory which is a git repo
       batchSize: 3,
     });
@@ -127,7 +127,7 @@ async function testAllFeatures() {
     // === Feature 4: Resolution Layer ===
     console.log('\n🤝 Feature 4: Resolution Layer');
 
-    const resolutionLayer = createRealResolutionLayer({
+    const resolutionLayer = createResolutionLayer({
       defaultStrategy: 'voting',
       enableConflictDetection: true,
     });
@@ -161,7 +161,7 @@ async function testAllFeatures() {
     // === Feature 5: Effect Sandboxing ===
     console.log('\n🛡️ Feature 5: Effect Sandboxing');
 
-    const effectSandbox = createRealEffectSandbox({
+    const effectSandbox = createEffectSandbox({
       type: 'worker',
       timeout: 2000,
       enableConsole: true,
@@ -186,7 +186,7 @@ async function testAllFeatures() {
     // === Feature 6: Query Optimization ===
     console.log('\n⚡ Feature 6: Query Optimization');
 
-    const queryOptimizer = createRealQueryOptimizer({
+    const queryOptimizer = createQueryOptimizer({
       enableCaching: true,
       enableIndexing: true,
       maxCacheSize: 50,
@@ -236,7 +236,7 @@ async function testAllFeatures() {
     console.log('\n🔗 Feature 7: Integration Testing');
 
     // Create integrated manager
-    const integratedManager = new RealKnowledgeHookManager({
+    const integratedManager = new KnowledgeHookManager({
       basePath: tempDir,
       enableLockchain: true,
       enableResolution: true,

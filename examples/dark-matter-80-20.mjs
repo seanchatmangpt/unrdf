@@ -116,7 +116,7 @@ async function darkMatter8020Example() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://example.ask.rq',
-          sha256: 'example-hash',
+          sha256: 'df51bab88659824018361a797c1152767692363b51a850dea9df6a3e49820bec',
           mediaType: 'application/sparql-query',
         },
       },

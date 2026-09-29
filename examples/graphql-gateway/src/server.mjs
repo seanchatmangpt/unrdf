@@ -6,7 +6,7 @@
 
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
-import { WorkflowEngine } from '@unrdf/yawl';
+import { WorkflowEngine } from '../../lib/workflow-engine.mjs';
 import { createStore } from '@unrdf/oxigraph';
 import { trace } from '@opentelemetry/api';
 
