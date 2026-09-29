@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: runner
-    image: unrdf:latest
+    image: unrdf:6.0.0-rc.1
     container_name: unrdf-app
     restart: 'no' # CLI image exits after running its command (no long-running server yet)
     ports:
@@ -31,8 +31,14 @@ services:
     networks:
       - unrdf-network
     # The image is the UNRDF CLI (see Dockerfile). The CLI has no HTTP health or
-    # metrics endpoint yet (the MCP SSE transport is not implemented), so there is
-    # no healthcheck here and prometheus target unrdf:9090 stays down until one exists.
+    # metrics endpoint yet, so the healthcheck verifies the CLI entrypoint loads;
+    # prometheus target unrdf:9090 stays down until a metrics endpoint exists.
+    healthcheck:
+      test: ['CMD', 'node', 'packages/cli/src/cli/main.mjs', '--version']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     deploy:
       resources:
         limits:
@@ -72,7 +78,7 @@ services:
     ports:
       - '3001:3000'
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_ROOT_URL=http://localhost:3001
       - GF_INSTALL_PLUGINS=

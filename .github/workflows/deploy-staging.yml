@@ -188,6 +188,11 @@ jobs:
           TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
         run: timeout 300s pnpm --filter @unrdf/integration-tests test
 
+      - name: Run E2E tests
+        env:
+          TEST_BASE_URL: https://${{ secrets.STAGING_HOST }}
+        run: timeout 300s pnpm --filter @unrdf/integration-tests test:workflows
+
   notify:
     name: Notify
     needs: [deploy-staging, integration-tests]

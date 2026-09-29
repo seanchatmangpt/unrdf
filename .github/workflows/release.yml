@@ -143,6 +143,20 @@ jobs:
       - name: Stamp release version
         run: make version-bump VERSION="${{ needs.validate.outputs.version }}"
 
+      - name: Verify stamped versions match tag
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          BAD=0
+          for f in packages/*/package.json; do
+            V=$(node -p "require('./$f').version")
+            if [ "$V" != "$VERSION" ]; then
+              echo "❌ Version mismatch in $f: $V (tag: $VERSION)"
+              BAD=1
+            fi
+          done
+          [ "$BAD" -eq 0 ] || exit 1
+          echo "✅ Version consistency verified: $VERSION"
+
       - name: Build project
         run: pnpm build
 
@@ -191,6 +205,20 @@ jobs:
 
       - name: Stamp release version
         run: make version-bump VERSION="${{ needs.validate.outputs.version }}"
+
+      - name: Verify stamped versions match tag
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          BAD=0
+          for f in packages/*/package.json; do
+            V=$(node -p "require('./$f').version")
+            if [ "$V" != "$VERSION" ]; then
+              echo "❌ Version mismatch in $f: $V (tag: $VERSION)"
+              BAD=1
+            fi
+          done
+          [ "$BAD" -eq 0 ] || exit 1
+          echo "✅ Version consistency verified: $VERSION"
 
       - name: Build project
         run: pnpm build

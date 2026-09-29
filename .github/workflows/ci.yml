@@ -269,6 +269,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify version consistency
+        run: |
+          echo "Verifying version consistency across workspace packages..."
+          # The root package.json version is intentionally agnostic and there is no
+          # CHANGELOG.md, so consistency means every workspace package carries one version.
+          VERSIONS=$(for f in packages/*/package.json; do node -p "require('./$f').version"; done | sort -u)
+          COUNT=$(echo "$VERSIONS" | wc -l)
+          if [ "$COUNT" -ne 1 ]; then
+            echo "❌ Version mismatch across packages:"
+            echo "$VERSIONS"
+            exit 1
+          fi
+          echo "✅ Version consistency verified: $VERSIONS"
+
       - name: Create release artifacts
         run: |
           echo "Creating release artifacts..."
