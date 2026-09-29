@@ -1286,14 +1286,6 @@ async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) 
 }
 
 /**
- * Evaluate an N3 forward-chaining condition via EYE reasoner
- * @param {Object} condition - The condition definition
- * @param {Store} graph - The RDF graph
- * @param {Object} resolver - File resolver instance
- * @param {Object} env - Environment variables
- * @returns {Promise<boolean>} N3 condition result
- */
-/**
  * Evaluate a semantic-inference condition by running a SPARQL query through the
  * Open Ontologies reasoner over the configured ontology files plus the current graph.
  * @param {Object} condition - Condition with `query` (SPARQL string) and optional `ontologyFiles` (string[])
@@ -1325,6 +1317,14 @@ async function evaluateSemanticInference(condition, graph, _resolver, _env) {
   return Array.isArray(rows) ? rows.length > 0 : Boolean(result && Object.keys(result).length > 0);
 }
 
+/**
+ * Evaluate an N3 forward-chaining condition via EYE reasoner
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @returns {Promise<boolean>} N3 condition result
+ */
 async function evaluateN3(condition, graph, resolver, env) {
   const { rules, askQuery } = condition;
 

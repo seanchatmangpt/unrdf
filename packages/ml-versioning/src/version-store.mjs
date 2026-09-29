@@ -169,7 +169,7 @@ export class MLVersionStore {
     const metadata = JSON.parse(result.metadata.value);
     const metrics = JSON.parse(result.metrics.value);
     const hash = result.hash.value;
-    const previousHash = result.previousHash ? result.previousHash.value : null;
+    const previousHash = result.previousHash?.value || null;
     const timestamp = parseInt(result.timestamp.value);
 
     // Reconstruct TensorFlow.js model

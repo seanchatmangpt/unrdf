@@ -334,7 +334,7 @@ export function verifyPartPassport(passport) {
  * Build a frozen, digested REFUSED judgement for inputs that fail integrity checks.
  * @param {Object[]} reasons - Refusal reasons; the first becomes the falsifier.
  * @param {Object} requirement - Requirement being judged (its digest is recorded when it is a string).
- * @param {Object} candidate - Candidate part (currently unused).
+ * @param {Object} candidate - Candidate part (its digest is recorded when it is a string).
  * @returns {Object} Frozen refusal judgement.
  */
 function integrityRefusal(reasons, requirement, candidate) {
