@@ -1,6 +1,13 @@
 import { createHash } from 'node:crypto';
 
+/**
+ * Error raised when a SPARQL query cannot be parsed or planned across the given sources.
+ */
 export class FederationPlanError extends Error {
+  /**
+   * @param {string} message - Human-readable error message.
+   * @param {object} [details] - Structured context (e.g. the unsatisfiable pattern).
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'FederationPlanError';
@@ -9,7 +16,14 @@ export class FederationPlanError extends Error {
   }
 }
 
+/**
+ * Error raised when executing a federation plan against its sources fails.
+ */
 export class FederationExecutionError extends Error {
+  /**
+   * @param {string} message - Human-readable error message.
+   * @param {object} [details] - Structured context (e.g. the failure cause or row bound).
+   */
   constructor(message, details = {}) {
     super(message);
     this.name = 'FederationExecutionError';
@@ -18,6 +32,12 @@ export class FederationExecutionError extends Error {
   }
 }
 
+/**
+ * Serialize a solution binding to a canonical JSON string with keys sorted,
+ * so equal bindings always produce equal strings.
+ * @param {Object<string, *>|null|undefined} binding - Variable-to-value map.
+ * @returns {string} JSON string with keys in sorted order.
+ */
 export function canonicalBinding(binding) {
   const out = {};
   for (const key of Object.keys(binding || {}).sort()) out[key] = binding[key];
@@ -89,6 +109,13 @@ function splitTerms(statement) {
   return terms;
 }
 
+/**
+ * Parse a basic SPARQL SELECT ... WHERE query into triple patterns, OPTIONAL
+ * patterns and FILTER/VALUES clauses. Nested groups are not supported.
+ * @param {string} query - SPARQL SELECT query text.
+ * @returns {{distinct: boolean, variables: string[], patterns: object[], optionals: object[], filters: string[], query: string}} Parsed query.
+ * @throws {FederationPlanError} If the query is empty, not a SELECT, unbalanced, or has unsupported patterns.
+ */
 export function parseBasicSparql(query) {
   if (typeof query !== 'string' || !query.trim()) throw new FederationPlanError('SPARQL query is empty');
   const clean = stripComments(query);
@@ -174,10 +201,25 @@ function renderTerm(term, binding = {}) {
   return term.value;
 }
 
+/**
+ * Render a triple pattern as SPARQL text, substituting any variables that are bound.
+ * @param {{subject: object, predicate: object, object: object}} pattern - Parsed triple pattern.
+ * @param {Object<string, *>} [binding] - Current variable bindings.
+ * @returns {string} Triple pattern text terminated with " .".
+ */
 export function renderPattern(pattern, binding = {}) {
   return `${renderTerm(pattern.subject, binding)} ${renderTerm(pattern.predicate, binding)} ${renderTerm(pattern.object, binding)} .`;
 }
 
+/**
+ * Build a federation plan: choose and cost candidate sources per triple pattern,
+ * order the steps to favor patterns sharing already-bound variables, and hash the result.
+ * @param {string|object} query - SPARQL text or an already parsed query.
+ * @param {Array<{id: string, metadata?: object, query?: Function}>} sources - Available federation sources.
+ * @param {{strategy?: string}} [options] - Planning options; strategy defaults to 'bind-join'.
+ * @returns {object} Plan with queryHash, variables, distinct, filters, ordered steps, strategy, planHash and a Map of sources by id.
+ * @throws {FederationPlanError} If no sources are supplied or no source can satisfy a pattern.
+ */
 export function buildFederationPlan(query, sources, options = {}) {
   const parsed = typeof query === 'string' ? parseBasicSparql(query) : query;
   if (!Array.isArray(sources) || !sources.length) throw new FederationPlanError('No federation sources supplied');
@@ -240,6 +282,13 @@ function compatible(left, right) {
   return true;
 }
 
+/**
+ * Join two sets of solution bindings on their compatible shared variables.
+ * @param {Array<Object<string, *>>} leftRows - Left-hand bindings.
+ * @param {Array<Object<string, *>>} rightRows - Right-hand bindings.
+ * @param {boolean} [optional] - If true, keep left rows with no match (left outer join).
+ * @returns {Array<Object<string, *>>} Merged bindings.
+ */
 export function joinBindings(leftRows, rightRows, optional = false) {
   const result = [];
   for (const left of leftRows) {
@@ -279,6 +328,14 @@ async function executeCandidate(step, candidate, bindings, options) {
   }
 }
 
+/**
+ * Execute a federation plan step by step, querying candidate sources per binding
+ * with optional failover, then project, dedupe (if DISTINCT) and sort the rows.
+ * @param {object} plan - Plan produced by buildFederationPlan.
+ * @param {{timeoutMs?: number, failover?: boolean, maxIntermediateRows?: number}} [options] - Execution limits.
+ * @returns {Promise<{rows: Array<Object<string, *>>, trace: object[], planHash: string}>} Result rows, per-step trace and plan hash.
+ * @throws {FederationExecutionError} If all sources fail for a step or the intermediate row bound is exceeded.
+ */
 export async function executeFederationPlan(plan, options = {}) {
   const config = {
     timeoutMs: options.timeoutMs ?? 30_000,
