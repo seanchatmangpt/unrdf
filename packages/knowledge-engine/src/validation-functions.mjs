@@ -7,17 +7,9 @@
  */
 
 import { z } from 'zod';
-import {
-  KnowledgeHookSchema,
-  HookEventSchema,
-  ConditionSchema,
-} from './hook-schemas.mjs';
-import {
-  ManagerConfigSchema,
-} from './config-schemas.mjs';
-import {
-  TransactionDeltaSchema,
-} from './transaction-schemas.mjs';
+import { KnowledgeHookSchema, HookEventSchema, ConditionSchema } from './hook-schemas.mjs';
+import { ManagerConfigSchema } from './config-schemas.mjs';
+import { TransactionDeltaSchema } from './transaction-schemas.mjs';
 
 /**
  * Validate a knowledge hook definition

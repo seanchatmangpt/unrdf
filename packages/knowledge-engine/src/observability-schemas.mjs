@@ -17,7 +17,7 @@ export const ObservabilityConfigSchema = z
     logSamplingRate: z.number().min(0).max(1).default(0.01),
     minSamples: z.number().int().nonnegative().default(10),
     ewmaAlpha: z.number().positive().max(1).default(0.3),
-    cacheMaxSize: z.number().int().nonnegative().optional()
+    cacheMaxSize: z.number().int().nonnegative().optional(),
   })
   .passthrough();
 
@@ -26,7 +26,7 @@ export const PerformanceMetricsSchema = z.object({
     p50: nonNegative,
     p95: nonNegative,
     p99: nonNegative,
-    max: nonNegative
+    max: nonNegative,
   }),
   hookExecutionRate: nonNegative,
   errorRate: z.number().min(0).max(1),
@@ -36,18 +36,18 @@ export const PerformanceMetricsSchema = z.object({
       heapTotal: nonNegative,
       heapUsed: nonNegative,
       external: nonNegative,
-      arrayBuffers: nonNegative.optional()
+      arrayBuffers: nonNegative.optional(),
     })
     .passthrough(),
   cacheStats: z.object({
     hitRate: z.number().min(0).max(1),
     size: nonNegative,
-    maxSize: nonNegative
+    maxSize: nonNegative,
   }),
   backpressure: z
     .object({
       queueDepth: nonNegative,
-      watermarks: z.object({ high: nonNegative, low: nonNegative })
+      watermarks: z.object({ high: nonNegative, low: nonNegative }),
     })
-    .passthrough()
+    .passthrough(),
 });

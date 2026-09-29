@@ -40,7 +40,12 @@ const ProjectModelOptionsSchema = z.object({
  * @returns {Object} The same store, extended
  */
 export function buildProjectModelFromFs(options) {
-  const { fsStore: store, baseIri, fsBaseIri, conventions } = ProjectModelOptionsSchema.parse(options);
+  const {
+    fsStore: store,
+    baseIri,
+    fsBaseIri,
+    conventions,
+  } = ProjectModelOptionsSchema.parse(options);
   const projectIri = namedNode(`${baseIri}project`);
 
   store.addQuad(projectIri, namedNode(RDF_TYPE), namedNode(PROJECT.Project));

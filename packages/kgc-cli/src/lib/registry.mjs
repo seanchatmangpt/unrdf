@@ -187,8 +187,7 @@ export class Registry {
   _findOverride(collision) {
     return this.overrides.find(
       o =>
-        o.rule === collision.key &&
-        (o.winner === collision.existing || o.winner === collision.new)
+        o.rule === collision.key && (o.winner === collision.existing || o.winner === collision.new)
     );
   }
 

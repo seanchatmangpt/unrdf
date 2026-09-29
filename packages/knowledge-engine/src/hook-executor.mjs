@@ -230,14 +230,14 @@ async function _executeHookPhases(
       const evaluator = createConditionEvaluator({ basePath, strictMode });
       conditionResult = await evaluator.evaluate(
         hook.when,
-        currentEvent.context?.graph || await createStore(),
+        currentEvent.context?.graph || (await createStore()),
         currentEvent.context?.env || {}
       );
 
       // Check if condition is satisfied
       const isSatisfied = await evaluator.isSatisfied(
         hook.when,
-        currentEvent.context?.graph || await createStore(),
+        currentEvent.context?.graph || (await createStore()),
         currentEvent.context?.env || {}
       );
 

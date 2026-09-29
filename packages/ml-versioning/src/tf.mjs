@@ -32,7 +32,7 @@ export async function loadTfjsNode() {
     const err = new Error(
       '@unrdf/ml-versioning: native @tensorflow/tfjs-node binding is unavailable ' +
         '(tfjs_binding.node not built for this platform). Run ' +
-        "`npm rebuild @tensorflow/tfjs-node --build-addon-from-source` (or approve its build script " +
+        '`npm rebuild @tensorflow/tfjs-node --build-addon-from-source` (or approve its build script ' +
         'with `pnpm approve-builds`), or use the pure-JS `tf` export from this module.',
       { cause }
     );
@@ -53,7 +53,9 @@ export async function loadTensorFlow({ requireNative = false } = {}) {
     return await loadTfjsNode();
   } catch (error) {
     if (requireNative) throw error;
-    console.warn(`[ml-versioning] ${error.message}\n[ml-versioning] Falling back to pure-JS CPU backend.`);
+    console.warn(
+      `[ml-versioning] ${error.message}\n[ml-versioning] Falling back to pure-JS CPU backend.`
+    );
     await tf.setBackend('cpu');
     await tf.ready();
     return tf;

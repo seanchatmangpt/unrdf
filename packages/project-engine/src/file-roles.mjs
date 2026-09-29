@@ -27,9 +27,24 @@ export const ROLE_PATTERNS = [
   ['Page', [/^(?:pages|src\/pages|src\/app|app)\//, new RegExp(`(?:^|/)page\\.${CODE}$`)]],
   ['Api', [new RegExp(`(?:api|server|route)\\.${CODE}$`), /^(?:api|server|routes)\//]],
   ['Hook', [new RegExp(`use[A-Z]\\w+\\.${CODE}$`), /^(?:src\/)?hooks?\//]],
-  ['Service', [new RegExp(`(?:service|client|repository)\\.${CODE}$`), /^(?:src\/)?(?:services?|clients?)\//]],
-  ['Schema', [new RegExp(`(?:schema|types?|interfaces?)\\.${CODE}$`), /(?:schema|types?|interfaces?)\.json$/]],
-  ['State', [new RegExp(`(?:store|state|reducer|context)\\.${CODE}$`), /^(?:src\/)?(?:store|state|redux)\//]],
+  [
+    'Service',
+    [new RegExp(`(?:service|client|repository)\\.${CODE}$`), /^(?:src\/)?(?:services?|clients?)\//],
+  ],
+  [
+    'Schema',
+    [
+      new RegExp(`(?:schema|types?|interfaces?)\\.${CODE}$`),
+      /(?:schema|types?|interfaces?)\.json$/,
+    ],
+  ],
+  [
+    'State',
+    [
+      new RegExp(`(?:store|state|reducer|context)\\.${CODE}$`),
+      /^(?:src\/)?(?:store|state|redux)\//,
+    ],
+  ],
   ['Doc', [/\.(?:md|mdx)$/, /^(?:docs?|README)/]],
   ['Config', [/package\.json$/, /tsconfig|eslintrc|prettier/, /\.(?:json|ya?ml|toml|conf)$/]],
   ['Build', [/(?:build|webpack|rollup|esbuild|vite|next\.config)/, /^scripts\//]],

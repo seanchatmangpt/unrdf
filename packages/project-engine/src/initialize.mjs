@@ -105,7 +105,13 @@ export async function createProjectInitializationPipeline(projectRoot, options =
   const domainBaseIri = `${opts.baseIri}domain#`;
 
   const phases = {};
-  const state = { fsStore: null, projectStore: null, domainStore: null, templateGraph: null, snapshot: null };
+  const state = {
+    fsStore: null,
+    projectStore: null,
+    domainStore: null,
+    templateGraph: null,
+    snapshot: null,
+  };
 
   /** Run one phase, record its receipt, and report failure. */
   const run = async (name, fn) => {
@@ -129,7 +135,11 @@ export async function createProjectInitializationPipeline(projectRoot, options =
         baseIri: fsBaseIri,
       });
       state.fsStore = store;
-      return { files: summary.fileCount, folders: summary.folderCount, ignored: summary.ignoredCount };
+      return {
+        files: summary.fileCount,
+        folders: summary.folderCount,
+        ignored: summary.ignoredCount,
+      };
     });
     if (!ok) return fail('scan');
   }
@@ -139,7 +149,12 @@ export async function createProjectInitializationPipeline(projectRoot, options =
       const profile = detectStackFromFs({ fsStore: state.fsStore });
       const frameworks = [
         ...new Set(
-          [profile.uiFramework, profile.webFramework, profile.apiFramework, profile.testFramework].filter(Boolean)
+          [
+            profile.uiFramework,
+            profile.webFramework,
+            profile.apiFramework,
+            profile.testFramework,
+          ].filter(Boolean)
         ),
       ];
       return { profile, frameworks };
@@ -156,7 +171,8 @@ export async function createProjectInitializationPipeline(projectRoot, options =
         conventions: opts.conventions,
       });
       return {
-        features: state.projectStore.getQuads(null, namedNode(RDF_TYPE), namedNode(PROJECT.Feature)).length,
+        features: state.projectStore.getQuads(null, namedNode(RDF_TYPE), namedNode(PROJECT.Feature))
+          .length,
       };
     });
     if (!ok) return fail('projectModel');
@@ -165,7 +181,11 @@ export async function createProjectInitializationPipeline(projectRoot, options =
   if (!skip.has('fileRoles') && state.projectStore) {
     const ok = await run('fileRoles', () => {
       classifyFiles({ fsStore: state.projectStore, baseIri: projectBaseIri });
-      const classified = state.projectStore.getQuads(null, namedNode(PROJECT.roleString), null).length;
+      const classified = state.projectStore.getQuads(
+        null,
+        namedNode(PROJECT.roleString),
+        null
+      ).length;
       return { classified, unclassified: listFiles(state.projectStore).length - classified };
     });
     if (!ok) return fail('fileRoles');
@@ -182,7 +202,9 @@ export async function createProjectInitializationPipeline(projectRoot, options =
 
   if (!skip.has('templateInference') && state.domainStore) {
     const ok = await run('templateInference', () => {
-      const templates = readEntities(state.domainStore).flatMap(entity => templatesForEntity(entity.name));
+      const templates = readEntities(state.domainStore).flatMap(entity =>
+        templatesForEntity(entity.name)
+      );
       state.templateGraph = { templates, patterns: inferPatterns(templates) };
       return { templates: templates.length, patterns: state.templateGraph.patterns };
     });
@@ -213,7 +235,10 @@ export async function createProjectInitializationPipeline(projectRoot, options =
   if (!opts.dryRun) {
     const ok = await run('persist', async () => {
       const outDir = path.resolve(root, opts.outputDir);
-      if (path.relative(root, outDir).startsWith('..') || path.isAbsolute(path.relative(root, outDir))) {
+      if (
+        path.relative(root, outDir).startsWith('..') ||
+        path.isAbsolute(path.relative(root, outDir))
+      ) {
         throw new Error(`outputDir must be inside the project root: ${opts.outputDir}`);
       }
       await fs.mkdir(outDir, { recursive: true });
@@ -230,10 +255,14 @@ export async function createProjectInitializationPipeline(projectRoot, options =
       }
       if (state.domainStore) {
         const target = path.join(outDir, 'domain.nt');
-        await fs.writeFile(target, state.domainStore.dump({
+        await fs.writeFile(
+          target,
+          state.domainStore.dump({
             format: 'application/n-triples',
             from_graph_name: dataFactory.defaultGraph(),
-          }), 'utf8');
+          }),
+          'utf8'
+        );
         outputs.push(target);
       }
       return { outputs: outputs.map(p => path.relative(root, p)) };
@@ -256,7 +285,9 @@ export async function createProjectInitializationPipeline(projectRoot, options =
 
 /** @returns {Array<{iri: string, path: string}>} file subjects with their relative paths */
 function listFiles(store) {
-  const fileIris = new Set(store.getQuads(null, namedNode(FS.byteSize), null).map(q => q.subject.value));
+  const fileIris = new Set(
+    store.getQuads(null, namedNode(FS.byteSize), null).map(q => q.subject.value)
+  );
   return store
     .getQuads(null, namedNode(FS.relativePath), null)
     .filter(q => fileIris.has(q.subject.value))
@@ -279,7 +310,11 @@ function readFeatures(store) {
         .map(m => files.get(m.subject.value))
         .filter(Boolean)
         .sort();
-      return { iri: q.subject.value, name: labelOf(store, q.subject) ?? q.subject.value, files: members };
+      return {
+        iri: q.subject.value,
+        name: labelOf(store, q.subject) ?? q.subject.value,
+        files: members,
+      };
     })
     .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
@@ -300,8 +335,21 @@ function readEntities(domainStore) {
 /* ------------------------------------------------------------------------- */
 
 const NON_ENTITY_FEATURES = new Set([
-  'utils', 'util', 'helpers', 'lib', 'shared', 'common', 'config', 'hooks', 'types', 'test', 'tests',
-  'components', 'assets', 'styles', 'constants',
+  'utils',
+  'util',
+  'helpers',
+  'lib',
+  'shared',
+  'common',
+  'config',
+  'hooks',
+  'types',
+  'test',
+  'tests',
+  'components',
+  'assets',
+  'styles',
+  'constants',
 ]);
 
 const COMMON_FIELDS = [
@@ -311,10 +359,26 @@ const COMMON_FIELDS = [
 ];
 
 const SPECIFIC_FIELDS = {
-  User: [{ name: 'email', type: 'string' }, { name: 'name', type: 'string' }, { name: 'role', type: 'string' }],
-  Product: [{ name: 'name', type: 'string' }, { name: 'price', type: 'number' }, { name: 'description', type: 'string' }],
-  Order: [{ name: 'status', type: 'string' }, { name: 'total', type: 'number' }, { name: 'items', type: 'array' }],
-  Post: [{ name: 'title', type: 'string' }, { name: 'content', type: 'string' }, { name: 'author', type: 'reference' }],
+  User: [
+    { name: 'email', type: 'string' },
+    { name: 'name', type: 'string' },
+    { name: 'role', type: 'string' },
+  ],
+  Product: [
+    { name: 'name', type: 'string' },
+    { name: 'price', type: 'number' },
+    { name: 'description', type: 'string' },
+  ],
+  Order: [
+    { name: 'status', type: 'string' },
+    { name: 'total', type: 'number' },
+    { name: 'items', type: 'array' },
+  ],
+  Post: [
+    { name: 'title', type: 'string' },
+    { name: 'content', type: 'string' },
+    { name: 'author', type: 'reference' },
+  ],
 };
 
 /** `user-profiles` -> `UserProfile`; non-entity folders -> null. */
@@ -344,7 +408,9 @@ function inferDomain(projectStore, domainBaseIri) {
     store.addQuad(entityIri, namedNode(RDFS_LABEL), literal(name));
 
     for (const field of [...COMMON_FIELDS, ...(SPECIFIC_FIELDS[name] ?? [])]) {
-      const fieldIri = namedNode(`${domainBaseIri}${encodeURIComponent(name)}/${encodeURIComponent(field.name)}`);
+      const fieldIri = namedNode(
+        `${domainBaseIri}${encodeURIComponent(name)}/${encodeURIComponent(field.name)}`
+      );
       store.addQuad(entityIri, namedNode(DOMAIN.hasField), fieldIri);
       store.addQuad(fieldIri, namedNode(RDFS_LABEL), literal(field.name));
       store.addQuad(fieldIri, namedNode(DOMAIN.fieldType), literal(field.type));
@@ -375,9 +441,18 @@ function deriveHooks(entities) {
   const hooks = [];
   const invariants = [];
   for (const { name } of entities) {
-    hooks.push({ name: `validate${name}`, type: 'validation', entity: name, trigger: 'before-insert' });
+    hooks.push({
+      name: `validate${name}`,
+      type: 'validation',
+      entity: name,
+      trigger: 'before-insert',
+    });
     hooks.push({ name: `sync${name}ToStore`, type: 'sync', entity: name, trigger: 'after-insert' });
-    invariants.push({ name: `${name}RequiredFields`, entity: name, rule: 'all-required-fields-present' });
+    invariants.push({
+      name: `${name}RequiredFields`,
+      entity: name,
+      rule: 'all-required-fields-present',
+    });
   }
   return { hooks, invariants };
 }
@@ -402,12 +477,15 @@ function hashFile(file) {
  */
 async function createSnapshot(root, fsStore) {
   const sizes = new Map(
-    fsStore.getQuads(null, namedNode(FS.byteSize), null).map(q => [q.subject.value, Number(q.object.value)])
+    fsStore
+      .getQuads(null, namedNode(FS.byteSize), null)
+      .map(q => [q.subject.value, Number(q.object.value)])
   );
   const files = [];
   for (const file of listFiles(fsStore)) {
     const size = sizes.get(file.iri) ?? 0;
-    const contentHash = size <= MAX_HASHED_BYTES ? await hashFile(path.join(root, file.path)) : null;
+    const contentHash =
+      size <= MAX_HASHED_BYTES ? await hashFile(path.join(root, file.path)) : null;
     files.push({ path: file.path, size, contentHash });
   }
   const overall = createHash('sha256');
@@ -436,7 +514,9 @@ function buildReport(state, phases, hooksDoc) {
     filesByRole[role] = (filesByRole[role] ?? 0) + 1;
   }
   const roleByPath = new Map(files.map(f => [f.path, roleByFile.get(f.iri) ?? 'Other']));
-  const testPaths = files.filter(f => roleByPath.get(f.path) === 'Test').map(f => f.path.toLowerCase());
+  const testPaths = files
+    .filter(f => roleByPath.get(f.path) === 'Test')
+    .map(f => f.path.toLowerCase());
 
   // A feature has tests when any of its files is a Test, or any test file path mentions the feature name.
   const features = state.projectStore
@@ -445,7 +525,12 @@ function buildReport(state, phases, hooksDoc) {
         for (const p of feature.files) roles[roleByPath.get(p) ?? 'Other'] = true;
         const name = feature.name.toLowerCase();
         const hasTests = roles.Test === true || testPaths.some(p => p.includes(name));
-        return { name: feature.name, fileCount: feature.files.length, roles, hasMissingTests: !hasTests };
+        return {
+          name: feature.name,
+          fileCount: feature.files.length,
+          roles,
+          hasMissingTests: !hasTests,
+        };
       })
     : [];
 
@@ -481,12 +566,19 @@ function buildReport(state, phases, hooksDoc) {
 
 function summarize(phases) {
   const parts = [];
-  if (phases.scan?.success) parts.push(`Scanned ${phases.scan.data.files} files in ${phases.scan.data.folders} folders`);
-  if (phases.stackDetection?.data?.frameworks.length) parts.push(`Detected stack: ${phases.stackDetection.data.frameworks.join(', ')}`);
-  if (phases.projectModel?.success) parts.push(`Found ${phases.projectModel.data.features} features`);
+  if (phases.scan?.success)
+    parts.push(`Scanned ${phases.scan.data.files} files in ${phases.scan.data.folders} folders`);
+  if (phases.stackDetection?.data?.frameworks.length)
+    parts.push(`Detected stack: ${phases.stackDetection.data.frameworks.join(', ')}`);
+  if (phases.projectModel?.success)
+    parts.push(`Found ${phases.projectModel.data.features} features`);
   if (phases.fileRoles?.success) parts.push(`Classified ${phases.fileRoles.data.classified} files`);
-  if (phases.domainInference?.success) parts.push(`Inferred ${phases.domainInference.data.entities} entities with ${phases.domainInference.data.fields} fields`);
-  if (phases.templateInference?.success) parts.push(`Generated ${phases.templateInference.data.templates} templates`);
+  if (phases.domainInference?.success)
+    parts.push(
+      `Inferred ${phases.domainInference.data.entities} entities with ${phases.domainInference.data.fields} fields`
+    );
+  if (phases.templateInference?.success)
+    parts.push(`Generated ${phases.templateInference.data.templates} templates`);
   if (phases.hooks?.success) parts.push(`Registered ${phases.hooks.data.registered} hooks`);
   return parts.length > 0 ? `${parts.join('. ')}.` : 'Nothing to report.';
 }
@@ -503,7 +595,13 @@ function buildFailureResult(phases, startTime, failedPhase, errorMessage) {
       error: errorMessage,
     },
     report: { summary: `Initialization failed at phase: ${failedPhase}`, error: errorMessage },
-    state: { fsStore: null, projectStore: null, domainStore: null, templateGraph: null, snapshot: null },
+    state: {
+      fsStore: null,
+      projectStore: null,
+      domainStore: null,
+      templateGraph: null,
+      snapshot: null,
+    },
     outputs: [],
   };
 }

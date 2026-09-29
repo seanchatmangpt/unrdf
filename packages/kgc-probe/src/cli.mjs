@@ -16,11 +16,7 @@
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import { createLogger } from './utils/logger.mjs';
-import {
-  ValidationError,
-  MergeConflictError,
-  ReceiptError,
-} from './utils/errors.mjs';
+import { ValidationError, MergeConflictError, ReceiptError } from './utils/errors.mjs';
 
 // ============================================================================
 // SCHEMAS
