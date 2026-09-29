@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   proposeResult,
   votePictlResult,
@@ -154,7 +154,7 @@ describe('Federation Quorum Voting', () => {
       votePictlResult(proposed.resultId, 'approve', '', quorumState);
 
       quorumState.nodeId = 'node-3';
-      const vote3 = votePictlResult(proposed.resultId, 'reject', '', quorumState);
+      votePictlResult(proposed.resultId, 'reject', '', quorumState);
 
       const stored = quorumState.results.get(proposed.resultId);
       expect(stored.status).toBe('approved');

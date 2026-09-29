@@ -228,7 +228,7 @@ export function validatePictlResult(result) {
  *
  * @param {Object} data - Data to validate
  * @param {string} shapeUri - SHACL shape URI to validate against
- * @param {Object} quorumState - Quorum state (for shape lookup)
+ * @param {Object} [_quorumState] - Quorum state (reserved for shape lookup; currently unused)
  * @returns {Object} Shape validation result
  *
  * @example
@@ -238,7 +238,7 @@ export function validatePictlResult(result) {
  *   quorumState
  * );
  */
-export function validateAgainstShapes(data, shapeUri, quorumState = null) {
+export function validateAgainstShapes(data, shapeUri, _quorumState = null) {
   const span = tracer.startSpan('pictl.validate_shapes');
   try {
     // Get shape definition

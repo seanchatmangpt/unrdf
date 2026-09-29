@@ -10,7 +10,7 @@
  */
 
 import { z } from 'zod';
-import { randomBytes, createHash } from 'crypto';
+import { createHash } from 'crypto';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { createRequire as __createRequire } from 'node:module';
 const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
@@ -178,7 +178,6 @@ export function votePictlResult(resultId, vote, reason, quorumState) {
 
     // Determine consensus (≥2/3 threshold) only if status hasn't been set and we have minimum quorum
     if (proposed.status === 'pending' && totalVotes >= quorumState.quorumThreshold) {
-      const threshold = Math.ceil(totalVotes * (2 / 3));
       // Need ceiling(2/3 of n) approvals. With 2 votes, need 2 (100%). With 3 votes, need 2 (66.7%)
       const needsApproval = Math.ceil(totalVotes * (2 / 3));
 

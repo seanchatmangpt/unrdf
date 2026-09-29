@@ -12,7 +12,6 @@ import {
   proposeResult,
   votePictlResult,
   getQuorumStatus,
-  validateVoteTally,
   QuorumConfigSchema,
 } from './quorum.mjs';
 import { validatePictlResult, validateAgainstShapes } from './result-validator.mjs';
