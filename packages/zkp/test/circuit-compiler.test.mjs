@@ -291,13 +291,21 @@ describe('CircuitCompiler', () => {
         }
       `;
 
-      const start1 = performance.now();
-      await compiler.compile(simpleQuery);
-      const time1 = performance.now() - start1;
+      // Both compilations take well under a millisecond, so one sample of each is dominated
+      // by scheduler noise. Compare the best of several runs of each after a warm-up.
+      const bestOf = async query => {
+        await compiler.compile(query); // warm-up
+        const times = [];
+        for (let run = 0; run < 7; run++) {
+          const start = performance.now();
+          await compiler.compile(query);
+          times.push(performance.now() - start);
+        }
+        return Math.min(...times);
+      };
 
-      const start2 = performance.now();
-      await compiler.compile(complexQuery);
-      const time2 = performance.now() - start2;
+      const time1 = await bestOf(simpleQuery);
+      const time2 = await bestOf(complexQuery);
 
       expect(time2).toBeLessThan(time1 * 10);
     });
