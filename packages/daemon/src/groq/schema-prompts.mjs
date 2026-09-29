@@ -301,10 +301,10 @@ export class SchemaProposalGenerator {
   /**
    * Generate class extension proposal
    *
-   * @param {Object} context - Analysis context
+   * @param {Object} [_context] - Analysis context (currently unused; prompt data comes from tracked query patterns)
    * @returns {Promise<Object>} Generated proposal
    */
-  async generateClassExtensionProposal(context = {}) {
+  async generateClassExtensionProposal(_context = {}) {
     const prompt = this._buildPrompt(CLASS_EXTENSION_TEMPLATE, {
       queryPatterns: this._formatQueryPatterns(),
       sampleData: this._formatDataDistribution(),
@@ -318,10 +318,10 @@ export class SchemaProposalGenerator {
   /**
    * Generate property addition proposal
    *
-   * @param {Object} context - Analysis context
+   * @param {Object} [_context] - Analysis context (currently unused; prompt data comes from tracked query patterns)
    * @returns {Promise<Object>} Generated proposal
    */
-  async generatePropertyAdditionProposal(context = {}) {
+  async generatePropertyAdditionProposal(_context = {}) {
     const prompt = this._buildPrompt(PROPERTY_ADDITION_TEMPLATE, {
       queryPatterns: this._formatQueryPatterns(),
       sampleData: this._formatDataDistribution(),
@@ -718,7 +718,6 @@ export async function checkOntologyAlignment(proposal, targetOntology) {
 export async function deployProposal(proposal, store, options = {}) {
   const {
     mode = 'staging', // staging, production
-    validate = true,
     rollbackOnFailure = true,
   } = options;
 
@@ -779,11 +778,11 @@ export async function deployProposal(proposal, store, options = {}) {
  * Rollback deployed proposal
  *
  * @param {Object} proposal - Proposal to rollback
- * @param {Object} store - RDF store
+ * @param {Object} _store - RDF store (currently unused; rollback only logs)
  * @returns {Promise<void>}
  * @private
  */
-async function rollbackDeployment(proposal, store) {
+async function rollbackDeployment(proposal, _store) {
   // In production, this would execute inverse operations
   console.warn(`Rolling back proposal ${proposal.proposalId}`);
 }
