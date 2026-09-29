@@ -10,8 +10,11 @@
  * @format machine-executable
  */
 
-import { runMapekIteration, runContinuousMapekLoop } from 'unrdf/project-engine';
-import { buildProjectModelFromFs, inferDomainModel } from 'unrdf/project-engine';
+// NOTE: the MAPEK symbols imported below (runMapekIteration, runContinuousMapekLoop,
+// createAutonomicHooks, reportMapekStatus) are not exported by any current @unrdf/* package;
+// this example documents the intended API and is not runnable as-is.
+import { runMapekIteration, runContinuousMapekLoop } from '@unrdf/project-engine';
+import { buildProjectModelFromFs, inferDomainModel } from '@unrdf/project-engine';
 
 /**
  * Problem: Need to run a single MAPEK cycle and get machine-readable results

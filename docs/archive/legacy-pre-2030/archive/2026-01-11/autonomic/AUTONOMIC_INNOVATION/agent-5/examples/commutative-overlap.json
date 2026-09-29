@@ -5,7 +5,7 @@
     "add": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/latest/age",
+        "predicate": "http://xmlns.com/foaf/0.1/age",
         "object": "\"30\"^^http://www.w3.org/2001/XMLSchema#integer",
         "graph": "http://example.org/graph1"
       }
@@ -21,7 +21,7 @@
     "add": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/latest/email",
+        "predicate": "http://xmlns.com/foaf/0.1/email",
         "object": "\"alice@example.com\"",
         "graph": "http://example.org/graph1"
       }

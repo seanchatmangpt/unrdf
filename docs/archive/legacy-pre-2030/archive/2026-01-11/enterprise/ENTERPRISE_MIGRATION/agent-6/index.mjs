@@ -7,6 +7,11 @@
  * @module agent-6
  */
 
+import { computeImpactSet, serializeImpactSet } from './impact-set.mjs';
+import { detectConflict, detectBatchConflicts, partitionConflictFree } from './conflict-detector.mjs';
+import { checkCommutativity, analyzeParallelizability, checkBatchCommutativity, generateCommutativityChain } from './commutativity.mjs';
+import { generateCertificate, createCertificateChain } from './conflict-certificate.mjs';
+
 // Impact Set Computation
 export {
   computeImpactSet,
@@ -76,10 +81,6 @@ export {
  */
 export function analyzeDeltaPair(deltaA, deltaB) {
   // Import local functions
-  const { computeImpactSet, serializeImpactSet } = await import('./impact-set.mjs');
-  const { detectConflict } = await import('./conflict-detector.mjs');
-  const { checkCommutativity } = await import('./commutativity.mjs');
-  const { generateCertificate } = await import('./conflict-certificate.mjs');
 
   // Compute impact sets
   const impactA = computeImpactSet(deltaA);
@@ -167,8 +168,6 @@ export async function recommendStrategy(deltas) {
     throw new Error('deltas must be a non-empty array');
   }
 
-  const { detectBatchConflicts, partitionConflictFree } = await import('./conflict-detector.mjs');
-  const { analyzeParallelizability } = await import('./commutativity.mjs');
 
   // Analyze conflicts
   const batchConflicts = detectBatchConflicts(deltas);
@@ -219,9 +218,6 @@ export async function generateSystemReport(deltas) {
     throw new Error('deltas must be an array');
   }
 
-  const { detectBatchConflicts } = await import('./conflict-detector.mjs');
-  const { checkBatchCommutativity, generateCommutativityChain } = await import('./commutativity.mjs');
-  const { createCertificateChain } = await import('./conflict-certificate.mjs');
 
   // Batch conflict detection
   const conflicts = detectBatchConflicts(deltas);

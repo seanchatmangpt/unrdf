@@ -10,7 +10,7 @@
  * @format machine-executable
  */
 
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 
 /**
  * Problem: Need to discover available capabilities matching criteria
@@ -159,12 +159,13 @@ export async function verifyCapabilityPreconditions(capabilityUri) {
           satisfied = typeof globalThis !== 'undefined';
           actualValue = typeof globalThis;
           break;
-        case 'nodeVersion':
+        case 'nodeVersion': {
           const required = parseFloat(value);
           const actual = parseFloat(process.versions.node.split('.')[0]);
           satisfied = actual >= required;
           actualValue = actual;
           break;
+        }
         case 'module':
           try {
             await import(value);
@@ -176,12 +177,13 @@ export async function verifyCapabilityPreconditions(capabilityUri) {
             error = e.message;
           }
           break;
-        case 'memory':
+        case 'memory': {
           const required = parseInt(value);
           const actual = process.memoryUsage().heapUsed;
           satisfied = actual < required;
           actualValue = actual;
           break;
+        }
         default:
           error = `Unknown precondition type: ${type}`;
       }

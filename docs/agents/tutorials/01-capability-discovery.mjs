@@ -11,7 +11,7 @@
  * @format machine-executable
  */
 
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
 
 /**
@@ -89,12 +89,13 @@ export async function verifyPreconditions(capabilityUri) {
         satisfied = typeof globalThis !== 'undefined';
         actualValue = typeof globalThis;
         break;
-      case 'nodeVersion':
+      case 'nodeVersion': {
         const required = parseFloat(value);
         const actual = parseFloat(process.versions.node.split('.')[0]);
         satisfied = actual >= required;
         actualValue = actual;
         break;
+      }
       case 'module':
         try {
           await import(value);
@@ -105,12 +106,13 @@ export async function verifyPreconditions(capabilityUri) {
           actualValue = 'not-found';
         }
         break;
-      case 'memory':
+      case 'memory': {
         const required = parseInt(value);
         const actual = process.memoryUsage().heapUsed;
         satisfied = actual < required;
         actualValue = actual;
         break;
+      }
     }
     
     results.push({
@@ -169,14 +171,14 @@ export async function invokeCapability(capabilityName, input) {
   // Invoke capability based on name
   switch (capabilityName) {
     case 'parseTurtle':
-      const { parseTurtle } = await import('unrdf');
+      const { parseTurtle } = await import('@unrdf/knowledge-engine');
       return { result: await parseTurtle(input.content) };
       
     case 'query':
       return { result: await system.query(input) };
       
     case 'defineHook':
-      const { defineHook } = await import('unrdf');
+      const { defineHook } = await import('@unrdf/knowledge-engine');
       return { result: defineHook(input) };
       
     default:

@@ -1,5 +1,5 @@
 {
-  "openapi": "latest",
+  "openapi": "3.0.0",
   "info": {
     "title": "UNRDF API Reference",
     "version": "latest",

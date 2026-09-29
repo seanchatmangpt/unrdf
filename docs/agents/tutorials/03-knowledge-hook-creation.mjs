@@ -11,7 +11,7 @@
  * @format machine-executable
  */
 
-import { createDarkMatterCore, defineHook } from 'unrdf';
+import { createDarkMatterCore, defineHook } from '@unrdf/knowledge-engine';
 import { createHash } from 'crypto';
 import { readFileSync, writeFileSync } from 'fs';
 import { z } from 'zod';
