@@ -200,6 +200,15 @@ function checkNPMTokenPermissions(pkg) {
     // For scoped packages, ensure the token isn't blindly failing 404s due to Granular Access Token bugs
     if (pkg.name && pkg.name.startsWith('@')) {
       const scope = pkg.name.split('/')[0];
+      // pkg.name comes from the inspected repo's package.json, so never let it reach a shell unchecked
+      if (!/^@[a-z0-9~-][a-z0-9._~-]*$/.test(scope)) {
+        return {
+          status: 'warn',
+          actual: `Authenticated as ${whoami}, but package scope ${JSON.stringify(scope)} is not a valid npm scope`,
+          expected: 'A valid npm scope such as @unrdf',
+          fix: 'Fix the "name" field in package.json.'
+        };
+      }
       try {
         // Ping the registry for the specific package or scope to see if we get a 401/403/404 that indicates a permission issue
         // This is a heuristic: if we are authenticated but the registry rejects an info request for our own scope

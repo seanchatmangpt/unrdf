@@ -117,9 +117,11 @@ const INJECTION_RULES = [
   {
     name: 'exec_sync_command',
     type: 'command_injection',
-    pattern: /execSync\s*\(/g,
+    // Only a non-literal command (variable, concatenation, interpolation) can carry attacker input;
+    // execSync('git rev-parse HEAD') is a constant and is not injectable.
+    pattern: /execSync\s*\(\s*(?!(?:'[^'\n]*'|"[^"\n]*"|`[^`$]*`)\s*[,)])/g,
     severity: 'critical',
-    description: 'execSync() with shell=true enables command injection',
+    description: 'execSync() with a non-literal command enables command injection',
     recommendation: 'Use execFileSync() with explicit arguments'
   },
   {

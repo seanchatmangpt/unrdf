@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { Mutex } from 'async-mutex';
@@ -65,7 +65,7 @@ function _execute(ooPath, query, { ontologyFiles, rawTriples }) {
     
     fs.writeFileSync(batchFile, batchCommands);
     
-    const output = execSync(`${ooPath} batch ${batchFile}`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] });
+    const output = execFileSync(ooPath, ['batch', batchFile], { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] });
     
     const lines = output.trim().split('\n');
     const queryResultLine = lines[lines.length - 1];

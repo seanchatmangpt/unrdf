@@ -11,7 +11,7 @@
  *     --output <path>
  */
 
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
@@ -43,7 +43,7 @@ function getCommitHistory() {
     }).trim();
 
     // Get commits since last tag
-    const commits = execSync(`git log ${lastTag}..HEAD --pretty=format:"%h %s"`, {
+    const commits = execFileSync('git', ['log', `${lastTag}..HEAD`, '--pretty=format:%h %s'], {
       encoding: 'utf-8',
     })
       .trim()

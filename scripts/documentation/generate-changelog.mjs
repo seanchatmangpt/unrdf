@@ -4,7 +4,7 @@
  * Generates CHANGELOG.md from conventional commits
  */
 
-import { execSync } from 'child_process';
+import { execSync, execFileSync } from 'child_process';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
 /**
@@ -20,7 +20,7 @@ function getCommitsSinceLastTag() {
 
     // Get commits
     const range = lastTag ? `${lastTag}..HEAD` : 'HEAD';
-    const output = execSync(`git log ${range} --pretty=format:"%H|%s|%an|%ae|%ad" --date=short`, {
+    const output = execFileSync('git', ['log', range, '--pretty=format:%H|%s|%an|%ae|%ad', '--date=short'], {
       encoding: 'utf8'
     });
 

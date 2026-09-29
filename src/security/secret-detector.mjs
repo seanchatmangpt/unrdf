@@ -118,7 +118,7 @@ const DETECTION_RULES = [
   {
     name: 'password_url',
     type: 'password',
-    pattern: /[a-z]+:\/\/[^:]+:([^@]+)@/gi,
+    pattern: /[a-z][a-z0-9+.-]*:\/\/[^:\s\/@"'`]+:([^@\s"'`]+)@/gi,
     severity: 'high',
     confidence: 0.7,
     description: 'Password in URL'
@@ -156,7 +156,7 @@ const DETECTION_RULES = [
   {
     name: 'database_url',
     type: 'database_url',
-    pattern: /(?:mongodb|postgres|mysql|redis|amqp):\/\/[^:]+:[^@]+@[^\s"']+/gi,
+    pattern: /(?:mongodb|postgres|mysql|redis|amqp):\/\/[^:\s\/@"'`]+:[^@\s"'`]+@[^\s"']+/gi,
     severity: 'critical',
     confidence: 0.9,
     description: 'Database connection string with credentials'

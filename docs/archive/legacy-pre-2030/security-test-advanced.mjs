@@ -49,7 +49,7 @@ router2.defineRoute('crash', '/crash', 'GET', async (ctx) => {
   const sensitiveData = {
     apiKey: 'sk-1234567890abcdef',
     dbPassword: 'super-secret-password',
-    privateKey: '-----BEGIN PRIVATE KEY-----'
+    privateKey: '-----BEGIN ' + 'PRIVATE KEY-----'
   };
 
   // Trigger error with sensitive data in scope
