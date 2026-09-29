@@ -437,7 +437,7 @@ export class ObservabilityManager {
         maxSize:
           typeof this.config.cacheMaxSize === 'number'
             ? this.config.cacheMaxSize
-            : (getRuntimeConfig().cacheMaxSize ?? this.metrics.cacheStats.size),
+            : this.metrics.cacheStats.size,
       },
       backpressure: this.metrics.backpressure,
     });

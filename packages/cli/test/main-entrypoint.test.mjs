@@ -5,6 +5,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const MAIN = fileURLToPath(new URL('../src/cli/main.mjs', import.meta.url));
@@ -15,7 +16,11 @@ const userEnv = () => {
   return { ...env, NODE_ENV: 'production' };
 };
 const run = (...args) =>
-  spawnSync(process.execPath, [MAIN, ...args], { encoding: 'utf8', timeout: 30_000, env: userEnv() });
+  spawnSync(process.execPath, [MAIN, ...args], {
+    encoding: 'utf8',
+    timeout: 30_000,
+    env: userEnv(),
+  });
 
 describe('unrdf main.mjs entry point', () => {
   it('loads and prints usage listing every registered command', () => {
@@ -27,9 +32,14 @@ describe('unrdf main.mjs entry point', () => {
   });
 
   it('reports the package.json version, never a template placeholder', () => {
+    const { version } = JSON.parse(
+      readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8')
+    );
     const result = run('--version');
     expect(result.status, result.stderr).toBe(0);
-    expect(result.stdout).not.toMatch(/[[\]{}]/);
-    expect(result.stdout).toMatch(/\d+\.\d+\.\d+/);
+    // consola prefixes its own '[log]' tag when CI is set; drop only that tag, then the output
+    // must be exactly the package.json version.
+    expect(result.stdout.replace(/^\[log\]\s*/, '').trim()).toBe(version);
+    expect(result.stdout).not.toMatch(/\[VERSION\]|\{\{|\}\}/);
   });
 });

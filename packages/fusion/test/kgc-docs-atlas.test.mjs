@@ -6,6 +6,7 @@ import { describe, it, expect } from 'vitest';
 import { writeFile, mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import {
   extractJSDocFromFile,
   extractExportsFromESM,
@@ -16,6 +17,10 @@ import {
   atlasAsMarkdown,
   atlasAsJSON,
 } from '../src/kgc-docs-atlas.mjs';
+
+// Repo root, derived from this file (packages/fusion/test -> repo root) so the suite runs on
+// any checkout path, not just one developer's machine.
+const WORKSPACE_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
 describe('KGC Documentation Atlas', () => {
   describe('extractJSDocFromFile', () => {
@@ -175,7 +180,7 @@ export default config;
     it('should scan a single package', async () => {
       // Use fusion package itself as test subject
       const result = await scanPackages('packages/fusion', {
-        workspaceRoot: '/home/user/unrdf',
+        workspaceRoot: WORKSPACE_ROOT,
       });
 
       expect(result).toHaveLength(1);
@@ -186,7 +191,7 @@ export default config;
 
     it('should filter by scope pattern', async () => {
       const result = await scanPackages('@unrdf/fusion', {
-        workspaceRoot: '/home/user/unrdf',
+        workspaceRoot: WORKSPACE_ROOT,
       });
 
       expect(result.length).toBeGreaterThanOrEqual(1);
@@ -441,7 +446,7 @@ export default config;
   describe('Integration: Real package scan', () => {
     it('should scan fusion package and generate full atlas', async () => {
       const packages = await scanPackages('packages/fusion', {
-        workspaceRoot: '/home/user/unrdf',
+        workspaceRoot: WORKSPACE_ROOT,
       });
 
       expect(packages.length).toBeGreaterThan(0);

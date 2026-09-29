@@ -84,7 +84,7 @@ export async function query(store, sparql, options = {}) {
           for await (const quad of executed) {
             quads.push(quad);
           }
-          result = new Store(quads);
+          result = createStore(quads);
           span.setAttribute('query.result_count', quads.length);
           break;
         }
