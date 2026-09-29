@@ -181,7 +181,7 @@ async function generateTestReport(results) {
   const report = {
     timestamp: new Date().toISOString(),
     component: 'KGEN Injection System',
-    version: 'latest',
+    version: '1.0.0',
     summary: {
       total_test_suites: 0,
       passed_test_suites: 0,

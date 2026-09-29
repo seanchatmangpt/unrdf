@@ -6,13 +6,13 @@
  * OTEL span-based validation for performance profiling features.
  * Tests profiler initialization, metric collection, and bottleneck detection.
  *
- * [VERSION] Feature: Add performance profiling tools
+ * v3.1.0 Feature: Add performance profiling tools
  */
 
 import {
   createValidationRunner,
   createValidationHelpers,
-} from "../packages/validation/index.mjs";
+} from "../packages/validation/src/index.mjs";
 
 const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });

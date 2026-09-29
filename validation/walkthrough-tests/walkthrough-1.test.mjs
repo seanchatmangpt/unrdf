@@ -7,7 +7,8 @@
 
 import { mkdir, writeFile, rm } from 'fs/promises';
 import { spawn } from 'child_process';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { tmpdir } from 'os';
 
 const TEST_DIR = join(tmpdir(), `walkthrough-1-test-${Date.now()}`);
@@ -49,7 +50,7 @@ async function test() {
     console.log('Step 1: Creating package.json...');
     const packageJson = {
       name: 'walkthrough-1-test',
-      version: '[VERSION]',
+      version: '1.0.0',
       type: 'module',
       private: true
     };
@@ -57,15 +58,15 @@ async function test() {
 
     // Step 2: Install @unrdf/core (use local version)
     console.log('Step 2: Installing dependencies...');
-    const unrdfCorePath = join(process.cwd(), '../../packages/core');
+    const unrdfCorePath = join(dirname(fileURLToPath(import.meta.url)), '../../packages/core');
     await exec('npm', ['install', unrdfCorePath]);
 
     // Step 3: Create knowledge-base.mjs
     console.log('Step 3: Creating knowledge-base.mjs...');
-    const knowledgeBase = `import { createKnowledgeSubstrateCore } from '@unrdf/core';
+    const knowledgeBase = `import { createUnrdfStore } from '@unrdf/core';
 
-// Initialize the core engine
-const core = await createKnowledgeSubstrateCore();
+// Create an in-memory RDF store
+const store = createUnrdfStore();
 
 // Define people and relationships in Turtle format
 const data = \`
@@ -99,18 +100,18 @@ const data = \`
     foaf:knows ex:Bob .
 \`;
 
-// Parse the data into a store
-const store = core.parseRdf(data);
+// Parse the data into the store
+store.load(data, { format: 'text/turtle' });
 
-console.log(\`Loaded \${store.size} triples into the knowledge graph\`);
+console.log(\`Loaded \${store.size()} triples into the knowledge graph\`);
 
-export { core, store };
+export { store };
 `;
     await writeFile(join(TEST_DIR, 'knowledge-base.mjs'), knowledgeBase);
 
     // Step 4: Create queries.mjs
     console.log('Step 4: Creating queries.mjs...');
-    const queries = `import { core, store } from './knowledge-base.mjs';
+    const queries = `import { store } from './knowledge-base.mjs';
 
 /**
  * Find all people in the knowledge graph
@@ -129,14 +130,14 @@ export async function findAllPeople() {
     ORDER BY ?name
   \`;
 
-  const results = await core.query(store, sparql);
+  const results = store.query(sparql);
 
   console.log('\\nAll People:');
   console.log('='.repeat(60));
   for (const row of results) {
-    const name = row.get('name')?.value;
-    const age = row.get('age')?.value;
-    const job = row.get('job')?.value || 'Unknown';
+    const name = row.name?.value;
+    const age = row.age?.value;
+    const job = row.job?.value || 'Unknown';
     console.log(\`\${name}, \${age} years old - \${job}\`);
   }
 }
@@ -157,13 +158,13 @@ export async function findRelationships() {
     ORDER BY ?person1Name
   \`;
 
-  const results = await core.query(store, sparql);
+  const results = store.query(sparql);
 
   console.log('\\nRelationships:');
   console.log('='.repeat(60));
   for (const row of results) {
-    const p1 = row.get('person1Name')?.value;
-    const p2 = row.get('person2Name')?.value;
+    const p1 = row.person1Name?.value;
+    const p2 = row.person2Name?.value;
     console.log(\`\${p1} knows \${p2}\`);
   }
 }
@@ -186,13 +187,13 @@ export async function findByJob(jobTitle) {
     }
   \`;
 
-  const results = await core.query(store, sparql);
+  const results = store.query(sparql);
 
   console.log(\`\\nPeople with "\${jobTitle}" in their job title:\`);
   console.log('='.repeat(60));
   for (const row of results) {
-    const name = row.get('name')?.value;
-    const age = row.get('age')?.value;
+    const name = row.name?.value;
+    const age = row.age?.value;
     console.log(\`\${name}, \${age} years old\`);
   }
 }
@@ -212,16 +213,17 @@ export async function findMutualConnections() {
                foaf:knows ?person1 .
       FILTER (?person1 != ?person2)
     }
+    ORDER BY ?person1Name ?person2Name
   \`;
 
-  const results = await core.query(store, sparql);
+  const results = store.query(sparql);
 
   console.log('\\nMutual Connections:');
   console.log('='.repeat(60));
   const seen = new Set();
   for (const row of results) {
-    const p1 = row.get('person1Name')?.value;
-    const p2 = row.get('person2Name')?.value;
+    const p1 = row.person1Name?.value;
+    const p2 = row.person2Name?.value;
     const key = [p1, p2].sort().join('-');
     if (!seen.has(key)) {
       console.log(\`\${p1} ↔ \${p2}\`);
@@ -258,7 +260,7 @@ main().catch(console.error);
     console.log('Step 7: Verifying output...');
     const expectedPatterns = [
       'Knowledge Graph Application',
-      'Loaded 16 triples',
+      'Loaded 22 triples',
       'Alice Johnson, 30 years old',
       'Bob Smith, 28 years old',
       'Charlie Brown, 35 years old',

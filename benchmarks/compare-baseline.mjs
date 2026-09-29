@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Performance Regression Detector
- * Compares current benchmark results against latest baseline
+ * Compares current benchmark results against v6.0.0 baseline
  *
  * Usage:
- *   node benchmarks/compare-baseline.mjs latest [results.json]
+ *   node benchmarks/compare-baseline.mjs v6.0.0 [results.json]
  *
  * Exit codes:
  *   0: All metrics within SLA
@@ -36,7 +36,7 @@ const fmt = (num) => typeof num === 'number' ? num.toFixed(2) : num;
 
 /**
  * Load baseline configuration
- * @param {string} version - Baseline version (e.g., 'latest')
+ * @param {string} version - Baseline version (e.g., 'v6.0.0')
  * @returns {Object} Baseline configuration
  */
 function loadBaseline(version) {
@@ -303,8 +303,8 @@ async function main() {
   try {
     // Parse arguments
     const args = process.argv.slice(2);
-    const baselineVersion = args[0] || 'latest';
-    const resultsPath = args[1] || '/home/user/unrdf/benchmarks/results/benchmark-results.json';
+    const baselineVersion = args[0] || 'v6.0.0';
+    const resultsPath = args[1] || path.join(__dirname, 'results', 'benchmark-results.json');
 
     log('🔍 Performance Regression Detector', 'bold');
     log(`Baseline: ${baselineVersion}`, 'cyan');

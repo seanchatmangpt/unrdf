@@ -3,7 +3,13 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { loadPictlOntology, queryPictlKnowledge, PICTL_CLASSES, PICTL_PROPERTIES } from '../src/ontology-loader.mjs';
+import {
+  loadPictlOntology,
+  queryPictlKnowledge,
+  PictlOntologyGraph,
+  PICTL_CLASSES,
+  PICTL_PROPERTIES,
+} from '../src/ontology-loader.mjs';
 
 describe('PICTL Ontology Loader', () => {
   let ontology;
@@ -191,6 +197,23 @@ describe('PICTL Ontology Loader', () => {
   });
 
   describe('N-Triples Export', () => {
+    it('escapes quotes, backslashes and newlines in literals so output stays parseable', async () => {
+      const { createStore } = await import('@unrdf/oxigraph');
+      const g = new PictlOntologyGraph();
+      const tricky = 'say "hi" \\ back\nslash';
+      g.addTriple({
+        subject: 'http://example.org/s',
+        predicate: 'http://example.org/p',
+        object: tricky,
+        objectType: 'literal',
+      });
+      const [line] = g.exportNTriples();
+      const store = createStore();
+      store.load(line, { format: 'application/n-triples' });
+      const [q] = store.match();
+      expect(q.object.value).toBe(tricky);
+    });
+
     it('should export ontology as N-Triples', () => {
       const triples = ontology.exportNTriples();
 

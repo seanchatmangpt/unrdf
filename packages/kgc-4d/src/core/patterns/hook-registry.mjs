@@ -101,6 +101,36 @@ export class HookRegistry {
   }
 
   /**
+   * Validate a field value with a hook that may be async.
+   * validate() is synchronous and rejects a Promise result (it has no `valid` property);
+   * use this for hooks that return Promise<{ valid, reason? }>.
+   * @param {string} fieldId - Field identifier
+   * @param {*} value - Value to validate
+   * @returns {Promise<Object>} { valid: boolean, reason?: string }
+   */
+  async validateAsync(fieldId, value) {
+    const hook = this.hooks.get(fieldId);
+    if (!hook) {
+      return { valid: true };
+    }
+
+    try {
+      const result = await hook.validate(value);
+
+      if (!result || typeof result.valid !== 'boolean') {
+        throw new Error(`Hook for field "${fieldId}" must return { valid: boolean }`);
+      }
+
+      return result;
+    } catch (error) {
+      return {
+        valid: false,
+        reason: `Validation error for field "${fieldId}": ${error.message}`,
+      };
+    }
+  }
+
+  /**
    * Validate multiple field values
    * @param {Object} values - Key-value pairs of fieldId -> value
    * @returns {Object} { valid: boolean, errors?: Object }

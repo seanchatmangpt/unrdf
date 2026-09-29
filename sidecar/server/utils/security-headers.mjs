@@ -4,10 +4,11 @@
  */
 
 import { z } from 'zod';
+import { defineEventHandler } from '#imports';
 
 const SecurityConfigSchema = z.object({
   contentSecurityPolicy: z.object({
-    directives: z.record(z.array(z.string()))
+    directives: z.record(z.string(), z.array(z.string()))
   }).optional(),
   hsts: z.object({
     maxAge: z.number(),

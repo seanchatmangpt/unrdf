@@ -17,7 +17,8 @@
 
 import { z } from 'zod';
 import { EventEmitter } from 'node:events';
-import { createSign, createVerify, generateKeyPairSync } from 'node:crypto';
+import { createHash, sign as cryptoSign, verify as cryptoVerify, generateKeyPairSync } from 'node:crypto';
+import { canonicalStringify } from '../canonical.mjs';
 
 /**
  * Node phase in consensus
@@ -42,6 +43,9 @@ export const MessageType = {
   COMMIT: 'commit',
   VIEW_CHANGE: 'view-change',
   NEW_VIEW: 'new-view',
+  // Failure-detector messages (SWIM style): suspicion about a node, and its refutation
+  SUSPECT: 'suspect',
+  ALIVE: 'alive',
 };
 
 /**
@@ -193,6 +197,9 @@ export class ByzantineNode extends EventEmitter {
     /** @type {number} - Current view number */
     this.view = 0;
 
+    /** @type {number} - Incarnation number, bumped to refute suspicions about this node */
+    this.incarnation = 0;
+
     /** @type {number} - Next sequence number */
     this.sequence = 0;
 
@@ -225,6 +232,8 @@ export class ByzantineNode extends EventEmitter {
 
     /** @type {Map<string, KeyObject>} - Peer public keys */
     this.peerKeys = new Map();
+    // A node can verify its own messages
+    this.peerKeys.set(this.nodeId, publicKey);
 
     // View change state
     /** @type {NodeJS.Timeout | null} */
@@ -475,10 +484,9 @@ export class ByzantineNode extends EventEmitter {
    * @returns {string} Hex digest
    */
   _computeDigest(request) {
-    const json = JSON.stringify(request, Object.keys(request).sort());
-    const hash = createSign('sha256');
-    hash.update(json);
-    return hash.sign(this.privateKey, 'hex');
+    // A digest must be a deterministic hash of the request; an Ed25519 signature is neither
+    // (and createSign('sha256') is unsupported for Ed25519 keys)
+    return createHash('sha256').update(canonicalStringify(request)).digest('hex');
   }
 
   /**
@@ -488,10 +496,9 @@ export class ByzantineNode extends EventEmitter {
    * @returns {SignedMessage} Signed message
    */
   _signMessage(message) {
-    const json = JSON.stringify(message, Object.keys(message).sort());
-    const sign = createSign('sha256');
-    sign.update(json);
-    const signature = sign.sign(this.privateKey, 'hex');
+    const json = canonicalStringify(message);
+    // Ed25519 signs the message directly (algorithm must be null)
+    const signature = cryptoSign(null, Buffer.from(json), this.privateKey).toString('hex');
 
     return {
       message,
@@ -517,11 +524,12 @@ export class ByzantineNode extends EventEmitter {
       return false;
     }
 
-    const json = JSON.stringify(message, Object.keys(message).sort());
-    const verify = createVerify('sha256');
-    verify.update(json);
-
-    return verify.verify(peerKey, signature, 'hex');
+    const json = canonicalStringify(message);
+    try {
+      return cryptoVerify(null, Buffer.from(json), peerKey, Buffer.from(signature, 'hex'));
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -534,7 +542,10 @@ export class ByzantineNode extends EventEmitter {
 
     for (const peer of this.peers) {
       if (peer !== this.nodeId) {
-        this._sendMessage(peer, signedMessage);
+        // Fire and forget: a failed send must not become an unhandled rejection
+        this._sendMessage(peer, signedMessage).catch((error) => {
+          this.emit('networkError', peer, error);
+        });
       }
     }
   }
@@ -599,8 +610,43 @@ export class ByzantineNode extends EventEmitter {
         this._handleNewView(message);
         break;
 
+      case MessageType.SUSPECT:
+        this._handleSuspect(message);
+        break;
+
+      case MessageType.ALIVE:
+        // Refutation from another node; nothing to do at the consensus layer
+        this.emit('nodeAlive', message);
+        break;
+
       default:
         this.emit('error', 'Unknown message type', message.type);
+    }
+  }
+
+  /**
+   * Handle a suspicion message. If it accuses this node at an incarnation that
+   * is not older than ours, refute it by bumping our incarnation and
+   * broadcasting a signed ALIVE message carrying the new number.
+   * @private
+   * @param {Object} message - SUSPECT message with a `members` list
+   */
+  _handleSuspect(message) {
+    for (const member of message.members || []) {
+      if (
+        member.nodeId === this.nodeId &&
+        member.status === 'suspect' &&
+        member.incarnation >= this.incarnation
+      ) {
+        this.incarnation = member.incarnation + 1;
+
+        this._broadcast({
+          type: MessageType.ALIVE,
+          view: this.view,
+          members: [{ nodeId: this.nodeId, status: 'alive', incarnation: this.incarnation }],
+        });
+        this.emit('suspicionRefuted', this.incarnation);
+      }
     }
   }
 

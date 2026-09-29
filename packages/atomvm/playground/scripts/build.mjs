@@ -9,6 +9,7 @@ import { readFileSync, existsSync, mkdirSync, statSync } from 'fs';
 import { join, resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { packBeamFile } from '../../scripts/pack-beam.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -69,11 +70,8 @@ export async function buildModule(moduleName) {
   const avmFile = join(publicDir, `${moduleName}.avm`);
   console.log(`Packaging ${moduleName}.beam to ${moduleName}.avm...`);
 
-  try {
-    execSync(`packbeam -o ${avmFile} ${beamFile}`, { stdio: 'inherit' });
-  } catch (error) {
-    throw new Error(`packbeam command failed: ${error.message}`);
-  }
+  // PackBEAM's CLI is positional (no -o); falls back to the JS packer when absent.
+  packBeamFile(avmFile, beamFile);
   
   if (!existsSync(avmFile)) {
     throw new Error(`Packaging failed: ${avmFile} not created`);

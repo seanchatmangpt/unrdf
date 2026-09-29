@@ -281,7 +281,7 @@ export function createMockSPARQL() {
         status: 'healthy',
         responseTime: Math.random() * 50 + 10,
         availableGraphs: ['default', 'ontology', 'instances'],
-        version: 'latest-mock'
+        version: '1.0.0-mock'
       };
     })
   };

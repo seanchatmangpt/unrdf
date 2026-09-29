@@ -36,6 +36,9 @@ export const NodeStatus = {
  * @property {number} [failureTimeout=5000] - Failure detection timeout (ms)
  * @property {number} [suspectTimeout=3000] - Suspect timeout before marking dead (ms)
  * @property {number} [gossipFanout=3] - Number of nodes to gossip to
+ * @property {number} [failureCheckInterval] - How often silent members are checked (ms).
+ *   Defaults to failureTimeout / 2 so a silent member is flagged well within one
+ *   failureTimeout instead of only at the next full-timeout tick.
  */
 const MembershipConfigSchema = z.object({
   nodeId: z.string(),
@@ -46,6 +49,7 @@ const MembershipConfigSchema = z.object({
   failureTimeout: z.number().positive().default(5000),
   suspectTimeout: z.number().positive().default(3000),
   gossipFanout: z.number().int().positive().default(3),
+  failureCheckInterval: z.number().positive().optional(),
 });
 
 /**
@@ -413,7 +417,7 @@ export class MembershipManager extends EventEmitter {
 
     this.failureTimer = setInterval(() => {
       this._detectFailures();
-    }, this.config.failureTimeout);
+    }, this.config.failureCheckInterval ?? this.config.failureTimeout / 2);
   }
 
   /**

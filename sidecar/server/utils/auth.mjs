@@ -5,8 +5,10 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
-import { ec as EC } from 'elliptic'
+import elliptic from 'elliptic'
 import { z } from 'zod'
+
+const { ec: EC } = elliptic
 
 const ec = new EC('secp256k1')
 

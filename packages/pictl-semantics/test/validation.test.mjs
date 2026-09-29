@@ -76,6 +76,9 @@ describe('PICTL Result Validation', () => {
       expect(validation.valid).toBe(false);
       expect(validation.schemaValid).toBe(false);
       expect(validation.errors.length).toBeGreaterThan(0);
+      // Zod v4 exposes ZodError#issues (not #errors): each error must carry the offending path
+      expect(validation.errors[0]).toMatchObject({ path: 'fitness' });
+      expect(validation.errors[0].message).toEqual(expect.any(String));
     });
 
     it('should reject invalid precision value', () => {

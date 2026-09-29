@@ -8,7 +8,12 @@
   "exports": {
     ".": "./src/index.mjs"
   },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run"
+  },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@unrdf/oxigraph": "workspace:*"
   },
   "devDependencies": {

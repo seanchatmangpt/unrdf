@@ -9,6 +9,8 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 const GenerateTypesOptionsSchema = z.object({
   namespace: z.string().default('ex:'),
@@ -69,6 +71,8 @@ export async function generateTypesFromSPARQL(store, options = {}) {
   for (const classBinding of classes) {
     const classIRI = classBinding.get('class')?.value;
     if (!classIRI) continue;
+    // classIRI is interpolated into an IRIREF below; skip anything that could break out of it
+    if (/[\s<>"{}|\\^`]/.test(classIRI)) continue;
 
     const className = extractLocalName(classIRI);
     const comment = classBinding.get('comment')?.value;
@@ -76,6 +80,7 @@ export async function generateTypesFromSPARQL(store, options = {}) {
     // Query properties for this class
     const propQuery = `
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
       SELECT ?prop ?propComment ?range ?minCardinality ?maxCardinality WHERE {
         ?prop rdfs:domain <${classIRI}> .
@@ -93,7 +98,7 @@ export async function generateTypesFromSPARQL(store, options = {}) {
       const propIRI = propBinding.get('prop')?.value;
       if (!propIRI) continue;
 
-      const propName = extractLocalName(propIRI);
+      const propName = extractLocalName(propIRI, false);
       const range = propBinding.get('range')?.value;
       const propComment = propBinding.get('propComment')?.value;
       const minCard = propBinding.get('minCardinality')?.value;
@@ -214,7 +219,7 @@ function mapXSDToZod(rangeIRI) {
  * @param {string} iri - Full IRI
  * @returns {string} Local name
  */
-function extractLocalName(iri) {
+function extractLocalName(iri, pascalCase = true) {
   const match = iri.match(/[#/]([^#/]+)$/);
   if (!match) {
     // Fallback: use last segment
@@ -224,6 +229,7 @@ function extractLocalName(iri) {
 
   // Convert to PascalCase
   const name = match[1];
+  if (!pascalCase) return name;
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
@@ -301,7 +307,7 @@ function zodTypeToTS(zodType) {
  */
 export function createGenerationReceipt(result, store) {
   return {
-    version: '[VERSION]',
+    version: PKG_VERSION,
     operation: 'sparql-type-generation',
     timestamp: Date.now(),
     duration: 0, // Set by caller

@@ -18,6 +18,8 @@ import {
   financialMonitoringHook,
   dataQualityHook,
 } from './define-hook-example.mjs';
+import { createHash } from 'node:crypto';
+import { createStore } from '@unrdf/oxigraph';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
 const { namedNode, literal, quad } = DataFactory;
@@ -273,7 +275,7 @@ async function testHookValidation() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/valid.ask.rq',
-          sha256: 'abc123',
+          sha256: '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090',
           mediaType: 'application/sparql-query',
         },
       },
@@ -296,7 +298,7 @@ async function testHookValidation() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/invalid.ask.rq',
-          sha256: 'def456',
+          sha256: '8f61ad5cfa0c471c8cbf810ea285cb1e5f9c2c5e5e5e4f58a3229667703e1587',
           mediaType: 'application/sparql-query',
         },
       },
@@ -316,7 +318,7 @@ async function testHookValidation() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/missing-run.ask.rq',
-          sha256: 'ghi789',
+          sha256: '5eb9480d37ff7490f465d5fad3b425fe4a4c65b46fd4eef160cb1b644df7f1e8',
           mediaType: 'application/sparql-query',
         },
       },
@@ -364,7 +366,7 @@ async function testHookValidation() {
         kind: 'shacl',
         ref: {
           uri: 'file://test/full.shacl.ttl',
-          sha256: 'full123',
+          sha256: 'fd1f180e7da53cf9c7d115ad8d570f4d56c50e7003c938e8d39bca426b5095ff',
           mediaType: 'text/turtle',
         },
       },
@@ -393,7 +395,7 @@ async function testHookValidation() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/immutable.ask.rq',
-          sha256: 'immutable123',
+          sha256: '2c290e186674213e8369943451479714679b29f65a10f093aafaf3ca2d19e411',
           mediaType: 'application/sparql-query',
         },
       },
@@ -438,7 +440,7 @@ async function testEdgeCases() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/error.ask.rq',
-          sha256: 'error123',
+          sha256: 'a6c469c24a52ba025b28133e1b546b5989c781192bbe60d08d3167020ec774cc',
           mediaType: 'application/sparql-query',
         },
       },
@@ -611,7 +613,7 @@ async function testPerformance() {
           kind: 'sparql-ask',
           ref: {
             uri: `file://test/memory-${i}.ask.rq`,
-            sha256: `memory${i}`,
+            sha256: createHash('sha256').update(`memory${i}`).digest('hex'),
             mediaType: 'application/sparql-query',
           },
         },
@@ -678,7 +680,7 @@ async function testRdfAssertions() {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test/assertions.ask.rq',
-          sha256: 'assertions123',
+          sha256: '8e1bbcb1c53eda5bb21001e148d65c81cb9959ef0530a608f5091f0b1db806d3',
           mediaType: 'application/sparql-query',
         },
       },

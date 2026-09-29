@@ -123,7 +123,7 @@ export const CONTENT_PATTERNS = {
 // Operation metadata
 export const OPERATION_METADATA = {
   CREATED_BY: 'KGEN Injection System',
-  VERSION: 'latest',
+  VERSION: '1.0.0',
   TIMESTAMP_FORMAT: 'YYYY-MM-DD HH:mm:ss UTC',
   HASH_ALGORITHM: 'sha256'
 };

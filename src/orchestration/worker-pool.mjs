@@ -41,7 +41,7 @@ export const WorkerSchema = z.object({
   tasksFailed: z.number().default(0),
   createdAt: z.number(),
   lastActiveAt: z.number().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

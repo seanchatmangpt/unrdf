@@ -379,8 +379,12 @@ describe('ConsensusManager - E2E Integration', () => {
       await consensusManager.initialize();
 
       // Act - Trigger partition detection
-      await new Promise(resolve => setTimeout(resolve, 150));
-      expect(consensusManager.partitionState).toBe('partitioned');
+      // (detector uses a strict > threshold on a threshold/2 interval, so a fixed 150ms
+      // sleep races the third tick; poll instead)
+      await vi.waitFor(() => expect(consensusManager.partitionState).toBe('partitioned'), {
+        timeout: 1000,
+        interval: 10,
+      });
 
       // Act - Trigger recovery (leader election)
       const recoverySpy = vi.fn();

@@ -54,8 +54,8 @@ function serializeStore(store) {
 
 function mergeStores(store1, store2) {
   const merged = new KGCStore();
-  for (const q of store1.match()) merged.add(q);
-  for (const q of store2.match()) merged.add(q);
+  for (const q of store1.match()) merged._bypassEnforcement(() => merged.add(q));
+  for (const q of store2.match()) merged._bypassEnforcement(() => merged.add(q));
   return merged;
 }
 

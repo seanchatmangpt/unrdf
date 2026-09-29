@@ -4,7 +4,7 @@
  * This composable provides a simple, intuitive interface for reasoning operations.
  * It abstracts away store management, rule parsing, and result handling.
  *
- * @version [VERSION]
+ * @version 2.0.0
  * @author GitVan Team
  * @license MIT
  */

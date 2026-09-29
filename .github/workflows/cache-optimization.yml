@@ -6,8 +6,13 @@ on:
     # Weekly cache warmup on Sunday at 1 AM UTC
     - cron: '0 1 * * 0'
 
+# The cleanup and statistics jobs list and delete Actions caches.
+permissions:
+  contents: read
+  actions: write
+
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '22'
   PNPM_VERSION: '10.15.0'
 
 jobs:
@@ -17,21 +22,21 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -65,16 +70,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: timeout 120s pnpm install --frozen-lockfile
@@ -85,7 +90,7 @@ jobs:
           path: |
             packages/*/dist
             packages/*/.turbo
-          key: ${{ runner.os }}-build-${{ hashFiles('packages/*/src/**/*.{js,mjs}') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/*/src/**/*.mjs', 'packages/*/src/**/*.js') }}
           restore-keys: |
             ${{ runner.os }}-build-
 

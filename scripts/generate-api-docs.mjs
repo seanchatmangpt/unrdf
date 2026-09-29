@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT = join(__dirname, '..');
+const WORKSPACE_VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf-8')).version;
 
 // Load capability map JSON
 const capabilityMapPath = join(ROOT, 'exploration', 'capability-map.json');
@@ -67,10 +68,10 @@ const capMapDocs = {
 // Generate OpenAPI 3.0 schema
 function generateOpenAPISchema() {
   const schema = {
-    openapi: 'latest',
+    openapi: '3.0.0',
     info: {
       title: 'UNRDF API Reference',
-      version: 'latest',
+      version: WORKSPACE_VERSION,
       description: 'Complete API reference for all UNRDF packages - RDF processing, SPARQL execution, workflow orchestration, and knowledge graph management',
       contact: {
         name: 'UNRDF Team',
@@ -165,7 +166,7 @@ function generateOpenAPISchema() {
 function generateMasterAPIReference() {
   let md = `# UNRDF API Reference
 
-**Version**: latest
+**Version**: ${WORKSPACE_VERSION}
 **Last Updated**: ${new Date().toISOString().split('T')[0]}
 **Total Packages**: ${capabilityMap.totalPackages}
 

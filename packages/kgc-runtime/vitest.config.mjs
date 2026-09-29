@@ -13,6 +13,13 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: ['**/node_modules/**', '**/test/**'],
     },
+    // node:test suites (run via `node --test` in the package test script)
+    exclude: [
+      '**/node_modules/**',
+      'test/bounds.test.mjs',
+      'test/enhanced-bounds.test.mjs',
+      'test/validators.test.mjs',
+    ],
     testTimeout: 5000,
   },
 });

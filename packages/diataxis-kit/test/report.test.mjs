@@ -28,7 +28,7 @@ async function setupTestInventories() {
   // Inventory 1: High confidence package
   const inventory1 = {
     packageName: '@unrdf/test-pkg-1',
-    version: '[VERSION]',
+    version: '1.0.0',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.9,
@@ -97,7 +97,7 @@ async function setupTestInventories() {
   // Inventory 2: Low confidence package
   const inventory2 = {
     packageName: '@unrdf/test-pkg-2',
-    version: '[VERSION]',
+    version: '0.5.0',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.3,
@@ -165,7 +165,7 @@ async function setupTestInventories() {
   // Inventory 3: Medium confidence package
   const inventory3 = {
     packageName: '@unrdf/test-pkg-3',
-    version: '[VERSION]',
+    version: '2.1.0',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.6,
@@ -230,17 +230,22 @@ async function setupTestInventories() {
     }
   };
 
+  // bin/run.mjs writes one diataxis.json per package under ARTIFACTS/diataxis/<name>/
+  for (const n of [1, 2, 3]) {
+    await mkdir(join(diataxisDir, '@unrdf', `test-pkg-${n}`), { recursive: true });
+  }
+
   // Write inventory files
   await writeFile(
-    join(diataxisDir, 'test-pkg-1.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-1', 'diataxis.json'),
     JSON.stringify(inventory1, null, 2)
   );
   await writeFile(
-    join(diataxisDir, 'test-pkg-2.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-2', 'diataxis.json'),
     JSON.stringify(inventory2, null, 2)
   );
   await writeFile(
-    join(diataxisDir, 'test-pkg-3.inventory.json'),
+    join(diataxisDir, '@unrdf', 'test-pkg-3', 'diataxis.json'),
     JSON.stringify(inventory3, null, 2)
   );
 }

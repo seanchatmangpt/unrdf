@@ -10,7 +10,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Open-ontologies binary location (installed via cargo install open-ontologies)
-export const ONTO_BINARY = process.env.ONTO_BINARY || join(process.env.HOME || '', '.local', 'bin', 'open-ontologies');
+// OPEN_ONTOLOGIES_PATH is the variable shared with the semantic sidecar / semantic-bridge
+export const ONTO_BINARY =
+  process.env.ONTO_BINARY ||
+  process.env.OPEN_ONTOLOGIES_PATH ||
+  join(process.env.HOME || '', '.local', 'bin', 'open-ontologies');
 
 // Open-ontologies data directory (SQLite store)
 export const ONTO_DATA_DIR = process.env.ONTO_DATA_DIR || join(process.env.HOME || '', '.open-ontologies');
@@ -140,7 +144,7 @@ export const ontoRegistryMetadata = [
     name: 'onto_version',
     phase: 'expert',
     description: 'Save ontology snapshots with version tags. Restore previous versions for rollback.',
-    examples: ['onto_version({tag: "[VERSION]"})', 'onto_version({restore: "[VERSION]"})', 'onto_version({list: true})'],
+    examples: ['onto_version({tag: "v1.0.0"})', 'onto_version({restore: "v1.0.0"})', 'onto_version({list: true})'],
   },
 ];
 

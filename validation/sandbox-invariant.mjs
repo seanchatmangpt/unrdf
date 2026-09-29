@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { createSandboxAdapter } from '../packages/security/sandbox-adapter.mjs';
+import { createSandboxAdapter } from '../packages/hooks/src/security/sandbox-adapter.mjs';
 
 const sandbox = createSandboxAdapter({ timeoutMs: 500 });
 
-const result = sandbox.run('const x = 2 + 3; typeof process === "undefined" ? x : "leak"');
+const result = await sandbox.run('const x = 2 + 3; return typeof process === "undefined" ? x : "leak"');
 
 if (result === 'leak') {
   console.error('❌ Sandbox invariant failed: process is accessible');

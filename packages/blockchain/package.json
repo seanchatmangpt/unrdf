@@ -13,8 +13,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo": "node examples/blockchain-demo.mjs",
-    "demo:full": "node examples/comprehensive-demo.mjs"
+    "demo": "node examples/blockchain-demo.mjs"
   },
   "keywords": [
     "blockchain",

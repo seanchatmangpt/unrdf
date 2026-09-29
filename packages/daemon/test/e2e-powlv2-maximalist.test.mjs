@@ -1,10 +1,14 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { faker } from '@faker-js/faker';
 import { powl_discover, powl_conformance, powl_to_ontology } from '../src/mcp/powl-handlers.mjs';
 import { KnowledgeHookManager } from '../../hooks/src/index.mjs';
-import { executeSemanticQuery } from '@unrdf/core/utils/semantic-bridge';
 
 describe('Vision 2030: Maximalist PoWL v2 Autonomics Suite', { timeout: 45000 }, () => {
+  beforeAll(() => {
+    requireOpenOntologies();
+  });
+
   
   const generateStochasticEventLog = (numTraces, maxEventsPerTrace) => {
     const traces = [];

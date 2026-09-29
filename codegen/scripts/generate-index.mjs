@@ -175,7 +175,7 @@ async function main() {
   // Generate CommonJS
   console.log('\n📝 Generating CommonJS...');
   const cjs = generateCommonJS(data);
-  const cjsPath = path.join(outputDir, 'index.js');
+  const cjsPath = path.join(outputDir, 'index.cjs');
   fs.writeFileSync(cjsPath, cjs);
   console.log(`   ✓ ${cjsPath}`);
 
@@ -190,15 +190,15 @@ async function main() {
   console.log('📝 Generating package.json...');
   const pkgJson = {
     name: '@unrdf/generated',
-    version: 'latest-rc.1',
+    version: JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf-8')).version,
     description: 'Auto-generated package registry and utilities',
     type: 'module',
-    main: 'index.js',
+    main: 'index.cjs',
     module: 'index.mjs',
     exports: {
       '.': './index.mjs',
-      './cjs': './index.js',
-      './registry': './registry.mjs'
+      './cjs': './index.cjs',
+      './registry': './index.mjs'
     }
   };
   const pkgPath = path.join(outputDir, 'package.json');

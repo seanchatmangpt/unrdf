@@ -13,7 +13,7 @@ import {
   OntologyRenderResultSchema,
   DocTemplateSchema
 } from './thesis-builder.schema.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 import * as TemplateRenderer from './template-renderer.mjs';
 
 /**
@@ -203,7 +203,12 @@ export async function executeSparqlConstruct(store, query, options = {}) {
     };
 
     const mimeType = formatMap[validated.outputFormat] || 'text/turtle';
-    const serialized = resultStore.dump({ format: mimeType });
+    // Graph-only formats (turtle, n-triples, rdf/xml) require an explicit graph to dump;
+    // CONSTRUCT results live in the default graph. Dataset formats (n-quads) dump everything.
+    const isDatasetFormat = mimeType === 'application/n-quads' || mimeType === 'application/trig';
+    const serialized = isDatasetFormat
+      ? resultStore.dump({ format: mimeType })
+      : resultStore.dump({ format: mimeType, from_graph_name: dataFactory.defaultGraph() });
 
     return serialized;
   } catch (error) {
@@ -405,27 +410,32 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
       const classUri = row.get('class')?.value;
       if (!classUri) continue;
 
-      try {
-        // Determine doc type based on Diataxis structure
-        const docType = validated.generateDiataxis ? 'reference' : 'docs';
-        const doc = await generateDocFromClass(store, classUri, docType);
+      // Diataxis: one document per quadrant for every class; otherwise a single flat doc
+      const docTypes = validated.generateDiataxis
+        ? ['tutorial', 'howto', 'reference', 'explanation']
+        : ['docs'];
 
-        // Write markdown file
-        const docPath = join(outputDir, doc.path);
-        await mkdir(join(outputDir, docType), { recursive: true });
-        await writeFile(docPath, doc.content, 'utf-8');
+      for (const docType of docTypes) {
+        try {
+          const doc = await generateDocFromClass(store, classUri, docType);
 
-        generatedDocs.push({
-          path: doc.path,
-          classUri,
-          type: docType,
-          size: doc.content.length
-        });
-      } catch (error) {
-        errors.push({
-          classUri,
-          error: error.message
-        });
+          // Write markdown file
+          const docPath = join(outputDir, doc.path);
+          await mkdir(join(outputDir, docType), { recursive: true });
+          await writeFile(docPath, doc.content, 'utf-8');
+
+          generatedDocs.push({
+            path: doc.path,
+            classUri,
+            type: docType,
+            size: doc.content.length
+          });
+        } catch (error) {
+          errors.push({
+            classUri,
+            error: error.message
+          });
+        }
       }
     }
 
@@ -434,6 +444,7 @@ export async function renderFromOntology(ontologyPath, outputDir, config = {}) {
       for (const queryConfig of validated.queries) {
         try {
           const result = await executeSparqlConstruct(store, queryConfig.query, {
+            prefixes: queryConfig.prefixes,
             outputFormat: queryConfig.outputFormat || 'turtle'
           });
 
@@ -508,7 +519,7 @@ export async function applyDocTemplate(template, rdfData) {
     // Prepare template data from RDF bindings
     const templateData = {
       type: validated.type,
-      name: validated.name,
+      ...(validated.name ? { name: validated.name } : {}),
       generated: true,
       timestamp: new Date().toISOString(),
       ...rdfData
@@ -535,12 +546,14 @@ export async function applyDocTemplate(template, rdfData) {
 
     // Add frontmatter if not already present
     if (!renderedContent.startsWith('---')) {
-      const frontmatter = `---
+      const extraLines = Object.entries(validated.frontmatter || {})
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n');
+    const frontmatter = `---
 type: ${validated.type}
-name: ${validated.name}
-generated: true
+${validated.name ? `name: ${validated.name}\n` : ''}generated: true
 timestamp: ${templateData.timestamp}
----
+${extraLines ? `${extraLines}\n` : ''}---
 
 `;
       return frontmatter + renderedContent;

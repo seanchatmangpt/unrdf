@@ -94,7 +94,7 @@ function scanPackages() {
 
       packages.push({
         name: pkg.name,
-        version: pkg.version || 'latest',
+        version: pkg.version || '0.0.0',
         description: pkg.description || 'No description',
         exports: extractExports(pkg),
         dependencies: pkg.dependencies || {},
@@ -225,7 +225,9 @@ function main() {
   console.log(`  3. Generate: pnpm run unrdf:generate`);
 }
 
-main().catch(error => {
+try {
+  main();
+} catch (error) {
   console.error('❌ Error:', error.message);
   process.exit(1);
-});
+}

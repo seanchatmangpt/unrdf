@@ -18,7 +18,7 @@ import { z } from 'zod';
  */
 export const RetryConfigSchema = z.object({
   maxAttempts: z.number().min(1).max(10).default(3),
-  initialDelayMs: z.number().min(100).max(10000).default(1000),
+  initialDelayMs: z.number().min(1).max(10000).default(1000),
   maxDelayMs: z.number().min(1000).max(60000).default(30000),
   backoffMultiplier: z.number().min(1).max(10).default(2),
   jitterMs: z.number().min(0).max(5000).default(100),
@@ -180,7 +180,9 @@ export class RetryStrategy {
     const cappedDelay = Math.min(exponentialDelay, this.config.maxDelayMs);
 
     // Add jitter to avoid thundering herd
-    const jitter = Math.random() * this.config.jitterMs;
+    // Jitter is capped at half the (capped) delay so it can never swamp the exponential step
+    // (otherwise successive delays are not monotonically increasing for small initial delays)
+    const jitter = Math.random() * Math.min(this.config.jitterMs, cappedDelay / 2);
 
     return Math.floor(cappedDelay + jitter);
   }

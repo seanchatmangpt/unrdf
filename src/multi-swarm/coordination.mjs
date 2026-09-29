@@ -18,6 +18,7 @@
 
 import { z } from 'zod';
 import { EventEmitter } from 'events';
+import { randomUUID } from 'crypto';
 
 /**
  * Message types for inter-swarm communication
@@ -98,7 +99,12 @@ export class MessageQueue {
    * @throws {Error} If queue is full
    */
   enqueue(message, priority = 0) {
-    const validated = MessageSchema.parse(message);
+    // id and timestamp are assigned when the sender omits them
+    const validated = MessageSchema.parse({
+      id: randomUUID(),
+      timestamp: new Date().toISOString(),
+      ...message
+    });
 
     if (this.size >= this.maxSize) {
       throw new Error(`Queue full: ${this.size}/${this.maxSize}`);

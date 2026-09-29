@@ -43,7 +43,7 @@ export const AgentRegistrationSchema = z.object({
   capabilities: z.array(z.string()).min(1),
   priority: z.number().default(0),
   maxConcurrent: z.number().default(1),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -162,6 +162,19 @@ export class AgentRouter {
 
     if (candidates.length === 0) {
       this.stats.routingFailures++;
+
+      // Capable agents may exist but all be at max concurrency: that is a capacity shortage
+      // rather than a missing capability
+      const capable = this._getMatchingAgents(requiredCapabilities, preferredRole, {
+        ignoreLoad: true
+      });
+      if (capable.length > 0) {
+        throw new Error(
+          `Insufficient agents: requested ${count}, found 0 available ` +
+          `(${capable.length} capable agent(s) at max concurrency)`
+        );
+      }
+
       throw new Error(
         `No agents found for capabilities: ${requiredCapabilities.join(', ')}`
       );
@@ -275,7 +288,7 @@ export class AgentRouter {
    * @returns {Object[]} Matching agents
    * @private
    */
-  _getMatchingAgents(requiredCapabilities, preferredRole) {
+  _getMatchingAgents(requiredCapabilities, preferredRole, options = {}) {
     let agents = Array.from(this.agents.values());
 
     // Filter by role if specified
@@ -294,6 +307,10 @@ export class AgentRouter {
     }
 
     // Filter by availability (not at max concurrent)
+    if (options.ignoreLoad) {
+      return agents;
+    }
+
     agents = agents.filter(agent => {
       const currentLoad = this._getLoad(agent.agentId);
       return currentLoad < agent.maxConcurrent;

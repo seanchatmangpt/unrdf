@@ -330,7 +330,7 @@ export class WorkItemExecutor {
    * @returns {Promise<Array>} Query results
    */
   async queryWorkItems(sparql) {
-    return this.store.query(sparql);
+    return this.store.query(sparql, { use_default_graph_as_union: true });
   }
 
   // ===== Private Methods =====

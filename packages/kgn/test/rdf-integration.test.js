@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createEngine, createCustomFilters } from '../src/index.js';
+import { createEngine, createCustomFilters } from '../src/index.mjs';
 
 describe('RDF Template Rendering', () => {
   let engine;

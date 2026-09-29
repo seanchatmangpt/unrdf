@@ -5,19 +5,8 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  AgentRegistry,
   createAgentRegistry,
   Agent,
-  OrchestratorAgent,
-  RuntimeAgent,
-  FilesystemAgent,
-  WasmAgent,
-  PerformanceAgent,
-  NetworkAgent,
-  ToolingAgent,
-  StorageAgent,
-  ConcurrencyAgent,
-  SystemAgent,
   createOrchestratorAgent,
   createRuntimeAgent,
   createFilesystemAgent,

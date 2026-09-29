@@ -746,7 +746,7 @@ app.use(requestLogger({ logBody: false }));
 
 const health = createHealthMiddleware({
   serviceName: 'unrdf-api',
-  version: '[VERSION]',
+  version: '5.0.1',
   dependencies: {
     database: async () => ({ status: 'connected' })
   }

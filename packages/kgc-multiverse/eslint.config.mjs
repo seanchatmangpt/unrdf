@@ -17,6 +17,8 @@ export default [
         crypto: 'readonly',
         BigInt: 'readonly',
         Buffer: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
       },
     },
     rules: {

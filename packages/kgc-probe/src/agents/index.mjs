@@ -18,7 +18,7 @@
 
 import { randomUUID } from 'crypto';
 import { performance } from 'perf_hooks';
-import { platform, version, arch, cpus, totalmem, freemem } from 'os';
+import { platform, arch, cpus, totalmem, freemem } from 'os';
 import { promises as fs, existsSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
@@ -101,10 +101,10 @@ export class Agent {
 
   /**
    * Probe the system and produce observations
-   * @param {Object} config - Probe configuration
+   * @param {Object} _config - Probe configuration
    * @returns {Promise<Array>} Array of observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     return [];
   }
 
@@ -136,10 +136,10 @@ export class OrchestratorAgent extends Agent {
 
   /**
    * Probe orchestrator state
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -256,10 +256,10 @@ export class RuntimeAgent extends Agent {
 
   /**
    * Probe runtime environment
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -545,10 +545,10 @@ export class WasmAgent extends Agent {
 
   /**
    * Probe WASM capabilities
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -675,10 +675,10 @@ export class PerformanceAgent extends Agent {
 
   /**
    * Probe performance
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -714,14 +714,14 @@ export class PerformanceAgent extends Agent {
 
     // Simple hash benchmark
     const hashStart = performance.now();
-    let hashSum = 0;
+    let _hashSum = 0; // accumulated only to keep the benchmark loop observable
     for (let i = 0; i < 10000; i++) {
       let hash = 0;
       for (let j = 0; j < testData.length; j++) {
         hash = (hash << 5) - hash + testData.charCodeAt(j);
         hash = hash & hash;
       }
-      hashSum += hash;
+      _hashSum += hash;
     }
     const hashTime = (performance.now() - hashStart) / 10000;
 
@@ -905,10 +905,10 @@ export class ToolingAgent extends Agent {
 
   /**
    * Probe tooling
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -972,10 +972,10 @@ export class StorageAgent extends Agent {
 
   /**
    * Probe storage
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -1075,10 +1075,10 @@ export class ConcurrencyAgent extends Agent {
 
   /**
    * Probe concurrency
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 
@@ -1186,10 +1186,10 @@ export class SystemAgent extends Agent {
 
   /**
    * Probe system
-   * @param {Object} config - Configuration
+   * @param {Object} _config - Configuration
    * @returns {Promise<Array>} Observations
    */
-  async probe(config = {}) {
+  async probe(_config = {}) {
     const startTime = performance.now();
     const observations = [];
 

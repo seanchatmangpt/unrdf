@@ -62,7 +62,7 @@ export const SparqlAskConditionSchema = z.object({
     .object({
       timeout: z.number().int().positive().max(30000).optional(),
       strict: z.boolean().optional(),
-      variables: z.record(z.string()).optional(),
+      variables: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
 });
@@ -81,7 +81,7 @@ export const SparqlSelectConditionSchema = z.object({
       limit: z.number().int().positive().max(10000).optional(),
       offset: z.number().int().nonnegative().optional(),
       strict: z.boolean().optional(),
-      variables: z.record(z.string()).optional(),
+      variables: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
 });
@@ -218,8 +218,8 @@ export const ReceiptSchema = z.object({
  */
 export const HookContextSchema = z.object({
   graph: z.any(), // RDF Store instance - validated at runtime
-  env: z.record(z.any()).optional(),
-  metadata: z.record(z.any()).optional(),
+  env: z.record(z.string(), z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   transactionId: z.string().uuid({ message: 'Must be a valid UUID' }).optional(),
   timestamp: z.coerce.date().optional(),
 });
@@ -247,7 +247,7 @@ export const HookResultSchema = z.object({
   duration: z.number().nonnegative().optional(),
   phase: z.enum(['before', 'run', 'after', 'completed', 'failed']).optional(),
   cancelled: z.boolean().default(false),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   assertions: z
     .array(
       z.object({

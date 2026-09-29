@@ -18,7 +18,7 @@ const ObservationSchema = z.object({
   method: z.string(),
   domain: z.string().optional(),
   timestamp: z.number().optional(),
-  outputs: z.any(),
+  outputs: z.any().optional(),
   error: z.string().optional(),
   guardDecision: z.string().optional(),
   hash: z.string().optional(),
@@ -49,7 +49,6 @@ const ConstraintSchema = z.object({
 const KGC_NS = 'http://unrdf.dev/kgc#';
 const XSD_NS = 'http://www.w3.org/2001/XMLSchema#';
 const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-const RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema#';
 
 /**
  * Create a KGC namespace URI
@@ -93,7 +92,7 @@ function generateHash(observation) {
  * @returns {string} Turtle-formatted RDF string
  *
  * @example
- * const obs = [{ method: 'probeRuntime', outputs: { node: '[VERSION]' } }];
+ * const obs = [{ method: 'probeRuntime', outputs: { node: 'v18.19.0' } }];
  * const turtle = observationsToRdf(obs);
  * console.log(turtle); // @prefix kgc: <http://unrdf.dev/kgc#> . ...
  */

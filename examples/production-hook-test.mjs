@@ -7,7 +7,7 @@
 import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
 import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
 import { createStore } from '../packages/oxigraph/src/index.mjs';
-import { namedNode, literal, quad } from '../packages/rdf/quad-utils.mjs';
+import { namedNode, literal, quad } from '../packages/test-utils/src/index.mjs';
 import { readFile } from 'fs/promises';
 import { createHash } from 'crypto';
 

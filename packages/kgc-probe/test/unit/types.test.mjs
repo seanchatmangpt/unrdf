@@ -9,14 +9,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   ObservationSchema,
-  ArtifactSchema,
   ProbeConfigSchema,
-  GuardConfigSchema,
   StorageConfigSchema,
-  GuardViolationSchema,
-  DiffResultSchema,
   validateObservation,
-  validateArtifact,
   validateProbeConfig,
   tryValidateObservation
 } from '../../src/types.mjs';

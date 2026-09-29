@@ -40,7 +40,6 @@ import { Readable, Writable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { join, resolve } from 'node:path';
 import { blake3 } from '@noble/hashes/blake3.js';
-import { ObservationSchema, ProbeConfigSchema } from '../types.mjs';
 
 // =============================================================================
 // Constants - Deterministic Test Data
@@ -110,24 +109,6 @@ function createObservation(category, observation, value, guardDecision, metadata
   };
 
   return obs;
-}
-
-/**
- * Create error observation
- * @param {string} category - Observation category
- * @param {string} observation - Observation description
- * @param {Error} error - Error object
- * @param {Object} guardDecision - Guard decision
- * @returns {Object} Validated observation
- */
-function createErrorObservation(category, observation, error, guardDecision) {
-  return createObservation(category, observation, null, guardDecision, {
-    error: {
-      message: error.message,
-      code: error.code,
-      stack: error.stack,
-    },
-  });
 }
 
 // =============================================================================
@@ -487,7 +468,6 @@ export async function probePerformance(config = {}) {
   // Validate config
   const validatedConfig = config;
   const out = validatedConfig.out || '/tmp';
-  const timeout = validatedConfig.timeout || 30000;
 
   // Additional config defaults for performance benchmarking
   const samples = config.samples || 100;
@@ -510,7 +490,7 @@ export async function probePerformance(config = {}) {
 
   try {
     // JSON Parse benchmarks
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const stats = await benchmarkJsonParse(size, benchmarkOptions);
       const sizeKB = (size / 1024).toFixed(0);
@@ -539,7 +519,7 @@ export async function probePerformance(config = {}) {
     }
 
     // JSON Stringify benchmarks
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const stats = await benchmarkJsonStringify(size, benchmarkOptions);
       const sizeKB = (size / 1024).toFixed(0);
@@ -565,7 +545,7 @@ export async function probePerformance(config = {}) {
     }
 
     // BLAKE3 hashing benchmarks
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const stats = await benchmarkBlake3(size, benchmarkOptions);
       const sizeKB = (size / 1024).toFixed(0);
@@ -613,7 +593,7 @@ export async function probePerformance(config = {}) {
     );
 
     // File I/O benchmarks (with guard checks)
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const guardDecision = guardPathAccess(out, out);
 
@@ -654,7 +634,7 @@ export async function probePerformance(config = {}) {
     }
 
     // File write benchmarks
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const guardDecision = guardPathAccess(out, out);
 
@@ -695,7 +675,7 @@ export async function probePerformance(config = {}) {
     }
 
     // Buffer operation benchmarks
-    for (const [label, size] of Object.entries(PAYLOAD_SIZES)) {
+    for (const size of Object.values(PAYLOAD_SIZES)) {
       checkBudget();
       const sizeKB = (size / 1024).toFixed(0);
 

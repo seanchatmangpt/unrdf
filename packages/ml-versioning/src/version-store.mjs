@@ -3,7 +3,7 @@
  * Uses UNRDF KGC-4D for time-travel capabilities and BLAKE3 for hash chains
  */
 
-import * as tf from '@tensorflow/tfjs-node';
+import { tf } from './tf.mjs';
 import { KGCStore } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
 import { blake3 } from 'hash-wasm';
@@ -169,7 +169,7 @@ export class MLVersionStore {
     const metadata = JSON.parse(result.metadata.value);
     const metrics = JSON.parse(result.metrics.value);
     const hash = result.hash.value;
-    const previousHash = result.previousHash ? result.previousHash.value : null;
+    const previousHash = result.previousHash?.value || null;
     const timestamp = parseInt(result.timestamp.value);
 
     // Reconstruct TensorFlow.js model
@@ -179,9 +179,9 @@ export class MLVersionStore {
       model,
       metadata,
       metrics,
-      hash: result.hash.value,
-      previousHash: result.previousHash?.value || null,
-      timestamp: parseInt(result.timestamp.value),
+      hash,
+      previousHash,
+      timestamp,
       versionId,
     };
   }

@@ -16,6 +16,12 @@
     "test:watch": "npm test -- --watch",
     "lint": "eslint src/"
   },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*.test.mjs"
+    ],
+    "transform": {}
+  },
   "keywords": [
     "rdf",
     "knowledge-graph",
@@ -31,8 +37,10 @@
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/knowledge-engine": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/project-engine": "workspace:*",
     "@unrdf/streaming": "workspace:*",
-    "@unrdf/validation": "workspace:*"
+    "@unrdf/validation": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

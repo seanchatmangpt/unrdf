@@ -46,6 +46,8 @@ import { createStageExecutor as _createStageExecutor } from './stage-executor.mj
 import { createRollbackManager as _createRollbackManager } from './rollback-manager.mjs';
 import { createReceiptAggregator as _createReceiptAggregator } from './receipt-aggregator.mjs';
 import { createWorkflowOrchestrator as _createWorkflowOrchestrator } from './workflow-orchestrator.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 // Re-export for convenience
 export const createResolver = _createDependencyResolver;
@@ -193,7 +195,7 @@ export function createOrchestrationPipeline(options = {}) {
 /**
  * Version information
  */
-export const VERSION = '[VERSION]';
+export const VERSION = PKG_VERSION;
 
 /**
  * Module metadata

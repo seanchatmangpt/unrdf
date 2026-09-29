@@ -22,7 +22,7 @@ describe('OTEL Span Validation', () => {
   let tracer;
 
   beforeEach(() => {
-    tracer = trace.getTracer('benchmark-validation-test', 'latest');
+    tracer = trace.getTracer('benchmark-validation-test', '1.0.0');
   });
 
   it('should create root span with required attributes', async () => {
@@ -31,7 +31,7 @@ describe('OTEL Span Validation', () => {
     await tracer.startActiveSpan('benchmark.test', (span) => {
       // Set required common attributes
       span.setAttribute('benchmark.suite.name', 'Test Suite');
-      span.setAttribute('benchmark.suite.version', 'latest');
+      span.setAttribute('benchmark.suite.version', '1.0.0');
       span.setAttribute('benchmark.id', 'test-benchmark');
       span.setAttribute('benchmark.name', 'Test Benchmark');
       span.setAttribute('benchmark.timestamp', new Date().toISOString());
@@ -43,7 +43,7 @@ describe('OTEL Span Validation', () => {
       // Validate attributes exist (in real implementation, extract from span)
       capturedAttributes = {
         suiteName: 'Test Suite',
-        suiteVersion: 'latest',
+        suiteVersion: '1.0.0',
         benchmarkId: 'test-benchmark',
         platform: process.platform,
         arch: process.arch,
@@ -56,7 +56,7 @@ describe('OTEL Span Validation', () => {
 
     // Validate all required attributes are present
     expect(capturedAttributes.suiteName).toBe('Test Suite');
-    expect(capturedAttributes.suiteVersion).toBe('latest');
+    expect(capturedAttributes.suiteVersion).toBe('1.0.0');
     expect(capturedAttributes.benchmarkId).toBe('test-benchmark');
     expect(capturedAttributes.platform).toBeTruthy();
     expect(capturedAttributes.arch).toBeTruthy();
@@ -479,7 +479,7 @@ describe('Baseline Target Validation', () => {
  */
 describe('Tinybench Integration Validation', () => {
   it('should run simple benchmark with tinybench', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     let executionCount = 0;
 
@@ -495,12 +495,12 @@ describe('Tinybench Integration Validation', () => {
     const task = bench.tasks[0];
     expect(task.name).toBe('test-operation');
     expect(task.result).toBeDefined();
-    expect(task.result.mean).toBeGreaterThan(0);
+    expect(task.result.latency.mean).toBeGreaterThan(0);
     expect(executionCount).toBeGreaterThan(0);
   });
 
   it('should collect accurate timing samples', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     bench.add('timed-operation', () => {
       // Operation that takes ~1ms
@@ -513,12 +513,12 @@ describe('Tinybench Integration Validation', () => {
     await bench.run();
 
     const task = bench.tasks[0];
-    expect(task.result.samples.length).toBeGreaterThan(0);
-    expect(task.result.mean).toBeGreaterThan(0.5); // Should take at least 0.5ms
+    expect(task.result.latency.samples.length).toBeGreaterThan(0);
+    expect(task.result.latency.mean).toBeGreaterThan(0.5); // Should take at least 0.5ms
   });
 
   it('should provide statistical metrics', async () => {
-    const bench = new Bench({ time: 100 });
+    const bench = new Bench({ time: 100, retainSamples: true });
 
     bench.add('math-operation', () => {
       return Math.pow(2, 16);
@@ -527,7 +527,7 @@ describe('Tinybench Integration Validation', () => {
     await bench.run();
 
     const task = bench.tasks[0];
-    const stats = task.result;
+    const stats = task.result.latency;
 
     expect(stats.mean).toBeDefined();
     expect(stats.variance).toBeDefined();

@@ -249,44 +249,5 @@ groups:
           description: "Static coverage is {{ $value | humanizePercentage }} (target: 95%+)"
           runbook: "monitoring/RUNBOOK.md#low-static-coverage"
 
-# ========================================
-# Alert Routing Configuration
-# ========================================
-route:
-  receiver: 'default'
-  group_by: ['alertname', 'component']
-  group_wait: 30s
-  group_interval: 5m
-  repeat_interval: 4h
-
-  routes:
-    # Critical alerts - immediate notification
-    - match:
-        severity: critical
-      receiver: 'pagerduty'
-      continue: true
-
-    # Warning alerts - slack notification
-    - match:
-        severity: warning
-      receiver: 'slack'
-
-# ========================================
-# Receivers Configuration
-# ========================================
-receivers:
-  - name: 'default'
-    webhook_configs:
-      - url: 'http://localhost:9090/webhook'
-
-  - name: 'pagerduty'
-    pagerduty_configs:
-      - service_key: '<PAGERDUTY_SERVICE_KEY>'
-        description: '{{ .GroupLabels.alertname }}: {{ .CommonAnnotations.summary }}'
-
-  - name: 'slack'
-    slack_configs:
-      - api_url: '<SLACK_WEBHOOK_URL>'
-        channel: '#unrdf-alerts'
-        title: '{{ .GroupLabels.alertname }}'
-        text: '{{ .CommonAnnotations.description }}'
+# Alert routing and receivers are configured in monitoring/alertmanager/config.yml
+# (they are not valid inside a Prometheus rule file).

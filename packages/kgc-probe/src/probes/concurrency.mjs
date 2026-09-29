@@ -165,7 +165,7 @@ async function probeWorkerThreadsAvailability() {
     // Check Node.js version
     const nodeVersion = process.version;
     outputs.nodeVersion = nodeVersion;
-    metadata.minVersion = '[VERSION]'; // worker_threads introduced in Node [VERSION]
+    metadata.minVersion = 'v10.5.0'; // worker_threads introduced in Node 10.5.0
   } catch (error) {
     outputs.available = false;
     metadata.error = error.message;
@@ -608,7 +608,7 @@ async function probeParallelIOContention(numReaders, timeout, testDir) {
     // Spawn N parallel readers
     const start = performance.now();
 
-    const readPromises = Array.from({ length: numReaders }, async (_, i) => {
+    const readPromises = Array.from({ length: numReaders }, async () => {
       const readStart = performance.now();
       await readFile(testFile);
       const readEnd = performance.now();
@@ -828,7 +828,7 @@ async function probeAsyncLocalStorage() {
     }
 
     metadata.nodeVersion = process.version;
-    metadata.note = 'AsyncLocalStorage available since Node.js [VERSION]';
+    metadata.note = 'AsyncLocalStorage available since Node.js v13.10.0';
   } catch (error) {
     outputs.available = false;
     outputs.functional = false;
@@ -860,9 +860,9 @@ async function probeMicrotaskQueueDepth(maxMicrotasks = 1000) {
   const timestamp = Date.now();
   const outputs = {};
   const metadata = {};
+  let executed = 0;
 
   try {
-    let executed = 0;
     const promises = [];
 
     // Queue N microtasks
@@ -914,11 +914,11 @@ async function probeMaxConcurrentPromises(maxPromises = 1000, timeout = 5000) {
   const timestamp = Date.now();
   const outputs = {};
   const metadata = {};
+  let resolved = 0;
+  let rejected = 0;
 
   try {
     const start = performance.now();
-    let resolved = 0;
-    let rejected = 0;
 
     // Create N promises that resolve after random delay
     const promises = Array.from({ length: maxPromises }, (_, i) =>

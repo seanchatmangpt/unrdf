@@ -4,12 +4,12 @@
  * This example shows how the RdfEngine now works with a single global store
  * using proper async context support with AsyncLocalStorage.
  *
- * @version latest
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { initStore } from '../packages/composables/src/context/index.mjs';
 
 // Example Turtle data

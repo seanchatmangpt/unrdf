@@ -5,7 +5,7 @@
 
 import { Worker } from 'worker_threads';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { z } from 'zod';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,16 +26,6 @@ export const WorkerPoolConfigSchema = z.object({
 /* ========================================================================= */
 /* Worker Pool Class                                                         */
 /* ========================================================================= */
-
-/**
- * Task result schema.
- */
-const TaskResultSchema = z.object({
-  success: z.boolean(),
-  result: z.any().optional(),
-  error: z.string().optional(),
-  workerId: z.string(),
-});
 
 /**
  * Worker pool for parallel task execution.

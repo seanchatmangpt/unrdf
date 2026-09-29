@@ -1,0 +1,15 @@
+{
+  // Declarations for this package only. The root tsconfig includes every package's src and maps
+  // @unrdf/* to sibling sources, so a per-package `tsc` would type-check (and emit) the whole
+  // monorepo into the repo-root dist. Compile just ./src, and treat sibling workspace packages as
+  // external (preserveSymlinks + no path mapping) so their JS is not re-analysed.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "paths": {},
+    "preserveSymlinks": true
+  },
+  "include": ["src/**/*.mjs", "src/**/*.js"],
+  "exclude": ["node_modules", "dist", "**/*.test.mjs", "**/*.test.js"]
+}

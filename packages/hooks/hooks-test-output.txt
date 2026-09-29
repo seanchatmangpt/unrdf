@@ -1,9 +1,9 @@
 
-> @unrdf/hooks@[VERSION] test:fast /Users/sac/chatmangpt/unrdf/packages/hooks
+> @unrdf/hooks@26.5.4 test:fast /Users/sac/chatmangpt/unrdf/packages/hooks
 > vitest run --coverage
 
 
- RUN  [VERSION] /Users/sac/chatmangpt/unrdf/packages/hooks
+ RUN  v4.1.3 /Users/sac/chatmangpt/unrdf/packages/hooks
       Coverage enabled with v8
 
 6:42:33 PM [vite] (ssr) warning: File URL host must be "localhost" or empty on darwin

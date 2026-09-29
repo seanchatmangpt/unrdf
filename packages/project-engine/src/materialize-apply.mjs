@@ -9,7 +9,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { createStore } from '@unrdf/oxigraph';
 import { scanFileSystemToStore } from './fs-scan.mjs';
-import { diffProjectStructure } from './project-diff.mjs';
+import { diffFsPaths } from './fs-path-diff.mjs';
 
 /**
  * @typedef {import('./materialize-plan.mjs').MaterializationPlan} MaterializationPlan
@@ -94,6 +94,42 @@ function hashContent(content) {
 }
 
 /**
+ * Resolve a plan-supplied relative path under outputRoot, refusing anything that
+ * escapes it (`../x`, absolute paths). Plans may come from untrusted templates.
+ *
+ * @param {string} outputRoot
+ * @param {string} relPath
+ * @returns {string} Absolute path inside outputRoot
+ * @throws {Error} If the path resolves outside outputRoot
+ */
+function resolveWithinRoot(outputRoot, relPath) {
+  const root = path.resolve(outputRoot);
+  const full = path.resolve(root, relPath);
+  const rel = path.relative(root, full);
+  if (rel === '' || rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+    throw new Error(`Path escapes output root: ${relPath}`);
+  }
+  return full;
+}
+
+/**
+ * Like resolveWithinRoot, but records the failure in `sink` and returns null.
+ *
+ * @param {string} outputRoot
+ * @param {string} relPath
+ * @param {string[]} sink
+ * @returns {string|null}
+ */
+function tryResolveWithinRoot(outputRoot, relPath, sink) {
+  try {
+    return resolveWithinRoot(outputRoot, relPath);
+  } catch (err) {
+    sink.push(err.message);
+    return null;
+  }
+}
+
+/**
  * Ensure directory exists for a file path
  *
  * @param {string} filePath
@@ -134,7 +170,12 @@ async function readFileWithHash(filePath) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyWrite(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path);
+  let fullPath;
+  try {
+    fullPath = resolveWithinRoot(options.outputRoot, op.path);
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 
   // Check if file already exists
   const existing = await readFileWithHash(fullPath);
@@ -168,7 +209,12 @@ async function applyWrite(op, options) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyUpdate(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path);
+  let fullPath;
+  try {
+    fullPath = resolveWithinRoot(options.outputRoot, op.path);
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 
   // Read existing file
   const existing = await readFileWithHash(fullPath);
@@ -207,7 +253,12 @@ async function applyUpdate(op, options) {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 async function applyDelete(op, options) {
-  const fullPath = path.resolve(options.outputRoot, op.path);
+  let fullPath;
+  try {
+    fullPath = resolveWithinRoot(options.outputRoot, op.path);
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 
   // Read existing file
   const existing = await readFileWithHash(fullPath);
@@ -277,7 +328,7 @@ async function snapshotFileSystem(root) {
  *    - Validate hash matches
  *    - Delete file
  * 6. Snapshot after with scanFileSystemToStore
- * 7. Compute diff using diffProjectStructure
+ * 7. Compute diff using diffFsPaths
  * 8. Return result + receipt
  *
  * @param {MaterializationPlan} plan - The plan to apply
@@ -355,7 +406,7 @@ export async function applyMaterializationPlan(plan, options = {}) {
     // Compute diff if we have both snapshots
     if (beforeSnapshot && afterSnapshot) {
       try {
-        fsDiff = diffProjectStructure({
+        fsDiff = diffFsPaths({
           actualStore: afterSnapshot.store,
           goldenStore: beforeSnapshot.store,
         });
@@ -406,7 +457,8 @@ export async function rollbackMaterialization(result, options = {}) {
 
   // Delete written files
   for (const filePath of result.writtenPaths) {
-    const fullPath = path.resolve(outputRoot, filePath);
+    const fullPath = tryResolveWithinRoot(outputRoot, filePath, errors);
+    if (!fullPath) continue;
     try {
       await fs.unlink(fullPath);
       rolledBack.push(filePath);
@@ -471,7 +523,8 @@ export async function checkPlanApplicability(plan, options = {}) {
 
   // Check writes don't conflict
   for (const op of validatedPlan.writes) {
-    const fullPath = path.resolve(outputRoot, op.path);
+    const fullPath = tryResolveWithinRoot(outputRoot, op.path, issues);
+    if (!fullPath) continue;
     const existing = await readFileWithHash(fullPath);
     if (existing !== null) {
       issues.push(`Write conflict: ${op.path} already exists`);
@@ -480,7 +533,8 @@ export async function checkPlanApplicability(plan, options = {}) {
 
   // Check updates exist and match
   for (const op of validatedPlan.updates) {
-    const fullPath = path.resolve(outputRoot, op.path);
+    const fullPath = tryResolveWithinRoot(outputRoot, op.path, issues);
+    if (!fullPath) continue;
     const existing = await readFileWithHash(fullPath);
     if (existing === null) {
       issues.push(`Update target missing: ${op.path}`);
@@ -491,7 +545,8 @@ export async function checkPlanApplicability(plan, options = {}) {
 
   // Check deletes exist and match
   for (const op of validatedPlan.deletes) {
-    const fullPath = path.resolve(outputRoot, op.path);
+    const fullPath = tryResolveWithinRoot(outputRoot, op.path, issues);
+    if (!fullPath) continue;
     const existing = await readFileWithHash(fullPath);
     if (existing !== null && existing.hash !== op.hash) {
       issues.push(`Delete hash mismatch: ${op.path}`);

@@ -207,7 +207,7 @@ export class FusekiContainer {
    *
    */
   constructor() {
-    this.container = new GenericContainer('stain/jena-fuseki:latest')
+    this.container = new GenericContainer('stain/jena-fuseki:4.9.0')
       .withExposedPorts(TEST_CONFIG.PORTS.FUSEKI)
       .withEnvironment({
         FUSEKI_DATASET_1: 'unrdf-test',
@@ -365,7 +365,7 @@ export class TestDataManager {
     return {
       meta: {
         name: 'test-policy-pack',
-        version: 'latest',
+        version: '1.0.0',
         description: 'Test policy pack for E2E testing',
       },
       hooks: [

@@ -14,13 +14,8 @@
  */
 
 import { executeQuerySync } from './executor-sync.mjs';
-import {
-  generateEmbedding,
-  generateQueryEmbedding,
-  generateQuadEmbedding,
-  cosineSimilarity,
-} from './embeddings.mjs';
-import { createHNSWIndex, buildHNSWIndex } from '../index/hnsw.mjs';
+import { generateQueryEmbedding, generateQuadEmbedding } from './embeddings.mjs';
+import { buildHNSWIndex } from '../index/hnsw.mjs';
 import { z } from 'zod';
 
 /**
@@ -238,8 +233,6 @@ async function executeSemanticSelect(store, sparql, config) {
  * @private
  */
 function isSemanticQuery(sparql) {
-  const normalized = sparql.toUpperCase();
-
   // Semantic indicators: FILTER, regex, text matching
   const semanticPatterns = [
     /FILTER\s*\(\s*REGEX\s*\(/i,

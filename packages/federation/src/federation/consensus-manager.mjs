@@ -20,6 +20,7 @@ import { EventEmitter } from 'events';
 import { randomUUID as _randomUUID } from 'crypto';
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { spanAttributes } from './tracing.mjs';
 
 const tracer = trace.getTracer('unrdf-federation');
 
@@ -135,22 +136,26 @@ export class ConsensusManager extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('consensus.initialize', async span => {
-      try {
-        span.setAttribute('node.id', this.config.nodeId);
+    return tracer.startActiveSpan(
+      'federation.consensus_initialize',
+      { attributes: spanAttributes({ nodeId: this.config.nodeId, peerCount: this.peers.size }) },
+      async span => {
+        try {
+          span.setAttribute('node.id', this.config.nodeId);
 
-        this.resetElectionTimer();
-        this.emit('initialized', { nodeId: this.config.nodeId });
+          this.resetElectionTimer();
+          this.emit('initialized', { nodeId: this.config.nodeId });
 
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
+        }
       }
-    });
+    );
   }
 
   /**
@@ -183,47 +188,57 @@ export class ConsensusManager extends EventEmitter {
    * @returns {Promise<boolean>} True if command was successfully replicated
    */
   async replicate(command) {
-    return tracer.startActiveSpan('consensus.replicate', async span => {
-      try {
-        span.setAttribute('command.type', command.type);
+    return tracer.startActiveSpan(
+      'federation.consensus_replicate',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.nodeId,
+          peerCount: this.peers.size,
+          quorumId: `term-${this.currentTerm}`,
+        }),
+      },
+      async span => {
+        try {
+          span.setAttribute('command.type', command.type);
 
-        if (this.state !== NodeState.LEADER) {
-          throw new Error('Only leader can replicate commands');
+          if (this.state !== NodeState.LEADER) {
+            throw new Error('Only leader can replicate commands');
+          }
+
+          // Create log entry
+          const entry = LogEntrySchema.parse({
+            term: this.currentTerm,
+            index: this.log.length + 1,
+            command,
+            timestamp: Date.now(),
+          });
+
+          this.log.push(entry);
+          this.stats.logEntriesReplicated++;
+
+          // Replicate to followers
+          await this.replicateToFollowers();
+
+          // Wait for majority to acknowledge
+          const success = await this.waitForMajority(entry.index);
+
+          if (success) {
+            this.commitIndex = entry.index;
+            this.applyCommittedEntries();
+          }
+
+          span.setAttribute('replicate.success', success);
+          span.setStatus({ code: SpanStatusCode.OK });
+          return success;
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Create log entry
-        const entry = LogEntrySchema.parse({
-          term: this.currentTerm,
-          index: this.log.length + 1,
-          command,
-          timestamp: Date.now(),
-        });
-
-        this.log.push(entry);
-        this.stats.logEntriesReplicated++;
-
-        // Replicate to followers
-        await this.replicateToFollowers();
-
-        // Wait for majority to acknowledge
-        const success = await this.waitForMajority(entry.index);
-
-        if (success) {
-          this.commitIndex = entry.index;
-          this.applyCommittedEntries();
-        }
-
-        span.setAttribute('replicate.success', success);
-        span.setStatus({ code: SpanStatusCode.OK });
-        return success;
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -231,63 +246,76 @@ export class ConsensusManager extends EventEmitter {
    * @private
    */
   async startElection() {
-    return tracer.startActiveSpan('consensus.election', async span => {
-      try {
-        this.state = NodeState.CANDIDATE;
-        this.currentTerm++;
-        this.votedFor = this.config.nodeId;
-        this.stats.electionsStarted++;
+    return tracer.startActiveSpan(
+      'federation.consensus_election',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.nodeId,
+          peerCount: this.peers.size,
+          quorumId: `term-${this.currentTerm}`,
+        }),
+      },
+      async span => {
+        try {
+          this.state = NodeState.CANDIDATE;
+          this.currentTerm++;
+          this.votedFor = this.config.nodeId;
+          this.stats.electionsStarted++;
 
-        span.setAttributes({
-          'election.term': this.currentTerm,
-          'election.candidate': this.config.nodeId,
-        });
+          span.setAttributes({
+            'election.term': this.currentTerm,
+            'election.candidate': this.config.nodeId,
+          });
 
-        let votesReceived = 1; // Vote for self
-        const votesNeeded = Math.floor(this.peers.size / 2) + 1;
+          let votesReceived = 1; // Vote for self
+          const votesNeeded = Math.floor(this.peers.size / 2) + 1;
 
-        // Request votes from peers
-        const votePromises = Array.from(this.peers.values()).map(async peer => {
-          try {
-            const granted = await this.requestVote(peer);
-            if (granted) votesReceived++;
-          } catch (error) {
-            // Log vote request failure and update peer status
-            console.error(`[consensus] Vote request failed from peer ${peer.nodeId}:`, error.message);
-            span.addEvent('vote_request_failed', {
-              attributes: {
-                'peer.id': peer.nodeId,
-                'error.message': error.message
+          // Request votes from peers
+          const votePromises = Array.from(this.peers.values()).map(async peer => {
+            try {
+              const granted = await this.requestVote(peer);
+              if (granted) votesReceived++;
+            } catch (error) {
+              // Log vote request failure and update peer status
+              console.error(
+                `[consensus] Vote request failed from peer ${peer.nodeId}:`,
+                error.message
+              );
+              span.addEvent('vote_request_failed', {
+                attributes: {
+                  'peer.id': peer.nodeId,
+                  'error.message': error.message,
+                },
+              });
+              // Update peer status to unreachable
+              if (this.peers.has(peer.nodeId)) {
+                const peerState = this.peers.get(peer.nodeId);
+                peerState.status = 'unreachable';
               }
-            });
-            // Update peer status to unreachable
-            if (this.peers.has(peer.nodeId)) {
-              const peerState = this.peers.get(peer.nodeId);
-              peerState.status = 'unreachable';
             }
+          });
+
+          await Promise.all(votePromises);
+
+          // Check if we won the election
+          if (this.state === NodeState.CANDIDATE && votesReceived >= votesNeeded) {
+            this.becomeLeader();
+            this.stats.electionsWon++;
+            span.setAttribute('election.won', true);
+          } else {
+            this.state = NodeState.FOLLOWER;
+            span.setAttribute('election.won', false);
           }
-        });
 
-        await Promise.all(votePromises);
-
-        // Check if we won the election
-        if (this.state === NodeState.CANDIDATE && votesReceived >= votesNeeded) {
-          this.becomeLeader();
-          this.stats.electionsWon++;
-          span.setAttribute('election.won', true);
-        } else {
-          this.state = NodeState.FOLLOWER;
-          span.setAttribute('election.won', false);
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        } finally {
+          span.end();
         }
-
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**

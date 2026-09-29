@@ -70,25 +70,22 @@ describe('TransactionManager', () => {
     await txManager.prepare(initialTx.id);
     await txManager.commit(initialTx.id);
 
-    // Create transaction that will fail during commit
-    const tx = txManager.begin([
-      {
-        id: 'op1',
-        type: 'add_capsule',
-        data: { id: 'new_capsule', content: 'new data' },
-      },
-      {
-        id: 'op2',
-        type: 'invalid_type', // This will cause failure
-        data: {},
-      },
-    ]);
-
-    const prepareResult = await txManager.prepare(tx.id);
-    expect(prepareResult.success).toBe(false);
-
-    const finalTx = txManager.getTransaction(tx.id);
-    expect(finalTx.status).toBe('aborted');
+    // An invalid operation is rejected up front by begin() (schema validation),
+    // so the transaction is never registered and cannot alter state
+    expect(() =>
+      txManager.begin([
+        {
+          id: 'op1',
+          type: 'add_capsule',
+          data: { id: 'new_capsule', content: 'new data' },
+        },
+        {
+          id: 'op2',
+          type: 'invalid_type',
+          data: {},
+        },
+      ])
+    ).toThrow();
 
     // Verify state not changed
     const state = txManager.getState();

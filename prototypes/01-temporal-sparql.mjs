@@ -10,6 +10,9 @@
  * Run: node prototypes/01-temporal-sparql.mjs
  */
 
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { KGCStore } from '../packages/kgc-4d/src/store.mjs';
 import { GitBackbone } from '../packages/kgc-4d/src/git.mjs';
 import { freezeUniverse, reconstructState } from '../packages/kgc-4d/src/freeze.mjs';
@@ -190,7 +193,7 @@ async function demo() {
 
   // Initialize store and git
   const store = new KGCStore({ nodeId: 'temporal-demo' });
-  const git = new GitBackbone('./temporal-demo-repo');
+  const git = new GitBackbone(mkdtempSync(join(tmpdir(), 'temporal-demo-repo-')));
 
   const ex = (name) => namedNode(`http://example.org/${name}`);
   const foaf = (name) => namedNode(`http://xmlns.com/foaf/0.1/${name}`);
@@ -198,10 +201,15 @@ async function demo() {
   console.log('1. Creating timeline with 3 snapshots...\n');
 
   // Event 1: Alice created (age 30)
-  const time1 = now();
   await store.appendEvent(
     { type: EVENT_TYPES.CREATE, payload: { entity: 'Alice' } },
     [
+      {
+        type: 'add',
+        subject: ex('Alice'),
+        predicate: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        object: foaf('Person')
+      },
       {
         type: 'add',
         subject: ex('Alice'),
@@ -217,13 +225,15 @@ async function demo() {
     ]
   );
   await freezeUniverse(store, git);
+  // Sample each time point AFTER its snapshot exists: reconstructState needs a
+  // snapshot at or before the target time.
+  const time1 = now();
   console.log(`  Snapshot 1: Alice created (age 30) at ${toISO(time1)}`);
 
   // Wait 100ms
   await new Promise(r => setTimeout(r, 100));
 
   // Event 2: Alice birthday (age 31)
-  const time2 = now();
   await store.appendEvent(
     { type: EVENT_TYPES.UPDATE, payload: { entity: 'Alice', field: 'age' } },
     [
@@ -242,16 +252,22 @@ async function demo() {
     ]
   );
   await freezeUniverse(store, git);
+  const time2 = now();
   console.log(`  Snapshot 2: Alice birthday (age 31) at ${toISO(time2)}`);
 
   // Wait 100ms
   await new Promise(r => setTimeout(r, 100));
 
   // Event 3: Add Bob (age 25)
-  const time3 = now();
   await store.appendEvent(
     { type: EVENT_TYPES.CREATE, payload: { entity: 'Bob' } },
     [
+      {
+        type: 'add',
+        subject: ex('Bob'),
+        predicate: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        object: foaf('Person')
+      },
       {
         type: 'add',
         subject: ex('Bob'),
@@ -267,6 +283,7 @@ async function demo() {
     ]
   );
   await freezeUniverse(store, git);
+  const time3 = now();
   console.log(`  Snapshot 3: Bob created (age 25) at ${toISO(time3)}\n`);
 
   // Create temporal query engine
@@ -343,7 +360,7 @@ async function demo() {
   );
 
   timeSeries.forEach((point, idx) => {
-    console.log(`  Snapshot ${idx + 1} (${point.timestamp}): ${point.count || 0} people`);
+    console.log(`  Snapshot ${idx + 1} (${point.timestamp}): ${point.results[0]?.count?.value ?? 0} people`);
   });
   console.log();
 

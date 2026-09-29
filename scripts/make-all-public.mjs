@@ -2,7 +2,10 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { glob } from 'glob';
 
-const NEW_VERSION = 'latest';
+// Target version: first CLI argument, else the workspace root package.json (never hardcoded)
+const NEW_VERSION =
+  process.argv[2] ||
+  JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 async function makeAllPublic() {
   const packageFiles = await glob('packages/*/package.json');
@@ -39,4 +42,7 @@ async function makeAllPublic() {
   console.log(`\n✓ All ${packageFiles.length} packages are now PUBLIC and set to v${NEW_VERSION}`);
 }
 
-makeAllPublic().catch(console.error);
+makeAllPublic().catch(error => {
+  console.error(error);
+  process.exit(1);
+});

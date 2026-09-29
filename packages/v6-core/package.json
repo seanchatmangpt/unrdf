@@ -12,11 +12,11 @@
     "./browser": "./src/browser.mjs",
     "./browser/receipt-store": "./src/browser/receipt-store.mjs",
     "./deltagate": "./src/deltagate.mjs",
-    "./schemas": "./src/schemas.mjs",
     "./receipts": "./src/receipts.mjs",
     "./receipts/base-receipt": "./src/receipts/base-receipt.mjs",
     "./receipts/merkle": "./src/receipts/merkle/tree.mjs",
     "./receipt-pattern": "./src/receipt-pattern.mjs",
+    "./store-receipts": "./src/store-receipts.mjs",
     "./delta": "./src/delta/index.mjs",
     "./delta/schema": "./src/delta/schema.mjs",
     "./delta/gate": "./src/delta/gate.mjs",
@@ -29,7 +29,10 @@
     "./cli/commands/delta": "./src/cli/commands/delta.mjs"
   },
   "scripts": {
-    "test": "node --test test/**/*.test.mjs",
+    "test": "pnpm test:vitest && pnpm test:node",
+    "test:fast": "pnpm test:vitest && pnpm test:node",
+    "test:vitest": "vitest run",
+    "test:node": "node ../../scripts/run-node-tests.mjs --test-concurrency=1 test/grammar/closure.test.mjs test/browser/*.test.mjs test/cli/*.test.mjs test/delta/*.test.mjs test/determinism/*.test.mjs test/errors/*.test.mjs test/integration/*.test.mjs test/performance/*.test.mjs test/receipts/receipt-comprehensive.test.mjs test/receipts/tamper-detection.test.mjs test/receipts/with-receipt-node.test.mjs test/security/*.test.mjs test/validation/*.test.mjs",
     "lint": "eslint src/**/*.mjs",
     "type-check": "tsc --noEmit --allowJs --checkJs src/**/*.mjs",
     "build": "echo 'No build step for ESM'",
@@ -65,7 +68,8 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "eslint": "^8.55.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.15"
   },
   "peerDependencies": {
     "@unrdf/core": "workspace:*"

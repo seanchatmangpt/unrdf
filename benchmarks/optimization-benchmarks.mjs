@@ -162,41 +162,40 @@ async function benchmarkReceiptBatch() {
   console.log('3. RECEIPT BATCH BENCHMARK');
   console.log('='.repeat(60));
 
-  const { generateReceiptBatch, verifyReceiptBatch, resetPool } = await import('../packages/yawl/src/receipt-batch.mjs');
-  const { RECEIPT_EVENT_TYPES } = await import('../packages/yawl/src/receipt.mjs');
-
-  resetPool(1000);
+  // packages/yawl (receipt-batch.mjs) no longer exists; the batch receipt
+  // generator now lives in @unrdf/receipts.
+  const { generateBatchReceipt, verifyBatchReceipt } = await import(
+    '../packages/receipts/src/batch-receipt-generator.mjs'
+  );
 
   const batchSizes = [10, 100, 1000, 10000];
   const results = [];
 
   for (const size of batchSizes) {
-    const events = Array(size).fill({
-      eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-      caseId: 'case1',
-      taskId: 'task1',
-      payload: { data: 'test' },
-    });
+    const operations = Array.from({ length: size }, (_, i) => ({
+      type: 'add',
+      subject: `http://example.org/s${i}`,
+      predicate: 'http://example.org/p',
+      object: `http://example.org/o${i}`,
+    }));
 
     const start = performance.now();
-    const result = await generateReceiptBatch(events, { workers: 4, usePool: true });
-    const elapsed = performance.now() - start;
+    const receipt = await generateBatchReceipt({
+      universeID: 'Q*_0123456789abcdef',
+      operations,
+      operationType: 'morphism',
+    });
+    const duration = performance.now() - start;
+    const throughput = (size / duration) * 1000;
 
     console.log(`\nBatch Size: ${size}`);
-    console.log(`  Duration:     ${result.duration.toFixed(2)} ms`);
-    console.log(`  Throughput:   ${result.throughput.toFixed(0)} receipts/sec`);
-    console.log(`  Pool Reuse:   ${(result.stats.poolStats?.reuseRate * 100 || 0).toFixed(1)}%`);
+    console.log(`  Duration:     ${duration.toFixed(2)} ms`);
+    console.log(`  Throughput:   ${throughput.toFixed(0)} operations/sec`);
 
-    results.push({
-      size,
-      duration: result.duration,
-      throughput: result.throughput,
-      poolStats: result.stats.poolStats,
-    });
+    results.push({ size, duration, throughput });
 
-    // Benchmark verification
     const verifyStart = performance.now();
-    const verification = await verifyReceiptBatch(result.receipts, 4);
+    const verification = await verifyBatchReceipt(receipt, operations);
     const verifyElapsed = performance.now() - verifyStart;
 
     console.log(`  Verify Time:  ${verifyElapsed.toFixed(2)} ms`);
@@ -353,8 +352,8 @@ async function main() {
 
   if (results.benchmarks.receiptBatch && Array.isArray(results.benchmarks.receiptBatch)) {
     const largest = results.benchmarks.receiptBatch[results.benchmarks.receiptBatch.length - 1];
-    console.log(`\n✅ Receipt Batch: ${largest?.throughput?.toFixed(0) || 'N/A'} receipts/sec`);
-    console.log(`   Target: 100K receipts/sec`);
+    console.log(`\n✅ Receipt Batch: ${largest?.throughput?.toFixed(0) || 'N/A'} operations/sec`);
+    console.log(`   Target: 100K receipts/sec (original yawl target; now measured per batched operation)`);
   }
 
   if (results.benchmarks.policyCompiler?.compilerStats) {

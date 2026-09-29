@@ -11,10 +11,11 @@
     "./token-generator": "./src/token-generator.mjs",
     "./compressor": "./src/compressor.mjs",
     "./tracker": "./src/tracker.mjs",
-    "./guardian": "./src/guardian.mjs"
+    "./guardian": "./src/guardian.mjs",
+    "./transport": "./src/transport/hypercore-transport.mjs"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run && node ../../scripts/run-node-tests.mjs src/receipts.test.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",

@@ -9,7 +9,7 @@
  */
 
 import { z } from 'zod';
-import { enhanceZodError } from '@unrdf/core/utils/enhanced-errors';
+import { enhanceZodError } from '../../packages/core/src/utils/enhanced-errors.mjs';
 
 
 /**

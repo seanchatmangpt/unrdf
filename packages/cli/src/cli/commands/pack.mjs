@@ -1,6 +1,5 @@
 import { defineCommand } from 'citty';
 import { createWriteStream, existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
 import { resolve, basename, dirname } from 'node:path';
 import archiver from 'archiver';
 import { parseConfig } from './sync/config-parser.mjs';
@@ -44,7 +43,7 @@ export const packCommand = defineCommand({
 
     const manifest = {
       pack_id: `unrdf:${config.project?.name || 'anonymous'}`,
-      version: config.project?.version || '[VERSION]',
+      version: config.project?.version || '1.0.0',
       timestamp: new Date().toISOString(),
       assets: []
     };

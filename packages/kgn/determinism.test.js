@@ -61,10 +61,10 @@ describe('Feature: Deterministic Template Generation', () => {
       const templateName = 'basic-template.njk';
       const inputData = {
         name: 'test-project',
-        version: 'latest',
+        version: '1.0.0',
         buildTime: '2025-01-01T00:00:00.000Z'
       };
-      const expectedOutput = 'Project: test-project latest (built: 2025-01-01T00:00:00.000Z)';
+      const expectedOutput = 'Project: test-project v1.0.0 (built: 2025-01-01T00:00:00.000Z)';
 
       // Mock consistent template rendering
       templateEngine.render.mockResolvedValue(expectedOutput);
@@ -104,15 +104,15 @@ describe('Feature: Deterministic Template Generation', () => {
         project: {
           name: 'complex-project',
           dependencies: {
-            lodash: '^latest',
-            axios: '^latest',
-            'node-fetch': '^latest'
+            lodash: '^4.17.21',
+            axios: '^1.0.0',
+            'node-fetch': '^3.0.0'
           },
           scripts: ['build', 'test', 'deploy']
         },
         metadata: {
           buildTime: '2025-01-01T00:00:00.000Z',
-          version: 'latest'
+          version: '2.1.0'
         }
       };
 
@@ -301,7 +301,7 @@ describe('Feature: Deterministic Template Generation', () => {
       // Given
       const contentData = {
         title: 'test-document',
-        version: 'latest'
+        version: '1.0.0'
       };
 
       templateEngine.render.mockImplementation((template, data) => {

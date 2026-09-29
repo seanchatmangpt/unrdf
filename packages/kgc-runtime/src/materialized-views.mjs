@@ -49,6 +49,10 @@ export class ViewCache {
     /** @type {Map<string, MaterializedView>} */
     this.views = new Map();
 
+    /** @type {Map<string, number>} Monotonic access sequence: breaks same-millisecond LRU ties */
+    this.accessSeq = new Map();
+    this._seq = 0;
+
     /** @type {Map<string, Set<string>>} */
     this.dependencies = new Map();
   }
@@ -82,6 +86,7 @@ export class ViewCache {
     });
 
     this.views.set(id, view);
+    this.accessSeq.set(id, ++this._seq);
 
     // Register dependencies
     if (options.dependsOn) {
@@ -113,12 +118,14 @@ export class ViewCache {
     // Check expiration
     if (now >= view.expiresAt) {
       this.views.delete(id);
+      this.accessSeq.delete(id);
       return null;
     }
 
     // Update access statistics
     view.hits++;
     view.lastAccessedAt = now;
+    this.accessSeq.set(id, ++this._seq);
 
     return view;
   }
@@ -139,6 +146,7 @@ export class ViewCache {
    * @returns {boolean} True if view was invalidated
    */
   invalidate(id) {
+    this.accessSeq.delete(id);
     return this.views.delete(id);
   }
 
@@ -156,6 +164,7 @@ export class ViewCache {
 
     let count = 0;
     for (const viewId of viewIds) {
+      this.accessSeq.delete(viewId);
       if (this.views.delete(viewId)) {
         count++;
       }
@@ -172,6 +181,7 @@ export class ViewCache {
   invalidateAll() {
     const count = this.views.size;
     this.views.clear();
+    this.accessSeq.clear();
     this.dependencies.clear();
     return count;
   }
@@ -227,6 +237,7 @@ export class ViewCache {
 
     if (victimId) {
       this.views.delete(victimId);
+      this.accessSeq.delete(victimId);
     }
 
     return victimId;
@@ -239,12 +250,15 @@ export class ViewCache {
    */
   _evictLRU() {
     let oldestTime = Infinity;
+    let oldestSeq = Infinity;
     let victimId = null;
 
     for (const [id, view] of this.views.entries()) {
       const lastAccess = view.lastAccessedAt ?? view.createdAt;
-      if (lastAccess < oldestTime) {
+      const seq = this.accessSeq.get(id) ?? 0;
+      if (lastAccess < oldestTime || (lastAccess === oldestTime && seq < oldestSeq)) {
         oldestTime = lastAccess;
+        oldestSeq = seq;
         victimId = id;
       }
     }
@@ -301,6 +315,7 @@ export class ViewCache {
     for (const [id, view] of this.views.entries()) {
       if (now >= view.expiresAt) {
         this.views.delete(id);
+        this.accessSeq.delete(id);
         count++;
       }
     }

@@ -3,7 +3,7 @@
  */
 
 import { createProfiler, quickProfile } from '../packages/core/src/profiling/profiler.mjs';
-import { _measureLatency } from '../packages/core/src/profiling/latency-profiler.mjs';
+import { measureLatency as _measureLatency } from '../packages/core/src/profiling/latency-profiler.mjs';
 import { measureMemory } from '../packages/core/src/profiling/memory-profiler.mjs';
 import { measureCpu, CpuProfiler } from '../packages/core/src/profiling/cpu-profiler.mjs';
 import { Reporter } from '../packages/core/src/profiling/reporter.mjs';
@@ -342,7 +342,7 @@ async function simulateCommit() {
 // Run all examples
 async function runAllExamples() {
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
-  console.log('║  UNRDF latest - Performance Profiling Examples           ║');
+  console.log('║  UNRDF v3.1.0 - Performance Profiling Examples           ║');
   console.log('╚═══════════════════════════════════════════════════════════╝');
 
   try {

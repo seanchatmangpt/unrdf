@@ -12,6 +12,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "test:fast": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test --ext .mjs",

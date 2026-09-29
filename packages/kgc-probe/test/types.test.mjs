@@ -26,16 +26,10 @@ import {
 
   // Block Metadata Schemas
   BlockTypeSchema,
-  OutputFormatSchema,
-  DeterminismLevelSchema,
   BlockMetadataSchema,
-  QueryTypeSchema,
-  ResultBoundsSchema,
   QueryMetadataSchema,
-  ExtractionTypeSchema,
   ExtractMetadataSchema,
   RenderMetadataSchema,
-  ProofTypeSchema,
   ProofMetadataSchema,
 
   // Receipt Schemas
@@ -47,8 +41,6 @@ import {
   DynamicSectionSchema,
 
   // Error Schemas
-  ErrorSeveritySchema,
-  ErrorTypeSchema,
   ProbeErrorSchema,
   ProbeWarningSchema,
 
@@ -135,27 +127,27 @@ describe('UUID_V4_REGEX', () => {
 
 describe('SEMVER_REGEX', () => {
   it('should match basic semver', () => {
-    expect(SEMVER_REGEX.test('[VERSION]')).toBe(true);
-    expect(SEMVER_REGEX.test('[VERSION]')).toBe(true);
-    expect(SEMVER_REGEX.test('[VERSION]')).toBe(true);
+    expect(SEMVER_REGEX.test('1.0.0')).toBe(true);
+    expect(SEMVER_REGEX.test('0.0.1')).toBe(true);
+    expect(SEMVER_REGEX.test('10.20.30')).toBe(true);
   });
 
   it('should match semver with prerelease', () => {
-    expect(SEMVER_REGEX.test('[VERSION]-alpha')).toBe(true);
-    expect(SEMVER_REGEX.test('[VERSION]-beta.1')).toBe(true);
+    expect(SEMVER_REGEX.test('1.0.0-alpha')).toBe(true);
+    expect(SEMVER_REGEX.test('1.0.0-beta.1')).toBe(true);
   });
 
   it('should match semver with build metadata', () => {
-    expect(SEMVER_REGEX.test('[VERSION]+build.123')).toBe(true);
+    expect(SEMVER_REGEX.test('1.0.0+build.123')).toBe(true);
   });
 
   it('should match semver with prerelease and build', () => {
-    expect(SEMVER_REGEX.test('[VERSION]-alpha+build')).toBe(true);
+    expect(SEMVER_REGEX.test('1.0.0-alpha+build')).toBe(true);
   });
 
   it('should reject invalid semver', () => {
     expect(SEMVER_REGEX.test('1.0')).toBe(false);
-    expect(SEMVER_REGEX.test('[VERSION]')).toBe(false);
+    expect(SEMVER_REGEX.test('v1.0.0')).toBe(false);
   });
 });
 
@@ -332,7 +324,7 @@ describe('FrontmatterSchema', () => {
     bounds: { maxQueries: 100, maxRuntime: 5000, maxFileScans: 50 },
     views: ['reference'],
     sources: [],
-    version: '[VERSION]',
+    version: '1.0.0',
     createdAt: '2025-12-26T10:00:00Z',
     lastProved: '2025-12-26T14:00:00Z'
   });
@@ -340,7 +332,7 @@ describe('FrontmatterSchema', () => {
   it('should parse valid frontmatter', () => {
     const result = FrontmatterSchema.parse(validFrontmatter());
     expect(result.o_hash).toBe('a'.repeat(64));
-    expect(result.version).toBe('[VERSION]');
+    expect(result.version).toBe('1.0.0');
   });
 
   it('should accept optional tags', () => {
@@ -816,17 +808,17 @@ describe('createFrontmatter', () => {
   it('should create frontmatter with defaults', () => {
     const fm = createFrontmatter({});
     expect(fm.o_hash).toBe('0'.repeat(64));
-    expect(fm.version).toBe('[VERSION]');
+    expect(fm.version).toBe('1.0.0');
     expect(fm.views).toEqual(['reference']);
   });
 
   it('should override defaults with provided values', () => {
     const fm = createFrontmatter({
       o_hash: 'a'.repeat(64),
-      version: '[VERSION]'
+      version: '2.0.0'
     });
     expect(fm.o_hash).toBe('a'.repeat(64));
-    expect(fm.version).toBe('[VERSION]');
+    expect(fm.version).toBe('2.0.0');
   });
 
   it('should set createdAt and lastProved to now', () => {
@@ -1064,7 +1056,7 @@ describe('tryValidateFrontmatter', () => {
     const fm = createFrontmatter({});
     const result = tryValidateFrontmatter(fm);
     expect(result).not.toBeNull();
-    expect(result?.version).toBe('[VERSION]');
+    expect(result?.version).toBe('1.0.0');
   });
 
   it('should return null on invalid data', () => {

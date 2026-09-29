@@ -6,6 +6,11 @@
  * Date: 2025-12-25
  */
 
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+
+const REPO_ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
+
 console.log('='.repeat(60));
 console.log('INTEGRATION TEST - PRODUCTION VALIDATION');
 console.log('='.repeat(60));
@@ -167,7 +172,8 @@ await test('No direct N3 imports in packages', async () => {
 
   try {
     const { stdout } = await execPromise(
-      "grep -r \"from 'n3'\" packages/*/src --exclude-dir=node_modules --exclude='*justified*' 2>/dev/null || true"
+      "grep -rE --include='*.mjs' --include='*.js' \"^[[:space:]]*(import|export)[[:space:]].*from[[:space:]]+'n3'\" packages/*/src --exclude-dir=node_modules --exclude='*justified*' 2>/dev/null || true",
+      { cwd: REPO_ROOT }
     );
 
     if (stdout && stdout.trim().length > 0) {
@@ -188,12 +194,12 @@ await test('Package.json files exist for all packages', async () => {
   const { readdir } = await import('fs/promises');
   const { existsSync } = await import('fs');
 
-  const packages = await readdir('packages', { withFileTypes: true });
+  const packages = await readdir(`${REPO_ROOT}/packages`, { withFileTypes: true });
   const dirs = packages.filter(p => p.isDirectory());
 
   const missing = [];
   for (const dir of dirs) {
-    const pkgPath = `packages/${dir.name}/package.json`;
+    const pkgPath = `${REPO_ROOT}/packages/${dir.name}/package.json`;
     if (!existsSync(pkgPath)) {
       missing.push(dir.name);
     }

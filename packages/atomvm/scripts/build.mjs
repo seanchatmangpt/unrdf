@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'no
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { packBeamFile } from './pack-beam.mjs';
 
 const MODULE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -32,26 +33,31 @@ function runTool(binary, args, label) {
  *
  * Tool overrides:
  * - ERLC_BIN=/path/to/erlc
- * - PACKBEAM_BIN=/path/to/PackBEAM
+ * - PACKBEAM_BIN=/path/to/PackBEAM (default: PackBEAM on PATH; if absent, the
+ *   built-in JS packer src/avm-packer.mjs is used)
+ *
+ * @param {string} moduleName
+ * @param {{srcDir?: string, publicDir?: string}} [options] - override output dirs
  */
-export async function buildModule(moduleName) {
+export async function buildModule(moduleName, options = {}) {
   const validatedModuleName = validateModuleName(moduleName);
   const erlc = process.env.ERLC_BIN || 'erlc';
-  const packbeam = process.env.PACKBEAM_BIN || 'PackBEAM';
 
-  mkdirSync(srcDir, { recursive: true });
-  mkdirSync(publicDir, { recursive: true });
+  const erlDir = options.srcDir ?? srcDir;
+  const outDir = options.publicDir ?? publicDir;
+  mkdirSync(erlDir, { recursive: true });
+  mkdirSync(outDir, { recursive: true });
 
-  const erlFile = join(srcDir, `${validatedModuleName}.erl`);
-  const beamFile = join(srcDir, `${validatedModuleName}.beam`);
-  const avmFile = join(publicDir, `${validatedModuleName}.avm`);
+  const erlFile = join(erlDir, `${validatedModuleName}.erl`);
+  const beamFile = join(erlDir, `${validatedModuleName}.beam`);
+  const avmFile = join(outDir, `${validatedModuleName}.avm`);
 
   if (!existsSync(erlFile)) {
     writeFileSync(erlFile, generateErlangModule(validatedModuleName), 'utf8');
     console.log(`Created ${erlFile}`);
   }
 
-  runTool(erlc, ['-o', srcDir, erlFile], 'erlc');
+  runTool(erlc, ['-o', erlDir, erlFile], 'erlc');
   if (!existsSync(beamFile)) {
     throw new Error(`Compilation failed: ${beamFile} was not created`);
   }
@@ -60,14 +66,14 @@ export async function buildModule(moduleName) {
     throw new Error(`Invalid BEAM file: ${beamFile} does not have a FOR1 header`);
   }
 
-  // PackBEAM uses positional output/input arguments. It has no -o option.
-  runTool(packbeam, [avmFile, beamFile], 'PackBEAM');
+  // Native PackBEAM when available, otherwise the JS packer.
+  const { kind } = packBeamFile(avmFile, beamFile);
   if (!existsSync(avmFile) || statSync(avmFile).size === 0) {
     throw new Error(`Packaging failed: ${avmFile} was not created or is empty`);
   }
 
-  console.log(`Built runnable AtomVM application: ${avmFile}`);
-  return Object.freeze({ moduleName: validatedModuleName, erlFile, beamFile, avmFile });
+  console.log(`Built runnable AtomVM application: ${avmFile} (packer: ${kind})`);
+  return Object.freeze({ moduleName: validatedModuleName, erlFile, beamFile, avmFile, packer: kind });
 }
 
 function generateErlangModule(moduleName) {

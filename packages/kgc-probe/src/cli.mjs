@@ -16,13 +16,7 @@
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import { createLogger } from './utils/logger.mjs';
-import {
-  ProbeError,
-  ValidationError,
-  ArtifactNotFoundError,
-  MergeConflictError,
-  ReceiptError,
-} from './utils/errors.mjs';
+import { ValidationError, MergeConflictError, ReceiptError } from './utils/errors.mjs';
 
 // ============================================================================
 // SCHEMAS
@@ -226,25 +220,6 @@ function buildMerkleTree(leaves) {
   return { root, tree, proofs };
 }
 
-/**
- * Verify merkle membership proof
- * @param {string} leaf - Leaf hash
- * @param {{hash: string, position: string}[]} proof - Proof path
- * @param {string} root - Expected root
- * @returns {boolean}
- */
-function verifyMerkleProof(leaf, proof, root) {
-  let current = leaf;
-  for (const step of proof) {
-    if (step.position === 'right') {
-      current = sha256(current + step.hash);
-    } else {
-      current = sha256(step.hash + current);
-    }
-  }
-  return current === root;
-}
-
 // ============================================================================
 // COMMAND HANDLERS
 // ============================================================================
@@ -259,7 +234,7 @@ function verifyMerkleProof(leaf, proof, root) {
  */
 export async function scanCommand(args) {
   const validated = ScanArgsSchema.parse(args);
-  const { output, timeout, parallel, validate, format, noReceipts, merkle, verbose } = validated;
+  const { output, timeout, parallel, format, noReceipts, merkle, verbose } = validated;
 
   const runId = generateRunId();
   const startTime = Date.now();
@@ -437,7 +412,7 @@ export async function scanCommand(args) {
  */
 export async function mergeCommand(args) {
   const validated = MergeArgsSchema.parse(args);
-  const { shardDir, output, format, onConflict, verbose } = validated;
+  const { shardDir, output, onConflict, verbose } = validated;
 
   if (verbose) {
     logger.info('Starting merge', { shardDir, onConflict });
@@ -528,8 +503,7 @@ export async function mergeCommand(args) {
  */
 export async function diffCommand(args) {
   const validated = DiffArgsSchema.parse(args);
-  const { oldArtifact, newArtifact, format, output, ignoreTimestamps, semanticOnly, verbose } =
-    validated;
+  const { oldArtifact, newArtifact, format, output, verbose } = validated;
 
   if (verbose) {
     logger.info('Starting diff', { oldArtifact, newArtifact });
@@ -789,10 +763,10 @@ function generateMarkdownReport(artifact, style, maxDepth) {
 /**
  * Generate Turtle RDF report
  * @param {Object} artifact - Artifact data
- * @param {boolean} includeProvenance - Include provenance data
+ * @param {boolean} _includeProvenance - Include provenance data (currently ignored by the Turtle output)
  * @returns {string} Turtle content
  */
-function generateTurtleReport(artifact, includeProvenance) {
+function generateTurtleReport(artifact, _includeProvenance) {
   const lines = [
     '@prefix kgc: <https://unrdf.io/kgc/probe/> .',
     '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
@@ -830,8 +804,7 @@ function generateTurtleReport(artifact, includeProvenance) {
  */
 export async function verifyCommand(args) {
   const validated = VerifyArgsSchema.parse(args);
-  const { artifactPath, checkMerkle, checkSchema, checkCrypto, receiptDir, strict, verbose } =
-    validated;
+  const { artifactPath, checkMerkle, checkSchema, checkCrypto, strict, verbose } = validated;
 
   if (verbose) {
     logger.info('Starting verification', { artifactPath, checkMerkle, checkSchema });

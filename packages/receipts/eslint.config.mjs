@@ -17,10 +17,11 @@ export default [
         crypto: 'readonly',
         BigInt: 'readonly',
         Buffer: 'readonly',
+        structuredClone: 'readonly',
       },
     },
     rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', ignoreRestSiblings: true }],
       'no-console': 'off',
     },
   },

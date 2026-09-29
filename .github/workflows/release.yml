@@ -20,7 +20,7 @@ on:
           - major
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '22'
   PNPM_VERSION: '10.15.0'
 
 jobs:
@@ -70,19 +70,9 @@ jobs:
           fi
           echo "✅ Version format valid: $VERSION"
 
-      - name: Verify git tag matches package.json
-        run: |
-          VERSION="${{ steps.extract_version.outputs.version }}"
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-
-          if [ "$VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "❌ Version mismatch!"
-            echo "Git tag: $VERSION"
-            echo "package.json: $PACKAGE_VERSION"
-            exit 1
-          fi
-
-          echo "✅ Version consistency verified: $VERSION"
+      # The workspace is version-agnostic (every package.json carries a placeholder version),
+      # so the tag is the single source of truth: build and publish jobs stamp it with
+      # `make version-bump VERSION=<tag version>` before packing or publishing.
 
   # Run Full Test Suite
   test:
@@ -91,21 +81,21 @@ jobs:
     needs: validate
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -116,11 +106,11 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Run E2E tests
-        run: pnpm test:e2e || echo "⚠️ E2E tests skipped or failed"
+      - name: Run integration tests
+        run: pnpm --filter @unrdf/integration-tests test
 
       - name: Upload coverage
-        if: matrix.node-version == 18
+        if: matrix.node-version == 22
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
@@ -136,62 +126,53 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Stamp release version
+        run: make version-bump VERSION="${{ needs.validate.outputs.version }}"
+
+      - name: Verify stamped versions match tag
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          BAD=0
+          for f in packages/*/package.json; do
+            V=$(node -p "require('./$f').version")
+            if [ "$V" != "$VERSION" ]; then
+              echo "❌ Version mismatch in $f: $V (tag: $VERSION)"
+              BAD=1
+            fi
+          done
+          [ "$BAD" -eq 0 ] || exit 1
+          echo "✅ Version consistency verified: $VERSION"
 
       - name: Build project
         run: pnpm build
 
-      - name: Verify build artifacts
+      - name: Verify package entries
+        run: node scripts/check-package-exports.mjs
+
+      - name: Create tarballs
         run: |
-          echo "Verifying build artifacts..."
-
-          if [ ! -d "dist" ]; then
-            echo "❌ dist directory not found"
-            exit 1
-          fi
-
-          if [ ! -f "dist/index.mjs" ]; then
-            echo "❌ dist/index.mjs not found"
-            exit 1
-          fi
-
-          # Test that built module loads
-          node -e "
-            import('./dist/index.mjs').then(module => {
-              console.log('✅ Main module loads successfully');
-            }).catch(err => {
-              console.error('❌ Failed to load main module:', err);
-              process.exit(1);
-            });
-          "
-
-          echo "✅ Build artifacts verified"
-
-      - name: Create tarball
-        run: |
-          VERSION="${{ needs.validate.outputs.version }}"
-          pnpm pack
-          mv unrdf-${VERSION}.tgz unrdf-${VERSION}.tar.gz
+          mkdir -p release-artifacts
+          pnpm -r --filter './packages/*' pack --pack-destination "$PWD/release-artifacts"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-build
-          path: |
-            dist/
-            unrdf-*.tar.gz
+          path: release-artifacts/*.tgz
           retention-days: 30
 
   # Publish to npm
@@ -207,6 +188,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -214,13 +200,25 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Stamp release version
+        run: make version-bump VERSION="${{ needs.validate.outputs.version }}"
+
+      - name: Verify stamped versions match tag
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          BAD=0
+          for f in packages/*/package.json; do
+            V=$(node -p "require('./$f').version")
+            if [ "$V" != "$VERSION" ]; then
+              echo "❌ Version mismatch in $f: $V (tag: $VERSION)"
+              BAD=1
+            fi
+          done
+          [ "$BAD" -eq 0 ] || exit 1
+          echo "✅ Version consistency verified: $VERSION"
 
       - name: Build project
         run: pnpm build
@@ -228,18 +226,18 @@ jobs:
       - name: Verify package can be published
         run: |
           echo "Verifying package..."
-          pnpm publish --dry-run
+          pnpm -r publish --dry-run --no-git-checks
           echo "✅ Package verification successful"
 
       - name: Publish to npm (stable)
         if: needs.validate.outputs.is_prerelease == 'false'
-        run: pnpm publish --no-git-checks --access public
+        run: pnpm -r publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm (prerelease)
         if: needs.validate.outputs.is_prerelease == 'true'
-        run: pnpm publish --no-git-checks --access public --tag next
+        run: pnpm -r publish --no-git-checks --access public --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -249,7 +247,7 @@ jobs:
           sleep 10  # Wait for npm registry to update
 
           echo "Verifying published package..."
-          npm view unrdf@${VERSION} version
+          npm view @unrdf/core@${VERSION} version
           echo "✅ Package published successfully"
 
   # Build and Push Docker Image
@@ -338,14 +336,14 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Release v${{ needs.validate.outputs.version }}
           body: ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: ${{ needs.validate.outputs.is_prerelease }}
           files: |
-            ./release-artifacts/unrdf-*.tar.gz
+            ./release-artifacts/*.tgz
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -360,8 +358,8 @@ jobs:
         run: |
           VERSION="${{ needs.validate.outputs.version }}"
 
-          echo "Installing unrdf@${VERSION} from npm..."
-          npm install -g unrdf@${VERSION}
+          echo "Installing @unrdf/cli@${VERSION} from npm..."
+          npm install -g @unrdf/cli@${VERSION}
 
           echo "Verifying CLI..."
           unrdf --version

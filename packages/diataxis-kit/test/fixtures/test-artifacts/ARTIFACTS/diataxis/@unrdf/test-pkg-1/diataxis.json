@@ -1,0 +1,115 @@
+{
+  "packageName": "@unrdf/test-pkg-1",
+  "version": "1.0.0",
+  "generatedAt": "2025-01-01T00:00:00.000Z",
+  "confidence": {
+    "tutorials": 0.9,
+    "howtos": 0.85,
+    "reference": 1,
+    "explanation": 0.8
+  },
+  "tutorials": [
+    {
+      "id": "tutorial-getting-started",
+      "title": "Getting Started",
+      "goal": "Learn basics",
+      "prerequisites": [],
+      "stepsOutline": [
+        "Install",
+        "Import",
+        "Use"
+      ],
+      "confidenceScore": 0.9,
+      "source": [
+        "readme",
+        "examples"
+      ]
+    }
+  ],
+  "howtos": [
+    {
+      "id": "howto-configure",
+      "title": "Configure Package",
+      "task": "Set up configuration",
+      "context": "When customizing",
+      "steps": [
+        "Create config",
+        "Set options"
+      ],
+      "confidenceScore": 0.85,
+      "source": [
+        "readme"
+      ]
+    },
+    {
+      "id": "howto-use-cli",
+      "title": "Use CLI",
+      "task": "Use command line",
+      "context": "When running CLI",
+      "steps": [
+        "Install",
+        "Run"
+      ],
+      "confidenceScore": 1,
+      "source": [
+        "bin"
+      ]
+    }
+  ],
+  "reference": {
+    "id": "reference-api",
+    "title": "API Reference",
+    "items": [
+      {
+        "name": "export1",
+        "type": "export",
+        "description": "Export 1",
+        "example": "import x"
+      },
+      {
+        "name": "cli-tool",
+        "type": "bin",
+        "description": "CLI tool",
+        "example": "cli-tool"
+      }
+    ],
+    "confidenceScore": 1,
+    "source": [
+      "exports",
+      "bin"
+    ]
+  },
+  "explanation": {
+    "id": "explanation-overview",
+    "title": "Understanding Package",
+    "concepts": [
+      "concept1",
+      "concept2"
+    ],
+    "architecture": "This is the architecture",
+    "tradeoffs": [
+      "Tradeoff 1",
+      "Tradeoff 2"
+    ],
+    "confidenceScore": 0.8,
+    "source": [
+      "readme",
+      "keywords"
+    ]
+  },
+  "evidence": {
+    "readmeHeadings": [
+      "Usage",
+      "API",
+      "Examples"
+    ],
+    "docsFiles": [
+      "guide.md"
+    ],
+    "examplesFiles": [
+      "example1.mjs",
+      "example2.mjs"
+    ],
+    "fingerprint": "abc123"
+  }
+}

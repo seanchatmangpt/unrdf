@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * @fileoverview Browser Integration Tests
  * @description Behavioral tests for AtomVM browser runtime components.

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Shared utility functions for grammar parsing
  * @module @unrdf/v6-core/grammar/parser/utils
- * @version [VERSION]-alpha.1
+ * @version 6.0.0-alpha.1
  */
 
 /**

@@ -11,6 +11,8 @@ import {
   WasmLatexOutputSchema,
   LatexCompilerOptionsSchema
 } from './latex-generator.schema.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * @typedef {Object} LatexOutput
@@ -210,7 +212,6 @@ export async function initWasmLatexEngine(config = {}) {
 function generatePreamble(docs) {
   return '% UNRDF Thesis - Generated ' + docs.generatedAt + '\n' +
          '% Merkle Root: ' + docs.merkleRoot + '\n\n' +
-         '\\documentclass[12pt,a4paper]{report}\n\n' +
          '% Packages\n' +
          '\\usepackage[utf8]{inputenc}\n' +
          '\\usepackage[T1]{fontenc}\n' +
@@ -263,11 +264,14 @@ function generateMainFile(docs, chapterFiles) {
     return '\\input{' + relative + '}';
   }).join('\n');
   
-  return '\\input{preamble.tex}\n\n' +
+  // \documentclass must live in the root document (latexmk/arXiv detect the root by it);
+  // preamble.tex only carries packages and settings.
+  return '\\documentclass[12pt,a4paper]{report}\n\n' +
+         '\\input{preamble.tex}\n\n' +
          '\\begin{document}\n\n' +
          '% Title page\n' +
          '\\title{UNRDF Documentation\\\\\n' +
-         '       \\large Version [VERSION]-alpha.1}\n' +
+         '       \\large Version ' + PKG_VERSION + '}\n' +
          '\\author{UNRDF Contributors}\n' +
          '\\date{Generated: ' + new Date().toISOString() + '}\n' +
          '\\maketitle\n\n' +
@@ -428,7 +432,7 @@ function sanitizeLabel(name) {
  */
 function generateLockfile(docs, mainFile, chapterFiles, hashes) {
   return {
-    version: '[VERSION]-alpha.1',
+    version: PKG_VERSION,
     generatedAt: docs.generatedAt,
     merkleRoot: docs.merkleRoot,
     files: {

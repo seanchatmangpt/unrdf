@@ -16,7 +16,7 @@ describe('ReceiptChain', () => {
       decision: 'allow',
       outputHash: 'hash3',
       toolchainVersion: {
-        node: '[VERSION]',
+        node: '18.19.0',
         packages: {},
       },
       beforeHash,

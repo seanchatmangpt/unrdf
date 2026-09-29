@@ -35,7 +35,7 @@ const InputHashesSchema = z.object({
  */
 const ToolchainVersionSchema = z.object({
   node: z.string(),
-  packages: z.record(z.string()),
+  packages: z.record(z.string(), z.string()),
 });
 
 /**
@@ -65,8 +65,8 @@ const ReceiptSchema = z.object({
  *   decision: 'allow',
  *   outputHash: 'hash4',
  *   toolchainVersion: {
- *     node: '[VERSION]',
- *     packages: { '@unrdf/core': '[VERSION]' }
+ *     node: '18.19.0',
+ *     packages: { '@unrdf/core': '5.0.1' }
  *   },
  *   beforeHash: 'hash0'
  * });

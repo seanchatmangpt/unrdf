@@ -183,3 +183,14 @@ export function isValidTrigger(trigger) {
 
   return true;
 }
+
+/**
+ * Namespace for the trigger evaluation functions (the documented `TriggerEvaluator` API).
+ * @type {Readonly<{evaluateTrigger: Function, shouldExecuteIdle: Function, calculateNextExecutionTime: Function, isValidTrigger: Function}>}
+ */
+export const TriggerEvaluator = Object.freeze({
+  evaluateTrigger,
+  shouldExecuteIdle,
+  calculateNextExecutionTime,
+  isValidTrigger,
+});

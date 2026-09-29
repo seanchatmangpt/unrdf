@@ -11,13 +11,16 @@
 import { spawn } from 'child_process';
 import { writeFileSync } from 'fs';
 import { performance } from 'perf_hooks';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const BENCH_DIR = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = join(BENCH_DIR, '..');
 
 const BENCHMARK_RUNS = 10;
 const BENCHMARKS = [
   { name: 'hook-execution', file: 'hook-execution-bench.mjs', timeout: 30000 },
   { name: 'receipt-generation', file: 'receipt-generation-bench.mjs', timeout: 30000 },
-  { name: 'task-activation', file: 'task-activation-bench.mjs', timeout: 30000 },
-  { name: 'workflow-e2e', file: 'workflow-e2e-bench.mjs', timeout: 30000 },
   { name: 'optimization-suite', file: 'optimization-suite.mjs', timeout: 30000 },
 ];
 
@@ -58,7 +61,7 @@ function runBenchmark(benchmarkFile, timeout) {
 
     const child = spawn('node', [`benchmarks/${benchmarkFile}`], {
       timeout,
-      cwd: '/home/user/unrdf',
+      cwd: REPO_ROOT,
     });
 
     child.stdout.on('data', (data) => {
@@ -156,7 +159,7 @@ async function main() {
   }
 
   // Save raw results
-  const rawResultsFile = '/home/user/unrdf/results/statistical-raw.json';
+  const rawResultsFile = join(BENCH_DIR, 'results', 'statistical-raw.json');
   writeFileSync(rawResultsFile, JSON.stringify(allResults, null, 2));
   console.log(`\n✅ Raw results saved to: ${rawResultsFile}`);
 
@@ -224,7 +227,7 @@ async function main() {
   }
 
   // Save statistical summary
-  const summaryFile = '/home/user/unrdf/results/statistical-summary.json';
+  const summaryFile = join(BENCH_DIR, 'results', 'statistical-summary.json');
   writeFileSync(summaryFile, JSON.stringify(summary, null, 2));
   console.log(`\n✅ Statistical summary saved to: ${summaryFile}`);
 

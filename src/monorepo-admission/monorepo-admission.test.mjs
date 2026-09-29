@@ -53,7 +53,7 @@ const createTestPartitions = () => {
   return [
     {
       name: '@unrdf/core',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.CORE,
       dependencies: [],
       exports: [{ path: '.', entryPoint: './src/index.mjs', isPublic: true }],
@@ -63,7 +63,7 @@ const createTestPartitions = () => {
     },
     {
       name: '@unrdf/oxigraph',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.CORE,
       dependencies: [],
       exports: [{ path: '.', entryPoint: './src/index.mjs', isPublic: true }],
@@ -71,47 +71,47 @@ const createTestPartitions = () => {
     },
     {
       name: '@unrdf/hooks',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.HOOKS,
       dependencies: [
-        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true }
+        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true }
       ],
       exports: [{ path: '.', entryPoint: './src/index.mjs', isPublic: true }],
       license: 'MIT'
     },
     {
       name: '@unrdf/yawl',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.YAWL,
       dependencies: [
-        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true },
-        { name: '@unrdf/hooks', version: '[VERSION]', isWorkspace: true }
+        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true },
+        { name: '@unrdf/hooks', version: '5.0.1', isWorkspace: true }
       ],
       exports: [{ path: '.', entryPoint: './src/index.mjs', isPublic: true }],
       license: 'MIT'
     },
     {
       name: '@unrdf/ml-inference',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.ML,
       dependencies: [
-        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true },
-        { name: '@unrdf/yawl', version: '[VERSION]', isWorkspace: true }
+        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true },
+        { name: '@unrdf/yawl', version: '5.0.1', isWorkspace: true }
       ],
       license: 'MIT'
     },
     {
       name: '@unrdf/serverless',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.INFRASTRUCTURE,
       dependencies: [
-        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true }
+        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true }
       ],
       license: 'MIT'
     },
     {
       name: '@unrdf/docs',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.DOCUMENTATION,
       dependencies: [],
       license: 'MIT'
@@ -123,20 +123,20 @@ describe('PackagePartition', () => {
   it('creates partition with valid config', () => {
     const partition = new PackagePartition({
       name: '@unrdf/test',
-      version: '[VERSION]',
+      version: '1.0.0',
       category: PartitionCategory.UTILITY,
       license: 'MIT'
     });
 
     expect(partition.name).toBe('@unrdf/test');
-    expect(partition.version).toBe('[VERSION]');
+    expect(partition.version).toBe('1.0.0');
     expect(partition.getHash()).toBeDefined();
   });
 
   it('parses semantic version correctly', () => {
     const partition = new PackagePartition({
       name: '@unrdf/test',
-      version: '[VERSION]-beta.1',
+      version: '5.2.3-beta.1',
       category: PartitionCategory.UTILITY
     });
 
@@ -150,13 +150,13 @@ describe('PackagePartition', () => {
   it('identifies protected packages', () => {
     const corePartition = new PackagePartition({
       name: '@unrdf/core',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.CORE
     });
 
     const utilPartition = new PackagePartition({
       name: '@unrdf/some-util',
-      version: '[VERSION]',
+      version: '1.0.0',
       category: PartitionCategory.UTILITY
     });
 
@@ -167,14 +167,14 @@ describe('PackagePartition', () => {
   it('validates license compatibility', () => {
     const mitPartition = new PackagePartition({
       name: '@unrdf/test',
-      version: '[VERSION]',
+      version: '1.0.0',
       category: PartitionCategory.UTILITY,
       license: 'MIT'
     });
 
     const gplPartition = new PackagePartition({
       name: '@unrdf/test2',
-      version: '[VERSION]',
+      version: '1.0.0',
       category: PartitionCategory.UTILITY,
       license: 'GPL-3.0'
     });
@@ -189,7 +189,7 @@ describe('PackageDelta', () => {
     const delta = new PackageDelta({
       agent: 'test-agent',
       changes: [
-        { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '[VERSION]' } }
+        { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '5.0.2' } }
       ]
     });
 
@@ -249,7 +249,7 @@ describe('Q_version_consistency', () => {
     // Add mismatched version
     partitions.set('@unrdf/hooks', new PackagePartition({
       name: '@unrdf/hooks',
-      version: '[VERSION]', // Mismatched!
+      version: '4.0.0', // Mismatched!
       category: PartitionCategory.HOOKS,
       license: 'MIT'
     }));
@@ -263,7 +263,7 @@ describe('Q_version_consistency', () => {
   it('warns when minor version drifts beyond threshold', () => {
     partitions.set('@unrdf/serverless', new PackagePartition({
       name: '@unrdf/serverless',
-      version: '[VERSION]', // 4 minor versions ahead
+      version: '5.5.0', // 4 minor versions ahead
       category: PartitionCategory.INFRASTRUCTURE,
       license: 'MIT'
     }));
@@ -294,10 +294,10 @@ describe('Q_dependency_acyclic', () => {
     // Create cycle: core -> hooks -> core
     partitions.set('@unrdf/core', new PackagePartition({
       name: '@unrdf/core',
-      version: '[VERSION]',
+      version: '5.0.1',
       category: PartitionCategory.CORE,
       dependencies: [
-        { name: '@unrdf/hooks', version: '[VERSION]', isWorkspace: true }
+        { name: '@unrdf/hooks', version: '5.0.1', isWorkspace: true }
       ],
       license: 'MIT'
     }));
@@ -321,8 +321,9 @@ describe('Q_dependency_acyclic', () => {
     });
 
     const result = Q_dependency_acyclic(partitions, delta);
-    // Note: The invariant checks for existing cycles plus proposed additions
-    expect(result.passed).toBe(true); // No existing cycle
+    // core -> yawl closes the existing yawl -> core edge, so the proposed addition must fail
+    expect(result.passed).toBe(false);
+    expect(result.reason).toContain('cycle');
   });
 });
 
@@ -344,7 +345,7 @@ describe('Q_license_compliance', () => {
   it('fails when incompatible license found', () => {
     partitions.set('@unrdf/problem', new PackagePartition({
       name: '@unrdf/problem',
-      version: '[VERSION]',
+      version: '1.0.0',
       category: PartitionCategory.UTILITY,
       license: 'GPL-3.0' // Incompatible!
     }));
@@ -401,7 +402,7 @@ describe('H_core_signature_break', () => {
         {
           packageName: '@unrdf/core',
           changeType: 'version_bump',
-          details: { bumpType: 'major', newVersion: '[VERSION]' }
+          details: { bumpType: 'major', newVersion: '6.0.0' }
         },
         {
           packageName: '@unrdf/core',
@@ -558,7 +559,7 @@ describe('MonorepoAdmissionEngine', () => {
         {
           packageName: '@unrdf/serverless',
           changeType: 'version_bump',
-          details: { newVersion: '[VERSION]' }
+          details: { newVersion: '5.0.2' }
         }
       ]
     });
@@ -609,7 +610,7 @@ describe('MonorepoAdmissionEngine', () => {
       agent: 'test-agent',
       changes: [
         // First change is fine
-        { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '[VERSION]' } },
+        { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '5.0.2' } },
         // Second change would fail (deprecating protected package)
         { packageName: '@unrdf/core', changeType: 'deprecation' }
       ]
@@ -625,7 +626,7 @@ describe('MonorepoAdmissionEngine', () => {
     const delta = new PackageDelta({
       agent: 'test-agent',
       changes: [
-        { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '[VERSION]' } }
+        { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '5.0.2' } }
       ]
     });
 
@@ -719,7 +720,7 @@ describe('Integration: Full Admission Flow', () => {
         {
           packageName: '@unrdf/serverless',
           changeType: 'version_bump',
-          details: { newVersion: '[VERSION]', bumpType: 'patch' },
+          details: { newVersion: '5.0.2', bumpType: 'patch' },
           reason: 'Bug fixes'
         }
       ]
@@ -754,17 +755,17 @@ describe('Integration: Full Admission Flow', () => {
         {
           packageName: '@unrdf/core',
           changeType: 'version_bump',
-          details: { newVersion: '[VERSION]', bumpType: 'minor' }
+          details: { newVersion: '5.1.0', bumpType: 'minor' }
         },
         {
           packageName: '@unrdf/hooks',
           changeType: 'version_bump',
-          details: { newVersion: '[VERSION]', bumpType: 'minor' }
+          details: { newVersion: '5.1.0', bumpType: 'minor' }
         },
         {
           packageName: '@unrdf/yawl',
           changeType: 'version_bump',
-          details: { newVersion: '[VERSION]', bumpType: 'minor' }
+          details: { newVersion: '5.1.0', bumpType: 'minor' }
         }
       ]
     });

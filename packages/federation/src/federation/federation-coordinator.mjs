@@ -19,6 +19,7 @@ import { EventEmitter } from 'events';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
 import { trace, SpanStatusCode, metrics } from '@opentelemetry/api';
+import { spanAttributes } from './tracing.mjs';
 import { createConsensusManager } from './consensus-manager.mjs';
 
 const tracer = trace.getTracer('unrdf-federation');
@@ -141,39 +142,48 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('federation.initialize', async span => {
-      try {
-        span.setAttribute('federation.id', this.config.federationId);
+    return tracer.startActiveSpan(
+      'federation.initialize',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.federationId,
+          peerCount: this.stores?.size ?? 0,
+        }),
+      },
+      async span => {
+        try {
+          span.setAttribute('federation.id', this.config.federationId);
 
-        // Initialize consensus if enabled
-        if (this.config.enableConsensus) {
-          this.consensus = createConsensusManager({
-            nodeId: this.config.federationId,
-            electionTimeoutMin: 150,
-            electionTimeoutMax: 300,
-          });
+          // Initialize consensus if enabled
+          if (this.config.enableConsensus) {
+            this.consensus = createConsensusManager({
+              nodeId: this.config.federationId,
+              electionTimeoutMin: 150,
+              electionTimeoutMax: 300,
+            });
 
-          await this.consensus.initialize();
+            await this.consensus.initialize();
 
-          // Listen for consensus events
-          this.consensus.on('commandApplied', command => {
-            this.handleConsensusCommand(command);
-          });
+            // Listen for consensus events
+            this.consensus.on('commandApplied', command => {
+              this.handleConsensusCommand(command);
+            });
+          }
+
+          // Start health monitoring
+          this.startHealthMonitoring();
+
+          this.emit('initialized', { federationId: this.config.federationId });
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Start health monitoring
-        this.startHealthMonitoring();
-
-        this.emit('initialized', { federationId: this.config.federationId });
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -182,38 +192,47 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async registerStore(storeMetadata) {
-    return tracer.startActiveSpan('federation.registerStore', async span => {
-      try {
-        const metadata = StoreMetadataSchema.parse(storeMetadata);
-        span.setAttribute('store.id', metadata.storeId);
-        span.setAttribute('store.endpoint', metadata.endpoint);
+    return tracer.startActiveSpan(
+      'federation.register_store',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.federationId,
+          peerCount: this.stores?.size ?? 0,
+        }),
+      },
+      async span => {
+        try {
+          const metadata = StoreMetadataSchema.parse(storeMetadata);
+          span.setAttribute('store.id', metadata.storeId);
+          span.setAttribute('store.endpoint', metadata.endpoint);
 
-        // Register store locally
-        this.stores.set(metadata.storeId, metadata);
-        this.storeHealth.set(metadata.storeId, StoreHealth.UNKNOWN);
+          // Register store locally
+          this.stores.set(metadata.storeId, metadata);
+          this.storeHealth.set(metadata.storeId, StoreHealth.UNKNOWN);
 
-        // Replicate registration via consensus
-        if (this.consensus) {
-          await this.consensus.replicate({
-            type: 'REGISTER_STORE',
-            storeId: metadata.storeId,
-            data: metadata,
-          });
+          // Replicate registration via consensus
+          if (this.consensus) {
+            await this.consensus.replicate({
+              type: 'REGISTER_STORE',
+              storeId: metadata.storeId,
+              data: metadata,
+            });
+          }
+
+          // Perform initial health check
+          await this.checkStoreHealth(metadata.storeId);
+
+          this.emit('storeRegistered', metadata);
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        // Perform initial health check
-        await this.checkStoreHealth(metadata.storeId);
-
-        this.emit('storeRegistered', metadata);
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -222,39 +241,48 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async deregisterStore(storeId) {
-    return tracer.startActiveSpan('federation.deregisterStore', async span => {
-      try {
-        span.setAttribute('store.id', storeId);
+    return tracer.startActiveSpan(
+      'federation.deregister_store',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.federationId,
+          peerCount: this.stores?.size ?? 0,
+        }),
+      },
+      async span => {
+        try {
+          span.setAttribute('store.id', storeId);
 
-        if (!this.stores.has(storeId)) {
-          throw new Error(`Store not found: ${storeId}`);
-        }
+          if (!this.stores.has(storeId)) {
+            throw new Error(`Store not found: ${storeId}`);
+          }
 
-        // Remove store locally
-        this.stores.delete(storeId);
-        this.storeHealth.delete(storeId);
+          // Remove store locally
+          this.stores.delete(storeId);
+          this.storeHealth.delete(storeId);
 
-        // Replicate deregistration via consensus
-        if (this.consensus) {
-          await this.consensus.replicate({
-            type: 'DEREGISTER_STORE',
-            storeId,
+          // Replicate deregistration via consensus
+          if (this.consensus) {
+            await this.consensus.replicate({
+              type: 'DEREGISTER_STORE',
+              storeId,
+            });
+          }
+
+          this.emit('storeDeregistered', { storeId });
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error.message,
           });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        this.emit('storeDeregistered', { storeId });
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error.message,
-        });
-        throw error;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**
@@ -349,40 +377,49 @@ export class FederationCoordinator extends EventEmitter {
    * @returns {Promise<string>} Health status
    */
   async checkStoreHealth(storeId) {
-    return tracer.startActiveSpan('federation.healthCheck', async span => {
-      try {
-        const store = this.stores.get(storeId);
-        if (!store) {
-          throw new Error(`Store not found: ${storeId}`);
+    return tracer.startActiveSpan(
+      'federation.health_check',
+      {
+        attributes: spanAttributes({
+          nodeId: this.config.federationId,
+          peerCount: this.stores?.size ?? 0,
+        }),
+      },
+      async span => {
+        try {
+          const store = this.stores.get(storeId);
+          if (!store) {
+            throw new Error(`Store not found: ${storeId}`);
+          }
+
+          span.setAttribute('store.id', storeId);
+          span.setAttribute('store.endpoint', store.endpoint);
+
+          // In production, make actual HTTP request to store health endpoint
+          // For now, simulate health check
+          const isHealthy = Math.random() > 0.1; // 90% healthy
+          const health = isHealthy ? StoreHealth.HEALTHY : StoreHealth.UNHEALTHY;
+
+          const previousHealth = this.storeHealth.get(storeId);
+          this.storeHealth.set(storeId, health);
+
+          if (previousHealth !== health) {
+            this.emit('storeHealthChanged', { storeId, health, previousHealth });
+          }
+
+          span.setAttribute('health.status', health);
+          span.setStatus({ code: SpanStatusCode.OK });
+          return health;
+        } catch (error) {
+          this.storeHealth.set(storeId, StoreHealth.UNHEALTHY);
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          return StoreHealth.UNHEALTHY;
+        } finally {
+          span.end();
         }
-
-        span.setAttribute('store.id', storeId);
-        span.setAttribute('store.endpoint', store.endpoint);
-
-        // In production, make actual HTTP request to store health endpoint
-        // For now, simulate health check
-        const isHealthy = Math.random() > 0.1; // 90% healthy
-        const health = isHealthy ? StoreHealth.HEALTHY : StoreHealth.UNHEALTHY;
-
-        const previousHealth = this.storeHealth.get(storeId);
-        this.storeHealth.set(storeId, health);
-
-        if (previousHealth !== health) {
-          this.emit('storeHealthChanged', { storeId, health, previousHealth });
-        }
-
-        span.setAttribute('health.status', health);
-        span.setStatus({ code: SpanStatusCode.OK });
-        return health;
-      } catch (error) {
-        this.storeHealth.set(storeId, StoreHealth.UNHEALTHY);
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        return StoreHealth.UNHEALTHY;
-      } finally {
-        span.end();
       }
-    });
+    );
   }
 
   /**

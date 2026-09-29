@@ -237,7 +237,7 @@ export class KGenFilters {
       description: 'Sort array by value or key'
     });
 
-    this.register('groupby', (arr, key) => {
+    const groupBy = (arr, key) => {
       if (!Array.isArray(arr)) return {};
 
       const groups = {};
@@ -252,9 +252,31 @@ export class KGenFilters {
       });
 
       return groups;
-    }, {
+    };
+    this.register('groupby', groupBy, {
       category: 'data',
       description: 'Group array elements by key'
+    });
+    this.register('groupBy', groupBy, {
+      category: 'data',
+      description: 'Group array elements by key (camelCase alias of groupby)'
+    });
+
+    this.register('items', (obj) => {
+      if (Array.isArray(obj)) return obj.map((v, i) => [i, v]);
+      return obj && typeof obj === 'object' ? Object.entries(obj) : [];
+    }, {
+      category: 'data',
+      description: 'Object entries as [key, value] pairs'
+    });
+
+    this.register('length', (value) => {
+      if (value === null || value === undefined) return 0;
+      if (typeof value === 'object' && !Array.isArray(value)) return Object.keys(value).length;
+      return value.length ?? 0;
+    }, {
+      category: 'data',
+      description: 'Length of a string or array, or number of object keys'
     });
 
     this.register('map', (arr, key) => {
@@ -459,7 +481,7 @@ export class KGenFilters {
         algorithm: options.algorithm || 'sha256',
         timestamp,
         attestor: options.attestor || 'kgen-templates',
-        version: 'latest'
+        version: '1.0.0'
       };
     }, {
       category: 'cas',
@@ -504,6 +526,27 @@ export class KGenFilters {
       category: 'utility',
       deterministic: false,
       description: 'Generate UUID (non-deterministic)'
+    });
+
+    // Pure formatting of an explicit date (UTC), so it is safe in deterministic mode
+    this.register('formatDate', (date, format = 'YYYY-MM-DD') => {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+      const pad = (n) => String(n).padStart(2, '0');
+      const yyyy = d.getUTCFullYear();
+      const mm = pad(d.getUTCMonth() + 1);
+      const dd = pad(d.getUTCDate());
+      switch (format) {
+        case 'MM/DD/YYYY':
+          return `${mm}/${dd}/${yyyy}`;
+        case 'DD/MM/YYYY':
+          return `${dd}/${mm}/${yyyy}`;
+        default:
+          return `${yyyy}-${mm}-${dd}`;
+      }
+    }, {
+      category: 'utility',
+      description: 'Format a date (UTC) as YYYY-MM-DD, MM/DD/YYYY or DD/MM/YYYY'
     });
 
     // Date arithmetic filters

@@ -6,8 +6,9 @@
  * governance, validation, and audit receipts.
  */
 
-import { TransactionManager } from '../packages/knowledge-engine.mjs';
+import { TransactionManager } from '../packages/knowledge-engine/src/index.mjs';
 
+import { createStore } from '@unrdf/oxigraph';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 const { namedNode, literal, quad } = DataFactory;
 

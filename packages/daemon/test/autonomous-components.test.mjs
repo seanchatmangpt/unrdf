@@ -11,7 +11,6 @@ import {
   AutonomousRefinementEngine,
   RefinementConfigSchema,
   RefinementEpisodeSchema,
-  createAutonomousRefinementEngine,
 } from '../src/autonomous-refinement-engine.mjs';
 import {
   KnowledgeSelfPlayLoop,
@@ -181,7 +180,7 @@ describe('AutonomousRefinementEngine', () => {
     mockStore = {
       size: 10,
       query: async () => [],
-      executeWithReceipt: async (sparql) => ({
+      executeWithReceipt: async (_sparql) => ({
         id: 'receipt-1',
         hash: 'hash-1',
         previousHash: null,
@@ -413,13 +412,13 @@ describe('KnowledgeSelfPlayLoop', () => {
   beforeEach(() => {
     mockStore = {
       size: 10,
-      add: async (quad) => {
+      add: async (_quad) => {
         // Mock add operation
       },
     };
 
     mockEngine = {
-      execute: async (store, delta, options) => {
+      execute: async (store, delta, _options) => {
         return {
           receipt: {
             id: `receipt-${delta.iterationNumber || 1}`,
@@ -752,7 +751,7 @@ describe('SelfPlayAgent', () => {
         },
       },
       tool2: {
-        handler: async (input) => {
+        handler: async (_input) => {
           throw new Error('tool2 failed');
         },
       },

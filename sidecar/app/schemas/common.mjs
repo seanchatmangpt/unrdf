@@ -31,7 +31,7 @@ export const TimestampSchema = z.string().datetime({
  * - invariant: Execute as a continuous validation
  */
 export const HookPhaseSchema = z.enum(['pre', 'post', 'invariant'], {
-  errorMap: () => ({ message: 'Hook phase must be one of: pre, post, invariant' })
+  message: 'Hook phase must be one of: pre, post, invariant'
 })
 
 /**
@@ -71,10 +71,10 @@ export const PolicyPackIdSchema = z.string().regex(/^[a-z0-9-]+$/, {
 
 /**
  * Version schema for semantic versioning
- * @example "[VERSION]"
+ * @example "1.0.0"
  */
 export const VersionSchema = z.string().regex(/^\d+\.\d+\.\d+$/, {
-  message: 'Version must follow semantic versioning (e.g., [VERSION])'
+  message: 'Version must follow semantic versioning (e.g., 1.0.0)'
 })
 
 /**
@@ -91,5 +91,5 @@ export const ErrorCodeSchema = z.string().regex(/^[A-Z_]+$/, {
  * Defines the severity of validation results or errors
  */
 export const SeveritySchema = z.enum(['info', 'warning', 'error', 'critical'], {
-  errorMap: () => ({ message: 'Severity must be one of: info, warning, error, critical' })
+  message: 'Severity must be one of: info, warning, error, critical'
 })

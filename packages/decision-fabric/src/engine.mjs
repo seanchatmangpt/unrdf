@@ -61,6 +61,9 @@ export class DecisionEngine {
     this.kgcStore = options.kgcStore || new KGCStore({ store: this.store });
     this.hookRegistry = options.hookRegistry || new HookRegistry();
 
+    // Monotonic clock in nanoseconds (bigint). Injectable so timing can be tested deterministically.
+    this.clock = options.clock || (() => process.hrtime.bigint());
+
     // Performance tracking
     this.stats = {
       total_decisions: 0,
@@ -80,12 +83,12 @@ export class DecisionEngine {
     // μ₁: Subject Coherence - Validates entity structure
     this.hookRegistry.register('subject_coherence', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         // Check if subject is well-formed IRI or literal
         const valid = this._isValidSubject(intent.subject);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000; // microseconds
+        const duration = Number(this.clock() - start) / 1000; // microseconds
         this.stats.operator_calls[0]++;
 
         return {
@@ -100,12 +103,12 @@ export class DecisionEngine {
     // μ₂: Ontology Membership - Checks domain validity
     this.hookRegistry.register('ontology_membership', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         // Query knowledge graph for ontology membership
         const valid = await this._checkOntologyMembership(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[1]++;
 
         return {
@@ -120,11 +123,11 @@ export class DecisionEngine {
     // μ₃: Availability - Verifies resource availability
     this.hookRegistry.register('availability', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         const valid = await this._checkAvailability(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[2]++;
 
         return {
@@ -139,11 +142,11 @@ export class DecisionEngine {
     // μ₄: Regional Constraints - Validates local rules
     this.hookRegistry.register('regional_constraints', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         const valid = await this._checkRegionalConstraints(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[3]++;
 
         return {
@@ -158,11 +161,11 @@ export class DecisionEngine {
     // μ₅: Authority Validation - Verifies source legitimacy
     this.hookRegistry.register('authority_validation', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         const valid = await this._checkAuthority(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[4]++;
 
         return {
@@ -177,11 +180,11 @@ export class DecisionEngine {
     // μ₆: Compatibility Check - Ensures contextual fit
     this.hookRegistry.register('compatibility_check', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         const valid = await this._checkCompatibility(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[5]++;
 
         return {
@@ -196,11 +199,11 @@ export class DecisionEngine {
     // μ₇: Drift Detection - Monitors for changes
     this.hookRegistry.register('drift_detection', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         const valid = await this._checkDrift(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[6]++;
 
         return {
@@ -215,12 +218,12 @@ export class DecisionEngine {
     // μ₈: Finalization - Commits the decision
     this.hookRegistry.register('finalization', {
       validate: async (intent) => {
-        const start = process.hrtime.bigint();
+        const start = this.clock();
 
         // Record decision in event log
         const valid = await this._finalize(intent);
 
-        const duration = Number(process.hrtime.bigint() - start) / 1000;
+        const duration = Number(this.clock() - start) / 1000;
         this.stats.operator_calls[7]++;
 
         return {
@@ -240,7 +243,7 @@ export class DecisionEngine {
    * @returns {DecisionOutcome} - Low entropy outcome (≤1 nat)
    */
   async processIntent(intent) {
-    const overallStart = process.hrtime.bigint();
+    const overallStart = this.clock();
 
     const operators = [
       'subject_coherence',
@@ -258,11 +261,11 @@ export class DecisionEngine {
 
     // Execute operators sequentially (cascade)
     for (const operatorName of operators) {
-      const result = await this.hookRegistry.validate(operatorName, intent);
+      const result = await this.hookRegistry.validateAsync(operatorName, intent);
 
       if (!result.valid) {
         // Early termination on failure
-        const overallDuration = Number(process.hrtime.bigint() - overallStart) / 1000;
+        const overallDuration = Number(this.clock() - overallStart) / 1000;
 
         this.stats.total_decisions++;
         this.stats.total_execution_time_us += overallDuration;
@@ -281,7 +284,7 @@ export class DecisionEngine {
     }
 
     // All operators passed
-    const overallDuration = Number(process.hrtime.bigint() - overallStart) / 1000;
+    const overallDuration = Number(this.clock() - overallStart) / 1000;
 
     // Calculate confidence based on entropy reduction
     // Target: 50 nats → ≤1 nat = 49 nats reduction

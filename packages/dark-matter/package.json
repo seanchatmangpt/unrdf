@@ -6,8 +6,7 @@
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./optimizer": "./src/optimizer.mjs",
-    "./analyzer": "./src/analyzer.mjs"
+    "./analyzer": "./src/dark-matter/query-analyzer.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -38,7 +37,8 @@
   "dependencies": {
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
-    "typhonjs-escomplex": "^0.1.0"
+    "typhonjs-escomplex": "^0.1.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

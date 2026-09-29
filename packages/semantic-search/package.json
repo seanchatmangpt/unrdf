@@ -23,7 +23,6 @@
     "test:watch": "vitest --no-coverage",
     "bench": "vitest run test/benchmark.test.mjs",
     "demo": "node examples/semantic-search-demo.mjs",
-    "demo:advanced": "node examples/advanced-queries-demo.mjs",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/ examples/",

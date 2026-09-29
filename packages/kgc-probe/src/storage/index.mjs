@@ -12,7 +12,7 @@
  */
 
 import { promises as fs, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { randomUUID } from 'crypto';
 
 // ============================================================================

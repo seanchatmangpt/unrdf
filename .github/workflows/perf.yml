@@ -32,16 +32,15 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history for comparison
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -65,7 +64,7 @@ jobs:
         id: run-benchmarks
         run: |
           # Run benchmark suite with 10% regression threshold
-          node scripts/bench-all.mjs --threshold 10 --format markdown > benchmark-results.md
+          node scripts/bench-all.mjs --threshold=10 --format=markdown > benchmark-results.md
           echo "exit_code=$?" >> $GITHUB_OUTPUT
 
       - name: Upload benchmark results
@@ -153,16 +152,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

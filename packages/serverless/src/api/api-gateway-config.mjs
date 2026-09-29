@@ -6,11 +6,13 @@
  * Handles routing, authentication, rate limiting, and request/response transformations.
  *
  * @module serverless/api/api-gateway-config
- * @version [VERSION]
+ * @version 1.0.0
  * @license MIT
  */
 
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * API endpoint configuration
@@ -255,10 +257,10 @@ export class ApiGatewayConfig {
     }
 
     return {
-      openapi: '[VERSION]',
+      openapi: '3.0.0',
       info: {
         title: this.#config.apiName,
-        version: '[VERSION]',
+        version: PKG_VERSION,
         description: 'UNRDF Serverless API',
       },
       servers: [

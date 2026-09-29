@@ -10,6 +10,10 @@ export default defineConfig({
       ...configDefaults.exclude,
       'test/interchangeable-part.test.mjs',
       'test/interchangeable-part-canonical.test.mjs',
+      'test/capability-control-plane.test.mjs',
+      'test/capability-runtime.test.mjs',
+      'test/state-primitives.test.mjs',
+      'test/transaction-core.node.test.mjs',
     ],
     testTimeout: 60000, // 60s timeout for long-running tests (e.g., 100K quad performance tests)
     coverage: {

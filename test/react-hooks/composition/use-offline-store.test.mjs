@@ -1,7 +1,7 @@
 /**
  * @file Tests for useOfflineStore hook functionality
  * Tests local storage operations, pending change queue, sync operations, conflict resolution, and online/offline detection
- * @since latest
+ * @since 3.2.0
  */
 
 import { describe, it, expect, _beforeEach, vi } from 'vitest';

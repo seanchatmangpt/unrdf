@@ -6,13 +6,13 @@
  * OTEL span-based validation for transaction manager.
  * Tests ACID guarantees, rollback, and transaction lifecycle.
  *
- * [VERSION] Feature: Transaction manager validation (10% weight)
+ * v3.1.0 Feature: Transaction manager validation (10% weight)
  */
 
 import {
   createValidationRunner,
   createValidationHelpers,
-} from "../packages/validation/index.mjs";
+} from "../packages/validation/src/index.mjs";
 
 const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });

@@ -1,8 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { requireOpenOntologies } from './helpers/open-ontologies-precondition.mjs';
 import { powl_discover, powl_to_ontology, powl_conformance } from '../src/mcp/powl-handlers.mjs';
-import { executeSemanticQuery } from '@unrdf/core/utils/semantic-bridge';
 
 describe('Vision 2030: PoWL v2 and Open Ontologies Integration', { timeout: 30000 }, () => {
+  beforeAll(() => {
+    requireOpenOntologies();
+  });
+
 
   const dummyEventLog = JSON.stringify({
     traces: [

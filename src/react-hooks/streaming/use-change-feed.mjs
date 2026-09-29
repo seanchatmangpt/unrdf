@@ -1,7 +1,7 @@
 /**
  * @file use-change-feed.mjs
  * @description React hook for real-time change stream with filtering
- * @since [VERSION]
+ * @since 3.2.0
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -33,7 +33,7 @@ const ChangeFeedConfigSchema = z
 /**
  * Hook for consuming real-time change feed from the knowledge graph
  *
- * @since [VERSION]
+ * @since 3.2.0
  * @param {Object} config - Change feed configuration
  * @param {Function} [config.filter] - Filter function for changes
  * @param {string[]} [config.operations] - Operations to track: 'insert', 'delete'

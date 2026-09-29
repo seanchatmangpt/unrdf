@@ -66,7 +66,7 @@ export const WorkflowReceiptSchema = z.object({
     checkpoint: z.string(),
     state: z.any().optional()
   })).optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

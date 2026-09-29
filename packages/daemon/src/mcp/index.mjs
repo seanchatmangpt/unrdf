@@ -24,7 +24,7 @@ import * as ontoHandlers from './open-ontologies-handlers.mjs';
 export function createMCPServer() {
   const server = new McpServer({
     name: 'unrdf-daemon-mcp',
-    version: '[VERSION]',
+    version: '26.4.23',
   });
 
   // Register resources and prompts

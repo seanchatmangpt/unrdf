@@ -103,7 +103,9 @@ describe('KGEN Base Templates Standalone Verification', () => {
 
     expect(generated.name).toBe('testFilter');
     expect(generated.description).toContain('Test filter description');
-    expect(generated.code).toContain('testFilter');
+    // generated.code is an anonymous arrow fn; the name lives in generated.name.
+    // Verify the context substitution reached the code instead.
+    expect(generated.code).toContain('return null;');
   });
 
   it('should generate SHACL shape from template', async () => {

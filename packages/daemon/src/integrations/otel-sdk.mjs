@@ -7,8 +7,12 @@
  */
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import Resource from '@opentelemetry/resources';
-import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
+import { Resource } from '@opentelemetry/resources';
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+  SEMRESATTRS_DEPLOYMENT_ENVIRONMENT as ATTR_DEPLOYMENT_ENVIRONMENT,
+} from '@opentelemetry/semantic-conventions';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { trace, metrics } from '@opentelemetry/api';
@@ -39,7 +43,7 @@ export async function initializeOTelSDK(config = {}) {
   const resource = Resource.default().merge(
     new Resource({
       [ATTR_SERVICE_NAME]: config.serviceName || 'unrdf-daemon',
-      [ATTR_SERVICE_VERSION]: config.version || '[VERSION]',
+      [ATTR_SERVICE_VERSION]: config.version || '26.4.23',
       [ATTR_DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
     })
   );
@@ -79,8 +83,8 @@ export async function initializeOTelSDK(config = {}) {
   await sdk.start();
 
   // Export tracer and meter for cross-package use
-  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || '[VERSION]');
-  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || '[VERSION]');
+  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
+  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
 
   console.log('[OTEL SDK] OpenTelemetry SDK initialized successfully');
   console.log(`[OTEL SDK] Service: ${config.serviceName || 'unrdf-daemon'}`);

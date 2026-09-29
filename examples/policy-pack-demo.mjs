@@ -30,13 +30,13 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'audit-trail-hook',
             description: 'Ensures audit trail compliance',
-            version: 'latest',
+            version: '1.0.0',
           },
           when: {
             kind: 'sparql-ask',
             ref: {
               uri: 'file://audit-trail.rq',
-              sha256: 'audit-hash',
+              sha256: 'a2efb2ac72e337593e1fe7c99eef92f6e6fc78ec491ed348c3b8c7068d332c9a',
               mediaType: 'application/sparql-query',
             },
           },
@@ -49,13 +49,13 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'data-retention-hook',
             description: 'Enforces data retention policies',
-            version: 'latest',
+            version: '1.0.0',
           },
           when: {
             kind: 'shacl',
             ref: {
               uri: 'file://retention.shacl',
-              sha256: 'retention-hash',
+              sha256: '721d5a768bb7698eb378fd4f56f1ce302e1ddf85d4104c2ca5baf66590b74adf',
               mediaType: 'text/turtle',
             },
           },
@@ -68,7 +68,7 @@ async function demonstratePolicyPacks() {
       {
         description: 'SOX Compliance Policy Pack for financial data governance',
         author: 'compliance-team',
-        version: 'latest',
+        version: '1.2.0',
         license: 'MIT',
         tags: ['compliance', 'sox', 'financial'],
         ontology: ['http://example.org/sox-ontology'],
@@ -88,13 +88,13 @@ async function demonstratePolicyPacks() {
           meta: {
             name: 'privacy-hook',
             description: 'Enforces privacy regulations',
-            version: 'latest',
+            version: '1.0.0',
           },
           when: {
             kind: 'sparql-ask',
             ref: {
               uri: 'file://privacy.rq',
-              sha256: 'privacy-hash',
+              sha256: '38061af0c86fcf57ecc39ff378d50465ed206d74d0b091f04c3caa5fe00cd149',
               mediaType: 'application/sparql-query',
             },
           },
@@ -107,7 +107,7 @@ async function demonstratePolicyPacks() {
       {
         description: 'Data Governance Policy Pack for privacy and data quality',
         author: 'data-team',
-        version: 'latest',
+        version: '2.1.0',
         license: 'Apache-2.0',
         tags: ['governance', 'privacy', 'data-quality'],
       }
@@ -130,13 +130,13 @@ async function demonstratePolicyPacks() {
     console.log('\n🔍 Testing compatibility checks...');
 
     const devEnvironment = {
-      version: 'latest',
+      version: '1.0.0',
       environment: 'development',
       features: ['sparql', 'shacl', 'audit'],
     };
 
     const prodEnvironment = {
-      version: 'latest',
+      version: '2.0.0',
       environment: 'production',
       features: ['sparql', 'shacl', 'audit', 'monitoring'],
     };

@@ -7,7 +7,7 @@
  * measurement framework. Provides feature extraction templates, aggregation
  * algorithms, and certificate validation logic.
  *
- * @version [VERSION]
+ * @version 1.0.0
  */
 
 import { z } from 'zod';
@@ -561,7 +561,7 @@ export function createCertificate(packages, options = {}) {
   const checksum = generateChecksum(system, packages);
 
   const certificate = {
-    version: '[VERSION]',
+    version: '1.0.0',
     certificate_id: crypto.randomUUID(),
     timestamp: new Date().toISOString(),
     epoch: Date.now(),

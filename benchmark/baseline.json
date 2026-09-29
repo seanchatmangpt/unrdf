@@ -1,11 +1,11 @@
 {
-  "version": "latest",
-  "createdAt": "2025-12-04T00:00:latestZ",
+  "version": "1.0.0",
+  "createdAt": "2025-12-04T00:00:00.000Z",
   "description": "Baseline performance targets for Knowledge Hooks benchmarks",
   "system": {
     "platform": "linux",
     "arch": "x64",
-    "nodeVersion": "vlatest",
+    "nodeVersion": "v20.10.0",
     "cpuModel": "To be recorded on first run",
     "cpuCores": 0,
     "totalMemoryMB": 0
@@ -13,73 +13,73 @@
   "benchmarks": {
     "hook-registration": {
       "small-batch": {
-        "avgLatency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
+        "avgLatency": 0.5,
+        "p95Latency": 1.0,
+        "p99Latency": 2.0,
         "throughput": 2000,
         "memoryOverhead": 5,
-        "errorRate": latest
+        "errorRate": 0.01
       },
       "medium-batch": {
-        "avgLatency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
+        "avgLatency": 1.0,
+        "p95Latency": 2.0,
+        "p99Latency": 5.0,
         "throughput": 1000,
         "memoryOverhead": 25,
-        "errorRate": latest
+        "errorRate": 0.1
       },
       "large-batch": {
-        "avgLatency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
+        "avgLatency": 1.0,
+        "p95Latency": 3.0,
+        "p99Latency": 5.0,
         "throughput": 1000,
         "memoryOverhead": 100,
-        "errorRate": latest
+        "errorRate": 0.1
       }
     },
     "hook-execution": {
       "simple-hook-execution": {
-        "p50Latency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
-        "maxLatency": latest,
+        "p50Latency": 1.0,
+        "p95Latency": 5.0,
+        "p99Latency": 10.0,
+        "maxLatency": 50.0,
         "throughput": 1000,
-        "errorRate": latest
+        "errorRate": 0.1
       },
       "medium-hook-execution": {
-        "p50Latency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
-        "maxLatency": latest,
+        "p50Latency": 3.0,
+        "p95Latency": 8.0,
+        "p99Latency": 15.0,
+        "maxLatency": 100.0,
         "throughput": 200,
-        "errorRate": latest
+        "errorRate": 0.1
       },
       "complex-hook-execution": {
-        "p50Latency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
-        "maxLatency": latest,
+        "p50Latency": 10.0,
+        "p95Latency": 25.0,
+        "p99Latency": 50.0,
+        "maxLatency": 200.0,
         "throughput": 50,
-        "errorRate": latest
+        "errorRate": 0.5
       }
     },
     "hook-validation": {
       "schema-validation-throughput": {
         "throughput": 10000,
-        "avgLatency": latest,
-        "p99Latency": latest,
-        "accuracy": latest,
-        "falsePositiveRate": latest,
-        "falseNegativeRate": latest,
-        "errorRate": latest
+        "avgLatency": 0.1,
+        "p99Latency": 1.0,
+        "accuracy": 99.9,
+        "falsePositiveRate": 0.01,
+        "falseNegativeRate": 0.01,
+        "errorRate": 0.1
       },
       "runtime-validation-performance": {
         "throughput": 5000,
-        "avgLatency": latest,
-        "p95Latency": latest,
-        "p99Latency": latest,
-        "accuracy": latest,
-        "errorRate": latest
+        "avgLatency": 0.2,
+        "p95Latency": 1.0,
+        "p99Latency": 2.0,
+        "accuracy": 99.5,
+        "errorRate": 0.5
       }
     },
     "memory-profiling": {
@@ -89,7 +89,7 @@
         "memoryGrowthRate": 1,
         "gcFrequency": 10,
         "gcPauseDuration": 10,
-        "memoryLeakRate": latest
+        "memoryLeakRate": 0.1
       },
       "memory-stress-test": {
         "peakMemory": 500,
@@ -98,7 +98,7 @@
         "gcFrequency": 20,
         "gcPauseDuration": 50,
         "memoryLeakRate": 1,
-        "oomErrorRate": latest
+        "oomErrorRate": 0.01
       }
     },
     "concurrent-execution": {
@@ -109,7 +109,7 @@
         "p95Latency": 50,
         "p99Latency": 100,
         "contentionRate": 5,
-        "errorRate": latest
+        "errorRate": 0.1
       },
       "medium-concurrency": {
         "totalThroughput": 2000,
@@ -118,7 +118,7 @@
         "p95Latency": 150,
         "p99Latency": 300,
         "contentionRate": 15,
-        "errorRate": latest
+        "errorRate": 0.5
       },
       "high-concurrency": {
         "totalThroughput": 1000,
@@ -134,30 +134,30 @@
   },
   "regressionThresholds": {
     "latency": {
-      "warning": latest,
-      "critical": latest
+      "warning": 0.10,
+      "critical": 0.20
     },
     "throughput": {
-      "warning": -latest,
-      "critical": -latest
+      "warning": -0.10,
+      "critical": -0.20
     },
     "memory": {
-      "warning": latest,
-      "critical": latest
+      "warning": 0.15,
+      "critical": 0.30
     },
     "errorRate": {
-      "warning": latest,
-      "critical": latest
+      "warning": 0.50,
+      "critical": 1.00
     }
   },
   "notes": [
     "This baseline file defines target performance metrics for all benchmark scenarios",
     "Actual baseline values should be recorded from a clean run on the target system",
     "Run `npm run benchmark -- --create-baseline` to generate system-specific baselines",
-    "Regression thresholds are percentages (latest = 10% degradation)",
+    "Regression thresholds are percentages (0.10 = 10% degradation)",
     "All latency values are in milliseconds",
     "All memory values are in megabytes",
     "All throughput values are in operations per second",
-    "Error rates are percentages (latest = latest% error rate)"
+    "Error rates are percentages (0.1 = 0.1% error rate)"
   ]
 }

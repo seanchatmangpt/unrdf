@@ -2,7 +2,7 @@
  * @fileoverview Simple test to debug RdfEngine context integration
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { initStore, useStoreContext } from '../packages/composables/src/context/index.mjs';
 
 const turtleData = `

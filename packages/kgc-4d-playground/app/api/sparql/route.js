@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getUniverse } from '../../../lib/server/multiverse.mjs';
+import { bindSparqlVariables } from '../../../lib/server/sparql-bind.mjs';
 
 export async function POST(request) {
   try {
@@ -22,11 +23,12 @@ export async function POST(request) {
     // Get the Universe instance
     const universe = await getUniverse();
 
-    // Replace variables in query (simple implementation)
-    let processedQuery = query;
-    for (const [key, value] of Object.entries(variables)) {
-      const placeholder = `$${key}`;
-      processedQuery = processedQuery.replaceAll(placeholder, value);
+    // Bind $variables as escaped RDF terms (never raw string substitution)
+    let processedQuery;
+    try {
+      processedQuery = bindSparqlVariables(query, variables);
+    } catch (bindError) {
+      return NextResponse.json({ error: bindError.message }, { status: 400 });
     }
 
     // Execute SPARQL query

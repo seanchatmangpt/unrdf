@@ -43,7 +43,7 @@ const _TestContextSchema = z.object({
   policyPackManager: z.any().optional(), // PolicyPackManager instance
   lockchainWriter: z.any().optional(), // LockchainWriter instance
   sandbox: z.any().optional(), // EffectSandbox instance
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -557,7 +557,7 @@ export const TestHelpers = {
       meta: {
         name,
         description: options.description || `Test hook ${name}`,
-        version: options.version || '[VERSION]',
+        version: options.version || '1.0.0',
       },
       when: when || {
         kind: 'sparql-ask',
@@ -580,7 +580,7 @@ export const TestHelpers = {
       id: `test-${name}-${Date.now()}`,
       meta: {
         name,
-        version: options.version || '[VERSION]',
+        version: options.version || '1.0.0',
         description: options.description || `Test policy pack ${name}`,
         author: options.author || 'test',
         license: options.license || 'MIT',

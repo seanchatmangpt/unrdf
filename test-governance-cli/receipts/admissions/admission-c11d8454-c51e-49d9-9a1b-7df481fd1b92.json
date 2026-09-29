@@ -40,7 +40,7 @@
     }
   ],
   "metadata": {
-    "version": "latest",
+    "version": "1.0.0",
     "generator": "governance-substrate-cli"
   }
 }

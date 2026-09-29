@@ -4,6 +4,7 @@
  */
 
 import { strict as assert } from 'assert';
+import { describe, it } from 'vitest';
 import {
   validateIri,
   loadTurtle,
@@ -327,27 +328,11 @@ async function testIntegration() {
   console.log('✅ Integration tests passed');
 }
 
-/**
- * Main test runner
- */
-async function runTests() {
-  console.log('🚀 Starting RDF Universe Test Suite\n');
-
-  try {
-    await testRdfUtils();
-    await testOntologyClasses();
-    await testOntologyRegistry();
-    await testPartitions();
-    await testUniverse();
-    await testIntegration();
-
-    console.log('\n✅ All tests passed!');
-    process.exit(0);
-  } catch (error) {
-    console.error('\n❌ Test failed:', error);
-    process.exit(1);
-  }
-}
-
-// Run tests
-runTests();
+describe('RDF Universe', () => {
+  it('RDF utils', testRdfUtils);
+  it('ontology classes', testOntologyClasses);
+  it('ontology registry', testOntologyRegistry);
+  it('partitions', testPartitions);
+  it('universe', testUniverse);
+  it('integration', testIntegration);
+});

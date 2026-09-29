@@ -146,6 +146,18 @@ const DEFAULT_SECRET_PATTERNS = [
 ];
 
 /**
+ * Sensitive file locations: reading/writing these exposes credentials even when the
+ * path itself contains no secret-looking token (e.g. /etc/passwd, .env)
+ */
+const SENSITIVE_PATH_PATTERNS = [
+  /(^|[\\/])\.env($|\.)/,
+  /(^|[\\/])etc[\\/](passwd|shadow|sudoers)$/,
+  /(^|[\\/])id_(rsa|dsa|ecdsa|ed25519)$/,
+  /\.(pem|p12|pfx|keystore)$/i,
+  /(^|[\\/])\.(aws|ssh|gnupg)[\\/]/,
+];
+
+/**
  * SecretGuard - Prevent exposure of credentials, tokens, keys
  *
  * Blocks operations that would expose secrets in:
@@ -170,6 +182,17 @@ export async function SecretGuard(operation, config = {}) {
       containsSecret = true;
       secretType = pattern.toString();
       break;
+    }
+  }
+
+  // Check sensitive file locations
+  if (!containsSecret && operation.type.startsWith('file:') && typeof operation.target === 'string') {
+    for (const pattern of SENSITIVE_PATH_PATTERNS) {
+      if (pattern.test(operation.target)) {
+        containsSecret = true;
+        secretType = pattern.toString();
+        break;
+      }
     }
   }
 
@@ -301,6 +324,11 @@ export async function NetworkGuard(operation, config = {}) {
   let url;
   try {
     url = new URL(operation.target);
+    // Only http(s) requests are governed by the host/port allowlist; ftp:, file:, data:
+    // etc. would otherwise pass the default (empty allowlist) check
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      throw new Error(`Unsupported protocol ${url.protocol}`);
+    }
   } catch {
     // If not a valid URL, block it
     const receipt = await generateReceipt(

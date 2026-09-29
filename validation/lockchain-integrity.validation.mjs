@@ -6,13 +6,13 @@
  * OTEL span-based validation for lockchain cryptographic audit trail.
  * Tests receipt writing, verification, Merkle root validation, and Git anchoring.
  *
- * [VERSION] Feature: Lockchain cryptographic integrity validation (15% weight)
+ * v3.1.0 Feature: Lockchain cryptographic integrity validation (15% weight)
  */
 
 import {
   createValidationRunner,
   createValidationHelpers,
-} from "../packages/validation/index.mjs";
+} from "../packages/validation/src/index.mjs";
 
 const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });

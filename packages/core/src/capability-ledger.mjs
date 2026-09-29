@@ -45,10 +45,21 @@ function assertText(value, name) {
   if (typeof value !== 'string' || value.trim() === '') throw new TypeError(`${name} must be a non-empty string`);
 }
 
+/**
+ * Ledger of capabilities with standing, disposition, evidence and an append-only history.
+ */
 export class CapabilityLedger {
   #entries = new Map();
   #history = [];
 
+  /**
+   * Create a ledger.
+   * @param {Object} options - Ledger identity.
+   * @param {string} options.subject - Non-empty subject the ledger describes.
+   * @param {string|null} [options.source] - Source of the assessment.
+   * @param {string|null} [options.authority] - Authority issuing the ledger.
+   * @throws {TypeError} If `subject` is not a non-empty string.
+   */
   constructor({ subject, source = null, authority = null } = {}) {
     assertText(subject, 'subject');
     this.subject = subject;
@@ -56,6 +67,13 @@ export class CapabilityLedger {
     this.authority = authority;
   }
 
+  /**
+   * Admit a new capability into the ledger.
+   * @param {Object} capability - Capability definition (id, owner, contract, verifier, falsifier, disposition, standing, exclusions, metadata).
+   * @returns {Object} A copy of the stored entry.
+   * @throws {TypeError} If required fields, standing or disposition are invalid.
+   * @throws {Error} If the id is already admitted.
+   */
   admit(capability) {
     const { id, owner, contract, verifier, falsifier, disposition = null, standing = Standing.UNKNOWN } = capability ?? {};
     assertText(id, 'capability.id');
@@ -79,6 +97,15 @@ export class CapabilityLedger {
     return structuredClone(entry);
   }
 
+  /**
+   * Move a capability to a new standing according to the transition table. ALIVE requires a verifier, falsifier and evidence.
+   * @param {string} id - Capability id.
+   * @param {string} standing - Target Standing value.
+   * @param {Object|null} [evidence] - Evidence recorded with the transition.
+   * @returns {Object} A copy of the updated entry.
+   * @throws {Error} If the capability is unknown, the transition is illegal, or ALIVE prerequisites are missing.
+   * @throws {TypeError} If the standing is invalid.
+   */
   transition(id, standing, evidence = null) {
     const entry = this.#require(id);
     if (!Object.values(Standing).includes(standing)) throw new TypeError(`invalid standing: ${standing}`);
@@ -97,6 +124,15 @@ export class CapabilityLedger {
     return structuredClone(entry);
   }
 
+  /**
+   * Set a capability's disposition with a rationale. REFUSED requires a falsifier.
+   * @param {string} id - Capability id.
+   * @param {string} disposition - A Disposition value.
+   * @param {string} rationale - Non-empty explanation.
+   * @returns {Object} A copy of the updated entry.
+   * @throws {Error} If the capability is unknown or REFUSED lacks a falsifier.
+   * @throws {TypeError} If the disposition or rationale is invalid.
+   */
   setDisposition(id, disposition, rationale) {
     const entry = this.#require(id);
     if (!Object.values(Disposition).includes(disposition)) throw new TypeError(`invalid disposition: ${disposition}`);
@@ -108,6 +144,14 @@ export class CapabilityLedger {
     return structuredClone(entry);
   }
 
+  /**
+   * Attach an evidence object to a capability.
+   * @param {string} id - Capability id.
+   * @param {Object} evidence - Evidence to record.
+   * @returns {Object} A copy of the updated entry.
+   * @throws {TypeError} If evidence is not an object.
+   * @throws {Error} If the capability is unknown.
+   */
   attachEvidence(id, evidence) {
     if (!evidence || typeof evidence !== 'object') throw new TypeError('evidence must be an object');
     const entry = this.#require(id);
@@ -116,9 +160,23 @@ export class CapabilityLedger {
     return structuredClone(entry);
   }
 
+  /**
+   * Get a capability entry.
+   * @param {string} id - Capability id.
+   * @returns {Object} A copy of the entry.
+   * @throws {Error} If the capability is unknown.
+   */
   get(id) { return structuredClone(this.#require(id)); }
+  /**
+   * List all entries sorted by id.
+   * @returns {Object[]} Copies of the entries.
+   */
   list() { return [...this.#entries.values()].sort((a,b) => a.id.localeCompare(b.id)).map(entry => structuredClone(entry)); }
 
+  /**
+   * Count entries by standing and disposition and count missing verifiers, falsifiers and dispositions.
+   * @returns {Object} Summary counts.
+   */
   summary() {
     const byStanding = Object.fromEntries(Object.values(Standing).map(x => [x, 0]));
     const byDisposition = Object.fromEntries(Object.values(Disposition).map(x => [x, 0]));
@@ -132,6 +190,10 @@ export class CapabilityLedger {
     return { count: this.#entries.size, byStanding, byDisposition, missingVerifier, missingFalsifier, missingDisposition };
   }
 
+  /**
+   * Assess the ledger overall: ALIVE only when no blocking reasons remain, otherwise PARTIAL_ALIVE.
+   * @returns {{standing: string, reasons: string[], summary: Object, digest: string}} Verdict with reasons and ledger digest.
+   */
   crown() {
     const summary = this.summary();
     const reasons = [];
@@ -145,13 +207,26 @@ export class CapabilityLedger {
     return { standing: reasons.length === 0 ? Standing.ALIVE : Standing.PARTIAL_ALIVE, reasons, summary, digest: this.digest() };
   }
 
+  /**
+   * Serialize the ledger canonically (identity, entries and history).
+   * @returns {Object} Canonical JSON-safe object.
+   */
   toJSON() {
     return canonical({ schema: 'unrdf.capability-ledger/1', subject: this.subject, source: this.source, authority: this.authority, entries: this.list(), history: this.#history });
   }
+  /**
+   * SHA-256 digest of the canonical serialization.
+   * @returns {string} Hex digest.
+   */
   digest() { return digest(this.toJSON()); }
 
   #require(id) { const entry = this.#entries.get(id); if (!entry) throw new Error(`CAPABILITY_NOT_FOUND:${id}`); return entry; }
   #record(type, capability, detail) { this.#history.push({ sequence: this.#history.length + 1, type, capability, detail: canonical(detail) }); }
 }
 
+/**
+ * Create a CapabilityLedger.
+ * @param {Object} options - Options forwarded to the CapabilityLedger constructor.
+ * @returns {CapabilityLedger} A new ledger.
+ */
 export function createCapabilityLedger(options) { return new CapabilityLedger(options); }

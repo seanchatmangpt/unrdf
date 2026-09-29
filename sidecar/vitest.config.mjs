@@ -1,6 +1,12 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
+
+const nitroImports = fileURLToPath(new URL('./test/mocks/nitro-imports.mjs', import.meta.url));
 
 export default defineConfig({
+  resolve: {
+    alias: { '#imports': nitroImports }
+  },
   test: {
     globals: true,
     environment: 'node',

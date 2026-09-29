@@ -5,15 +5,17 @@
  * CLI command to create a new context with sidecar configuration.
  *
  * @module cli/commands/context/create
- * @version [VERSION]
+ * @version 2.4.0
  * @license MIT
  */
 
 import { defineCommand } from 'citty';
 import { ContextManager } from '../../core/context.mjs';
 import { trace } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../../../package.json').version;
 
-const tracer = trace.getTracer('unrdf-cli-context-create', '[VERSION]');
+const tracer = trace.getTracer('unrdf-cli-context-create', PKG_VERSION);
 
 /**
  * Create context command

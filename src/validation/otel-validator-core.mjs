@@ -42,7 +42,7 @@ export const ValidationResultSchema = z.object({
       name: z.string(),
       status: z.enum(['ok', 'error']),
       duration: z.number(),
-      attributes: z.record(z.any()),
+      attributes: z.record(z.string(), z.any()),
     })
   ),
   violations: z.array(z.string()),

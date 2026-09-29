@@ -47,8 +47,8 @@ describe('Saga Pattern - Distributed Transactions', () => {
       const result = await saga.execute({ initial: 'data' });
 
       expect(result.success).toBe(true);
-      expect(result.result.step1).toBe('done');
-      expect(result.result.step2).toBe('done');
+      expect(result.result.first.step1).toBe('done');
+      expect(result.result.second.step2).toBe('done');
       expect(executionOrder).toEqual(['step1-execute', 'step2-execute']);
     });
 
@@ -117,7 +117,8 @@ describe('Saga Pattern - Distributed Transactions', () => {
         },
         async () => {
           compensated.push('step2');
-        }
+        },
+        { retryable: false }
       );
 
       const step3 = createSagaStep(

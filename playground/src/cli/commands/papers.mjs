@@ -7,12 +7,12 @@
  * Supports multiple paper families: IMRAD, DSR, Argument, Contribution.
  *
  * @module cli/commands/papers
- * @version latest
  * @license MIT
  */
 
 import { defineCommand } from 'citty';
 import { z } from 'zod';
+import { renderTemplate, renderMarkdown, writeOutput } from '../../render.mjs';
 
 // =============================================================================
 // Constants
@@ -145,7 +145,9 @@ function toSimpleYaml(obj, indent = 0) {
  */
 function formatAsTable(data) {
   if (Array.isArray(data)) {
-    if (data.length === 0) return 'No data';
+    if (data.length === 0) {
+return 'No data';
+}
     const keys = Object.keys(data[0]);
     const header = keys.map(k => k.padEnd(20)).join(' ');
     const separator = '-'.repeat(header.length);
@@ -268,7 +270,9 @@ const generateCommand = defineCommand({
         printProgress(`Generating ${familyConfig.name} paper...`, 'progress');
         printProgress(`  Title: ${input.title}`, 'info');
         printProgress(`  Author: ${input.author}`, 'info');
-        if (input.affiliation) printProgress(`  Affiliation: ${input.affiliation}`, 'info');
+        if (input.affiliation) {
+printProgress(`  Affiliation: ${input.affiliation}`, 'info');
+}
         printProgress(`  Family: ${familyConfig.name}`, 'info');
         printProgress(`  Sections: ${familyConfig.sections.join(', ')}`, 'info');
       }
@@ -284,11 +288,13 @@ const generateCommand = defineCommand({
           affiliation: input.affiliation || 'Unknown'
         }],
         abstract: input.abstract || '',
-        sections: familyConfig.sections.map((name, index) => ({
-          heading: name,
-          order: index + 1,
-          content: ''
-        })),
+        sections: (input.sections ?? familyConfig.sections.map(name => ({ heading: name }))).map(
+          (section, index) => ({
+            heading: section.heading,
+            order: index + 1,
+            content: section.content ?? ''
+          })
+        ),
         metadata: {
           template: args.template || `${input.family}.tex.njk`,
           format: args.format,
@@ -296,15 +302,38 @@ const generateCommand = defineCommand({
         }
       };
 
-      // Output based on format
+      // Render according to the requested format
+      let rendered;
+      let extension;
       if (args.format === 'json') {
-        console.log(JSON.stringify(paper, null, 2));
+        rendered = JSON.stringify(paper, null, 2);
+        extension = 'json';
       } else if (args.format === 'yaml') {
-        console.log(toSimpleYaml(paper));
+        rendered = toSimpleYaml(paper);
+        extension = 'yaml';
+      } else if (args.format === 'markdown') {
+        rendered = renderMarkdown(paper, `*${input.author}*`);
+        extension = 'md';
+      } else if (args.format === 'latex') {
+        rendered = renderTemplate(args.template || `${input.family}.tex.njk`, paper, {
+          family: familyConfig.name,
+          author: input.author
+        });
+        extension = 'tex';
       } else {
+        throw new Error(`Unsupported output format: ${args.format} (use ${OUTPUT_FORMATS.join(', ')})`);
+      }
+
+      // Machine-readable formats print to stdout unless -o is given; document
+      // formats are always written to a file.
+      const toStdout = (args.format === 'json' || args.format === 'yaml') && !args.output;
+      if (toStdout) {
+        console.log(rendered);
+      } else {
+        const written = writeOutput(args.output || `./output/${paper.id}.${extension}`, rendered);
         if (!args.quiet) {
           printProgress('Paper generated successfully!', 'success');
-          printProgress(`Output: ${args.output || `./output/${paper.id}.tex`}`, 'info');
+          printProgress(`Output: ${written}`, 'info');
         }
       }
 
@@ -313,7 +342,7 @@ const generateCommand = defineCommand({
     } catch (error) {
       if (error instanceof z.ZodError) {
         printProgress('Validation error:', 'error');
-        error.errors.forEach(err => {
+        error.issues.forEach(err => {
           console.error(`  - ${err.path.join('.')}: ${err.message}`);
         });
       } else if (error instanceof SyntaxError) {

@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "test": "timeout 30s pnpm test:fast",
-    "test:fast": "timeout 30s vitest run test/test.mjs --reporter=verbose",
-    "test:watch": "timeout 60s vitest run test/test.mjs",
+    "test:fast": "timeout 30s vitest run test/validation.test.mjs --reporter=verbose",
+    "test:watch": "timeout 60s vitest run test/validation.test.mjs",
     "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
@@ -42,6 +42,11 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@unrdf/knowledge-engine": "workspace:*"
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

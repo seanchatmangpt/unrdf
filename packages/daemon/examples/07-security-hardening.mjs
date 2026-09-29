@@ -231,7 +231,7 @@ const completeRequest = {
     name: 'Test <script>alert("XSS")</script>',
     query: "SELECT * FROM users",
   },
-  ip: '[VERSION].1',
+  ip: '127.0.0.1',
 };
 
 const completeResponse = {};
@@ -278,7 +278,7 @@ const customSecurity = createSecurityMiddleware({
   },
   customHeaders: {
     'X-Application-Name': 'UNRDF-Daemon',
-    'X-Security-Version': '[VERSION]',
+    'X-Security-Version': '1.0.0',
   },
 });
 

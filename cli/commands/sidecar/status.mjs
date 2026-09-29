@@ -8,8 +8,8 @@
  */
 
 import { defineCommand } from 'citty';
-import { formatOutput } from '../../formatters/index.mjs';
-import { createSidecarClient } from '../../../sidecar/client.mjs';
+import { formatOutput } from '../../../src/domain/formatters/index.mjs';
+import { createSidecarClient } from '../../../src/sidecar/client.mjs';
 
 /**
  * Sidecar status command

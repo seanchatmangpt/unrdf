@@ -18,8 +18,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
-    "test:fast": "vitest run --coverage",
+    "test": "vitest run --coverage && pnpm test:node",
+    "test:fast": "vitest run --coverage && pnpm test:node",
+    "test:node": "node ../../scripts/run-node-tests.mjs test/integration-node.test.mjs test/schema-codec.node.test.mjs",
     "test:watch": "vitest --coverage",
     "build": "node build.config.mjs",
     "lint": "eslint src/ --max-warnings=0",
@@ -42,6 +43,7 @@
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/v6-core": "workspace:*",
+    "glob": "^13.0.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {

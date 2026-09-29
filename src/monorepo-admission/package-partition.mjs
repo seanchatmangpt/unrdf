@@ -83,7 +83,7 @@ export const PackagePartitionConfigSchema = z.object({
   testCoverage: z.number().min(0).max(100).optional(),
   docCoverage: z.number().min(0).max(100).optional(),
   maintainers: z.array(z.string()).default([]),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -183,9 +183,9 @@ export const COMPATIBLE_LICENSES = new Set([
  * @example
  * const partition = new PackagePartition({
  *   name: '@unrdf/core',
- *   version: '[VERSION]',
+ *   version: '5.0.1',
  *   category: 'O_core',
- *   dependencies: [{ name: '@unrdf/oxigraph', version: '[VERSION]', isWorkspace: true }]
+ *   dependencies: [{ name: '@unrdf/oxigraph', version: '5.0.1', isWorkspace: true }]
  * });
  */
 export class PackagePartition {

@@ -29,13 +29,13 @@ import { blake3 } from 'hash-wasm';
 const MeasurementSnapshotSchema = z.object({
   dimension: z.object({
     systemDimension: z.number(),
-    partitionDimensions: z.record(z.number()),
+    partitionDimensions: z.record(z.string(), z.number()),
     utilizationRatio: z.number()
   }),
   correlation: z.object({
     totalCorrelation: z.number(),
     normalizedTC: z.number(),
-    partitionEntropies: z.record(z.number())
+    partitionEntropies: z.record(z.string(), z.number())
   }),
   transferEntropy: z.object({
     causalEdges: z.array(z.object({
@@ -105,13 +105,13 @@ export class CertificateGenerator {
   /**
    * Create a new Certificate Generator
    * @param {Object} [config] - Configuration options
-   * @param {string} [config.version='[VERSION]'] - Certificate version
+   * @param {string} [config.version='1.0.0'] - Certificate version
    * @param {number} [config.maxCertHistory=100] - Max certificates to keep
    * @param {Object} [config.healthThresholds] - Custom health thresholds
    */
   constructor(config = {}) {
     this.config = {
-      version: config.version || '[VERSION]',
+      version: config.version || '1.0.0',
       maxCertHistory: config.maxCertHistory || 100,
       healthThresholds: {
         dimension: {

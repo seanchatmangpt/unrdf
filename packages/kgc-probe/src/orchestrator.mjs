@@ -10,7 +10,7 @@
  */
 
 import { randomUUID } from 'crypto';
-import { ProbeConfigSchema, validateProbeConfig } from './types.mjs';
+import { validateProbeConfig } from './types.mjs';
 import { createGuardRegistry } from './guards.mjs';
 import { createAgentRegistry } from './agents/index.mjs';
 import { hashObservations, computeArtifactSummary } from './artifact.mjs';

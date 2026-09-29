@@ -53,7 +53,7 @@ export function createHealthEndpoint(coordinator) {
       return {
         status,
         uptime: Math.floor((Date.now() - startTime) / 1000),
-        version: '[VERSION]',
+        version: '5.0.1',
         peers: {
           healthy: stats.healthyPeers,
           total: stats.totalPeers,

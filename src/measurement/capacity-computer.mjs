@@ -42,7 +42,7 @@ const CapacityResultSchema = z.object({
   epoch: z.string(),
   systemCapacity: z.number(),
   normalizedCapacity: z.number(),
-  partitionCapacities: z.record(z.number()),
+  partitionCapacities: z.record(z.string(), z.number()),
   utilizationRatio: z.number(),
   admissionRate: z.number(),
   throughput: z.object({

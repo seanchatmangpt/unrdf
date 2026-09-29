@@ -376,7 +376,20 @@ async function validateDocsUrls(codeFiles) {
   const results = [];
 
   for (const file of codeFiles) {
-    const content = await readFile(file, 'utf-8');
+    let content;
+    try {
+      content = await readFile(file, 'utf-8');
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      // Dangling symlink or file removed during the scan: report it, do not abort the run
+      results.push({
+        type: 'unreadable-file',
+        severity: 'error',
+        file: relative(PROJECT_ROOT, file),
+        message: `Cannot read file (dangling symlink?): ${error.message}`
+      });
+      continue;
+    }
     const urls = extractDocsUrlsFromCode(content, file);
 
     for (const urlRef of urls) {

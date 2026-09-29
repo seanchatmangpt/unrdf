@@ -3,6 +3,7 @@
  * Ensures deterministic output across all input variations
  */
 import crypto from 'crypto';
+import { renderText } from '../fixtures/render-text.js';
 import { TemplateEngine } from '../../../src/engine/template-engine.js';
 import { createTestDataFactory } from '../fixtures/test-data-factory.js';
 import { GoldenTestValidator } from '../golden/golden-validator.js';
@@ -73,7 +74,7 @@ export class PermutationTestRunner {
     // Perform multiple renders
     for (let i = 0; i < this.iterations; i++) {
       try {
-        const output = await this.templateEngine.render(template, data, options);
+        const output = await renderText(this.templateEngine, template, data, options);
         const hash = this.generateContentHash(output);
 
         renders.push({
@@ -127,7 +128,7 @@ export class PermutationTestRunner {
     const startTime = process.hrtime.bigint();
 
     try {
-      const output = await this.templateEngine.render(template, data, options);
+      const output = await renderText(this.templateEngine, template, data, options);
       const endTime = process.hrtime.bigint();
 
       return {

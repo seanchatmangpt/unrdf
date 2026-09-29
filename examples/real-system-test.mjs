@@ -8,11 +8,11 @@
  */
 
 import { createStore } from '@unrdf/oxigraph';
-import { RealKnowledgeHookManager } from '../packages/knowledge-engine/src/real-knowledge-hooks.mjs';
-import { createRealLockchainWriter } from '../packages/knowledge-engine/src/real-lockchain-writer.mjs';
-import { createRealResolutionLayer } from '../packages/knowledge-engine/src/real-resolution-layer.mjs';
-import { createRealEffectSandbox } from '../packages/knowledge-engine/src/real-effect-sandbox.mjs';
-import { createRealQueryOptimizer } from '../packages/knowledge-engine/src/real-query-optimizer.mjs';
+import { KnowledgeHookManager } from '../packages/knowledge-engine/src/knowledge-hook-manager.mjs';
+import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchain-writer.mjs';
+import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
+import { createEffectSandbox } from '../packages/knowledge-engine/src/effect-sandbox.mjs';
+import { createQueryOptimizer } from '../packages/knowledge-engine/src/query-optimizer.mjs';
 
 console.log('🚀 Real System Integration Test\n');
 
@@ -24,7 +24,7 @@ async function testRealSystem() {
     // === Phase 1: Real System Initialization ===
     console.log('🔧 Phase 1: Real System Initialization');
 
-    const manager = new RealKnowledgeHookManager({
+    const manager = new KnowledgeHookManager({
       basePath: process.cwd(),
       strictMode: false,
       enableLockchain: true,
@@ -103,7 +103,7 @@ async function testRealSystem() {
     // === Phase 4: Real Lockchain Integration ===
     console.log('\n🔗 Phase 4: Real Lockchain Integration');
 
-    const lockchainWriter = createRealLockchainWriter({
+    const lockchainWriter = createLockchainWriter({
       gitRepo: process.cwd(),
       batchSize: 5,
     });
@@ -125,7 +125,7 @@ async function testRealSystem() {
     // === Phase 5: Real Resolution Layer ===
     console.log('\n🤝 Phase 5: Real Resolution Layer');
 
-    const resolutionLayer = createRealResolutionLayer({
+    const resolutionLayer = createResolutionLayer({
       defaultStrategy: 'voting',
       enableConflictDetection: true,
     });
@@ -168,7 +168,7 @@ async function testRealSystem() {
     // === Phase 6: Real Effect Sandboxing ===
     console.log('\n🛡️ Phase 6: Real Effect Sandboxing');
 
-    const effectSandbox = createRealEffectSandbox({
+    const effectSandbox = createEffectSandbox({
       type: 'worker', // Use worker threads for safety
       timeout: 3000,
       enableConsole: true,
@@ -195,7 +195,7 @@ async function testRealSystem() {
     // === Phase 7: Real Query Optimization ===
     console.log('\n⚡ Phase 7: Real Query Optimization');
 
-    const queryOptimizer = createRealQueryOptimizer({
+    const queryOptimizer = createQueryOptimizer({
       enableCaching: true,
       enableIndexing: true,
       maxCacheSize: 100,

@@ -221,7 +221,7 @@ export class RunCapsule {
    * @returns {RunCapsule} Capsule instance
    */
   static fromJSON(json) {
-    return new RunCapsule({
+    const capsule = new RunCapsule({
       inputs: json.inputs,
       tool_trace: json.tool_trace,
       edits: json.edits,
@@ -231,6 +231,13 @@ export class RunCapsule {
       o_hash_after: json.o_hash_after,
       receipts: json.receipts || [],
     });
+    // Preserve the persisted BLAKE3 hash; the constructor only computes a 32-bit placeholder,
+    // which made hash lookups return capsules whose capsule_hash differed from the key.
+    if (typeof json.capsule_hash === 'string' && /^[a-f0-9]{64}$/.test(json.capsule_hash)) {
+      capsule.capsule_hash = json.capsule_hash;
+      capsule._hashComputed = true;
+    }
+    return capsule;
   }
 }
 
@@ -387,12 +394,9 @@ export async function replayCapsule(capsule, o_snapshot) {
     });
     const outputHash = await blake3(snapshotString);
 
-    // Verify output matches expected
-    // In production, this would compare against actual ontology hash
-    // For now, we use a simplified verification
-    const verified = outputHash === capsule.o_hash_after ||
-                     (editsApplied === capsule.edits.length &&
-                      toolTracesExecuted === capsule.tool_trace.length);
+    // Verify output matches expected. The previous fallback also admitted whenever every
+    // edit/trace was merely "applied", which accepted divergent state.
+    const verified = outputHash === capsule.o_hash_after;
 
     const receipt = {
       capsule_hash: capsule.capsule_hash,

@@ -29,7 +29,7 @@ export default function examplePlugin(runtime) {
 
   return {
     name: 'example-plugin',
-    version: '[VERSION]',
+    version: '1.0.0',
 
     /**
      * Initialize plugin
@@ -77,7 +77,7 @@ export default function examplePlugin(runtime) {
         ...baseReceipt,
         pluginMetadata: {
           pluginName: 'example-plugin',
-          pluginVersion: '[VERSION]',
+          pluginVersion: '1.0.0',
           receiptType: 'custom-example',
           customFields: {
             callCount,
@@ -139,7 +139,7 @@ export default function examplePlugin(runtime) {
       return {
         initialized,
         callCount,
-        version: '[VERSION]',
+        version: '1.0.0',
       };
     },
 

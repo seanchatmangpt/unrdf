@@ -3,8 +3,8 @@
  * @module hooks/parallel-executor
  */
 
-import { DependencyGraph, buildExecutionLayers } from './dependency-graph.mjs';
-import { WorkerPool, createWorkerPool } from './worker-pool.mjs';
+import { DependencyGraph } from './dependency-graph.mjs';
+import { createWorkerPool } from './worker-pool.mjs';
 import { z } from 'zod';
 
 /* ========================================================================= */

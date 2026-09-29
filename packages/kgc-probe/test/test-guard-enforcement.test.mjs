@@ -12,12 +12,10 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createGuardRegistry, GuardRegistry } from '../src/guards.mjs';
+import { createGuardRegistry } from '../src/guards.mjs';
 import {
   ALL_FORBIDDEN_PATTERNS,
   FORBIDDEN_ENV_VARS,
-  FORBIDDEN_PATHS,
-  FORBIDDEN_URLS,
   ALL_TEST_CASES,
   DENY_CASES,
   ALLOW_CASES,
@@ -40,11 +38,11 @@ import { FROZEN_TIMESTAMP } from './fixtures/frozen-environment.mjs';
 
 describe('Guard Enforcement', () => {
   let guardRegistry;
-  let auditLog;
+  let _auditLog;
 
   beforeEach(() => {
     guardRegistry = createGuardRegistry();
-    auditLog = [];
+    _auditLog = [];
   });
 
   describe('Forbidden Pattern Detection', () => {

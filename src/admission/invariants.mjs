@@ -27,7 +27,7 @@ export const InvariantResultSchema = z.object({
   passed: z.boolean(),
   reason: z.string(),
   violations: z.array(z.any()).optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

@@ -573,7 +573,7 @@ ORDER BY ?depth ?affectedName
  * const results = universe.query(QueryTemplates.ALL_PACKAGES);
  * const formatted = formatResults(results);
  * console.log(formatted);
- * // [{ pkg: '...', name: '@unrdf/core', version: '[VERSION]' }, ...]
+ * // [{ pkg: '...', name: '@unrdf/core', version: '5.0.1' }, ...]
  * ```
  */
 export function formatResults(results) {

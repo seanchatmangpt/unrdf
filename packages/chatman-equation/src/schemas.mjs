@@ -41,7 +41,7 @@ export const DomainEnum = z.enum([
  * @type {z.ZodObject}
  */
 export const ObservationSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   timestamp: z.string().datetime(),
   domain: DomainEnum,
   state: z.record(z.any()),
@@ -108,7 +108,7 @@ export const ClosureOperatorSchema = z.object({
 export const DeltaOperationSchema = z.object({
   op: z.enum(['add', 'update', 'delete']),
   field: z.string().min(1),
-  value: z.any(),
+  value: z.any().optional(), // Zod v4: bare z.any() is required; delete ops carry no value
   reason: z.string().optional(),
 });
 
@@ -125,7 +125,7 @@ export const DeltaOperationSchema = z.object({
  * @type {z.ZodObject}
  */
 export const DeltaSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   timestamp: z.string().datetime(),
   domain: DomainEnum,
   operations: z.array(DeltaOperationSchema).min(1),
@@ -148,10 +148,10 @@ export const DeltaSchema = z.object({
  * @type {z.ZodObject}
  */
 export const ArtifactSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   timestamp: z.string().datetime(),
-  source_observation: z.string().uuid(),
-  applied_deltas: z.array(z.string().uuid()).min(1),
+  source_observation: z.string().min(1),
+  applied_deltas: z.array(z.string().min(1)).min(1),
   operator: z.string().min(1),
   result: z.record(z.any()),
   proof: z.record(z.any()).optional(),

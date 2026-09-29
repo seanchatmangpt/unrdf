@@ -23,13 +23,15 @@ import { validateCommand } from './commands/validate.mjs';
 import { proposeCommand } from './commands/propose.mjs';
 import { admitCommand } from './commands/admit.mjs';
 import { projectCommand } from './commands/project.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * CLI configuration
  */
 const CLI_CONFIG = {
   name: 'governance-substrate',
-  version: '[VERSION]',
+  version: PKG_VERSION,
   description: 'Governance Substrate CLI - Universe validation and admission control',
 };
 

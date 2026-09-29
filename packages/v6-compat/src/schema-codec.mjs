@@ -119,10 +119,23 @@ class Parser {
   }
 }
 
+/**
+ * Parse a TypeScript type expression into a simple type AST.
+ * @param {string} source - TypeScript type source text (e.g. `{ a: string }[]`).
+ * @returns {object} AST node whose `kind` is primitive, literal, reference, array, tuple, union, intersection, object or generic.
+ * @throws {SyntaxError} If the source is malformed or has trailing input.
+ */
 export function parseTypeScriptType(source) { return new Parser(source).parse(); }
 
 function identifier(value) { return /^[A-Za-z_$][\w$]*$/.test(value) ? value : JSON.stringify(value); }
 
+/**
+ * Convert a type AST (from parseTypeScriptType) into Zod source code.
+ * @param {object} ast - Type AST node.
+ * @param {{reference?: function(string): string}} [options] - `reference` maps a named type reference to Zod source; defaults to a lazy `<Name>Schema` lookup.
+ * @returns {string} Zod expression source text.
+ * @throws {Error} If the AST kind is unsupported.
+ */
 export function typeAstToZod(ast, options = {}) {
   const reference = options.reference || (name => `z.lazy(() => ${name}Schema)`);
   switch (ast.kind) {
@@ -158,6 +171,12 @@ export function typeAstToZod(ast, options = {}) {
   }
 }
 
+/**
+ * Convert TypeScript type source text directly into Zod source code.
+ * @param {string} source - TypeScript type source text.
+ * @param {{reference?: function(string): string}} [options] - Options forwarded to typeAstToZod.
+ * @returns {string} Zod expression source text.
+ */
 export function typeScriptTypeToZod(source, options = {}) { return typeAstToZod(parseTypeScriptType(source), options); }
 
 function definition(schema) { return schema?._def || schema?.def || {}; }
@@ -192,6 +211,13 @@ function literalValue(schema) {
 function optionalSchema(schema) { return ['optional', 'default', 'catch'].includes(rawType(schema)); }
 function parenthesize(type) { return /[|&]/.test(type) ? `(${type})` : type; }
 
+/**
+ * Render a Zod schema as a TypeScript type expression, guarding against recursive schemas.
+ * @param {object} schema - Zod schema instance (v3 or v4 internals).
+ * @param {object} [options] - Rendering options (recursiveType, lazyName, customType, unknownType).
+ * @param {{active: Set<object>}} [context] - Recursion-tracking state holding schemas currently being rendered.
+ * @returns {string} TypeScript type text; `unknown` for missing or unrecognised schemas.
+ */
 export function zodSchemaToTypeScript(schema, options = {}, context = { active: new Set() }) {
   if (!schema) return 'unknown';
   if (context.active.has(schema)) return options.recursiveType || 'unknown';
@@ -273,6 +299,12 @@ export function zodSchemaToTypeScript(schema, options = {}, context = { active: 
   }
 }
 
+/**
+ * Generate an `interface` (for object schemas) or `type` alias declaration from a Zod schema.
+ * @param {object} schema - Zod schema instance.
+ * @param {{name?: string, export?: boolean, interface?: boolean}} [options] - Declaration name (default `Generated`), whether to export, and whether to emit interfaces for objects; other options are passed to zodSchemaToTypeScript.
+ * @returns {string} TypeScript declaration source text.
+ */
 export function generateTypeScriptDeclaration(schema, options = {}) {
   const name = options.name || 'Generated';
   const exported = options.export === false ? '' : 'export ';

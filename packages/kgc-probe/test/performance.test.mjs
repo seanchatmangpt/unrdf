@@ -5,7 +5,6 @@
 
 import { describe, it, expect } from 'vitest';
 import { probePerformance } from '../src/probes/performance.mjs';
-import { ObservationSchema } from '../src/types.mjs';
 
 describe('Performance Probe', () => {
   it('should probe performance with default config', async () => {

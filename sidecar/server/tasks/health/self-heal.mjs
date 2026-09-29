@@ -2,7 +2,7 @@
 /**
  * SAFLA Self-Healing Health Check Task
  *
- * Scheduled: Every minute (*/1 * * * *)
+ * Scheduled: Every minute (cron: * * * * *)
  *
  * Self-healing autonomic system that:
  * - Monitors all circuit breakers
@@ -21,7 +21,7 @@ export default defineTask({
   meta: {
     name: 'health:self-heal',
     description: 'SAFLA self-healing autonomic health monitoring',
-    version: '[VERSION]'
+    version: '1.0.0'
   },
 
   async run({ payload, context: taskContext }) {

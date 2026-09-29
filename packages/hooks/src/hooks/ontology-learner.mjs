@@ -5,6 +5,15 @@
  */
 
 /**
+ * Iterate quads of any store (iterable N3-style or Oxigraph with getQuads()).
+ * @param {Object} store
+ * @returns {Iterable<Object>}
+ */
+function quadsOf(store) {
+  return typeof store[Symbol.iterator] === 'function' ? store : store.getQuads();
+}
+
+/**
  * Learn ontology patterns from RDF data
  */
 export class OntologyLearner {
@@ -61,7 +70,7 @@ export class OntologyLearner {
   extractClasses(store) {
     const classes = new Set();
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       // RDF type declarations
       if (quad.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
         if (quad.object.value && quad.object.value.startsWith('http')) {
@@ -88,7 +97,7 @@ export class OntologyLearner {
     const instances = new Set();
     const typeIri = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
-    for (const quad of store) {
+    for (const quad of quadsOf(store)) {
       if (quad.predicate.value === typeIri && quad.object.value === className) {
         instances.add(quad.subject.value);
       }
@@ -104,7 +113,7 @@ export class OntologyLearner {
     const properties = {};
 
     for (const instance of instances) {
-      for (const quad of store) {
+      for (const quad of quadsOf(store)) {
         if (quad.subject.value === instance) {
           const pred = quad.predicate.value;
           const obj = quad.object.value;

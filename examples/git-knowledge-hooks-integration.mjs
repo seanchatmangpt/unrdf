@@ -6,12 +6,12 @@
  * - Knowledge hooks monitor git operations for compliance and quality
  * - Synchronous event-driven architecture
  *
- * @version latest
+ * @version 1.0.0
  * @author unrdf Team
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { registerHook } from '../packages/knowledge-engine/src/engines/hook-manager.mjs';
 import {
   defineHook,

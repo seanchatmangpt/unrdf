@@ -34,7 +34,7 @@ export const ObservableUpdateSchema = z.object({
   timestamp: z.number(),
   data: z.any(),
   delta: z.any().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -169,6 +169,8 @@ export class ParallelOrchestrator extends EventEmitter {
 
     this.running = true;
     this.stats.startTime = Date.now();
+    // High-resolution start so uptime is strictly positive even within the first millisecond
+    this._startPerf = performance.now();
 
     // Start worker pool
     await this.workerPool.start();
@@ -223,7 +225,7 @@ export class ParallelOrchestrator extends EventEmitter {
     // Shutdown worker pool
     await this.workerPool.shutdown(options);
 
-    this.stats.uptime = Date.now() - this.stats.startTime;
+    this.stats.uptime = performance.now() - this._startPerf;
 
     this.emit('orchestrator:shutdown', {
       stats: this.getStats()
@@ -374,7 +376,7 @@ export class ParallelOrchestrator extends EventEmitter {
   getStats() {
     return {
       ...this.stats,
-      uptime: this.running ? Date.now() - this.stats.startTime : this.stats.uptime,
+      uptime: this.running ? performance.now() - this._startPerf : this.stats.uptime,
       workerPool: this.workerPool.getStats(),
       taskQueue: this.taskQueue.getStats(),
       agentRouter: this.agentRouter.getStats(),

@@ -19,8 +19,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --coverage",
-    "test:fast": "vitest run --coverage",
+    "test": "vitest run --coverage && node ../../scripts/run-node-tests.mjs test/query-planner-core.node.test.mjs",
+    "test:fast": "vitest run && node --test test/query-planner-core.node.test.mjs",
     "test:watch": "vitest --coverage",
     "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",
@@ -46,6 +46,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@types/node": "^24.10.1",
     "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"

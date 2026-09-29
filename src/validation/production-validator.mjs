@@ -49,7 +49,7 @@ export const CheckResultSchema = z.object({
   remediation: z.array(z.string()),
   duration: z.number(),
   timestamp: z.string().datetime(),
-  details: z.record(z.any()).optional()
+  details: z.record(z.string(), z.any()).optional()
 });
 
 /**
@@ -94,7 +94,7 @@ export const ProductionReceiptSchema = z.object({
   overallScore: z.number().min(0).max(100),
   productionReady: z.boolean(),
   checkResults: z.array(CheckResultSchema),
-  categoryScores: z.record(z.number()),
+  categoryScores: z.record(z.string(), z.number()),
   topBlockers: z.array(z.object({
     category: z.string(),
     issue: z.string(),
@@ -140,7 +140,7 @@ export const DEFAULT_THRESHOLDS = {
 /**
  * Validator version for receipt tracking
  */
-export const VALIDATOR_VERSION = '[VERSION]';
+export const VALIDATOR_VERSION = '1.0.0';
 
 /**
  * Production Validator - Main orchestrator for production readiness checks
@@ -303,7 +303,7 @@ export class ProductionValidator {
     const receipt = await this._generateReceipt({
       packageName: packageInfo.name || 'unknown',
       packagePath,
-      version: packageInfo.version || '[VERSION]',
+      version: packageInfo.version || '0.0.0',
       timestamp,
       overallScore,
       productionReady,
@@ -570,7 +570,7 @@ export class ProductionValidator {
       const content = await readFile(packageJsonPath, 'utf-8');
       return JSON.parse(content);
     } catch (error) {
-      return { name: 'unknown', version: '[VERSION]' };
+      return { name: 'unknown', version: '0.0.0' };
     }
   }
 

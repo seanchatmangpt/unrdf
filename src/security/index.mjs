@@ -32,8 +32,8 @@ export const SecurityCheckResultSchema = z.object({
   passed: z.boolean(),
   severity: z.enum(['critical', 'high', 'medium', 'low', 'info']),
   findings: z.array(z.any()),
-  summary: z.record(z.any()).optional(),
-  metadata: z.record(z.any()).optional()
+  summary: z.record(z.string(), z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 /**

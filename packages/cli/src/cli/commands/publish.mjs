@@ -1,8 +1,6 @@
 import { defineCommand } from 'citty';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { createHypercoreTransport } from '@unrdf/kgc-swarm/transport';
 
 export const publishCommand = defineCommand({
   meta: {
@@ -23,6 +21,8 @@ export const publishCommand = defineCommand({
       process.exit(1);
     }
 
+    // Lazy import: keeps the rest of the CLI usable when the swarm transport is unavailable
+    const { createHypercoreTransport } = await import('@unrdf/kgc-swarm/transport');
     // Initialize transport
     const transport = createHypercoreTransport({ name: 'cli-publisher' });
     await transport.init();

@@ -30,7 +30,7 @@ import {
   createStructureSnapshot,
   deriveHooksFromStructure,
   buildProjectReport,
-} from '../packages/project-engine/index.mjs';
+} from '../packages/project-engine/src/index.mjs';
 
 /**
  * Example 1: Quick initialization with the pipeline

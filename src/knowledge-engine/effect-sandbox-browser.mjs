@@ -37,7 +37,7 @@ const SandboxContextSchema = z.object({
   event: z.any(),
   store: z.any(),
   delta: z.any(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**

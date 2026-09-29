@@ -98,8 +98,10 @@ feature('KGEN Native Template Engine', () => {
       });
 
       then('the attestation should be successful', () => {
-        expect(attestResult.attested).toBe(true);
-        expect(attestResult.attestation.contentHash).toBeDefined();
+        // engine.attest() returns the post result plus `attestation`, the attestor's
+        // { attested, attestation: <record> } (documented in src/PORT-MAP.md).
+        expect(attestResult.attestation.attested).toBe(true);
+        expect(attestResult.attestation.attestation.contentHash).toBeDefined();
       });
     });
   });

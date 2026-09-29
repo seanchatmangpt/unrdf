@@ -21,7 +21,7 @@ import {
 export const PredicateSchema = z.object({
   /** Type of predicate: SPARQL query or custom function */
   type: z.enum(['sparql', 'custom'], {
-    errorMap: () => ({ message: 'Predicate type must be either "sparql" or "custom"' })
+    message: 'Predicate type must be either "sparql" or "custom"'
   }),
 
   /** SPARQL query string (required for sparql type) */
@@ -31,7 +31,7 @@ export const PredicateSchema = z.object({
   name: z.string().min(1).max(100).optional(),
 
   /** Additional parameters for custom predicates */
-  params: z.record(z.any()).optional()
+  params: z.record(z.string(), z.any()).optional()
 }).refine(
   (data) => {
     // Ensure sparql predicates have query, custom predicates have name
@@ -48,7 +48,7 @@ export const PredicateSchema = z.object({
  * Knowledge Hook schema
  * Core schema for defining knowledge hooks
  */
-export const KnowledgeHookSchema = z.object({
+const KnowledgeHookBaseSchema = z.object({
   /** Unique identifier for the hook */
   id: HookIdSchema,
 
@@ -84,40 +84,55 @@ export const KnowledgeHookSchema = z.object({
   tags: z.array(z.string()).default([]),
 
   /** Metadata for additional context */
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 
   /** Creation timestamp */
   createdAt: TimestampSchema.optional(),
 
   /** Last update timestamp */
   updatedAt: TimestampSchema.optional()
-}).refine(
-  (data) => {
-    // If selectQuerySha256 is provided, selectQuery must also be provided
-    if (data.selectQuerySha256) return !!data.selectQuery
-    return true
-  },
-  {
-    message: 'selectQuerySha256 requires selectQuery to be present'
-  }
+})
+
+/**
+ * Cross-field rule shared by every hook schema variant.
+ * Zod v4 forbids .omit()/.partial() on refined objects, so the refinement is
+ * applied after deriving each variant from the base object.
+ * @param {{selectQuery?: string, selectQuerySha256?: string}} data
+ * @returns {boolean}
+ */
+const selectQueryHashRule = (data) => {
+  // If selectQuerySha256 is provided, selectQuery must also be provided
+  if (data.selectQuerySha256) return !!data.selectQuery
+  return true
+}
+
+const selectQueryHashIssue = {
+  message: 'selectQuerySha256 requires selectQuery to be present'
+}
+
+export const KnowledgeHookSchema = KnowledgeHookBaseSchema.refine(
+  selectQueryHashRule,
+  selectQueryHashIssue
 )
 
 /**
  * Hook creation input schema
  * Schema for creating new hooks (omits auto-generated fields)
  */
-export const CreateHookSchema = KnowledgeHookSchema.omit({
+export const CreateHookSchema = KnowledgeHookBaseSchema.omit({
   createdAt: true,
   updatedAt: true
-})
+}).refine(selectQueryHashRule, selectQueryHashIssue)
 
 /**
  * Hook update input schema
  * Schema for updating existing hooks (all fields optional except id)
  */
-export const UpdateHookSchema = KnowledgeHookSchema.partial().required({
-  id: true
-})
+export const UpdateHookSchema = KnowledgeHookBaseSchema.partial()
+  .required({
+    id: true
+  })
+  .refine(selectQueryHashRule, selectQueryHashIssue)
 
 /**
  * Hook list response schema
@@ -160,14 +175,14 @@ export const HookEvaluationResultSchema = z.object({
     passed: z.boolean(),
 
     /** SPARQL query results (if applicable) */
-    bindings: z.array(z.record(z.any())).optional(),
+    bindings: z.array(z.record(z.string(), z.any())).optional(),
 
     /** Error message (if failed) */
     error: z.string().optional()
   })),
 
   /** SELECT query results (if selectQuery was provided) */
-  selectResults: z.array(z.record(z.any())).optional(),
+  selectResults: z.array(z.record(z.string(), z.any())).optional(),
 
   /** Overall error message (if evaluation failed) */
   error: z.string().optional(),
@@ -194,7 +209,7 @@ export const HookValidationErrorSchema = z.object({
   path: z.array(z.union([z.string(), z.number()])).optional(),
 
   /** Additional context */
-  context: z.record(z.any()).optional()
+  context: z.record(z.string(), z.any()).optional()
 })
 
 /**
@@ -208,7 +223,7 @@ export const BatchHookEvaluationSchema = z.object({
   }),
 
   /** Optional context data for evaluation */
-  context: z.record(z.any()).optional(),
+  context: z.record(z.string(), z.any()).optional(),
 
   /** Whether to stop on first failure */
   failFast: z.boolean().default(false)

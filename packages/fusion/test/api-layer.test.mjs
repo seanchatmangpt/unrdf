@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { graphql, subscribe } from 'graphql';
+import { graphql, parse, subscribe } from 'graphql';
 import { createEngine } from '../src/index.mjs';
 import {
   createGraphQLSchema,
@@ -251,7 +251,7 @@ describe('GraphQL API', () => {
 
       const stream = await subscribe({
         schema: graphqlSchema,
-        document: subscription,
+        document: parse(subscription),
       });
 
       expect(stream).toBeDefined();
@@ -287,7 +287,7 @@ describe('GraphQL API', () => {
 
       const stream = await subscribe({
         schema: graphqlSchema,
-        document: subscription,
+        document: parse(subscription),
       });
 
       expect(stream).toBeDefined();
@@ -476,7 +476,7 @@ describe('REST API', () => {
 describe('Introspection API', () => {
   it('should have valid schema structure', () => {
     expect(introspectionSchema).toBeDefined();
-    expect(introspectionSchema.version).toBe('latest');
+    expect(introspectionSchema.version).toBe('1.0.0');
     expect(introspectionSchema.description).toBe('Unified Fusion Engine API');
     expect(introspectionSchema.timestamp).toBeDefined();
   });

@@ -119,7 +119,7 @@ export async function validateRequest(event, schema, source = 'body') {
     if (span) {
       span.setAttribute('validation.success', false)
       span.setAttribute('validation.source', source)
-      span.setAttribute('validation.error_count', error.errors?.length || 1)
+      span.setAttribute('validation.error_count', error.issues?.length || 1)
       span.recordException(error)
     }
 

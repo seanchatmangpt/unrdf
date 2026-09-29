@@ -15,21 +15,17 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createProbeOrchestrator } from '../src/orchestrator.mjs';
-import { createMemoryStorage, createFileStorage } from '../src/storage/index.mjs';
+import { createMemoryStorage } from '../src/storage/index.mjs';
 import { createAgentRegistry } from '../src/agents/index.mjs';
 import { createGuardRegistry } from '../src/guards.mjs';
-import { mergeShards, verifyArtifact, diffArtifacts, hashObservations } from '../src/artifact.mjs';
+import { mergeShards, verifyArtifact, diffArtifacts } from '../src/artifact.mjs';
 import { runProbe } from '../src/probe.mjs';
 import {
-  PROJECT_STRUCTURE,
-  SAMPLE_OBSERVATIONS,
-  EXPECTED_SCAN_RESULT,
   EXPECTED_ARTIFACT_STRUCTURE,
   E2E_VALIDATION_CRITERIA,
   createMockStore,
   E2E_CONFIG
 } from './fixtures/real-project-snapshot.mjs';
-import { createFrozenDateMock } from './fixtures/frozen-environment.mjs';
 
 // ============================================================================
 // E2E INTEGRATION TESTS
@@ -38,13 +34,13 @@ import { createFrozenDateMock } from './fixtures/frozen-environment.mjs';
 describe('E2E Integration', () => {
   let storage;
   let orchestrator;
-  let mockStore;
+  let _mockStore;
   let startTime;
 
   beforeEach(() => {
     storage = createMemoryStorage();
     orchestrator = createProbeOrchestrator({ storage });
-    mockStore = createMockStore();
+    _mockStore = createMockStore();
     startTime = Date.now();
   });
 

@@ -529,7 +529,7 @@ export function renderProofAsJSON(receipts, merkleRoot, o_hash, opts = {}) {
 
   // Build proof object
   const proof = {
-    version: 'latest',
+    version: '1.0.0',
     type: 'kgc-document-proof',
     o_hash,
     merkleRoot,

@@ -8,8 +8,10 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
-const tracer = trace.getTracer('@unrdf/pictl-semantics', '[VERSION]');
+const tracer = trace.getTracer('@unrdf/pictl-semantics', PKG_VERSION);
 
 /**
  * PICTL Result Schema (comprehensive)
@@ -145,7 +147,7 @@ export function validatePictlResult(result) {
     const parsed = PictlResultSchema.safeParse(result);
 
     if (!parsed.success) {
-      const errors = parsed.error.errors.map(e => ({
+      const errors = parsed.error.issues.map(e => ({
         path: e.path.join('.'),
         message: e.message,
         code: e.code,
@@ -226,7 +228,7 @@ export function validatePictlResult(result) {
  *
  * @param {Object} data - Data to validate
  * @param {string} shapeUri - SHACL shape URI to validate against
- * @param {Object} quorumState - Quorum state (for shape lookup)
+ * @param {Object} [_quorumState] - Quorum state (reserved for shape lookup; currently unused)
  * @returns {Object} Shape validation result
  *
  * @example
@@ -236,7 +238,7 @@ export function validatePictlResult(result) {
  *   quorumState
  * );
  */
-export function validateAgainstShapes(data, shapeUri, quorumState = null) {
+export function validateAgainstShapes(data, shapeUri, _quorumState = null) {
   const span = tracer.startSpan('pictl.validate_shapes');
   try {
     // Get shape definition

@@ -4,12 +4,12 @@
  * This example shows how the RdfEngine now works seamlessly with the store context
  * system, providing both traditional methods and context-aware convenience methods.
  *
- * @version latest
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
+import { RdfEngine } from '../src/engines/rdf-engine.mjs';
 import { initStore } from '../packages/composables/src/context/index.mjs';
 
 // Example Turtle data

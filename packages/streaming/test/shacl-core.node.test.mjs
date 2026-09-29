@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   compileShacl,
-  validateCompiledShacl,
   validateShaclCore,
   validateShaclDelta,
   evaluatePath,
@@ -163,7 +162,6 @@ test('inverse, sequence, alternative and transitive property paths evaluate', ()
   pathQuads.push(q(alternativeNode, SH.alternativePath, alternatives));
   const closureNode = bn('closure');
   pathQuads.push(q(closureNode, SH.zeroOrMorePath, nn('urn:parent')));
-  const shapes = new Store(pathQuads);
   const alice = nn('urn:alice');
   const bob = nn('urn:bob');
   const carol = nn('urn:carol');

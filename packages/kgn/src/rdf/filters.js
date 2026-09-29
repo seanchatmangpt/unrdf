@@ -289,8 +289,8 @@ function formatTerm(term, prefixes = {}) {
     if (term.includes(':') && !term.startsWith('http')) {
       return term;
     }
-    // URI
-    return `<${term}>`;
+    // URI (contract to a CURIE when a declared prefix matches)
+    return contractUri(term, prefixes);
   }
 
   if (typeof term === 'object') {
@@ -301,7 +301,7 @@ function formatTerm(term, prefixes = {}) {
     }
     // Literal
     if (term.termType === 'Literal' || term.type === 'Literal') {
-      let lit = `"${(term.value || '').replace(/"/g, '\\"')}"`;
+      let lit = `"${escapeTurtleString(term.value || '')}"`;
       if (term.language) {
         lit += `@${term.language}`;
       } else if (term.datatype && term.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') {
@@ -319,6 +319,21 @@ function formatTerm(term, prefixes = {}) {
 }
 
 /**
+ * Escape a string for use inside a double-quoted Turtle literal
+ * @private
+ * @param {string} str - Raw literal value
+ * @returns {string} Escaped value
+ */
+function escapeTurtleString(str) {
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
+/**
  * Contract URI to CURIE if possible
  * @private
  * @param {string} uri - Full URI
@@ -329,7 +344,10 @@ function contractUri(uri, prefixes = {}) {
   for (const [prefix, namespace] of Object.entries(prefixes)) {
     if (uri.startsWith(namespace)) {
       const localName = uri.substring(namespace.length);
-      return `${prefix}:${localName}`;
+      // Only contract when the remainder is a valid (simplified) Turtle local name
+      if (/^[A-Za-z_][A-Za-z0-9_-]*$/.test(localName)) {
+        return `${prefix}:${localName}`;
+      }
     }
   }
   return `<${uri}>`;

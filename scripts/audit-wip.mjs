@@ -44,6 +44,7 @@ function walk(path, files = []) {
   }
 
   for (const entry of readdirSync(path, { withFileTypes: true })) {
+    if (entry.isSymbolicLink()) continue; // dangling or cyclic links are not WIP source
     if (entry.isDirectory() && EXCLUDED_SEGMENTS.has(entry.name)) continue;
     walk(resolve(path, entry.name), files);
   }

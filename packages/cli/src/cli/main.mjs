@@ -28,9 +28,12 @@ import { mcpCommand } from './commands/mcp.mjs';
 import { doctor } from './commands/doctor/index.mjs';
 import { atomvmCommand } from './commands/atomvm.mjs';
 import { telcoCommand } from './commands/telco.mjs';
+import { initCommand } from './commands/init.mjs';
 import { validateCommand } from './commands/validate.mjs';
 import { packCommand } from './commands/pack.mjs';
 import { publishCommand } from './commands/publish.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * Main CLI application
@@ -38,7 +41,7 @@ import { publishCommand } from './commands/publish.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '[VERSION]',
+    version: PKG_VERSION,
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {
@@ -59,6 +62,9 @@ export const main = defineCommand({
     daemon: daemonCommand,
     mcp: mcpCommand,
     telco: telcoCommand,
+
+    // Project Setup
+    init: initCommand,
 
     // Code Generation
     sync: syncCommand,

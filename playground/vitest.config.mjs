@@ -5,12 +5,13 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['**/*.test.mjs', '**/*.spec.mjs'],
-    exclude: ['node_modules/**', 'dist/**'],
-    timeout: 30_000, // 30 seconds for CLI operations
-    testTimeout: 30_000,
+    exclude: ['**/node_modules/**', 'dist/**', '.nitro/**'],
+    // API tests need the Nitro server; globalSetup starts (and stops) it
+    globalSetup: './test/setup.mjs',
+    testTimeout: 30_000, // 30 seconds for CLI operations
     hookTimeout: 30_000,
     teardownTimeout: 30_000,
-    reporter: ['verbose', 'json', 'html'],
+    reporters: ['verbose', 'json', 'html'],
     outputFile: {
       json: './test-results.json',
       html: './test-results.html'

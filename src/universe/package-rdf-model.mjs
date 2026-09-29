@@ -197,20 +197,20 @@ export const PackageProperties = {
 /**
  * Package.json dependency schema
  */
-const DependencyMapSchema = z.record(z.string()).optional().default({});
+const DependencyMapSchema = z.record(z.string(), z.string()).optional().default({});
 
 /**
  * Package.json exports schema (simplified)
  */
 const ExportsSchema = z.union([
   z.string(),
-  z.record(z.string()),
+  z.record(z.string(), z.string()),
 ]).optional();
 
 /**
  * Package.json scripts schema
  */
-const ScriptsSchema = z.record(z.string()).optional().default({});
+const ScriptsSchema = z.record(z.string(), z.string()).optional().default({});
 
 /**
  * Package.json engines schema
@@ -237,7 +237,7 @@ const RepositorySchema = z.union([
  */
 export const PackageJsonSchema = z.object({
   name: z.string(),
-  version: z.string().optional().default('[VERSION]'),
+  version: z.string().optional().default('0.0.0'),
   description: z.string().optional().default(''),
   type: z.string().optional().default('module'),
   main: z.string().optional(),
@@ -323,7 +323,7 @@ export function scriptToIri(packageName, scriptName) {
  * ```javascript
  * const quads = parsePackageToQuads({
  *   name: "@unrdf/core",
- *   version: "[VERSION]",
+ *   version: "5.0.1",
  *   dependencies: { "@unrdf/oxigraph": "workspace:*" }
  * });
  * console.log(`Generated ${quads.length} quads`);
@@ -562,7 +562,7 @@ export function validatePackageJson(content) {
 
   return {
     valid: false,
-    errors: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`),
+    errors: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`),
   };
 }
 

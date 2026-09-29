@@ -6,13 +6,13 @@
  * OTEL span-based validation for browser compatibility layer.
  * Tests browser shims, polyfills, and Worker support.
  *
- * [VERSION] Feature: Complete browser support
+ * v3.1.0 Feature: Complete browser support
  */
 
 import {
   createValidationRunner,
   createValidationHelpers,
-} from "../packages/validation/index.mjs";
+} from "../packages/validation/src/index.mjs";
 
 const helpers = createValidationHelpers();
 const runner = createValidationRunner({ verbose: true });

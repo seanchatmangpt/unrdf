@@ -2,6 +2,18 @@
 export class ExecutionPlan {
   #steps = new Map();
 
+  /**
+   * Add a step.
+   * @param {Object} step - Step definition.
+   * @param {string} step.id - Unique step id.
+   * @param {Function} step.run - Async function `({context, inputs})` producing the output.
+   * @param {string[]} [step.dependsOn] - Ids of prerequisite steps.
+   * @param {Function|null} [step.verify] - Function `(output, {context, inputs})` that must return true.
+   * @param {Function|null} [step.compensate] - Function `(output, {context})` to undo the step on later failure.
+   * @returns {ExecutionPlan} This plan, for chaining.
+   * @throws {TypeError} If id or run is missing.
+   * @throws {Error} If the id is duplicated.
+   */
   add(step) {
     const { id, run, dependsOn = [], verify = null, compensate = null } = step ?? {};
     if (!id || typeof run !== 'function') throw new TypeError('step.id and step.run are required');
@@ -10,6 +22,11 @@ export class ExecutionPlan {
     return this;
   }
 
+  /**
+   * Topologically sort steps (dependencies first, ties by id).
+   * @returns {string[]} Step ids in execution order.
+   * @throws {Error} On a cycle (PLAN_CYCLE) or unknown dependency (STEP_NOT_FOUND).
+   */
   order() {
     const permanent = new Set();
     const temporary = new Set();
@@ -29,6 +46,14 @@ export class ExecutionPlan {
     return ordered;
   }
 
+  /**
+   * Run the steps in order, verifying each and compensating completed steps in reverse on failure.
+   * @param {Object} [context] - Context passed to every step.
+   * @param {Object} [options] - Execution options.
+   * @param {Object|null} [options.receiptChain] - Chain to append a receipt per step.
+   * @param {boolean} [options.stopOnFailure] - Rethrow the first error; otherwise record it and continue.
+   * @returns {Promise<Object>} Map of step id to output (or `{error}` for failures when not stopping).
+   */
   async execute(context = {}, { receiptChain = null, stopOnFailure = true } = {}) {
     const results = new Map();
     const completed = [];
@@ -58,4 +83,8 @@ export class ExecutionPlan {
   }
 }
 
+/**
+ * Create an empty execution plan.
+ * @returns {ExecutionPlan} A new plan.
+ */
 export function createExecutionPlan() { return new ExecutionPlan(); }

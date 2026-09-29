@@ -2,17 +2,17 @@
  * @fileoverview Hook planning API endpoint
  */
 
-import { planHook } from '../../../../src/hooks.mjs'
+import { planHook } from '../../../../lib/hooks.mjs'
 
 /**
  * POST /api/hooks/[id]/plan - Plan hook execution
  */
 export default defineEventHandler(async (event) => {
-  const { requireAuth } = await import('../../_auth.mjs')
+  const { requireAuth } = await import('../../../../lib/auth.mjs')
   requireAuth(event)
   const id = getRouterParam(event, 'id')
   
-  const { hookRegistry } = await import('../_shared.mjs')
+  const { hookRegistry } = await import('../../../../lib/hooks-state.mjs')
   
   if (!hookRegistry.has(id)) {
     throw createError({

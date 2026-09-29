@@ -71,8 +71,8 @@ const ChangeOperationSchema = z.object({
     graph: z.string().optional(),
   }),
   timestamp: z.number().default(() => Date.now()),
-  version: z.record(z.number()).default({}),
-  metadata: z.record(z.any()).optional(),
+  version: z.record(z.string(), z.number()).default({}),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**

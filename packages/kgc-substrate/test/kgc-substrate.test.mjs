@@ -31,14 +31,15 @@ vi.mock('@unrdf/kgc-4d', () => {
     match: vi.fn().mockReturnValue([]),
   };
   return {
-    KGCStore: vi.fn().mockImplementation(() => mockStore),
+    KGCStore: vi.fn().mockImplementation(function () { return mockStore; }),
+    GRAPHS: { UNIVERSE: 'http://kgc.io/Universe', EVENT_LOG: 'http://kgc.io/EventLog', SYSTEM: 'http://kgc.io/System' },
     freezeUniverse: vi.fn().mockResolvedValue({
       t_ns: '2000000000',
       universe_hash: 'mock-universe-hash',
       git_ref: 'mock-git-ref',
-      id: '00000000-0000-0000-0000-000000000001',
+      id: '00000000-0000-4000-8000-000000000001',
     }),
-    GitBackbone: vi.fn().mockImplementation(() => ({})),
+    GitBackbone: vi.fn().mockImplementation(function () { return {}; }),
   };
 });
 
@@ -782,7 +783,7 @@ describe('Type Validators', () => {
       timestamp_ns: 1000000000n,
       quads_hash: 'abc123',
       commit_hash: 'def456',
-      snapshot_id: '00000000-0000-0000-0000-000000000001',
+      snapshot_id: '00000000-0000-4000-8000-000000000001',
       quad_count: 5,
     };
 
@@ -797,7 +798,7 @@ describe('Type Validators', () => {
       timestamp_ns: 1000000000n,
       quads_hash: 'abc',
       commit_hash: 'def',
-      snapshot_id: '00000000-0000-0000-0000-000000000001',
+      snapshot_id: '00000000-0000-4000-8000-000000000001',
     };
 
     // Act & Assert

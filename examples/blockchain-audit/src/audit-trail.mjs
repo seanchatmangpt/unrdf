@@ -4,8 +4,7 @@
  * @module blockchain-audit/audit-trail
  */
 
-import { WorkflowEngine } from '@unrdf/yawl';
-import { createReceipt } from '@unrdf/yawl/receipt';
+import { WorkflowEngine, createReceipt } from '../../lib/workflow-engine.mjs';
 import { createStore } from '@unrdf/oxigraph';
 import { trace } from '@opentelemetry/api';
 import { sha256 } from 'hash-wasm';
@@ -38,6 +37,7 @@ export class AuditTrail {
     this.engine = new WorkflowEngine({ store: this.store });
     this.receipts = new Map();
     this.blockHashes = [];
+    this.blocks = [];
   }
 
   /**
@@ -117,6 +117,7 @@ export class AuditTrail {
     // Calculate block hash
     block.hash = await this._calculateBlockHash(block);
     this.blockHashes.push(block.hash);
+    this.blocks.push(block);
 
     return block;
   }
@@ -238,8 +239,17 @@ export class AuditTrail {
    * @returns {Promise<boolean>} Valid
    */
   async _verifyBlockchain(workflowId) {
-    // In production, query blockchain
-    return true;
+    // In production, query the chain. Locally: the workflow must have an audit
+    // block that references the stored receipt and whose hash recomputes.
+    const receipt = this.receipts.get(workflowId);
+    const block = this.blocks.find(b => b.workflowId === workflowId);
+    if (!receipt || !block) {
+      return false;
+    }
+    if (block.receiptHash !== receipt.hash) {
+      return false;
+    }
+    return (await this._calculateBlockHash(block)) === block.hash;
   }
 
   /**
@@ -249,10 +259,19 @@ export class AuditTrail {
    * @returns {Promise<boolean>} Valid
    */
   async _verifyChainIntegrity() {
-    // Verify all block hashes are linked correctly
-    for (let i = 1; i < this.blockHashes.length; i++) {
-      // Each block should reference previous
-      // Simplified - actual verification would check stored blocks
+    let previousHash = '0'.repeat(64);
+    for (let i = 0; i < this.blocks.length; i++) {
+      const block = this.blocks[i];
+      if (block.index !== i || block.previousHash !== previousHash) {
+        return false;
+      }
+      if ((await this._calculateBlockHash(block)) !== block.hash) {
+        return false;
+      }
+      if (this.blockHashes[i] !== block.hash) {
+        return false;
+      }
+      previousHash = block.hash;
     }
     return true;
   }

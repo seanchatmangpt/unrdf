@@ -33,8 +33,11 @@
     "infrastructure"
   ],
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@unrdf/core": "workspace:*",
-    "@unrdf/knowledge-engine": "workspace:*"
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

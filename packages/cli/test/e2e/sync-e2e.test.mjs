@@ -77,7 +77,7 @@ function generateConfig(ontologyPath, templatePath, outputDir, extraRules = '') 
   return `
 [project]
 name = "e2e-test"
-version = "[VERSION]"
+version = "1.0.0"
 [ontology]
 source = "${ontologyPath}"
 format = "turtle"

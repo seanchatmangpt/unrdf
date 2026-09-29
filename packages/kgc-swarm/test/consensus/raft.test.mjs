@@ -48,16 +48,31 @@ describe('Raft Consensus', () => {
       node.config.electionTimeoutMin = 10;
       node.config.electionTimeoutMax = 20;
 
-      await node.start();
+      // Deterministic timing: Math.random() = 0 gives the minimum timeout (10ms).
+      // With real timers and a 50ms wait the node legitimately times out again
+      // (no peers answer), so its term keeps climbing past 1.
+      vi.useFakeTimers();
+      const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0);
 
-      // Wait for election timeout
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      try {
+        await node.start();
 
-      expect(stateChangeSpy).toHaveBeenCalledWith(NodeState.CANDIDATE, 1);
-      expect(node.currentTerm).toBe(1);
-      expect(node.votedFor).toBe('node-1');
+        // First election timeout
+        await vi.advanceTimersByTimeAsync(10);
 
-      await node.stop();
+        expect(stateChangeSpy).toHaveBeenCalledWith(NodeState.CANDIDATE, 1);
+        expect(node.currentTerm).toBe(1);
+        expect(node.votedFor).toBe('node-1');
+
+        // Nobody granted a vote, so the next timeout starts a new term
+        await vi.advanceTimersByTimeAsync(10);
+        expect(node.currentTerm).toBe(2);
+
+        await node.stop();
+      } finally {
+        randomSpy.mockRestore();
+        vi.useRealTimers();
+      }
     });
 
     it('should become leader with majority votes', async () => {
@@ -205,10 +220,15 @@ describe('Raft Consensus', () => {
       const proposedSpy = vi.fn();
       node.on('proposed', proposedSpy);
 
-      node.becomeLeader();
+      // A leader always leads a term >= 1 (it was elected); this test skips the
+      // election, so put the node in term 1 before promoting it.
+      node.currentTerm = 1;
+      node.votedFor = node.nodeId;
 
       // Mock RPC handler
       node.setRPCHandler(async () => ({ term: 1, success: true }));
+
+      node.becomeLeader();
 
       const entry = await node.propose({ type: 'set', key: 'x', value: 42 });
 

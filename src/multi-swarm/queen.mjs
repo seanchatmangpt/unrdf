@@ -209,7 +209,20 @@ export class QueenSwarm extends EventEmitter {
             const result = this.hub.results.get(workId);
             if (result) {
               clearTimeout(timeoutId);
-              resolve(result.result);
+              const payload = result.result;
+              // Worker swarms report { success, result | error }: unwrap for the caller and
+              // propagate worker-side failures as job failures
+              if (result.status === 'failed') {
+                reject(new Error(result.error || `Work failed: ${workId}`));
+              } else if (payload && typeof payload === 'object' && 'success' in payload) {
+                if (payload.success) {
+                  resolve(payload.result);
+                } else {
+                  reject(new Error(payload.error || `Work failed: ${workId}`));
+                }
+              } else {
+                resolve(payload);
+              }
             } else {
               setTimeout(checkResult, 100);
             }
@@ -369,14 +382,20 @@ export class QueenSwarm extends EventEmitter {
   _aggregateResults(job, results) {
     const { aggregationStrategy } = job;
 
+    // A job that was not partitioned (non-array payload) produced exactly one result:
+    // return it as-is instead of wrapping it in an array
+    if (!Array.isArray(job.payload) && results.length === 1) {
+      return results[0];
+    }
+
     switch (aggregationStrategy) {
       case 'concat':
-        // Concatenate array results
-        return results.flat();
+        // Concatenate array results (fully flattened: partitions may return nested arrays)
+        return results.flat(Infinity);
 
       case 'merge':
-        // Merge object results
-        return results.reduce((acc, result) => ({
+        // Merge object results (array results are flattened one level first)
+        return results.flat().reduce((acc, result) => ({
           ...acc,
           ...result
         }), {});

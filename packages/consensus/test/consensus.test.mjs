@@ -68,7 +68,9 @@ describe('Raft Coordinator', () => {
   it('should initialize coordinator', () => {
     expect(coordinator.config.nodeId).toBe('raft-test');
     expect(coordinator.transport).toBeDefined();
-    expect(coordinator.raft).toBeDefined();
+    // The coordinator is itself the Raft node (there is no separate .raft member)
+    expect(coordinator.currentTerm).toBe(0);
+    expect(Array.isArray(coordinator.log)).toBe(true);
   });
 
   it('should add peers', () => {

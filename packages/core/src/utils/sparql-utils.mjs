@@ -4,7 +4,7 @@
  * These utilities provide SPARQL query building, query analysis,
  * and common SPARQL patterns for RDF operations.
  *
- * @version [VERSION]
+ * @version 1.0.0
  * @author GitVan Team
  * @license MIT
  */

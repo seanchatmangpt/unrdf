@@ -1,5 +1,5 @@
 /**
- * @unrdf/pictl-semantics [VERSION]
+ * @unrdf/pictl-semantics v26.4.23
  *
  * PICTL Semantics Integration with @unrdf Federation
  * Ontology-driven process mining with cryptographic quorum consensus
@@ -12,7 +12,6 @@ import {
   proposeResult,
   votePictlResult,
   getQuorumStatus,
-  validateVoteTally,
   QuorumConfigSchema,
 } from './quorum.mjs';
 import { validatePictlResult, validateAgainstShapes } from './result-validator.mjs';

@@ -30,48 +30,48 @@ export const PACKAGES_WITH_ZOD = {
   '@unrdf/core': {
     dependencies: [],
     devDependencies: [],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/core',
     externalDependencies: {
-      'zod': '^[VERSION]'
+      'zod': '^3.22.0'
     }
   },
   '@unrdf/validation': {
     dependencies: ['@unrdf/core'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/validation',
     externalDependencies: {
-      'zod': '^[VERSION]'
+      'zod': '^3.22.0'
     }
   },
   '@unrdf/cli': {
     dependencies: ['@unrdf/core', '@unrdf/validation'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/cli',
     externalDependencies: {
-      'zod': '^[VERSION]'
+      'zod': '^3.22.0'
     }
   },
   '@unrdf/api': {
     dependencies: ['@unrdf/core', '@unrdf/validation'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/api',
     externalDependencies: {
-      'zod': '^[VERSION]'
+      'zod': '^3.22.0'
     }
   },
   '@unrdf/streaming': {
     dependencies: ['@unrdf/core'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/streaming',
     externalDependencies: {}  // No zod
   },
   '@unrdf/kgc-4d': {
     dependencies: ['@unrdf/core', '@unrdf/validation'],
-    version: '[VERSION]',
+    version: '5.0.0',
     path: 'packages/kgc-4d',
     externalDependencies: {
-      'zod': '^[VERSION]'
+      'zod': '^3.22.0'
     }
   }
 };
@@ -97,7 +97,7 @@ export function findPackagesUsingDependency(packages, depName) {
  */
 export async function runDependencyUpgrade(options = {}) {
   console.log('=== Dependency Upgrade Workflow ===\n');
-  console.log('Upgrading: zod ^[VERSION] -> ^[VERSION]\n');
+  console.log('Upgrading: zod ^3.22.0 -> ^4.0.0\n');
 
   // Step 1: Find affected packages
   const affectedByDep = findPackagesUsingDependency(PACKAGES_WITH_ZOD, 'zod');
@@ -142,7 +142,7 @@ export async function runDependencyUpgrade(options = {}) {
     console.log('');
     console.log('New versions:');
     for (const pkg of affectedByDep) {
-      console.log(`  ${pkg}: zod ^[VERSION]`);
+      console.log(`  ${pkg}: zod ^4.0.0`);
     }
     console.log('');
     console.log('Version consistency: VERIFIED');
@@ -153,7 +153,7 @@ export async function runDependencyUpgrade(options = {}) {
     console.log('');
     console.log('Original versions preserved:');
     for (const pkg of affectedByDep) {
-      console.log(`  ${pkg}: zod ^[VERSION] (unchanged)`);
+      console.log(`  ${pkg}: zod ^3.22.0 (unchanged)`);
     }
     console.log('');
     console.log('Failure reason:', result.stages.find(s => s.status === 'failed')?.name || 'Unknown');
@@ -241,7 +241,7 @@ export function generateUpgradePlan(packages, depName, newVersion) {
 export const EXAMPLE_UPGRADE_PLAN = generateUpgradePlan(
   PACKAGES_WITH_ZOD,
   'zod',
-  '^[VERSION]'
+  '^4.0.0'
 );
 
 // Run if executed directly

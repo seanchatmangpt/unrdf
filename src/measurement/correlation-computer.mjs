@@ -41,7 +41,7 @@ const AdmissionEventSchema = z.object({
 const CorrelationResultSchema = z.object({
   totalCorrelation: z.number(),
   normalizedTC: z.number(),
-  partitionEntropies: z.record(z.number()),
+  partitionEntropies: z.record(z.string(), z.number()),
   jointEntropy: z.number(),
   pairwiseMI: z.array(z.object({
     partition1: z.string(),

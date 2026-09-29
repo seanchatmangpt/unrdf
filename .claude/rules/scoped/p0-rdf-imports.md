@@ -30,10 +30,10 @@ const broken = { ...originalQuad, object: DataFactory.namedNode('new-value') };
 
 ```javascript
 // Correct
-await store.load(format: 'application/n-triples', data);
+store.load(data, { format: 'application/n-triples' });
 
-// Wrong - format:turtle serializer has issues
-await store.load(format: 'text/turtle', data);
+// Wrong - options omitted: OxigraphStore.load throws 'Format option is required'
+store.load(data);
 ```
 
 ### Property Assertions

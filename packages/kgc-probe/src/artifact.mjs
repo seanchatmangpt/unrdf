@@ -10,8 +10,7 @@
  * @module @unrdf/kgc-probe/artifact
  */
 
-import { randomUUID } from 'crypto';
-import { ArtifactSchema, validateArtifact, DiffResultSchema } from './types.mjs';
+import { validateArtifact } from './types.mjs';
 import { canonicalJson, mergeObservations, sortObservations } from './orchestration-core.mjs';
 
 /**

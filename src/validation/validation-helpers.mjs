@@ -15,13 +15,13 @@ const _SpanValidationSchema = z.object({
   name: z.string(),
   status: z.enum(['ok', 'error']),
   duration: z.number().min(0),
-  attributes: z.record(z.any()),
+  attributes: z.record(z.string(), z.any()),
   events: z
     .array(
       z.object({
         name: z.string(),
         timestamp: z.number(),
-        attributes: z.record(z.any()).optional(),
+        attributes: z.record(z.string(), z.any()).optional(),
       })
     )
     .optional(),
@@ -31,7 +31,7 @@ const _MetricValidationSchema = z.object({
   name: z.string(),
   value: z.number(),
   unit: z.string().optional(),
-  attributes: z.record(z.any()).optional(),
+  attributes: z.record(z.string(), z.any()).optional(),
   timestamp: z.number(),
 });
 

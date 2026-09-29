@@ -241,7 +241,7 @@ async function writeConfig(configPath, config) {
  * @returns {Object} Workspace paths
  */
 function getWorkspacePaths() {
-  const root = join(__dirname, '..');
+  const root = process.env.KGC_WORKSPACE_ROOT || join(__dirname, '..');
   return {
     root,
     varKgc: join(root, 'var', 'kgc'),
@@ -368,7 +368,7 @@ async function initCommand(options = {}) {
 
   // Create tool registry
   const registry = {
-    version: 'latest',
+    version: '1.0.0',
     tools: [],
     created: new Date().toISOString(),
   };
@@ -1023,9 +1023,14 @@ function parseArgs(args) {
     } else if (arg.startsWith('--')) {
       // Named option
       const key = arg.slice(2);
-      const value = args[i + 1];
-      result.options[key] = value;
-      i++; // Skip next arg
+      const next = args[i + 1];
+      if (next === undefined || next.startsWith('--')) {
+        // Boolean flag (e.g. --force, --list, --strict): do not swallow the next flag
+        result.options[key] = true;
+      } else {
+        result.options[key] = next;
+        i++; // Skip value
+      }
     } else if (!result.command) {
       result.command = arg;
     } else {

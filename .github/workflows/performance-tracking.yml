@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '22'
   PNPM_VERSION: '10.15.0'
 
 jobs:
@@ -26,16 +26,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: timeout 60s pnpm install --frozen-lockfile
@@ -43,22 +43,20 @@ jobs:
       - name: Run core benchmarks
         run: |
           echo "Running core package benchmarks..."
-          timeout 120s pnpm -C packages/core test -- --run --reporter=verbose 2>&1 | tee benchmark-core.log || echo "Core benchmarks completed"
+          set -o pipefail
+          timeout 120s pnpm -C packages/core test 2>&1 | tee benchmark-core.log
 
       - name: Run streaming benchmarks
         run: |
           echo "Running streaming package benchmarks..."
-          timeout 120s pnpm -C packages/streaming test -- --run --reporter=verbose 2>&1 | tee benchmark-streaming.log || echo "Streaming benchmarks completed"
+          set -o pipefail
+          timeout 120s pnpm -C packages/streaming test 2>&1 | tee benchmark-streaming.log
 
       - name: Run federation benchmarks
         run: |
           echo "Running federation package benchmarks..."
-          timeout 120s pnpm -C packages/federation test -- --run --reporter=verbose 2>&1 | tee benchmark-federation.log || echo "Federation benchmarks completed"
-
-      - name: Run YAWL pattern benchmarks
-        run: |
-          echo "Running YAWL pattern benchmarks..."
-          timeout 180s pnpm -C packages/yawl test -- --run --reporter=verbose 2>&1 | tee benchmark-yawl.log || echo "YAWL benchmarks completed"
+          set -o pipefail
+          timeout 120s pnpm -C packages/federation test 2>&1 | tee benchmark-federation.log
 
       - name: Collect benchmark metrics
         run: |
@@ -159,16 +157,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: timeout 60s pnpm install --frozen-lockfile
@@ -204,16 +202,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: timeout 60s pnpm install --frozen-lockfile

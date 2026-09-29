@@ -26,6 +26,8 @@
  */
 
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Metrics configuration schema
@@ -334,6 +336,6 @@ export const metrics = createMetrics({
   prefix: 'unrdf',
   labels: {
     service: 'unrdf',
-    version: '[VERSION]',
+    version: PKG_VERSION,
   },
 });

@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "Bash",
+      "version": "1.0.0",
+      "description": "Execute a shell command",
+      "schema_in": {
+        "type": "object",
+        "properties": { "command": { "type": "string" } },
+        "required": ["command"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": { "stdout": { "type": "string" }, "exit_code": { "type": "number" } },
+        "required": ["stdout", "exit_code"]
+      },
+      "capabilities": ["command-execution"]
+    },
+    {
+      "name": "Read",
+      "version": "1.0.0",
+      "description": "Read a file",
+      "schema_in": {
+        "type": "object",
+        "properties": { "path": { "type": "string" } },
+        "required": ["path"]
+      },
+      "schema_out": {
+        "type": "object",
+        "properties": { "content": { "type": "string" } },
+        "required": ["content"]
+      },
+      "capabilities": ["file-read"]
+    }
+  ]
+}

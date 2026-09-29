@@ -5,6 +5,9 @@
  */
 
 import { readFileSync, writeFileSync } from 'fs';
+import { fileURLToPath as __fileURLToPath } from 'node:url';
+import { resolve as __resolvePath } from 'node:path';
+const REPO_ROOT = __resolvePath(__fileURLToPath(new URL('..', import.meta.url)));
 
 const testFiles = [
   'packages/core/examples/basic-store/test/example.test.mjs',
@@ -24,7 +27,7 @@ const testFiles = [
 let totalFixed = 0;
 
 for (const file of testFiles) {
-  const fullPath = `/Users/sac/unrdf/${file}`;
+  const fullPath = `${REPO_ROOT}/${file}`;
 
   try {
     let content = readFileSync(fullPath, 'utf-8');

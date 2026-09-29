@@ -34,18 +34,20 @@
   },
   "dependencies": {
     "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/receipts": "workspace:*",
     "hash-wasm": "^4.12.0",
     "piscina": "^4.9.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@vitest/coverage-v8": "^4.0.15",
-    "vitest": "^4.0.15",
     "eslint": "^9.39.1",
-    "unbuild": "^2.0.0"
+    "typescript": "^5.9.3",
+    "unbuild": "^2.0.0",
+    "vitest": "^4.0.15"
   },
   "keywords": [
     "rdf",

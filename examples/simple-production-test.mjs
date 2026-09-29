@@ -34,7 +34,7 @@ async function testSimpleProduction() {
     const simpleHook = createKnowledgeHook({
       meta: {
         name: 'simple-test',
-        version: 'latest',
+        version: '1.0.0',
         description: 'Simple test hook',
       },
       when: {

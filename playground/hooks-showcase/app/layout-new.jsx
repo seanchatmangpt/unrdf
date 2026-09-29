@@ -3,7 +3,7 @@
  * @description New layout with real KGC-4D backend integration
  */
 
-import { KGCProvider } from '../../packages/kgc-4d/playground/lib/client/kgc-context.mjs';
+import { KGCProvider } from '../../../packages/kgc-4d-playground/lib/client/kgc-context.mjs';
 import './globals.css';
 
 export const metadata = {

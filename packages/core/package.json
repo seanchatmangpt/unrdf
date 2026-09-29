@@ -9,6 +9,7 @@
     "./rdf": "./src/rdf/index.mjs",
     "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
     "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
+    "./rdf/n3-justified-only.mjs": "./src/rdf/n3-justified-only.mjs",
     "./sparql": "./src/sparql/index.mjs",
     "./sparql/executor-sync": "./src/sparql/executor-sync.mjs",
     "./sparql/embeddings": "./src/sparql/embeddings.mjs",
@@ -24,6 +25,7 @@
     "./security-schemas": "./src/security-schemas.mjs",
     "./utils/sparql-utils": "./src/utils/sparql-utils.mjs",
     "./utils/semantic-bridge": "./src/utils/semantic-bridge.mjs",
+    "./utils/lockchain-writer": "./src/utils/lockchain-writer.mjs",
     "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
     "./viz/query-explainer": "./src/viz/query-explainer.mjs",
     "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs",
@@ -45,9 +47,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "vitest run --no-coverage",
+    "test": "vitest run --no-coverage && pnpm test:node",
+    "test:node": "node ../../scripts/run-node-tests.mjs test/capability-control-plane.test.mjs test/capability-runtime.test.mjs test/state-primitives.test.mjs test/transaction-core.node.test.mjs test/interchangeable-part.test.mjs test/interchangeable-part-canonical.test.mjs",
     "test:coverage": "vitest run --coverage",
-    "test:fast": "vitest run --no-coverage",
+    "test:fast": "vitest run --no-coverage && pnpm test:node",
     "test:watch": "vitest --no-coverage",
     "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",
@@ -65,6 +68,8 @@
     "linked-data"
   ],
   "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "@opentelemetry/api": "^1.9.0",
     "@rdfjs/data-model": "^2.1.1",
     "@rdfjs/namespace": "^2.0.1",
     "@rdfjs/serializer-jsonld": "^2.0.1",
@@ -76,6 +81,7 @@
     "jsonld": "^9.0.0",
     "n3": "^1.26.0",
     "onnxruntime-node": "^1.19.2",
+    "oxigraph": "^0.5.2",
     "rdf-canonize": "^5.0.0",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",

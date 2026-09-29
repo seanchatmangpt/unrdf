@@ -48,7 +48,7 @@ const DependencyEdgeSchema = z.object({
 const ArchitectureInputSchema = z.object({
   partitions: z.array(PartitionMetadataSchema),
   dependencies: z.array(DependencyEdgeSchema).default([]),
-  namespaces: z.record(z.array(z.string())).default({}),
+  namespaces: z.record(z.string(), z.array(z.string())).default({}),
   metadata: z.object({
     name: z.string(),
     version: z.string(),
@@ -301,7 +301,7 @@ export class ArchitectureProjector {
    * const result = await projector.project({
    *   partitions: [...],
    *   dependencies: [...],
-   *   metadata: { name: 'MyProject', version: '[VERSION]', description: 'Desc' }
+   *   metadata: { name: 'MyProject', version: '1.0.0', description: 'Desc' }
    * });
    */
   async project(input) {
@@ -394,7 +394,7 @@ export class ArchitectureProjector {
       namespaces,
       metadata: {
         name: 'UNRDF Universe',
-        version: '[VERSION]',
+        version: '1.0.0',
         description: 'RDF Universe partition architecture',
       },
     };

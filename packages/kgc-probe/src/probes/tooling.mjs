@@ -154,7 +154,7 @@ async function probeGit(timeout) {
   const metadata = {};
 
   if (result.success && result.stdout) {
-    // Parse version: "git version [VERSION]" -> "[VERSION]"
+    // Parse version: "git version 2.34.1" -> "2.34.1"
     const match = result.stdout.match(/git version ([\d.]+)/);
     if (match) {
       outputs.version = match[1];
@@ -186,7 +186,7 @@ async function probeNode(timeout) {
   const metadata = {};
 
   if (result.success && result.stdout) {
-    // Parse version: "[VERSION]" -> "[VERSION]"
+    // Parse version: "v18.17.0" -> "18.17.0"
     const version = result.stdout.replace(/^v/, '');
     outputs.version = version;
     outputs.available = true;
@@ -298,10 +298,10 @@ async function probeShells(timeout) {
 
 /**
  * Probes for build tools (make, cmake)
- * @param {number} timeout - Timeout in milliseconds
+ * @param {number} _timeout - Timeout in milliseconds (currently unused)
  * @returns {Promise<Observation[]>}
  */
-async function probeBuildTools(timeout) {
+async function probeBuildTools(_timeout) {
   // NOTE: make and cmake are NOT in allowlist
   // Return observations with guardDecision: "denied"
   const tools = ['make', 'cmake'];

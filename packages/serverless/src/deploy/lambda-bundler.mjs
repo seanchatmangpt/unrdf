@@ -6,7 +6,7 @@
  * Handles dependency resolution, minification, and tree-shaking for minimal cold starts.
  *
  * @module serverless/deploy/lambda-bundler
- * @version [VERSION]
+ * @version 1.0.0
  * @license MIT
  */
 
@@ -18,8 +18,8 @@ import { pipeline } from 'node:stream/promises';
 import { z } from 'zod';
 
 const BundlerConfigSchema = z.object({
-  entryPoint: z.string(),
-  outDir: z.string(),
+  entryPoint: z.string().min(1),
+  outDir: z.string().min(1),
   minify: z.boolean().default(true),
   sourcemap: z.boolean().default(false),
   external: z.array(z.string()).default(['@aws-sdk/*']),
@@ -28,13 +28,36 @@ const BundlerConfigSchema = z.object({
   target: z.string().default('node20'),
 });
 
+/**
+ * Bundles a single UNRDF entry point into a Lambda deployment package with esbuild.
+ */
 export class LambdaBundler {
   #config;
 
+  /**
+   * Creates a bundler after validating and defaulting the configuration.
+   *
+   * @param {Object} config - Bundler configuration.
+   * @param {string} config.entryPoint - Path of the source entry file.
+   * @param {string} config.outDir - Directory to write the bundle into.
+   * @param {boolean} [config.minify=true] - Whether to minify output.
+   * @param {boolean} [config.sourcemap=false] - Whether to emit a sourcemap.
+   * @param {string[]} [config.external] - Module patterns left unbundled (default `@aws-sdk/*`).
+   * @param {Record<string,string>} [config.define] - Compile-time constant replacements.
+   * @param {'node'|'browser'} [config.platform='node'] - Target platform.
+   * @param {string} [config.target='node20'] - esbuild target.
+   * @throws {import('zod').ZodError} If the configuration is invalid.
+   */
   constructor(config) {
     this.#config = BundlerConfigSchema.parse(config);
   }
 
+  /**
+   * Runs esbuild, writes `index.js` plus a gzip copy to the output directory, and reports sizes.
+   *
+   * @returns {Promise<{outputPath: string, sizeBytes: number, gzipSizeBytes: number, dependencies: string[], buildTimeMs: number}>} Bundle path, raw and gzipped sizes, sorted node_modules dependency names, and build duration.
+   * @throws {Error} `Bundle failed: ...` wrapping any underlying error.
+   */
   async bundle() {
     const startTime = Date.now();
 
@@ -76,6 +99,12 @@ export class LambdaBundler {
     }
   }
 
+  /**
+   * Builds several bundles concurrently.
+   *
+   * @param {Object[]} configs - Bundler configurations, one per bundle.
+   * @returns {Promise<Object[]>} Bundle results in the same order as `configs`.
+   */
   static async bundleAll(configs) {
     const bundlers = configs.map(config => new LambdaBundler(config));
     return Promise.all(bundlers.map(bundler => bundler.bundle()));
@@ -99,6 +128,12 @@ export class LambdaBundler {
     return Array.from(deps).sort();
   }
 
+  /**
+   * Summarizes bundle size per module from an esbuild metafile JSON file.
+   *
+   * @param {string} metafilePath - Path to an esbuild metafile JSON file.
+   * @returns {Promise<{totalSizeBytes: number, largestDeps: Array<{name: string, bytes: number, percentage: string}>, moduleCount: number}>} Total input bytes, the ten largest modules with percentage share, and the number of distinct modules.
+   */
   static async analyzeBundleSize(metafilePath) {
     const content = await fs.readFile(metafilePath, 'utf-8');
     const metafile = JSON.parse(content);
@@ -129,6 +164,13 @@ export class LambdaBundler {
   }
 }
 
+/**
+ * Builds the default bundler configuration for a named Lambda function.
+ *
+ * @param {string} functionName - Function directory name under `src/lambda/`.
+ * @param {Object} [options={}] - Configuration overrides merged over the defaults.
+ * @returns {Object} Bundler configuration for `LambdaBundler`.
+ */
 export function createDefaultBundlerConfig(functionName, options = {}) {
   return {
     entryPoint: `./src/lambda/${functionName}/index.mjs`,
@@ -144,6 +186,12 @@ export function createDefaultBundlerConfig(functionName, options = {}) {
   };
 }
 
+/**
+ * Bundles the built-in `query` and `ingest` Lambda functions sequentially.
+ *
+ * @param {Object} [options={}] - Configuration overrides applied to every function.
+ * @returns {Promise<Map<string, Object>>} Bundle results keyed by function name.
+ */
 export async function bundleUNRDFFunctions(options = {}) {
   const functions = ['query', 'ingest'];
   const results = new Map();

@@ -54,3 +54,7 @@ TEMPLATE_IMPLEMENTATION_COMPLETE.md
 UNRDF_TOML_VALIDATION.md
 test-template.njk
 generated/
+
+# Local/CI build receipts (atomvm pattern gates, interchangeable-parts)
+.build/
+**/.build/

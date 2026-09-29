@@ -5,6 +5,7 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import * as path from 'node:path';
+import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -45,6 +46,16 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '../..');
+
+// The yawl-* workflow packages have been removed from the workspace, so the number of
+// packages present in a partition is derived from what actually exists on disk.
+const presentInPartition = (partitionName) => {
+  const def = PARTITION_DEFINITIONS.find((d) => d.name === partitionName);
+  return def.packages.filter((name) => {
+    const dir = name.startsWith('@unrdf/') ? name.slice('@unrdf/'.length) : name;
+    return fs.existsSync(path.join(ROOT_DIR, 'packages', dir, 'package.json'));
+  }).length;
+};
 
 // ============================================================================
 // Package RDF Model Tests
@@ -98,7 +109,7 @@ describe('Package RDF Model', () => {
     it('should parse basic package.json to quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '[VERSION]',
+        version: '1.0.0',
         description: 'Test package',
       });
 
@@ -116,10 +127,10 @@ describe('Package RDF Model', () => {
     it('should include dependencies as quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '[VERSION]',
+        version: '1.0.0',
         dependencies: {
           '@unrdf/core': 'workspace:*',
-          lodash: '^[VERSION]',
+          lodash: '^4.17.21',
         },
       });
 
@@ -134,7 +145,7 @@ describe('Package RDF Model', () => {
     it('should include exports as quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '[VERSION]',
+        version: '1.0.0',
         exports: {
           '.': './src/index.mjs',
           './api': './src/api.mjs',
@@ -150,7 +161,7 @@ describe('Package RDF Model', () => {
 
     it('should include partition assignment', () => {
       const quads = parsePackageToQuads(
-        { name: '@unrdf/core', version: '[VERSION]' },
+        { name: '@unrdf/core', version: '1.0.0' },
         { partition: 'O_foundational' }
       );
 
@@ -167,7 +178,7 @@ describe('Package RDF Model', () => {
     it('should validate valid package.json', () => {
       const result = validatePackageJson({
         name: 'test-package',
-        version: '[VERSION]',
+        version: '1.0.0',
       });
       expect(result.valid).toBe(true);
     });
@@ -175,7 +186,7 @@ describe('Package RDF Model', () => {
     it('should reject invalid package.json', () => {
       const result = validatePackageJson({
         // missing name
-        version: '[VERSION]',
+        version: '1.0.0',
       });
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -282,7 +293,7 @@ describe('MonorepoUniverse', () => {
     it('should have loaded specific packages', () => {
       expect(universe.getPackage('@unrdf/core')).toBeDefined();
       expect(universe.getPackage('@unrdf/oxigraph')).toBeDefined();
-      expect(universe.getPackage('@unrdf/yawl')).toBeDefined();
+      expect(universe.getPackage('@unrdf/kgc-4d')).toBeDefined();
     });
   });
 
@@ -295,8 +306,9 @@ describe('MonorepoUniverse', () => {
 
     it('should get packages in O_workflow', () => {
       const pkgs = universe.getPackagesInPartition('O_workflow');
-      expect(pkgs.length).toBe(9);
-      expect(pkgs.map((p) => p.name)).toContain('@unrdf/yawl');
+      expect(pkgs.length).toBe(presentInPartition('O_workflow'));
+      const hooksPkgs = universe.getPackagesInPartition('O_knowledge');
+      expect(hooksPkgs.map((p) => p.name)).toContain('@unrdf/hooks');
     });
   });
 
@@ -348,7 +360,7 @@ describe('MonorepoUniverse', () => {
     });
 
     it('should get transitive dependencies', () => {
-      const deps = universe.getTransitiveDependencies('@unrdf/yawl');
+      const deps = universe.getTransitiveDependencies('@unrdf/kgc-4d');
       expect(deps.size).toBeGreaterThan(0);
       expect(deps.has('@unrdf/oxigraph')).toBe(true);
     });
@@ -404,7 +416,7 @@ describe('MonorepoUniverse', () => {
     it('should get partition stats', () => {
       const stats = universe.getPartitionStats();
       expect(stats.O_foundational.packageCount).toBe(3);
-      expect(stats.O_workflow.packageCount).toBe(9);
+      expect(stats.O_workflow.packageCount).toBe(presentInPartition('O_workflow'));
     });
 
     it('should get summary', () => {
@@ -473,17 +485,17 @@ describe('Query Templates', () => {
 describe('Result Formatters', () => {
   it('should format results as objects', () => {
     const raw = [
-      { name: { value: 'test1' }, version: { value: '[VERSION]' } },
-      { name: { value: 'test2' }, version: { value: '[VERSION]' } },
+      { name: { value: 'test1' }, version: { value: '1.0.0' } },
+      { name: { value: 'test2' }, version: { value: '2.0.0' } },
     ];
     const formatted = formatResults(raw);
     expect(formatted[0].name).toBe('test1');
-    expect(formatted[0].version).toBe('[VERSION]');
+    expect(formatted[0].version).toBe('1.0.0');
   });
 
   it('should format as table', () => {
     const raw = [
-      { name: { value: 'test1' }, version: { value: '[VERSION]' } },
+      { name: { value: 'test1' }, version: { value: '1.0.0' } },
     ];
     const table = formatAsTable(raw);
     expect(table).toContain('name');

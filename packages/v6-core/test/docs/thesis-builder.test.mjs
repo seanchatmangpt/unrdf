@@ -23,7 +23,10 @@ describe('SPARQL CONSTRUCT Execution', () => {
     // Add test data
     store.load(`
       @prefix ex: <http://example.org/> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
       ex:Person a rdfs:Class ;
         rdfs:label "Person" ;
@@ -71,7 +74,10 @@ describe('generateDocFromClass', () => {
     store.load(`
       @prefix ex: <http://example.org/> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
       @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
       ex:Person a owl:Class ;
         rdfs:label "Person" ;
@@ -125,6 +131,8 @@ describe('loadOntology', () => {
     const ontologyContent = `
       @prefix ex: <http://example.org/> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
       @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
       ex:Person a owl:Class ;
@@ -144,18 +152,33 @@ describe('loadOntology', () => {
   });
 
   it('should load ontology from TTL file', async () => {
-    const result = await loadOntology(ontologyPath);
+    // loadOntology returns the populated store itself
+    const store = await loadOntology(ontologyPath);
 
-    expect(result.loaded).toBe(true);
-    expect(result.store).toBeDefined();
-    expect(result.tripleCount).toBeGreaterThan(0);
-    expect(result.path).toBe(ontologyPath);
+    expect(store).toBeDefined();
+    expect(store.size).toBe(6); // 2 classes x (type, label, comment)
+    const rows = store.query('SELECT ?c WHERE { ?c a <http://www.w3.org/2002/07/owl#Class> }');
+    expect(rows.map(r => r.get('c').value).sort()).toEqual([
+      'http://example.org/Organization',
+      'http://example.org/Person'
+    ]);
   });
 
   it('should detect correct format from extension', async () => {
-    const result = await loadOntology(ontologyPath);
+    // Same content in N-Triples must be parsed as N-Triples (format chosen by extension)
+    const ntPath = join(tempDir, 'test.nt');
+    await writeFile(
+      ntPath,
+      '<http://example.org/A> <http://www.w3.org/2000/01/rdf-schema#label> "A" .\n',
+      'utf8'
+    );
+    const ntStore = await loadOntology(ntPath);
+    expect(ntStore.size).toBe(1);
 
-    expect(result.format).toBe('text/turtle');
+    // Turtle syntax under a .nt extension must be rejected, proving the format is extension-driven
+    const wrongPath = join(tempDir, 'wrong.nt');
+    await writeFile(wrongPath, '@prefix ex: <http://example.org/> . ex:a ex:b ex:c .', 'utf8');
+    await expect(loadOntology(wrongPath)).rejects.toThrow(/Failed to load ontology/);
   });
 
   it('should throw error for non-existent file', async () => {
@@ -185,6 +208,8 @@ describe('renderFromOntology', () => {
     const ontologyContent = `
       @prefix ex: <http://example.org/> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
       @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
       ex:Person a owl:Class ;
@@ -273,7 +298,7 @@ describe('applyDocTemplate', () => {
       template: '# {{title}}',
       frontmatter: {
         author: 'Test Author',
-        version: '[VERSION]'
+        version: '1.0.0'
       }
     };
 
@@ -281,6 +306,6 @@ describe('applyDocTemplate', () => {
     const result = await applyDocTemplate(template, data);
 
     expect(result).toContain('author: Test Author');
-    expect(result).toContain('version: [VERSION]');
+    expect(result).toContain('version: 1.0.0');
   });
 });

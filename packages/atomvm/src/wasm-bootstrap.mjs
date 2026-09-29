@@ -12,17 +12,14 @@
  * - OTEL tracing for load timing
  * - Error handling with meaningful messages
  *
- * @version [VERSION]
+ * @version agnostic
  * @license MIT
  */
 
 import { withSpan, recordAttribute, recordError } from './otel-instrumentation.mjs';
+import { ATOMVM_VERSION, atomvmAssetName } from './assets.mjs';
 
-/**
- * AtomVM version
- * @constant {string}
- */
-export const ATOMVM_VERSION = '[VERSION]';
+export { ATOMVM_VERSION };
 
 /**
  * Environment type
@@ -72,7 +69,8 @@ export function detectEnvironment() {
  * @returns {{jsPath: string, wasmPath: string}} Asset paths
  */
 export function getAssetPaths(environment) {
-  const base = environment === 'browser' ? '/public' : './public';
+  // Vite serves public/ at the web root; Node reads it relative to the package.
+  const base = environment === 'browser' ? '' : './public';
   const variant = environment === 'browser' ? 'web' : 'node';
   
   return {
@@ -83,11 +81,11 @@ export function getAssetPaths(environment) {
 
 /**
  * Check if WASM assets are available
+ * @param {EnvironmentType} [environment] - Override environment detection
  * @returns {Promise<WASMAssetStatus>} Asset availability status
  */
-export async function checkWASMAssets() {
+export async function checkWASMAssets(environment = detectEnvironment()) {
   return withSpan('wasm.check_assets', async () => {
-    const environment = detectEnvironment();
     const { jsPath, wasmPath } = getAssetPaths(environment);
     
     try {
@@ -147,6 +145,25 @@ export async function checkWASMAssets() {
 }
 
 /**
+ * Read the wasm binary for the given environment.
+ * @param {EnvironmentType} environment
+ * @param {string} wasmPath - Path/URL reported by getAssetPaths
+ * @returns {Promise<Uint8Array>}
+ */
+async function readWasmBytes(environment, wasmPath) {
+  if (environment === 'browser') {
+    const response = await fetch(wasmPath);
+    if (!response.ok) throw new Error(`HTTP ${response.status} fetching ${wasmPath}`);
+    return new Uint8Array(await response.arrayBuffer());
+  }
+  const { readFile } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const publicDir = join(fileURLToPath(new URL('.', import.meta.url)), '..', 'public');
+  return readFile(join(publicDir, atomvmAssetName('node', 'wasm')));
+}
+
+/**
  * Load AtomVM WASM module with OTEL instrumentation
  * @param {Object} [options={}] - Load options
  * @param {EnvironmentType} [options.environment] - Override environment detection
@@ -160,7 +177,7 @@ export async function loadWASM(options = {}) {
     
     try {
       // Check assets first
-      const assetStatus = await checkWASMAssets();
+      const assetStatus = await checkWASMAssets(environment);
       
       if (!assetStatus.available) {
         throw new Error(
@@ -169,13 +186,16 @@ export async function loadWASM(options = {}) {
         );
       }
       
-      // For now, we return a mock successful load
-      // Real implementation would dynamically import the WASM module
+      // Compile the real binary: a truncated or corrupt .wasm (e.g. an HTML 404
+      // page saved under the asset name) must fail here, not at first execute.
+      const bytes = await readWasmBytes(environment, assetStatus.expectedWasmPath);
+      const compiled = await WebAssembly.compile(bytes);
       const loadTimeMs = performance.now() - startTime;
-      
+
       return {
         success: true,
-        module: null, // Would be actual module in production
+        module: compiled,
+        exports: WebAssembly.Module.exports(compiled).map(entry => entry.name),
         loadTimeMs,
         error: null,
       };
@@ -185,6 +205,7 @@ export async function loadWASM(options = {}) {
       return {
         success: false,
         module: null,
+        exports: [],
         loadTimeMs,
         error: error.message,
       };

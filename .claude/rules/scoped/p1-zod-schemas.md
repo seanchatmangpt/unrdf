@@ -63,7 +63,7 @@ export default z.object({ /* ... */ });
 // Correct - check success before accessing
 const result = schema.safeParse(input);
 if (!result.success) {
-  console.error(result.error.errors);
+  console.error(result.error.issues);
   return;
 }
 // Use result.data

@@ -161,6 +161,7 @@ export {
  * @param {boolean} [config.enableCaching=true] - Enable multi-layer cache
  * @param {boolean} [config.enableBlockchain=true] - Enable blockchain receipts
  * @param {boolean} [config.enableGit=false] - Enable Git snapshots
+ * @param {Object} [config.blockchain] - Anchoring config { provider, privateKey, contractAddress }; anchorer is null when omitted
  * @returns {Promise<Object>} Unified engine instance
  */
 export async function createEngine(config = {}) {
@@ -188,7 +189,8 @@ export async function createEngine(config = {}) {
   // Blockchain receipts
   const receipts = enableBlockchain
     ? {
-        anchorer: new ReceiptAnchorer(),
+        // ReceiptAnchorer needs a live provider + key + contract; only build it when configured
+        anchorer: config.blockchain ? new ReceiptAnchorer(config.blockchain) : null,
         merkle: new MerkleProofGenerator(),
       }
     : null;

@@ -14,7 +14,7 @@ import { z } from 'zod';
 export const TransactionDeltaSchema = z.object({
   additions: z.array(z.any()).default([]), // RDF Quad array
   removals: z.array(z.any()).default([]), // RDF Quad array
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   id: z.string().optional(),
   timestamp: z.coerce.date().optional(),
 });

@@ -2,7 +2,7 @@
 /**
  * Periodic Knowledge Hook Evaluation Task
  *
- * Scheduled: Every 5 minutes (*/5 * * * *)
+ * Scheduled: Every 5 minutes (cron: 0-59/5 * * * *)
  *
  * Evaluates all registered knowledge hooks to:
  * - Detect policy violations
@@ -18,7 +18,7 @@ export default defineTask({
   meta: {
     name: 'hooks:evaluate-periodic',
     description: 'Periodic evaluation of all knowledge hooks with SAFLA neural feedback',
-    version: '[VERSION]'
+    version: '1.0.0'
   },
 
   async run({ payload, context: taskContext }) {

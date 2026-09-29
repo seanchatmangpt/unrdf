@@ -12,7 +12,7 @@
  * @module @unrdf/kgc-probe/test/test-receipt-verification
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   simpleHash,
   hashObservation,
@@ -24,13 +24,10 @@ import {
   CHAIN_AGENT_3,
   ALL_CHAINS,
   MERKLE_TREE_AGENT_1,
-  MERKLE_TREE_AGENT_2,
-  MERKLE_TREE_AGENT_3,
   MERKLE_TREE_COMBINED,
   EXPECTED_CHAIN_HASHES,
   VERIFICATION_CASES
 } from './fixtures/receipt-chain-data.mjs';
-import { FROZEN_TIMESTAMP } from './fixtures/frozen-environment.mjs';
 
 // ============================================================================
 // RECEIPT VERIFICATION TESTS
@@ -201,7 +198,6 @@ describe('Receipt Verification', () => {
     it('should verify merkle proof for last leaf', () => {
       const tree = MERKLE_TREE_AGENT_1;
       const lastIndex = tree.leaves.length - 1;
-      const leafHash = tree.leaves[lastIndex];
       const proof = tree.proofs.get(lastIndex);
 
       // Proof may or may not verify depending on tree construction

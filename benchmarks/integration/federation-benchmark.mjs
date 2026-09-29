@@ -11,10 +11,46 @@
  */
 
 import { suite, randomString } from '../framework.mjs';
-import { createFederatedEngine } from '../../packages/federation/src/index.mjs';
+import {
+  buildFederationPlan,
+  executeFederationPlan,
+} from '../../packages/federation/src/index.mjs';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
 
 const { namedNode, literal, quad } = dataFactory;
+
+const NAME = 'http://schema.org/name';
+
+/**
+ * Convert an oxigraph term into the string form the federation planner binds
+ * (IRIs as bare strings, literals as quoted strings).
+ * @param {object} term - RDF term
+ * @returns {string} Binding value
+ */
+function termToBinding(term) {
+  return term.termType === 'Literal' ? JSON.stringify(term.value) : term.value;
+}
+
+/**
+ * Create an in-process federated engine over oxigraph endpoint stores using the
+ * federation query planner (bind-join across sources).
+ * @param {object[]} endpoints - Endpoint configurations from createEndpoints
+ * @returns {{query: function(string): Promise<object>}} Engine
+ */
+function createFederatedEngine(endpoints) {
+  const sources = endpoints.map(endpoint => ({
+    id: endpoint.id,
+    metadata: { predicates: endpoint.predicates, cardinality: endpoint.size },
+    query: async subquery => endpoint.store.query(subquery).map(row => {
+      const out = {};
+      for (const [key, term] of row.entries()) out[key] = termToBinding(term);
+      return out;
+    })
+  }));
+  return {
+    query: async sparql => executeFederationPlan(buildFederationPlan(sparql, sources))
+  };
+}
 
 // =============================================================================
 // Helper Functions
@@ -34,15 +70,17 @@ async function createEndpoints(count, triplesPerStore = 100) {
 
     // Populate store with domain-specific data
     for (let j = 0; j < triplesPerStore; j++) {
-      const subject = namedNode(`http://endpoint${i}.org/resource/${j}`);
-      const predicate = namedNode('http://schema.org/name');
+      const subject = namedNode(`http://shared.org/resource/${j}`);
       const object = literal(`Resource ${i}-${j}`);
-      await store.add(quad(subject, predicate, object));
+      await store.add(quad(subject, namedNode(NAME), object));
+      await store.add(quad(subject, namedNode(`http://endpoint${i}.org/name`), object));
     }
 
     endpoints.push({
       id: `endpoint_${i}`,
       url: `http://endpoint${i}.org/sparql`,
+      predicates: [NAME, `http://endpoint${i}.org/name`],
+      size: triplesPerStore * 2,
       store: store
     });
   }
@@ -80,12 +118,7 @@ export const federationBenchmarks = suite('Federation Performance', {
       return { engine };
     },
     fn: async function() {
-      const query = `
-        SELECT ?s ?o WHERE {
-          ?s <http://schema.org/name> ?o
-        }
-        LIMIT 10
-      `;
+      const query = `SELECT ?s ?o WHERE { ?s <${NAME}> ?o . }`;
       return await this.engine.query(query);
     },
     iterations: 3000,
@@ -99,18 +132,10 @@ export const federationBenchmarks = suite('Federation Performance', {
       return { engine };
     },
     fn: async function() {
-      const query = `
-        SELECT ?s ?o WHERE {
-          SERVICE <http://endpoint0.org/sparql> {
-            ?s <http://schema.org/name> ?o
-          }
-          UNION
-          SERVICE <http://endpoint1.org/sparql> {
-            ?s <http://schema.org/name> ?o
-          }
-        }
-        LIMIT 20
-      `;
+      const query = `SELECT ?s ?a ?b WHERE {
+          ?s <http://endpoint0.org/name> ?a .
+          ?s <http://endpoint1.org/name> ?b .
+        }`;
       return await this.engine.query(query);
     },
     iterations: 2000,
@@ -124,17 +149,10 @@ export const federationBenchmarks = suite('Federation Performance', {
       return { engine };
     },
     fn: async function() {
-      const query = `
-        SELECT ?s ?name1 ?name2 WHERE {
-          SERVICE <http://endpoint0.org/sparql> {
-            ?s <http://schema.org/name> ?name1
-          }
-          SERVICE <http://endpoint1.org/sparql> {
-            ?s <http://schema.org/name> ?name2
-          }
-        }
-        LIMIT 10
-      `;
+      const query = `SELECT ?s ?name1 ?name2 WHERE {
+          ?s <http://endpoint0.org/name> ?name1 .
+          ?s <http://endpoint1.org/name> ?name2 .
+        }`;
       return await this.engine.query(query);
     },
     iterations: 1000,
@@ -149,9 +167,9 @@ export const federationBenchmarks = suite('Federation Performance', {
     },
     fn: async function() {
       const queries = [
-        'SELECT ?s ?o WHERE { ?s <http://schema.org/name> ?o } LIMIT 10',
-        'SELECT ?s ?o WHERE { ?s <http://schema.org/name> ?o } LIMIT 10',
-        'SELECT ?s ?o WHERE { ?s <http://schema.org/name> ?o } LIMIT 10'
+        'SELECT ?s ?o WHERE { ?s <http://endpoint0.org/name> ?o . }',
+        'SELECT ?s ?o WHERE { ?s <http://endpoint1.org/name> ?o . }',
+        'SELECT ?s ?o WHERE { ?s <http://endpoint2.org/name> ?o . }'
       ];
 
       return await Promise.all(queries.map(q => this.engine.query(q)));

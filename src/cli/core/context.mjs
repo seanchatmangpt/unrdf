@@ -7,7 +7,7 @@
  * to a specific sidecar endpoint.
  *
  * @module cli/core/context
- * @version [VERSION]
+ * @version 2.4.0
  * @license MIT
  */
 
@@ -16,9 +16,11 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { existsSync } from 'node:fs';
 import { trace, metrics } from '@opentelemetry/api';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../../package.json').version;
 
-const tracer = trace.getTracer('unrdf-cli-context', '[VERSION]');
-const meter = metrics.getMeter('unrdf-cli-context', '[VERSION]');
+const tracer = trace.getTracer('unrdf-cli-context', PKG_VERSION);
+const meter = metrics.getMeter('unrdf-cli-context', PKG_VERSION);
 
 const contextOperationCounter = meter.createCounter('context.operations', {
   description: 'Number of context operations',

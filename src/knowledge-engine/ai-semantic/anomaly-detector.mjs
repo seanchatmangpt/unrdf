@@ -44,8 +44,8 @@ const AnomalyDetectionResultSchema = z.object({
   anomalies: z.array(AnomalySchema),
   statistics: z.object({
     total: z.number(),
-    bySeverity: z.record(z.number()),
-    byType: z.record(z.number()),
+    bySeverity: z.record(z.string(), z.number()),
+    byType: z.record(z.string(), z.number()),
   }),
   duration: z.number(),
 });

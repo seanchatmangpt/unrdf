@@ -29,13 +29,15 @@ import dependencyAuditor from './dependency-auditor.mjs';
 import licenseChecker from './license-checker.mjs';
 import auditTrailValidator from './audit-trail-validator.mjs';
 import dashboard from './dashboard.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../../package.json').version;
 
 /**
  * CLI configuration
  */
 const CLI_CONFIG = {
   name: 'security',
-  version: '[VERSION]',
+  version: PKG_VERSION,
   description: 'UNRDF Monorepo Security Scanner'
 };
 

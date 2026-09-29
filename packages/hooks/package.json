@@ -57,12 +57,15 @@
     "@unrdf/oxigraph": "workspace:*",
     "citty": "^0.1.6",
     "eyereasoner": "^10",
+    "oxigraph": "^0.5.2",
+    "rdf-validate-shacl": "^0.6.5",
     "sparqljs": "^3.7.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@unrdf/test-utils": "workspace:*",
+    "n3": "^1.26.0",
     "vitest": "^4.0.15"
   },
   "engines": {
@@ -80,5 +83,13 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "@unrdf/daemon": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@unrdf/daemon": {
+      "optional": true
+    }
   }
 }

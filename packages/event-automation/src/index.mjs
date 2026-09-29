@@ -1,7 +1,7 @@
 /**
  * @file Event Automation - Main Entry Point
  * @module @unrdf/event-automation
- * @description Event-driven automation for [VERSION] with delta processing, receipts, and policy enforcement
+ * @description Event-driven automation for v6.1.0 with delta processing, receipts, and policy enforcement
  */
 
 // Engine
@@ -40,11 +40,13 @@ export {
   ReplayOptionsSchema,
   StatisticsSchema,
 } from './schemas.mjs';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Version constant
  */
-export const VERSION = '[VERSION]';
+export const VERSION = PKG_VERSION;
 
 /**
  * Feature flags

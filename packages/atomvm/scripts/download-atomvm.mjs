@@ -11,7 +11,7 @@
  * node scripts/download-atomvm.mjs
  * ```
  *
- * @version [VERSION]
+ * @version agnostic
  * @license MIT
  */
 
@@ -26,18 +26,13 @@ const __dirname = dirname(__filename);
  * AtomVM version to download/verify
  * @constant {string}
  */
-const ATOMVM_VERSION = '[VERSION]';
+import { ATOMVM_VERSION, REQUIRED_ASSET_NAMES } from '../src/assets.mjs';
 
 /**
  * Required WASM assets
  * @constant {Array<string>}
  */
-const REQUIRED_ASSETS = [
-  `AtomVM-web-${ATOMVM_VERSION}.js`,
-  `AtomVM-web-${ATOMVM_VERSION}.wasm`,
-  `AtomVM-node-${ATOMVM_VERSION}.js`,
-  `AtomVM-node-${ATOMVM_VERSION}.wasm`,
-];
+const REQUIRED_ASSETS = REQUIRED_ASSET_NAMES;
 
 /**
  * Get the public directory path

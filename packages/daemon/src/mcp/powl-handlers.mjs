@@ -23,8 +23,8 @@ const PowlToOntologySchema = z.object({
 export async function powl_discover(args) {
   try {
     const { logJson, variant } = PowlDiscoverSchema.parse(args);
-    // Convert JSON to EventLogIR
-    const eventLogIr = JSON.parse(logJson);
+    // Validate that the log is well-formed JSON (throws otherwise)
+    JSON.parse(logJson);
     
     // Discover Model (Simulated)
     const result = {
@@ -42,7 +42,7 @@ export async function powl_discover(args) {
 
 export async function powl_conformance(args) {
   try {
-    const { powlModel, logJson } = PowlConformanceSchema.parse(args);
+    const { logJson } = PowlConformanceSchema.parse(args);
     
     // Parse the event log
     const eventLogIr = JSON.parse(logJson);

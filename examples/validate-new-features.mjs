@@ -22,7 +22,7 @@ import { createLockchainWriter } from '../packages/knowledge-engine/src/lockchai
 import { createEffectSandbox } from '../packages/knowledge-engine/src/effect-sandbox.mjs';
 import { createResolutionLayer } from '../packages/knowledge-engine/src/resolution-layer.mjs';
 import { createQueryOptimizer } from '../packages/knowledge-engine/src/query-optimizer.mjs';
-import { scenario, _expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
+import { scenario, expect as _expect, createTestContext, TestHelpers } from '../packages/test-utils/index.mjs';
 
 console.log('🚀 UNRDF New Features Validation\n');
 
@@ -87,7 +87,7 @@ async function validatePolicyPacks() {
       name: 'test-compliance',
       description: 'Test compliance policy pack',
       author: 'test-user',
-      version: 'latest',
+      version: '1.0.0',
     });
 
     console.log(
@@ -96,7 +96,7 @@ async function validatePolicyPacks() {
 
     // Test compatibility check
     const compatibility = {
-      version: 'latest',
+      version: '1.0.0',
       environment: 'development',
       features: ['sparql', 'shacl'],
     };
@@ -373,13 +373,13 @@ async function validateIntegratedFeatures() {
       meta: {
         name: 'integration-test-hook',
         description: 'Test hook for integration validation',
-        version: 'latest',
+        version: '1.0.0',
       },
       when: {
         kind: 'sparql-ask',
         ref: {
           uri: 'file://test.rq',
-          sha256: 'test-hash',
+          sha256: 'd6672ee3a93d0d6e3c30bdef89f310799c2f3ab781098a9792040d5541ce3ed3',
           mediaType: 'application/sparql-query',
         },
       },

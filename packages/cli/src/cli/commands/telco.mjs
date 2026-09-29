@@ -4,9 +4,7 @@
  */
 
 import { defineCommand } from 'citty';
-import { createStore } from '@unrdf/core';
 import { dataFactory } from '@unrdf/oxigraph';
-import { SemanticSidecarManager } from '@unrdf/daemon';
 import { GitBackbone, KGCStore, freezeUniverse } from '@unrdf/kgc-4d';
 // Assuming hooks are available
 import { HookConditionSchema } from '@unrdf/hooks';
@@ -18,7 +16,7 @@ const tapCommand = defineCommand({
   async run() {
     console.log('📞 Connecting alligator clips to the KGC-4D event stream...');
     try {
-      const store = new KGCStore();
+      new KGCStore(); // constructed for its side effects; instance is not otherwise used
       console.log('📡 Signal acquired on KGCStore. Listening for semantic deltas...');
       console.log(`[${new Date().toISOString()}] INITIALIZED <unrdf:sys:Store> <unrdf:state> "ready"`);
       console.log('✅ Tap successful. (Press Ctrl+C to disconnect)');
@@ -128,6 +126,7 @@ const pbxCommand = defineCommand({
   async run() {
     console.log('🏢 Provisioning Private Branch Exchange (Ephemeral Sidecar)...');
     try {
+      const { SemanticSidecarManager } = await import('@unrdf/daemon');
       const pbx = new SemanticSidecarManager({
         binPath: 'open-ontologies',
         watchdog: false

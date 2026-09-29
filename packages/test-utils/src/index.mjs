@@ -119,9 +119,7 @@ export function generateQuads(count, { base = TEST_BASE, predicates = 10 } = {})
  * @example
  * const store = createTestStore();
  */
-export function createTestStore() {
-  return createStore();
-}
+export { createTestStore } from './helpers.mjs';
 
 /**
  * Create an Oxigraph store pre-loaded with the given quads.
@@ -178,3 +176,15 @@ export {
   assertThrowsCode, assertRejects,
   assertStoreSize, assertStoreContains, assertRollback, assertBindingContains,
 } from './assertions.mjs';
+
+export {
+  // Test workflow / OTEL / timing / snapshot helpers
+  createTestWorkflow, mockOTEL, waitForCondition, createQuad,
+  measureTime, testBatch, snapshotStore, assertSnapshotsEqual,
+} from './helpers.mjs';
+
+export {
+  // Sample data fixtures
+  sampleRDF, sampleWorkflows, sampleCaseData, sampleHooks,
+  sampleQueries, performanceFixtures, errorScenarios,
+} from './fixtures.mjs';

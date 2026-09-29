@@ -621,7 +621,6 @@ export function estimateNoise(epsilon, sensitivity, mechanism = 'laplace') {
 
 export default DifferentialPrivacySPARQL;
 export {
-  PrivacyBudgetManager,
   PrivacyParamsSchema,
   PrivateQueryResultSchema,
   BudgetReceiptSchema,

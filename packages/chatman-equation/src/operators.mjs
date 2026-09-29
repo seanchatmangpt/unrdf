@@ -4,6 +4,8 @@
  * @description Implements μ operators for different market dynamics domains
  */
 
+import { evaluateExpression } from './condition-evaluator.mjs';
+
 /**
  * Evaluates a condition expression against observation data
  * @param {string} condition - Condition expression to evaluate
@@ -11,34 +13,12 @@
  * @returns {boolean} Whether condition is met
  */
 export function evaluateCondition(condition, context) {
-  // Simple expression evaluator for configuration-driven conditions
-  // Supports basic comparisons: >, <, >=, <=, ==, !=, AND, OR
+  // Safe recursive-descent evaluator (no eval / new Function): context values are
+  // bound as data, never spliced into source text.
+  // Supports comparisons (>, <, >=, <=, ==, !=), AND/OR/NOT (or &&, ||, !) and parentheses.
 
   try {
-    // Replace variable names with context values
-    let expression = condition;
-
-    // Handle common patterns
-    for (const [key, value] of Object.entries(context)) {
-      const regex = new RegExp(`\\b${key}\\b`, 'g');
-      if (typeof value === 'number') {
-        expression = expression.replace(regex, String(value));
-      } else if (typeof value === 'boolean') {
-        expression = expression.replace(regex, String(value));
-      } else if (typeof value === 'string') {
-        expression = expression.replace(regex, `"${value}"`);
-      }
-    }
-
-    // Convert logical operators
-    expression = expression
-      .replace(/\bAND\b/g, '&&')
-      .replace(/\bOR\b/g, '||')
-      .replace(/\bNOT\b/g, '!');
-
-    // Evaluate in isolated scope (safe for config-driven expressions)
-    // In production, use a proper expression parser
-    return new Function(`return ${expression}`)();
+    return Boolean(evaluateExpression(condition, context));
   } catch (error) {
     console.warn(`Failed to evaluate condition: ${condition}`, error);
     return false;

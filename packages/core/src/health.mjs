@@ -12,7 +12,7 @@
  *
  * const health = createHealthChecks({
  *   serviceName: 'unrdf-api',
- *   version: '[VERSION]',
+ *   version: '5.0.1',
  *   dependencies: {
  *     database: async () => await db.ping(),
  *     cache: async () => await redis.ping()
@@ -26,6 +26,8 @@
  */
 
 import { z } from 'zod';
+import { createRequire as __createRequire } from 'node:module';
+const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 
 /**
  * Health check status enumeration
@@ -319,7 +321,7 @@ export function createHealthMiddleware(config) {
      */
     prometheus: async (req, res) => {
       const result = await health.prometheus();
-      res.setHeader('Content-Type', 'text/plain; version=[VERSION]');
+      res.setHeader('Content-Type', 'text/plain; version=0.0.4');
       res.status(200).send(result);
     },
   };
@@ -334,7 +336,7 @@ export function createHealthMiddleware(config) {
 export function createUnrdfHealthChecks(options = {}) {
   return createHealthChecks({
     serviceName: options.serviceName || 'unrdf',
-    version: options.version || '[VERSION]',
+    version: options.version || PKG_VERSION,
     environment: process.env.NODE_ENV || 'production',
     ...options,
   });
