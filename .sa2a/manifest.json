@@ -1,0 +1,21 @@
+{
+  "schema": "sa2a-diataxis/v1",
+  "repository": "seanchatmangpt/unrdf",
+  "role": "semantic",
+  "authority": [
+    "engineering-standards/semantic/sa2a-diataxis"
+  ],
+  "generator": "ggen-marketplace/packs/sa2a-diataxis-pack",
+  "capabilities": [
+    "unrdf"
+  ],
+  "depends_on": [
+    "graphlaw",
+    "open-ontologies"
+  ],
+  "generated_paths": [
+    ".sa2a/bootstrap",
+    ".sa2a/manifest.json",
+    ".sa2a/diataxis.ttl"
+  ]
+}
