@@ -22,7 +22,7 @@
   "scripts": {
     "test": "vitest run && pnpm test:node",
     "test:fast": "vitest run && pnpm test:node",
-    "test:node": "node --test test/receipt-verifier.node.test.mjs test/substitution-receipt.test.mjs",
+    "test:node": "node ../../scripts/run-node-tests.mjs test/receipt-verifier.node.test.mjs test/substitution-receipt.test.mjs",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src test",

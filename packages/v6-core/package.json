@@ -32,7 +32,7 @@
     "test": "pnpm test:vitest && pnpm test:node",
     "test:fast": "pnpm test:vitest && pnpm test:node",
     "test:vitest": "vitest run",
-    "test:node": "node --test --test-concurrency=1 test/grammar/closure.test.mjs test/browser/*.test.mjs test/cli/*.test.mjs test/delta/*.test.mjs test/determinism/*.test.mjs test/errors/*.test.mjs test/integration/*.test.mjs test/performance/*.test.mjs test/receipts/receipt-comprehensive.test.mjs test/receipts/tamper-detection.test.mjs test/receipts/with-receipt-node.test.mjs test/security/*.test.mjs test/validation/*.test.mjs",
+    "test:node": "node ../../scripts/run-node-tests.mjs --test-concurrency=1 test/grammar/closure.test.mjs test/browser/*.test.mjs test/cli/*.test.mjs test/delta/*.test.mjs test/determinism/*.test.mjs test/errors/*.test.mjs test/integration/*.test.mjs test/performance/*.test.mjs test/receipts/receipt-comprehensive.test.mjs test/receipts/tamper-detection.test.mjs test/receipts/with-receipt-node.test.mjs test/security/*.test.mjs test/validation/*.test.mjs",
     "lint": "eslint src/**/*.mjs",
     "type-check": "tsc --noEmit --allowJs --checkJs src/**/*.mjs",
     "build": "echo 'No build step for ESM'",

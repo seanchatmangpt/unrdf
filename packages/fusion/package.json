@@ -39,7 +39,7 @@
   "scripts": {
     "prove": "DETERMINISTIC=1 node ../../tools/prove.mjs",
     "test": "vitest run && pnpm run test:node",
-    "test:node": "node --test test/determinism.test.mjs test/kgc-docs-proof-appendix.test.mjs test/resource-manager.test.mjs test/store-e2e.test.mjs",
+    "test:node": "node ../../scripts/run-node-tests.mjs test/determinism.test.mjs test/kgc-docs-proof-appendix.test.mjs test/resource-manager.test.mjs test/store-e2e.test.mjs",
     "test:watch": "vitest"
   }
 }

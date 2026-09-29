@@ -36,7 +36,7 @@
     "test:browser:watch": "vitest --config vitest.browser.config.mjs",
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
-    "test:node": "node --test test/armstrong-kernel-chicago.test.mjs test/innovation-checkpoints.test.mjs test/otp-patterns-chicago.test.mjs test/process-broker.test.mjs test/swarm-cluster.test.mjs",
+    "test:node": "node ../../scripts/run-node-tests.mjs test/armstrong-kernel-chicago.test.mjs test/innovation-checkpoints.test.mjs test/otp-patterns-chicago.test.mjs test/process-broker.test.mjs test/swarm-cluster.test.mjs",
     "test:continuum": "vitest run test/continuum --coverage.enabled=false",
     "build:fixtures": "node scripts/build-tier-fixtures.mjs"
   },
