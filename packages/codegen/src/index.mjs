@@ -21,6 +21,9 @@ export {
   default as generatePropertyTests,
   generateFromSHACL,
 } from './property-test-generator.mjs';
+import { generateTypesFromSPARQL } from './sparql-type-generator.mjs';
+import { MetaTemplateEngine } from './meta-template-engine.mjs';
+import generatePropertyTests from './property-test-generator.mjs';
 import { createRequire as __createRequire } from 'node:module';
 const PKG_VERSION = __createRequire(import.meta.url)('../package.json').version;
 

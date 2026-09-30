@@ -191,10 +191,11 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
           );
         }
 
-        const errorResult = `Failed to parse ontology file: ${filePath}\n` +
-            `  Format: ${fileFormat}${lineInfo}\n` +
-            `  Parse error: ${errorMsg}` +
-            formatSuggestions.join('\n');
+        const errorResult =
+          `Failed to parse ontology file: ${filePath}\n` +
+          `  Format: ${fileFormat}${lineInfo}\n` +
+          `  Parse error: ${errorMsg}` +
+          formatSuggestions.join('\n');
 
         if (filesToLoad.length > 1) {
           console.error(`   ${c.red}ERROR${c.reset} ${errorResult}`);
@@ -223,7 +224,9 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
           const { tripleCount: addCount } = await loadOntology(add, baseDir);
           tripleCount += addCount;
         } catch (err) {
-          console.error(`   ${c.yellow}Warning:${c.reset} Failed to load additional source: ${add.source}`);
+          console.error(
+            `   ${c.yellow}Warning:${c.reset} Failed to load additional source: ${add.source}`
+          );
         }
       }
     }

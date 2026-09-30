@@ -111,7 +111,7 @@ describe('Performance Benchmarks', () => {
 
       expect(duration).toBeLessThan(30000);
       expect(count).toBe(store.size);
-      
+
       await freshEngine.dispose();
     }, 60000);
 

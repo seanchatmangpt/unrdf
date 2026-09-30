@@ -144,7 +144,7 @@ export class DependencyGraph {
      * @param {string} node - Current node
      * @returns {boolean} - True if cycle found
      */
-    const dfs = (node) => {
+    const dfs = node => {
       color.set(node, GRAY);
 
       const dependencies = this.dependencies.get(node) || new Set();
@@ -271,7 +271,7 @@ export class DependencyGraph {
     const visited = new Set();
     const result = new Set();
 
-    const dfs = (node) => {
+    const dfs = node => {
       if (visited.has(node)) {
         return;
       }
@@ -298,7 +298,7 @@ export class DependencyGraph {
     const visited = new Set();
     const result = new Set();
 
-    const dfs = (node) => {
+    const dfs = node => {
       if (visited.has(node)) {
         return;
       }

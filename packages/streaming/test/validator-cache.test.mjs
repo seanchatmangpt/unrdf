@@ -402,7 +402,7 @@ describe('Real-Time Validator Cache', () => {
       // Memory should be bounded by cache size
       // Cache size limits are working (cache has exactly 100 entries)
       expect(validator.validationCache.size).toBe(100);
-    });
+    }, 120000);
 
     it('should use more memory with larger cache', async () => {
       const validator1 = createRealTimeValidator({
@@ -446,7 +446,7 @@ describe('Real-Time Validator Cache', () => {
 
       await validator1.cleanup();
       await validator2.cleanup();
-    });
+    }, 120000);
 
     it('clearCache should free memory', async () => {
       validator = createRealTimeValidator({

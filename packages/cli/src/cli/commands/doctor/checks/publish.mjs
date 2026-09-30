@@ -15,7 +15,7 @@ function checkPackageJson(pkgPath) {
       actual: 'Missing',
       expected: 'Exists',
       critical: true,
-      fix: 'Create a package.json file.'
+      fix: 'Create a package.json file.',
     };
   }
   return { status: 'pass', actual: 'Exists', expected: 'Exists' };
@@ -28,7 +28,7 @@ function checkSemver(pkg) {
       actual: pkg.version || 'Missing',
       expected: 'Valid semver (e.g. 1.0.0)',
       critical: true,
-      fix: 'Update version in package.json to a publishable semver.'
+      fix: 'Update version in package.json to a publishable semver.',
     };
   }
   return { status: 'pass', actual: pkg.version, expected: 'Valid semver' };
@@ -46,14 +46,14 @@ function checkWorkspaceProtocols(pkg) {
       }
     }
   }
-  
+
   if (issues.length > 0) {
     return {
       status: 'fail',
       actual: `${issues.length} workspace protocols found`,
       expected: '0 workspace protocols',
       critical: true,
-      fix: `Resolve 'workspace:*' dependencies before publishing: ${issues.join(', ')}`
+      fix: `Resolve 'workspace:*' dependencies before publishing: ${issues.join(', ')}`,
     };
   }
   return { status: 'pass', actual: '0 workspace protocols', expected: '0 workspace protocols' };
@@ -64,13 +64,13 @@ function checkMetadata(pkg) {
   if (!pkg.license) missing.push('license');
   if (!pkg.repository) missing.push('repository');
   if (!pkg.description) missing.push('description');
-  
+
   if (missing.length > 0) {
     return {
       status: 'warn',
       actual: `Missing: ${missing.join(', ')}`,
       expected: 'Complete metadata',
-      fix: `Add ${missing.join(', ')} to package.json`
+      fix: `Add ${missing.join(', ')} to package.json`,
     };
   }
   return { status: 'pass', actual: 'Complete', expected: 'Complete metadata' };
@@ -78,7 +78,7 @@ function checkMetadata(pkg) {
 
 function checkMainEntry(pkgPath, pkg) {
   if (!pkg.main) return { status: 'pass', actual: 'No main defined', expected: 'Optional' };
-  
+
   const mainPath = path.join(pkgPath, pkg.main);
   if (!fs.existsSync(mainPath)) {
     return {
@@ -86,7 +86,7 @@ function checkMainEntry(pkgPath, pkg) {
       actual: 'Missing',
       expected: `File exists at ${pkg.main}`,
       critical: true,
-      fix: `Ensure build script runs and generates ${pkg.main}`
+      fix: `Ensure build script runs and generates ${pkg.main}`,
     };
   }
   return { status: 'pass', actual: 'Exists', expected: 'File exists' };
@@ -94,9 +94,9 @@ function checkMainEntry(pkgPath, pkg) {
 
 function checkExports(pkgPath, pkg) {
   if (!pkg.exports) return { status: 'pass', actual: 'No exports defined', expected: 'Optional' };
-  
+
   const missing = [];
-  const traverseExports = (obj) => {
+  const traverseExports = obj => {
     if (typeof obj === 'string') {
       if (!fs.existsSync(path.join(pkgPath, obj))) {
         missing.push(obj);
@@ -116,7 +116,7 @@ function checkExports(pkgPath, pkg) {
       actual: `${missing.length} missing export files`,
       expected: 'All export paths exist',
       critical: true,
-      fix: `Ensure build artifacts exist for: ${missing.join(', ')}`
+      fix: `Ensure build artifacts exist for: ${missing.join(', ')}`,
     };
   }
   return { status: 'pass', actual: 'All valid', expected: 'All export paths exist' };
@@ -128,7 +128,7 @@ function checkPublishConfig(pkg) {
       status: 'warn',
       actual: 'Missing or private',
       expected: 'access: "public"',
-      fix: 'Add `"publishConfig": { "access": "public" }` to prevent NPM 402 Payment Required errors for scoped packages.'
+      fix: 'Add `"publishConfig": { "access": "public" }` to prevent NPM 402 Payment Required errors for scoped packages.',
     };
   }
   return { status: 'pass', actual: 'Public access configured', expected: 'access: "public"' };
@@ -140,7 +140,7 @@ function checkFilesArray(pkg) {
       status: 'warn',
       actual: 'Missing or empty',
       expected: 'Explicit files array',
-      fix: 'Define a strict `"files"` array to prevent publishing tests, benchmarks, or Rust source directories.'
+      fix: 'Define a strict `"files"` array to prevent publishing tests, benchmarks, or Rust source directories.',
     };
   }
   return { status: 'pass', actual: 'Defined', expected: 'Explicit files array' };
@@ -148,27 +148,27 @@ function checkFilesArray(pkg) {
 
 function checkTypes(pkgPath, pkg) {
   if (!pkg.types) return { status: 'pass', actual: 'No types defined', expected: 'Optional' };
-  
+
   if (!fs.existsSync(path.join(pkgPath, pkg.types))) {
     return {
       status: 'fail',
       actual: 'Missing',
       expected: `Exists at ${pkg.types}`,
       critical: true,
-      fix: `Run tsc --emitDeclarationOnly to generate ${pkg.types}`
+      fix: `Run tsc --emitDeclarationOnly to generate ${pkg.types}`,
     };
   }
   return { status: 'pass', actual: 'Exists', expected: 'Types file exists' };
 }
 
 function checkEngines(pkg) {
-  const expectedNode = ">=18.0.0";
+  const expectedNode = '>=18.0.0';
   if (!pkg.engines || pkg.engines.node !== expectedNode) {
     return {
       status: 'warn',
       actual: pkg.engines?.node || 'Missing',
       expected: expectedNode,
-      fix: `Set "engines": { "node": "${expectedNode}" } for ecosystem consistency.`
+      fix: `Set "engines": { "node": "${expectedNode}" } for ecosystem consistency.`,
     };
   }
   return { status: 'pass', actual: pkg.engines.node, expected: expectedNode };
@@ -183,11 +183,16 @@ function checkGitDirty(pkgPath) {
         actual: 'Dirty working tree',
         expected: 'Clean working tree',
         critical: true,
-        fix: 'Commit or stash changes before publishing to ensure repeatable builds.'
+        fix: 'Commit or stash changes before publishing to ensure repeatable builds.',
       };
     }
   } catch (e) {
-    return { status: 'warn', actual: 'Git execution failed', expected: 'Clean working tree', fix: 'Ensure git is installed and repository is accessible.' };
+    return {
+      status: 'warn',
+      actual: 'Git execution failed',
+      expected: 'Clean working tree',
+      fix: 'Ensure git is installed and repository is accessible.',
+    };
   }
   return { status: 'pass', actual: 'Clean', expected: 'Clean working tree' };
 }
@@ -196,10 +201,19 @@ function checkNPMTokenPermissions(pkg) {
   try {
     // Check if we are authenticated
     const whoami = execSync('npm whoami', { stdio: 'pipe', encoding: 'utf8' }).trim();
-    
+
     // For scoped packages, ensure the token isn't blindly failing 404s due to Granular Access Token bugs
     if (pkg.name && pkg.name.startsWith('@')) {
       const scope = pkg.name.split('/')[0];
+      // pkg.name comes from the inspected repo's package.json, so never let it reach a shell unchecked
+      if (!/^@[a-z0-9~-][a-z0-9._~-]*$/.test(scope)) {
+        return {
+          status: 'warn',
+          actual: `Authenticated as ${whoami}, but package scope ${JSON.stringify(scope)} is not a valid npm scope`,
+          expected: 'A valid npm scope such as @unrdf',
+          fix: 'Fix the "name" field in package.json.',
+        };
+      }
       try {
         // Ping the registry for the specific package or scope to see if we get a 401/403/404 that indicates a permission issue
         // This is a heuristic: if we are authenticated but the registry rejects an info request for our own scope
@@ -210,7 +224,7 @@ function checkNPMTokenPermissions(pkg) {
           status: 'warn',
           actual: `Authenticated as ${whoami}, but scope access check failed`,
           expected: `Write access to ${scope}`,
-          fix: `If you are using a Granular Access Token and receive 404s on publish, recreate it as a Classic Automation Token, or ensure the scope '${scope}' is explicitly granted.`
+          fix: `If you are using a Granular Access Token and receive 404s on publish, recreate it as a Classic Automation Token, or ensure the scope '${scope}' is explicitly granted.`,
         };
       }
     }
@@ -221,7 +235,7 @@ function checkNPMTokenPermissions(pkg) {
       status: 'warn',
       actual: 'Not authenticated or invalid token',
       expected: 'Valid NPM_TOKEN or npm login',
-      fix: 'Run `npm login` or set a valid NPM_TOKEN environment variable.'
+      fix: 'Run `npm login` or set a valid NPM_TOKEN environment variable.',
     };
   }
 }
@@ -234,7 +248,7 @@ function checkNPMTokenPermissions(pkg) {
 export async function checkPublishReadiness(pkgPath = process.cwd()) {
   const checks = [
     { name: 'Package Manifest', ...checkPackageJson(pkgPath) },
-    { name: 'Git Working Tree', ...checkGitDirty(pkgPath) }
+    { name: 'Git Working Tree', ...checkGitDirty(pkgPath) },
   ];
 
   const pkgJsonPath = path.join(pkgPath, 'package.json');
@@ -258,13 +272,13 @@ export async function checkPublishReadiness(pkgPath = process.cwd()) {
         actual: 'Parse Error',
         expected: 'Valid JSON',
         critical: true,
-        fix: `Fix JSON syntax in package.json: ${e.message}`
+        fix: `Fix JSON syntax in package.json: ${e.message}`,
       });
     }
   }
 
   return {
     category: 'Publication Readiness',
-    checks
+    checks,
   };
 }

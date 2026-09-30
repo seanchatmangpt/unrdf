@@ -213,14 +213,19 @@ export const doctor = defineCommand({
       name: 'publish',
       args: {
         'dry-run': { type: 'boolean', default: true },
-        format: { type: 'string', default: 'human', description: 'Output format: human, json, yaml', alias: 'f' }
+        format: {
+          type: 'string',
+          default: 'human',
+          description: 'Output format: human, json, yaml',
+          alias: 'f',
+        },
       },
       async run({ args }) {
         const categoryResult = await checkPublishReadiness(process.cwd());
         const results = {
           categories: [categoryResult],
           failedChecks: 0,
-          warnings: 0
+          warnings: 0,
         };
 
         for (const check of categoryResult.checks) {
@@ -232,7 +237,7 @@ export const doctor = defineCommand({
         console.log(formatted);
 
         process.exit(results.failedChecks > 0 ? 1 : 0);
-      }
+      },
     }),
   },
   args: {

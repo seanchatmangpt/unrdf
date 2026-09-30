@@ -161,7 +161,6 @@ export class ChatmanOperator {
    * @private
    */
   _generateDarkFieldPatterns(type, observablePatterns, targetSize) {
-    const darkField = [];
     const generators = {
       market: this._generateMarketDarkField.bind(this),
       organizational: this._generateOrganizationalDarkField.bind(this),

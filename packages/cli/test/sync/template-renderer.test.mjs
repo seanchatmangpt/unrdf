@@ -16,7 +16,12 @@ import {
   _DEFAULT_PREFIXES,
   preprocessFrontmatter,
 } from '../../src/cli/commands/sync/template-renderer.mjs';
-import { _FrontmatterParser, getOperationMode, shouldSkip, FRONTMATTER_SCHEMA } from '../../src/lib/frontmatter-parser.mjs';
+import {
+  _FrontmatterParser,
+  getOperationMode,
+  shouldSkip,
+  FRONTMATTER_SCHEMA,
+} from '../../src/lib/frontmatter-parser.mjs';
 
 const SIMPLE_SPARQL_RESULTS = [
   { class: 'User', property: 'name', type: 'string' },
@@ -43,14 +48,17 @@ describe('Template Renderer', () => {
   it('should render template with SPARQL results, context variables, frontmatter merge, and metadata', async () => {
     // SPARQL results rendering
     const sparqlPath = join(templatesDir, 'sparql.njk');
-    await writeFile(sparqlPath, `---
+    await writeFile(
+      sparqlPath,
+      `---
 to: output/api.ts
 description: Generated API file
 ---
 // Generated API
 {% for result in sparql_results %}
 // Class: {{ result.class }}
-{% endfor %}`);
+{% endfor %}`
+    );
 
     const sparqlResult = await renderTemplate(sparqlPath, SIMPLE_SPARQL_RESULTS);
     expect(sparqlResult.content).toContain('// Class: User');
@@ -59,32 +67,41 @@ description: Generated API file
 
     // Context variables
     const ctxPath = join(templatesDir, 'ctx.njk');
-    await writeFile(ctxPath, `---
+    await writeFile(
+      ctxPath,
+      `---
 to: "{{ projectName }}/api.ts"
 ---
-Project: {{ projectName }}`);
+Project: {{ projectName }}`
+    );
     const ctxResult = await renderTemplate(ctxPath, [], { projectName: 'MyApp' });
     expect(ctxResult.content).toContain('Project: MyApp');
     expect(ctxResult.outputPath).toBe('MyApp/api.ts');
 
     // Frontmatter variable merge
     const varPath = join(templatesDir, 'vars.njk');
-    await writeFile(varPath, `---
+    await writeFile(
+      varPath,
+      `---
 to: output/result.txt
 variables:
   defaultVersion: 0.1.0
 ---
-Version: {{ version | default(defaultVersion) }}`);
+Version: {{ version | default(defaultVersion) }}`
+    );
     const varResult = await renderTemplate(varPath, [], { version: '2.0.0' });
     expect(varResult.content).toContain('Version: 2.0.0');
 
     // Metadata in result
     const metaPath = join(templatesDir, 'meta.njk');
-    await writeFile(metaPath, `---
+    await writeFile(
+      metaPath,
+      `---
 to: output/file.ts
 mode: append
 ---
-Content`);
+Content`
+    );
     const metaResult = await renderTemplate(metaPath, []);
     expect(metaResult.mode).toBe('append');
     expect(metaResult.frontmatter.mode).toBe('append');
@@ -92,13 +109,19 @@ Content`);
 
   it('should handle missing template, Nunjucks filters, and filter edge cases', async () => {
     // Missing template
-    await expect(renderTemplate(join(templatesDir, 'nonexistent.njk'), [])).rejects.toThrow('Template not found');
+    await expect(renderTemplate(join(templatesDir, 'nonexistent.njk'), [])).rejects.toThrow(
+      'Template not found'
+    );
 
     // Nunjucks filters
     const env = createNunjucksEnvironment();
     expect(env.renderString('{{ "http://example.org/User" | localName }}', {})).toBe('User');
-    expect(env.renderString('{{ "http://example.org/User" | namespace }}', {})).toBe('http://example.org/');
-    const sorted = env.renderString('{{ (items | sortBy("property")) | length }}', { items: SIMPLE_SPARQL_RESULTS });
+    expect(env.renderString('{{ "http://example.org/User" | namespace }}', {})).toBe(
+      'http://example.org/'
+    );
+    const sorted = env.renderString('{{ (items | sortBy("property")) | length }}', {
+      items: SIMPLE_SPARQL_RESULTS,
+    });
     expect(sorted).toBe('4');
     expect(env.renderString('{{ "my-class-name" | camelCase }}', {})).toBe('myClassName');
     expect(env.renderString('{{ "my-class-name" | pascalCase }}', {})).toBe('MyClassName');
@@ -108,7 +131,11 @@ Content`);
     // Filter edge cases: null/undefined
     expect(env.renderString('{{ val | localName }}', { val: null })).toBe('');
     expect(env.renderString('{{ val | camelCase }}', { val: undefined })).toBe('');
-    expect(env.renderString('{% set grouped = arr | groupBy("key") %}{{ grouped | keys | length }}', { arr: [] })).toBe('0');
+    expect(
+      env.renderString('{% set grouped = arr | groupBy("key") %}{{ grouped | keys | length }}', {
+        arr: [],
+      })
+    ).toBe('0');
   });
 
   it('should handle renderWithOptions dry-run, write, append, skip_existing, and nested dirs', async () => {
@@ -131,7 +158,7 @@ Content`);
     await writeFile(join(outputDir, 'existing.ts'), 'Original', 'utf-8');
     const skipResult = await renderWithOptions(skipPath, [], { dryRun: false, outputDir });
     expect(skipResult.status).toBe('skipped');
-    expect((await readFile(join(outputDir, 'existing.ts'), 'utf-8'))).toBe('Original');
+    expect(await readFile(join(outputDir, 'existing.ts'), 'utf-8')).toBe('Original');
 
     // Append
     const appendPath = join(templatesDir, 'append.njk');
@@ -143,10 +170,76 @@ Content`);
     expect(appendContent).toContain('Line 2');
   });
 
+  it('keeps skip/unless_exists/backup semantics when the target does or does not exist', async () => {
+    // skip_existing creates a missing file and never touches an existing one
+    const skipPath = join(templatesDir, 'skip-missing.njk');
+    await writeFile(skipPath, '---\nto: skip-missing.ts\nmode: skip_existing\n---\nCREATED');
+    const created = await renderWithOptions(skipPath, [], { dryRun: false, outputDir });
+    expect(created.status).toBe('success');
+    expect(await readFile(join(outputDir, 'skip-missing.ts'), 'utf-8')).toContain('CREATED');
+    const again = await renderWithOptions(skipPath, [], { dryRun: false, outputDir });
+    expect(again.status).toBe('skipped');
+    expect(again.reason).toBe('file exists and mode is skip_existing');
+
+    // unless_exists behaves the same and reports its own reason
+    const unlessPath = join(templatesDir, 'unless.njk');
+    await writeFile(unlessPath, '---\nto: unless.ts\nunless_exists: true\n---\nFIRST');
+    expect((await renderWithOptions(unlessPath, [], { dryRun: false, outputDir })).status).toBe(
+      'success'
+    );
+    await writeFile(unlessPath, '---\nto: unless.ts\nunless_exists: true\n---\nSECOND');
+    const unlessAgain = await renderWithOptions(unlessPath, [], { dryRun: false, outputDir });
+    expect(unlessAgain.reason).toBe('file exists and unless_exists is true');
+    expect(await readFile(join(outputDir, 'unless.ts'), 'utf-8')).toContain('FIRST');
+
+    // force overrides both
+    const forced = await renderWithOptions(unlessPath, [], {
+      dryRun: false,
+      outputDir,
+      force: true,
+    });
+    expect(forced.status).toBe('success');
+    expect(await readFile(join(outputDir, 'unless.ts'), 'utf-8')).toContain('SECOND');
+
+    // skipIf regex matches existing content, and does not match when the pattern is absent
+    const skipIfPath = join(templatesDir, 'skipif-regex.njk');
+    await writeFile(skipIfPath, "---\nto: skipif-regex.ts\nskipIf: '/MARK[0-9]+/'\n---\nNEW");
+    await writeFile(join(outputDir, 'skipif-regex.ts'), 'has MARK42 inside', 'utf-8');
+    expect((await renderWithOptions(skipIfPath, [], { dryRun: false, outputDir })).reason).toBe(
+      'skipIf matched'
+    );
+    await writeFile(join(outputDir, 'skipif-regex.ts'), 'nothing here', 'utf-8');
+    expect((await renderWithOptions(skipIfPath, [], { dryRun: false, outputDir })).status).toBe(
+      'success'
+    );
+
+    // backup_before_overwrite keeps the FIRST backup and never overwrites it
+    const bakPath = join(templatesDir, 'bak.njk');
+    await writeFile(bakPath, '---\nto: bak.ts\n---\nV2');
+    await writeFile(join(outputDir, 'bak.ts'), 'V1', 'utf-8');
+    await renderWithOptions(bakPath, [], {
+      dryRun: false,
+      outputDir,
+      backup_before_overwrite: true,
+    });
+    expect(await readFile(join(outputDir, 'bak.ts.bak'), 'utf-8')).toBe('V1');
+    await writeFile(bakPath, '---\nto: bak.ts\n---\nV3');
+    await renderWithOptions(bakPath, [], {
+      dryRun: false,
+      outputDir,
+      backup_before_overwrite: true,
+    });
+    expect(await readFile(join(outputDir, 'bak.ts.bak'), 'utf-8')).toBe('V1');
+    expect(await readFile(join(outputDir, 'bak.ts'), 'utf-8')).toContain('V3');
+  });
+
   it('should support Hygen parity: inject/before, inject/after, prepend, lineAt, skipIf, and frontmatter validation', async () => {
     // inject: true + before: "anchor" — content inserted BEFORE anchor
     const beforePath = join(templatesDir, 'before.njk');
-    await writeFile(beforePath, '---\nto: before.ts\ninject: true\nbefore: "// MARKER"\n---\nINSERTED');
+    await writeFile(
+      beforePath,
+      '---\nto: before.ts\ninject: true\nbefore: "// MARKER"\n---\nINSERTED'
+    );
     await writeFile(join(outputDir, 'before.ts'), 'top\n// MARKER\nbottom', 'utf-8');
     await renderWithOptions(beforePath, [], { dryRun: false, outputDir });
     const beforeContent = await readFile(join(outputDir, 'before.ts'), 'utf-8');
@@ -154,7 +247,10 @@ Content`);
 
     // inject: true + after: "anchor" — content inserted AFTER anchor
     const afterPath = join(templatesDir, 'after.njk');
-    await writeFile(afterPath, '---\nto: after.ts\ninject: true\nafter: "// ANCHOR"\n---\nINSERTED');
+    await writeFile(
+      afterPath,
+      '---\nto: after.ts\ninject: true\nafter: "// ANCHOR"\n---\nINSERTED'
+    );
     await writeFile(join(outputDir, 'after.ts'), 'top\n// ANCHOR\nbottom', 'utf-8');
     await renderWithOptions(afterPath, [], { dryRun: false, outputDir });
     const afterContent = await readFile(join(outputDir, 'after.ts'), 'utf-8');
@@ -193,7 +289,10 @@ Content`);
 
     // skipIf with non-matching value — should NOT skip
     const skipIfNotPath = join(templatesDir, 'skipif-not.njk');
-    await writeFile(skipIfNotPath, '---\nto: skipif-not.ts\nskipIf: "env==production"\n---\nSHOULD WRITE');
+    await writeFile(
+      skipIfNotPath,
+      '---\nto: skipif-not.ts\nskipIf: "env==production"\n---\nSHOULD WRITE'
+    );
     const skipIfNotResult = await renderWithOptions(skipIfNotPath, [], {
       dryRun: false,
       outputDir,
@@ -204,7 +303,10 @@ Content`);
 
     // skip_if (snake_case alias) also works
     const skipIfSnakePath = join(templatesDir, 'skipif-snake.njk');
-    await writeFile(skipIfSnakePath, '---\nto: skipif-snake.ts\nskip_if: "env==production"\n---\nSHOULD SKIP');
+    await writeFile(
+      skipIfSnakePath,
+      '---\nto: skipif-snake.ts\nskip_if: "env==production"\n---\nSHOULD SKIP'
+    );
     const skipIfSnakeResult = await renderWithOptions(skipIfSnakePath, [], {
       dryRun: false,
       outputDir,
@@ -218,15 +320,18 @@ Content`);
     await writeFile(join(outputDir, 'unless.ts'), 'EXISTING', 'utf-8');
     const unlessResult = await renderWithOptions(unlessPath, [], { dryRun: false, outputDir });
     expect(unlessResult.status).toBe('skipped');
-    expect((await readFile(join(outputDir, 'unless.ts'), 'utf-8'))).toBe('EXISTING');
+    expect(await readFile(join(outputDir, 'unless.ts'), 'utf-8')).toBe('EXISTING');
 
     // unless_exists: true — writes when file does NOT exist
     const unlessNewPath = join(templatesDir, 'unless-new.njk');
     await writeFile(unlessNewPath, '---\nto: unless-new.ts\nunless_exists: true\n---\nNEW FILE');
-    const unlessNewResult = await renderWithOptions(unlessNewPath, [], { dryRun: false, outputDir });
+    const unlessNewResult = await renderWithOptions(unlessNewPath, [], {
+      dryRun: false,
+      outputDir,
+    });
     expect(unlessNewResult.status).toBe('success');
     expect(existsSync(join(outputDir, 'unless-new.ts'))).toBe(true);
-    expect((await readFile(join(outputDir, 'unless-new.ts'), 'utf-8'))).toBe('NEW FILE');
+    expect(await readFile(join(outputDir, 'unless-new.ts'), 'utf-8')).toBe('NEW FILE');
 
     // Frontmatter validation rejects missing required field "to"
     const noToPath = join(templatesDir, 'noto.njk');
@@ -236,15 +341,22 @@ Content`);
     // Frontmatter validation rejects unknown keys
     const unknownKeyPath = join(templatesDir, 'unknown.njk');
     await writeFile(unknownKeyPath, '---\nto: out.ts\nbogus_key: value\n---\nContent');
-    await expect(renderTemplate(unknownKeyPath, [])).rejects.toThrow(/Unknown frontmatter key: "bogus_key"/);
+    await expect(renderTemplate(unknownKeyPath, [])).rejects.toThrow(
+      /Unknown frontmatter key: "bogus_key"/
+    );
 
     // Frontmatter validation rejects before without inject
     const beforeNoInjectPath = join(templatesDir, 'before-noinject.njk');
     await writeFile(beforeNoInjectPath, '---\nto: out.ts\nbefore: "pattern"\n---\nContent');
-    await expect(renderTemplate(beforeNoInjectPath, [])).rejects.toThrow(/"before" requires "inject: true"/);
+    await expect(renderTemplate(beforeNoInjectPath, [])).rejects.toThrow(
+      /"before" requires "inject: true"/
+    );
 
     // getOperationMode returns correct modes
-    expect(getOperationMode({ inject: true, before: 'x' })).toEqual({ mode: 'before', anchor: 'x' });
+    expect(getOperationMode({ inject: true, before: 'x' })).toEqual({
+      mode: 'before',
+      anchor: 'x',
+    });
     expect(getOperationMode({ inject: true, after: 'x' })).toEqual({ mode: 'after', anchor: 'x' });
     expect(getOperationMode({ inject: true })).toEqual({ mode: 'inject' });
     expect(getOperationMode({ lineAt: 5 })).toEqual({ mode: 'lineAt', line: 5 });
@@ -278,7 +390,10 @@ Content`);
   it('should read force from frontmatter (Hygen parity)', async () => {
     // force: true in frontmatter should overwrite skip_existing
     const forcePath = join(templatesDir, 'force-fm.njk');
-    await writeFile(forcePath, '---\nto: force-test.ts\nmode: skip_existing\nforce: true\n---\nFORCED');
+    await writeFile(
+      forcePath,
+      '---\nto: force-test.ts\nmode: skip_existing\nforce: true\n---\nFORCED'
+    );
     await writeFile(join(outputDir, 'force-test.ts'), 'ORIGINAL', 'utf-8');
     const result = await renderWithOptions(forcePath, [], { dryRun: false, outputDir });
     expect(result.status).toBe('success');
@@ -290,7 +405,10 @@ Content`);
   it('should support regex patterns for before/after anchors (Hygen parity)', async () => {
     // before with regex pattern
     const regexBeforePath = join(templatesDir, 'regex-before.njk');
-    await writeFile(regexBeforePath, '---\nto: regex-before.ts\ninject: true\nbefore: "/MARKER.*END/"\n---\nINSERTED');
+    await writeFile(
+      regexBeforePath,
+      '---\nto: regex-before.ts\ninject: true\nbefore: "/MARKER.*END/"\n---\nINSERTED'
+    );
     await writeFile(join(outputDir, 'regex-before.ts'), 'top\nMARKER_END\nbottom', 'utf-8');
     await renderWithOptions(regexBeforePath, [], { dryRun: false, outputDir });
     const beforeContent = await readFile(join(outputDir, 'regex-before.ts'), 'utf-8');
@@ -298,7 +416,10 @@ Content`);
 
     // after with regex pattern
     const regexAfterPath = join(templatesDir, 'regex-after.njk');
-    await writeFile(regexAfterPath, '---\nto: regex-after.ts\ninject: true\nafter: "/MARKER.*START/"\n---\nINSERTED');
+    await writeFile(
+      regexAfterPath,
+      '---\nto: regex-after.ts\ninject: true\nafter: "/MARKER.*START/"\n---\nINSERTED'
+    );
     await writeFile(join(outputDir, 'regex-after.ts'), 'top\nMARKER_START\nbottom', 'utf-8');
     await renderWithOptions(regexAfterPath, [], { dryRun: false, outputDir });
     const afterContent = await readFile(join(outputDir, 'regex-after.ts'), 'utf-8');
@@ -307,7 +428,10 @@ Content`);
 
     // String anchor still works (backward compat)
     const stringBeforePath = join(templatesDir, 'string-before.njk');
-    await writeFile(stringBeforePath, '---\nto: string-before.ts\ninject: true\nbefore: "EXACT"\n---\nINSERTED');
+    await writeFile(
+      stringBeforePath,
+      '---\nto: string-before.ts\ninject: true\nbefore: "EXACT"\n---\nINSERTED'
+    );
     await writeFile(join(outputDir, 'string-before.ts'), 'top\nEXACT\nbottom', 'utf-8');
     await renderWithOptions(stringBeforePath, [], { dryRun: false, outputDir });
     const stringContent = await readFile(join(outputDir, 'string-before.ts'), 'utf-8');
@@ -358,7 +482,10 @@ Content`);
   it('should support eof_last directive for trailing newline control', async () => {
     // eof_last: false — trim trailing newline
     const eofFalsePath = join(templatesDir, 'eof-false.njk');
-    await writeFile(eofFalsePath, '---\nto: eof-false.txt\neof_last: false\n---\nLine 1\nLine 2\n  ');
+    await writeFile(
+      eofFalsePath,
+      '---\nto: eof-false.txt\neof_last: false\n---\nLine 1\nLine 2\n  '
+    );
     await renderWithOptions(eofFalsePath, [], { dryRun: false, outputDir });
     const falseContent = await readFile(join(outputDir, 'eof-false.txt'), 'utf-8');
     expect(falseContent.endsWith('\n')).toBe(false);
@@ -375,7 +502,10 @@ Content`);
   it('should support chmod directive to set file permissions (Hygen parity)', async () => {
     const chmodPath = join(templatesDir, 'chmod.njk');
     // Using string '755' for octal permissions
-    await writeFile(chmodPath, '---\nto: chmod-out.sh\nchmod: "755"\n---\n#!/bin/bash\necho "test"');
+    await writeFile(
+      chmodPath,
+      '---\nto: chmod-out.sh\nchmod: "755"\n---\n#!/bin/bash\necho "test"'
+    );
     await renderWithOptions(chmodPath, [], { dryRun: false, outputDir });
     const finalPath = join(outputDir, 'chmod-out.sh');
     const stats = await stat(finalPath);
@@ -396,7 +526,10 @@ Content`);
 
   it('should support inject: true with prepend: true (Hygen parity)', async () => {
     const injectPrependPath = join(templatesDir, 'inject-prepend.njk');
-    await writeFile(injectPrependPath, '---\nto: inject-prepend.ts\ninject: true\nprepend: true\n---\nTOP');
+    await writeFile(
+      injectPrependPath,
+      '---\nto: inject-prepend.ts\ninject: true\nprepend: true\n---\nTOP'
+    );
     await writeFile(join(outputDir, 'inject-prepend.ts'), 'bottom', 'utf-8');
     await renderWithOptions(injectPrependPath, [], { dryRun: false, outputDir });
     const content = await readFile(join(outputDir, 'inject-prepend.ts'), 'utf-8');

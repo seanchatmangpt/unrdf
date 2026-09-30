@@ -246,9 +246,7 @@ export const validateCommand = defineCommand({
           }
 
           if (errors.length > 10) {
-            console.log(
-              `   ${c.dim}... and ${errors.length - 10} more errors${c.reset}\n`
-            );
+            console.log(`   ${c.dim}... and ${errors.length - 10} more errors${c.reset}\n`);
           }
         } else {
           console.log(`   ${c.green}✓${c.reset} No syntax errors\n`);

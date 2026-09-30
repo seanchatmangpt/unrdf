@@ -8,7 +8,12 @@ import { createHash, randomUUID } from 'node:crypto';
  */
 export function canonicalizeJSON(value) {
   if (Array.isArray(value)) return value.map(canonicalizeJSON);
-  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(k => [k, canonicalizeJSON(value[k])]));
+  if (value && typeof value === 'object')
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map(k => [k, canonicalizeJSON(value[k])])
+    );
   if (typeof value === 'bigint') return value.toString();
   return value;
 }
@@ -19,7 +24,9 @@ export function canonicalizeJSON(value) {
  * @returns {string} Hex digest.
  */
 export function hashCanonical(value) {
-  return createHash('sha256').update(JSON.stringify(canonicalizeJSON(value))).digest('hex');
+  return createHash('sha256')
+    .update(JSON.stringify(canonicalizeJSON(value)))
+    .digest('hex');
 }
 
 /**
@@ -56,13 +63,32 @@ export class ReceiptChain {
    * @returns {Object} A copy of the frozen receipt with id, sequence, previous and digest.
    * @throws {TypeError} If action or result is missing.
    */
-  append({ action, inputs = {}, outputs = {}, result, verifier = null, environment = {}, exclusions = [] }) {
+  append({
+    action,
+    inputs = {},
+    outputs = {},
+    result,
+    verifier = null,
+    environment = {},
+    exclusions = [],
+  }) {
     if (!action || !result) throw new TypeError('action and result are required');
     const previous = this.#receipts.at(-1)?.digest ?? null;
     const body = canonicalizeJSON({
-      schema: 'unrdf.execution-receipt/1', id: randomUUID(), sequence: this.#receipts.length + 1,
-      subject: this.subject, source: this.source, authority: this.authority, previous,
-      action, inputs, outputs, result, verifier, environment, exclusions,
+      schema: 'unrdf.execution-receipt/1',
+      id: randomUUID(),
+      sequence: this.#receipts.length + 1,
+      subject: this.subject,
+      source: this.source,
+      authority: this.authority,
+      previous,
+      action,
+      inputs,
+      outputs,
+      result,
+      verifier,
+      environment,
+      exclusions,
     });
     const receipt = Object.freeze({ ...body, digest: hashCanonical(body) });
     this.#receipts.push(receipt);
@@ -73,12 +99,16 @@ export class ReceiptChain {
    * List all receipts.
    * @returns {Object[]} Copies of the receipts in order.
    */
-  list() { return this.#receipts.map(receipt => structuredClone(receipt)); }
+  list() {
+    return this.#receipts.map(receipt => structuredClone(receipt));
+  }
   /**
    * Get the latest receipt.
    * @returns {Object|null} A copy of the last receipt, or null if empty.
    */
-  head() { return this.#receipts.length ? structuredClone(this.#receipts.at(-1)) : null; }
+  head() {
+    return this.#receipts.length ? structuredClone(this.#receipts.at(-1)) : null;
+  }
 
   /**
    * Check each receipt's digest, previous link and sequence number.
@@ -89,12 +119,19 @@ export class ReceiptChain {
     for (let i = 0; i < this.#receipts.length; i++) {
       const receipt = this.#receipts[i];
       const { digest, ...body } = receipt;
-      if (hashCanonical(body) !== digest) failures.push({ sequence: i + 1, code: 'DIGEST_MISMATCH' });
+      if (hashCanonical(body) !== digest)
+        failures.push({ sequence: i + 1, code: 'DIGEST_MISMATCH' });
       const expected = i === 0 ? null : this.#receipts[i - 1].digest;
-      if (receipt.previous !== expected) failures.push({ sequence: i + 1, code: 'PREVIOUS_MISMATCH' });
+      if (receipt.previous !== expected)
+        failures.push({ sequence: i + 1, code: 'PREVIOUS_MISMATCH' });
       if (receipt.sequence !== i + 1) failures.push({ sequence: i + 1, code: 'SEQUENCE_MISMATCH' });
     }
-    return { valid: failures.length === 0, count: this.#receipts.length, head: this.head()?.digest ?? null, failures };
+    return {
+      valid: failures.length === 0,
+      count: this.#receipts.length,
+      head: this.head()?.digest ?? null,
+      failures,
+    };
   }
 
   /**
@@ -102,7 +139,14 @@ export class ReceiptChain {
    * @returns {Object} Canonical export object.
    */
   export() {
-    return canonicalizeJSON({ schema: 'unrdf.receipt-chain/1', subject: this.subject, source: this.source, authority: this.authority, receipts: this.list(), verification: this.verify() });
+    return canonicalizeJSON({
+      schema: 'unrdf.receipt-chain/1',
+      subject: this.subject,
+      source: this.source,
+      authority: this.authority,
+      receipts: this.list(),
+      verification: this.verify(),
+    });
   }
 }
 
@@ -117,12 +161,22 @@ export class ReceiptChain {
 export function compareReplay(first, second, { ignore = ['id'] } = {}) {
   const omit = value => {
     if (Array.isArray(value)) return value.map(omit);
-    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).filter(([k]) => !ignore.includes(k)).map(([k, v]) => [k, omit(v)]));
+    if (value && typeof value === 'object')
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(([k]) => !ignore.includes(k))
+          .map(([k, v]) => [k, omit(v)])
+      );
     return value;
   };
   const firstDigest = hashCanonical(omit(first));
   const secondDigest = hashCanonical(omit(second));
-  return { match: firstDigest === secondDigest, firstDigest, secondDigest, state: firstDigest === secondDigest ? 'REPLAY_MATCH' : 'REPLAY_DIFFERENCE' };
+  return {
+    match: firstDigest === secondDigest,
+    firstDigest,
+    secondDigest,
+    state: firstDigest === secondDigest ? 'REPLAY_MATCH' : 'REPLAY_DIFFERENCE',
+  };
 }
 
 /**
@@ -130,4 +184,6 @@ export function compareReplay(first, second, { ignore = ['id'] } = {}) {
  * @param {Object} options - Options forwarded to the constructor.
  * @returns {ReceiptChain} A new chain.
  */
-export function createReceiptChain(options) { return new ReceiptChain(options); }
+export function createReceiptChain(options) {
+  return new ReceiptChain(options);
+}

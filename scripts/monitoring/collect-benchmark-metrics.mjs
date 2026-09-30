@@ -4,7 +4,7 @@
  * Aggregates performance data for tracking
  */
 
-import { readFileSync, writeFileSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 /**
@@ -65,7 +65,7 @@ function collectBenchmarks() {
   };
 
   for (const file of benchmarkFiles) {
-    if (!require('fs').existsSync(file)) {
+    if (!existsSync(file)) {
       console.warn(`Benchmark file not found: ${file}`);
       continue;
     }

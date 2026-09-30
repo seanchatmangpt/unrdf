@@ -45,13 +45,16 @@ export class ReceiptTracker {
       const receiptId = `receipt-${delta.id}-${Date.now()}-${this.receiptCounter++}`;
       const operation = options.operation || 'process';
       const entityType = options.entityType || 'Delta';
+      // One timestamp for both the hash and the stored receipt, or verifyReceipt()
+      // fails whenever the clock ticks over between the two reads.
+      const timestamp = Date.now();
 
       // Generate receipt hash
       const hash = await this._generateReceiptHash({
         deltaId: delta.id,
         operation,
         entityType,
-        timestamp: Date.now(),
+        timestamp,
       });
 
       const receipt = {
@@ -59,7 +62,7 @@ export class ReceiptTracker {
         deltaId: delta.id,
         operation,
         entityType,
-        timestamp: Date.now(),
+        timestamp,
         hash,
         metadata: {
           duration: performance.now() - startTime,

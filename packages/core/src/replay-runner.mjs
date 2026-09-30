@@ -11,11 +11,10 @@ import { compareReplay } from './receipt-chain.mjs';
  * @returns {Promise<Object>} `{runs, match, firstDigest, secondDigest, state}`.
  * @throws {TypeError} If operation is not a function.
  */
-export async function replay(operation, {
-  setup = async () => ({}),
-  cleanup = async () => {},
-  normalize = value => value,
-} = {}) {
+export async function replay(
+  operation,
+  { setup = async () => ({}), cleanup = async () => {}, normalize = value => value } = {}
+) {
   if (typeof operation !== 'function') throw new TypeError('operation must be a function');
   const runs = [];
   for (let attempt = 1; attempt <= 2; attempt++) {

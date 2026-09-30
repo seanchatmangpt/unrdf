@@ -7,7 +7,7 @@
  * OTEL exporter, Docker containers, and optional services.
  */
 
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,7 +39,10 @@ async function checkFederationPeers() {
     };
   }
 
-  const peerList = peers.split(',').map(p => p.trim()).filter(Boolean);
+  const peerList = peers
+    .split(',')
+    .map(p => p.trim())
+    .filter(Boolean);
   if (peerList.length === 0) {
     return {
       status: 'fail',
@@ -197,7 +200,7 @@ function checkRedis() {
     const port = process.env.REDIS_PORT || 6379;
 
     // Try to connect to Redis using redis-cli (if available)
-    execSync(`redis-cli -h ${host} -p ${port} ping`, {
+    execFileSync('redis-cli', ['-h', String(host), '-p', String(port), 'ping'], {
       encoding: 'utf-8',
       stdio: 'pipe',
       timeout: 2000,
@@ -227,7 +230,7 @@ function checkPostgres() {
     const port = process.env.PGPORT || 5432;
 
     // Try to connect to PostgreSQL using psql (if available)
-    execSync(`psql -h ${host} -p ${port} -c 'SELECT 1'`, {
+    execFileSync('psql', ['-h', String(host), '-p', String(port), '-c', 'SELECT 1'], {
       encoding: 'utf-8',
       stdio: 'pipe',
       timeout: 2000,

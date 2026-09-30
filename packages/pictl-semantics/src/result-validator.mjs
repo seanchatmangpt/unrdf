@@ -58,7 +58,9 @@ export const ShapeConstraintSchema = z.object({
   shapeUri: z.string().min(1),
   name: z.string(),
   description: z.string().optional(),
-  nodeKind: z.enum(['IRI', 'BlankNode', 'Literal', 'BlankNodeOrIRI', 'BlankNodeOrLiteral', 'IRIOrLiteral']).optional(),
+  nodeKind: z
+    .enum(['IRI', 'BlankNode', 'Literal', 'BlankNodeOrIRI', 'BlankNodeOrLiteral', 'IRIOrLiteral'])
+    .optional(),
   datatype: z.string().optional(),
   minInclusive: z.number().optional(),
   maxInclusive: z.number().optional(),

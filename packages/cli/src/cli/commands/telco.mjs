@@ -18,18 +18,20 @@ const tapCommand = defineCommand({
     try {
       new KGCStore(); // constructed for its side effects; instance is not otherwise used
       console.log('📡 Signal acquired on KGCStore. Listening for semantic deltas...');
-      console.log(`[${new Date().toISOString()}] INITIALIZED <unrdf:sys:Store> <unrdf:state> "ready"`);
+      console.log(
+        `[${new Date().toISOString()}] INITIALIZED <unrdf:sys:Store> <unrdf:state> "ready"`
+      );
       console.log('✅ Tap successful. (Press Ctrl+C to disconnect)');
     } catch (e) {
       console.error(`❌ Tap failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const toneCommand = defineCommand({
   meta: { name: 'tone', description: 'Inject a semantic control tone (RDF-star) to seize control' },
   args: {
-    hz: { type: 'string', required: true, description: 'Tone frequency (e.g. 2600)' }
+    hz: { type: 'string', required: true, description: 'Tone frequency (e.g. 2600)' },
   },
   async run({ args }) {
     console.log(`🔊 Emitting ${args.hz} Hz control tone into the semantic substrate...`);
@@ -39,24 +41,26 @@ const toneCommand = defineCommand({
         dataFactory.namedNode('unrdf:sys:emitTone'),
         dataFactory.literal(args.hz)
       );
-      
+
       // Simulate RDF-star assertion for CLI output since basic dataFactory might reject nested quads
       const subjectStr = `<< ${toneTriple.subject.value} ${toneTriple.predicate.value} "${toneTriple.object.value}" >>`;
 
-      console.log(`✨ Injected elevated assertion: ${subjectStr} unrdf:sys:requiresElevation "true"`);
+      console.log(
+        `✨ Injected elevated assertion: ${subjectStr} unrdf:sys:requiresElevation "true"`
+      );
       console.log('✅ Trunk secured. Control hook triggered.');
     } catch (e) {
       console.error(`❌ Tone injection failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const routeCommand = defineCommand({
-// ... rest same ...
+  // ... rest same ...
   meta: { name: 'route', description: 'Manually override a PoWL v2 process transition' },
   args: {
     instance: { type: 'string', required: true, description: 'Process instance ID' },
-    node: { type: 'string', required: true, description: 'Target node to transition to' }
+    node: { type: 'string', required: true, description: 'Target node to transition to' },
   },
   async run({ args }) {
     console.log(`🔌 Operator patching instance ${args.instance} to node ${args.node}...`);
@@ -66,14 +70,14 @@ const routeCommand = defineCommand({
     } catch (e) {
       console.error(`❌ Route override failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const traceCommand = defineCommand({
   meta: { name: 'trace', description: 'Run a deep causal line trace across KGC-4D and OTEL' },
   args: {
     uri: { type: 'string', required: true, description: 'Entity URI to trace' },
-    dir: { type: 'string', description: 'KGC-4D Git Directory', default: '.' }
+    dir: { type: 'string', description: 'KGC-4D Git Directory', default: '.' },
   },
   async run({ args }) {
     console.log(`🕵️  Tracing origin path for ${args.uri}...`);
@@ -85,14 +89,14 @@ const traceCommand = defineCommand({
     } catch (e) {
       console.error(`❌ Trace failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const spliceCommand = defineCommand({
   meta: { name: 'splice', description: 'Semantically merge two divergent Universe forks' },
   args: {
     forkA: { type: 'string', required: true, description: 'Fork A ID' },
-    forkB: { type: 'string', required: true, description: 'Fork B ID' }
+    forkB: { type: 'string', required: true, description: 'Fork B ID' },
   },
   async run({ args }) {
     console.log(`🪢 Splicing ${args.forkA} and ${args.forkB} together...`);
@@ -102,7 +106,7 @@ const spliceCommand = defineCommand({
     } catch (e) {
       console.error(`❌ Splice failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const phreakCommand = defineCommand({
@@ -118,7 +122,7 @@ const phreakCommand = defineCommand({
     } catch (e) {
       console.error(`❌ Phreak sequence failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const pbxCommand = defineCommand({
@@ -129,14 +133,16 @@ const pbxCommand = defineCommand({
       const { SemanticSidecarManager } = await import('@unrdf/daemon');
       const pbx = new SemanticSidecarManager({
         binPath: 'open-ontologies',
-        watchdog: false
+        watchdog: false,
       });
       console.log(`🚀 Isolated Open Ontologies backend spinning up...`);
-      console.log(`✅ PBX Active (federation: DISABLED). Instantiated Sidecar ID: ${pbx.id || 'ephemeral'}`);
+      console.log(
+        `✅ PBX Active (federation: DISABLED). Instantiated Sidecar ID: ${pbx.id || 'ephemeral'}`
+      );
     } catch (e) {
       console.error(`❌ PBX initialization failed: ${e.message}`);
     }
-  }
+  },
 });
 
 const hangupCommand = defineCommand({
@@ -153,7 +159,7 @@ const hangupCommand = defineCommand({
     } catch (e) {
       console.error(`❌ Hangup failed: ${e.message}`);
     }
-  }
+  },
 });
 
 /**

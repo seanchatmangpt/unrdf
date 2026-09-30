@@ -268,13 +268,13 @@ rules = []
 
     // PHASE 3: Gate 1 (Input Validation) - Block projection if source ontology lacks SpecKit receipt
     if (args.harden) {
-       const { parseConfig } = await import('./sync/config-parser.mjs');
-       const config = await parseConfig(configPath);
-       const ontologySource = config.ontology?.source;
-       
-       if (ontologySource && existsSync(ontologySource)) {
-         const { readFile } = await import('fs/promises');
-         // Fallback for missing @unrdf/receipts
+      const { parseConfig } = await import('./sync/config-parser.mjs');
+      const config = await parseConfig(configPath);
+      const ontologySource = config.ontology?.source;
+
+      if (ontologySource && existsSync(ontologySource)) {
+        const { readFile } = await import('fs/promises');
+        // Fallback for missing @unrdf/receipts
         let verifyPQReceipt;
         try {
           const pkg = await import('@unrdf/receipts');
@@ -282,41 +282,43 @@ rules = []
         } catch (e) {
           verifyPQReceipt = async () => false;
         }
-         const { UnrdfStore } = await import('@unrdf/core');
+        const { UnrdfStore } = await import('@unrdf/core');
 
-         const receiptPath = `${ontologySource}.receipt.json`;
-         if (!existsSync(receiptPath)) {
-           console.error('Error: [Gate 1] Constitutional Integrity Failure');
-           console.error(`Missing PQ receipt for hardened projection: ${receiptPath}`);
-           process.exit(1);
-         }
+        const receiptPath = `${ontologySource}.receipt.json`;
+        if (!existsSync(receiptPath)) {
+          console.error('Error: [Gate 1] Constitutional Integrity Failure');
+          console.error(`Missing PQ receipt for hardened projection: ${receiptPath}`);
+          process.exit(1);
+        }
 
-         try {
-           const receipt = JSON.parse(await readFile(receiptPath, 'utf-8'));
-           const ontologyContent = await readFile(ontologySource, 'utf-8');
-           
-           // Load ontology into store to get canonical triples for verification
-           const store = new UnrdfStore();
-           store.load(ontologyContent, { format: 'turtle' });
-           const triples = store.match();
+        try {
+          const receipt = JSON.parse(await readFile(receiptPath, 'utf-8'));
+          const ontologyContent = await readFile(ontologySource, 'utf-8');
 
-           const verification = await verifyPQReceipt(receipt, triples);
-           if (!verification.valid || !verification.signatureValid) {
-             console.error('Error: [Gate 1] Constitutional Integrity Failure');
-             console.error(`Invalid PQ receipt for: ${ontologySource}`);
-             console.error(`Reason: ${verification.reason || 'Signature verification failed'}`);
-             process.exit(1);
-           }
-           
-           if (args.verbose) {
-             console.log(`[Gate 1] Verified PQ receipt for ${ontologySource} (${verification.signatureScheme})`);
-           }
-         } catch (err) {
-           console.error('Error: [Gate 1] Constitutional Integrity Failure');
-           console.error(`Verification process failed: ${err.message}`);
-           process.exit(1);
-         }
-       }
+          // Load ontology into store to get canonical triples for verification
+          const store = new UnrdfStore();
+          store.load(ontologyContent, { format: 'turtle' });
+          const triples = store.match();
+
+          const verification = await verifyPQReceipt(receipt, triples);
+          if (!verification.valid || !verification.signatureValid) {
+            console.error('Error: [Gate 1] Constitutional Integrity Failure');
+            console.error(`Invalid PQ receipt for: ${ontologySource}`);
+            console.error(`Reason: ${verification.reason || 'Signature verification failed'}`);
+            process.exit(1);
+          }
+
+          if (args.verbose) {
+            console.log(
+              `[Gate 1] Verified PQ receipt for ${ontologySource} (${verification.signatureScheme})`
+            );
+          }
+        } catch (err) {
+          console.error('Error: [Gate 1] Constitutional Integrity Failure');
+          console.error(`Verification process failed: ${err.message}`);
+          process.exit(1);
+        }
+      }
     }
 
     try {

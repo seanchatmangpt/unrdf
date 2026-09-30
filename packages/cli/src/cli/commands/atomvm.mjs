@@ -151,19 +151,19 @@ const executeCommand = defineCommand({
     try {
       // Import runtime from atomvm package
       const { AtomVMNodeRuntime } = await import(join(ATOMVM_PKG_DIR, 'src/node-runtime.mjs'));
-      
+
       const runtime = new AtomVMNodeRuntime({
-        log: (msg) => {
+        log: msg => {
           if (verbose || !msg.startsWith('[Runtime]')) {
             console.log(msg);
           }
         },
-        errorLog: (msg) => console.error(`${c.red}[Error]${c.reset} ${msg}`),
+        errorLog: msg => console.error(`${c.red}[Error]${c.reset} ${msg}`),
       });
 
       await runtime.load();
       const result = await runtime.execute(absoluteAvmPath);
-      
+
       console.log(`\n${c.green}✅ Execution complete (exit code: ${result.exitCode})${c.reset}`);
     } catch (error) {
       console.error(`${c.red}Execution failed:${c.reset} ${error.message}`);

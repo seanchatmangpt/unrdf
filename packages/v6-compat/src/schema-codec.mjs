@@ -15,23 +15,67 @@ const PRIMITIVE_ZOD = Object.freeze({
   Date: 'z.date()',
 });
 
+/**
+ * Convert a single-quoted string literal token to an equivalent double-quoted JSON string.
+ * Walks the body so existing escapes are preserved (a bare regex replace of `"` would leave
+ * backslashes unescaped and mis-handle `\\'` and `\\"`).
+ * @param {string} token - Single-quoted literal including the surrounding quotes
+ * @returns {string} Double-quoted string literal safe for JSON.parse
+ */
+function singleToDoubleQuoted(token) {
+  const body = token.slice(1, -1);
+  let out = '';
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (ch === '\\') {
+      const next = body[++i];
+      out += next === "'" ? "'" : `\\${next}`;
+    } else {
+      out += ch === '"' ? '\\"' : ch;
+    }
+  }
+  return `"${out}"`;
+}
+
 function tokenize(source) {
   const tokens = [];
   let index = 0;
   while (index < source.length) {
     const rest = source.slice(index);
     const whitespace = rest.match(/^\s+/);
-    if (whitespace) { index += whitespace[0].length; continue; }
+    if (whitespace) {
+      index += whitespace[0].length;
+      continue;
+    }
     const comment = rest.match(/^(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)/);
-    if (comment) { index += comment[0].length; continue; }
+    if (comment) {
+      index += comment[0].length;
+      continue;
+    }
     const string = rest.match(/^(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/);
-    if (string) { tokens.push({ type: 'string', value: string[0] }); index += string[0].length; continue; }
+    if (string) {
+      tokens.push({ type: 'string', value: string[0] });
+      index += string[0].length;
+      continue;
+    }
     const number = rest.match(/^-?(?:\d+\.\d+|\d+)(?:[eE][+-]?\d+)?/);
-    if (number) { tokens.push({ type: 'number', value: number[0] }); index += number[0].length; continue; }
+    if (number) {
+      tokens.push({ type: 'number', value: number[0] });
+      index += number[0].length;
+      continue;
+    }
     const identifier = rest.match(/^[A-Za-z_$][\w$]*/);
-    if (identifier) { tokens.push({ type: 'identifier', value: identifier[0] }); index += identifier[0].length; continue; }
+    if (identifier) {
+      tokens.push({ type: 'identifier', value: identifier[0] });
+      index += identifier[0].length;
+      continue;
+    }
     const operator = rest.match(/^(?:=>|\[\]|[{}[\]()<>,|&?:;])/);
-    if (operator) { tokens.push({ type: 'punctuation', value: operator[0] }); index += operator[0].length; continue; }
+    if (operator) {
+      tokens.push({ type: 'punctuation', value: operator[0] });
+      index += operator[0].length;
+      continue;
+    }
     throw new SyntaxError(`Unexpected token near ${JSON.stringify(rest.slice(0, 20))}`);
   }
   tokens.push({ type: 'eof', value: '<eof>' });
@@ -39,16 +83,33 @@ function tokenize(source) {
 }
 
 class Parser {
-  constructor(source) { this.tokens = tokenize(source); this.index = 0; }
-  peek(value) { const token = this.tokens[this.index]; return value == null ? token : token.value === value; }
+  constructor(source) {
+    this.tokens = tokenize(source);
+    this.index = 0;
+  }
+  peek(value) {
+    const token = this.tokens[this.index];
+    return value == null ? token : token.value === value;
+  }
   consume(value) {
     const token = this.tokens[this.index];
-    if (value != null && token.value !== value) throw new SyntaxError(`Expected ${value}, found ${token.value}`);
+    if (value != null && token.value !== value)
+      throw new SyntaxError(`Expected ${value}, found ${token.value}`);
     this.index += 1;
     return token;
   }
-  maybe(value) { if (this.peek(value)) { this.index += 1; return true; } return false; }
-  parse() { const type = this.parseUnion(); if (!this.peek('<eof>')) throw new SyntaxError(`Unexpected token ${this.peek().value}`); return type; }
+  maybe(value) {
+    if (this.peek(value)) {
+      this.index += 1;
+      return true;
+    }
+    return false;
+  }
+  parse() {
+    const type = this.parseUnion();
+    if (!this.peek('<eof>')) throw new SyntaxError(`Unexpected token ${this.peek().value}`);
+    return type;
+  }
   parseUnion() {
     const types = [this.parseIntersection()];
     while (this.maybe('|')) types.push(this.parseIntersection());
@@ -65,12 +126,17 @@ class Parser {
     return node;
   }
   parsePrimary() {
-    if (this.maybe('(')) { const type = this.parseUnion(); this.consume(')'); return type; }
+    if (this.maybe('(')) {
+      const type = this.parseUnion();
+      this.consume(')');
+      return type;
+    }
     if (this.maybe('[')) {
       const elements = [];
       let rest = null;
       while (!this.peek(']')) {
-        if (this.peek().type === 'identifier' && this.peek().value === '...') throw new SyntaxError('Tuple rest tokenization unsupported');
+        if (this.peek().type === 'identifier' && this.peek().value === '...')
+          throw new SyntaxError('Tuple rest tokenization unsupported');
         elements.push(this.parseUnion());
         if (!this.maybe(',')) break;
       }
@@ -79,17 +145,27 @@ class Parser {
     }
     if (this.maybe('{')) return this.parseObject();
     const token = this.consume();
-    if (token.type === 'string') return { kind: 'literal', value: JSON.parse(token.value[0] === "'" ? `"${token.value.slice(1, -1).replace(/"/g, '\\"')}"` : token.value) };
+    if (token.type === 'string')
+      return {
+        kind: 'literal',
+        value: JSON.parse(token.value[0] === "'" ? singleToDoubleQuoted(token.value) : token.value),
+      };
     if (token.type === 'number') return { kind: 'literal', value: Number(token.value) };
     if (token.type !== 'identifier') throw new SyntaxError(`Expected type, found ${token.value}`);
-    if (token.value === 'true' || token.value === 'false') return { kind: 'literal', value: token.value === 'true' };
+    if (token.value === 'true' || token.value === 'false')
+      return { kind: 'literal', value: token.value === 'true' };
     if (this.maybe('<')) {
       const args = [];
-      while (!this.peek('>')) { args.push(this.parseUnion()); if (!this.maybe(',')) break; }
+      while (!this.peek('>')) {
+        args.push(this.parseUnion());
+        if (!this.maybe(',')) break;
+      }
       this.consume('>');
       return { kind: 'generic', name: token.value, args };
     }
-    return PRIMITIVE_ZOD[token.value] ? { kind: 'primitive', name: token.value } : { kind: 'reference', name: token.value };
+    return PRIMITIVE_ZOD[token.value]
+      ? { kind: 'primitive', name: token.value }
+      : { kind: 'reference', name: token.value };
   }
   parseObject() {
     const properties = [];
@@ -105,7 +181,8 @@ class Parser {
         indexSignature = { keyName, keyType, valueType };
       } else {
         const nameToken = this.consume();
-        if (!['identifier', 'string'].includes(nameToken.type)) throw new SyntaxError(`Invalid object property ${nameToken.value}`);
+        if (!['identifier', 'string'].includes(nameToken.type))
+          throw new SyntaxError(`Invalid object property ${nameToken.value}`);
         const name = nameToken.type === 'string' ? nameToken.value.slice(1, -1) : nameToken.value;
         const optional = this.maybe('?');
         this.consume(':');
@@ -125,9 +202,13 @@ class Parser {
  * @returns {object} AST node whose `kind` is primitive, literal, reference, array, tuple, union, intersection, object or generic.
  * @throws {SyntaxError} If the source is malformed or has trailing input.
  */
-export function parseTypeScriptType(source) { return new Parser(source).parse(); }
+export function parseTypeScriptType(source) {
+  return new Parser(source).parse();
+}
 
-function identifier(value) { return /^[A-Za-z_$][\w$]*$/.test(value) ? value : JSON.stringify(value); }
+function identifier(value) {
+  return /^[A-Za-z_$][\w$]*$/.test(value) ? value : JSON.stringify(value);
+}
 
 /**
  * Convert a type AST (from parseTypeScriptType) into Zod source code.
@@ -139,35 +220,62 @@ function identifier(value) { return /^[A-Za-z_$][\w$]*$/.test(value) ? value : J
 export function typeAstToZod(ast, options = {}) {
   const reference = options.reference || (name => `z.lazy(() => ${name}Schema)`);
   switch (ast.kind) {
-    case 'primitive': return PRIMITIVE_ZOD[ast.name];
-    case 'literal': return `z.literal(${JSON.stringify(ast.value)})`;
-    case 'reference': return reference(ast.name);
-    case 'array': return `z.array(${typeAstToZod(ast.element, options)})`;
-    case 'tuple': return `z.tuple([${ast.elements.map(type => typeAstToZod(type, options)).join(', ')}])`;
-    case 'union': return `z.union([${ast.types.map(type => typeAstToZod(type, options)).join(', ')}])`;
-    case 'intersection': return ast.types.map(type => typeAstToZod(type, options)).reduce((left, right) => `z.intersection(${left}, ${right})`);
+    case 'primitive':
+      return PRIMITIVE_ZOD[ast.name];
+    case 'literal':
+      return `z.literal(${JSON.stringify(ast.value)})`;
+    case 'reference':
+      return reference(ast.name);
+    case 'array':
+      return `z.array(${typeAstToZod(ast.element, options)})`;
+    case 'tuple':
+      return `z.tuple([${ast.elements.map(type => typeAstToZod(type, options)).join(', ')}])`;
+    case 'union':
+      return `z.union([${ast.types.map(type => typeAstToZod(type, options)).join(', ')}])`;
+    case 'intersection':
+      return ast.types
+        .map(type => typeAstToZod(type, options))
+        .reduce((left, right) => `z.intersection(${left}, ${right})`);
     case 'object': {
-      const fields = ast.properties.map(property => `${identifier(property.name)}: ${typeAstToZod(property.type, options)}${property.optional ? '.optional()' : ''}`);
+      const fields = ast.properties.map(
+        property =>
+          `${identifier(property.name)}: ${typeAstToZod(property.type, options)}${property.optional ? '.optional()' : ''}`
+      );
       let result = `z.object({ ${fields.join(', ')} })`;
-      if (ast.indexSignature) result += `.catchall(${typeAstToZod(ast.indexSignature.valueType, options)})`;
+      if (ast.indexSignature)
+        result += `.catchall(${typeAstToZod(ast.indexSignature.valueType, options)})`;
       return result;
     }
     case 'generic': {
       const args = ast.args.map(type => typeAstToZod(type, options));
       switch (ast.name) {
-        case 'Array': case 'ReadonlyArray': return `z.array(${args[0] || 'z.unknown()'})`;
-        case 'Promise': return `z.promise(${args[0] || 'z.unknown()'})`;
-        case 'Set': return `z.set(${args[0] || 'z.unknown()'})`;
-        case 'Map': return `z.map(${args[0] || 'z.unknown()'}, ${args[1] || 'z.unknown()'})`;
-        case 'Record': return args.length > 1 ? `z.record(${args[0]}, ${args[1]})` : `z.record(z.string(), ${args[0] || 'z.unknown()'})`;
-        case 'Partial': return `${args[0]}.partial()`;
-        case 'Required': return `${args[0]}.required()`;
-        case 'Readonly': return `${args[0]}.readonly()`;
-        case 'Nullable': return `${args[0]}.nullable()`;
-        default: return reference(ast.name);
+        case 'Array':
+        case 'ReadonlyArray':
+          return `z.array(${args[0] || 'z.unknown()'})`;
+        case 'Promise':
+          return `z.promise(${args[0] || 'z.unknown()'})`;
+        case 'Set':
+          return `z.set(${args[0] || 'z.unknown()'})`;
+        case 'Map':
+          return `z.map(${args[0] || 'z.unknown()'}, ${args[1] || 'z.unknown()'})`;
+        case 'Record':
+          return args.length > 1
+            ? `z.record(${args[0]}, ${args[1]})`
+            : `z.record(z.string(), ${args[0] || 'z.unknown()'})`;
+        case 'Partial':
+          return `${args[0]}.partial()`;
+        case 'Required':
+          return `${args[0]}.required()`;
+        case 'Readonly':
+          return `${args[0]}.readonly()`;
+        case 'Nullable':
+          return `${args[0]}.nullable()`;
+        default:
+          return reference(ast.name);
       }
     }
-    default: throw new Error(`Unsupported TypeScript AST kind ${ast.kind}`);
+    default:
+      throw new Error(`Unsupported TypeScript AST kind ${ast.kind}`);
   }
 }
 
@@ -177,9 +285,13 @@ export function typeAstToZod(ast, options = {}) {
  * @param {{reference?: function(string): string}} [options] - Options forwarded to typeAstToZod.
  * @returns {string} Zod expression source text.
  */
-export function typeScriptTypeToZod(source, options = {}) { return typeAstToZod(parseTypeScriptType(source), options); }
+export function typeScriptTypeToZod(source, options = {}) {
+  return typeAstToZod(parseTypeScriptType(source), options);
+}
 
-function definition(schema) { return schema?._def || schema?.def || {}; }
+function definition(schema) {
+  return schema?._def || schema?.def || {};
+}
 function rawType(schema) {
   const def = definition(schema);
   const value = def.typeName || def.type || schema?.type || schema?.constructor?.name || '';
@@ -208,8 +320,12 @@ function literalValue(schema) {
   if (schema?.value !== undefined) return schema.value;
   return undefined;
 }
-function optionalSchema(schema) { return ['optional', 'default', 'catch'].includes(rawType(schema)); }
-function parenthesize(type) { return /[|&]/.test(type) ? `(${type})` : type; }
+function optionalSchema(schema) {
+  return ['optional', 'default', 'catch'].includes(rawType(schema));
+}
+function parenthesize(type) {
+  return /[|&]/.test(type) ? `(${type})` : type;
+}
 
 /**
  * Render a Zod schema as a TypeScript type expression, guarding against recursive schemas.
@@ -226,23 +342,49 @@ export function zodSchemaToTypeScript(schema, options = {}, context = { active: 
   context.active.add(schema);
   try {
     switch (type) {
-      case 'string': return 'string';
-      case 'number': case 'nan': return 'number';
-      case 'boolean': return 'boolean';
-      case 'bigint': return 'bigint';
-      case 'symbol': return 'symbol';
-      case 'date': return 'Date';
-      case 'null': return 'null';
-      case 'undefined': return 'undefined';
-      case 'void': return 'void';
-      case 'never': return 'never';
-      case 'any': return 'any';
-      case 'unknown': return 'unknown';
-      case 'literal': return JSON.stringify(literalValue(schema));
-      case 'enum': case 'nativeenum': return enumValues(schema).map(value => JSON.stringify(value)).join(' | ') || 'never';
-      case 'optional': return `${zodSchemaToTypeScript(unwrap(schema), options, context)} | undefined`;
-      case 'nullable': return `${zodSchemaToTypeScript(unwrap(schema), options, context)} | null`;
-      case 'default': case 'catch': case 'readonly': case 'brand': case 'branded':
+      case 'string':
+        return 'string';
+      case 'number':
+      case 'nan':
+        return 'number';
+      case 'boolean':
+        return 'boolean';
+      case 'bigint':
+        return 'bigint';
+      case 'symbol':
+        return 'symbol';
+      case 'date':
+        return 'Date';
+      case 'null':
+        return 'null';
+      case 'undefined':
+        return 'undefined';
+      case 'void':
+        return 'void';
+      case 'never':
+        return 'never';
+      case 'any':
+        return 'any';
+      case 'unknown':
+        return 'unknown';
+      case 'literal':
+        return JSON.stringify(literalValue(schema));
+      case 'enum':
+      case 'nativeenum':
+        return (
+          enumValues(schema)
+            .map(value => JSON.stringify(value))
+            .join(' | ') || 'never'
+        );
+      case 'optional':
+        return `${zodSchemaToTypeScript(unwrap(schema), options, context)} | undefined`;
+      case 'nullable':
+        return `${zodSchemaToTypeScript(unwrap(schema), options, context)} | null`;
+      case 'default':
+      case 'catch':
+      case 'readonly':
+      case 'brand':
+      case 'branded':
         return zodSchemaToTypeScript(unwrap(schema), options, context);
       case 'array': {
         const element = def.element || def.type || schema.element;
@@ -253,11 +395,19 @@ export function zodSchemaToTypeScript(schema, options = {}, context = { active: 
         const rest = def.rest ? `, ...${zodSchemaToTypeScript(def.rest, options, context)}[]` : '';
         return `[${items.map(item => zodSchemaToTypeScript(item, options, context)).join(', ')}${rest}]`;
       }
-      case 'union': case 'discriminatedunion': {
-        const optionsList = def.options instanceof Map ? [...def.options.values()] : def.options || schema.options || [];
-        return optionsList.map(item => zodSchemaToTypeScript(item, options, context)).join(' | ') || 'never';
+      case 'union':
+      case 'discriminatedunion': {
+        const optionsList =
+          def.options instanceof Map
+            ? [...def.options.values()]
+            : def.options || schema.options || [];
+        return (
+          optionsList.map(item => zodSchemaToTypeScript(item, options, context)).join(' | ') ||
+          'never'
+        );
       }
-      case 'intersection': return `${zodSchemaToTypeScript(def.left, options, context)} & ${zodSchemaToTypeScript(def.right, options, context)}`;
+      case 'intersection':
+        return `${zodSchemaToTypeScript(def.left, options, context)} & ${zodSchemaToTypeScript(def.right, options, context)}`;
       case 'object': {
         const fields = Object.entries(objectShape(schema)).map(([name, field]) => {
           const optional = optionalSchema(field);
@@ -265,7 +415,10 @@ export function zodSchemaToTypeScript(schema, options = {}, context = { active: 
           if (optional) fieldType = fieldType.replace(/\s*\|\s*undefined$/, '');
           return `${identifier(name)}${optional ? '?' : ''}: ${fieldType};`;
         });
-        const catchall = def.catchall && rawType(def.catchall) !== 'never' ? ` [key: string]: ${zodSchemaToTypeScript(def.catchall, options, context)};` : '';
+        const catchall =
+          def.catchall && rawType(def.catchall) !== 'never'
+            ? ` [key: string]: ${zodSchemaToTypeScript(def.catchall, options, context)};`
+            : '';
         return `{ ${fields.join(' ')}${catchall} }`;
       }
       case 'record': {
@@ -273,23 +426,38 @@ export function zodSchemaToTypeScript(schema, options = {}, context = { active: 
         const value = def.valueType || def.value || def.type;
         return `Record<${zodSchemaToTypeScript(key, options, context)}, ${zodSchemaToTypeScript(value, options, context)}>`;
       }
-      case 'map': return `Map<${zodSchemaToTypeScript(def.keyType || def.key, options, context)}, ${zodSchemaToTypeScript(def.valueType || def.value, options, context)}>`;
-      case 'set': return `Set<${zodSchemaToTypeScript(def.valueType || def.value || def.type, options, context)}>`;
-      case 'promise': return `Promise<${zodSchemaToTypeScript(unwrap(schema), options, context)}>`;
+      case 'map':
+        return `Map<${zodSchemaToTypeScript(def.keyType || def.key, options, context)}, ${zodSchemaToTypeScript(def.valueType || def.value, options, context)}>`;
+      case 'set':
+        return `Set<${zodSchemaToTypeScript(def.valueType || def.value || def.type, options, context)}>`;
+      case 'promise':
+        return `Promise<${zodSchemaToTypeScript(unwrap(schema), options, context)}>`;
       case 'lazy': {
         const getter = def.getter || schema.getter;
         if (options.lazyName) return options.lazyName(schema);
-        return typeof getter === 'function' ? zodSchemaToTypeScript(getter(), options, context) : 'unknown';
+        return typeof getter === 'function'
+          ? zodSchemaToTypeScript(getter(), options, context)
+          : 'unknown';
       }
-      case 'effects': case 'transform': case 'pipeline': case 'pipe':
-        return zodSchemaToTypeScript(def.schema || def.out || def.output || def.in || def.input, options, context);
+      case 'effects':
+      case 'transform':
+      case 'pipeline':
+      case 'pipe':
+        return zodSchemaToTypeScript(
+          def.schema || def.out || def.output || def.in || def.input,
+          options,
+          context
+        );
       case 'function': {
         const args = def.args?._def?.items || def.input?._def?.items || [];
         const output = def.returns || def.output;
         return `(${args.map((arg, index) => `arg${index}: ${zodSchemaToTypeScript(arg, options, context)}`).join(', ')}) => ${zodSchemaToTypeScript(output, options, context)}`;
       }
-      case 'template_literal': case 'templateliteral': return 'string';
-      case 'custom': return options.customType || 'unknown';
+      case 'template_literal':
+      case 'templateliteral':
+        return 'string';
+      case 'custom':
+        return options.customType || 'unknown';
       default:
         if (schema?._output !== undefined) return 'unknown';
         return options.unknownType || 'unknown';

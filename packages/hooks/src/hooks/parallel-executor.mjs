@@ -31,10 +31,12 @@ export const HookExecutionTaskSchema = z.object({
     adds: z.array(z.any()).optional(),
     deletes: z.array(z.any()).optional(),
   }),
-  options: z.object({
-    env: z.any().optional(),
-    debug: z.boolean().optional(),
-  }).optional(),
+  options: z
+    .object({
+      env: z.any().optional(),
+      debug: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /* ========================================================================= */
@@ -110,7 +112,10 @@ export class ParallelHookExecutor {
 
     if (hasCycle) {
       if (this.fallbackToSequential) {
-        console.warn('Cycle detected in hook dependencies, falling back to sequential execution:', cycle);
+        console.warn(
+          'Cycle detected in hook dependencies, falling back to sequential execution:',
+          cycle
+        );
         return this._executeSequential(hooks, store, delta, options);
       } else {
         throw new Error('Cycle detected in hook dependencies: ' + cycle.join(' -> '));

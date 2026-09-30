@@ -221,7 +221,7 @@ export class FormationTheorems {
    * @returns {Object} Formation
    * @private
    */
-  _applyStrategicCanvasTheorem(artifact, options) {
+  _applyStrategicCanvasTheorem(artifact, _options) {
     const formation = [];
     const strategicMoves = [];
 
@@ -267,7 +267,7 @@ export class FormationTheorems {
    * @returns {Object} Formation
    * @private
    */
-  _applyFourActionsTheorem(artifact, options) {
+  _applyFourActionsTheorem(artifact, _options) {
     const formation = [];
     const strategicMoves = [];
 

@@ -44,7 +44,11 @@ function checkCoverage() {
     if (match) {
       const coverage = parseFloat(match[1]);
       if (coverage >= 80) {
-        return { status: 'pass', actual: `${coverage.toFixed(1)}% coverage`, expected: '>=80% coverage' };
+        return {
+          status: 'pass',
+          actual: `${coverage.toFixed(1)}% coverage`,
+          expected: '>=80% coverage',
+        };
       }
       return {
         status: 'fail',
@@ -99,7 +103,11 @@ function checkFileSize() {
       if (lines > 500) violations.push({ file, lines });
     }
     if (violations.length === 0) {
-      return { status: 'pass', actual: 'No file size violations', expected: 'All files <=500 lines' };
+      return {
+        status: 'pass',
+        actual: 'No file size violations',
+        expected: 'All files <=500 lines',
+      };
     }
     return {
       status: 'warn',
@@ -122,7 +130,11 @@ function checkNoTypeScript() {
   try {
     const tsFiles = glob.sync('**/*.{ts,tsx,d.ts}', { cwd: projectRoot, ignore: COMMON_IGNORES });
     if (tsFiles.length === 0) {
-      return { status: 'pass', actual: 'No TypeScript files found', expected: 'Pure ESM + JSDoc project' };
+      return {
+        status: 'pass',
+        actual: 'No TypeScript files found',
+        expected: 'Pure ESM + JSDoc project',
+      };
     }
     return {
       status: 'fail',
@@ -147,7 +159,8 @@ function checkN3Imports() {
     const violations = [];
     for (const file of files) {
       const content = readFileSync(join(projectRoot, file), 'utf-8');
-      const hasN3Import = /^import\s+.*from\s+['"]n3['"]/m.test(content) ||
+      const hasN3Import =
+        /^import\s+.*from\s+['"]n3['"]/m.test(content) ||
         /^const\s+.*=\s+require\(['"]n3['"]\)/m.test(content);
       if (hasN3Import && !file.includes('n3-justified-only')) violations.push(file);
     }
@@ -243,7 +256,8 @@ function checkSkippedTests() {
     const skippedFiles = [];
     for (const file of testFiles) {
       const code = stripNonCode(readFileSync(join(projectRoot, file), 'utf-8'));
-      const matches = code.match(/\b(?:describe|it|test)\.skip\s*\(|\b(?:xit|xdescribe)\s*\(/g) || [];
+      const matches =
+        code.match(/\b(?:describe|it|test)\.skip\s*\(|\b(?:xit|xdescribe)\s*\(/g) || [];
       if (matches.length > 0) {
         skippedCount += matches.length;
         skippedFiles.push({ file, count: matches.length });

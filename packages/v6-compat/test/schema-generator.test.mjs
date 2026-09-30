@@ -100,7 +100,7 @@ describe('P0-002: Zod Schema Generator', () => {
       expect(functions.length).toBeGreaterThan(0);
 
       // Check that functions have required metadata
-      functions.forEach((fn) => {
+      functions.forEach(fn => {
         expect(fn.name).toBeDefined();
         expect(fn.jsdoc).toBeDefined();
         expect(Array.isArray(fn.params)).toBe(true);
@@ -120,5 +120,29 @@ describe('P0-002: Zod Schema Generator', () => {
       expect(schema).toContain("import { z } from 'zod'");
       expect(schema).toContain('DO NOT EDIT MANUALLY');
     }
+  });
+  describe('generateSchemaFromFunction robustness', () => {
+    it('parses signatures with defaults, optionals and return types', () => {
+      const result = generateSchemaFromFunction(
+        "async function g(id: string, n?: number, m: number = 5): Promise<string> { return 'x'; }"
+      );
+      expect(result.params).toBe(
+        'z.tuple([z.string(), z.number().optional(), z.number().optional()])'
+      );
+      expect(result.returns).toBe('z.string()');
+    });
+
+    it('rejects input without a complete signature', () => {
+      expect(() => generateSchemaFromFunction('const x = 1')).toThrow(SyntaxError);
+      expect(() => generateSchemaFromFunction('function q(a: string')).toThrow(SyntaxError);
+    });
+
+    it('does not backtrack polynomially on adversarial source text', () => {
+      // The previous single-regex parser took seconds here; the bound is deliberately loose.
+      const hostile = 'function\t0('.repeat(50000);
+      const start = performance.now();
+      expect(() => generateSchemaFromFunction(hostile)).not.toThrow(RangeError);
+      expect(performance.now() - start).toBeLessThan(1000);
+    });
   });
 });

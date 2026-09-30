@@ -1,0 +1,28 @@
+name: Setup workspace
+description: >
+  Single definition of the pnpm + Node toolchain and the frozen-lockfile install used by every CI job.
+  The pnpm store is cached by actions/setup-node (keyed on pnpm-lock.yaml), so a cache miss only costs
+  download time, never correctness.
+inputs:
+  node-version:
+    description: Node.js version
+    default: '22'
+  pnpm-version:
+    description: pnpm version
+    default: '10.15.0'
+  install:
+    description: Run `pnpm install --frozen-lockfile` ('false' to skip, e.g. for jobs that only need Node)
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+    - if: inputs.install == 'true'
+      shell: bash
+      run: pnpm install --frozen-lockfile --prefer-offline

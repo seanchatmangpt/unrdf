@@ -59,7 +59,9 @@ export class ExecutionPlan {
     const completed = [];
     for (const id of this.order()) {
       const step = this.#steps.get(id);
-      const inputs = Object.fromEntries(step.dependsOn.map(dependency => [dependency, results.get(dependency)]));
+      const inputs = Object.fromEntries(
+        step.dependsOn.map(dependency => [dependency, results.get(dependency)])
+      );
       try {
         const output = await step.run({ context, inputs });
         if (step.verify) {
@@ -68,12 +70,26 @@ export class ExecutionPlan {
         }
         results.set(id, output);
         completed.push(id);
-        receiptChain?.append({ action: id, inputs, outputs: output, result: 'success', verifier: step.verify?.name || null });
+        receiptChain?.append({
+          action: id,
+          inputs,
+          outputs: output,
+          result: 'success',
+          verifier: step.verify?.name || null,
+        });
       } catch (error) {
-        receiptChain?.append({ action: id, inputs, outputs: {}, result: 'error', verifier: step.verify?.name || null, exclusions: [error.message] });
+        receiptChain?.append({
+          action: id,
+          inputs,
+          outputs: {},
+          result: 'error',
+          verifier: step.verify?.name || null,
+          exclusions: [error.message],
+        });
         for (const completedId of completed.reverse()) {
           const completedStep = this.#steps.get(completedId);
-          if (completedStep.compensate) await completedStep.compensate(results.get(completedId), { context });
+          if (completedStep.compensate)
+            await completedStep.compensate(results.get(completedId), { context });
         }
         if (stopOnFailure) throw error;
         results.set(id, { error: error.message });
@@ -87,4 +103,6 @@ export class ExecutionPlan {
  * Create an empty execution plan.
  * @returns {ExecutionPlan} A new plan.
  */
-export function createExecutionPlan() { return new ExecutionPlan(); }
+export function createExecutionPlan() {
+  return new ExecutionPlan();
+}

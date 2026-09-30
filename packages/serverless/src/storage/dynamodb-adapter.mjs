@@ -48,7 +48,9 @@ export class DynamoDBAdapter {
    *
    * @returns {string} Table name.
    */
-  get tableName() { return this.#store.tableName; }
+  get tableName() {
+    return this.#store.tableName;
+  }
 
   /**
    * Validates and stores one triple.
@@ -69,7 +71,10 @@ export class DynamoDBAdapter {
    * @returns {Promise<number|{written: number, retries: number}>} Count written, or `{written, retries}` when `detailed` is set.
    */
   async addTriples(triples, batchSizeOrOptions = 25) {
-    const options = typeof batchSizeOrOptions === 'number' ? { batchSize: batchSizeOrOptions } : batchSizeOrOptions;
+    const options =
+      typeof batchSizeOrOptions === 'number'
+        ? { batchSize: batchSizeOrOptions }
+        : batchSizeOrOptions;
     const values = Array.from(triples || [], triple => TripleSchema.parse(triple));
     const result = await this.#store.addTriples(values, options);
     return options?.detailed ? result : result.written;
@@ -195,7 +200,9 @@ export function createAdapterFromEnv(options = {}) {
     const require = createRequire(import.meta.url);
     sdk = require('@aws-sdk/client-dynamodb');
   } catch (error) {
-    throw new Error('@aws-sdk/client-dynamodb is required when no DynamoDB client is supplied', { cause: error });
+    throw new Error('@aws-sdk/client-dynamodb is required when no DynamoDB client is supplied', {
+      cause: error,
+    });
   }
   const client = new sdk.DynamoDBClient({
     region: options.region || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,

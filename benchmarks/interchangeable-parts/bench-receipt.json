@@ -7,7 +7,7 @@
     "kind": "git-blob-ids-of-measured-kernel-sources",
     "kernel_blobs": {
       "packages/atomvm/src/part-admission-broker.mjs": "89d6a5319f1f21cc08efd64d9101f2a561df591c",
-      "packages/core/src/interchangeable-part.mjs": "b54b68abf257e2a79f43a31a451c7c40d54d21bb",
+      "packages/core/src/interchangeable-part.mjs": "f59831b3b0f7a8b25046347e78fa412a67f0db80",
       "packages/receipts/src/substitution-receipt.mjs": "2699876f1e41cb68e40d4c0017f24a5db1261287"
     }
   },
@@ -19,98 +19,98 @@
   "runs": [
     {
       "verifyPartPassport": {
-        "medianNs": 21286,
-        "p99Ns": 68440,
-        "opsPerSec": 46979
+        "medianNs": 37799,
+        "p99Ns": 133118,
+        "opsPerSec": 26456
       },
       "evaluateSubstitution.admit": {
-        "medianNs": 49153,
-        "p99Ns": 237639,
-        "opsPerSec": 20345
+        "medianNs": 88655,
+        "p99Ns": 672178,
+        "opsPerSec": 11280
       },
       "evaluateSubstitution.forgedRefuse": {
-        "medianNs": 42626,
-        "p99Ns": 108465,
-        "opsPerSec": 23460
+        "medianNs": 119668,
+        "p99Ns": 461634,
+        "opsPerSec": 8356
       },
       "createSubstitutionReceipt": {
-        "medianNs": 59318,
-        "p99Ns": 298054,
-        "opsPerSec": 16858
+        "medianNs": 119851,
+        "p99Ns": 679787,
+        "opsPerSec": 8344
       },
       "verifySubstitutionReceipt": {
-        "medianNs": 56379,
-        "p99Ns": 299581,
-        "opsPerSec": 17737
+        "medianNs": 103450,
+        "p99Ns": 614223,
+        "opsPerSec": 9667
       },
       "broker.execute": {
-        "medianNs": 110147,
-        "p99Ns": 387923,
-        "opsPerSec": 9079
+        "medianNs": 205436,
+        "p99Ns": 800148,
+        "opsPerSec": 4868
       }
     },
     {
       "verifyPartPassport": {
-        "medianNs": 21265,
-        "p99Ns": 72531,
-        "opsPerSec": 47026
+        "medianNs": 38965,
+        "p99Ns": 174037,
+        "opsPerSec": 25664
       },
       "evaluateSubstitution.admit": {
-        "medianNs": 49280,
-        "p99Ns": 285108,
-        "opsPerSec": 20292
+        "medianNs": 91733,
+        "p99Ns": 588712,
+        "opsPerSec": 10901
       },
       "evaluateSubstitution.forgedRefuse": {
-        "medianNs": 43067,
-        "p99Ns": 113584,
-        "opsPerSec": 23220
+        "medianNs": 137584,
+        "p99Ns": 598651,
+        "opsPerSec": 7268
       },
       "createSubstitutionReceipt": {
-        "medianNs": 59783,
-        "p99Ns": 298758,
-        "opsPerSec": 16727
+        "medianNs": 114978,
+        "p99Ns": 650822,
+        "opsPerSec": 8697
       },
       "verifySubstitutionReceipt": {
-        "medianNs": 56677,
-        "p99Ns": 287290,
-        "opsPerSec": 17644
+        "medianNs": 105355,
+        "p99Ns": 616373,
+        "opsPerSec": 9492
       },
       "broker.execute": {
-        "medianNs": 111248,
-        "p99Ns": 392136,
-        "opsPerSec": 8989
+        "medianNs": 211396,
+        "p99Ns": 907174,
+        "opsPerSec": 4730
       }
     },
     {
       "verifyPartPassport": {
-        "medianNs": 21298,
-        "p99Ns": 68864,
-        "opsPerSec": 46953
+        "medianNs": 37539,
+        "p99Ns": 128225,
+        "opsPerSec": 26639
       },
       "evaluateSubstitution.admit": {
-        "medianNs": 49469,
-        "p99Ns": 308116,
-        "opsPerSec": 20215
+        "medianNs": 86747,
+        "p99Ns": 590945,
+        "opsPerSec": 11528
       },
       "evaluateSubstitution.forgedRefuse": {
-        "medianNs": 42814,
-        "p99Ns": 119125,
-        "opsPerSec": 23357
+        "medianNs": 79617,
+        "p99Ns": 334649,
+        "opsPerSec": 12560
       },
       "createSubstitutionReceipt": {
-        "medianNs": 59472,
-        "p99Ns": 289212,
-        "opsPerSec": 16815
+        "medianNs": 188733,
+        "p99Ns": 771175,
+        "opsPerSec": 5298
       },
       "verifySubstitutionReceipt": {
-        "medianNs": 56358,
-        "p99Ns": 284713,
-        "opsPerSec": 17744
+        "medianNs": 104495,
+        "p99Ns": 1178233,
+        "opsPerSec": 9570
       },
       "broker.execute": {
-        "medianNs": 109911,
-        "p99Ns": 365291,
-        "opsPerSec": 9098
+        "medianNs": 214453,
+        "p99Ns": 923750,
+        "opsPerSec": 4663
       }
     }
   ],
@@ -129,12 +129,12 @@
   "bounds": {
     "rule": "medianNs <= 10 x max observed median over 3 host runs, rounded up to 1 microsecond; wrong verdicts refuse regardless of speed",
     "medianNs": {
-      "verifyPartPassport": 213000,
-      "evaluateSubstitution.admit": 495000,
-      "evaluateSubstitution.forgedRefuse": 431000,
-      "createSubstitutionReceipt": 598000,
-      "verifySubstitutionReceipt": 567000,
-      "broker.execute": 1113000
+      "verifyPartPassport": 390000,
+      "evaluateSubstitution.admit": 918000,
+      "evaluateSubstitution.forgedRefuse": 1376000,
+      "createSubstitutionReceipt": 1888000,
+      "verifySubstitutionReceipt": 1054000,
+      "broker.execute": 2145000
     }
   }
 }

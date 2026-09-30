@@ -28,6 +28,7 @@ jobs:
   validate:
     name: Validate Release
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       version: ${{ steps.extract_version.outputs.version }}
       is_prerelease: ${{ steps.check_prerelease.outputs.is_prerelease }}
@@ -78,6 +79,7 @@ jobs:
   test:
     name: Test Suite
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: validate
     strategy:
       matrix:
@@ -121,6 +123,7 @@ jobs:
   build:
     name: Build Release
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, test]
     steps:
       - name: Checkout code
@@ -179,6 +182,7 @@ jobs:
   publish-npm:
     name: Publish to npm
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, build]
     environment: production
     permissions:
@@ -254,6 +258,7 @@ jobs:
   docker:
     name: Docker Build & Push
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, build]
     if: needs.validate.outputs.is_prerelease == 'false'
     permissions:
@@ -299,6 +304,7 @@ jobs:
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, build, publish-npm]
     permissions:
       contents: write
@@ -352,6 +358,7 @@ jobs:
   validate-release:
     name: Validate Release
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, publish-npm, github-release]
     steps:
       - name: Verify npm package
@@ -383,6 +390,7 @@ jobs:
   notify:
     name: Release Notification
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     needs: [validate, validate-release]
     if: always()
     steps:

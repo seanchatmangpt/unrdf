@@ -13,7 +13,7 @@
  *
  * const cache = new MultiLayerCache({
  *   store: createStore(),
- *   redisUrl: 'redis://localhost:6379',
+ *   redisUrl: process.env.REDIS_URL,
  *   l1MaxSize: 1000,
  *   l2TtlSeconds: 300
  * });

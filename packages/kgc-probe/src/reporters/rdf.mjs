@@ -371,7 +371,7 @@ export async function convertToTurtle(observations) {
   // Serialize to Turtle using N3.js Writer
   // Note: Oxigraph dump() may not support 'turtle' format in all versions
   // So we extract quads and use N3.js Writer for compatibility
-  const N3 = await import('n3');
+  const N3 = await import('n3'); // n3 justified: Turtle serialization (Oxigraph dump lacks turtle in some versions)
   const writer = new N3.Writer({ format: 'Turtle' });
 
   // Get all quads from store

@@ -11,7 +11,8 @@ export class BoundedCache {
    * @throws {TypeError} If `maxSize` or `ttlMs` is invalid.
    */
   constructor({ maxSize = 1000, ttlMs = 60000, now = () => Date.now() } = {}) {
-    if (!Number.isInteger(maxSize) || maxSize <= 0) throw new TypeError('maxSize must be a positive integer');
+    if (!Number.isInteger(maxSize) || maxSize <= 0)
+      throw new TypeError('maxSize must be a positive integer');
     if (!Number.isFinite(ttlMs) || ttlMs < 0) throw new TypeError('ttlMs must be non-negative');
     this.maxSize = maxSize;
     this.ttlMs = ttlMs;
@@ -44,7 +45,10 @@ export class BoundedCache {
    */
   get(key) {
     const entry = this.#entries.get(key);
-    if (!entry) { this.stats.misses++; return undefined; }
+    if (!entry) {
+      this.stats.misses++;
+      return undefined;
+    }
     if (entry.expiresAt <= this.now()) {
       this.#entries.delete(key);
       this.stats.expirations++;
@@ -62,27 +66,43 @@ export class BoundedCache {
    * @param {*} key - Cache key.
    * @returns {boolean} True if a defined value is cached.
    */
-  has(key) { return this.get(key) !== undefined; }
+  has(key) {
+    return this.get(key) !== undefined;
+  }
   /**
    * Remove an entry without touching stats.
    * @param {*} key - Cache key.
    * @returns {boolean} True if an entry was removed.
    */
-  delete(key) { return this.#entries.delete(key); }
+  delete(key) {
+    return this.#entries.delete(key);
+  }
   /**
    * Remove all entries (stats are kept).
    */
-  clear() { this.#entries.clear(); }
+  clear() {
+    this.#entries.clear();
+  }
   /**
    * Number of stored entries, including any expired ones not yet touched.
    * @returns {number} Entry count.
    */
-  get size() { return this.#entries.size; }
+  get size() {
+    return this.#entries.size;
+  }
   /**
    * Capture cache configuration, a copy of the stats, and keys in LRU-to-MRU order.
    * @returns {{size: number, maxSize: number, ttlMs: number, stats: Object, keys: Array}} Snapshot object.
    */
-  snapshot() { return { size: this.size, maxSize: this.maxSize, ttlMs: this.ttlMs, stats: { ...this.stats }, keys: [...this.#entries.keys()] }; }
+  snapshot() {
+    return {
+      size: this.size,
+      maxSize: this.maxSize,
+      ttlMs: this.ttlMs,
+      stats: { ...this.stats },
+      keys: [...this.#entries.keys()],
+    };
+  }
 }
 
 /**
@@ -90,4 +110,6 @@ export class BoundedCache {
  * @param {Object} [options] - Options forwarded to the BoundedCache constructor.
  * @returns {BoundedCache} A new cache.
  */
-export function createBoundedCache(options) { return new BoundedCache(options); }
+export function createBoundedCache(options) {
+  return new BoundedCache(options);
+}

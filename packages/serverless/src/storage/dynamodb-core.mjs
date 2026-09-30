@@ -20,13 +20,22 @@ const MAX_BATCH_WRITE = 25;
 export function assertTriple(triple) {
   if (!triple || typeof triple !== 'object') throw new TypeError('Triple must be an object');
   for (const field of ['subject', 'predicate', 'object']) {
-    if (typeof triple[field] !== 'string' || triple[field].length === 0) throw new TypeError(`Triple ${field} must be a non-empty string`);
+    if (typeof triple[field] !== 'string' || triple[field].length === 0)
+      throw new TypeError(`Triple ${field} must be a non-empty string`);
   }
-  if (triple.graph != null && typeof triple.graph !== 'string') throw new TypeError('Triple graph must be a string');
-  return { subject: triple.subject, predicate: triple.predicate, object: triple.object, ...(triple.graph ? { graph: triple.graph } : {}) };
+  if (triple.graph != null && typeof triple.graph !== 'string')
+    throw new TypeError('Triple graph must be a string');
+  return {
+    subject: triple.subject,
+    predicate: triple.predicate,
+    object: triple.object,
+    ...(triple.graph ? { graph: triple.graph } : {}),
+  };
 }
 
-function s(value) { return { S: value }; }
+function s(value) {
+  return { S: value };
+}
 
 /**
  * Encodes a triple as a DynamoDB item with composite sort-key attributes.
@@ -56,7 +65,8 @@ export function encodeTriple(triple) {
  * @throws {Error} If subject, predicate or object is missing.
  */
 export function decodeTriple(item) {
-  if (!item?.subject?.S || !item?.predicate?.S || !item?.object?.S) throw new Error('Malformed DynamoDB triple item');
+  if (!item?.subject?.S || !item?.predicate?.S || !item?.object?.S)
+    throw new Error('Malformed DynamoDB triple item');
   return {
     subject: item.subject.S,
     predicate: item.predicate.S,
@@ -85,8 +95,11 @@ export function encodeToken(lastEvaluatedKey) {
  */
 export function decodeToken(token) {
   if (!token) return undefined;
-  try { return JSON.parse(Buffer.from(token, 'base64url').toString('utf8')); }
-  catch (error) { throw new TypeError(`Invalid DynamoDB continuation token: ${error.message}`); }
+  try {
+    return JSON.parse(Buffer.from(token, 'base64url').toString('utf8'));
+  } catch (error) {
+    throw new TypeError(`Invalid DynamoDB continuation token: ${error.message}`);
+  }
 }
 
 /**
@@ -235,8 +248,10 @@ export class DynamoRdfStore {
    * @throws {TypeError} If the client or table name is invalid.
    */
   constructor(client, tableName, options = {}) {
-    if (!client || typeof client.send !== 'function') throw new TypeError('DynamoDB client must implement send(command)');
-    if (typeof tableName !== 'string' || !tableName) throw new TypeError('DynamoDB table name is required');
+    if (!client || typeof client.send !== 'function')
+      throw new TypeError('DynamoDB client must implement send(command)');
+    if (typeof tableName !== 'string' || !tableName)
+      throw new TypeError('DynamoDB table name is required');
     this.#client = client;
     this.#tableName = tableName;
     this.#indexes = { ...DEFAULT_INDEXES, ...(options.indexes || {}) };
@@ -250,7 +265,9 @@ export class DynamoRdfStore {
    *
    * @returns {string} Table name.
    */
-  get tableName() { return this.#tableName; }
+  get tableName() {
+    return this.#tableName;
+  }
 
   async #send(operation, input) {
     return this.#client.send(this.#commandFactory(operation, input));
@@ -267,7 +284,16 @@ export class DynamoRdfStore {
     const input = {
       TableName: this.#tableName,
       Item: encodeTriple(triple),
-      ...(options.ifAbsent ? { ConditionExpression: 'attribute_not_exists(#subject) AND attribute_not_exists(#predicateObject)', ExpressionAttributeNames: { '#subject': 'subject', '#predicateObject': 'predicate_object' } } : {}),
+      ...(options.ifAbsent
+        ? {
+            ConditionExpression:
+              'attribute_not_exists(#subject) AND attribute_not_exists(#predicateObject)',
+            ExpressionAttributeNames: {
+              '#subject': 'subject',
+              '#predicateObject': 'predicate_object',
+            },
+          }
+        : {}),
     };
     await this.#send('PutItem', input);
   }
@@ -286,15 +312,22 @@ export class DynamoRdfStore {
     let written = 0;
     let retries = 0;
     for (let offset = 0; offset < values.length; offset += batchSize) {
-      let pending = values.slice(offset, offset + batchSize).map(triple => ({ PutRequest: { Item: encodeTriple(triple) } }));
+      let pending = values
+        .slice(offset, offset + batchSize)
+        .map(triple => ({ PutRequest: { Item: encodeTriple(triple) } }));
       let attempt = 0;
       while (pending.length) {
-        const output = await this.#send('BatchWriteItem', { RequestItems: { [this.#tableName]: pending } });
+        const output = await this.#send('BatchWriteItem', {
+          RequestItems: { [this.#tableName]: pending },
+        });
         const unprocessed = output?.UnprocessedItems?.[this.#tableName] || [];
         written += pending.length - unprocessed.length;
         pending = unprocessed;
         if (!pending.length) break;
-        if (attempt >= this.#maxRetries) throw new Error(`DynamoDB left ${pending.length} unprocessed writes after ${attempt + 1} attempts`);
+        if (attempt >= this.#maxRetries)
+          throw new Error(
+            `DynamoDB left ${pending.length} unprocessed writes after ${attempt + 1} attempts`
+          );
         const delay = Math.min(1000, 25 * 2 ** attempt);
         await this.#sleep(delay);
         attempt += 1;
@@ -314,7 +347,13 @@ export class DynamoRdfStore {
   async queryPage(pattern = {}, options = {}) {
     const limit = Math.max(1, options.limit ?? DEFAULT_LIMIT);
     const startKey = decodeToken(options.token);
-    const { operation, input } = planPattern(this.#tableName, this.#indexes, pattern, limit, startKey);
+    const { operation, input } = planPattern(
+      this.#tableName,
+      this.#indexes,
+      pattern,
+      limit,
+      startKey
+    );
     const output = await this.#send(operation, input);
     return {
       triples: (output?.Items || []).map(decodeTriple),
@@ -335,11 +374,15 @@ export class DynamoRdfStore {
    * @throws {TypeError} If `limit` is not a positive finite number.
    */
   async queryTriples(pattern = {}, limit = DEFAULT_LIMIT) {
-    if (!Number.isFinite(limit) || limit <= 0) throw new TypeError('Query limit must be a positive finite number');
+    if (!Number.isFinite(limit) || limit <= 0)
+      throw new TypeError('Query limit must be a positive finite number');
     const triples = [];
     let token = null;
     do {
-      const page = await this.queryPage(pattern, { limit: Math.min(1000, limit - triples.length), token });
+      const page = await this.queryPage(pattern, {
+        limit: Math.min(1000, limit - triples.length),
+        token,
+      });
       triples.push(...page.triples);
       token = page.token;
     } while (token && triples.length < limit);
@@ -359,7 +402,10 @@ export class DynamoRdfStore {
     let yielded = 0;
     let token = options.token || null;
     do {
-      const page = await this.queryPage(pattern, { limit: Math.min(pageSize, limit - yielded), token });
+      const page = await this.queryPage(pattern, {
+        limit: Math.min(pageSize, limit - yielded),
+        token,
+      });
       for (const triple of page.triples) {
         if (yielded >= limit) return;
         yield triple;
@@ -399,15 +445,27 @@ export class DynamoRdfStore {
     let deleted = 0;
     let retries = 0;
     for (let offset = 0; offset < values.length; offset += batchSize) {
-      let pending = values.slice(offset, offset + batchSize).map(triple => ({ DeleteRequest: { Key: { subject: s(triple.subject), predicate_object: s(`${triple.predicate}#${triple.object}`) } } }));
+      let pending = values.slice(offset, offset + batchSize).map(triple => ({
+        DeleteRequest: {
+          Key: {
+            subject: s(triple.subject),
+            predicate_object: s(`${triple.predicate}#${triple.object}`),
+          },
+        },
+      }));
       let attempt = 0;
       while (pending.length) {
-        const output = await this.#send('BatchWriteItem', { RequestItems: { [this.#tableName]: pending } });
+        const output = await this.#send('BatchWriteItem', {
+          RequestItems: { [this.#tableName]: pending },
+        });
         const unprocessed = output?.UnprocessedItems?.[this.#tableName] || [];
         deleted += pending.length - unprocessed.length;
         pending = unprocessed;
         if (!pending.length) break;
-        if (attempt >= this.#maxRetries) throw new Error(`DynamoDB left ${pending.length} unprocessed deletes after ${attempt + 1} attempts`);
+        if (attempt >= this.#maxRetries)
+          throw new Error(
+            `DynamoDB left ${pending.length} unprocessed deletes after ${attempt + 1} attempts`
+          );
         await this.#sleep(Math.min(1000, 25 * 2 ** attempt));
         attempt += 1;
         retries += 1;
@@ -426,7 +484,9 @@ export class DynamoRdfStore {
   async deletePattern(pattern = {}, options = {}) {
     let deleted = 0;
     const buffer = [];
-    for await (const triple of this.iterateTriples(pattern, { pageSize: options.pageSize ?? 250 })) {
+    for await (const triple of this.iterateTriples(pattern, {
+      pageSize: options.pageSize ?? 250,
+    })) {
       buffer.push(triple);
       if (buffer.length === MAX_BATCH_WRITE) {
         deleted += (await this.deleteTriples(buffer.splice(0), options)).deleted;

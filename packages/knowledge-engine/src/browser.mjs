@@ -8,7 +8,7 @@
  */
 
 import { _isBrowser } from './browser-shims.mjs';
-import { randomUUID, path, fs } from './browser-shims.mjs';
+import { randomUUID, path } from './browser-shims.mjs';
 import { process as _browserProcess } from './browser-shims.mjs';
 
 // Browser-compatible versions

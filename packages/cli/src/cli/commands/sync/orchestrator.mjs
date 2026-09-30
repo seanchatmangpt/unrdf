@@ -38,7 +38,16 @@ function formatDuration(ms) {
 export async function runSync(options) {
   const startTime = performance.now();
   const args = SyncArgsSchema.parse(options);
-  const { config: configPath, dryRun, verbose, force: _force, rule: ruleFilter, output, harden, breed: cliBreed } = args;
+  const {
+    config: configPath,
+    dryRun,
+    verbose,
+    force: _force,
+    rule: ruleFilter,
+    output,
+    harden,
+    breed: cliBreed,
+  } = args;
 
   const results = [];
   const metrics = { rulesProcessed: 0, filesGenerated: 0, filesSkipped: 0, errors: 0 };
@@ -64,7 +73,7 @@ export async function runSync(options) {
     if (!config.ontology) {
       throw new Error(
         'Configuration missing required "ontology" section.\n' +
-        'Add to unrdf.toml:\n[ontology]\nsource = "path/to/ontology.ttl"\n'
+          'Add to unrdf.toml:\n[ontology]\nsource = "path/to/ontology.ttl"\n'
       );
     }
 
@@ -81,7 +90,10 @@ export async function runSync(options) {
       for (const extraSource of extraSources) {
         const extraOntology = { ...config.ontology, source: extraSource };
         try {
-          const { store: extraStore, tripleCount: _extraCount } = await loadOntology(extraOntology, baseDir);
+          const { store: extraStore, tripleCount: _extraCount } = await loadOntology(
+            extraOntology,
+            baseDir
+          );
           const previousCount = store.size || tripleCount;
 
           // Merge extra store into main store
@@ -111,19 +123,14 @@ export async function runSync(options) {
           metrics.totalTriples = newCount;
         } catch (extraErr) {
           console.log(
-            '   ' +
-              c.yellow +
-              'SKIP' +
-              c.reset +
-              ' ' +
-              extraSource +
-              ': ' +
-              extraErr.message
+            '   ' + c.yellow + 'SKIP' + c.reset + ' ' + extraSource + ': ' + extraErr.message
           );
         }
       }
 
-      console.log('   ' + c.dim + 'Total after merge: ' + metrics.totalTriples + ' triples' + c.reset);
+      console.log(
+        '   ' + c.dim + 'Total after merge: ' + metrics.totalTriples + ' triples' + c.reset
+      );
     }
 
     console.log('\n' + c.cyan + 'Phase 3:' + c.reset + ' Processing rules...');
@@ -169,7 +176,7 @@ export async function runSync(options) {
         let sparqlResults;
         try {
           let queryString = rule.query;
-          if (rule.query && (rule.query.endsWith(".rq") || rule.query.endsWith(".sparql"))) {
+          if (rule.query && (rule.query.endsWith('.rq') || rule.query.endsWith('.sparql'))) {
             const queryPath = resolve(baseDir, rule.query);
             if (existsSync(queryPath)) {
               const { readFile } = await import('fs/promises');
@@ -189,7 +196,7 @@ export async function runSync(options) {
 
         // Render template
         const outputDir = config.generation?.output_dir || resolve(baseDir, 'lib');
-        
+
         // peek if template exists and check for inject: true to handle per-row injection automatically
         let hasInject = false;
         let hasLoop = false;
@@ -203,7 +210,7 @@ export async function runSync(options) {
         // 1. The output filename is dynamic (contains {{)
         // 2. The template is an injection template (has inject: true) AND does not have its own loop
         const perRow = (rule.output_file || '').includes('{{') || (hasInject && !hasLoop);
-        
+
         // If not perRow, we render exactly once with full context.
         // If perRow, we render once per result row.
         // Special case: if perRow is true but we have 0 results, we render 0 times (skip).
@@ -229,11 +236,21 @@ export async function runSync(options) {
             });
 
             if (result.skipped) {
-              const displayPath = result.finalPath ? relative(process.cwd(), result.finalPath) : rule.template;
+              const displayPath = result.finalPath
+                ? relative(process.cwd(), result.finalPath)
+                : rule.template;
               if (verbose || result.status !== 'skipped') {
-                console.log("   " + c.yellow + "SKIP" + c.reset + " " + displayPath + (result.reason ? ` (${result.reason})` : ''));
+                console.log(
+                  '   ' +
+                    c.yellow +
+                    'SKIP' +
+                    c.reset +
+                    ' ' +
+                    displayPath +
+                    (result.reason ? ` (${result.reason})` : '')
+                );
               }
-              results.push({ rule: rule.name, path: result.finalPath, status: "skipped" });
+              results.push({ rule: rule.name, path: result.finalPath, status: 'skipped' });
               metrics.filesSkipped++;
               continue;
             }
@@ -242,13 +259,30 @@ export async function runSync(options) {
             const bytes = result.bytes || 0;
             totalBytes += bytes;
 
-            if (result.status === "dry-run") {
-              console.log("   " + c.yellow + "[DRY RUN]" + c.reset + " Would write: " + relative(process.cwd(), finalPath));
-              results.push({ rule: rule.name, path: finalPath, status: "dry-run", bytes });
+            if (result.status === 'dry-run') {
+              console.log(
+                '   ' +
+                  c.yellow +
+                  '[DRY RUN]' +
+                  c.reset +
+                  ' Would write: ' +
+                  relative(process.cwd(), finalPath)
+              );
+              results.push({ rule: rule.name, path: finalPath, status: 'dry-run', bytes });
               metrics.filesSkipped++;
             } else {
-              console.log("   " + c.green + "OK" + c.reset + " " + relative(process.cwd(), finalPath) + " (" + bytes + " bytes)");
-              results.push({ rule: rule.name, path: finalPath, status: "success", bytes });
+              console.log(
+                '   ' +
+                  c.green +
+                  'OK' +
+                  c.reset +
+                  ' ' +
+                  relative(process.cwd(), finalPath) +
+                  ' (' +
+                  bytes +
+                  ' bytes)'
+              );
+              results.push({ rule: rule.name, path: finalPath, status: 'success', bytes });
               metrics.filesGenerated++;
             }
           } catch (renderErr) {

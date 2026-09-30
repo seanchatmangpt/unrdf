@@ -100,7 +100,7 @@ export class ChatmanEngine {
    * @param {Object} [options] - Execution options
    * @returns {Promise<Object>} Execution result
    */
-  async executeClosure(observable, options = {}) {
+  async executeClosure(observable, _options = {}) {
     const span = this.tracer?.startSpan?.('chatman.engine.execute_closure');
     const startTime = Date.now();
 

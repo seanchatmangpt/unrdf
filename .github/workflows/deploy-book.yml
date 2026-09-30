@@ -161,6 +161,7 @@ jobs:
     name: Deploy exact site artifact
     needs: build-site
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

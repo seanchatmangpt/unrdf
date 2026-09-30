@@ -8,7 +8,6 @@ import { createArtifactGenerator } from '../src/artifact-generator.mjs';
 import { createDarkFieldDetector } from '../src/dark-field-detector.mjs';
 import { createFormationTheorems } from '../src/formation-theorems.mjs';
 import { createChatmanEngine } from '../src/chatman-engine.mjs';
-import { loadChatmanConfig } from '../src/chatman-config-loader.mjs';
 
 console.log('Chatman Equation Direct Test\n');
 

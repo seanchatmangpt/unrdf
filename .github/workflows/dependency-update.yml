@@ -25,6 +25,7 @@ jobs:
   check-outdated:
     name: Check Outdated Dependencies
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     outputs:
       has_updates: ${{ steps.check.outputs.has_updates }}
     steps:
@@ -75,6 +76,7 @@ jobs:
   update-patch:
     name: Update Patch Versions
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     needs: check-outdated
     if: needs.check-outdated.outputs.has_updates == 'true' && (github.event.inputs.update_type == 'patch' || github.event.inputs.update_type == 'all' || github.event_name == 'schedule')
     steps:
@@ -137,6 +139,7 @@ jobs:
   update-minor:
     name: Update Minor Versions
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     needs: check-outdated
     if: needs.check-outdated.outputs.has_updates == 'true' && (github.event.inputs.update_type == 'minor' || github.event.inputs.update_type == 'all')
     steps:
@@ -207,6 +210,7 @@ jobs:
   security-updates:
     name: Security Updates
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -289,6 +293,7 @@ jobs:
   update-summary:
     name: Update Summary
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     needs: [check-outdated, update-patch, update-minor, security-updates]
     if: always()
     steps:

@@ -4,6 +4,7 @@
  * @description Renders code generation templates using Nunjucks
  */
 import { readFile, writeFile, mkdir, readdir, stat, chmod, copyFile } from 'fs/promises';
+import { constants as fsConstants } from 'fs';
 import { existsSync } from 'fs';
 import { resolve, dirname, basename, extname, join, isAbsolute } from 'path';
 import matter from 'gray-matter';
@@ -19,6 +20,21 @@ export const TEMPLATE_EXTENSIONS = ['.njk', '.nunjucks', '.jinja', '.jinja2', '.
 export const DEFAULT_PREFIXES = { ...COMMON_PREFIXES };
 
 /**
+ * Read a file, returning null when it does not exist.
+ * Single read instead of existsSync + readFile, so the file cannot change between check and use.
+ * @param {string} path - File to read
+ * @returns {Promise<string|null>} File contents, or null on ENOENT
+ */
+async function readIfExists(path) {
+  try {
+    return await readFile(path, 'utf-8');
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+/**
  * Recursively strip leading/trailing double quotes from string values that
  * contain {{ }} template syntax. This is a safety net for values that were
  * auto-quoted by preprocessFrontmatter() but where js-yaml did not strip
@@ -30,9 +46,11 @@ export const DEFAULT_PREFIXES = { ...COMMON_PREFIXES };
 function stripQuotesFromTemplateVars(value) {
   if (typeof value === 'string') {
     // Only strip if the value contains template syntax AND is wrapped in matching quotes
-    if ((value.includes('{{') || value.includes('}}')) &&
-        ((value.startsWith('"') && value.endsWith('"')) ||
-         (value.startsWith("'") && value.endsWith("'")))) {
+    if (
+      (value.includes('{{') || value.includes('}}')) &&
+      ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'")))
+    ) {
       return value.slice(1, -1);
     }
     return value;
@@ -121,17 +139,20 @@ export function preprocessFrontmatter(content) {
  * @returns {Promise<Object>} Render result with content, outputPath, etc.
  */
 export async function renderTemplate(templatePath, sparqlResults, context = {}) {
-  const env = createNunjucksEnvironment(context.templates_dir || dirname(resolve(templatePath)), context.prefixes || {});
-  
+  const env = createNunjucksEnvironment(
+    context.templates_dir || dirname(resolve(templatePath)),
+    context.prefixes || {}
+  );
+
   // Inject hardening globals
   const harden_enabled = !!context.harden;
-  const renderContext = { 
-    ...context, 
+  const renderContext = {
+    ...context,
     harden: harden_enabled,
     harden_enabled,
-    sparql_results: sparqlResults, 
-    results: sparqlResults, 
-    now: new Date() 
+    sparql_results: sparqlResults,
+    results: sparqlResults,
+    now: new Date(),
   };
   const absPath = resolve(templatePath);
   if (!existsSync(absPath)) throw new Error(`Template not found: ${absPath}`);
@@ -146,11 +167,11 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   } catch (error) {
     throw new Error(
       `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
-      `Note: Template syntax {{ }} in frontmatter values is auto-quoted.\n` +
-      `If the error persists, check for:\n` +
-      `  - Malformed YAML (indentation, colons in unquoted strings)\n` +
-      `  - Complex template expressions that need manual quoting\n` +
-      `  - Multi-line values with template syntax\n`
+        `Note: Template syntax {{ }} in frontmatter values is auto-quoted.\n` +
+        `If the error persists, check for:\n` +
+        `  - Malformed YAML (indentation, colons in unquoted strings)\n` +
+        `  - Complex template expressions that need manual quoting\n` +
+        `  - Multi-line values with template syntax\n`
     );
   }
 
@@ -162,15 +183,14 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     validationFrontmatter.to = synthesizedTo;
   }
 
-
-  
-
   // Interpolate frontmatter strings
   for (const [key, value] of Object.entries(frontmatter)) {
-    if (typeof value === "string" && value.includes("{{")) {
+    if (typeof value === 'string' && value.includes('{{')) {
       try {
         frontmatter[key] = env.renderString(value, renderContext);
-      } catch (e) { /* ignore interpolation errors in frontmatter for now */ }
+      } catch (e) {
+        /* ignore interpolation errors in frontmatter for now */
+      }
     }
   }
 
@@ -204,8 +224,6 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     if (!existsSync(fromPath)) throw new Error(`from: template not found: ${fromPath}`);
     template = await readFile(fromPath, 'utf-8');
   }
-
-  
 
   let rendered;
   try {
@@ -292,18 +310,22 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
         .replace(/[_\s]+/g, '-') || ''
   );
   env.addFilter('slug', s => {
-    return s
-      ?.toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]+/g, '')
-      .replace(/[\s_]+/g, '-')
-      .replace(/[^\w\s-]+/g, '') || '';
+    return (
+      s
+        ?.toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]+/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^\w\s-]+/g, '') || ''
+    );
   });
   env.addFilter('title', s => {
-    return s
-      ?.replace(/[-_\s]+(.)?/g, (_, c) => ' ' + (c?.toUpperCase() || ''))
-      .trim()
-      .replace(/^\w/, c => c.toUpperCase()) || '';
+    return (
+      s
+        ?.replace(/[-_\s]+(.)?/g, (_, c) => ' ' + (c?.toUpperCase() || ''))
+        .trim()
+        .replace(/^\w/, c => c.toUpperCase()) || ''
+    );
   });
 
   // RDF filters
@@ -386,7 +408,7 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
   env.addFilter('keys', obj => (obj ? Object.keys(obj) : []));
   env.addFilter('values', obj => (obj ? Object.values(obj) : []));
   env.addFilter('items', obj => (obj ? Object.entries(obj) : []));
-  env.addFilter('join', (arr, sep = ',') => Array.isArray(arr) ? arr.join(sep) : '');
+  env.addFilter('join', (arr, sep = ',') => (Array.isArray(arr) ? arr.join(sep) : ''));
 
   // String filters
   env.addFilter(
@@ -419,27 +441,27 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
   });
   env.addFilter('artifact_extension', type => {
     const extensions = {
-      'powl': 'ttl',
-      'sparql': 'rq',
-      'shacl': 'ttl',
+      powl: 'ttl',
+      sparql: 'rq',
+      shacl: 'ttl',
       'mcp-tool': 'mjs',
-      'documentation': 'md',
-      'python': 'py',
-      'typescript': 'ts',
-      'elixir': 'ex',
-      'go': 'go',
-      'rust': 'rs',
-      'java': 'java',
-      'yaml': 'yaml',
-      'json': 'json',
-      'ttl': 'ttl',
-      'njk': 'njk',
-      'rq': 'rq',
-      'mjs': 'mjs'
+      documentation: 'md',
+      python: 'py',
+      typescript: 'ts',
+      elixir: 'ex',
+      go: 'go',
+      rust: 'rs',
+      java: 'java',
+      yaml: 'yaml',
+      json: 'json',
+      ttl: 'ttl',
+      njk: 'njk',
+      rq: 'rq',
+      mjs: 'mjs',
     };
     return extensions[type] || 'txt';
   });
-  env.addFilter('default', (val, defaultValue) => val != null ? val : defaultValue);
+  env.addFilter('default', (val, defaultValue) => (val != null ? val : defaultValue));
 
   // wordwrap filter
   env.addFilter('wordwrap', (s, width = 80) => {
@@ -450,7 +472,10 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
     for (const word of str.split(/\s+/)) {
       if (!currentLine) currentLine = word;
       else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
-      else { lines.push(currentLine); currentLine = word; }
+      else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
     }
     if (currentLine) lines.push(currentLine);
     return lines.join('\n');
@@ -482,14 +507,14 @@ export async function createTemplateEngine(options = {}) {
 
   // Re-apply filter aliases (createNunjucksEnvironment registers them, but
   // the expand override above replaces the filter — ensure aliases survive)
-  env.addFilter('camel_case',  env.getFilter('camelCase'));
+  env.addFilter('camel_case', env.getFilter('camelCase'));
   env.addFilter('pascal_case', env.getFilter('pascalCase'));
-  env.addFilter('snake_case',  env.getFilter('snakeCase'));
-  env.addFilter('kebab_case',  env.getFilter('kebabCase'));
-  env.addFilter('zod_type',    env.getFilter('zodType'));
-  env.addFilter('jsdoc_type',  env.getFilter('jsdocType'));
-  env.addFilter('local_name',  env.getFilter('localName'));
-  env.addFilter('pascal',      env.getFilter('pascalCase'));
+  env.addFilter('snake_case', env.getFilter('snakeCase'));
+  env.addFilter('kebab_case', env.getFilter('kebabCase'));
+  env.addFilter('zod_type', env.getFilter('zodType'));
+  env.addFilter('jsdoc_type', env.getFilter('jsdocType'));
+  env.addFilter('local_name', env.getFilter('localName'));
+  env.addFilter('pascal', env.getFilter('pascalCase'));
 
   // wordwrap may be overridden by expand; re-register to be safe
   env.addFilter('wordwrap', (s, width = 79) => {
@@ -500,7 +525,10 @@ export async function createTemplateEngine(options = {}) {
     for (const word of str.split(/\s+/)) {
       if (!currentLine) currentLine = word;
       else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
-      else { lines.push(currentLine); currentLine = word; }
+      else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
     }
     if (currentLine) lines.push(currentLine);
     return lines.join('\n');
@@ -545,7 +573,8 @@ export async function createTemplateEngine(options = {}) {
 export async function renderWithOptions(templatePath, sparqlResults, options = {}) {
   const {
     dryRun = false,
-    outputDir, baseDir,
+    outputDir,
+    baseDir,
     force: optionsForce = false,
     mode: optionsMode,
     outputPath: overridePath,
@@ -582,7 +611,7 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     const env = createNunjucksEnvironment(context.templates_dir || baseDir, context.prefixes || {});
     finalOutputPath = env.renderString(finalOutputPath, context);
   }
-  
+
   if (!finalOutputPath) throw new Error(`Template ${templatePath} does not specify output path`);
 
   // Determine final path: outputDir (CLI/config) > baseDir (project relative) > templateDir
@@ -610,59 +639,55 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
 
   const fm = result.frontmatter;
 
-  // skipIf/skip_if: regex — skip if content exists in file (Hygen parity)
+  // One read decides every "skip if it already exists" rule below. Checking existsSync() first and then
+  // reading/writing leaves a window in which the file can change between check and use.
   const skipExpr = (fm.skipIf || fm.skip_if)?.trim();
-  if (existsSync(finalPath) && !effectiveForce && skipExpr) {
+  const createOnly =
+    !effectiveForce &&
+    (effectiveMode === 'skip_existing' || Boolean(result.frontmatter.unless_exists));
+  const needsExisting =
+    (!effectiveForce && Boolean(skipExpr)) ||
+    createOnly ||
+    Boolean(options.backup_before_overwrite);
+  const existingAtStart = needsExisting ? await readIfExists(finalPath) : null;
+  const skipped = reason => ({
+    ...result,
+    finalPath,
+    status: 'skipped',
+    written: false,
+    skipped: true,
+    dryRun: false,
+    reason,
+  });
+
+  // skipIf/skip_if: regex — skip if content exists in file (Hygen parity)
+  if (existingAtStart !== null && !effectiveForce && skipExpr) {
     const regexMatch = skipExpr.match(/^\/(.+)\/([gimsuy]*)$/);
-    if (regexMatch) {
-      const existing = await readFile(finalPath, "utf-8");
-      const regex = new RegExp(regexMatch[1], regexMatch[2]);
-      if (regex.test(existing)) {
-        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
-      }
-    } else {
-      // String match
-      const existing = await readFile(finalPath, "utf-8");
-      if (existing.includes(skipExpr)) {
-        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
-      }
-    }
+    const matched = regexMatch
+      ? new RegExp(regexMatch[1], regexMatch[2]).test(existingAtStart)
+      : existingAtStart.includes(skipExpr);
+    if (matched) return skipped('skipIf matched');
   }
 
   // mode: skip_existing check
-  if (existsSync(finalPath) && !effectiveForce && effectiveMode === 'skip_existing') {
-    return {
-      ...result,
-      finalPath,
-      status: 'skipped',
-      written: false,
-      skipped: true,
-      dryRun: false,
-      reason: 'file exists and mode is skip_existing',
-    };
+  if (existingAtStart !== null && !effectiveForce && effectiveMode === 'skip_existing') {
+    return skipped('file exists and mode is skip_existing');
   }
 
   // unless_exists: true — skip if file already exists (Hygen parity)
-  if (existsSync(finalPath) && result.frontmatter.unless_exists && !effectiveForce) {
-    return {
-      ...result,
-      finalPath,
-      status: 'skipped',
-      written: false,
-      skipped: true,
-      dryRun: false,
-      reason: 'file exists and unless_exists is true',
-    };
+  if (existingAtStart !== null && result.frontmatter.unless_exists && !effectiveForce) {
+    return skipped('file exists and unless_exists is true');
   }
 
   await mkdir(dirname(finalPath), { recursive: true });
 
-  // Backup before modification if enabled
-  if (options.backup_before_overwrite && existsSync(finalPath)) {
+  // Backup before modification if enabled. COPYFILE_EXCL: never overwrite an existing backup, atomically.
+  if (options.backup_before_overwrite && existingAtStart !== null) {
     const backupPath = finalPath + (options.backup_suffix || '.bak');
-    // Only create backup if it doesn't exist (don't overwrite backups)
-    if (!existsSync(backupPath)) {
-      await copyFile(finalPath, backupPath);
+    try {
+      await copyFile(finalPath, backupPath, fsConstants.COPYFILE_EXCL);
+    } catch (error) {
+      if (!error || error.code !== 'EEXIST') throw error;
     }
   }
 
@@ -679,26 +704,49 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     }
   }
 
+  // Create a file that did not exist a moment ago. In create-only modes the flag is exclusive ('wx'), so a file
+  // that appears in the window is reported as skipped instead of being overwritten.
+  const writeNew = async () => {
+    try {
+      await writeFile(finalPath, contentToWrite, {
+        encoding: 'utf-8',
+        flag: createOnly ? 'wx' : 'w',
+      });
+      return null;
+    } catch (error) {
+      if (createOnly && error && error.code === 'EEXIST') {
+        return skipped(
+          effectiveMode === 'skip_existing'
+            ? 'file exists and mode is skip_existing'
+            : 'file exists and unless_exists is true'
+        );
+      }
+      throw error;
+    }
+  };
+
   if (opMode.mode === 'inject' || opMode.mode === 'append' || result.mode === 'append') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const separator = existing.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'prepend' || result.mode === 'prepend') {
     // Fix: support both opMode.prepend AND frontmatter.mode === 'prepend'
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const separator = contentToWrite.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, contentToWrite + separator + existing, 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'before') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const anchorPattern = opMode.anchor;
       // Hygen parity: support regex for before anchor
       // Detect regex: starts with /, ends with / or /flags, and has content between
@@ -728,11 +776,12 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
         await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'after') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const anchorPattern = opMode.anchor;
       // Hygen parity: support regex for after anchor
       // Detect regex: starts with /, ends with / or /flags, and has content between
@@ -761,36 +810,44 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
         const before = existing.substring(0, insertAt);
         const after = existing.substring(insertAt);
         const separatorBefore = before.endsWith('\n') ? '' : '\n';
-        const separatorAfter = (contentToWrite.endsWith('\n') || after.startsWith('\n')) ? '' : '\n';
-        await writeFile(finalPath, before + separatorBefore + contentToWrite + separatorAfter + after, 'utf-8');
+        const separatorAfter = contentToWrite.endsWith('\n') || after.startsWith('\n') ? '' : '\n';
+        await writeFile(
+          finalPath,
+          before + separatorBefore + contentToWrite + separatorAfter + after,
+          'utf-8'
+        );
       } else {
         const separator = existing.endsWith('\n') ? '' : '\n';
         await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'lineAt') {
     const lineNum = opMode.line;
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const lines = existing.split('\n');
       const clampedLine = Math.max(0, Math.min(lineNum, lines.length));
       lines.splice(clampedLine, 0, contentToWrite.trimEnd());
       await writeFile(finalPath, lines.join('\n'), 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else {
     // Default: overwrite
-    await writeFile(finalPath, contentToWrite, 'utf-8');
+    const lostRace = await writeNew();
+    if (lostRace) return lostRace;
   }
 
   // chmod directive: set file permissions (Hygen parity)
   if (result.frontmatter.chmod) {
-    const mode = typeof result.frontmatter.chmod === 'string'
-      ? parseInt(result.frontmatter.chmod, 8)
-      : result.frontmatter.chmod;
+    const mode =
+      typeof result.frontmatter.chmod === 'string'
+        ? parseInt(result.frontmatter.chmod, 8)
+        : result.frontmatter.chmod;
     await chmod(finalPath, mode);
   }
 
@@ -853,9 +910,10 @@ export async function batchRender(templates, sharedContext = {}, _options = {}) 
       templateBody = parsed.content;
     } catch (error) {
       results.push({
-        error: `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
-                `Tip: If your frontmatter values contain colons, wrap them in quotes.`,
-        templatePath: absPath
+        error:
+          `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
+          `Tip: If your frontmatter values contain colons, wrap them in quotes.`,
+        templatePath: absPath,
       });
       continue;
     }

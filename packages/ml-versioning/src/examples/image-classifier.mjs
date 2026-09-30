@@ -36,7 +36,7 @@ function generateTrainingData(numSamples = 100) {
   return {
     x: tf.tensor2d(data),
     // Bypass tf.oneHot bug in tfjs-node 4.22
-    y: tf.tensor2d(labels.map(l => l === 1 ? [0, 1] : [1, 0])),
+    y: tf.tensor2d(labels.map(l => (l === 1 ? [0, 1] : [1, 0]))),
   };
 }
 

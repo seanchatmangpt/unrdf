@@ -2,7 +2,7 @@ import { executeSemanticQuery } from '@unrdf/core/utils/semantic-bridge';
 
 /**
  * Bridges wasm4pm process conformance results to Open Ontologies.
- * 
+ *
  * @param {Object} conformanceResult - Output from pictl/wasm4pm conformance check
  * @returns {Object} Semantic event metadata
  */

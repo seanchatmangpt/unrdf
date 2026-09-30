@@ -5,7 +5,6 @@
 
 import { Parser, Writer, N3Store as Store } from '@unrdf/core/rdf/n3-justified-only';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { createStore } from '@unrdf/oxigraph';
 
 const tracer = trace.getTracer('unrdf');
 

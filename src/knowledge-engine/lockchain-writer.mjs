@@ -7,7 +7,7 @@
  * to Git. Provides cryptographic integrity and tamper-proof provenance.
  */
 
-import { execSync } from 'child_process';
+import { execSync, execFileSync } from 'child_process';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, _dirname } from 'path';
 import { sha3_256 } from '@noble/hashes/sha3.js';
@@ -447,7 +447,7 @@ export class LockchainWriter {
    * @private
    */
   async _gitAdd(filePath) {
-    execSync(`git add "${filePath}"`, {
+    execFileSync('git', ['add', '--', filePath], {
       cwd: this.config.gitRepo,
       stdio: 'pipe',
     });
@@ -463,7 +463,7 @@ export class LockchainWriter {
   async _gitCommit(message, metadata = {}) {
     const commitMessage = `${message}\n\nMetadata: ${JSON.stringify(metadata)}`;
 
-    const output = execSync(`git commit -m "${commitMessage}"`, {
+    const output = execFileSync('git', ['commit', '-m', commitMessage], {
       cwd: this.config.gitRepo,
       stdio: 'pipe',
       encoding: 'utf8',
@@ -514,8 +514,11 @@ export class LockchainWriter {
    * @private
    */
   async _verifyGitCommit(commitHash) {
+    if (!/^[0-9a-f]{4,64}$/i.test(String(commitHash))) {
+      return false;
+    }
     try {
-      execSync(`git cat-file -t ${commitHash}`, {
+      execFileSync('git', ['cat-file', '-t', commitHash], {
         cwd: this.config.gitRepo,
         stdio: 'pipe',
       });
