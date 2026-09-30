@@ -24,13 +24,26 @@ async function run(cmd, args, cwd, logPath, ms = timeout) {
   const log = createWriteStream(logPath);
   const start = process.hrtime.bigint();
   let stdout = '', stderr = '', timedOut = false, spawnError = null;
-  const child = spawn(cmd, args, { cwd, env: { ...process.env, CI: process.env.CI || '1' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  // Own process group (POSIX) so a timeout can kill the whole tree. Killing only `pnpm` leaves vitest/esbuild
+  // workers alive holding the stdout pipe open, so 'close' never fires and one hung test stalls the whole matrix.
+  const grouped = process.platform !== 'win32';
+  const child = spawn(cmd, args, { cwd, env: { ...process.env, CI: process.env.CI || '1' }, stdio: ['ignore', 'pipe', 'pipe'], detached: grouped });
+  const killTree = signal => { try { process.kill(grouped ? -child.pid : child.pid, signal); } catch { try { child.kill(signal); } catch { /* already gone */ } } };
   child.stdout.on('data', x => { const s = x.toString(); stdout = tail(stdout, s, 1048576); log.write(s); });
   child.stderr.on('data', x => { const s = x.toString(); stderr = tail(stderr, s); log.write(s); });
-  child.once('error', e => { spawnError = e.message; });
-  const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, ms);
-  const exitCode = await new Promise(resolve => child.once('close', code => resolve(code ?? 1)));
-  clearTimeout(timer); await new Promise(resolve => log.end(resolve));
+  let killer;
+  const timer = setTimeout(() => { timedOut = true; killTree('SIGTERM'); killer = setTimeout(() => killTree('SIGKILL'), 5000); }, ms);
+  const exitCode = await new Promise(resolve => {
+    let settled = false;
+    const settle = code => { if (!settled) { settled = true; resolve(code ?? 1); } };
+    child.once('error', e => { spawnError = e.message; settle(1); });
+    child.once('close', settle);
+    // Do not rely on 'close' alone: a surviving grandchild can hold the pipes open after the command has exited.
+    child.once('exit', code => { setTimeout(() => settle(code), 2000).unref(); });
+  });
+  clearTimeout(timer); clearTimeout(killer);
+  killTree('SIGKILL'); // reap anything the command left behind in its process group
+  await new Promise(resolve => log.end(resolve));
   return { command: [cmd, ...args], cwd: path.relative(root, cwd) || '.', log: path.relative(root, logPath), exitCode, timedOut, spawnError, durationMs: Math.round(Number(process.hrtime.bigint() - start) / 1e6), stdoutTail: stdout, stderrTail: stderr };
 }
 
