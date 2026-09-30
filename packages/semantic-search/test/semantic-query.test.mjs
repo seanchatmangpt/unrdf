@@ -157,7 +157,7 @@ describe('SemanticQueryEngine', () => {
         expect(result).toHaveProperty('score');
 
         // Should not include the reference triple itself
-        const isSame = 
+        const isSame =
           result.triple.subject === referenceTriple.subject.value &&
           result.triple.predicate === referenceTriple.predicate.value &&
           result.triple.object === referenceTriple.object.value;

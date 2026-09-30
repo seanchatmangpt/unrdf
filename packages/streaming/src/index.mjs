@@ -81,4 +81,12 @@ export {
 } from './benchmarks.mjs';
 
 // Checkpointed streaming and bounded backpressure
-export { BoundedAsyncQueue, MemoryCheckpointStore, BackpressureRefusal, PipelineAbort, runCheckpointedPipeline, batchBySize, itemId } from './checkpointed-pipeline.mjs';
+export {
+  BoundedAsyncQueue,
+  MemoryCheckpointStore,
+  BackpressureRefusal,
+  PipelineAbort,
+  runCheckpointedPipeline,
+  batchBySize,
+  itemId,
+} from './checkpointed-pipeline.mjs';

@@ -21,28 +21,62 @@ export const Disposition = Object.freeze({
 });
 
 const transitions = new Map([
-  [Standing.UNKNOWN, new Set([Standing.UNKNOWN, Standing.PARTIAL_ALIVE, Standing.BLOCKED, Standing.BUILD_BROKEN, Standing.UNSUPPORTED])],
-  [Standing.PARTIAL_ALIVE, new Set([Standing.PARTIAL_ALIVE, Standing.ALIVE, Standing.BLOCKED, Standing.BUILD_BROKEN])],
-  [Standing.ALIVE, new Set([Standing.ALIVE, Standing.PARTIAL_ALIVE, Standing.BLOCKED, Standing.BUILD_BROKEN])],
-  [Standing.BLOCKED, new Set([Standing.BLOCKED, Standing.UNKNOWN, Standing.PARTIAL_ALIVE, Standing.BUILD_BROKEN, Standing.UNSUPPORTED])],
-  [Standing.BUILD_BROKEN, new Set([Standing.BUILD_BROKEN, Standing.UNKNOWN, Standing.PARTIAL_ALIVE, Standing.BLOCKED])],
+  [
+    Standing.UNKNOWN,
+    new Set([
+      Standing.UNKNOWN,
+      Standing.PARTIAL_ALIVE,
+      Standing.BLOCKED,
+      Standing.BUILD_BROKEN,
+      Standing.UNSUPPORTED,
+    ]),
+  ],
+  [
+    Standing.PARTIAL_ALIVE,
+    new Set([Standing.PARTIAL_ALIVE, Standing.ALIVE, Standing.BLOCKED, Standing.BUILD_BROKEN]),
+  ],
+  [
+    Standing.ALIVE,
+    new Set([Standing.ALIVE, Standing.PARTIAL_ALIVE, Standing.BLOCKED, Standing.BUILD_BROKEN]),
+  ],
+  [
+    Standing.BLOCKED,
+    new Set([
+      Standing.BLOCKED,
+      Standing.UNKNOWN,
+      Standing.PARTIAL_ALIVE,
+      Standing.BUILD_BROKEN,
+      Standing.UNSUPPORTED,
+    ]),
+  ],
+  [
+    Standing.BUILD_BROKEN,
+    new Set([Standing.BUILD_BROKEN, Standing.UNKNOWN, Standing.PARTIAL_ALIVE, Standing.BLOCKED]),
+  ],
   [Standing.UNSUPPORTED, new Set([Standing.UNSUPPORTED, Standing.UNKNOWN])],
 ]);
 
 function canonical(value) {
   if (Array.isArray(value)) return value.map(canonical);
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map(key => [key, canonical(value[key])])
+    );
   }
   return value;
 }
 
 function digest(value) {
-  return createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+  return createHash('sha256')
+    .update(JSON.stringify(canonical(value)))
+    .digest('hex');
 }
 
 function assertText(value, name) {
-  if (typeof value !== 'string' || value.trim() === '') throw new TypeError(`${name} must be a non-empty string`);
+  if (typeof value !== 'string' || value.trim() === '')
+    throw new TypeError(`${name} must be a non-empty string`);
 }
 
 /**
@@ -75,15 +109,27 @@ export class CapabilityLedger {
    * @throws {Error} If the id is already admitted.
    */
   admit(capability) {
-    const { id, owner, contract, verifier, falsifier, disposition = null, standing = Standing.UNKNOWN } = capability ?? {};
+    const {
+      id,
+      owner,
+      contract,
+      verifier,
+      falsifier,
+      disposition = null,
+      standing = Standing.UNKNOWN,
+    } = capability ?? {};
     assertText(id, 'capability.id');
     assertText(owner, 'capability.owner');
     assertText(contract, 'capability.contract');
-    if (!Object.values(Standing).includes(standing)) throw new TypeError(`invalid standing: ${standing}`);
-    if (disposition !== null && !Object.values(Disposition).includes(disposition)) throw new TypeError(`invalid disposition: ${disposition}`);
+    if (!Object.values(Standing).includes(standing))
+      throw new TypeError(`invalid standing: ${standing}`);
+    if (disposition !== null && !Object.values(Disposition).includes(disposition))
+      throw new TypeError(`invalid disposition: ${disposition}`);
     if (this.#entries.has(id)) throw new Error(`CAPABILITY_DUPLICATE:${id}`);
     const entry = {
-      id, owner, contract,
+      id,
+      owner,
+      contract,
       verifier: verifier ?? null,
       falsifier: falsifier ?? null,
       disposition,
@@ -108,7 +154,8 @@ export class CapabilityLedger {
    */
   transition(id, standing, evidence = null) {
     const entry = this.#require(id);
-    if (!Object.values(Standing).includes(standing)) throw new TypeError(`invalid standing: ${standing}`);
+    if (!Object.values(Standing).includes(standing))
+      throw new TypeError(`invalid standing: ${standing}`);
     if (!transitions.get(entry.standing)?.has(standing)) {
       throw new Error(`ILLEGAL_STANDING_TRANSITION:${entry.standing}->${standing}:${id}`);
     }
@@ -120,7 +167,11 @@ export class CapabilityLedger {
     const previous = entry.standing;
     entry.standing = standing;
     if (evidence) entry.evidence.push(canonical(evidence));
-    this.#record('TRANSITION', id, { previous, standing, evidence: evidence ? canonical(evidence) : null });
+    this.#record('TRANSITION', id, {
+      previous,
+      standing,
+      evidence: evidence ? canonical(evidence) : null,
+    });
     return structuredClone(entry);
   }
 
@@ -135,9 +186,11 @@ export class CapabilityLedger {
    */
   setDisposition(id, disposition, rationale) {
     const entry = this.#require(id);
-    if (!Object.values(Disposition).includes(disposition)) throw new TypeError(`invalid disposition: ${disposition}`);
+    if (!Object.values(Disposition).includes(disposition))
+      throw new TypeError(`invalid disposition: ${disposition}`);
     assertText(rationale, 'rationale');
-    if (disposition === Disposition.REFUSED && !entry.falsifier) throw new Error(`REFUSAL_WITHOUT_FALSIFIER:${id}`);
+    if (disposition === Disposition.REFUSED && !entry.falsifier)
+      throw new Error(`REFUSAL_WITHOUT_FALSIFIER:${id}`);
     entry.disposition = disposition;
     entry.dispositionRationale = rationale;
     this.#record('DISPOSITION', id, { disposition, rationale });
@@ -153,7 +206,8 @@ export class CapabilityLedger {
    * @throws {Error} If the capability is unknown.
    */
   attachEvidence(id, evidence) {
-    if (!evidence || typeof evidence !== 'object') throw new TypeError('evidence must be an object');
+    if (!evidence || typeof evidence !== 'object')
+      throw new TypeError('evidence must be an object');
     const entry = this.#require(id);
     entry.evidence.push(canonical(evidence));
     this.#record('EVIDENCE', id, canonical(evidence));
@@ -166,12 +220,18 @@ export class CapabilityLedger {
    * @returns {Object} A copy of the entry.
    * @throws {Error} If the capability is unknown.
    */
-  get(id) { return structuredClone(this.#require(id)); }
+  get(id) {
+    return structuredClone(this.#require(id));
+  }
   /**
    * List all entries sorted by id.
    * @returns {Object[]} Copies of the entries.
    */
-  list() { return [...this.#entries.values()].sort((a,b) => a.id.localeCompare(b.id)).map(entry => structuredClone(entry)); }
+  list() {
+    return [...this.#entries.values()]
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map(entry => structuredClone(entry));
+  }
 
   /**
    * Count entries by standing and disposition and count missing verifiers, falsifiers and dispositions.
@@ -180,14 +240,24 @@ export class CapabilityLedger {
   summary() {
     const byStanding = Object.fromEntries(Object.values(Standing).map(x => [x, 0]));
     const byDisposition = Object.fromEntries(Object.values(Disposition).map(x => [x, 0]));
-    let missingVerifier = 0, missingFalsifier = 0, missingDisposition = 0;
+    let missingVerifier = 0,
+      missingFalsifier = 0,
+      missingDisposition = 0;
     for (const entry of this.#entries.values()) {
       byStanding[entry.standing]++;
-      if (entry.disposition) byDisposition[entry.disposition]++; else missingDisposition++;
+      if (entry.disposition) byDisposition[entry.disposition]++;
+      else missingDisposition++;
       if (!entry.verifier) missingVerifier++;
       if (!entry.falsifier) missingFalsifier++;
     }
-    return { count: this.#entries.size, byStanding, byDisposition, missingVerifier, missingFalsifier, missingDisposition };
+    return {
+      count: this.#entries.size,
+      byStanding,
+      byDisposition,
+      missingVerifier,
+      missingFalsifier,
+      missingDisposition,
+    };
   }
 
   /**
@@ -204,7 +274,12 @@ export class CapabilityLedger {
     if (summary.missingVerifier) reasons.push('MISSING_VERIFIERS');
     if (summary.missingFalsifier) reasons.push('MISSING_FALSIFIERS');
     if (summary.missingDisposition) reasons.push('MISSING_DISPOSITIONS');
-    return { standing: reasons.length === 0 ? Standing.ALIVE : Standing.PARTIAL_ALIVE, reasons, summary, digest: this.digest() };
+    return {
+      standing: reasons.length === 0 ? Standing.ALIVE : Standing.PARTIAL_ALIVE,
+      reasons,
+      summary,
+      digest: this.digest(),
+    };
   }
 
   /**
@@ -212,16 +287,36 @@ export class CapabilityLedger {
    * @returns {Object} Canonical JSON-safe object.
    */
   toJSON() {
-    return canonical({ schema: 'unrdf.capability-ledger/1', subject: this.subject, source: this.source, authority: this.authority, entries: this.list(), history: this.#history });
+    return canonical({
+      schema: 'unrdf.capability-ledger/1',
+      subject: this.subject,
+      source: this.source,
+      authority: this.authority,
+      entries: this.list(),
+      history: this.#history,
+    });
   }
   /**
    * SHA-256 digest of the canonical serialization.
    * @returns {string} Hex digest.
    */
-  digest() { return digest(this.toJSON()); }
+  digest() {
+    return digest(this.toJSON());
+  }
 
-  #require(id) { const entry = this.#entries.get(id); if (!entry) throw new Error(`CAPABILITY_NOT_FOUND:${id}`); return entry; }
-  #record(type, capability, detail) { this.#history.push({ sequence: this.#history.length + 1, type, capability, detail: canonical(detail) }); }
+  #require(id) {
+    const entry = this.#entries.get(id);
+    if (!entry) throw new Error(`CAPABILITY_NOT_FOUND:${id}`);
+    return entry;
+  }
+  #record(type, capability, detail) {
+    this.#history.push({
+      sequence: this.#history.length + 1,
+      type,
+      capability,
+      detail: canonical(detail),
+    });
+  }
 }
 
 /**
@@ -229,4 +324,6 @@ export class CapabilityLedger {
  * @param {Object} options - Options forwarded to the CapabilityLedger constructor.
  * @returns {CapabilityLedger} A new ledger.
  */
-export function createCapabilityLedger(options) { return new CapabilityLedger(options); }
+export function createCapabilityLedger(options) {
+  return new CapabilityLedger(options);
+}

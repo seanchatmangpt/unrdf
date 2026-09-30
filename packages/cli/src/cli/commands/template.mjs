@@ -50,7 +50,7 @@ async function discoverLocalTemplates(cwd = process.cwd()) {
       ...tmpl,
       source: 'local',
       source_type: 'project',
-      priority: 'high'
+      priority: 'high',
     }));
   } catch (error) {
     console.error(`Warning: Failed to discover local templates: ${error.message}`);
@@ -121,13 +121,13 @@ async function loadMergedCatalog(cwd = process.cwd()) {
         merged.templates[catName][existingIdx] = {
           ...tmpl,
           source: 'local',
-          priority: 'high'
+          priority: 'high',
         };
       } else {
         merged.templates[catName].push({
           ...tmpl,
           source: 'local',
-          priority: 'high'
+          priority: 'high',
         });
       }
     }
@@ -146,7 +146,7 @@ async function loadMergedCatalog(cwd = process.cwd()) {
         name: tmpl.name || basename(tmpl.path),
         ...tmpl,
         source: 'local',
-        priority: 'high'
+        priority: 'high',
       });
     }
   }
@@ -170,7 +170,7 @@ function filterByCategory(catalog, category) {
         filtered.push({
           ...tmpl,
           source_category: catName,
-          status: tmpl.status || 'existing'
+          status: tmpl.status || 'existing',
         });
       }
     }
@@ -199,7 +199,7 @@ function searchTemplates(catalog, pattern) {
         results.push({
           ...tmpl,
           source_category: catName,
-          status: tmpl.status || 'existing'
+          status: tmpl.status || 'existing',
         });
       }
     }
@@ -380,14 +380,14 @@ const generateCommand = defineCommand({
 
     // PHASE 3: Gate 1 (Input Validation) - Block projection if source ontology lacks SpecKit receipt
     if (ctx.args.harden) {
-       const content = await readFile(rdfPath, 'utf-8');
-       // In production, this would use verifyPQReceipt against a formal SpecKit header
-       if (!content.includes('shacl:conforms')) {
-         console.error('Error: [Gate 1] Constitutional Integrity Failure');
-         console.error('The source ontology lacks a valid SpecKit receipt (shacl:conforms).');
-         console.error('Hardened projection requires verified manufacturing proof.');
-         process.exit(1);
-       }
+      const content = await readFile(rdfPath, 'utf-8');
+      // In production, this would use verifyPQReceipt against a formal SpecKit header
+      if (!content.includes('shacl:conforms')) {
+        console.error('Error: [Gate 1] Constitutional Integrity Failure');
+        console.error('The source ontology lacks a valid SpecKit receipt (shacl:conforms).');
+        console.error('Hardened projection requires verified manufacturing proof.');
+        process.exit(1);
+      }
     }
 
     const sparqlQuery = resolveSparqlQuery(ctx.args.sparql, fm.sparql);
@@ -581,7 +581,7 @@ const listCommand = defineCommand({
             templates.push({
               ...tmpl,
               source_category: catName,
-              status: tmpl.status || 'existing'
+              status: tmpl.status || 'existing',
             });
           }
         }
@@ -670,11 +670,17 @@ const templateQueryCommand = defineCommand({
       if (ctx.args.sparql) {
         const results = loader.queryToContext(store, ctx.args.sparql);
         if (ctx.args.format === 'json') {
-          console.log(JSON.stringify({
-            version: PKG_VERSION,
-            timestamp: new Date().toISOString(),
-            ...results
-          }, null, 2));
+          console.log(
+            JSON.stringify(
+              {
+                version: PKG_VERSION,
+                timestamp: new Date().toISOString(),
+                ...results,
+              },
+              null,
+              2
+            )
+          );
         } else {
           const rows = results.$rdf?.raw ?? [];
           if (rows.length === 0) {
@@ -737,11 +743,17 @@ const extractCommand = defineCommand({
 
       if (ctx.args.subject) {
         const context = loader.createInstanceContext(store, ctx.args.subject);
-        console.log(JSON.stringify({
-          version: PKG_VERSION,
-          timestamp: new Date().toISOString(),
-          ...context
-        }, null, 2));
+        console.log(
+          JSON.stringify(
+            {
+              version: PKG_VERSION,
+              timestamp: new Date().toISOString(),
+              ...context,
+            },
+            null,
+            2
+          )
+        );
       } else {
         console.log('Provide --subject / -s');
       }
@@ -823,13 +835,8 @@ const catalogCommand = defineCommand({
     const data = [
       ['Category', 'Source', 'Template Count', 'Templates'],
       ...Object.entries(catalog.templates || {}).flatMap(([cat, templates]) =>
-        templates.map(t => [
-          cat,
-          t.source === 'local' ? '🏠 Local' : '🌐 Global',
-          '1',
-          t.name
-        ])
-      )
+        templates.map(t => [cat, t.source === 'local' ? '🏠 Local' : '🌐 Global', '1', t.name])
+      ),
     ];
     console.log(table(data));
 

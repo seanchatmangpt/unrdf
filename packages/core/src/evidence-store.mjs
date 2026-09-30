@@ -17,7 +17,8 @@ export class EvidenceStore {
    */
   add(record) {
     const normalized = canonicalizeJSON(record ?? {});
-    if (!normalized.claim || !normalized.subject || !normalized.source) throw new TypeError('evidence requires claim, subject, and source');
+    if (!normalized.claim || !normalized.subject || !normalized.source)
+      throw new TypeError('evidence requires claim, subject, and source');
     const digest = hashCanonical(normalized);
     const stored = Object.freeze({ ...normalized, digest });
     if (!this.#records.has(digest)) {
@@ -65,7 +66,8 @@ export class EvidenceStore {
     const failures = [];
     for (const [digest, record] of this.#records) {
       const { digest: _ignored, ...body } = record;
-      if (hashCanonical(body) !== digest) failures.push({ digest, code: 'EVIDENCE_DIGEST_MISMATCH' });
+      if (hashCanonical(body) !== digest)
+        failures.push({ digest, code: 'EVIDENCE_DIGEST_MISMATCH' });
     }
     return { valid: failures.length === 0, count: this.#records.size, failures, root: this.root() };
   }
@@ -74,18 +76,33 @@ export class EvidenceStore {
    * Hash of the sorted record digests.
    * @returns {string} Hex digest.
    */
-  root() { return hashCanonical([...this.#records.keys()].sort()); }
+  root() {
+    return hashCanonical([...this.#records.keys()].sort());
+  }
   /**
    * Export all records with a verification result.
    * @returns {Object} Canonical export object.
    */
-  export() { return canonicalizeJSON({ schema: 'unrdf.evidence-store/1', records: [...this.#records.values()], verification: this.verify() }); }
-  #index(index, key, digest) { if (!index.has(key)) index.set(key, new Set()); index.get(key).add(digest); }
-  #intersect(left, right) { return new Set([...left].filter(value => right.has(value))); }
+  export() {
+    return canonicalizeJSON({
+      schema: 'unrdf.evidence-store/1',
+      records: [...this.#records.values()],
+      verification: this.verify(),
+    });
+  }
+  #index(index, key, digest) {
+    if (!index.has(key)) index.set(key, new Set());
+    index.get(key).add(digest);
+  }
+  #intersect(left, right) {
+    return new Set([...left].filter(value => right.has(value)));
+  }
 }
 
 /**
  * Create an empty evidence store.
  * @returns {EvidenceStore} A new store.
  */
-export function createEvidenceStore() { return new EvidenceStore(); }
+export function createEvidenceStore() {
+  return new EvidenceStore();
+}

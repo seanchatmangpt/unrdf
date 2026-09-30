@@ -110,8 +110,10 @@ export class BoundedAsyncQueue {
    * @throws {TypeError} If capacity or policy is invalid.
    */
   constructor({ capacity = 100, policy = 'wait' } = {}) {
-    if (!Number.isInteger(capacity) || capacity < 1) throw new TypeError('capacity must be a positive integer');
-    if (!['wait', 'drop-oldest', 'drop-newest', 'refuse'].includes(policy)) throw new TypeError(`Unknown backpressure policy: ${policy}`);
+    if (!Number.isInteger(capacity) || capacity < 1)
+      throw new TypeError('capacity must be a positive integer');
+    if (!['wait', 'drop-oldest', 'drop-newest', 'refuse'].includes(policy))
+      throw new TypeError(`Unknown backpressure policy: ${policy}`);
     this.capacity = capacity;
     this.policy = policy;
     this.items = [];
@@ -125,7 +127,9 @@ export class BoundedAsyncQueue {
    * Number of items currently buffered.
    * @returns {number} Buffered item count.
    */
-  get size() { return this.items.length; }
+  get size() {
+    return this.items.length;
+  }
 
   /**
    * Adds a value to the queue, applying the backpressure policy when full.
@@ -223,22 +227,30 @@ export class BoundedAsyncQueue {
    * Makes the queue usable in `for await` loops.
    * @returns {BoundedAsyncQueue} The queue itself.
    */
-  [Symbol.asyncIterator]() { return this; }
+  [Symbol.asyncIterator]() {
+    return this;
+  }
   /**
    * Async iterator step; equivalent to {@link BoundedAsyncQueue#shift}.
    * @returns {Promise<{value: *, done: boolean}>} Iterator result.
    */
-  next() { return this.shift(); }
+  next() {
+    return this.shift();
+  }
 }
 
 function sleep(ms, signal) {
   if (ms <= 0) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const timer = setTimeout(resolve, ms);
-    signal?.addEventListener('abort', () => {
-      clearTimeout(timer);
-      reject(new PipelineAbort('pipeline aborted during retry delay'));
-    }, { once: true });
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(new PipelineAbort('pipeline aborted during retry delay'));
+      },
+      { once: true }
+    );
   });
 }
 
@@ -252,7 +264,7 @@ async function executeWithRetry(item, handler, options, signal) {
     } catch (error) {
       lastError = error;
       if (attempt === options.retries) break;
-      const delay = Math.min(options.maxRetryDelayMs, options.retryDelayMs * (2 ** attempt));
+      const delay = Math.min(options.maxRetryDelayMs, options.retryDelayMs * 2 ** attempt);
       await sleep(delay, signal);
       attempt++;
     }
@@ -270,7 +282,8 @@ async function executeWithRetry(item, handler, options, signal) {
 export function batchBySize(items, size) {
   if (!Number.isInteger(size) || size < 1) throw new TypeError('batch size must be positive');
   const batches = [];
-  for (let index = 0; index < items.length; index += size) batches.push(items.slice(index, index + size));
+  for (let index = 0; index < items.length; index += size)
+    batches.push(items.slice(index, index + size));
   return batches;
 }
 
@@ -303,7 +316,8 @@ export async function runCheckpointedPipeline(source, handler, options = {}) {
     offset: options.offset || ((item, index) => item?.offset ?? index),
     deadLetter: options.deadLetter || (async () => {}),
   };
-  if (!Number.isInteger(config.concurrency) || config.concurrency < 1) throw new TypeError('concurrency must be positive');
+  if (!Number.isInteger(config.concurrency) || config.concurrency < 1)
+    throw new TypeError('concurrency must be positive');
 
   const checkpoint = await config.checkpointStore.load(config.streamId);
   const queue = new BoundedAsyncQueue({ capacity: config.capacity, policy: config.backpressure });
@@ -331,7 +345,11 @@ export async function runCheckpointedPipeline(source, handler, options = {}) {
         committed.push({ ...outcome, checkpoint: saved });
       } else {
         failures.push(outcome);
-        await config.deadLetter(outcome.item, outcome.error, { sequence: nextCommit, id: outcome.id, offset: outcome.offset });
+        await config.deadLetter(outcome.item, outcome.error, {
+          sequence: nextCommit,
+          id: outcome.id,
+          offset: outcome.offset,
+        });
         if (config.failFast) throw outcome.error;
       }
       nextCommit++;
@@ -341,17 +359,39 @@ export async function runCheckpointedPipeline(source, handler, options = {}) {
   const workers = Array.from({ length: config.concurrency }, async () => {
     for await (const envelope of queue) {
       const { item, sequence: itemSequence, id, offset } = envelope;
-      if (config.exactlyOnce && await config.checkpointStore.hasSeen(config.streamId, id)) {
-        outcomes.set(itemSequence, { status: 'fulfilled', item, id, offset, skipped: true, value: null, attempts: 0 });
+      if (config.exactlyOnce && (await config.checkpointStore.hasSeen(config.streamId, id))) {
+        outcomes.set(itemSequence, {
+          status: 'fulfilled',
+          item,
+          id,
+          offset,
+          skipped: true,
+          value: null,
+          attempts: 0,
+        });
         await commitReady();
         continue;
       }
       outcomes.set(itemSequence, { status: 'pending' });
       try {
         const result = await executeWithRetry(item, handler, config, config.signal);
-        outcomes.set(itemSequence, { status: 'fulfilled', item, id, offset, ...result, skipped: false });
+        outcomes.set(itemSequence, {
+          status: 'fulfilled',
+          item,
+          id,
+          offset,
+          ...result,
+          skipped: false,
+        });
       } catch (error) {
-        outcomes.set(itemSequence, { status: 'rejected', item, id, offset, error, attempts: error.attempts || config.retries + 1 });
+        outcomes.set(itemSequence, {
+          status: 'rejected',
+          item,
+          id,
+          offset,
+          error,
+          attempts: error.attempts || config.retries + 1,
+        });
       }
       await commitReady();
     }
@@ -362,10 +402,14 @@ export async function runCheckpointedPipeline(source, handler, options = {}) {
     for await (const item of source) {
       if (config.signal?.aborted) throw new PipelineAbort('pipeline aborted');
       const offset = config.offset(item, index);
-      if (checkpoint && offset <= checkpoint.offset) { index++; continue; }
+      if (checkpoint && offset <= checkpoint.offset) {
+        index++;
+        continue;
+      }
       const envelope = { item, sequence, id: config.id(item, index), offset };
       const admission = await queue.push(envelope);
-      if (!admission.accepted) failures.push({ status: 'dropped', item, id: envelope.id, offset, reason: 'backpressure' });
+      if (!admission.accepted)
+        failures.push({ status: 'dropped', item, id: envelope.id, offset, reason: 'backpressure' });
       sequence++;
       index++;
     }

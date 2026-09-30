@@ -30,22 +30,25 @@ export const packCommand = defineCommand({
 
     const config = await parseConfig(configPath);
     const projectDir = dirname(configPath);
-    const outputPath = args.output || resolve(projectDir, `${config.project?.name || 'artifact'}.unrdf`);
-    
+    const outputPath =
+      args.output || resolve(projectDir, `${config.project?.name || 'artifact'}.unrdf`);
+
     const output = createWriteStream(outputPath);
     const archive = archiver('tar', {
       gzip: true,
-      gzipOptions: { level: 9 }
+      gzipOptions: { level: 9 },
     });
 
-    archive.on('error', (err) => { throw err; });
+    archive.on('error', err => {
+      throw err;
+    });
     archive.pipe(output);
 
     const manifest = {
       pack_id: `unrdf:${config.project?.name || 'anonymous'}`,
       version: config.project?.version || '1.0.0',
       timestamp: new Date().toISOString(),
-      assets: []
+      assets: [],
     };
 
     // Bundle ontology source

@@ -124,12 +124,20 @@ async function fixN3Imports() {
     const filePath = join(projectRoot, file);
     const content = readFileSync(filePath, 'utf-8');
 
-    const hasN3Import = /^import\s+.*from\s+['"]n3['"]/m.test(content) || /^const\s+.*=\s+require\(['"]n3['"]\)/m.test(content);
+    const hasN3Import =
+      /^import\s+.*from\s+['"]n3['"]/m.test(content) ||
+      /^const\s+.*=\s+require\(['"]n3['"]\)/m.test(content);
 
     if (hasN3Import) {
       const updated = content
-        .replace(/import\s+\{\s*([^}]+)\s*\}\s+from\s+['"]n3['"]/g, "import { $1 } from '@unrdf/core/rdf/n3-justified-only.mjs'")
-        .replace(/import\s+N3\s+from\s+['"]n3['"]/g, "import * as N3 from '@unrdf/core/rdf/n3-justified-only.mjs'");
+        .replace(
+          /import\s+\{\s*([^}]+)\s*\}\s+from\s+['"]n3['"]/g,
+          "import { $1 } from '@unrdf/core/rdf/n3-justified-only.mjs'"
+        )
+        .replace(
+          /import\s+N3\s+from\s+['"]n3['"]/g,
+          "import * as N3 from '@unrdf/core/rdf/n3-justified-only.mjs'"
+        );
 
       if (updated !== content) {
         writeFileSync(filePath, updated, 'utf-8');

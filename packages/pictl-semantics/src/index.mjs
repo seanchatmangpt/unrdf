@@ -8,12 +8,7 @@
  */
 
 import { loadPictlOntology, queryPictlKnowledge } from './ontology-loader.mjs';
-import {
-  proposeResult,
-  votePictlResult,
-  getQuorumStatus,
-  QuorumConfigSchema,
-} from './quorum.mjs';
+import { proposeResult, votePictlResult, getQuorumStatus, QuorumConfigSchema } from './quorum.mjs';
 import { validatePictlResult, validateAgainstShapes } from './result-validator.mjs';
 
 /**
@@ -60,7 +55,8 @@ export async function initializePictlSemantics(config) {
     query: async sparql => queryPictlKnowledge(sparql, quorumState.ontology),
     // Federation quorum operations
     proposeResult: (result, nodeId) => proposeResult(result, nodeId, quorumState),
-    votePictlResult: (resultId, vote, reason) => votePictlResult(resultId, vote, reason, quorumState),
+    votePictlResult: (resultId, vote, reason) =>
+      votePictlResult(resultId, vote, reason, quorumState),
     getQuorumStatus: () => getQuorumStatus(quorumState),
     // Result validation
     validateResult: result => validatePictlResult(result),

@@ -139,12 +139,14 @@ export class StreamingAdmission {
    */
   #computeQuadsHash(quads) {
     // Canonical JSON serialization
-    const canonical = JSON.stringify(quads.map(q => ({
-      g: q.graph || '',
-      o: q.object,
-      p: q.predicate,
-      s: q.subject,
-    })));
+    const canonical = JSON.stringify(
+      quads.map(q => ({
+        g: q.graph || '',
+        o: q.object,
+        p: q.predicate,
+        s: q.subject,
+      }))
+    );
 
     // Use SHA256 as BLAKE3 fallback (both deterministic)
     return createHash('sha256').update(canonical).digest('hex');
@@ -158,18 +160,22 @@ export class StreamingAdmission {
    */
   #computeDeltaHash(delta) {
     const normalized = {
-      add: (delta.add || []).map(q => ({
-        g: q.graph || '',
-        o: q.object,
-        p: q.predicate,
-        s: q.subject,
-      })).sort((a, b) => `${a.s}${a.p}${a.o}`.localeCompare(`${b.s}${b.p}${b.o}`)),
-      remove: (delta.remove || []).map(q => ({
-        g: q.graph || '',
-        o: q.object,
-        p: q.predicate,
-        s: q.subject,
-      })).sort((a, b) => `${a.s}${a.p}${a.o}`.localeCompare(`${b.s}${b.p}${b.o}`)),
+      add: (delta.add || [])
+        .map(q => ({
+          g: q.graph || '',
+          o: q.object,
+          p: q.predicate,
+          s: q.subject,
+        }))
+        .sort((a, b) => `${a.s}${a.p}${a.o}`.localeCompare(`${b.s}${b.p}${b.o}`)),
+      remove: (delta.remove || [])
+        .map(q => ({
+          g: q.graph || '',
+          o: q.object,
+          p: q.predicate,
+          s: q.subject,
+        }))
+        .sort((a, b) => `${a.s}${a.p}${a.o}`.localeCompare(`${b.s}${b.p}${b.o}`)),
     };
 
     const canonical = JSON.stringify(normalized);
@@ -198,9 +204,10 @@ export class StreamingAdmission {
    * @returns {Object} Receipt object
    */
   #createReceipt(input_hash, output_hash, deltaHash, accepted, rejection_reason = null) {
-    const previousReceiptHash = this.#receiptChain.length > 0
-      ? this.#receiptChain[this.#receiptChain.length - 1].hash
-      : undefined;
+    const previousReceiptHash =
+      this.#receiptChain.length > 0
+        ? this.#receiptChain[this.#receiptChain.length - 1].hash
+        : undefined;
 
     const receipt = {
       id: this.#generateReceiptId(),

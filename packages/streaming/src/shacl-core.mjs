@@ -244,7 +244,10 @@ function compilePath(store, pathTerm, stack = new Set()) {
     if (inverse) return { kind: 'inverse', path: compilePath(store, inverse, stack) };
     const alternative = firstObject(store, pathTerm, SH.alternativePath);
     if (alternative) {
-      return { kind: 'alternative', paths: readRdfList(store, alternative).map(item => compilePath(store, item, stack)) };
+      return {
+        kind: 'alternative',
+        paths: readRdfList(store, alternative).map(item => compilePath(store, item, stack)),
+      };
     }
     const zeroOrMore = firstObject(store, pathTerm, SH.zeroOrMorePath);
     if (zeroOrMore) return { kind: 'zeroOrMore', path: compilePath(store, zeroOrMore, stack) };
@@ -253,7 +256,10 @@ function compilePath(store, pathTerm, stack = new Set()) {
     const zeroOrOne = firstObject(store, pathTerm, SH.zeroOrOnePath);
     if (zeroOrOne) return { kind: 'zeroOrOne', path: compilePath(store, zeroOrOne, stack) };
     if (isRdfListHead(store, pathTerm)) {
-      return { kind: 'sequence', paths: readRdfList(store, pathTerm).map(item => compilePath(store, item, stack)) };
+      return {
+        kind: 'sequence',
+        paths: readRdfList(store, pathTerm).map(item => compilePath(store, item, stack)),
+      };
     }
     throw new Error(`Unsupported SHACL path expression ${pathTerm.value}`);
   } finally {
@@ -281,15 +287,24 @@ export function evaluatePath(store, startNodes, path, { maxDepth = 64, maxNodes 
     let values = [];
     switch (expression.kind) {
       case 'predicate':
-        for (const node of nodes) values.push(...quads(store, node, expression.predicate, null, null).map(q => q.object));
+        for (const node of nodes)
+          values.push(...quads(store, node, expression.predicate, null, null).map(q => q.object));
         break;
       case 'inverse':
         if (expression.path.kind === 'predicate') {
-          for (const node of nodes) values.push(...quads(store, null, expression.path.predicate, node, null).map(q => q.subject));
+          for (const node of nodes)
+            values.push(
+              ...quads(store, null, expression.path.predicate, node, null).map(q => q.subject)
+            );
         } else {
           const candidates = uniqueTerms(quads(store).flatMap(q => [q.subject, q.object]));
           for (const candidate of candidates) {
-            if (step([candidate], expression.path, depth + 1).some(value => nodes.some(node => termEquals(node, value)))) values.push(candidate);
+            if (
+              step([candidate], expression.path, depth + 1).some(value =>
+                nodes.some(node => termEquals(node, value))
+              )
+            )
+              values.push(candidate);
           }
         }
         break;
@@ -307,7 +322,8 @@ export function evaluatePath(store, startNodes, path, { maxDepth = 64, maxNodes 
       case 'oneOrMore': {
         const visited = new Map();
         let frontier = nodes;
-        if (expression.kind === 'zeroOrMore') for (const node of nodes) visited.set(termKey(node), node);
+        if (expression.kind === 'zeroOrMore')
+          for (const node of nodes) visited.set(termKey(node), node);
         while (frontier.length) {
           const next = step(frontier, expression.path, depth + 1);
           frontier = [];
@@ -316,7 +332,8 @@ export function evaluatePath(store, startNodes, path, { maxDepth = 64, maxNodes 
             if (!visited.has(key)) {
               visited.set(key, node);
               frontier.push(node);
-              if (visited.size > maxNodes) throw new Error(`SHACL path exceeds max nodes ${maxNodes}`);
+              if (visited.size > maxNodes)
+                throw new Error(`SHACL path exceeds max nodes ${maxNodes}`);
             }
           }
         }
@@ -461,13 +478,20 @@ export function compileShacl(shapesStore) {
       for (const predicate of shape.targets.subjectsOf) dependencyPredicates.add(predicate.value);
       for (const predicate of shape.targets.objectsOf) dependencyPredicates.add(predicate.value);
     }
-    for (const predicate of [shape.constraints.equals, shape.constraints.disjoint, shape.constraints.lessThan, shape.constraints.lessThanOrEquals]) {
+    for (const predicate of [
+      shape.constraints.equals,
+      shape.constraints.disjoint,
+      shape.constraints.lessThan,
+      shape.constraints.lessThanOrEquals,
+    ]) {
       if (predicate) dependencyPredicates.add(predicate.value);
     }
   }
 
   return Object.freeze({
-    nodeShapes: Array.from(shapesById.values()).filter(shape => shape.type === 'NodeShape' && shape.targets),
+    nodeShapes: Array.from(shapesById.values()).filter(
+      shape => shape.type === 'NodeShape' && shape.targets
+    ),
     propertyShapes: Array.from(shapesById.values()).filter(shape => shape.type === 'PropertyShape'),
     shapesById,
     dependencyPredicates,
@@ -476,9 +500,12 @@ export function compileShacl(shapesStore) {
 
 function targetNodes(dataStore, shape) {
   const targets = [...shape.targets.nodes];
-  for (const targetClass of shape.targets.classes) targets.push(...subjects(dataStore, RDF.type, targetClass));
-  for (const predicate of shape.targets.subjectsOf) targets.push(...quads(dataStore, null, predicate, null, null).map(q => q.subject));
-  for (const predicate of shape.targets.objectsOf) targets.push(...quads(dataStore, null, predicate, null, null).map(q => q.object));
+  for (const targetClass of shape.targets.classes)
+    targets.push(...subjects(dataStore, RDF.type, targetClass));
+  for (const predicate of shape.targets.subjectsOf)
+    targets.push(...quads(dataStore, null, predicate, null, null).map(q => q.subject));
+  for (const predicate of shape.targets.objectsOf)
+    targets.push(...quads(dataStore, null, predicate, null, null).map(q => q.object));
   return uniqueTerms(targets).sort((a, b) => termKey(a).localeCompare(termKey(b)));
 }
 
@@ -513,13 +540,20 @@ function hasClass(dataStore, node, classTerm) {
 
 function conformsNodeKind(term, nodeKind) {
   switch (nodeKind?.value) {
-    case SH.IRI: return term.termType === 'NamedNode';
-    case SH.BlankNode: return term.termType === 'BlankNode';
-    case SH.Literal: return term.termType === 'Literal';
-    case SH.BlankNodeOrIRI: return term.termType === 'BlankNode' || term.termType === 'NamedNode';
-    case SH.BlankNodeOrLiteral: return term.termType === 'BlankNode' || term.termType === 'Literal';
-    case SH.IRIOrLiteral: return term.termType === 'NamedNode' || term.termType === 'Literal';
-    default: return true;
+    case SH.IRI:
+      return term.termType === 'NamedNode';
+    case SH.BlankNode:
+      return term.termType === 'BlankNode';
+    case SH.Literal:
+      return term.termType === 'Literal';
+    case SH.BlankNodeOrIRI:
+      return term.termType === 'BlankNode' || term.termType === 'NamedNode';
+    case SH.BlankNodeOrLiteral:
+      return term.termType === 'BlankNode' || term.termType === 'Literal';
+    case SH.IRIOrLiteral:
+      return term.termType === 'NamedNode' || term.termType === 'Literal';
+    default:
+      return true;
   }
 }
 
@@ -534,7 +568,12 @@ function defaultMessage(component, details = '') {
   return `${name} constraint violated${details ? `: ${details}` : ''}`;
 }
 
-function resultFor(shape, focusNode, component, { path = null, value = null, message = null, details = null } = {}) {
+function resultFor(
+  shape,
+  focusNode,
+  component,
+  { path = null, value = null, message = null, details = null } = {}
+) {
   return {
     severity: shape.severity || SH.Violation,
     sourceShape: shape.id,
@@ -559,40 +598,120 @@ function setIntersects(left, right) {
 
 function evaluateReferencedShape(dataStore, compiled, shapeTerm, node, context) {
   const shape = compiled.shapesById.get(termKey(shapeTerm));
-  if (!shape) return { conforms: false, results: [resultFor({ id: shapeTerm, severity: SH.Violation, messages: [] }, node, CONSTRAINT_COMPONENTS.node, { details: 'referenced shape is missing' })] };
+  if (!shape)
+    return {
+      conforms: false,
+      results: [
+        resultFor(
+          { id: shapeTerm, severity: SH.Violation, messages: [] },
+          node,
+          CONSTRAINT_COMPONENTS.node,
+          { details: 'referenced shape is missing' }
+        ),
+      ],
+    };
   return validateShape(dataStore, compiled, shape, node, context);
 }
 
-function validateValueConstraints(dataStore, compiled, shape, focusNode, valueNodes, path, context) {
+function validateValueConstraints(
+  dataStore,
+  compiled,
+  shape,
+  focusNode,
+  valueNodes,
+  path,
+  context
+) {
   const c = shape.constraints;
   const results = [];
   const pushEach = (component, predicate, details) => {
-    for (const value of valueNodes) if (!predicate(value)) results.push(resultFor(shape, focusNode, component, { path, value, details }));
+    for (const value of valueNodes)
+      if (!predicate(value))
+        results.push(resultFor(shape, focusNode, component, { path, value, details }));
   };
 
-  if (c.datatype) pushEach(CONSTRAINT_COMPONENTS.datatype, value => conformsDatatype(value, c.datatype), `expected datatype ${c.datatype.value}`);
-  if (c.class) pushEach(CONSTRAINT_COMPONENTS.class, value => hasClass(dataStore, value, c.class), `expected class ${c.class.value}`);
-  if (c.nodeKind) pushEach(CONSTRAINT_COMPONENTS.nodeKind, value => conformsNodeKind(value, c.nodeKind), `expected node kind ${c.nodeKind.value}`);
-  if (c.minLength != null) pushEach(CONSTRAINT_COMPONENTS.minLength, value => [...lexical(value)].length >= c.minLength, `minimum length ${c.minLength}`);
-  if (c.maxLength != null) pushEach(CONSTRAINT_COMPONENTS.maxLength, value => [...lexical(value)].length <= c.maxLength, `maximum length ${c.maxLength}`);
+  if (c.datatype)
+    pushEach(
+      CONSTRAINT_COMPONENTS.datatype,
+      value => conformsDatatype(value, c.datatype),
+      `expected datatype ${c.datatype.value}`
+    );
+  if (c.class)
+    pushEach(
+      CONSTRAINT_COMPONENTS.class,
+      value => hasClass(dataStore, value, c.class),
+      `expected class ${c.class.value}`
+    );
+  if (c.nodeKind)
+    pushEach(
+      CONSTRAINT_COMPONENTS.nodeKind,
+      value => conformsNodeKind(value, c.nodeKind),
+      `expected node kind ${c.nodeKind.value}`
+    );
+  if (c.minLength != null)
+    pushEach(
+      CONSTRAINT_COMPONENTS.minLength,
+      value => [...lexical(value)].length >= c.minLength,
+      `minimum length ${c.minLength}`
+    );
+  if (c.maxLength != null)
+    pushEach(
+      CONSTRAINT_COMPONENTS.maxLength,
+      value => [...lexical(value)].length <= c.maxLength,
+      `maximum length ${c.maxLength}`
+    );
   if (c.pattern != null) {
     let regex;
-    try { regex = new RegExp(c.pattern, c.flags); } catch (error) { throw new Error(`Invalid SHACL regex on ${shape.id.value}: ${error.message}`); }
-    pushEach(CONSTRAINT_COMPONENTS.pattern, value => regex.test(lexical(value)), `pattern ${c.pattern}`);
+    try {
+      regex = new RegExp(c.pattern, c.flags);
+    } catch (error) {
+      throw new Error(`Invalid SHACL regex on ${shape.id.value}: ${error.message}`);
+    }
+    pushEach(
+      CONSTRAINT_COMPONENTS.pattern,
+      value => regex.test(lexical(value)),
+      `pattern ${c.pattern}`
+    );
   }
-  if (c.languageIn.length) pushEach(CONSTRAINT_COMPONENTS.languageIn, value => value.termType === 'Literal' && c.languageIn.includes(String(value.language || '').toLowerCase()), `language in ${c.languageIn.join(', ')}`);
+  if (c.languageIn.length)
+    pushEach(
+      CONSTRAINT_COMPONENTS.languageIn,
+      value =>
+        value.termType === 'Literal' &&
+        c.languageIn.includes(String(value.language || '').toLowerCase()),
+      `language in ${c.languageIn.join(', ')}`
+    );
   if (c.uniqueLang) {
     const seen = new Set();
     for (const value of valueNodes) {
       const language = String(value.language || '').toLowerCase();
       if (!language) continue;
-      if (seen.has(language)) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.uniqueLang, { path, value, details: `duplicate language ${language}` }));
+      if (seen.has(language))
+        results.push(
+          resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.uniqueLang, {
+            path,
+            value,
+            details: `duplicate language ${language}`,
+          })
+        );
       seen.add(language);
     }
   }
-  if (c.in.length) pushEach(CONSTRAINT_COMPONENTS.in, value => c.in.some(allowed => termEquals(value, allowed)), 'value not in allowed set');
+  if (c.in.length)
+    pushEach(
+      CONSTRAINT_COMPONENTS.in,
+      value => c.in.some(allowed => termEquals(value, allowed)),
+      'value not in allowed set'
+    );
   for (const expected of c.hasValue) {
-    if (!valueNodes.some(value => termEquals(value, expected))) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.hasValue, { path, value: expected, details: 'required value missing' }));
+    if (!valueNodes.some(value => termEquals(value, expected)))
+      results.push(
+        resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.hasValue, {
+          path,
+          value: expected,
+          details: 'required value missing',
+        })
+      );
   }
 
   const bounds = [
@@ -603,17 +722,28 @@ function validateValueConstraints(dataStore, compiled, shape, focusNode, valueNo
   ];
   for (const [name, bound, predicate] of bounds) {
     if (!bound) continue;
-    pushEach(CONSTRAINT_COMPONENTS[name], value => {
-      const comparison = compareTerms(value, bound);
-      return comparison != null && predicate(comparison);
-    }, `${name} ${bound.value}`);
+    pushEach(
+      CONSTRAINT_COMPONENTS[name],
+      value => {
+        const comparison = compareTerms(value, bound);
+        return comparison != null && predicate(comparison);
+      },
+      `${name} ${bound.value}`
+    );
   }
 
   if (c.node.length) {
     for (const referenced of c.node) {
       for (const value of valueNodes) {
         const nested = evaluateReferencedShape(dataStore, compiled, referenced, value, context);
-        if (!nested.conforms) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.node, { path, value, details: `does not conform to ${referenced.value}` }));
+        if (!nested.conforms)
+          results.push(
+            resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.node, {
+              path,
+              value,
+              details: `does not conform to ${referenced.value}`,
+            })
+          );
       }
     }
   }
@@ -621,23 +751,62 @@ function validateValueConstraints(dataStore, compiled, shape, focusNode, valueNo
     for (const referenced of c.not) {
       for (const value of valueNodes) {
         const nested = evaluateReferencedShape(dataStore, compiled, referenced, value, context);
-        if (nested.conforms) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.not, { path, value, details: `must not conform to ${referenced.value}` }));
+        if (nested.conforms)
+          results.push(
+            resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.not, {
+              path,
+              value,
+              details: `must not conform to ${referenced.value}`,
+            })
+          );
       }
     }
   }
-  for (const [name, refs] of [['and', c.and], ['or', c.or], ['xone', c.xone]]) {
+  for (const [name, refs] of [
+    ['and', c.and],
+    ['or', c.or],
+    ['xone', c.xone],
+  ]) {
     if (!refs.length) continue;
     for (const value of valueNodes) {
-      const count = refs.reduce((sum, ref) => sum + (evaluateReferencedShape(dataStore, compiled, ref, value, context).conforms ? 1 : 0), 0);
-      const valid = name === 'and' ? count === refs.length : name === 'or' ? count >= 1 : count === 1;
-      if (!valid) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], { path, value, details: `${count}/${refs.length} referenced shapes conformed` }));
+      const count = refs.reduce(
+        (sum, ref) =>
+          sum +
+          (evaluateReferencedShape(dataStore, compiled, ref, value, context).conforms ? 1 : 0),
+        0
+      );
+      const valid =
+        name === 'and' ? count === refs.length : name === 'or' ? count >= 1 : count === 1;
+      if (!valid)
+        results.push(
+          resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], {
+            path,
+            value,
+            details: `${count}/${refs.length} referenced shapes conformed`,
+          })
+        );
     }
   }
 
   if (c.qualifiedValueShape) {
-    const count = valueNodes.filter(value => evaluateReferencedShape(dataStore, compiled, c.qualifiedValueShape, value, context).conforms).length;
-    if (c.qualifiedMinCount != null && count < c.qualifiedMinCount) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.qualifiedMinCount, { path, details: `${count} qualified values; minimum ${c.qualifiedMinCount}` }));
-    if (c.qualifiedMaxCount != null && count > c.qualifiedMaxCount) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.qualifiedMaxCount, { path, details: `${count} qualified values; maximum ${c.qualifiedMaxCount}` }));
+    const count = valueNodes.filter(
+      value =>
+        evaluateReferencedShape(dataStore, compiled, c.qualifiedValueShape, value, context).conforms
+    ).length;
+    if (c.qualifiedMinCount != null && count < c.qualifiedMinCount)
+      results.push(
+        resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.qualifiedMinCount, {
+          path,
+          details: `${count} qualified values; minimum ${c.qualifiedMinCount}`,
+        })
+      );
+    if (c.qualifiedMaxCount != null && count > c.qualifiedMaxCount)
+      results.push(
+        resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.qualifiedMaxCount, {
+          path,
+          details: `${count} qualified values; maximum ${c.qualifiedMaxCount}`,
+        })
+      );
   }
   return results;
 }
@@ -647,8 +816,20 @@ function validatePropertyShape(dataStore, compiled, shape, focusNode, context) {
   const valueNodes = evaluatePath(dataStore, [focusNode], shape.path, context.options);
   const c = shape.constraints;
   const results = [];
-  if (c.minCount != null && valueNodes.length < c.minCount) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.minCount, { path: shape.pathTerm, details: `${valueNodes.length} values; minimum ${c.minCount}` }));
-  if (c.maxCount != null && valueNodes.length > c.maxCount) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.maxCount, { path: shape.pathTerm, details: `${valueNodes.length} values; maximum ${c.maxCount}` }));
+  if (c.minCount != null && valueNodes.length < c.minCount)
+    results.push(
+      resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.minCount, {
+        path: shape.pathTerm,
+        details: `${valueNodes.length} values; minimum ${c.minCount}`,
+      })
+    );
+  if (c.maxCount != null && valueNodes.length > c.maxCount)
+    results.push(
+      resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.maxCount, {
+        path: shape.pathTerm,
+        details: `${valueNodes.length} values; maximum ${c.maxCount}`,
+      })
+    );
 
   const comparisonPaths = [
     ['equals', c.equals, (left, right) => setEquals(left, right)],
@@ -657,39 +838,84 @@ function validatePropertyShape(dataStore, compiled, shape, focusNode, context) {
   for (const [name, predicate, validate] of comparisonPaths) {
     if (!predicate) continue;
     const other = quads(dataStore, focusNode, predicate, null, null).map(q => q.object);
-    if (!validate(valueNodes, other)) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], { path: shape.pathTerm, details: `${name} path ${predicate.value}` }));
+    if (!validate(valueNodes, other))
+      results.push(
+        resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], {
+          path: shape.pathTerm,
+          details: `${name} path ${predicate.value}`,
+        })
+      );
   }
-  for (const [name, predicate, inclusive] of [['lessThan', c.lessThan, false], ['lessThanOrEquals', c.lessThanOrEquals, true]]) {
+  for (const [name, predicate, inclusive] of [
+    ['lessThan', c.lessThan, false],
+    ['lessThanOrEquals', c.lessThanOrEquals, true],
+  ]) {
     if (!predicate) continue;
     const other = quads(dataStore, focusNode, predicate, null, null).map(q => q.object);
     for (const value of valueNodes) {
       for (const right of other) {
         const comparison = compareTerms(value, right);
-        if (comparison == null || (inclusive ? comparison > 0 : comparison >= 0)) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], { path: shape.pathTerm, value, details: `${value.value} is not ${inclusive ? '<=' : '<'} ${right.value}` }));
+        if (comparison == null || (inclusive ? comparison > 0 : comparison >= 0))
+          results.push(
+            resultFor(shape, focusNode, CONSTRAINT_COMPONENTS[name], {
+              path: shape.pathTerm,
+              value,
+              details: `${value.value} is not ${inclusive ? '<=' : '<'} ${right.value}`,
+            })
+          );
       }
     }
   }
 
-  results.push(...validateValueConstraints(dataStore, compiled, shape, focusNode, valueNodes, shape.pathTerm, context));
+  results.push(
+    ...validateValueConstraints(
+      dataStore,
+      compiled,
+      shape,
+      focusNode,
+      valueNodes,
+      shape.pathTerm,
+      context
+    )
+  );
   return { conforms: results.length === 0, results };
 }
 
 function validateNodeShape(dataStore, compiled, shape, focusNode, context) {
   if (shape.deactivated) return { conforms: true, results: [] };
-  const results = validateValueConstraints(dataStore, compiled, shape, focusNode, [focusNode], null, context);
+  const results = validateValueConstraints(
+    dataStore,
+    compiled,
+    shape,
+    focusNode,
+    [focusNode],
+    null,
+    context
+  );
   for (const propertyKey of shape.propertyShapes || []) {
     const propertyShape = compiled.shapesById.get(propertyKey);
-    if (propertyShape) results.push(...validatePropertyShape(dataStore, compiled, propertyShape, focusNode, context).results);
+    if (propertyShape)
+      results.push(
+        ...validatePropertyShape(dataStore, compiled, propertyShape, focusNode, context).results
+      );
   }
   if (shape.constraints.closed) {
     const allowed = new Set(shape.constraints.ignoredProperties.map(term => term.value));
     allowed.add(RDF.type);
     for (const propertyKey of shape.propertyShapes || []) {
       const propertyShape = compiled.shapesById.get(propertyKey);
-      if (propertyShape?.path?.kind === 'predicate') allowed.add(propertyShape.path.predicate.value);
+      if (propertyShape?.path?.kind === 'predicate')
+        allowed.add(propertyShape.path.predicate.value);
     }
     for (const quad of quads(dataStore, focusNode, null, null, null)) {
-      if (!allowed.has(quad.predicate.value)) results.push(resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.closed, { path: quad.predicate, value: quad.object, details: `predicate ${quad.predicate.value} is not allowed` }));
+      if (!allowed.has(quad.predicate.value))
+        results.push(
+          resultFor(shape, focusNode, CONSTRAINT_COMPONENTS.closed, {
+            path: quad.predicate,
+            value: quad.object,
+            details: `predicate ${quad.predicate.value} is not allowed`,
+          })
+        );
     }
   }
   return { conforms: results.length === 0, results };
@@ -759,7 +985,10 @@ export function validateShaclCore(dataStore, shapesStore, options = {}) {
  * the changed subject so targetClass shapes are re-evaluated.
  */
 export function affectedFocusNodes(delta, compiled) {
-  const changed = [...(delta?.additions || delta?.added || []), ...(delta?.deletions || delta?.removed || [])];
+  const changed = [
+    ...(delta?.additions || delta?.added || []),
+    ...(delta?.deletions || delta?.removed || []),
+  ];
   const nodes = [];
   for (const quad of changed) {
     if (!compiled.dependencyPredicates.has(quad.predicate?.value)) continue;
@@ -778,8 +1007,11 @@ export function affectedFocusNodes(delta, compiled) {
  * @returns {object} Validation report; `skipped: true` when the delta touches no shape-relevant predicate.
  */
 export function validateShaclDelta(dataStore, compiledOrShapesStore, delta, options = {}) {
-  const compiled = compiledOrShapesStore?.shapesById ? compiledOrShapesStore : compileShacl(compiledOrShapesStore);
+  const compiled = compiledOrShapesStore?.shapesById
+    ? compiledOrShapesStore
+    : compileShacl(compiledOrShapesStore);
   const focusNodes = affectedFocusNodes(delta, compiled);
-  if (focusNodes.length === 0) return { conforms: true, results: [], checkedShapes: 0, checkedFocusNodes: 0, skipped: true };
+  if (focusNodes.length === 0)
+    return { conforms: true, results: [], checkedShapes: 0, checkedFocusNodes: 0, skipped: true };
   return validateCompiledShacl(dataStore, compiled, { ...options, focusNodes });
 }

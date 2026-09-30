@@ -147,12 +147,14 @@ export class SemanticQueryEngine {
     const sparqlResults = this.store.query(sparqlQuery);
 
     // Create lookup set for SPARQL results
-    const sparqlSet = new Set(Array.from(sparqlResults).map(r => {
-      const s = r.get ? r.get('s') : r.s;
-      const p = r.get ? r.get('p') : r.p;
-      const o = r.get ? r.get('o') : r.o;
-      return `${s.value}|${p.value}|${o.value}`;
-    }));
+    const sparqlSet = new Set(
+      Array.from(sparqlResults).map(r => {
+        const s = r.get ? r.get('s') : r.s;
+        const p = r.get ? r.get('p') : r.p;
+        const o = r.get ? r.get('o') : r.o;
+        return `${s.value}|${p.value}|${o.value}`;
+      })
+    );
 
     // Combine results with hybrid weighting
     const hybrid = semanticResults.map(result => {

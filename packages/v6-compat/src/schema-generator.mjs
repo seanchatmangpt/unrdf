@@ -22,15 +22,28 @@ import {
  * TypeScript type to Zod schema mapping
  */
 const TS_TO_ZOD = {
-  string: 'z.string()', number: 'z.number()', boolean: 'z.boolean()', bigint: 'z.bigint()',
-  Date: 'z.date()', unknown: 'z.unknown()', any: 'z.any()', void: 'z.void()', null: 'z.null()',
-  undefined: 'z.undefined()', never: 'z.never()',
+  string: 'z.string()',
+  number: 'z.number()',
+  boolean: 'z.boolean()',
+  bigint: 'z.bigint()',
+  Date: 'z.date()',
+  unknown: 'z.unknown()',
+  any: 'z.any()',
+  void: 'z.void()',
+  null: 'z.null()',
+  undefined: 'z.undefined()',
+  never: 'z.never()',
 };
 
 function toZod(type) {
-  const normalized = String(type || 'unknown').trim().replace(/^Promise<(.+)>$/, '$1');
-  try { return typeScriptTypeToZod(normalized); }
-  catch { return TS_TO_ZOD[normalized] || `z.unknown() /* ${normalized} */`; }
+  const normalized = String(type || 'unknown')
+    .trim()
+    .replace(/^Promise<(.+)>$/, '$1');
+  try {
+    return typeScriptTypeToZod(normalized);
+  } catch {
+    return TS_TO_ZOD[normalized] || `z.unknown() /* ${normalized} */`;
+  }
 }
 
 /**
@@ -101,14 +114,20 @@ export function parseJSDocToZod(jsdoc) {
  * // }
  */
 export function generateSchemaFromFunction(fnSource) {
-  const signature = fnSource.match(/(?:async\s+)?function\s+\w+\s*\(([^)]*)\)\s*(?::\s*([^\s{]+(?:<[^>]+>)?))?/s);
+  const signature = fnSource.match(
+    /(?:async\s+)?function\s+\w+\s*\(([^)]*)\)\s*(?::\s*([^\s{]+(?:<[^>]+>)?))?/s
+  );
   if (!signature) throw new SyntaxError('Unable to parse function signature');
-  const params = signature[1].trim() ? signature[1].split(',').map(parameter => {
-    const match = parameter.trim().match(/^(?:\.\.\.)?([A-Za-z_$][\w$]*)(\?)?\s*:\s*(.+?)(?:\s*=.+)?$/);
-    if (!match) return 'z.unknown()';
-    const schema = toZod(match[3]);
-    return match[2] || parameter.includes('=') ? `${schema}.optional()` : schema;
-  }) : [];
+  const params = signature[1].trim()
+    ? signature[1].split(',').map(parameter => {
+        const match = parameter
+          .trim()
+          .match(/^(?:\.\.\.)?([A-Za-z_$][\w$]*)(\?)?\s*:\s*(.+?)(?:\s*=.+)?$/);
+        if (!match) return 'z.unknown()';
+        const schema = toZod(match[3]);
+        return match[2] || parameter.includes('=') ? `${schema}.optional()` : schema;
+      })
+    : [];
   const returnType = signature[2] || 'void';
   return {
     params: `z.tuple([${params.join(', ')}])`,

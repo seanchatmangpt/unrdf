@@ -26,13 +26,15 @@ const SemanticExecutorConfigSchema = z.object({
   similarityThreshold: z.number().min(0).max(1).default(0.7),
   maxResults: z.number().default(100),
   useExactFallback: z.boolean().default(true),
-  indexConfig: z.object({
-    dimensions: z.number().default(384),
-    maxElements: z.number().default(10000),
-    M: z.number().default(16),
-    efConstruction: z.number().default(200),
-    efSearch: z.number().default(50),
-  }).optional(),
+  indexConfig: z
+    .object({
+      dimensions: z.number().default(384),
+      maxElements: z.number().default(10000),
+      M: z.number().default(16),
+      efConstruction: z.number().default(200),
+      efSearch: z.number().default(50),
+    })
+    .optional(),
 });
 
 /**
@@ -138,7 +140,7 @@ async function executeSemanticConstruct(store, sparql, config) {
   const results = await globalIndex.search(queryEmbedding, config.maxResults);
 
   // Filter by similarity threshold
-  const filtered = results.filter(r => r.distance <= (1 - config.similarityThreshold));
+  const filtered = results.filter(r => r.distance <= 1 - config.similarityThreshold);
 
   // If exact fallback enabled, verify with SPARQL
   if (config.useExactFallback) {
@@ -146,16 +148,19 @@ async function executeSemanticConstruct(store, sparql, config) {
     const exactQuads = Array.isArray(exactResults) ? exactResults : [exactResults];
 
     // Merge semantic and exact results
-    const merged = [...filtered, ...exactQuads.map(quad => ({
-      id: quadToStringId(quad),
-      distance: 0, // Exact match
-      quad,
-    }))];
+    const merged = [
+      ...filtered,
+      ...exactQuads.map(quad => ({
+        id: quadToStringId(quad),
+        distance: 0, // Exact match
+        quad,
+      })),
+    ];
 
     // Remove duplicates and return
     const seen = new Set();
     const unique = merged.filter(r => {
-      const id = r.id || r.quad && quadToStringId(r.quad);
+      const id = r.id || (r.quad && quadToStringId(r.quad));
       if (id && !seen.has(id)) {
         seen.add(id);
         return true;
@@ -186,7 +191,7 @@ async function executeSemanticSelect(store, sparql, config) {
   const results = await globalIndex.search(queryEmbedding, config.maxResults);
 
   // Filter by similarity threshold
-  const filtered = results.filter(r => r.distance <= (1 - config.similarityThreshold));
+  const filtered = results.filter(r => r.distance <= 1 - config.similarityThreshold);
 
   // Extract variables from query
   const variables = extractVariables(sparql);
@@ -252,7 +257,10 @@ function isSemanticQuery(sparql) {
  * @private
  */
 function detectQueryType(sparql) {
-  const normalized = sparql.replace(/PREFIX\s+[^\s]+\s+<[^>]+>/gm, '').trim().toUpperCase();
+  const normalized = sparql
+    .replace(/PREFIX\s+[^\s]+\s+<[^>]+>/gm, '')
+    .trim()
+    .toUpperCase();
   const firstWord = normalized.split(/\s+/)[0];
 
   if (['SELECT', 'CONSTRUCT', 'ASK', 'DESCRIBE'].includes(firstWord)) {

@@ -30,9 +30,11 @@ export const DEFAULT_PREFIXES = { ...COMMON_PREFIXES };
 function stripQuotesFromTemplateVars(value) {
   if (typeof value === 'string') {
     // Only strip if the value contains template syntax AND is wrapped in matching quotes
-    if ((value.includes('{{') || value.includes('}}')) &&
-        ((value.startsWith('"') && value.endsWith('"')) ||
-         (value.startsWith("'") && value.endsWith("'")))) {
+    if (
+      (value.includes('{{') || value.includes('}}')) &&
+      ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'")))
+    ) {
       return value.slice(1, -1);
     }
     return value;
@@ -121,17 +123,20 @@ export function preprocessFrontmatter(content) {
  * @returns {Promise<Object>} Render result with content, outputPath, etc.
  */
 export async function renderTemplate(templatePath, sparqlResults, context = {}) {
-  const env = createNunjucksEnvironment(context.templates_dir || dirname(resolve(templatePath)), context.prefixes || {});
-  
+  const env = createNunjucksEnvironment(
+    context.templates_dir || dirname(resolve(templatePath)),
+    context.prefixes || {}
+  );
+
   // Inject hardening globals
   const harden_enabled = !!context.harden;
-  const renderContext = { 
-    ...context, 
+  const renderContext = {
+    ...context,
     harden: harden_enabled,
     harden_enabled,
-    sparql_results: sparqlResults, 
-    results: sparqlResults, 
-    now: new Date() 
+    sparql_results: sparqlResults,
+    results: sparqlResults,
+    now: new Date(),
   };
   const absPath = resolve(templatePath);
   if (!existsSync(absPath)) throw new Error(`Template not found: ${absPath}`);
@@ -146,11 +151,11 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   } catch (error) {
     throw new Error(
       `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
-      `Note: Template syntax {{ }} in frontmatter values is auto-quoted.\n` +
-      `If the error persists, check for:\n` +
-      `  - Malformed YAML (indentation, colons in unquoted strings)\n` +
-      `  - Complex template expressions that need manual quoting\n` +
-      `  - Multi-line values with template syntax\n`
+        `Note: Template syntax {{ }} in frontmatter values is auto-quoted.\n` +
+        `If the error persists, check for:\n` +
+        `  - Malformed YAML (indentation, colons in unquoted strings)\n` +
+        `  - Complex template expressions that need manual quoting\n` +
+        `  - Multi-line values with template syntax\n`
     );
   }
 
@@ -162,15 +167,14 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     validationFrontmatter.to = synthesizedTo;
   }
 
-
-  
-
   // Interpolate frontmatter strings
   for (const [key, value] of Object.entries(frontmatter)) {
-    if (typeof value === "string" && value.includes("{{")) {
+    if (typeof value === 'string' && value.includes('{{')) {
       try {
         frontmatter[key] = env.renderString(value, renderContext);
-      } catch (e) { /* ignore interpolation errors in frontmatter for now */ }
+      } catch (e) {
+        /* ignore interpolation errors in frontmatter for now */
+      }
     }
   }
 
@@ -204,8 +208,6 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     if (!existsSync(fromPath)) throw new Error(`from: template not found: ${fromPath}`);
     template = await readFile(fromPath, 'utf-8');
   }
-
-  
 
   let rendered;
   try {
@@ -292,18 +294,22 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
         .replace(/[_\s]+/g, '-') || ''
   );
   env.addFilter('slug', s => {
-    return s
-      ?.toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]+/g, '')
-      .replace(/[\s_]+/g, '-')
-      .replace(/[^\w\s-]+/g, '') || '';
+    return (
+      s
+        ?.toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]+/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^\w\s-]+/g, '') || ''
+    );
   });
   env.addFilter('title', s => {
-    return s
-      ?.replace(/[-_\s]+(.)?/g, (_, c) => ' ' + (c?.toUpperCase() || ''))
-      .trim()
-      .replace(/^\w/, c => c.toUpperCase()) || '';
+    return (
+      s
+        ?.replace(/[-_\s]+(.)?/g, (_, c) => ' ' + (c?.toUpperCase() || ''))
+        .trim()
+        .replace(/^\w/, c => c.toUpperCase()) || ''
+    );
   });
 
   // RDF filters
@@ -386,7 +392,7 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
   env.addFilter('keys', obj => (obj ? Object.keys(obj) : []));
   env.addFilter('values', obj => (obj ? Object.values(obj) : []));
   env.addFilter('items', obj => (obj ? Object.entries(obj) : []));
-  env.addFilter('join', (arr, sep = ',') => Array.isArray(arr) ? arr.join(sep) : '');
+  env.addFilter('join', (arr, sep = ',') => (Array.isArray(arr) ? arr.join(sep) : ''));
 
   // String filters
   env.addFilter(
@@ -419,27 +425,27 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
   });
   env.addFilter('artifact_extension', type => {
     const extensions = {
-      'powl': 'ttl',
-      'sparql': 'rq',
-      'shacl': 'ttl',
+      powl: 'ttl',
+      sparql: 'rq',
+      shacl: 'ttl',
       'mcp-tool': 'mjs',
-      'documentation': 'md',
-      'python': 'py',
-      'typescript': 'ts',
-      'elixir': 'ex',
-      'go': 'go',
-      'rust': 'rs',
-      'java': 'java',
-      'yaml': 'yaml',
-      'json': 'json',
-      'ttl': 'ttl',
-      'njk': 'njk',
-      'rq': 'rq',
-      'mjs': 'mjs'
+      documentation: 'md',
+      python: 'py',
+      typescript: 'ts',
+      elixir: 'ex',
+      go: 'go',
+      rust: 'rs',
+      java: 'java',
+      yaml: 'yaml',
+      json: 'json',
+      ttl: 'ttl',
+      njk: 'njk',
+      rq: 'rq',
+      mjs: 'mjs',
     };
     return extensions[type] || 'txt';
   });
-  env.addFilter('default', (val, defaultValue) => val != null ? val : defaultValue);
+  env.addFilter('default', (val, defaultValue) => (val != null ? val : defaultValue));
 
   // wordwrap filter
   env.addFilter('wordwrap', (s, width = 80) => {
@@ -450,7 +456,10 @@ export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
     for (const word of str.split(/\s+/)) {
       if (!currentLine) currentLine = word;
       else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
-      else { lines.push(currentLine); currentLine = word; }
+      else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
     }
     if (currentLine) lines.push(currentLine);
     return lines.join('\n');
@@ -482,14 +491,14 @@ export async function createTemplateEngine(options = {}) {
 
   // Re-apply filter aliases (createNunjucksEnvironment registers them, but
   // the expand override above replaces the filter — ensure aliases survive)
-  env.addFilter('camel_case',  env.getFilter('camelCase'));
+  env.addFilter('camel_case', env.getFilter('camelCase'));
   env.addFilter('pascal_case', env.getFilter('pascalCase'));
-  env.addFilter('snake_case',  env.getFilter('snakeCase'));
-  env.addFilter('kebab_case',  env.getFilter('kebabCase'));
-  env.addFilter('zod_type',    env.getFilter('zodType'));
-  env.addFilter('jsdoc_type',  env.getFilter('jsdocType'));
-  env.addFilter('local_name',  env.getFilter('localName'));
-  env.addFilter('pascal',      env.getFilter('pascalCase'));
+  env.addFilter('snake_case', env.getFilter('snakeCase'));
+  env.addFilter('kebab_case', env.getFilter('kebabCase'));
+  env.addFilter('zod_type', env.getFilter('zodType'));
+  env.addFilter('jsdoc_type', env.getFilter('jsdocType'));
+  env.addFilter('local_name', env.getFilter('localName'));
+  env.addFilter('pascal', env.getFilter('pascalCase'));
 
   // wordwrap may be overridden by expand; re-register to be safe
   env.addFilter('wordwrap', (s, width = 79) => {
@@ -500,7 +509,10 @@ export async function createTemplateEngine(options = {}) {
     for (const word of str.split(/\s+/)) {
       if (!currentLine) currentLine = word;
       else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
-      else { lines.push(currentLine); currentLine = word; }
+      else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
     }
     if (currentLine) lines.push(currentLine);
     return lines.join('\n');
@@ -545,7 +557,8 @@ export async function createTemplateEngine(options = {}) {
 export async function renderWithOptions(templatePath, sparqlResults, options = {}) {
   const {
     dryRun = false,
-    outputDir, baseDir,
+    outputDir,
+    baseDir,
     force: optionsForce = false,
     mode: optionsMode,
     outputPath: overridePath,
@@ -582,7 +595,7 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     const env = createNunjucksEnvironment(context.templates_dir || baseDir, context.prefixes || {});
     finalOutputPath = env.renderString(finalOutputPath, context);
   }
-  
+
   if (!finalOutputPath) throw new Error(`Template ${templatePath} does not specify output path`);
 
   // Determine final path: outputDir (CLI/config) > baseDir (project relative) > templateDir
@@ -615,16 +628,30 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
   if (existsSync(finalPath) && !effectiveForce && skipExpr) {
     const regexMatch = skipExpr.match(/^\/(.+)\/([gimsuy]*)$/);
     if (regexMatch) {
-      const existing = await readFile(finalPath, "utf-8");
+      const existing = await readFile(finalPath, 'utf-8');
       const regex = new RegExp(regexMatch[1], regexMatch[2]);
       if (regex.test(existing)) {
-        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
+        return {
+          ...result,
+          finalPath,
+          status: 'skipped',
+          written: false,
+          skipped: true,
+          reason: 'skipIf matched',
+        };
       }
     } else {
       // String match
-      const existing = await readFile(finalPath, "utf-8");
+      const existing = await readFile(finalPath, 'utf-8');
       if (existing.includes(skipExpr)) {
-        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
+        return {
+          ...result,
+          finalPath,
+          status: 'skipped',
+          written: false,
+          skipped: true,
+          reason: 'skipIf matched',
+        };
       }
     }
   }
@@ -761,8 +788,12 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
         const before = existing.substring(0, insertAt);
         const after = existing.substring(insertAt);
         const separatorBefore = before.endsWith('\n') ? '' : '\n';
-        const separatorAfter = (contentToWrite.endsWith('\n') || after.startsWith('\n')) ? '' : '\n';
-        await writeFile(finalPath, before + separatorBefore + contentToWrite + separatorAfter + after, 'utf-8');
+        const separatorAfter = contentToWrite.endsWith('\n') || after.startsWith('\n') ? '' : '\n';
+        await writeFile(
+          finalPath,
+          before + separatorBefore + contentToWrite + separatorAfter + after,
+          'utf-8'
+        );
       } else {
         const separator = existing.endsWith('\n') ? '' : '\n';
         await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
@@ -788,9 +819,10 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
 
   // chmod directive: set file permissions (Hygen parity)
   if (result.frontmatter.chmod) {
-    const mode = typeof result.frontmatter.chmod === 'string'
-      ? parseInt(result.frontmatter.chmod, 8)
-      : result.frontmatter.chmod;
+    const mode =
+      typeof result.frontmatter.chmod === 'string'
+        ? parseInt(result.frontmatter.chmod, 8)
+        : result.frontmatter.chmod;
     await chmod(finalPath, mode);
   }
 
@@ -853,9 +885,10 @@ export async function batchRender(templates, sharedContext = {}, _options = {}) 
       templateBody = parsed.content;
     } catch (error) {
       results.push({
-        error: `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
-                `Tip: If your frontmatter values contain colons, wrap them in quotes.`,
-        templatePath: absPath
+        error:
+          `Failed to parse template frontmatter from ${absPath}:\n${error.message}\n\n` +
+          `Tip: If your frontmatter values contain colons, wrap them in quotes.`,
+        templatePath: absPath,
       });
       continue;
     }

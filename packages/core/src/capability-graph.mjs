@@ -73,7 +73,8 @@ export class CapabilityGraph {
   impact(changed) {
     const seeds = [...new Set(changed)].sort();
     const impacted = new Set(seeds);
-    for (const id of seeds) for (const dependent of this.dependents(id, { transitive: true })) impacted.add(dependent);
+    for (const id of seeds)
+      for (const dependent of this.dependents(id, { transitive: true })) impacted.add(dependent);
     return this.order().filter(id => impacted.has(id));
   }
 
@@ -84,7 +85,10 @@ export class CapabilityGraph {
    */
   order() {
     const indegree = new Map([...this.#nodes.keys()].map(id => [id, this.#in.get(id).size]));
-    const ready = [...indegree].filter(([, degree]) => degree === 0).map(([id]) => id).sort();
+    const ready = [...indegree]
+      .filter(([, degree]) => degree === 0)
+      .map(([id]) => id)
+      .sort();
     const result = [];
     while (ready.length) {
       const id = ready.shift();
@@ -106,7 +110,13 @@ export class CapabilityGraph {
    * @returns {{nodes: Array<{id: string, metadata: Object, dependencies: string[]}>}} Nodes in dependency order.
    */
   toJSON() {
-    return { nodes: this.order().map(id => ({ id, metadata: structuredClone(this.#nodes.get(id)), dependencies: this.dependencies(id) })) };
+    return {
+      nodes: this.order().map(id => ({
+        id,
+        metadata: structuredClone(this.#nodes.get(id)),
+        dependencies: this.dependencies(id),
+      })),
+    };
   }
 
   #walk(id, edges, transitive) {
@@ -123,11 +133,15 @@ export class CapabilityGraph {
     return [...seen].sort();
   }
 
-  #require(id) { if (!this.#nodes.has(id)) throw new Error(`NODE_NOT_FOUND:${id}`); }
+  #require(id) {
+    if (!this.#nodes.has(id)) throw new Error(`NODE_NOT_FOUND:${id}`);
+  }
 }
 
 /**
  * Create an empty capability graph.
  * @returns {CapabilityGraph} A new graph.
  */
-export function createCapabilityGraph() { return new CapabilityGraph(); }
+export function createCapabilityGraph() {
+  return new CapabilityGraph();
+}

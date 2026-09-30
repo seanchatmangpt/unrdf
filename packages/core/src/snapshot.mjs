@@ -38,13 +38,26 @@ export function diffSnapshots(before, after) {
   const changes = [];
   const walk = (left, right, path = '$') => {
     if (Object.is(left, right)) return;
-    if (!left || !right || typeof left !== 'object' || typeof right !== 'object' || Array.isArray(left) !== Array.isArray(right)) {
+    if (
+      !left ||
+      !right ||
+      typeof left !== 'object' ||
+      typeof right !== 'object' ||
+      Array.isArray(left) !== Array.isArray(right)
+    ) {
       changes.push({ path, before: left, after: right });
       return;
     }
     const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
-    for (const key of [...keys].sort()) walk(left[key], right[key], Array.isArray(left) ? `${path}[${key}]` : `${path}.${key}`);
+    for (const key of [...keys].sort())
+      walk(left[key], right[key], Array.isArray(left) ? `${path}[${key}]` : `${path}.${key}`);
   };
   walk(before.state, after.state);
-  return { subject: before.subject, before: before.digest, after: after.digest, changes, changed: changes.length > 0 };
+  return {
+    subject: before.subject,
+    before: before.digest,
+    after: after.digest,
+    changes,
+    changed: changes.length > 0,
+  };
 }

@@ -53,7 +53,9 @@ export class AdmissionBoundary {
         if (!passed) throw new AdmissionRefusal(rule.code, rule.message, result);
       } catch (error) {
         if (error instanceof AdmissionRefusal) throw error;
-        throw new AdmissionRefusal(rule.code, `${rule.message}: ${error.message}`, { cause: error.message });
+        throw new AdmissionRefusal(rule.code, `${rule.message}: ${error.message}`, {
+          cause: error.message,
+        });
       }
     }
     return { admitted: true, subject, checks };
@@ -65,7 +67,8 @@ export const rules = Object.freeze({
     id: `required:${field}`,
     code: 'REQUIRED_FIELD_MISSING',
     message: `${field} is required`,
-    test: subject => subject?.[field] !== undefined && subject?.[field] !== null && subject?.[field] !== '',
+    test: subject =>
+      subject?.[field] !== undefined && subject?.[field] !== null && subject?.[field] !== '',
   }),
   oneOf: (field, values) => ({
     id: `oneOf:${field}`,
@@ -73,11 +76,18 @@ export const rules = Object.freeze({
     message: `${field} is not admitted`,
     test: subject => values.includes(subject?.[field]),
   }),
-  predicate: (id, predicate, code = 'PREDICATE_REFUSED') => ({ id, test: predicate, code, message: id }),
+  predicate: (id, predicate, code = 'PREDICATE_REFUSED') => ({
+    id,
+    test: predicate,
+    code,
+    message: id,
+  }),
 });
 
 /**
  * Create an empty admission boundary.
  * @returns {AdmissionBoundary} A new boundary with no rules.
  */
-export function createAdmissionBoundary() { return new AdmissionBoundary(); }
+export function createAdmissionBoundary() {
+  return new AdmissionBoundary();
+}

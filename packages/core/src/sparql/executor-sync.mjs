@@ -124,19 +124,29 @@ function wrapQueryResult(queryResult, queryType) {
           for (const [key, val] of item.entries()) {
             if (val && typeof val === 'object') {
               const termType = val.termType || val.type || (val.__wbg_ptr ? 'Literal' : 'unknown');
-              if ('value' in val || typeof val.value === 'string' || typeof val.toString === 'function') {
+              if (
+                'value' in val ||
+                typeof val.value === 'string' ||
+                typeof val.toString === 'function'
+              ) {
                 // Keep the original RDF term object but ensure compatibility properties exist
                 row[key] = val;
                 // Add 'type' property if missing for legacy compatibility
                 if (!val.type) {
-                  try { Object.defineProperty(val, 'type', { get: () => (termType === 'NamedNode' ? 'uri' : termType.toLowerCase()) }); } catch (e) { /* ignore read-only */ }
+                  try {
+                    Object.defineProperty(val, 'type', {
+                      get: () => (termType === 'NamedNode' ? 'uri' : termType.toLowerCase()),
+                    });
+                  } catch (e) {
+                    /* ignore read-only */
+                  }
                 }
               }
             } else {
               row[key] = {
                 termType: 'Literal',
                 value: val,
-                type: 'literal'
+                type: 'literal',
               };
             }
           }

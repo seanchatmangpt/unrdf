@@ -45,12 +45,14 @@ function normalizeResult(result, options) {
     timestamp: options.timestamp ?? Date.now(),
   };
   if (!options.includeDetails) {
-    normalized.results = normalized.results.map(({ severity, sourceConstraintComponent, focusNode, resultPath }) => ({
-      severity,
-      sourceConstraintComponent,
-      focusNode,
-      resultPath,
-    }));
+    normalized.results = normalized.results.map(
+      ({ severity, sourceConstraintComponent, focusNode, resultPath }) => ({
+        severity,
+        sourceConstraintComponent,
+        focusNode,
+        resultPath,
+      })
+    );
   }
   return ShaclValidationResultSchema.parse(normalized);
 }
@@ -70,20 +72,25 @@ export async function validateShacl(dataStore, shapesStoreOrCompiled, options = 
     return normalizeResult(result, validatedOptions);
   } catch (error) {
     if (validatedOptions.strict) throw error;
-    return normalizeResult({
-      conforms: false,
-      checkedShapes: 0,
-      checkedFocusNodes: 0,
-      warnings: [{ code: 'SHACL_VALIDATION_ERROR', message: error.message }],
-      results: [{
-        severity: SH.Violation,
-        sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
-        focusNode: null,
-        resultPath: null,
-        value: null,
-        message: error.message,
-      }],
-    }, validatedOptions);
+    return normalizeResult(
+      {
+        conforms: false,
+        checkedShapes: 0,
+        checkedFocusNodes: 0,
+        warnings: [{ code: 'SHACL_VALIDATION_ERROR', message: error.message }],
+        results: [
+          {
+            severity: SH.Violation,
+            sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
+            focusNode: null,
+            resultPath: null,
+            value: null,
+            message: error.message,
+          },
+        ],
+      },
+      validatedOptions
+    );
   }
 }
 
@@ -95,26 +102,32 @@ export async function validateDelta(dataStore, shapesStoreOrCompiled, delta, opt
     return normalizeResult(result, validatedOptions);
   } catch (error) {
     if (validatedOptions.strict) throw error;
-    return normalizeResult({
-      conforms: false,
-      checkedShapes: 0,
-      checkedFocusNodes: 0,
-      warnings: [{ code: 'SHACL_DELTA_VALIDATION_ERROR', message: error.message }],
-      results: [{
-        severity: SH.Violation,
-        sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
-        focusNode: null,
-        resultPath: null,
-        value: null,
-        message: error.message,
-      }],
-    }, validatedOptions);
+    return normalizeResult(
+      {
+        conforms: false,
+        checkedShapes: 0,
+        checkedFocusNodes: 0,
+        warnings: [{ code: 'SHACL_DELTA_VALIDATION_ERROR', message: error.message }],
+        results: [
+          {
+            severity: SH.Violation,
+            sourceConstraintComponent: 'http://www.w3.org/ns/shacl#SPARQLConstraintComponent',
+            focusNode: null,
+            resultPath: null,
+            value: null,
+            message: error.message,
+          },
+        ],
+      },
+      validatedOptions
+    );
   }
 }
 
 /** Validate a single RDF/JS quad. */
 export async function validateQuad(quad, shapesStoreOrCompiled, options = {}) {
-  if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError('validateQuad requires an RDF/JS quad');
+  if (!quad?.subject || !quad?.predicate || !quad?.object)
+    throw new TypeError('validateQuad requires an RDF/JS quad');
   const tempStore = createStore();
   tempStore.addQuad(quad);
   return validateShacl(tempStore, shapesStoreOrCompiled, options);
@@ -125,7 +138,8 @@ export async function validateQuads(quads, shapesStoreOrCompiled, options = {}) 
   const tempStore = createStore();
   let count = 0;
   for (const quad of quads || []) {
-    if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError(`Invalid RDF/JS quad at index ${count}`);
+    if (!quad?.subject || !quad?.predicate || !quad?.object)
+      throw new TypeError(`Invalid RDF/JS quad at index ${count}`);
     tempStore.addQuad(quad);
     count += 1;
   }

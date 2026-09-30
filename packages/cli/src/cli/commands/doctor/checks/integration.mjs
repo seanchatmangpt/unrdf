@@ -39,7 +39,10 @@ async function checkFederationPeers() {
     };
   }
 
-  const peerList = peers.split(',').map(p => p.trim()).filter(Boolean);
+  const peerList = peers
+    .split(',')
+    .map(p => p.trim())
+    .filter(Boolean);
   if (peerList.length === 0) {
     return {
       status: 'fail',

@@ -30,7 +30,9 @@ export function canonicalJson(value) {
  * @returns {string} Hex digest.
  */
 export function sha256(value) {
-  return createHash('sha256').update(typeof value === 'string' ? value : canonicalJson(value)).digest('hex');
+  return createHash('sha256')
+    .update(typeof value === 'string' ? value : canonicalJson(value))
+    .digest('hex');
 }
 
 /**
@@ -50,7 +52,8 @@ export function termKey(term) {
  * @throws {TypeError} If subject, predicate or object is missing.
  */
 export function quadKey(quad) {
-  if (!quad?.subject || !quad?.predicate || !quad?.object) throw new TypeError('quadKey requires an RDF/JS quad');
+  if (!quad?.subject || !quad?.predicate || !quad?.object)
+    throw new TypeError('quadKey requires an RDF/JS quad');
   return [quad.subject, quad.predicate, quad.object, quad.graph].map(termKey).join('||');
 }
 
@@ -161,12 +164,15 @@ export class MemoryQuadStore {
    * @returns {string} Hex digest.
    */
   digest() {
-    return sha256([...this.quads.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key]) => key));
+    return sha256(
+      [...this.quads.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key]) => key)
+    );
   }
 }
 
 function normalizeOperation(operation) {
-  if (!operation || !['add', 'delete'].includes(operation.type)) throw new TypeError('operation.type must be add or delete');
+  if (!operation || !['add', 'delete'].includes(operation.type))
+    throw new TypeError('operation.type must be add or delete');
   const key = quadKey(operation.quad);
   return { type: operation.type, key, quad: cloneQuad(operation.quad) };
 }
@@ -186,12 +192,14 @@ export class QuadTransaction {
    * @throws {TypeError} If the store is not a MemoryQuadStore or isolation is unsupported.
    */
   constructor(store, options = {}) {
-    if (!(store instanceof MemoryQuadStore)) throw new TypeError('QuadTransaction requires MemoryQuadStore');
+    if (!(store instanceof MemoryQuadStore))
+      throw new TypeError('QuadTransaction requires MemoryQuadStore');
     this.store = store;
     this.id = options.id || randomUUID();
     this.actor = options.actor || 'anonymous';
     this.isolation = options.isolation || 'snapshot';
-    if (!ISOLATIONS.has(this.isolation)) throw new TypeError(`Unsupported isolation: ${this.isolation}`);
+    if (!ISOLATIONS.has(this.isolation))
+      throw new TypeError(`Unsupported isolation: ${this.isolation}`);
     this.idempotencyKey = options.idempotencyKey || null;
     this.snapshot = store.snapshot();
     this.readSet = new Set();
@@ -358,7 +366,8 @@ export class QuadTransaction {
     const conflicts = [];
     for (const key of keys) {
       const changedAt = this.store.keyVersions.get(key) || 0;
-      if (changedAt > this.snapshot.version) conflicts.push({ key, changedAt, snapshotVersion: this.snapshot.version });
+      if (changedAt > this.snapshot.version)
+        conflicts.push({ key, changedAt, snapshotVersion: this.snapshot.version });
     }
     return conflicts;
   }
@@ -392,22 +401,30 @@ export class QuadTransaction {
     }
 
     const conflicts = this.detectConflicts();
-    if (conflicts.length) throw new TransactionConflict('Transaction conflicts with committed changes', { conflicts });
+    if (conflicts.length)
+      throw new TransactionConflict('Transaction conflicts with committed changes', { conflicts });
 
     const view = this.preview();
     for (const assertion of this.assertions) {
-      if (!assertion.predicate(view, this)) throw new TransactionRefusal(assertion.message, assertion.details);
+      if (!assertion.predicate(view, this))
+        throw new TransactionRefusal(assertion.message, assertion.details);
     }
 
     const beforeHash = this.store.digest();
     const applied = [];
     const nextVersion = this.store.version + 1;
-    for (const operation of [...this.operations.values()].sort((a, b) => a.key.localeCompare(b.key))) {
+    for (const operation of [...this.operations.values()].sort((a, b) =>
+      a.key.localeCompare(b.key)
+    )) {
       const existed = this.store.quads.has(operation.key);
       if (operation.type === 'add') this.store.quads.set(operation.key, operation.quad);
       else this.store.quads.delete(operation.key);
       this.store.keyVersions.set(operation.key, nextVersion);
-      applied.push({ type: operation.type, key: operation.key, changed: operation.type === 'add' ? !existed : existed });
+      applied.push({
+        type: operation.type,
+        key: operation.key,
+        changed: operation.type === 'add' ? !existed : existed,
+      });
     }
     this.store.version = nextVersion;
     const afterHash = this.store.digest();

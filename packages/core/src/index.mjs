@@ -4,36 +4,175 @@
  */
 
 export { UnrdfStore, createStore as createUnrdfStore } from './rdf/unrdf-store.mjs';
-export { executeQuerySync, executeSelectSync, executeAskSync, executeConstructSync, prepareQuerySync } from './sparql/executor-sync.mjs';
-export { createStore, addQuad, removeQuad, getQuads, iterateQuads, countQuads, namedNode, literal, blankNode, variable, defaultGraph, quad } from './rdf/store.mjs';
+export {
+  executeQuerySync,
+  executeSelectSync,
+  executeAskSync,
+  executeConstructSync,
+  prepareQuerySync,
+} from './sparql/executor-sync.mjs';
+export {
+  createStore,
+  addQuad,
+  removeQuad,
+  getQuads,
+  iterateQuads,
+  countQuads,
+  namedNode,
+  literal,
+  blankNode,
+  variable,
+  defaultGraph,
+  quad,
+} from './rdf/store.mjs';
 export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonicalize.mjs';
 export { cloneQuad } from './utils/quad-utils.mjs';
 export { diffGraphFromStores, diffGraphFromDelta, diffOntologyFromGraphDiff } from './diff.mjs';
-export { executeQuery, prepareQuery, executeSelect, executeConstruct, executeAsk } from './sparql/executor.mjs';
-export { createTerms, createNamedNode, createLiteral, createBlankNode, createVariable, createQuad } from './types.mjs';
+export {
+  executeQuery,
+  prepareQuery,
+  executeSelect,
+  executeConstruct,
+  executeAsk,
+} from './sparql/executor.mjs';
+export {
+  createTerms,
+  createNamedNode,
+  createLiteral,
+  createBlankNode,
+  createVariable,
+  createQuad,
+} from './types.mjs';
 export { RDF, RDFS, OWL, XSD, FOAF, DCTERMS, SKOS, COMMON_PREFIXES } from './constants.mjs';
-export { QuadSchema, StoreSchema, QueryOptionsSchema, validateQuad, validateStore } from './validation/index.mjs';
-export { UnrdfError, ValidationError, ConfigError, QueryError, StoreError, NetworkError, TimeoutError, ParserError, ERROR_CODES, createError, wrapError, assertError } from './errors.mjs';
-export { DebugLogger, createDebugger, PerformanceTracker, perfTracker, trace, traceMethod, formatBytes, getSystemInfo, dumpDebugSnapshot } from './debug.mjs';
-export { retry, CircuitBreaker, fallback, withTimeout, bulkOperation, RateLimiter, withRecovery } from './recovery.mjs';
+export {
+  QuadSchema,
+  StoreSchema,
+  QueryOptionsSchema,
+  validateQuad,
+  validateStore,
+} from './validation/index.mjs';
+export {
+  UnrdfError,
+  ValidationError,
+  ConfigError,
+  QueryError,
+  StoreError,
+  NetworkError,
+  TimeoutError,
+  ParserError,
+  ERROR_CODES,
+  createError,
+  wrapError,
+  assertError,
+} from './errors.mjs';
+export {
+  DebugLogger,
+  createDebugger,
+  PerformanceTracker,
+  perfTracker,
+  trace,
+  traceMethod,
+  formatBytes,
+  getSystemInfo,
+  dumpDebugSnapshot,
+} from './debug.mjs';
+export {
+  retry,
+  CircuitBreaker,
+  fallback,
+  withTimeout,
+  bulkOperation,
+  RateLimiter,
+  withRecovery,
+} from './recovery.mjs';
 export { toDOT, toMermaid, toASCII, toHTML, extractSubgraph } from './viz/graph-visualizer.mjs';
-export { explainQuery, formatPlanAsTree, trackQueryStats, compareQueryPerformance } from './viz/query-explainer.mjs';
-export { getGraphStatistics, analyzeNamespaces, detectOrphans, assessDataQuality, checkSchemaConformance, generateInspectionReport } from './debug/rdf-inspector.mjs';
-export { RDFStarFactory, factory as rdfStarFactory, RDFSTAR, isQuotedTriple, extractBaseTriple } from './rdf-star.mjs';
+export {
+  explainQuery,
+  formatPlanAsTree,
+  trackQueryStats,
+  compareQueryPerformance,
+} from './viz/query-explainer.mjs';
+export {
+  getGraphStatistics,
+  analyzeNamespaces,
+  detectOrphans,
+  assessDataQuality,
+  checkSchemaConformance,
+  generateInspectionReport,
+} from './debug/rdf-inspector.mjs';
+export {
+  RDFStarFactory,
+  factory as rdfStarFactory,
+  RDFSTAR,
+  isQuotedTriple,
+  extractBaseTriple,
+} from './rdf-star.mjs';
 export { QuotedTriple, createQuotedTriple } from './quoted-triple.mjs';
-export { AnnotationBuilder, createAnnotationBuilder, createProvenance, createTemporal, createConfidence, createMultiSource, mergeAnnotations, extractAnnotations } from './annotation.mjs';
-export { QuotedTripleSchema, ProvenanceSchema, TemporalSchema, ConfidenceSchema, MultiSourceSchema, AnnotationSchema, AnnotatedTripleSchema, SPARQLStarOptionsSchema, validateQuotedTriple, validateProvenance, validateTemporal, validateConfidence, validateAnnotation, safeParseQuotedTriple, safeParseAnnotation } from './rdf-star.schema.mjs';
+export {
+  AnnotationBuilder,
+  createAnnotationBuilder,
+  createProvenance,
+  createTemporal,
+  createConfidence,
+  createMultiSource,
+  mergeAnnotations,
+  extractAnnotations,
+} from './annotation.mjs';
+export {
+  QuotedTripleSchema,
+  ProvenanceSchema,
+  TemporalSchema,
+  ConfidenceSchema,
+  MultiSourceSchema,
+  AnnotationSchema,
+  AnnotatedTripleSchema,
+  SPARQLStarOptionsSchema,
+  validateQuotedTriple,
+  validateProvenance,
+  validateTemporal,
+  validateConfidence,
+  validateAnnotation,
+  safeParseQuotedTriple,
+  safeParseAnnotation,
+} from './rdf-star.schema.mjs';
 
 // Capability control plane
-export { Standing, Disposition, CapabilityLedger, createCapabilityLedger } from './capability-ledger.mjs';
-export { ReceiptChain, createReceiptChain, canonicalizeJSON, hashCanonical, compareReplay } from './receipt-chain.mjs';
+export {
+  Standing,
+  Disposition,
+  CapabilityLedger,
+  createCapabilityLedger,
+} from './capability-ledger.mjs';
+export {
+  ReceiptChain,
+  createReceiptChain,
+  canonicalizeJSON,
+  hashCanonical,
+  compareReplay,
+} from './receipt-chain.mjs';
 export { ExecutionPlan, createExecutionPlan } from './execution-plan.mjs';
 export { EvidenceStore, createEvidenceStore } from './evidence-store.mjs';
 export { CapabilityGraph, createCapabilityGraph } from './capability-graph.mjs';
-export { AdmissionBoundary, AdmissionRefusal, createAdmissionBoundary, rules as admissionRules } from './admission-boundary.mjs';
+export {
+  AdmissionBoundary,
+  AdmissionRefusal,
+  createAdmissionBoundary,
+  rules as admissionRules,
+} from './admission-boundary.mjs';
 export { verifyCommand, commandVerifier } from './command-verifier.mjs';
 export { replay, requireReplayMatch } from './replay-runner.mjs';
-export { PART_REQUIREMENT_SCHEMA, PART_PASSPORT_SCHEMA, SUBSTITUTION_JUDGEMENT_SCHEMA, PartSubstitutionRefusal, createPartRequirement, createPartPassport, verifyPartRequirement, verifyPartPassport, evaluateSubstitution, assertSubstitutable } from './interchangeable-part.mjs';
+export {
+  PART_REQUIREMENT_SCHEMA,
+  PART_PASSPORT_SCHEMA,
+  SUBSTITUTION_JUDGEMENT_SCHEMA,
+  PartSubstitutionRefusal,
+  createPartRequirement,
+  createPartPassport,
+  verifyPartRequirement,
+  verifyPartPassport,
+  evaluateSubstitution,
+  assertSubstitutable,
+} from './interchangeable-part.mjs';
 
 // Deterministic state primitives
 export { PolicyEngine, createPolicyEngine } from './policy-engine.mjs';
@@ -43,4 +182,13 @@ export { EventLog, createEventLog } from './event-log.mjs';
 export { LeaseRegistry, createLeaseRegistry } from './lease.mjs';
 
 // Dense transaction semantics
-export { MemoryQuadStore, QuadTransaction, TransactionConflict, TransactionRefusal, beginTransaction, verifyTransactionReceipt, replayOperations, quadKey as transactionQuadKey } from './utils/transaction-core.mjs';
+export {
+  MemoryQuadStore,
+  QuadTransaction,
+  TransactionConflict,
+  TransactionRefusal,
+  beginTransaction,
+  verifyTransactionReceipt,
+  replayOperations,
+  quadKey as transactionQuadKey,
+} from './utils/transaction-core.mjs';

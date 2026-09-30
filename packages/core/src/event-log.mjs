@@ -53,10 +53,17 @@ export class EventLog {
     for (let index = 0; index < this.#events.length; index++) {
       const event = this.#events[index];
       const { digest, ...body } = event;
-      if (digest !== hashCanonical(body)) failures.push({ sequence: index + 1, code: 'EVENT_DIGEST_MISMATCH' });
-      if (event.previous !== (index === 0 ? null : this.#events[index - 1].digest)) failures.push({ sequence: index + 1, code: 'EVENT_CHAIN_BROKEN' });
+      if (digest !== hashCanonical(body))
+        failures.push({ sequence: index + 1, code: 'EVENT_DIGEST_MISMATCH' });
+      if (event.previous !== (index === 0 ? null : this.#events[index - 1].digest))
+        failures.push({ sequence: index + 1, code: 'EVENT_CHAIN_BROKEN' });
     }
-    return { valid: failures.length === 0, count: this.#events.length, head: this.#events.at(-1)?.digest ?? null, failures };
+    return {
+      valid: failures.length === 0,
+      count: this.#events.length,
+      head: this.#events.at(-1)?.digest ?? null,
+      failures,
+    };
   }
 }
 
@@ -64,4 +71,6 @@ export class EventLog {
  * Create an empty event log.
  * @returns {EventLog} A new log.
  */
-export function createEventLog() { return new EventLog(); }
+export function createEventLog() {
+  return new EventLog();
+}

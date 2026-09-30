@@ -404,7 +404,10 @@ export function getQuorumStatus(quorumState) {
       receipts: {
         count: quorumState.receipts.length,
         chainValid: chainValidation.valid,
-        latestHash: quorumState.receipts.length > 0 ? quorumState.receipts[quorumState.receipts.length - 1].hash : null,
+        latestHash:
+          quorumState.receipts.length > 0
+            ? quorumState.receipts[quorumState.receipts.length - 1].hash
+            : null,
       },
     };
 

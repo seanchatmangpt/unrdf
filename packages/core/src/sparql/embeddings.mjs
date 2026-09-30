@@ -64,7 +64,8 @@ export async function initializeEmbeddings(config = {}) {
     const ort = await import('onnxruntime-node');
 
     // Model path - will download from HuggingFace if not cached
-    const modelPath = validatedConfig.modelPath ||
+    const modelPath =
+      validatedConfig.modelPath ||
       'https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/onnx/model_quantized.onnx';
 
     // Create ONNX session with optimized options
@@ -140,7 +141,11 @@ export async function generateEmbedding(text, options = {}) {
 
     // Prepare input tensors
     const inputTensor = new ort.Tensor('int64', BigInt64Array.from(inputIds), [1, inputIds.length]);
-    const attentionMask = new ort.Tensor('int64', BigInt64Array.from({ length: inputIds.length }).fill(1n), [1, inputIds.length]);
+    const attentionMask = new ort.Tensor(
+      'int64',
+      BigInt64Array.from({ length: inputIds.length }).fill(1n),
+      [1, inputIds.length]
+    );
 
     // Run inference
     const outputs = await modelSession.run({
@@ -179,9 +184,7 @@ export async function generateEmbeddingsBatch(texts, options = {}) {
     throw new TypeError('texts must be an array');
   }
 
-  const embeddings = await Promise.all(
-    texts.map(text => generateEmbedding(text, options))
-  );
+  const embeddings = await Promise.all(texts.map(text => generateEmbedding(text, options)));
 
   return embeddings;
 }

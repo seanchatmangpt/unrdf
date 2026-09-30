@@ -35,11 +35,11 @@ export const publishCommand = defineCommand({
       type: 'ARTIFACT_PUBLISH',
       path: args.artifact,
       timestamp: new Date().toISOString(),
-      node: transport.core.key.toString('hex')
+      node: transport.core.key.toString('hex'),
     });
 
     console.log('✅ Published successfully.');
-    
+
     // Close transport
     await transport.close();
   },

@@ -147,7 +147,12 @@ class PictlOntologyGraph {
     }
 
     // Add quality metric axioms
-    const qualityMetrics = ['fitnessScore', 'precisionScore', 'generalizationScore', 'simplicityScore'];
+    const qualityMetrics = [
+      'fitnessScore',
+      'precisionScore',
+      'generalizationScore',
+      'simplicityScore',
+    ];
     for (const metricName of qualityMetrics) {
       const metricUri = this.properties[metricName];
       triples.push({

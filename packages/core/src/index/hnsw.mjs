@@ -77,17 +77,17 @@ class BruteForceIndex {
     const results = [];
 
     for (const [id, vector] of this.vectors.entries()) {
-      const distance = this.config.metric === 'l2'
-        ? this.l2Distance(query, vector)
-        : this.innerProduct(query, vector);
+      const distance =
+        this.config.metric === 'l2'
+          ? this.l2Distance(query, vector)
+          : this.innerProduct(query, vector);
 
       results.push({ id, vector, distance });
     }
 
     // Sort by distance (ascending for L2, descending for IP)
-    results.sort((a, b) => this.config.metric === 'l2'
-      ? a.distance - b.distance
-      : b.distance - a.distance
+    results.sort((a, b) =>
+      this.config.metric === 'l2' ? a.distance - b.distance : b.distance - a.distance
     );
 
     return results.slice(0, k);
@@ -181,10 +181,7 @@ class HNSWIndex {
       // Try to use hnswlib-node
       const hnswlib = await import('hnswlib-node');
 
-      this.index = new hnswlib.HierarchicalNSW(
-        this.config.metric,
-        this.config.dimensions
-      );
+      this.index = new hnswlib.HierarchicalNSW(this.config.metric, this.config.dimensions);
 
       this.index.initIndex(this.config.maxElements);
       this.index.setEf(this.config.efSearch);

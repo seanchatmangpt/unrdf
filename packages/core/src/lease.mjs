@@ -21,7 +21,8 @@ export class LeaseRegistry {
    * @throws {TypeError} If arguments are invalid.
    */
   acquire(resource, owner, ttlMs) {
-    if (!resource || !owner || !Number.isFinite(ttlMs) || ttlMs <= 0) throw new TypeError('resource, owner, and positive ttlMs are required');
+    if (!resource || !owner || !Number.isFinite(ttlMs) || ttlMs <= 0)
+      throw new TypeError('resource, owner, and positive ttlMs are required');
     const current = this.#leases.get(resource);
     if (current && current.expiresAt > this.now() && current.owner !== owner) return null;
     const lease = { resource, owner, token: ++this.#token, expiresAt: this.now() + ttlMs };
@@ -39,7 +40,8 @@ export class LeaseRegistry {
    */
   renew(resource, owner, token, ttlMs) {
     const lease = this.#leases.get(resource);
-    if (!lease || lease.owner !== owner || lease.token !== token || lease.expiresAt <= this.now()) return null;
+    if (!lease || lease.owner !== owner || lease.token !== token || lease.expiresAt <= this.now())
+      return null;
     lease.expiresAt = this.now() + ttlMs;
     return { ...lease };
   }
@@ -78,4 +80,6 @@ export class LeaseRegistry {
  * @param {Object} [options] - Options forwarded to the constructor.
  * @returns {LeaseRegistry} A new registry.
  */
-export function createLeaseRegistry(options) { return new LeaseRegistry(options); }
+export function createLeaseRegistry(options) {
+  return new LeaseRegistry(options);
+}

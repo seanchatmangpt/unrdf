@@ -48,13 +48,19 @@ function deepFreeze(value) {
 function canonical(value) {
   if (Array.isArray(value)) return value.map(canonical);
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])]));
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map(key => [key, canonical(value[key])])
+    );
   }
   return value;
 }
 
 function digest(value) {
-  return createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+  return createHash('sha256')
+    .update(JSON.stringify(canonical(value)))
+    .digest('hex');
 }
 
 function digestRecord(record) {
@@ -266,7 +272,8 @@ export function createPartRequirement(input = {}) {
   if (!Number.isInteger(body.maxDelegationDepth) || body.maxDelegationDepth < 0) {
     throw new TypeError('maxDelegationDepth must be a non-negative integer');
   }
-  if (body.allowedAuthorityIssuers.length === 0) throw new TypeError('allowedAuthorityIssuers must not be empty');
+  if (body.allowedAuthorityIssuers.length === 0)
+    throw new TypeError('allowedAuthorityIssuers must not be empty');
   if (body.allowedRuntimes.length === 0) throw new TypeError('allowedRuntimes must not be empty');
 
   return deepFreeze({ ...body, digest: digest(body) });
@@ -353,7 +360,12 @@ function integrityRefusal(reasons, requirement, candidate) {
 
 function contextRefusal(context) {
   if (context === null || typeof context !== 'object' || Array.isArray(context)) {
-    return reason('CONTEXT_MALFORMED_REFUSED', 'context', 'object', context === null ? null : typeof context);
+    return reason(
+      'CONTEXT_MALFORMED_REFUSED',
+      'context',
+      'object',
+      context === null ? null : typeof context
+    );
   }
   for (const [field, check] of [
     ['hostCapabilities', stringSet],
@@ -386,11 +398,20 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
 
   const requirementVerification = verifyPartRequirement(requirement);
   if (!requirementVerification.valid) {
-    reasons.push(reason('REQUIREMENT_INTEGRITY_REFUSED', 'requirement.digest', 'valid', requirementVerification.reason));
+    reasons.push(
+      reason(
+        'REQUIREMENT_INTEGRITY_REFUSED',
+        'requirement.digest',
+        'valid',
+        requirementVerification.reason
+      )
+    );
   }
   const passportVerification = verifyPartPassport(candidate);
   if (!passportVerification.valid) {
-    reasons.push(reason('PASSPORT_INTEGRITY_REFUSED', 'candidate.digest', 'valid', passportVerification.reason));
+    reasons.push(
+      reason('PASSPORT_INTEGRITY_REFUSED', 'candidate.digest', 'valid', passportVerification.reason)
+    );
   }
   const malformedContext = contextRefusal(context);
   if (malformedContext) reasons.push(malformedContext);
@@ -415,56 +436,112 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
 
   const missingInputs = missing(requirement?.expectedInputs ?? [], candidate?.acceptedInputs ?? []);
   if (missingInputs.length) {
-    reasons.push(reason('INPUT_COVERAGE_REFUSED', 'acceptedInputs', requirement.expectedInputs, candidate.acceptedInputs));
+    reasons.push(
+      reason(
+        'INPUT_COVERAGE_REFUSED',
+        'acceptedInputs',
+        requirement.expectedInputs,
+        candidate.acceptedInputs
+      )
+    );
   }
 
-  const missingGuarantees = missing(requirement?.requiredGuarantees ?? [], candidate?.guarantees ?? []);
+  const missingGuarantees = missing(
+    requirement?.requiredGuarantees ?? [],
+    candidate?.guarantees ?? []
+  );
   if (missingGuarantees.length) {
-    reasons.push(reason('GUARANTEE_COVERAGE_REFUSED', 'guarantees', requirement.requiredGuarantees, candidate.guarantees));
+    reasons.push(
+      reason(
+        'GUARANTEE_COVERAGE_REFUSED',
+        'guarantees',
+        requirement.requiredGuarantees,
+        candidate.guarantees
+      )
+    );
   }
 
   const widenedEffects = widened(candidate?.effects ?? [], requirement?.allowedEffects ?? []);
   if (widenedEffects.length) {
-    reasons.push(reason('CONSEQUENCE_WIDENING_REFUSED', 'effects', requirement.allowedEffects, candidate.effects));
+    reasons.push(
+      reason(
+        'CONSEQUENCE_WIDENING_REFUSED',
+        'effects',
+        requirement.allowedEffects,
+        candidate.effects
+      )
+    );
   }
 
   const widenedFailures = widened(candidate?.failures ?? [], requirement?.allowedFailures ?? []);
   if (widenedFailures.length) {
-    reasons.push(reason('FAILURE_WIDENING_REFUSED', 'failures', requirement.allowedFailures, candidate.failures));
+    reasons.push(
+      reason(
+        'FAILURE_WIDENING_REFUSED',
+        'failures',
+        requirement.allowedFailures,
+        candidate.failures
+      )
+    );
   }
 
-  const hostCapabilities = context.hostCapabilities === undefined
-    ? requirement?.allowedCapabilities ?? []
-    : stringSet(context.hostCapabilities, 'context.hostCapabilities');
+  const hostCapabilities =
+    context.hostCapabilities === undefined
+      ? (requirement?.allowedCapabilities ?? [])
+      : stringSet(context.hostCapabilities, 'context.hostCapabilities');
   const effectiveCapabilities = (requirement?.allowedCapabilities ?? [])
     .filter(capability => hostCapabilities.includes(capability))
     .sort();
   if (!subset(candidate?.capabilities ?? [], effectiveCapabilities)) {
-    reasons.push(reason('AUTHORITY_WIDENING_REFUSED', 'capabilities', effectiveCapabilities, candidate?.capabilities ?? []));
+    reasons.push(
+      reason(
+        'AUTHORITY_WIDENING_REFUSED',
+        'capabilities',
+        effectiveCapabilities,
+        candidate?.capabilities ?? []
+      )
+    );
   }
 
-  const hostAuthorityIssuers = context.hostAuthorityIssuers === undefined
-    ? requirement?.allowedAuthorityIssuers ?? []
-    : stringSet(context.hostAuthorityIssuers, 'context.hostAuthorityIssuers');
+  const hostAuthorityIssuers =
+    context.hostAuthorityIssuers === undefined
+      ? (requirement?.allowedAuthorityIssuers ?? [])
+      : stringSet(context.hostAuthorityIssuers, 'context.hostAuthorityIssuers');
   const effectiveIssuers = (requirement?.allowedAuthorityIssuers ?? [])
     .filter(issuer => hostAuthorityIssuers.includes(issuer))
     .sort();
   if (!effectiveIssuers.includes(candidate?.authorityIssuer)) {
-    reasons.push(reason('AUTHORITY_ISSUER_REFUSED', 'authorityIssuer', effectiveIssuers, candidate?.authorityIssuer));
+    reasons.push(
+      reason(
+        'AUTHORITY_ISSUER_REFUSED',
+        'authorityIssuer',
+        effectiveIssuers,
+        candidate?.authorityIssuer
+      )
+    );
   }
 
   if ((candidate?.delegationDepth ?? Infinity) > (requirement?.maxDelegationDepth ?? -1)) {
-    reasons.push(reason('DELEGATION_DEPTH_REFUSED', 'delegationDepth', requirement?.maxDelegationDepth, candidate?.delegationDepth));
+    reasons.push(
+      reason(
+        'DELEGATION_DEPTH_REFUSED',
+        'delegationDepth',
+        requirement?.maxDelegationDepth,
+        candidate?.delegationDepth
+      )
+    );
   }
 
-  const hostResources = context.hostResourceCeilings === undefined
-    ? requirement?.resourceCeilings ?? {}
-    : budget(context.hostResourceCeilings, 'context.hostResourceCeilings');
+  const hostResources =
+    context.hostResourceCeilings === undefined
+      ? (requirement?.resourceCeilings ?? {})
+      : budget(context.hostResourceCeilings, 'context.hostResourceCeilings');
   const effectiveResourceCeilings = Object.create(null);
   for (const key of Object.keys(requirement?.resourceCeilings ?? {}).sort()) {
     const requirementCeiling = requirement.resourceCeilings[key];
     const hostCeiling = Object.hasOwn(hostResources, key) ? hostResources[key] : undefined;
-    if (hostCeiling !== undefined) effectiveResourceCeilings[key] = Math.min(requirementCeiling, hostCeiling);
+    if (hostCeiling !== undefined)
+      effectiveResourceCeilings[key] = Math.min(requirementCeiling, hostCeiling);
   }
   for (const [key, observed] of Object.entries(candidate?.resources ?? {})) {
     // Own-property lookup only: a demand named after an Object.prototype member
@@ -474,26 +551,57 @@ export function evaluateSubstitution(requirement, candidate, context = {}) {
       ? effectiveResourceCeilings[key]
       : undefined;
     if (ceiling === undefined || observed > ceiling) {
-      reasons.push(reason('RESOURCE_CEILING_REFUSED', `resources.${key}`, ceiling ?? 'UNADMITTED', observed));
+      reasons.push(
+        reason('RESOURCE_CEILING_REFUSED', `resources.${key}`, ceiling ?? 'UNADMITTED', observed)
+      );
     }
   }
 
-  const missingVerifiers = missing(requirement?.requiredVerifiers ?? [], candidate?.verifiers ?? []);
+  const missingVerifiers = missing(
+    requirement?.requiredVerifiers ?? [],
+    candidate?.verifiers ?? []
+  );
   if (missingVerifiers.length) {
-    reasons.push(reason('EVIDENCE_INCOMPLETE_REFUSED', 'verifiers', requirement.requiredVerifiers, candidate.verifiers));
+    reasons.push(
+      reason(
+        'EVIDENCE_INCOMPLETE_REFUSED',
+        'verifiers',
+        requirement.requiredVerifiers,
+        candidate.verifiers
+      )
+    );
   }
 
   if (candidate?.receiptSchema !== requirement?.receiptSchema) {
-    reasons.push(reason('RECEIPT_SCHEMA_MISMATCH', 'receiptSchema', requirement?.receiptSchema, candidate?.receiptSchema));
+    reasons.push(
+      reason(
+        'RECEIPT_SCHEMA_MISMATCH',
+        'receiptSchema',
+        requirement?.receiptSchema,
+        candidate?.receiptSchema
+      )
+    );
   }
   if (requirement?.replayRequired && candidate?.replay !== true) {
     reasons.push(reason('REPLAY_REQUIRED_REFUSED', 'replay', true, candidate?.replay));
   }
   if (!(requirement?.allowedRuntimes ?? []).includes(candidate?.runtime)) {
-    reasons.push(reason('RUNTIME_REFUSED', 'runtime', requirement?.allowedRuntimes ?? [], candidate?.runtime));
+    reasons.push(
+      reason('RUNTIME_REFUSED', 'runtime', requirement?.allowedRuntimes ?? [], candidate?.runtime)
+    );
   }
-  if (!candidate?.provenance?.source || candidate?.provenance?.artifactDigest !== candidate?.artifactDigest) {
-    reasons.push(reason('PROVENANCE_INCOMPLETE_REFUSED', 'provenance', 'source + matching artifactDigest', candidate?.provenance));
+  if (
+    !candidate?.provenance?.source ||
+    candidate?.provenance?.artifactDigest !== candidate?.artifactDigest
+  ) {
+    reasons.push(
+      reason(
+        'PROVENANCE_INCOMPLETE_REFUSED',
+        'provenance',
+        'source + matching artifactDigest',
+        candidate?.provenance
+      )
+    );
   }
 
   const body = canonical({
