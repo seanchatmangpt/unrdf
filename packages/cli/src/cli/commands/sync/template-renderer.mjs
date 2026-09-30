@@ -4,6 +4,7 @@
  * @description Renders code generation templates using Nunjucks
  */
 import { readFile, writeFile, mkdir, readdir, stat, chmod, copyFile } from 'fs/promises';
+import { constants as fsConstants } from 'fs';
 import { existsSync } from 'fs';
 import { resolve, dirname, basename, extname, join, isAbsolute } from 'path';
 import matter from 'gray-matter';
@@ -638,73 +639,55 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
 
   const fm = result.frontmatter;
 
-  // skipIf/skip_if: regex — skip if content exists in file (Hygen parity)
+  // One read decides every "skip if it already exists" rule below. Checking existsSync() first and then
+  // reading/writing leaves a window in which the file can change between check and use.
   const skipExpr = (fm.skipIf || fm.skip_if)?.trim();
-  if (existsSync(finalPath) && !effectiveForce && skipExpr) {
+  const createOnly =
+    !effectiveForce &&
+    (effectiveMode === 'skip_existing' || Boolean(result.frontmatter.unless_exists));
+  const needsExisting =
+    (!effectiveForce && Boolean(skipExpr)) ||
+    createOnly ||
+    Boolean(options.backup_before_overwrite);
+  const existingAtStart = needsExisting ? await readIfExists(finalPath) : null;
+  const skipped = reason => ({
+    ...result,
+    finalPath,
+    status: 'skipped',
+    written: false,
+    skipped: true,
+    dryRun: false,
+    reason,
+  });
+
+  // skipIf/skip_if: regex — skip if content exists in file (Hygen parity)
+  if (existingAtStart !== null && !effectiveForce && skipExpr) {
     const regexMatch = skipExpr.match(/^\/(.+)\/([gimsuy]*)$/);
-    if (regexMatch) {
-      const existing = await readFile(finalPath, 'utf-8');
-      const regex = new RegExp(regexMatch[1], regexMatch[2]);
-      if (regex.test(existing)) {
-        return {
-          ...result,
-          finalPath,
-          status: 'skipped',
-          written: false,
-          skipped: true,
-          reason: 'skipIf matched',
-        };
-      }
-    } else {
-      // String match
-      const existing = await readFile(finalPath, 'utf-8');
-      if (existing.includes(skipExpr)) {
-        return {
-          ...result,
-          finalPath,
-          status: 'skipped',
-          written: false,
-          skipped: true,
-          reason: 'skipIf matched',
-        };
-      }
-    }
+    const matched = regexMatch
+      ? new RegExp(regexMatch[1], regexMatch[2]).test(existingAtStart)
+      : existingAtStart.includes(skipExpr);
+    if (matched) return skipped('skipIf matched');
   }
 
   // mode: skip_existing check
-  if (existsSync(finalPath) && !effectiveForce && effectiveMode === 'skip_existing') {
-    return {
-      ...result,
-      finalPath,
-      status: 'skipped',
-      written: false,
-      skipped: true,
-      dryRun: false,
-      reason: 'file exists and mode is skip_existing',
-    };
+  if (existingAtStart !== null && !effectiveForce && effectiveMode === 'skip_existing') {
+    return skipped('file exists and mode is skip_existing');
   }
 
   // unless_exists: true — skip if file already exists (Hygen parity)
-  if (existsSync(finalPath) && result.frontmatter.unless_exists && !effectiveForce) {
-    return {
-      ...result,
-      finalPath,
-      status: 'skipped',
-      written: false,
-      skipped: true,
-      dryRun: false,
-      reason: 'file exists and unless_exists is true',
-    };
+  if (existingAtStart !== null && result.frontmatter.unless_exists && !effectiveForce) {
+    return skipped('file exists and unless_exists is true');
   }
 
   await mkdir(dirname(finalPath), { recursive: true });
 
-  // Backup before modification if enabled
-  if (options.backup_before_overwrite && existsSync(finalPath)) {
+  // Backup before modification if enabled. COPYFILE_EXCL: never overwrite an existing backup, atomically.
+  if (options.backup_before_overwrite && existingAtStart !== null) {
     const backupPath = finalPath + (options.backup_suffix || '.bak');
-    // Only create backup if it doesn't exist (don't overwrite backups)
-    if (!existsSync(backupPath)) {
-      await copyFile(finalPath, backupPath);
+    try {
+      await copyFile(finalPath, backupPath, fsConstants.COPYFILE_EXCL);
+    } catch (error) {
+      if (!error || error.code !== 'EEXIST') throw error;
     }
   }
 
@@ -721,13 +704,35 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     }
   }
 
+  // Create a file that did not exist a moment ago. In create-only modes the flag is exclusive ('wx'), so a file
+  // that appears in the window is reported as skipped instead of being overwritten.
+  const writeNew = async () => {
+    try {
+      await writeFile(finalPath, contentToWrite, {
+        encoding: 'utf-8',
+        flag: createOnly ? 'wx' : 'w',
+      });
+      return null;
+    } catch (error) {
+      if (createOnly && error && error.code === 'EEXIST') {
+        return skipped(
+          effectiveMode === 'skip_existing'
+            ? 'file exists and mode is skip_existing'
+            : 'file exists and unless_exists is true'
+        );
+      }
+      throw error;
+    }
+  };
+
   if (opMode.mode === 'inject' || opMode.mode === 'append' || result.mode === 'append') {
     const existing = await readIfExists(finalPath);
     if (existing !== null) {
       const separator = existing.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'prepend' || result.mode === 'prepend') {
     // Fix: support both opMode.prepend AND frontmatter.mode === 'prepend'
@@ -736,7 +741,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       const separator = contentToWrite.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, contentToWrite + separator + existing, 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'before') {
     const existing = await readIfExists(finalPath);
@@ -770,7 +776,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
         await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'after') {
     const existing = await readIfExists(finalPath);
@@ -814,7 +821,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
         await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else if (opMode.mode === 'lineAt') {
     const lineNum = opMode.line;
@@ -825,11 +833,13 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       lines.splice(clampedLine, 0, contentToWrite.trimEnd());
       await writeFile(finalPath, lines.join('\n'), 'utf-8');
     } else {
-      await writeFile(finalPath, contentToWrite, 'utf-8');
+      const lostRace = await writeNew();
+      if (lostRace) return lostRace;
     }
   } else {
     // Default: overwrite
-    await writeFile(finalPath, contentToWrite, 'utf-8');
+    const lostRace = await writeNew();
+    if (lostRace) return lostRace;
   }
 
   // chmod directive: set file permissions (Hygen parity)
