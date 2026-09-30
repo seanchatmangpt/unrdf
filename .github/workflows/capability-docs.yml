@@ -45,7 +45,7 @@ concurrency:
 
 jobs:
   validate-quality-gate:
-    name: Quality Gate & OTEL Validation
+    name: Capability Docs Structure
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -69,35 +69,9 @@ jobs:
         run: pnpm install --frozen-lockfile
         timeout-minutes: 5
 
-      - name: Run linting
-        run: timeout 30s pnpm lint
-        continue-on-error: false
-
-      - name: Run fast tests
-        run: timeout 60s pnpm test:fast
-        continue-on-error: false
-
       - name: Validate capability docs structure
         run: timeout 10s node scripts/validate-capability-docs.mjs
         continue-on-error: false
-
-      - name: Run OTEL validation
-        run: timeout 30s node validation/run-all.mjs comprehensive
-        continue-on-error: true
-        id: otel_validation
-
-      - name: Check OTEL score threshold
-        run: |
-          if grep -q "Score:" validation-output.log; then
-            SCORE=$(grep "Score:" validation-output.log | tail -1 | awk '{print $2}' | cut -d'/' -f1)
-            echo "OTEL Score: $SCORE/100"
-            if [ "$SCORE" -lt 80 ]; then
-              echo "::warning::OTEL validation score ($SCORE) below threshold (80)"
-            fi
-          else
-            echo "::warning::OTEL validation log not found"
-          fi
-        continue-on-error: true
 
   generate-capability-maps:
     name: Generate Capability Maps

@@ -63,7 +63,7 @@ export function getMethodologyInfo() {
 export async function validateStack() {
   try {
     await import('@iarna/toml');
-    await import('n3');
+    await import('n3'); // n3 justified: dependency probe only (checks the stack resolves); no quads are parsed here
     await import('zod');
     return true;
   } catch (error) {

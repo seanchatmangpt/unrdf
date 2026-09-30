@@ -5,16 +5,25 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { assignShards, gitChangedFiles, loadWeights, parseShard, selectAffected, withDependencies } from './ci/affected.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, '.artifacts/package-matrix');
 const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const limit = +(process.argv.find(x => x.startsWith('--concurrency='))?.split('=')[1] || 4);
 const timeout = +(process.argv.find(x => x.startsWith('--timeout-ms='))?.split('=')[1] || 300000);
-const phases = ['lint', 'build', 'test'];
+const flag = name => process.argv.find(x => x.startsWith(`--${name}=`))?.split('=').slice(1).join('=');
+// Optional CI planning flags. With none of them the script verifies every package exactly as before.
+//   --affected-from=<ref>   lint/build/test only the packages changed since <ref> plus their dependents
+//   --shard=i/n             verify only the i-th of n weight-balanced package groups
+//   --phases=a,b            subset of lint,build,test,import (default: all four)
+const affectedFrom = flag('affected-from');
+const shardSpec = flag('shard');
+const enabledPhases = new Set((flag('phases') || 'lint,build,test,import').split(','));
+const phases = ['lint', 'build', 'test'].filter(p => enabledPhases.has(p));
 const noop = /\b(echo|printf)\b.*\b(no|skipped)\b.*\b(test|build|lint)/i;
 const masked = /\|\|\s*true\b|;\s*exit\s+0\b/;
-const receipt = { schemaVersion: 2, base: process.env.GITHUB_BASE_SHA || null, head: process.env.GITHUB_HEAD_SHA || null, node: process.version, startedAt: new Date().toISOString(), state: 'UNKNOWN', packages: [], executions: [], imports: [] };
+const receipt = { schemaVersion: 2, base: process.env.GITHUB_BASE_SHA || null, head: process.env.GITHUB_HEAD_SHA || null, node: process.version, startedAt: new Date().toISOString(), state: 'UNKNOWN', selection: null, shard: null, packages: [], executions: [], imports: [] };
 
 const slug = s => s.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]+/g, '-');
 const tail = (a, b, n = 16384) => (a + b).slice(-n);
@@ -78,8 +87,25 @@ try {
   receipt.packages.sort((a, b) => a.path.localeCompare(b.path));
   if (!receipt.packages.length) throw new Error('WORKSPACE_DISCOVERY_EMPTY');
 
+  // Change-impact selection (lint/build/test) and shard membership (everything). Import is cheap and
+  // always covers every package in the shard, so a broken entry point can never hide behind "not affected".
+  const plan = selectAffected({
+    packages: withDependencies(root, receipt.packages),
+    changedFiles: affectedFrom ? gitChangedFiles(affectedFrom, root) : null,
+  });
+  const selected = new Set(affectedFrom ? plan.selected : receipt.packages.map(p => p.name));
+  receipt.selection = affectedFrom ? { from: affectedFrom, all: plan.all, reason: plan.reason, changed: plan.changed, selected: plan.selected.length, total: receipt.packages.length } : { all: true, reason: 'no --affected-from', total: receipt.packages.length };
+  let inShard = receipt.packages;
+  if (shardSpec) {
+    const { index, count } = parseShard(shardSpec);
+    const mine = new Set(assignShards(receipt.packages.map(p => p.name), loadWeights(path.join(root, 'scripts/ci/package-weights.json')), count)[index - 1]);
+    inShard = receipt.packages.filter(p => mine.has(p.name));
+    receipt.shard = { index, count, packages: inShard.length };
+  }
+  receipt.packages = inShard;
+
   for (const phase of phases) {
-    const targets = receipt.packages.filter(p => typeof p.scripts[phase] === 'string');
+    const targets = receipt.packages.filter(p => typeof p.scripts[phase] === 'string' && selected.has(p.name));
     receipt.executions.push(...await pool(targets, async p => {
       console.log(`[${phase}] ${p.name}`);
       const result = await run(pnpm, ['--dir', path.join(root, p.path), 'run', phase], root, path.join(out, phase, `${slug(p.name)}.log`));
@@ -88,10 +114,10 @@ try {
       console.log(`[${phase}] ${p.name}: ${state}`);
       return { package: p.name, path: p.path, phase, script, state, ...result };
     }));
-    for (const p of receipt.packages.filter(p => !p.scripts[phase])) receipt.executions.push({ package: p.name, path: p.path, phase, script: null, state: 'NOT_APPLICABLE', reason: `no ${phase} script` });
+    for (const p of receipt.packages.filter(p => !p.scripts[phase] || !selected.has(p.name))) receipt.executions.push({ package: p.name, path: p.path, phase, script: null, state: 'NOT_APPLICABLE', reason: !p.scripts[phase] ? `no ${phase} script` : 'not affected by this change' });
   }
 
-  receipt.imports.push(...await pool(receipt.packages, async p => {
+  receipt.imports.push(...await pool(enabledPhases.has('import') ? receipt.packages : [], async p => {
     const target = p.entries.find(x => existsSync(path.resolve(root, p.path, x)));
     if (!target) return { package: p.name, path: p.path, state: p.private ? 'NOT_APPLICABLE' : 'BUILD_BROKEN', reason: p.entries.length ? 'declared root export is missing' : 'no root export declared', candidates: p.entries };
     const result = await run(process.execPath, ['--input-type=module', '--eval', `await import(${JSON.stringify(pathToFileURL(path.resolve(root, p.path, target)).href)})`], root, path.join(out, 'import', `${slug(p.name)}.log`), 120000);
@@ -106,6 +132,6 @@ try {
 } finally {
   receipt.completedAt = new Date().toISOString();
   await writeFile(path.join(out, 'receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`);
-  console.log(`PACKAGE_MATRIX_RECEIPT ${JSON.stringify({ state: receipt.state, packageCount: receipt.packages.length, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
+  console.log(`PACKAGE_MATRIX_RECEIPT ${JSON.stringify({ state: receipt.state, packageCount: receipt.packages.length, selection: receipt.selection, shard: receipt.shard, summary: receipt.summary || {}, receipt: '.artifacts/package-matrix/receipt.json' })}`);
   process.exitCode = receipt.state === 'ALIVE' ? 0 : 1;
 }

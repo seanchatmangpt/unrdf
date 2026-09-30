@@ -5,8 +5,8 @@ debt that already exists. The debt is not hidden: it is listed here, in review, 
 
 | File                      | Used by                                                      | Key                                            | Gate                                           |
 | ------------------------- | ------------------------------------------------------------ | ---------------------------------------------- | ---------------------------------------------- |
-| `audit.json`              | `Security Audit` (ci.yml), `Dependency Audit` (security.yml) | `advisory id \| package \| installed versions` | fails on any moderate+ advisory not listed     |
-| `injection-critical.json` | `Security Invariants` (security.yml)                         | `file \| rule` -> count                        | fails on a new `file\|rule`, or a higher count |
+| `audit.json`              | `Static checks` (ci.yml, PRs), `Dependency Audit` (security.yml, nightly) | `advisory id \| package \| installed versions` | fails on any moderate+ advisory not listed     |
+| `injection-critical.json` | `Static checks` (ci.yml, PRs), `Security Invariants` (security.yml)                 | `file \| rule` -> count                        | fails on a new `file\|rule`, or a higher count |
 
 Secrets scanning is **not** ratcheted: it stays at zero tolerance.
 
@@ -35,5 +35,5 @@ Exit codes: `0` nothing new, `1` new/increased findings, `2` the audit or report
 
 ## Dependency Review
 
-`security.yml`'s `Dependency Review` job needs the repository's _Dependency graph_ setting. Once it is enabled, set the
+`ci.yml`'s `Dependency Review` job needs the repository's _Dependency graph_ setting. Once it is enabled, set the
 repository variable `DEPENDENCY_GRAPH_ENABLED=true` and the job starts enforcing (until then it is skipped).

@@ -1,9 +1,9 @@
 name: Performance Tracking & Benchmarking
 
 on:
+  # Trend tracking only (main + daily). Pull requests get the regression gate from perf.yml; this workflow used
+  # to re-run the core/streaming/federation test suites on every PR on top of ci.yml's package matrix.
   push:
-    branches: [main, develop]
-  pull_request:
     branches: [main, develop]
   schedule:
     # Run performance benchmarks daily at 3 AM UTC

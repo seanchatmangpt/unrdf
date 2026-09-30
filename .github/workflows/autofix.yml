@@ -1,8 +1,12 @@
 name: autofix.ci
 
+# autofix.ci acts on pull requests (and main). A bare `push:` also fired on every PR-branch commit, running the
+# job twice per commit.
 on:
   push:
+    branches: [main]
   pull_request:
+    paths-ignore: ['**/*.md', 'docs/**', 'LICENSE']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.ref_name }}
