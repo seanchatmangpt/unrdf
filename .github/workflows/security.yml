@@ -9,9 +9,9 @@ name: Security Scanning
 #   secrets      full-history TruffleHog + Gitleaks
 #   container    image build + Trivy/Scout
 
+# Nightly and on demand only. Running these on every push to main added ~5 report-style jobs (a container build,
+# an 11-minute security report, three advisory checks) to every merge; the gates themselves run in ci.yml.
 on:
-  push:
-    branches: [main, develop]
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
