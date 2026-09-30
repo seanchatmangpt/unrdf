@@ -12,8 +12,6 @@ name: Scheduled quality
 on:
   schedule:
     - cron: '30 3 * * *'
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:

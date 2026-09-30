@@ -106,7 +106,13 @@ jobs:
       - name: Validate workflow files
         run: |
           if git diff --name-only HEAD^1 HEAD 2>/dev/null | grep -qE '^\.github/(workflows|actions)/' || [ "${{ github.event_name }}" != "pull_request" ]; then
-            npx --yes @action-validator/cli@0.6.0 .github/workflows/*.yml
+            # action-validator takes ONE file per call. Install it once (a per-file `npx` is ~2 s each) and loop.
+            npm install --global @action-validator/cli@0.6.0 >/dev/null 2>&1
+            status=0
+            for f in .github/workflows/*.yml .github/actions/*/action.yml; do
+              action-validator "$f" >/dev/null 2>validator.err || { echo "INVALID $f"; cat validator.err; status=1; }
+            done
+            exit $status
           else
             echo "No workflow changes; skipped."
           fi

@@ -42,7 +42,8 @@ pull_request ──► ci.yml
                             otel-weaver-validate, unrdf-sync-integration, perf.yml (regression gate), thesis-validation.yml
 
 push to main ──► ci.yml with the full matrix: node 20/22 × 3 shards, everything (no affected filtering)
-nightly      ──► scheduled.yml (coverage + quality thresholds, advisory analysis), security.yml (deep scans)
+nightly      ──► scheduled.yml (coverage + quality thresholds, advisory analysis), security.yml (deep scans);
+               both are schedule/dispatch only, so a merge to main does not also pay for them
 ```
 
 ### Change impact (`scripts/ci/affected.mjs`)
