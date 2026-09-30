@@ -332,7 +332,10 @@ export class WorkerPool {
       }, this.taskTimeout);
 
       // Clear timeout when promise resolves
-      Promise.race([this.taskQueue.find(t => t.taskId === taskId)?.resolve, this.taskQueue.find(t => t.taskId === taskId)?.reject])
+      Promise.race([
+        this.taskQueue.find(t => t.taskId === taskId)?.resolve,
+        this.taskQueue.find(t => t.taskId === taskId)?.reject,
+      ])
         .then(() => clearTimeout(timeout))
         .catch(() => clearTimeout(timeout));
     });
@@ -362,8 +365,7 @@ export class WorkerPool {
       totalTasksProcessed += count;
     }
 
-    const avgTasksPerWorker =
-      activeWorkers > 0 ? totalTasksProcessed / activeWorkers : 0;
+    const avgTasksPerWorker = activeWorkers > 0 ? totalTasksProcessed / activeWorkers : 0;
 
     return {
       activeWorkers,
@@ -400,7 +402,10 @@ export class WorkerPool {
     for (const [workerId, worker] of this.workers) {
       terminatePromises.push(
         new Promise(resolve => {
-          worker.terminate().then(() => resolve()).catch(() => resolve());
+          worker
+            .terminate()
+            .then(() => resolve())
+            .catch(() => resolve());
         })
       );
 

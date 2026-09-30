@@ -24,10 +24,7 @@ try {
 }
 
 // Import generated semantic convention constants
-import {
-  ATTR_UNRDF_HOOK_ID,
-  ATTR_UNRDF_TRANSACTION_ID,
-} from '@unrdf/otel/generated';
+import { ATTR_UNRDF_HOOK_ID, ATTR_UNRDF_TRANSACTION_ID } from '@unrdf/otel/generated';
 
 /**
  * OpenTelemetry observability manager
@@ -79,7 +76,9 @@ export class ObservabilityManager {
         this._createCustomMetrics();
 
         this.initialized = true;
-        console.log(`[Observability] Initialized with daemon SDK for service: ${this.config.serviceName}`);
+        console.log(
+          `[Observability] Initialized with daemon SDK for service: ${this.config.serviceName}`
+        );
       } else {
         // Daemon SDK not available - use fallback
         console.warn('[Observability] Daemon SDK not available - using fallback mode');

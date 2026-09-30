@@ -19,7 +19,8 @@ export function canonicalize(value, active = new Set()) {
   }
   if (typeof value === 'bigint') return { $bigint: value.toString() };
   if (typeof value === 'undefined') return { $undefined: true };
-  if (typeof value === 'function' || typeof value === 'symbol') throw new TypeError(`Cannot canonicalize ${typeof value}`);
+  if (typeof value === 'function' || typeof value === 'symbol')
+    throw new TypeError(`Cannot canonicalize ${typeof value}`);
   if (active.has(value)) throw new TypeError('Cannot canonicalize cyclic value');
   active.add(value);
   try {
@@ -27,10 +28,18 @@ export function canonicalize(value, active = new Set()) {
     if (value instanceof Uint8Array) return { $bytes: Buffer.from(value).toString('base64') };
     if (Array.isArray(value)) return value.map(item => canonicalize(item, active));
     if (value instanceof Set) {
-      return { $set: [...value].map(item => canonicalize(item, active)).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))) };
+      return {
+        $set: [...value]
+          .map(item => canonicalize(item, active))
+          .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
+      };
     }
     if (value instanceof Map) {
-      return { $map: [...value].map(([key, item]) => [canonicalize(key, active), canonicalize(item, active)]).sort((a, b) => JSON.stringify(a[0]).localeCompare(JSON.stringify(b[0]))) };
+      return {
+        $map: [...value]
+          .map(([key, item]) => [canonicalize(key, active), canonicalize(item, active)])
+          .sort((a, b) => JSON.stringify(a[0]).localeCompare(JSON.stringify(b[0]))),
+      };
     }
     const result = {};
     for (const key of Object.keys(value).sort()) result[key] = canonicalize(value[key], active);
@@ -45,7 +54,9 @@ export function canonicalize(value, active = new Set()) {
  * @param {*} value - Value to serialize
  * @returns {string} Canonical JSON text
  */
-export function canonicalJson(value) { return JSON.stringify(canonicalize(value)); }
+export function canonicalJson(value) {
+  return JSON.stringify(canonicalize(value));
+}
 
 /**
  * Hash the canonical JSON form of a value.
@@ -130,7 +141,11 @@ export function mergeObservations(shards, additions = [], options = {}) {
       if (conflictPolicy === 'latest') {
         const leftTime = Date.parse(existing.timestamp || 0) || 0;
         const rightTime = Date.parse(observation.timestamp || 0) || 0;
-        if (rightTime > leftTime || (rightTime === leftTime && canonicalJson(observation) > canonicalJson(existing))) byIdentity.set(identity, observation);
+        if (
+          rightTime > leftTime ||
+          (rightTime === leftTime && canonicalJson(observation) > canonicalJson(existing))
+        )
+          byIdentity.set(identity, observation);
       }
       if (conflictPolicy === 'right') byIdentity.set(identity, observation);
     }
@@ -181,11 +196,22 @@ export function verifyArtifact(artifact) {
   const differences = [];
   if (!actual) differences.push({ path: 'integrity', expected, actual: null });
   else {
-    if (actual.root !== expected.root) differences.push({ path: 'integrity.root', expected: expected.root, actual: actual.root });
+    if (actual.root !== expected.root)
+      differences.push({ path: 'integrity.root', expected: expected.root, actual: actual.root });
     for (const [section, hash] of Object.entries(expected.sections)) {
-      if (actual.sections?.[section] !== hash) differences.push({ path: `integrity.sections.${section}`, expected: hash, actual: actual.sections?.[section] });
+      if (actual.sections?.[section] !== hash)
+        differences.push({
+          path: `integrity.sections.${section}`,
+          expected: hash,
+          actual: actual.sections?.[section],
+        });
     }
-    if (actual.observationCount !== expected.observationCount) differences.push({ path: 'integrity.observationCount', expected: expected.observationCount, actual: actual.observationCount });
+    if (actual.observationCount !== expected.observationCount)
+      differences.push({
+        path: 'integrity.observationCount',
+        expected: expected.observationCount,
+        actual: actual.observationCount,
+      });
   }
   return { valid: differences.length === 0, differences, expected };
 }
@@ -248,7 +274,15 @@ export async function withTimeout(task, timeoutMs, signal) {
           reject(error);
         }, timeoutMs);
       }),
-      signal ? new Promise((_, reject) => signal.addEventListener('abort', () => reject(abortError(signal.reason?.message || 'Operation aborted')), { once: true })) : new Promise(() => {}),
+      signal
+        ? new Promise((_, reject) =>
+            signal.addEventListener(
+              'abort',
+              () => reject(abortError(signal.reason?.message || 'Operation aborted')),
+              { once: true }
+            )
+          )
+        : new Promise(() => {}),
     ]);
   } finally {
     if (timer) clearTimeout(timer);
@@ -281,10 +315,24 @@ export async function runAgentPool(agentEntries, options = {}) {
       const entry = agentEntries[index];
       const startedAt = options.now?.() ?? Date.now();
       try {
-        const value = await withTimeout(signal => entry.run(signal), entry.timeoutMs ?? options.timeoutMs, options.signal);
-        results[index] = { id: entry.id, status: 'fulfilled', value, durationMs: (options.now?.() ?? Date.now()) - startedAt };
+        const value = await withTimeout(
+          signal => entry.run(signal),
+          entry.timeoutMs ?? options.timeoutMs,
+          options.signal
+        );
+        results[index] = {
+          id: entry.id,
+          status: 'fulfilled',
+          value,
+          durationMs: (options.now?.() ?? Date.now()) - startedAt,
+        };
       } catch (error) {
-        const failure = { id: entry.id, status: 'rejected', error, durationMs: (options.now?.() ?? Date.now()) - startedAt };
+        const failure = {
+          id: entry.id,
+          status: 'rejected',
+          error,
+          durationMs: (options.now?.() ?? Date.now()) - startedAt,
+        };
         results[index] = failure;
         errors.push(failure);
         if (failFast) stopped = true;
@@ -292,5 +340,10 @@ export async function runAgentPool(agentEntries, options = {}) {
     }
   });
   await Promise.all(workers);
-  return { results: results.filter(Boolean), errors, aborted: Boolean(options.signal?.aborted), stoppedEarly: stopped && cursor < agentEntries.length };
+  return {
+    results: results.filter(Boolean),
+    errors,
+    aborted: Boolean(options.signal?.aborted),
+    stoppedEarly: stopped && cursor < agentEntries.length,
+  };
 }
