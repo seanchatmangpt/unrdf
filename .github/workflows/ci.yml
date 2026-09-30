@@ -221,7 +221,9 @@ jobs:
 
   gate:
     name: CI Gate
-    if: always()
+    # Runs when a lane failed (to report it) but not when the whole run was cancelled by a newer push; with
+    # `always()` a superseded commit ended up with a red gate.
+    if: ${{ !cancelled() }}
     needs: [static, secrets, dependency-review, packages]
     runs-on: ubuntu-latest
     timeout-minutes: 5
