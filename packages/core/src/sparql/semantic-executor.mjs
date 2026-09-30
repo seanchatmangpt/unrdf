@@ -258,7 +258,7 @@ function isSemanticQuery(sparql) {
  */
 function detectQueryType(sparql) {
   const normalized = sparql
-    .replace(/PREFIX\s+[^\s]+\s+<[^>]+>/gm, '')
+    .replace(/PREFIX\s+[^\s<>]+\s+<[^<>\s]*>/gm, '')
     .trim()
     .toUpperCase();
   const firstWord = normalized.split(/\s+/)[0];

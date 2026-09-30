@@ -19,6 +19,21 @@ export const TEMPLATE_EXTENSIONS = ['.njk', '.nunjucks', '.jinja', '.jinja2', '.
 export const DEFAULT_PREFIXES = { ...COMMON_PREFIXES };
 
 /**
+ * Read a file, returning null when it does not exist.
+ * Single read instead of existsSync + readFile, so the file cannot change between check and use.
+ * @param {string} path - File to read
+ * @returns {Promise<string|null>} File contents, or null on ENOENT
+ */
+async function readIfExists(path) {
+  try {
+    return await readFile(path, 'utf-8');
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+/**
  * Recursively strip leading/trailing double quotes from string values that
  * contain {{ }} template syntax. This is a safety net for values that were
  * auto-quoted by preprocessFrontmatter() but where js-yaml did not strip
@@ -707,8 +722,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
   }
 
   if (opMode.mode === 'inject' || opMode.mode === 'append' || result.mode === 'append') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const separator = existing.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
     } else {
@@ -716,16 +731,16 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     }
   } else if (opMode.mode === 'prepend' || result.mode === 'prepend') {
     // Fix: support both opMode.prepend AND frontmatter.mode === 'prepend'
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const separator = contentToWrite.endsWith('\n') ? '' : '\n';
       await writeFile(finalPath, contentToWrite + separator + existing, 'utf-8');
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
     }
   } else if (opMode.mode === 'before') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const anchorPattern = opMode.anchor;
       // Hygen parity: support regex for before anchor
       // Detect regex: starts with /, ends with / or /flags, and has content between
@@ -758,8 +773,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       await writeFile(finalPath, contentToWrite, 'utf-8');
     }
   } else if (opMode.mode === 'after') {
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const anchorPattern = opMode.anchor;
       // Hygen parity: support regex for after anchor
       // Detect regex: starts with /, ends with / or /flags, and has content between
@@ -803,8 +818,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     }
   } else if (opMode.mode === 'lineAt') {
     const lineNum = opMode.line;
-    if (existsSync(finalPath)) {
-      const existing = await readFile(finalPath, 'utf-8');
+    const existing = await readIfExists(finalPath);
+    if (existing !== null) {
       const lines = existing.split('\n');
       const clampedLine = Math.max(0, Math.min(lineNum, lines.length));
       lines.splice(clampedLine, 0, contentToWrite.trimEnd());

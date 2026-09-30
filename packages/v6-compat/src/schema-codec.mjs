@@ -15,6 +15,28 @@ const PRIMITIVE_ZOD = Object.freeze({
   Date: 'z.date()',
 });
 
+/**
+ * Convert a single-quoted string literal token to an equivalent double-quoted JSON string.
+ * Walks the body so existing escapes are preserved (a bare regex replace of `"` would leave
+ * backslashes unescaped and mis-handle `\\'` and `\\"`).
+ * @param {string} token - Single-quoted literal including the surrounding quotes
+ * @returns {string} Double-quoted string literal safe for JSON.parse
+ */
+function singleToDoubleQuoted(token) {
+  const body = token.slice(1, -1);
+  let out = '';
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (ch === '\\') {
+      const next = body[++i];
+      out += next === "'" ? "'" : `\\${next}`;
+    } else {
+      out += ch === '"' ? '\\"' : ch;
+    }
+  }
+  return `"${out}"`;
+}
+
 function tokenize(source) {
   const tokens = [];
   let index = 0;
@@ -126,11 +148,7 @@ class Parser {
     if (token.type === 'string')
       return {
         kind: 'literal',
-        value: JSON.parse(
-          token.value[0] === "'"
-            ? `"${token.value.slice(1, -1).replace(/"/g, '\\"')}"`
-            : token.value
-        ),
+        value: JSON.parse(token.value[0] === "'" ? singleToDoubleQuoted(token.value) : token.value),
       };
     if (token.type === 'number') return { kind: 'literal', value: Number(token.value) };
     if (token.type !== 'identifier') throw new SyntaxError(`Expected type, found ${token.value}`);
