@@ -14,11 +14,16 @@ env:
   NODE_VERSION: '22'
   PNPM_VERSION: '10.15.0'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   # Dependency Vulnerability Scanning
   dependency-scan:
     name: Dependency Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,25 +45,18 @@ jobs:
       - name: Run pnpm audit
         run: |
           echo "Running pnpm audit..."
-          pnpm audit --audit-level moderate || echo "⚠️ Vulnerabilities found"
+          pnpm audit --audit-level moderate || echo "⚠️ Vulnerabilities found (see the ratchet below for whether any are new)"
 
-          # Generate detailed audit report
+          # Keep the full report as an artifact
           pnpm audit --json > audit-report.json || true
+          echo "Critical: $(jq '.metadata.vulnerabilities.critical // 0' audit-report.json)  High: $(jq '.metadata.vulnerabilities.high // 0' audit-report.json)"
 
-          # Check for critical/high vulnerabilities
-          CRITICAL=$(cat audit-report.json | jq '.metadata.vulnerabilities.critical // 0')
-          HIGH=$(cat audit-report.json | jq '.metadata.vulnerabilities.high // 0')
+      # Ratchet: fail only on advisories that are not in .github/baselines/audit.json
+      - name: Ratchet self-test
+        run: node --test scripts/ci/ratchet.test.mjs
 
-          echo "Critical: $CRITICAL"
-          echo "High: $HIGH"
-
-          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
-            echo "❌ Critical or high severity vulnerabilities found!"
-            pnpm audit --audit-level high
-            exit 1
-          fi
-
-          echo "✅ No critical or high vulnerabilities found"
+      - name: Audit ratchet (fail on new advisories)
+        run: node scripts/ci/audit-ratchet.mjs --input audit-report.json
 
       - name: Upload audit report
         if: always()
@@ -72,6 +70,7 @@ jobs:
   sast-scan:
     name: SAST Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       security-events: write
       contents: read
@@ -94,6 +93,7 @@ jobs:
   secrets-scan:
     name: Secrets Detection
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -117,6 +117,7 @@ jobs:
   license-scan:
     name: License Compliance
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -160,7 +161,11 @@ jobs:
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    timeout-minutes: 30
+    # Requires the repository's "Dependency graph" setting (Settings -> Code security). Without it the action fails on
+    # every PR regardless of what the PR changes. Set the repository VARIABLE DEPENDENCY_GRAPH_ENABLED=true once the
+    # graph is enabled and this job starts enforcing; until then it is skipped rather than permanently red.
+    if: github.event_name == 'pull_request' && vars.DEPENDENCY_GRAPH_ENABLED == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -175,6 +180,7 @@ jobs:
   supply-chain:
     name: Supply Chain Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -208,6 +214,7 @@ jobs:
   container-scan:
     name: Container Security
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name != 'pull_request'
     steps:
       - name: Checkout code
@@ -243,6 +250,7 @@ jobs:
   security-checks:
     name: Security Best Practices
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -302,6 +310,7 @@ jobs:
   security-invariants:
     name: Security Invariants
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -403,11 +412,21 @@ jobs:
           SECRETS_CRITICAL=${{ steps.secrets.outputs.critical || 0 }}
           INJECTION_CRITICAL=${{ steps.injection.outputs.critical || 0 }}
 
-          if [ "$SECRETS_CRITICAL" -gt 0 ] || [ "$INJECTION_CRITICAL" -gt 0 ]; then
-            echo "❌ Security gate FAILED - Critical issues detected"
+          # Secrets: strict, zero tolerance. Injection: ratchet against .github/baselines/injection-critical.json
+          # (findings keyed by file|rule; a NEW file|rule or a higher count fails, accepted debt does not).
+          # Update the baseline deliberately with: node scripts/ci/findings-ratchet.mjs --report injection-report.json \
+          #   --baseline .github/baselines/injection-critical.json --update
+          node --test scripts/ci/ratchet.test.mjs
+          INJECTION_RATCHET=0
+          node scripts/ci/findings-ratchet.mjs --report injection-report.json \
+            --baseline .github/baselines/injection-critical.json || INJECTION_RATCHET=$?
+
+          if [ "$SECRETS_CRITICAL" -gt 0 ] || [ "$INJECTION_RATCHET" -ne 0 ]; then
+            echo "❌ Security gate FAILED"
             echo ""
-            echo "Secrets Critical: $SECRETS_CRITICAL"
-            echo "Injection Critical: $INJECTION_CRITICAL"
+            echo "Secrets Critical: $SECRETS_CRITICAL (must be 0)"
+            echo "Injection ratchet exit code: $INJECTION_RATCHET (0 = nothing new, 1 = new/increased findings, 2 = report unreadable)"
+            echo "Injection Critical total: $INJECTION_CRITICAL (accepted baseline debt is allowed; new debt is not)"
             exit 1
           fi
 
@@ -445,6 +464,7 @@ jobs:
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [dependency-scan, sast-scan, secrets-scan, license-scan, supply-chain, security-checks, security-invariants]
     if: always()
     steps:

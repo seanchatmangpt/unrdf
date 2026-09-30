@@ -6,6 +6,10 @@ on:
       - '.github/workflows/r88-r86-qualification-capsule.yml'
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   qualify:
     runs-on: ubuntu-24.04
