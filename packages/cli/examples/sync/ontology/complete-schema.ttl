@@ -1,0 +1,205 @@
+# Complete Example Schema - Blog Domain Model
+# Used by advanced.unrdf.toml. It provides everything the six example rules query for:
+#   entities / api-docs -> owl:Class
+#   properties          -> owl:DatatypeProperty (with domain / range)
+#   relationships       -> owl:ObjectProperty (with owl:inverseOf)
+#   schemas             -> sh:NodeShape with sh:property constraints
+#   instances           -> owl:NamedIndividual (rule disabled by default)
+# Labels are unique so the generated constants never collide.
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://example.org/schema#> .
+
+# =============================================================================
+# Entity Classes
+# =============================================================================
+
+ex:User a owl:Class ;
+    rdfs:label "User" ;
+    rdfs:comment "A user in the system with authentication and profile data" .
+
+ex:Post a owl:Class ;
+    rdfs:label "Post" ;
+    rdfs:comment "A blog post created by a user" .
+
+ex:Comment a owl:Class ;
+    rdfs:label "Comment" ;
+    rdfs:comment "A comment on a blog post" .
+
+ex:Tag a owl:Class ;
+    rdfs:label "Tag" ;
+    rdfs:comment "A tag for categorizing posts" .
+
+ex:Role a owl:Class ;
+    rdfs:label "Role" ;
+    rdfs:comment "A permission role that can be granted to a user" .
+
+# =============================================================================
+# Datatype Properties
+# =============================================================================
+
+ex:username a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:string ;
+    rdfs:label "username" ;
+    rdfs:comment "The user's unique username" .
+
+ex:email a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:string ;
+    rdfs:label "email" ;
+    rdfs:comment "The user's email address" .
+
+ex:createdAt a owl:DatatypeProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "createdAt" ;
+    rdfs:comment "When the user account was created" .
+
+ex:title a owl:DatatypeProperty ;
+    rdfs:domain ex:Post ;
+    rdfs:range xsd:string ;
+    rdfs:label "title" ;
+    rdfs:comment "The post title" .
+
+ex:body a owl:DatatypeProperty ;
+    rdfs:domain ex:Post ;
+    rdfs:range xsd:string ;
+    rdfs:label "body" ;
+    rdfs:comment "The post content" .
+
+ex:publishedAt a owl:DatatypeProperty ;
+    rdfs:domain ex:Post ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "publishedAt" ;
+    rdfs:comment "When the post was published" .
+
+ex:text a owl:DatatypeProperty ;
+    rdfs:domain ex:Comment ;
+    rdfs:range xsd:string ;
+    rdfs:label "text" ;
+    rdfs:comment "The comment text" .
+
+ex:name a owl:DatatypeProperty ;
+    rdfs:domain ex:Tag ;
+    rdfs:range xsd:string ;
+    rdfs:label "name" ;
+    rdfs:comment "The tag name" .
+
+# =============================================================================
+# Object Properties (Relationships)
+# =============================================================================
+
+ex:author a owl:ObjectProperty ;
+    rdfs:domain ex:Post ;
+    rdfs:range ex:User ;
+    rdfs:label "author" ;
+    rdfs:comment "The user who wrote the post" ;
+    owl:inverseOf ex:authored .
+
+ex:authored a owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:Post ;
+    rdfs:label "authored" ;
+    rdfs:comment "The posts written by the user" ;
+    owl:inverseOf ex:author .
+
+ex:commentOn a owl:ObjectProperty ;
+    rdfs:domain ex:Comment ;
+    rdfs:range ex:Post ;
+    rdfs:label "commentOn" ;
+    rdfs:comment "The post a comment belongs to" .
+
+ex:taggedWith a owl:ObjectProperty ;
+    rdfs:domain ex:Post ;
+    rdfs:range ex:Tag ;
+    rdfs:label "taggedWith" ;
+    rdfs:comment "The tags applied to the post" .
+
+ex:hasRole a owl:ObjectProperty ;
+    rdfs:domain ex:User ;
+    rdfs:range ex:Role ;
+    rdfs:label "hasRole" ;
+    rdfs:comment "The roles granted to the user" .
+
+# =============================================================================
+# SHACL Shapes (used by the "schemas" rule)
+# =============================================================================
+
+ex:UserShape a sh:NodeShape ;
+    sh:targetClass ex:User ;
+    sh:property [
+        sh:path ex:username ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ex:email ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ex:createdAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+ex:PostShape a sh:NodeShape ;
+    sh:targetClass ex:Post ;
+    sh:property [
+        sh:path ex:title ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ex:body ;
+        sh:datatype xsd:string ;
+        sh:minCount 1
+    ] ;
+    sh:property [
+        sh:path ex:publishedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1
+    ] .
+
+ex:CommentShape a sh:NodeShape ;
+    sh:targetClass ex:Comment ;
+    sh:property [
+        sh:path ex:text ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+ex:TagShape a sh:NodeShape ;
+    sh:targetClass ex:Tag ;
+    sh:property [
+        sh:path ex:name ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+# =============================================================================
+# Named Individuals (used by the "instances" rule, disabled by default)
+# =============================================================================
+
+ex:AdminRole a owl:NamedIndividual, ex:Role ;
+    rdfs:label "AdminRole" ;
+    rdfs:comment "Full administrative access" .
+
+ex:EditorRole a owl:NamedIndividual, ex:Role ;
+    rdfs:label "EditorRole" ;
+    rdfs:comment "Can create and edit posts" .
+
+ex:ReaderRole a owl:NamedIndividual, ex:Role ;
+    rdfs:label "ReaderRole" ;
+    rdfs:comment "Read-only access" .

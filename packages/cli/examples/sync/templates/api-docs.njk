@@ -1,0 +1,18 @@
+---
+to: ../docs/api-reference.md
+description: Generated Markdown API reference from RDF ontology
+---
+# API Reference
+
+> Auto-generated from the RDF ontology ({{ sparql_results | length }} classes). Do not edit by hand;
+> regenerate with `unrdf sync --config advanced.unrdf.toml --rule api-docs`.
+
+{% for row in sparql_results %}
+## {{ row.classLabel | default("Unnamed class") }}
+
+{{ row.classComment | default("No description available.") }}
+
+- **URI**: `{{ row.class }}`
+- **Properties**: {{ row.properties | default("none") }}
+
+{% endfor %}
