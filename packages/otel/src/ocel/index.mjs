@@ -284,3 +284,5 @@ export function generateImpossibleLog(scenario) {
 function iso(offsetSeconds) {
   return new Date(1_700_000_000_000 + offsetSeconds * 1000).toISOString();
 }
+
+export * from './git-swarm.mjs';
