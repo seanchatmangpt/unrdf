@@ -1,0 +1,29 @@
+name: v26.9.16 RFC Closure
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/atomvm/src/idle-estate.mjs'
+      - 'packages/atomvm/src/index.mjs'
+      - 'packages/atomvm/test/idle-estate-chicago.test.mjs'
+      - '.github/workflows/v26-9-16-rfc-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  atomvm-idle-estate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Exact subject
+        run: |
+          echo "HEAD=$GITHUB_SHA"
+          git rev-parse HEAD
+      - name: Chicago idle-estate court
+        run: node --test packages/atomvm/test/idle-estate-chicago.test.mjs
