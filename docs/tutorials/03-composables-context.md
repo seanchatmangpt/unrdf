@@ -24,7 +24,7 @@ UNRDF uses a context-based architecture (powered by unctx) that eliminates prop 
 Use `initStore()` to create a context and run code within it:
 
 ```javascript
-import { initStore, useStore } from 'unrdf';
+import { initStore, useStore } from '@unrdf/composables';
 
 // Initialize a context with an empty Store
 const runApp = initStore();
@@ -54,7 +54,7 @@ Store ready: true
 You can initialize the context with existing quads or Turtle data:
 
 ```javascript
-import { initStore, useStore } from 'unrdf';
+import { initStore, useStore } from '@unrdf/composables';
 import { DataFactory } from 'n3';
 
 const { namedNode, literal, quad } = DataFactory;
@@ -89,7 +89,7 @@ Store initialized with 1 triples
 `useGraph()` provides a high-level API for querying:
 
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 import { parseTurtle } from 'unrdf/knowledge-engine';
 
 // Sample data
@@ -161,7 +161,7 @@ Graph stats: { subjects: 2, predicates: 3, objects: 6 }
 `useTerms()` provides helpers for creating RDF terms:
 
 ```javascript
-import { initStore, useStore, useTerms } from 'unrdf';
+import { initStore, useStore, useTerms } from '@unrdf/composables';
 
 const runApp = initStore();
 
@@ -212,7 +212,7 @@ Store size after adding age: 2
 `useTurtle()` provides parsing and serialization helpers:
 
 ```javascript
-import { initStore, useTurtle } from 'unrdf';
+import { initStore, useTurtle } from '@unrdf/composables';
 
 const runApp = initStore();
 
@@ -240,7 +240,7 @@ runApp(async () => {
 Let's combine everything into a practical example:
 
 ```javascript
-import { initStore, useStore, useGraph, useTerms, useTurtle } from 'unrdf';
+import { initStore, useStore, useGraph, useTerms, useTurtle } from '@unrdf/composables';
 
 async function buildSocialNetwork() {
   // Initialize empty context
@@ -364,7 +364,7 @@ graph1.store === graph2.store: true
 If you try to use composables outside a context, you'll get a clear error:
 
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 
 try {
   // This will fail - no context initialized!

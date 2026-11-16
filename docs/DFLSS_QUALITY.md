@@ -373,7 +373,7 @@ docs/
  * @see [Related documentation links]
  */
 
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 // ... other imports
 
 // =============================================================================

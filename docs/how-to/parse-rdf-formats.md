@@ -11,7 +11,7 @@ UNRDF provides unified parsing and serialization through format-specific functio
 Turtle is the most human-readable RDF format:
 
 ```javascript
-import { parseTurtle, toTurtle } from 'unrdf';
+import { parseTurtle, toTurtle } from '@unrdf/knowledge-engine';
 
 const ttl = `
 @prefix ex: <http://example.org/> .
@@ -39,7 +39,7 @@ console.log(output);
 N-Quads is line-based, ideal for streaming:
 
 ```javascript
-import { toNQuads } from 'unrdf';
+import { toNQuads } from '@unrdf/knowledge-engine';
 
 // Serialize to N-Quads
 const nquads = toNQuads(store);
@@ -58,7 +58,7 @@ const store2 = parseTurtle(nquads);
 JSON-LD embeds RDF in JSON:
 
 ```javascript
-import { parseJsonLd, toJsonLd } from 'unrdf';
+import { parseJsonLd, toJsonLd } from '@unrdf/knowledge-engine';
 
 const jsonLd = {
   "@context": "http://schema.org/",
@@ -104,7 +104,8 @@ await writeTurtleFile(store, './output.ttl');
 Convert between formats:
 
 ```javascript
-import { readTurtleFile, toJsonLd, writeJsonLdFile } from 'unrdf';
+import { readTurtleFile, writeJsonLdFile } from '@unrdf/core';
+import { toJsonLd } from '@unrdf/knowledge-engine';
 
 // Turtle → JSON-LD
 const store = await readTurtleFile('./input.ttl');
@@ -122,7 +123,7 @@ await fs.writeFile('./output.nq', nquads, 'utf-8');
 Use composables for parsing within contexts:
 
 ```javascript
-import { initStore, useTurtle } from 'unrdf';
+import { initStore, useTurtle } from '@unrdf/composables';
 
 await initStore();
 const turtle = useTurtle();
@@ -197,7 +198,7 @@ Parse based on file extension:
 
 ```javascript
 import { readFile } from 'fs/promises';
-import { parseTurtle, parseJsonLd } from 'unrdf';
+import { parseTurtle, parseJsonLd } from '@unrdf/knowledge-engine';
 
 async function parseRDFFile(path) {
   const content = await readFile(path, 'utf-8');
@@ -241,7 +242,7 @@ console.log(`Merged ${merged.size} quads from ${files.length} files`);
 Handle parsing errors gracefully:
 
 ```javascript
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 function safeParseTurtle(ttl, fallback = null) {
   try {

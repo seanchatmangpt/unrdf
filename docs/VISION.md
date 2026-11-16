@@ -93,7 +93,7 @@ v3 is designed to be **composed** into larger systems. Want a CLI? Build it on v
 ### If you used the programmatic API (RECOMMENDED):
 ```javascript
 // v2.x - Still works in v3!
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 const system = await createDarkMatterCore();
 // ✅ No changes needed
 ```
@@ -104,7 +104,7 @@ const system = await createDarkMatterCore();
 unrdf parse data.ttl
 
 # v3.x - Use programmatic API or wait for @unrdf/cli
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 const store = await parseTurtle(fs.readFileSync('data.ttl', 'utf-8'));
 ```
 
@@ -114,7 +114,7 @@ const store = await parseTurtle(fs.readFileSync('data.ttl', 'utf-8'));
 import { SidecarClient } from 'unrdf/sidecar';
 
 // v3.x - Use direct library integration or wait for @unrdf/sidecar
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 const system = await createDarkMatterCore();
 ```
 

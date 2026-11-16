@@ -41,7 +41,7 @@ Instead of TypeScript, unrdf uses JSDoc for type hints and Zod for runtime valid
 Let's start with a simple example that creates some RDF data and queries it:
 
 ```javascript
-import { useStore, useTerms, useGraph } from 'unrdf';
+import { useStore, useTerms, useGraph } from '@unrdf/composables';
 
 // Create a store
 const store = useStore();
@@ -92,7 +92,7 @@ console.log(results);
 Prefixes make IRIs more readable and manageable:
 
 ```javascript
-import { usePrefixes } from 'unrdf';
+import { usePrefixes } from '@unrdf/composables';
 
 // Create a prefix manager
 const prefixes = usePrefixes({
@@ -121,7 +121,7 @@ unrdf provides several ways to load and save RDF data:
 ### Turtle Files
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = useTurtle();
 
@@ -143,7 +143,7 @@ console.log(turtleString);
 ### N-Quads Files
 
 ```javascript
-import { useNQuads } from 'unrdf';
+import { useNQuads } from '@unrdf/composables';
 
 const nquads = useNQuads();
 
@@ -161,7 +161,7 @@ console.log(nquadsString);
 ### File System Operations
 
 ```javascript
-import { useTurtleFS } from 'unrdf';
+import { useTurtleFS } from '@unrdf/composables';
 
 // Create a Turtle file system interface
 const turtleFS = await useTurtleFS('./data', {
@@ -184,7 +184,7 @@ const loadedStore = await turtleFS.load('my-data.ttl');
 RDF lists are a common pattern for ordered collections:
 
 ```javascript
-import { useLists } from 'unrdf';
+import { useLists } from '@unrdf/composables';
 import { Store } from 'n3';
 
 const store = new Store();
@@ -218,7 +218,7 @@ console.log(length); // 3
 Clownface provides a powerful way to traverse RDF graphs:
 
 ```javascript
-import { usePointer } from 'unrdf';
+import { usePointer } from '@unrdf/composables';
 
 const pointer = usePointer(store);
 
@@ -247,7 +247,7 @@ console.log(namedNodes);
 SHACL (Shapes Constraint Language) provides a way to validate RDF data:
 
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 
@@ -287,7 +287,7 @@ if (report.conforms) {
 EYE is a logic-based reasoner that can infer new facts from existing data:
 
 ```javascript
-import { useReasoner } from 'unrdf';
+import { useReasoner } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 
@@ -312,7 +312,7 @@ console.log("Inferred quads:", inferredStore.size());
 Zod provides runtime validation for data derived from RDF:
 
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 import { z } from 'zod';
 
 const zod = useZod();
@@ -349,7 +349,7 @@ if (validation.valid) {
 Canonicalization ensures that equivalent RDF graphs have the same representation:
 
 ```javascript
-import { useCanon } from 'unrdf';
+import { useCanon } from '@unrdf/composables';
 
 const canon = useCanon();
 
@@ -367,7 +367,7 @@ console.log("Stores are equivalent:", isIsomorphic);
 unrdf provides comprehensive error handling with descriptive error messages:
 
 ```javascript
-import { useTerms } from 'unrdf';
+import { useTerms } from '@unrdf/composables';
 
 const terms = useTerms();
 

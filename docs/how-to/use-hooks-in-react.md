@@ -28,7 +28,7 @@ Initialize a global hook manager in your app root:
 
 ```javascript
 import React, { createContext, useContext, useMemo } from 'react';
-import { createHookManager } from 'unrdf';
+import { createHookManager } from '@unrdf/knowledge-engine';
 
 // Create context for hook manager
 const HookManagerContext = createContext(null);
@@ -118,7 +118,8 @@ Manage RDF store state in React:
 
 ```javascript
 import { useState, useCallback, useEffect } from 'react';
-import { Store, parseTurtle } from 'unrdf';
+import { Store } from '@unrdf/oxigraph';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 export function useRdfStore(initialTurtle = '') {
   const [store, setStore] = useState(() => {
@@ -171,7 +172,7 @@ export function useRdfStore(initialTurtle = '') {
 Automatically validate form changes against SHACL shapes:
 
 ```javascript
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 import { useKnowledgeHook, useRdfStore } from './hooks';
 import { useState } from 'react';
 
@@ -284,7 +285,7 @@ Automatically persist changes using hooks:
 
 ```javascript
 import { useEffect } from 'react';
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 import { useKnowledgeHook } from './hooks';
 
 export function AutoSaveDocument({ documentId, store }) {
@@ -335,7 +336,7 @@ export function AutoSaveDocument({ documentId, store }) {
 Guard mutations with permission-checking hooks:
 
 ```javascript
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 import { useKnowledgeHook } from './hooks';
 import { useAuth } from './auth'; // Your auth context
 
@@ -462,7 +463,7 @@ Complete example combining hooks, store, and React:
 
 ```javascript
 import { useState, useMemo } from 'react';
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 import { useKnowledgeHook, useRdfStore } from './hooks';
 
 export function KnowledgeGraphSearch() {

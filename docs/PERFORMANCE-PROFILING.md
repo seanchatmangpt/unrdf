@@ -53,7 +53,7 @@ UNRDF vlatest includes a **built-in performance profiler** providing real-time i
 ### Basic Setup
 
 ```javascript
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 
 const system = await createDarkMatterCore({
   profiling: {
@@ -258,7 +258,7 @@ console.log(profile.memory);
 ### Human-Readable Format
 
 ```javascript
-import { formatBytes } from 'unrdf';
+import { formatBytes } from '@unrdf/core';
 
 const profile = await system.getPerformanceProfile();
 const mem = profile.memory;
@@ -416,7 +416,7 @@ console.log(profile.hotPaths);
 ### Flamegraph Generation
 
 ```javascript
-import { generateFlamegraph } from 'unrdf';
+import { generateFlamegraph } from '@unrdf/knowledge-engine';
 
 // Generate flamegraph (requires Node.js)
 const flamegraph = await system.generateFlamegraph({

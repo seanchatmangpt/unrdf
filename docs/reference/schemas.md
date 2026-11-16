@@ -42,7 +42,7 @@ This reference documents all Zod schemas exported by UNRDF for runtime validatio
 
 **Example**:
 ```javascript
-import { HookMetaSchema } from 'unrdf';
+import { HookMetaSchema } from '@unrdf/knowledge-engine';
 
 const meta = HookMetaSchema.parse({
   name: 'compliance:largeTx',
@@ -75,7 +75,7 @@ const meta = HookMetaSchema.parse({
 
 **Example**:
 ```javascript
-import { FileRefSchema } from 'unrdf';
+import { FileRefSchema } from '@unrdf/knowledge-engine';
 
 const ref = FileRefSchema.parse({
   uri: 'file://hooks/compliance/largeTx.ask.rq',
@@ -102,7 +102,7 @@ const ref = FileRefSchema.parse({
 
 **Example**:
 ```javascript
-import { HookChannelSchema } from 'unrdf';
+import { HookChannelSchema } from '@unrdf/knowledge-engine';
 
 const channel = HookChannelSchema.parse({
   graphs: ['urn:graph:fibo:prod', 'urn:graph:fibo:staging'],
@@ -137,7 +137,7 @@ const channel = HookChannelSchema.parse({
 
 **Example**:
 ```javascript
-import { KnowledgeHookSchema } from 'unrdf';
+import { KnowledgeHookSchema } from '@unrdf/knowledge-engine';
 
 const hook = KnowledgeHookSchema.parse({
   meta: { name: 'test-hook' },
@@ -172,7 +172,7 @@ const hook = KnowledgeHookSchema.parse({
 
 **Example**:
 ```javascript
-import { SparqlAskConditionSchema } from 'unrdf';
+import { SparqlAskConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = SparqlAskConditionSchema.parse({
   kind: 'sparql-ask',
@@ -207,7 +207,7 @@ const condition = SparqlAskConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { SparqlSelectConditionSchema } from 'unrdf';
+import { SparqlSelectConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = SparqlSelectConditionSchema.parse({
   kind: 'sparql-select',
@@ -241,7 +241,7 @@ const condition = SparqlSelectConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { ShaclConditionSchema } from 'unrdf';
+import { ShaclConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = ShaclConditionSchema.parse({
   kind: 'shacl',
@@ -280,7 +280,7 @@ const condition = ShaclConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { DeltaConditionSchema } from 'unrdf';
+import { DeltaConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = DeltaConditionSchema.parse({
   kind: 'delta',
@@ -319,7 +319,7 @@ const condition = DeltaConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { ThresholdConditionSchema } from 'unrdf';
+import { ThresholdConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = ThresholdConditionSchema.parse({
   kind: 'threshold',
@@ -358,7 +358,7 @@ const condition = ThresholdConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { CountConditionSchema } from 'unrdf';
+import { CountConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = CountConditionSchema.parse({
   kind: 'count',
@@ -396,7 +396,7 @@ const condition = CountConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { WindowConditionSchema } from 'unrdf';
+import { WindowConditionSchema } from '@unrdf/knowledge-engine';
 
 const condition = WindowConditionSchema.parse({
   kind: 'window',
@@ -418,7 +418,7 @@ const condition = WindowConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { ConditionSchema } from 'unrdf';
+import { ConditionSchema } from '@unrdf/knowledge-engine';
 
 // Validates any condition type
 const condition = ConditionSchema.parse({
@@ -517,7 +517,7 @@ const condition = ConditionSchema.parse({
 
 **Example**:
 ```javascript
-import { DeterminismSchema } from 'unrdf';
+import { DeterminismSchema } from '@unrdf/knowledge-engine';
 
 const determinism = DeterminismSchema.parse({
   seed: 42,
@@ -545,7 +545,7 @@ const determinism = DeterminismSchema.parse({
 
 **Example**:
 ```javascript
-import { ReceiptSchema } from 'unrdf';
+import { ReceiptSchema } from '@unrdf/knowledge-engine';
 
 const receipt = ReceiptSchema.parse({
   anchor: 'git-notes',
@@ -655,7 +655,8 @@ const receipt = ReceiptSchema.parse({
 
 **Example**:
 ```javascript
-import { DeltaSchema, DataFactory } from 'unrdf';
+import { DeltaSchema } from '@unrdf/knowledge-engine';
+import { DataFactory } from '@unrdf/core';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -739,7 +740,7 @@ const delta = DeltaSchema.parse({
 
 **Example**:
 ```javascript
-import { validateKnowledgeHook } from 'unrdf';
+import { validateKnowledgeHook } from '@unrdf/knowledge-engine';
 
 const validation = validateKnowledgeHook({
   meta: { name: 'test-hook' },
@@ -834,7 +835,7 @@ if (!validation.success) {
 
 **Example**:
 ```javascript
-import { createKnowledgeHook } from 'unrdf';
+import { createKnowledgeHook } from '@unrdf/knowledge-engine';
 
 const hook = createKnowledgeHook({
   meta: { name: 'test-hook', description: 'Test hook' },
@@ -868,7 +869,7 @@ console.log(Object.isFrozen(hook)); // true
 
 **Example**:
 ```javascript
-import { createHookEvent } from 'unrdf';
+import { createHookEvent } from '@unrdf/knowledge-engine';
 
 const event = createHookEvent({
   name: 'test-hook',
@@ -900,7 +901,7 @@ console.log('Timestamp:', event.timestamp);
 
 **Example**:
 ```javascript
-import { createCondition } from 'unrdf';
+import { createCondition } from '@unrdf/knowledge-engine';
 
 const condition = createCondition({
   kind: 'sparql-ask',
@@ -921,7 +922,7 @@ import {
   createKnowledgeHook,
   HookMetaSchema,
   SparqlAskConditionSchema
-} from 'unrdf';
+} from '@unrdf/knowledge-engine';
 
 // Validate individual components first
 const meta = HookMetaSchema.parse({
@@ -959,7 +960,8 @@ const hook = createKnowledgeHook({
 ### Transaction with Validated Delta
 
 ```javascript
-import { TransactionManager, DeltaSchema, DataFactory } from 'unrdf';
+import { TransactionManager, DeltaSchema } from '@unrdf/knowledge-engine';
+import { DataFactory } from '@unrdf/core';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -987,7 +989,7 @@ console.log('Transaction receipt:', receipt);
 ### Manager Configuration with Validation
 
 ```javascript
-import { ManagerConfigSchema, KnowledgeHookManager } from 'unrdf';
+import { ManagerConfigSchema, KnowledgeHookManager } from '@unrdf/knowledge-engine';
 
 // Validate configuration
 const config = ManagerConfigSchema.parse({

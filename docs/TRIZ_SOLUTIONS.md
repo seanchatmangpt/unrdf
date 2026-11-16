@@ -103,7 +103,7 @@ Documentation must always be current BUT manual updates are error-prone and lag 
  *
  * @example
  * ```javascript
- * import { createDarkMatterCore } from 'unrdf';
+ * import { createDarkMatterCore } from '@unrdf/knowledge-engine';
  *
  * const system = await createDarkMatterCore();
  * await system.executeTransaction({
@@ -172,7 +172,7 @@ const results = await engine.query({ query: sparql, type: 'sparql-select' });
 
 ### Layer 2: Working Code (1 minute to copy-paste)
 ```javascript
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 import { namedNode, literal, quad } from '@rdfjs/data-model';
 
 const system = await createDarkMatterCore();
@@ -399,7 +399,7 @@ export default defineConfig({
 ```javascript
 // docs/examples/basic-usage.test.mjs
 import { describe, it, expect } from 'vitest';
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 import { namedNode, literal, quad } from '@rdfjs/data-model';
 
 describe('README Basic Usage Example', () => {

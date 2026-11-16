@@ -11,7 +11,8 @@ Use `TransactionManager` to coordinate hook-driven transactions. All changes app
 Apply delta with additions and removals:
 
 ```javascript
-import { TransactionManager, parseTurtle, DataFactory } from 'unrdf';
+import { TransactionManager, parseTurtle } from '@unrdf/knowledge-engine';
+import { DataFactory } from '@unrdf/core';
 
 const txManager = new TransactionManager();
 const store = parseTurtle(`
@@ -42,7 +43,7 @@ console.log(`Store now has ${store.size} quads`);
 Add hook for pre-transaction validation:
 
 ```javascript
-import { TransactionManager, validateShacl, getValidationErrors } from 'unrdf';
+import { TransactionManager, validateShacl, getValidationErrors } from '@unrdf/knowledge-engine';
 
 const txManager = new TransactionManager();
 
@@ -83,7 +84,7 @@ try {
 Chain hooks for complex workflows:
 
 ```javascript
-import { TransactionManager, LockchainWriter } from 'unrdf';
+import { TransactionManager, LockchainWriter } from '@unrdf/knowledge-engine';
 
 const txManager = new TransactionManager();
 const lockchain = new LockchainWriter();
@@ -221,7 +222,7 @@ console.log(`Average duration: ${stats.averageDuration}ms`);
 Use `defineHook()` with TransactionManager:
 
 ```javascript
-import { defineHook, registerHook, TransactionManager } from 'unrdf';
+import { defineHook, registerHook, TransactionManager } from '@unrdf/knowledge-engine';
 
 // Define Knowledge Hook
 const validationHook = defineHook({
@@ -345,7 +346,8 @@ class TwoPhaseTransactionManager {
 Build deltas from SPARQL results:
 
 ```javascript
-import { select, DataFactory } from 'unrdf';
+import { select } from '@unrdf/knowledge-engine';
+import { DataFactory } from '@unrdf/core';
 
 function createDeltaFromQuery(store, selectQuery, updateFn) {
   const results = select(store, selectQuery);

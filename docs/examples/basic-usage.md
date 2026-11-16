@@ -15,7 +15,7 @@ This guide provides practical examples of using UNRDF for common RDF operations.
 ### Simple Person Data
 
 ```javascript
-import { useStore, useGraph, useTurtle } from 'unrdf';
+import { useStore, useGraph, useTurtle } from '@unrdf/composables';
 
 // Initialize components
 const store = useStoreContext();
@@ -262,7 +262,7 @@ try {
 ### Validation Error Handling
 
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 

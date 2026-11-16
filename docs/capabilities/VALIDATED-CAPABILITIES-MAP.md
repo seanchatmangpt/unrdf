@@ -858,7 +858,7 @@ docs/
 
 **Package Structure**:
 ```javascript
-import { /* core */ } from 'unrdf';
+import { /* core */ } from '@unrdf/knowledge-engine';
 import { /* react */ } from 'unrdf/react-hooks';
 import { /* engine */ } from 'unrdf/knowledge-engine';
 import { /* cli */ } from 'unrdf/cli';

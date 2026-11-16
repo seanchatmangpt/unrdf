@@ -27,7 +27,7 @@ UNRDF latest is a **major version release** that represents a strategic refocusi
 $ unrdf parse data.ttl
 
 // After (v3.x programmatic)
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 import { readFileSync } from 'fs';
 const store = await parseTurtle(readFileSync('data.ttl', 'utf-8'));
 ```
@@ -44,7 +44,7 @@ import { SidecarClient } from 'unrdf/sidecar';
 const client = new SidecarClient({ endpoint: 'localhost:50051' });
 
 // After (v3.x direct)
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 const system = await createDarkMatterCore();
 ```
 
@@ -161,7 +161,7 @@ import {
   defineHook,
   registerHook,
   // ... all v2 core exports still work
-} from 'unrdf';
+} from '@unrdf/knowledge-engine';
 ```
 
 ### File Structure
@@ -189,7 +189,7 @@ test/
 
 ```javascript
 // This still works exactly the same in v3
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 const system = await createDarkMatterCore();
 await system.executeTransaction({ ... });
 ```
@@ -199,7 +199,7 @@ await system.executeTransaction({ ... });
 
 ```javascript
 // Parse
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 import { readFileSync } from 'fs';
 const store = await parseTurtle(readFileSync('data.ttl', 'utf-8'));
 
@@ -223,7 +223,7 @@ const validation = await system.validate({
 
 ```javascript
 // Replace sidecar client with direct usage
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 const system = await createDarkMatterCore();
 ```
 

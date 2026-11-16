@@ -15,7 +15,7 @@ Apply a three-layer optimization strategy: QueryEngine singleton pattern, LRU ca
 The QueryEngine has significant initialization cost. Create once, reuse everywhere:
 
 ```javascript
-import { QueryEngine } from 'unrdf';
+import { QueryEngine } from '@unrdf/knowledge-engine';
 
 // Create singleton instance (once per application)
 const queryEngine = new QueryEngine();
@@ -57,7 +57,7 @@ async function queryGood(store, sparql) {
 Cache query results to avoid re-executing identical queries:
 
 ```javascript
-import { createQueryCache } from 'unrdf';
+import { createQueryCache } from '@unrdf/knowledge-engine';
 
 // Create cache with 1000 entry limit
 const queryCache = createQueryCache({
@@ -168,7 +168,7 @@ export const queryCache = new LRUQueryCache();
 Only re-query when relevant data changes:
 
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { defineHook, registerHook } from '@unrdf/knowledge-engine';
 
 // Track which queries depend on which predicates
 const queryDependencies = new Map();
@@ -231,7 +231,7 @@ const persons = await cachedQuery(store, `
 Use Store's built-in indexing for frequent access patterns:
 
 ```javascript
-import { Store } from 'unrdf';
+import { Store } from '@unrdf/oxigraph';
 
 const store = new Store();
 
@@ -484,7 +484,7 @@ const results = await cachedQuery(sparql);
  * @description Complete query optimization with singleton, caching, and delta-awareness
  */
 
-import { QueryEngine } from 'unrdf';
+import { QueryEngine } from '@unrdf/knowledge-engine';
 
 // Layer 1: Singleton
 let queryEngineInstance = null;

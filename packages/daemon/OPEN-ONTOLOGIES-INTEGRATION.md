@@ -135,7 +135,7 @@ server.registerTool('onto_stats', {...}, handler);
 
 ### Configuration
 
-- Binary location: `~/.local/bin/open-ontologies` (override via `ONTO_BINARY`)
+- Binary location: resolved in order `ONTO_BINARY` → `OPEN_ONTOLOGIES_PATH` → `~/.local/bin/open-ontologies`; `OPEN_ONTOLOGIES_PATH` is shared with the semantic sidecar / semantic-bridge
 - Data directory: `~/.open-ontologies/` (override via `ONTO_DATA_DIR`)
 - Installation: `cargo install open-ontologies`
 

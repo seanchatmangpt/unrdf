@@ -201,7 +201,7 @@ npx local-ssl-proxy --source 3001 --target 3000
 **Solution:** Use IndexedDB for all storage:
 ```javascript
 // Node.js (filesystem)
-import { LockchainWriter } from 'unrdf';
+import { LockchainWriter } from '@unrdf/knowledge-engine';
 const lockchain = new LockchainWriter({ repoPath: './lockchain' });
 
 // Browser (IndexedDB)
@@ -288,7 +288,7 @@ Choose your bundler:
 import { createBrowserKnowledgeEngine } from 'unrdf/browser';
 
 // ❌ Don't use Node.js entry point in browser
-import { createDarkMatterCore } from 'unrdf';  // Will fail!
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';  // Will fail!
 ```
 
 ### Step 4: Initialize Engine

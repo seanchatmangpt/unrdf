@@ -16,7 +16,7 @@ Convert a value to a NamedNode.
 
 **Example:**
 ```javascript
-import { asNamedNode } from 'unrdf';
+import { asNamedNode } from '@unrdf/core';
 
 const node = asNamedNode("http://example.org/foo");
 ```
@@ -33,7 +33,7 @@ Convert a value to a Literal.
 
 **Example:**
 ```javascript
-import { asLiteral } from 'unrdf';
+import { asLiteral } from '@unrdf/core';
 
 const lit = asLiteral("hello");
 const typedLit = asLiteral(42, "http://www.w3.org/2001/XMLSchema#integer");
@@ -50,7 +50,7 @@ Convert a value to a BlankNode.
 
 **Example:**
 ```javascript
-import { asBlankNode } from 'unrdf';
+import { asBlankNode } from '@unrdf/core';
 
 const bnode = asBlankNode();
 const namedBnode = asBlankNode("person1");
@@ -70,7 +70,7 @@ Convert a quad to a JSON representation.
 
 **Example:**
 ```javascript
-import { quadToJSON } from 'unrdf';
+import { quadToJSON } from '@unrdf/core';
 
 const json = quadToJSON(quad);
 console.log(json.subject.value); // "http://example.org/person"
@@ -86,7 +86,7 @@ Convert a JSON representation to a quad.
 
 **Example:**
 ```javascript
-import { jsonToQuad } from 'unrdf';
+import { jsonToQuad } from '@unrdf/core';
 
 const quad = jsonToQuad({
   subject: { termType: "NamedNode", value: "http://example.org/person" },
@@ -192,7 +192,7 @@ Extract all objects for a given predicate.
 
 **Example:**
 ```javascript
-import { pluck } from 'unrdf';
+import { pluck } from '@unrdf/core';
 
 const labels = pluck(store, "http://www.w3.org/2000/01/rdf-schema#label");
 ```
@@ -208,7 +208,7 @@ Create an index mapping subjects to objects for a predicate.
 
 **Example:**
 ```javascript
-import { indexByPredicate } from 'unrdf';
+import { indexByPredicate } from '@unrdf/core';
 
 const labelMap = indexByPredicate(store, "http://www.w3.org/2000/01/rdf-schema#label");
 ```
@@ -224,7 +224,7 @@ Get all subjects of a specific type.
 
 **Example:**
 ```javascript
-import { getSubjectsByType } from 'unrdf';
+import { getSubjectsByType } from '@unrdf/core';
 
 const persons = getSubjectsByType(store, "http://xmlns.com/foaf/latest/Person");
 ```
@@ -241,7 +241,7 @@ Check if a subject has a specific type.
 
 **Example:**
 ```javascript
-import { hasType } from 'unrdf';
+import { hasType } from '@unrdf/core';
 
 const isPerson = hasType(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/Person");
 ```
@@ -258,7 +258,7 @@ Get a single object for a subject-predicate pair.
 
 **Example:**
 ```javascript
-import { getOne } from 'unrdf';
+import { getOne } from '@unrdf/core';
 
 const name = getOne(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
@@ -275,7 +275,7 @@ Get all objects for a subject-predicate pair.
 
 **Example:**
 ```javascript
-import { getAll } from 'unrdf';
+import { getAll } from '@unrdf/core';
 
 const names = getAll(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
@@ -292,7 +292,7 @@ Get all subjects for a predicate-object pair.
 
 **Example:**
 ```javascript
-import { getSubjects } from 'unrdf';
+import { getSubjects } from '@unrdf/core';
 
 const subjects = getSubjects(store, "http://xmlns.com/foaf/latest/name", "John Doe");
 ```
@@ -309,7 +309,7 @@ Get all predicates for a subject-object pair.
 
 **Example:**
 ```javascript
-import { getPredicates } from 'unrdf';
+import { getPredicates } from '@unrdf/core';
 
 const predicates = getPredicates(store, "http://example.org/foo", "John Doe");
 ```
@@ -326,7 +326,7 @@ Find subjects by property value.
 
 **Example:**
 ```javascript
-import { findByProperty } from 'unrdf';
+import { findByProperty } from '@unrdf/core';
 
 const subjects = findByProperty(store, "http://xmlns.com/foaf/latest/name", "John Doe");
 ```
@@ -342,7 +342,7 @@ Get all types for a subject.
 
 **Example:**
 ```javascript
-import { getTypes } from 'unrdf';
+import { getTypes } from '@unrdf/core';
 
 const types = getTypes(store, "http://example.org/foo");
 ```
@@ -358,7 +358,7 @@ Get all properties for a subject.
 
 **Example:**
 ```javascript
-import { getProperties } from 'unrdf';
+import { getProperties } from '@unrdf/core';
 
 const properties = getProperties(store, "http://example.org/foo");
 ```
@@ -375,7 +375,7 @@ Get all objects for a subject-predicate pair.
 
 **Example:**
 ```javascript
-import { getObjects } from 'unrdf';
+import { getObjects } from '@unrdf/core';
 
 const objects = getObjects(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
@@ -394,7 +394,7 @@ Serialize a store to Turtle for debugging.
 
 **Example:**
 ```javascript
-import { debugTurtle } from 'unrdf';
+import { debugTurtle } from '@unrdf/core';
 
 const turtle = await debugTurtle(store);
 console.log(turtle);
@@ -410,7 +410,7 @@ Serialize a store to N-Quads for debugging.
 
 **Example:**
 ```javascript
-import { debugNQuads } from 'unrdf';
+import { debugNQuads } from '@unrdf/core';
 
 const nquads = await debugNQuads(store);
 console.log(nquads);
@@ -426,7 +426,7 @@ Serialize a store to JSON-LD for debugging.
 
 **Example:**
 ```javascript
-import { debugJSONLD } from 'unrdf';
+import { debugJSONLD } from '@unrdf/core';
 
 const jsonld = await debugJSONLD(store);
 console.log(JSON.stringify(jsonld, null, 2));
@@ -446,7 +446,7 @@ Validate an IRI string.
 
 **Example:**
 ```javascript
-import { validateIRI } from 'unrdf';
+import { validateIRI } from '@unrdf/core';
 
 const isValid = validateIRI("http://example.org/foo");
 ```
@@ -463,7 +463,7 @@ Validate an RDF term.
 
 **Example:**
 ```javascript
-import { validateTerm } from 'unrdf';
+import { validateTerm } from '@unrdf/core';
 
 const result = validateTerm(term);
 if (!result.valid) {
@@ -483,7 +483,7 @@ Validate an RDF quad.
 
 **Example:**
 ```javascript
-import { validateQuad } from 'unrdf';
+import { validateQuad } from '@unrdf/core';
 
 const result = validateQuad(quad);
 if (!result.valid) {
@@ -504,7 +504,7 @@ Validate an RDF store.
 
 **Example:**
 ```javascript
-import { validateStore } from 'unrdf';
+import { validateStore } from '@unrdf/core';
 
 const result = validateStore(store);
 if (!result.valid) {
@@ -527,7 +527,7 @@ Generate a unique identifier.
 
 **Example:**
 ```javascript
-import { generateId } from 'unrdf';
+import { generateId } from '@unrdf/core';
 
 const id = generateId("person");
 // Returns something like "person_1234567890"
@@ -563,7 +563,7 @@ Read a file asynchronously.
 
 **Example:**
 ```javascript
-import { readFile } from 'unrdf';
+import { readFile } from '@unrdf/core';
 
 const content = await readFile('./data.ttl');
 ```
@@ -579,7 +579,7 @@ Write content to a file asynchronously.
 
 **Example:**
 ```javascript
-import { writeFile } from 'unrdf';
+import { writeFile } from '@unrdf/core';
 
 await writeFile('./output.ttl', turtleContent);
 ```
@@ -653,7 +653,7 @@ Debug information about a store.
 
 **Example:**
 ```javascript
-import { debugStore } from 'unrdf';
+import { debugStore } from '@unrdf/core';
 
 const debug = debugStore(store, { verbose: true });
 console.log(debug);

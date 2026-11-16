@@ -409,7 +409,7 @@ pnpm vitest test/cli-v2/commands/resource/action.test.mjs
 ### Creating Hooks
 
 ```javascript
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 
 export const myHook = defineHook({
   name: 'my-hook',
@@ -478,7 +478,7 @@ describe('My Hook', () => {
 ### Creating Policy Packs
 
 ```javascript
-import { definePolicyPack } from 'unrdf';
+import { definePolicyPack } from '@unrdf/knowledge-engine';
 
 export const myPolicyPack = definePolicyPack({
   name: 'my-policy-pack',

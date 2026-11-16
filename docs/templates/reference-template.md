@@ -32,7 +32,7 @@ related:
 
 ```javascript
 // Named import
-import { functionName } from 'unrdf';
+import { functionName } from '@unrdf/knowledge-engine';
 
 // Or from specific path
 import { functionName } from 'unrdf/knowledge-engine';
@@ -86,7 +86,7 @@ function functionName(options) {}
 **Example:**
 
 ```javascript
-import { functionName } from 'unrdf';
+import { functionName } from '@unrdf/knowledge-engine';
 
 // Basic usage
 const result = await functionName({
@@ -201,7 +201,7 @@ try {
 ### Basic Usage
 
 ```javascript
-import { functionName } from 'unrdf';
+import { functionName } from '@unrdf/knowledge-engine';
 
 const result = await functionName({ name: 'basic' });
 ```
@@ -209,7 +209,7 @@ const result = await functionName({ name: 'basic' });
 ### With Options
 
 ```javascript
-import { functionName } from 'unrdf';
+import { functionName } from '@unrdf/knowledge-engine';
 
 const result = await functionName({
   name: 'advanced',
@@ -221,7 +221,8 @@ const result = await functionName({
 ### Error Handling
 
 ```javascript
-import { functionName, ValidationError } from 'unrdf';
+import { functionName } from '@unrdf/knowledge-engine';
+import { ValidationError } from '@unrdf/core';
 
 try {
   const result = await functionName({ name: 'test' });

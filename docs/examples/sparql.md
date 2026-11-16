@@ -16,7 +16,7 @@ This guide provides comprehensive examples of SPARQL queries using UNRDF, coveri
 ### Simple Property Queries
 
 ```javascript
-import { useStore, useGraph, useTurtle } from 'unrdf';
+import { useStore, useGraph, useTurtle } from '@unrdf/composables';
 
 const store = useStoreContext();
 const graph = useGraph(store);

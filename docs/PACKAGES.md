@@ -15,6 +15,9 @@ UNRDF is organized as a monorepo with specialized packages. This guide explains 
   ├─ federation ................ Federated queries
   ├─ browser ................... Browser runtime
   ├─ cli ....................... Command-line interface
+  ├─ semantic-parts ............ Semantic software parts + substitution discovery
+  ├─ manufacturing ............. Deterministic manufacturing + ERRC receipts
+  ├─ privacy ................... Differential privacy for SPARQL
   ├─ composables ............... React/Vue hooks
   └─ zk-proofs ................. Zero-knowledge proofs for RDF
 ```
@@ -502,6 +505,86 @@ await project.save('./kb-backup');
 
 // Load later
 const loaded = await loadProject('./kb-backup');
+```
+
+---
+
+### `@unrdf/semantic-parts` - Semantic Software Parts
+
+**Purpose:** Evidence-bounded semantic software-parts graph with cross-language substitution discovery
+
+**Install:**
+Not yet published to npm (`private: true`, version `0.0.0-agnostic`). Use it from
+the monorepo workspace:
+```bash
+git clone https://github.com/seanchatmangpt/unrdf.git && cd unrdf
+pnpm install
+pnpm add @unrdf/semantic-parts@workspace:*
+```
+
+**Features:**
+- Admitted semantic parts graphs (`admitSemanticPartsGraph`)
+- Deterministic inverted index; stale indexes are refused (`buildSemanticIndex` / `admitSemanticIndex`)
+- Ranked substitution alternatives (`findAlternativesIndexed`)
+- Deterministic RDF (Turtle) projection (`toSemanticPartsTurtle`)
+- Transport-neutral CodeGraph release reader (`fromCodeGraphReader` / `fromCodeGraphTables`)
+
+---
+
+### `@unrdf/manufacturing` - Manufacturing Runtime
+
+**Purpose:** Composable operators for deterministic artifact manufacturing
+
+**Install:**
+Not yet published to npm (`private: true`, version `0.0.0-agnostic`). Use it from
+the monorepo workspace:
+```bash
+git clone https://github.com/seanchatmangpt/unrdf.git && cd unrdf
+pnpm install
+pnpm add @unrdf/manufacturing@workspace:*
+```
+
+**Features:**
+- `unrdf-errc-receipt` CLI (`bin/errc-receipt.mjs`) emits deterministic exact-subject ERRC repository receipts from real git facts
+- Repository fact collection and accounting (`@unrdf/manufacturing/git-repository-facts`, `@unrdf/manufacturing/repository-fact-accounting`)
+- Part passport projection (`manufacturePartPassport`)
+
+**Example:**
+```bash
+# Emit an exact-subject ERRC repository receipt from real git facts
+unrdf-errc-receipt --repository https://github.com/owner/unrdf --output errc-receipt.json
+```
+
+**Part admission:** `createPartAdmissionBroker` (`@unrdf/atomvm`) enforces zero unreceipted actuation — substitution actuation is refused without a valid, current substitution receipt. `@unrdf/receipts` provides `createSubstitutionReceipt` / `verifySubstitutionReceipt` and `SUBSTITUTION_RECEIPT_SCHEMA`; `@unrdf/manufacturing` projects part passports via `manufacturePartPassport`.
+
+---
+
+### `@unrdf/privacy` - Differential Privacy for SPARQL
+
+**Purpose:** Differential privacy for SPARQL queries: budget accounting, Laplace/Gaussian/exponential mechanisms
+
+**Install:**
+Not yet published to npm (version `0.0.0-agnostic`). Use it from
+the monorepo workspace:
+```bash
+git clone https://github.com/seanchatmangpt/unrdf.git && cd unrdf
+pnpm install
+pnpm add @unrdf/privacy@workspace:*
+```
+
+**Features:**
+- Privacy budget management (`PrivacyBudgetManager`: `canExecute`, `spend`, `remaining`)
+- Private aggregate queries (`DifferentialPrivacySPARQL.executeCOUNT` returns true value, noisy value, mechanism, budget spent/remaining, and a BLAKE3 query hash)
+- Noise mechanisms (`laplace`, `gaussian`, `exponentialMechanism`)
+- Budget planning helpers (`allocateEpsilon`, `estimateNoise`)
+
+**Example:**
+```javascript
+import { DifferentialPrivacySPARQL } from '@unrdf/privacy';
+
+const engine = new DifferentialPrivacySPARQL({ totalBudget: 10.0 });
+const result = await engine.executeCOUNT(store, '?s a Patient', 1.0);
+console.log(result.noisyValue, result.budgetRemaining);
 ```
 
 ---

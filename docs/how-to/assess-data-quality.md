@@ -12,7 +12,7 @@ Get comprehensive quality metrics:
 
 ```javascript
 import { assessDataQuality } from 'unrdf/utils';
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 const store = parseTurtle(`
   @prefix ex: <http://example.org/> .
@@ -131,7 +131,7 @@ suggestions.forEach(suggestion => {
 Verify required properties exist:
 
 ```javascript
-import { select } from 'unrdf';
+import { select } from '@unrdf/knowledge-engine';
 
 function checkCompleteness(store, requiredProps) {
   const issues = [];

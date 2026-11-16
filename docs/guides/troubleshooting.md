@@ -36,7 +36,7 @@ pnpm add unrdf
 
 ```javascript
 // Wrong
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 // Correct
 import { parseTurtle } from 'unrdf/knowledge-engine';

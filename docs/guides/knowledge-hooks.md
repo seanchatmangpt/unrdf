@@ -11,7 +11,8 @@ Knowledge Hooks are the crown jewel of unrdf - they transform static knowledge g
 Knowledge Hooks are pure functions that monitor RDF graphs for specific conditions and emit cryptographically signed receipts when those conditions are met. They eliminate the need for custom event systems while providing enterprise-grade audit trails.
 
 ```javascript
-import { initStore, defineHook, evaluateHook } from 'unrdf';
+import { initStore } from '@unrdf/composables';
+import { defineHook, evaluateHook } from '@unrdf/knowledge-engine';
 
 // Define a hook to monitor service health
 const healthHook = defineHook({
@@ -528,7 +529,7 @@ const customHook = defineHook({
 
 ```javascript
 // Use planHook to debug execution plans
-import { planHook } from 'unrdf';
+import { planHook } from '@unrdf/knowledge-engine';
 
 const plan = planHook(hook);
 console.log('Query Plan:', plan.queryPlan);

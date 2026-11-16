@@ -17,7 +17,7 @@ The `RdfEngine` is the core RDF engine that powers all unrdf operations. It enfo
 ## Constructor
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine(options);
 ```
@@ -299,7 +299,7 @@ const types = person.out(engine.namedNode('http://www.w3.org/1999/02/22-rdf-synt
 ### Basic Usage
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine();
 
@@ -327,7 +327,7 @@ console.log('Results:', results.results);
 ### Turtle Processing
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine();
 
@@ -346,7 +346,7 @@ console.log(turtle);
 ### SHACL Validation
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine();
 
@@ -387,7 +387,7 @@ if (report.conforms) {
 ### N3 Reasoning
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine();
 
@@ -417,7 +417,7 @@ console.log(`Inferred ${inferred.size} new triples`);
 ### Canonicalization
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine();
 

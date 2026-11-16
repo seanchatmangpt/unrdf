@@ -156,7 +156,7 @@ Each example follows this structure:
  * This example demonstrates basic unrdf usage.
  */
 
-import { useStore, useGraph } from 'unrdf';
+import { useStore, useGraph } from '@unrdf/composables';
 
 async function main() {
   try {
@@ -193,7 +193,7 @@ When adding new examples:
  * [Description of what this example demonstrates]
  */
 
-import { useStore, useGraph, useTurtle, useValidator, useReasoner, useCanon, useZod } from 'unrdf';
+import { useStore, useGraph, useTurtle, useValidator, useReasoner, useCanon, useZod } from '@unrdf/composables';
 
 async function main() {
   try {
@@ -259,7 +259,7 @@ const config = {
 ### Data Loading
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = await useTurtle();
 const store = await turtle.load('data.ttl');
@@ -268,7 +268,7 @@ const store = await turtle.load('data.ttl');
 ### Query Processing
 
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const results = await graph.select(sparql);
@@ -277,7 +277,7 @@ const results = await graph.select(sparql);
 ### Validation
 
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 const report = await validator.validate(dataStore, shapesStore);
@@ -286,7 +286,7 @@ const report = await validator.validate(dataStore, shapesStore);
 ### Reasoning
 
 ```javascript
-import { useReasoner } from 'unrdf';
+import { useReasoner } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 const inferred = await reasoner.reason(dataStore, rulesStore);
@@ -295,7 +295,7 @@ const inferred = await reasoner.reason(dataStore, rulesStore);
 ### Canonicalization
 
 ```javascript
-import { useCanon } from 'unrdf';
+import { useCanon } from '@unrdf/composables';
 
 const canon = useCanon();
 const canonical = await canon.canonicalize(store);
@@ -304,7 +304,7 @@ const canonical = await canon.canonicalize(store);
 ### Runtime Validation
 
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 
 const zod = useZod();
 const schema = zod.z.object({ name: zod.z.string() });

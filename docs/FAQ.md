@@ -79,7 +79,7 @@ unrdf uses N3.Store for in-memory storage, which is optimized for performance. F
 ### How do I get started with unrdf?
 
 1. Install unrdf: `pnpm add unrdf`
-2. Import composables: `import { useStore, useGraph } from 'unrdf'`
+2. Import composables: `import { useStore, useGraph } from '@unrdf/composables'`
 3. Create a store: `const store = useStore()`
 4. Add data: `store.add([quad1, quad2])`
 5. Query data: `const results = await graph.select(sparql)`
@@ -94,7 +94,7 @@ unrdf uses N3.Store for in-memory storage, which is optimized for performance. F
 Use the useValidator composable with SHACL shapes:
 
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 const validation = await validator.validate(store, shapes);
@@ -109,7 +109,7 @@ if (!validation.valid) {
 Use the useReasoner composable with N3 rules:
 
 ```javascript
-import { useReasoner } from 'unrdf';
+import { useReasoner } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 const reasonedStore = await reasoner.reason(store, rules);
@@ -120,7 +120,7 @@ const reasonedStore = await reasoner.reason(store, rules);
 Use the useJsonLd composable:
 
 ```javascript
-import { useJsonLd } from 'unrdf';
+import { useJsonLd } from '@unrdf/composables';
 
 const jsonld = useJsonLd();
 
@@ -136,7 +136,7 @@ const rdfStore = await jsonld.fromJSONLD(jsonldDoc);
 Use the usePrefixes composable:
 
 ```javascript
-import { usePrefixes } from 'unrdf';
+import { usePrefixes } from '@unrdf/composables';
 
 const prefixes = usePrefixes();
 prefixes.register({

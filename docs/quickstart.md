@@ -53,7 +53,7 @@ EOF
 Create `hooks/health-check.mjs`:
 
 ```javascript
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 
 export default defineHook({
   meta: {
@@ -116,7 +116,8 @@ unrdf hook eval hooks/health-check.mjs --data data.ttl
 Create `app.mjs`:
 
 ```javascript
-import { initStore, useGraph, defineHook } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
+import { defineHook } from '@unrdf/knowledge-engine';
 
 // Initialize store context
 const runApp = initStore();
@@ -191,7 +192,7 @@ Knowledge Hooks are reactive intelligence for your RDF graphs. They trigger auto
 Policy packs are versioned governance units that bundle hooks, shapes, and rules.
 
 ```javascript
-import { createPolicyPackManifest } from 'unrdf';
+import { createPolicyPackManifest } from '@unrdf/hooks';
 
 const policyPack = createPolicyPackManifest({
   name: 'compliance-v1',
@@ -213,7 +214,7 @@ const policyPack = createPolicyPackManifest({
 UNRDF provides cryptographic audit trails for all transactions:
 
 ```javascript
-import { KnowledgeHookManager } from 'unrdf';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
 
 const manager = new KnowledgeHookManager({
   receipt: { anchor: 'git-notes' }  // Git-anchored receipts

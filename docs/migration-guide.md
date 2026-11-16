@@ -20,7 +20,7 @@ store.add(subject, predicate, object);
 
 **After (unrdf):**
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 
 const store = useStore();
 store.add(
@@ -53,7 +53,7 @@ $rdf.sparqlToJson(store, query, (err, results) => {
 
 **After (unrdf):**
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const results = await graph.select(`
@@ -81,7 +81,7 @@ $rdf.parse(turtle, store, 'http://example.org/', 'text/turtle');
 
 **After (unrdf):**
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = await useTurtle();
 const store = await turtle.parse(`
@@ -110,7 +110,7 @@ store.add(quad(
 
 **After (unrdf):**
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 
 const store = useStore();
 store.add(
@@ -134,7 +134,7 @@ const store = new Store(parser.parse(turtle));
 
 **After (unrdf):**
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = await useTurtle();
 const store = await turtle.parse(turtle);
@@ -152,7 +152,7 @@ const bindings = await engine.queryBindings(sparql, { sources: [store] });
 
 **After (unrdf):**
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const results = await graph.select(sparql);
@@ -176,7 +176,7 @@ for await (const binding of bindings) {
 
 **After (unrdf):**
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const results = await graph.select(sparql);
@@ -194,7 +194,7 @@ const boolean = await engine.queryBoolean(sparql, { sources: [store] });
 
 **After (unrdf):**
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const boolean = await graph.ask(sparql);
@@ -217,7 +217,7 @@ const report = await validator.validate(dataDataset);
 
 **After (unrdf):**
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 const report = await validator.validate(dataStore, shapesStore);
@@ -237,7 +237,7 @@ const doc = await jsonld.fromRDF(nquads, { format: 'application/n-quads' });
 
 **After (unrdf):**
 ```javascript
-import { useJsonLd } from 'unrdf';
+import { useJsonLd } from '@unrdf/composables';
 
 const jsonld = useJsonLd();
 const store = await jsonld.fromJSONLD(jsonldDoc);
@@ -260,7 +260,7 @@ const canonical = await rdfCanonize.canonize(nquads, {
 
 **After (unrdf):**
 ```javascript
-import { useCanon } from 'unrdf';
+import { useCanon } from '@unrdf/composables';
 
 const canon = useCanon();
 const canonical = await canon.canonicalize(store);
@@ -282,7 +282,7 @@ const types = person.out($rdf.ns.rdf.type);
 
 **After (unrdf):**
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 const results = await graph.select(`

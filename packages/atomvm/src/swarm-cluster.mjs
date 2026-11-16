@@ -37,6 +37,7 @@ export class AtomVMSwarmCluster {
   #swarms = new Map();
   #links = new Map();
   #receipts = [];
+  #actuatedIntentDigests = new Set();
 
   constructor({ clusterId, clock = () => new Date().toISOString(), idFactory = randomUUID } = {}) {
     assertId(clusterId, 'clusterId');
@@ -123,6 +124,14 @@ export class AtomVMSwarmCluster {
     if (!broker || typeof broker.execute !== 'function') {
       throw new SwarmClusterRefusal('BROKER_REQUIRED_REFUSED', 'Zero unreceipted actuation: broker.execute is required');
     }
+    if (this.#actuatedIntentDigests.has(intent.intentDigest)) {
+      throw new SwarmClusterRefusal(
+        'INTENT_REPLAYED_REFUSED',
+        'A constructed intent is single-use; replaying it at the broker is refused',
+        { intentDigest: intent.intentDigest },
+      );
+    }
+    this.#actuatedIntentDigests.add(intent.intentDigest);
 
     const startedAt = this.clock();
     let outcome;

@@ -267,7 +267,7 @@ Or use `store export` with graph filter.
 **User alternatives**:
 ```javascript
 // Programmatic access (describe/get)
-import { KnowledgeHookManager } from 'unrdf';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
 const manager = new KnowledgeHookManager();
 const hook = manager.getHook('myHook');
 console.log(hook.metadata); // Full hook details
@@ -325,7 +325,7 @@ SELECT (COUNT(DISTINCT ?g) as ?graphs) WHERE { GRAPH ?g { ?s ?p ?o } }
 
 **User workaround**:
 ```javascript
-import { KnowledgeHookManager, defineHook } from 'unrdf';
+import { KnowledgeHookManager, defineHook } from '@unrdf/knowledge-engine';
 
 const manager = new KnowledgeHookManager();
 const hook = defineHook({ ... });
@@ -579,7 +579,7 @@ unrdf store export --output all.ttl --format turtle
 // unrdf hook describe my-hook
 
 // NEW (v2.2 - Programmatic)
-import { KnowledgeHookManager } from 'unrdf';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
 const manager = new KnowledgeHookManager();
 const hook = manager.getHook('my-hook');
 console.log(JSON.stringify(hook, null, 2));

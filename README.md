@@ -85,6 +85,9 @@ pnpm add @unrdf/core
 | **`@unrdf/streaming`**  | Large graph streaming                                        |
 | **`@unrdf/federation`** | Distributed queries                                          |
 | **`@unrdf/cli`**        | Command-line tools                                           |
+| **`@unrdf/semantic-parts`** | Evidence-bounded semantic software-parts graph, cross-language substitution discovery, CodeGraph release reader |
+| **`@unrdf/manufacturing`** | Manufacturing runtime; `unrdf-errc-receipt` CLI emits deterministic exact-subject ERRC repository receipts from real git facts |
+| **`@unrdf/privacy`**    | Differential privacy for SPARQL: budget accounting, Laplace/Gaussian/exponential mechanisms |
 
 **59+ packages total** - See [docs/PACKAGES.md](docs/PACKAGES.md) for complete list.
 
@@ -164,9 +167,14 @@ pnpm test:fast
 
 # Coverage report
 pnpm test --coverage
+
+# Package integrity sweep (exports/files/scripts targets + src imports)
+pnpm check:integrity          # add --json for machine-readable output
 ```
 
 **100% test pass rate** on core packages (466+ tests).
+
+`pnpm check:integrity` runs `scripts/check-package-integrity.mjs`, which sweeps every `packages/*/package.json` (main/module/types/bin/exports/files targets, script file arguments, workspace-package references) and every `packages/*/src/**/*.{mjs,js}` import, failing with exit 1 on any dangling target or unresolvable import.
 
 ---
 

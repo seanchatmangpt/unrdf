@@ -39,7 +39,7 @@ This reference documents all core RDF operations including parsing, serializatio
 
 **Example**:
 ```javascript
-import { parseTurtle } from 'unrdf';
+import { parseTurtle } from '@unrdf/knowledge-engine';
 
 const ttl = `
   @prefix ex: <http://example.org/> .
@@ -76,7 +76,8 @@ console.log('Parsed', store.size, 'quads');
 
 **Example**:
 ```javascript
-import { toTurtle, Store } from 'unrdf';
+import { toTurtle } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const store = new Store();
 // ... add quads
@@ -113,7 +114,7 @@ console.log(turtle);
 
 **Example**:
 ```javascript
-import { toNQuads } from 'unrdf';
+import { toNQuads } from '@unrdf/knowledge-engine';
 
 const nquads = await toNQuads(store);
 console.log(nquads);
@@ -144,7 +145,7 @@ console.log(nquads);
 
 **Example**:
 ```javascript
-import { parseJsonLd } from 'unrdf';
+import { parseJsonLd } from '@unrdf/knowledge-engine';
 
 const jsonld = {
   "@context": { "ex": "http://example.org/" },
@@ -182,7 +183,7 @@ console.log('Parsed', store.size, 'quads');
 
 **Example**:
 ```javascript
-import { toJsonLd } from 'unrdf';
+import { toJsonLd } from '@unrdf/knowledge-engine';
 
 const jsonld = await toJsonLd(store, {
   context: { ex: 'http://example.org/' }
@@ -225,7 +226,8 @@ console.log(JSON.stringify(jsonld, null, 2));
 
 **Example**:
 ```javascript
-import { query, Store } from 'unrdf';
+import { query } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const store = new Store();
 // ... add quads
@@ -264,7 +266,7 @@ console.log(results); // [{ s: '...', o: '...' }, ...]
 
 **Example**:
 ```javascript
-import { select } from 'unrdf';
+import { select } from '@unrdf/knowledge-engine';
 
 const bindings = await select(store, `
   SELECT ?name ?age WHERE {
@@ -302,7 +304,7 @@ console.log(bindings);
 
 **Example**:
 ```javascript
-import { ask } from 'unrdf';
+import { ask } from '@unrdf/knowledge-engine';
 
 const hasData = await ask(store, `
   ASK WHERE {
@@ -338,7 +340,7 @@ console.log('Store has data:', hasData);
 
 **Example**:
 ```javascript
-import { construct } from 'unrdf';
+import { construct } from '@unrdf/knowledge-engine';
 
 const constructed = await construct(store, `
   CONSTRUCT {
@@ -376,7 +378,7 @@ console.log('Constructed', constructed.size, 'quads');
 
 **Example**:
 ```javascript
-import { describe } from 'unrdf';
+import { describe } from '@unrdf/knowledge-engine';
 
 const described = await describe(store, `
   DESCRIBE <http://example.org/alice>
@@ -410,7 +412,7 @@ console.log('Described', described.size, 'quads');
 
 **Example**:
 ```javascript
-import { update } from 'unrdf';
+import { update } from '@unrdf/knowledge-engine';
 
 const updated = await update(store, `
   INSERT DATA {
@@ -452,7 +454,8 @@ console.log('Updated store has', updated.size, 'quads');
 
 **Example**:
 ```javascript
-import { validateShacl, Store } from 'unrdf';
+import { validateShacl } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const dataStore = new Store();
 // ... add data quads
@@ -505,7 +508,7 @@ console.log('Results:', report.results);
 
 **Example**:
 ```javascript
-import { validateShaclMultiple } from 'unrdf';
+import { validateShaclMultiple } from '@unrdf/knowledge-engine';
 
 const shapesList = [
   personShapesTtl,
@@ -543,7 +546,7 @@ console.log('Shape-specific results:', report.shapeResults);
 
 **Example**:
 ```javascript
-import { validateShacl, formatValidationReport } from 'unrdf';
+import { validateShacl, formatValidationReport } from '@unrdf/knowledge-engine';
 
 const report = validateShacl(store, shapes);
 const formatted = formatValidationReport(report, {
@@ -573,7 +576,7 @@ console.log(formatted);
 
 **Example**:
 ```javascript
-import { validateShacl, hasValidationErrors } from 'unrdf';
+import { validateShacl, hasValidationErrors } from '@unrdf/knowledge-engine';
 
 const report = validateShacl(store, shapes);
 if (hasValidationErrors(report)) {
@@ -600,7 +603,7 @@ if (hasValidationErrors(report)) {
 
 **Example**:
 ```javascript
-import { validateShacl, getValidationErrors } from 'unrdf';
+import { validateShacl, getValidationErrors } from '@unrdf/knowledge-engine';
 
 const report = validateShacl(store, shapes);
 const errors = getValidationErrors(report);
@@ -629,7 +632,7 @@ errors.forEach(error => {
 
 **Example**:
 ```javascript
-import { validateShacl, getValidationWarnings } from 'unrdf';
+import { validateShacl, getValidationWarnings } from '@unrdf/knowledge-engine';
 
 const report = validateShacl(store, shapes);
 const warnings = getValidationWarnings(report);
@@ -669,7 +672,8 @@ warnings.forEach(warning => {
 
 **Example**:
 ```javascript
-import { reason, Store } from 'unrdf';
+import { reason } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const dataStore = new Store();
 // ... add data quads
@@ -711,7 +715,7 @@ console.log('Reasoned quads:', reasonedStore.size);
 
 **Example**:
 ```javascript
-import { reasonMultiple } from 'unrdf';
+import { reasonMultiple } from '@unrdf/knowledge-engine';
 
 const rulesList = [
   rdfsRulesTtl,
@@ -743,7 +747,7 @@ console.log('Applied', rulesList.length, 'rule sets');
 
 **Example**:
 ```javascript
-import { reason, extractInferred } from 'unrdf';
+import { reason, extractInferred } from '@unrdf/knowledge-engine';
 
 const original = new Store();
 // ... add data
@@ -773,7 +777,7 @@ console.log('Inferred', inferred.size, 'new quads');
 
 **Example**:
 ```javascript
-import { reason, getReasoningStats } from 'unrdf';
+import { reason, getReasoningStats } from '@unrdf/knowledge-engine';
 
 const reasoned = await reason(store, rules);
 const stats = getReasoningStats(reasoned);
@@ -803,7 +807,7 @@ console.log('Reasoning stats:', stats);
 
 **Example**:
 ```javascript
-import { validateRules } from 'unrdf';
+import { validateRules } from '@unrdf/knowledge-engine';
 
 const rulesTtl = `
   @prefix ex: <http://example.org/> .
@@ -830,7 +834,7 @@ console.log('Rules valid:', valid);
 
 **Example**:
 ```javascript
-import { createReasoningSession } from 'unrdf';
+import { createReasoningSession } from '@unrdf/knowledge-engine';
 
 const session = createReasoningSession();
 session.addRules(rulesTtl);
@@ -866,7 +870,8 @@ const result = await session.reason(store);
 
 **Example**:
 ```javascript
-import { canonicalize, Store } from 'unrdf';
+import { canonicalize } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const store = new Store();
 // ... add quads with blank nodes
@@ -902,7 +907,8 @@ console.log('Canonical N-Quads:', canonical);
 
 **Example**:
 ```javascript
-import { isIsomorphic, Store } from 'unrdf';
+import { isIsomorphic } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const store1 = new Store();
 const store2 = new Store();
@@ -938,7 +944,7 @@ console.log('Stores are isomorphic:', isomorphic);
 
 **Example**:
 ```javascript
-import { getCanonicalHash } from 'unrdf';
+import { getCanonicalHash } from '@unrdf/knowledge-engine';
 
 const hash = await getCanonicalHash(store);
 console.log('Canonical hash:', hash);
@@ -964,7 +970,7 @@ console.log('Canonical hash:', hash);
 
 **Example**:
 ```javascript
-import { groupByIsomorphism } from 'unrdf';
+import { groupByIsomorphism } from '@unrdf/knowledge-engine';
 
 const stores = [store1, store2, store3, store4];
 const groups = await groupByIsomorphism(stores);
@@ -992,7 +998,7 @@ console.log('Found', groups.length, 'isomorphism classes');
 
 **Example**:
 ```javascript
-import { findDuplicates } from 'unrdf';
+import { findDuplicates } from '@unrdf/knowledge-engine';
 
 const stores = [store1, store2, store3];
 const duplicates = await findDuplicates(stores);
@@ -1019,7 +1025,7 @@ console.log('Found', duplicates.length, 'sets of duplicates');
 
 **Example**:
 ```javascript
-import { getCanonicalizationStats } from 'unrdf';
+import { getCanonicalizationStats } from '@unrdf/knowledge-engine';
 
 const stats = getCanonicalizationStats(store);
 console.log('Canonicalization stats:', stats);
@@ -1041,7 +1047,7 @@ console.log('Canonicalization stats:', stats);
 
 **Example**:
 ```javascript
-import { createCanonicalizationSession } from 'unrdf';
+import { createCanonicalizationSession } from '@unrdf/knowledge-engine';
 
 const session = createCanonicalizationSession();
 const canonical1 = await session.canonicalize(store1);
@@ -1064,7 +1070,7 @@ UNRDF re-exports core N3.js classes for convenience:
 
 **Example**:
 ```javascript
-import { Store } from 'unrdf';
+import { Store } from '@unrdf/oxigraph';
 
 const store = new Store();
 ```
@@ -1081,7 +1087,7 @@ const store = new Store();
 
 **Example**:
 ```javascript
-import { Parser } from 'unrdf';
+import { Parser } from '@unrdf/core';
 
 const parser = new Parser();
 ```
@@ -1098,7 +1104,7 @@ const parser = new Parser();
 
 **Example**:
 ```javascript
-import { Writer } from 'unrdf';
+import { Writer } from '@unrdf/core';
 
 const writer = new Writer({ format: 'Turtle' });
 ```
@@ -1115,7 +1121,7 @@ const writer = new Writer({ format: 'Turtle' });
 
 **Example**:
 ```javascript
-import { DataFactory } from 'unrdf';
+import { DataFactory } from '@unrdf/core';
 
 const { namedNode, literal, blankNode, quad } = DataFactory;
 const triple = quad(

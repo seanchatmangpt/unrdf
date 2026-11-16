@@ -48,35 +48,8 @@ UNRDF is a production-ready RDF knowledge graph library featuring:
 ### Entry Point: `unrdf`
 
 ```javascript
-import {
-  // Store context
-  initStore,
-  useStoreContext,
-
-  // Core composables
-  useGraph,
-  useTurtle,
-  useTerms,
-
-  // Validation and reasoning
-  useReasoner,
-  useCanon,
-
-  // Type safety
-  useZod,
-
-  // Change tracking
-  useDelta,
-
-  // Engines
-  RdfEngine,
-
-  // Knowledge Engine (all exports)
-  KnowledgeHookManager,
-  TransactionManager,
-  defineHook,
-  // ... and more
-} from 'unrdf';
+import { useStoreContext, useTurtle, useTerms, useCanon } from '@unrdf/composables';
+import { TransactionManager, defineHook } from '@unrdf/knowledge-engine';
 ```
 
 ---
@@ -1608,7 +1581,7 @@ function useGraph()
 
 **Example**:
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 
 const runApp = initStore();
 
@@ -1673,7 +1646,7 @@ function useTurtle(graphDir, options)
 
 **Example**:
 ```javascript
-import { initStore, useTurtle } from 'unrdf';
+import { initStore, useTurtle } from '@unrdf/composables';
 
 const runApp = initStore();
 
@@ -1718,7 +1691,7 @@ function useZod(options)
 
 **Example**:
 ```javascript
-import { initStore, useGraph, useZod } from 'unrdf';
+import { initStore, useGraph, useZod } from '@unrdf/composables';
 
 const runApp = initStore();
 

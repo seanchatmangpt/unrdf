@@ -20,7 +20,7 @@ The core API consists of:
 Creates and manages an RDF store for storing and retrieving RDF data.
 
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 
 const store = useStore();
 ```
@@ -38,7 +38,7 @@ const store = useStore();
 Creates a graph interface for querying and manipulating RDF data.
 
 ```javascript
-import { useStore, useGraph } from 'unrdf';
+import { useStore, useGraph } from '@unrdf/composables';
 
 const store = useStore();
 const graph = useGraph(store);
@@ -60,7 +60,7 @@ const graph = useGraph(store);
 Provides Turtle RDF format parsing and serialization.
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = useTurtle();
 ```
@@ -78,7 +78,7 @@ const turtle = useTurtle();
 Provides RDF validation using SHACL shapes.
 
 ```javascript
-import { useValidator } from 'unrdf';
+import { useValidator } from '@unrdf/composables';
 
 const validator = useValidator();
 ```
@@ -96,7 +96,7 @@ const validator = useValidator();
 Provides OWL reasoning and inference capabilities.
 
 ```javascript
-import { useReasoner } from 'unrdf';
+import { useReasoner } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 ```
@@ -114,7 +114,7 @@ const reasoner = useReasoner();
 Provides type-safe RDF operations using Zod schemas.
 
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 
 const zodHelper = useZod();
 ```
@@ -329,7 +329,8 @@ interface ValidationReport {
 UNRDF provides comprehensive error handling:
 
 ```javascript
-import { UnrdfError, ValidationError, ParseError } from 'unrdf';
+import { UnrdfError, ValidationError } from '@unrdf/core';
+import { ParseError } from '@unrdf/knowledge-engine';
 
 try {
   const quads = await turtle.parse(invalidTurtle);
@@ -355,7 +356,7 @@ try {
 UNRDF can be configured globally:
 
 ```javascript
-import { configure } from 'unrdf';
+import { configure } from '@unrdf/knowledge-engine';
 
 configure({
   // Default prefixes
@@ -412,7 +413,7 @@ configure({
 ### Basic Store Operations
 
 ```javascript
-import { useStore, useGraph, useTurtle } from 'unrdf';
+import { useStore, useGraph, useTurtle } from '@unrdf/composables';
 
 const store = useStore();
 const graph = useGraph(store);
@@ -436,7 +437,7 @@ for await (const binding of results) {
 ### Validation Example
 
 ```javascript
-import { useValidator, useTurtle } from 'unrdf';
+import { useValidator, useTurtle } from '@unrdf/composables';
 
 const validator = useValidator();
 const turtle = useTurtle();
@@ -453,7 +454,7 @@ if (!result.conforms) {
 ### Reasoning Example
 
 ```javascript
-import { useReasoner, useTurtle } from 'unrdf';
+import { useReasoner, useTurtle } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 const turtle = useTurtle();

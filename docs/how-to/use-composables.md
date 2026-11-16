@@ -11,7 +11,7 @@ UNRDF composables provide context-aware functions that simplify common RDF tasks
 Start every workflow with `initStore()`:
 
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 
 // Create root context with empty store
 await initStore();
@@ -27,7 +27,8 @@ console.log(`Initial size: ${graph.size}`);
 Use `useGraph()` for all graph operations:
 
 ```javascript
-import { initStore, useGraph, DataFactory } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
+import { DataFactory } from '@unrdf/core';
 
 await initStore();
 const graph = useGraph();
@@ -66,7 +67,7 @@ console.log(results[0].age.value);   // "30"
 Use `useTurtle()` for format conversion:
 
 ```javascript
-import { initStore, useTurtle, useGraph } from 'unrdf';
+import { initStore, useTurtle, useGraph } from '@unrdf/composables';
 
 await initStore();
 const turtle = useTurtle();
@@ -94,7 +95,7 @@ console.log(output);
 Use `useTerms()` and `usePrefixes()` for ergonomic term creation:
 
 ```javascript
-import { initStore, useTerms, usePrefixes } from 'unrdf';
+import { initStore, useTerms, usePrefixes } from '@unrdf/composables';
 
 await initStore();
 const { namedNode, literal, quad } = useTerms();
@@ -121,7 +122,7 @@ console.log(prefixedIRI);  // "ex:alice"
 Use specialized composables for validation:
 
 ```javascript
-import { initStore, useGraph, useValidator, useReasoner } from 'unrdf';
+import { initStore, useGraph, useValidator, useReasoner } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();
@@ -151,7 +152,7 @@ console.log(`Inferred ${inferred.size} new quads`);
 Use `stats()` for graph metrics:
 
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();
@@ -228,7 +229,7 @@ console.log(`Transformed to ${foafStore.size} quads`);
 Use `useCanon()` for graph comparison:
 
 ```javascript
-import { initStore, useGraph, useCanon } from 'unrdf';
+import { initStore, useGraph, useCanon } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();
@@ -260,7 +261,7 @@ console.log(`Content hash: ${hash}`);
 Combine composables with file I/O:
 
 ```javascript
-import { initStore, useGraph, useTurtle } from 'unrdf';
+import { initStore, useGraph, useTurtle } from '@unrdf/composables';
 import { readFile } from 'fs/promises';
 
 await initStore();
@@ -283,7 +284,7 @@ const results = graph.select(`SELECT * WHERE { ?s ?p ?o } LIMIT 10`);
 Create isolated contexts for different datasets:
 
 ```javascript
-import { createStoreContext, useStoreContext, useGraph } from 'unrdf';
+import { createStoreContext, useStoreContext, useGraph } from '@unrdf/composables';
 
 // Context 1
 const ctx1 = createStoreContext([], { label: 'dataset1' });
@@ -307,7 +308,7 @@ await ctx2.call(async () => {
 Use `useZod()` for type safety:
 
 ```javascript
-import { initStore, useZod } from 'unrdf';
+import { initStore, useZod } from '@unrdf/composables';
 
 await initStore();
 const zod = useZod();
@@ -330,7 +331,7 @@ const validQuery = zod.validateSPARQLQuery(query);
 Use `useDelta()` for change detection:
 
 ```javascript
-import { initStore, useGraph, useDelta } from 'unrdf';
+import { initStore, useGraph, useDelta } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();

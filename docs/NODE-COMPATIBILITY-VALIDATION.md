@@ -27,7 +27,7 @@
 ### 1. Package Import Test ✅
 
 ```bash
-node -e "import('unrdf').then(m => console.log('Exports:', Object.keys(m).length))"
+node -e "import('@unrdf/knowledge-engine').then(m => console.log('Exports:', Object.keys(m).length))"
 ```
 
 **Result**: ✅ 301 exports loaded successfully
@@ -46,7 +46,7 @@ This is from a dependency (likely `jsonld`), not UNRDF code.
 
 **Test Code**:
 ```javascript
-import { parseTurtle, toTurtle, query } from 'unrdf';
+import { parseTurtle, toTurtle, query } from '@unrdf/knowledge-engine';
 
 const ttl = `@prefix ex: <http://example.org/> .
 ex:Alice a ex:Person ;
@@ -107,7 +107,7 @@ console.log('✅ Hook executed, triggered =', result.triggered);
 
 **Test Code**:
 ```javascript
-import { initStore, useStoreContext, useGraph, useTerms } from 'unrdf';
+import { initStore, useStoreContext, useGraph, useTerms } from '@unrdf/composables';
 
 const runApp = initStore([], { baseIRI: 'http://example.org/' });
 

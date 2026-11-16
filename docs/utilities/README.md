@@ -447,7 +447,7 @@ describe('Term Utilities', () => {
 ### Integration Testing
 
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 import { getObjects, getSubjects } from 'unrdf/utils';
 
 describe('Graph Utilities Integration', () => {

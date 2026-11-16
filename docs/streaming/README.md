@@ -54,7 +54,7 @@ const subId = manager.subscribe({
 
 ```javascript
 import { createChangeFeed, createChangeFeedHook } from 'unrdf/streaming';
-import { TransactionManager } from 'unrdf';
+import { TransactionManager } from '@unrdf/knowledge-engine';
 
 // Create change feed
 const feed = createChangeFeed({
@@ -458,7 +458,7 @@ See the `/examples/streaming/` directory for complete examples:
 The streaming module integrates seamlessly with UNRDF's Knowledge Hooks:
 
 ```javascript
-import { KnowledgeHookManager } from 'unrdf';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
 import { createChangeFeed, createChangeFeedHook } from 'unrdf/streaming';
 
 const manager = new KnowledgeHookManager();

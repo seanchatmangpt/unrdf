@@ -32,7 +32,7 @@ Initialize the RDF store context.
 **Example:**
 
 ```javascript
-import { initStore } from 'unrdf';
+import { initStore } from '@unrdf/composables';
 
 const runApp = initStore([], {
   baseIRI: 'http://example.org/',
@@ -58,7 +58,7 @@ Access the current store context.
 **Example:**
 
 ```javascript
-import { useStoreContext } from 'unrdf';
+import { useStoreContext } from '@unrdf/composables';
 
 const ctx = useStoreContext();
 console.log('Store size:', ctx.store.size);
@@ -76,7 +76,7 @@ Main interface for RDF graph operations.
 **Example:**
 
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph();
 
@@ -444,7 +444,7 @@ Parse and serialize Turtle format.
 **Example:**
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = useTurtle();
 
@@ -499,7 +499,7 @@ Detect and compute graph changes.
 **Example:**
 
 ```javascript
-import { useDelta } from 'unrdf';
+import { useDelta } from '@unrdf/composables';
 
 const delta = useDelta();
 
@@ -565,7 +565,7 @@ Canonicalize RDF graphs (URDNA2015).
 **Example:**
 
 ```javascript
-import { useCanon } from 'unrdf';
+import { useCanon } from '@unrdf/composables';
 
 const canon = useCanon();
 
@@ -623,7 +623,7 @@ Create and manipulate RDF terms.
 **Example:**
 
 ```javascript
-import { useTerms } from 'unrdf';
+import { useTerms } from '@unrdf/composables';
 
 const terms = useTerms();
 
@@ -701,7 +701,7 @@ Apply reasoning rules (Eye reasoner).
 **Example:**
 
 ```javascript
-import { useReasoner } from 'unrdf';
+import { useReasoner } from '@unrdf/composables';
 
 const reasoner = useReasoner();
 
@@ -746,7 +746,7 @@ Runtime validation with Zod schemas.
 **Example:**
 
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 
 const zod = useZod();
 

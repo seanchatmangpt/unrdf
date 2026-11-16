@@ -10,7 +10,7 @@ This guide covers advanced usage patterns, performance optimization, and best pr
 When adding many quads, batch operations are more efficient:
 
 ```javascript
-import { useStore, useTerms } from 'unrdf';
+import { useStore, useTerms } from '@unrdf/composables';
 
 const store = useStore();
 const terms = useTerms();
@@ -43,7 +43,7 @@ for (let i = 0; i < 1000; i++) {
 For large datasets, consider using streaming or chunked processing:
 
 ```javascript
-import { useNQuads } from 'unrdf';
+import { useNQuads } from '@unrdf/composables';
 import { createReadStream } from 'fs';
 
 const nquads = useNQuads();
@@ -75,7 +75,7 @@ async function processLargeFile(filePath) {
 Structure queries to minimize data transfer and processing:
 
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 
@@ -101,7 +101,7 @@ const allResults = await graph.select(`
 Cache frequently used queries:
 
 ```javascript
-import { useCache } from 'unrdf';
+import { useCache } from '@unrdf/composables';
 
 const cache = useCache({ ttl: 300000 }); // 5 minutes
 
@@ -134,7 +134,7 @@ function hashQuery(query) {
 Use Clownface for complex graph navigation:
 
 ```javascript
-import { usePointer } from 'unrdf';
+import { usePointer } from '@unrdf/composables';
 
 const pointer = usePointer(store);
 
@@ -219,7 +219,7 @@ function findShortestPath(startIRI, endIRI) {
 Merge multiple graphs with conflict resolution:
 
 ```javascript
-import { useStore } from 'unrdf';
+import { useStore } from '@unrdf/composables';
 
 function mergeGraphsWithResolution(graphs, conflictResolver) {
   const merged = useStore();
@@ -262,7 +262,7 @@ function preferNewer(existing, incoming) {
 Normalize data to a standard format:
 
 ```javascript
-import { useTerms } from 'unrdf';
+import { useTerms } from '@unrdf/composables';
 
 function normalizePersonData(store) {
   const terms = useTerms();
@@ -365,7 +365,7 @@ const results = await withRetry(async () => {
 Create a validation pipeline for data quality:
 
 ```javascript
-import { useValidator, useZod } from 'unrdf';
+import { useValidator, useZod } from '@unrdf/composables';
 import { z } from 'zod';
 
 async function validateDataPipeline(store) {
@@ -566,7 +566,7 @@ serializer.end();
 Track performance metrics for operations:
 
 ```javascript
-import { useMetrics } from 'unrdf';
+import { useMetrics } from '@unrdf/composables';
 
 const metrics = useMetrics();
 

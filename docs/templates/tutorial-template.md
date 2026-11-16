@@ -61,7 +61,7 @@ Before starting this tutorial, make sure you have:
 
 ```javascript
 // Code example with comments explaining each part
-import { something } from 'unrdf';
+import { something } from '@unrdf/knowledge-engine';
 
 // Create a new instance
 const instance = something();
@@ -125,7 +125,7 @@ Here's the complete code from this tutorial:
 // Complete working example
 // This should be copy-paste-able and work immediately
 
-import { something } from 'unrdf';
+import { something } from '@unrdf/knowledge-engine';
 
 // [All code from previous steps combined]
 

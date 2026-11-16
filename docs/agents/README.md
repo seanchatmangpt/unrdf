@@ -40,7 +40,7 @@ This documentation follows the [Diataxis framework](https://diataxis.fr/) optimi
 
 ```javascript
 // Discover available capabilities via SPARQL
-import { createDarkMatterCore } from 'unrdf';
+import { createDarkMatterCore } from '@unrdf/knowledge-engine';
 
 const system = await createDarkMatterCore();
 const capabilities = await system.query({

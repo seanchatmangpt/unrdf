@@ -63,7 +63,7 @@ const iris = ids.map(id => generateIRI(base, id));
 Generate deterministic IDs from content:
 
 ```javascript
-import { getCanonicalHash } from 'unrdf';
+import { getCanonicalHash } from '@unrdf/knowledge-engine';
 import crypto from 'crypto';
 
 // Hash RDF content

@@ -26,7 +26,8 @@ Knowledge Hooks are the crown jewel of unrdf - they transform static knowledge g
 Let's start with a simple service health monitoring hook:
 
 ```javascript
-import { initStore, defineHook, evaluateHook } from 'unrdf';
+import { initStore } from '@unrdf/composables';
+import { defineHook, evaluateHook } from '@unrdf/knowledge-engine';
 
 // Initialize context with your RDF data
 const runApp = initStore();
@@ -108,7 +109,7 @@ The composable functions provide granular control over RDF operations when you n
 ### 1. Create a Store
 
 ```javascript
-import { useStoreContext } from 'unrdf';
+import { useStoreContext } from '@unrdf/composables';
 
 // Create an empty store
 const store = useStoreContext();
@@ -122,7 +123,7 @@ const storeWithData = useStore([
 ### 2. Parse Turtle Data
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = useTurtle();
 const store = await turtle.parse(`
@@ -138,7 +139,7 @@ const store = await turtle.parse(`
 ### 3. Query with SPARQL
 
 ```javascript
-import { useGraph } from 'unrdf';
+import { useGraph } from '@unrdf/composables';
 
 const graph = useGraph(store);
 

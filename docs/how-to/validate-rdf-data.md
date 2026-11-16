@@ -9,7 +9,7 @@ UNRDF provides comprehensive validation through SHACL and SPARQL. Use `validateS
 ### Basic SHACL Validation
 
 ```javascript
-import { parseTurtle, validateShacl, formatValidationReport } from 'unrdf';
+import { parseTurtle, validateShacl, formatValidationReport } from '@unrdf/knowledge-engine';
 
 // Your RDF data
 const dataTtl = `
@@ -58,7 +58,7 @@ if (report.conforms) {
 For complex validation scenarios, validate against multiple shape graphs:
 
 ```javascript
-import { validateShaclMultiple, getValidationErrors } from 'unrdf';
+import { validateShaclMultiple, getValidationErrors } from '@unrdf/knowledge-engine';
 
 const shapes = [
   personShapesTtl,
@@ -83,7 +83,7 @@ if (!report.conforms) {
 Use SPARQL queries for domain-specific validation rules:
 
 ```javascript
-import { query } from 'unrdf';
+import { query } from '@unrdf/knowledge-engine';
 
 // Find persons without email addresses
 const missingEmails = `
@@ -121,7 +121,7 @@ invalid.forEach(row => {
 Integrate validation into Knowledge Hooks for automatic enforcement:
 
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { defineHook, registerHook } from '@unrdf/knowledge-engine';
 
 const validationHook = defineHook({
   meta: {
@@ -154,7 +154,7 @@ registerHook(validationHook);
 Use `TransactionManager` for atomic validation + updates:
 
 ```javascript
-import { TransactionManager } from 'unrdf';
+import { TransactionManager } from '@unrdf/knowledge-engine';
 
 const txManager = new TransactionManager();
 
@@ -187,7 +187,7 @@ try {
 Handle warnings vs errors differently:
 
 ```javascript
-import { getValidationWarnings, hasValidationErrors } from 'unrdf';
+import { getValidationWarnings, hasValidationErrors } from '@unrdf/knowledge-engine';
 
 const report = await validateShacl(store, shapesTtl);
 
@@ -206,7 +206,7 @@ if (warnings.length > 0) {
 Validate incrementally during data construction:
 
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();

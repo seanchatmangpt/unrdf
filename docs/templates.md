@@ -541,7 +541,7 @@ Continue? (yes): yes
 
 4. **Reference in Knowledge Hook**:
    ```javascript
-   import { defineHook } from 'unrdf';
+   import { defineHook } from '@unrdf/knowledge-engine';
 
    export const myHook = defineHook({
      meta: {
@@ -612,7 +612,7 @@ After running `unrdf init`:
 
 3. **Create custom hooks** in `src/hooks/`:
    ```javascript
-   import { defineHook } from 'unrdf';
+   import { defineHook } from '@unrdf/knowledge-engine';
 
    export const myCustomHook = defineHook({
      // Your hook definition
@@ -789,7 +789,7 @@ project-name/
 
 2. **Load with PolicyPackManager**:
    ```javascript
-   import { PolicyPackManager } from 'unrdf';
+   import { PolicyPackManager } from '@unrdf/knowledge-engine';
 
    const manager = new PolicyPackManager();
    await manager.loadPolicyPack('./my-policy-pack.yaml');

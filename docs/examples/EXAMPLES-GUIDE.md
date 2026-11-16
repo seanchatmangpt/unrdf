@@ -42,7 +42,7 @@ Core status: { status: 'active', components: 1 }
 
 **Key Code:**
 ```javascript
-import { createKnowledgeSubstrateCore } from 'unrdf'
+import { createKnowledgeSubstrateCore } from '@unrdf/knowledge-engine'
 
 const core = await createKnowledgeSubstrateCore()
 const store = core.parseTurtle(ttl)

@@ -59,7 +59,7 @@ This reference documents the Knowledge Hooks system - an autonomic, declarative 
 
 **Example**:
 ```javascript
-import { defineHook } from 'unrdf';
+import { defineHook } from '@unrdf/knowledge-engine';
 
 const hook = defineHook({
   meta: {
@@ -136,7 +136,7 @@ const hook = defineHook({
 
 **Example**:
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { defineHook, registerHook } from '@unrdf/knowledge-engine';
 
 const hook = defineHook({
   meta: { name: 'test-hook', description: 'Test hook' },
@@ -166,7 +166,7 @@ await registerHook(hook);
 
 **Example**:
 ```javascript
-import { deregisterHook } from 'unrdf';
+import { deregisterHook } from '@unrdf/knowledge-engine';
 
 const removed = await deregisterHook('test-hook');
 console.log('Hook removed:', removed);
@@ -188,7 +188,7 @@ console.log('Hook removed:', removed);
 
 **Example**:
 ```javascript
-import { getRegisteredHooks } from 'unrdf';
+import { getRegisteredHooks } from '@unrdf/knowledge-engine';
 
 const hooks = getRegisteredHooks();
 console.log('Registered hooks:', hooks);
@@ -208,7 +208,7 @@ console.log('Registered hooks:', hooks);
 
 **Example**:
 ```javascript
-import { resetGlobalHookManager } from 'unrdf';
+import { resetGlobalHookManager } from '@unrdf/knowledge-engine';
 
 // After tests
 resetGlobalHookManager();
@@ -243,7 +243,8 @@ resetGlobalHookManager();
 
 **Example**:
 ```javascript
-import { evaluateHook, defineHook, Store } from 'unrdf';
+import { evaluateHook, defineHook } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
 
 const hook = defineHook({
   meta: { name: 'test-hook' },
@@ -282,7 +283,7 @@ console.log('Hook evaluation result:', result);
 
 **Example**:
 ```javascript
-import { createHookExecutor } from 'unrdf';
+import { createHookExecutor } from '@unrdf/knowledge-engine';
 
 const executor = createHookExecutor({
   timeout: 5000,
@@ -315,7 +316,7 @@ const result = await executor.execute(hook, event);
 
 **Example**:
 ```javascript
-import { createConditionEvaluator } from 'unrdf';
+import { createConditionEvaluator } from '@unrdf/knowledge-engine';
 
 const evaluator = createConditionEvaluator({
   enableCache: true,
@@ -360,7 +361,7 @@ const satisfied = await evaluator.isSatisfied(condition, store, context);
 
 **Example**:
 ```javascript
-import { TransactionManager, defineHook } from 'unrdf';
+import { TransactionManager, defineHook } from '@unrdf/knowledge-engine';
 
 const manager = new TransactionManager();
 const hook = defineHook({
@@ -400,7 +401,9 @@ manager.addHook(hook);
 
 **Example**:
 ```javascript
-import { TransactionManager, Store, DataFactory } from 'unrdf';
+import { TransactionManager } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
+import { DataFactory } from '@unrdf/core';
 
 const { namedNode, literal, quad } = DataFactory;
 

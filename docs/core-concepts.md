@@ -151,7 +151,8 @@ unrdf eliminates this by providing a unified interface with built-in reactivity:
 
 ```javascript
 // unrdf - minimal "dark matter" with built-in reactivity
-import { initStore, defineHook, evaluateHook } from 'unrdf';
+import { initStore } from '@unrdf/composables';
+import { defineHook, evaluateHook } from '@unrdf/knowledge-engine';
 
 // Initialize context once
 const runApp = initStore();
@@ -188,7 +189,7 @@ export function useTerms(options = {}) {
 
 ### 2. Zod for Runtime Validation
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 import { z } from 'zod';
 
 const zod = useZod();

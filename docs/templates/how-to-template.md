@@ -48,7 +48,7 @@ related:
 
 ```javascript
 // Code example
-import { something } from 'unrdf';
+import { something } from '@unrdf/knowledge-engine';
 
 const result = something();
 ```
@@ -82,7 +82,7 @@ Here's a complete, working example you can copy and use:
  * Run with: node example.mjs
  */
 
-import { something } from 'unrdf';
+import { something } from '@unrdf/knowledge-engine';
 
 async function main() {
   // Step 1

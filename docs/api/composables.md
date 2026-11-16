@@ -115,7 +115,7 @@ console.log(`Store contains ${stats.quadCount} quads`);
 ### Example
 
 ```javascript
-import { useStore, useTurtle } from 'unrdf';
+import { useStore, useTurtle } from '@unrdf/composables';
 
 const store = useStore({
   enableIndexing: true,
@@ -239,7 +239,7 @@ const quadCount = graph.size();
 ### Example
 
 ```javascript
-import { useStore, useGraph, useTurtle } from 'unrdf';
+import { useStore, useGraph, useTurtle } from '@unrdf/composables';
 
 const store = useStore();
 const graph = useGraph(store, {
@@ -355,7 +355,7 @@ const turtleString = await turtle.serializeWithPrefixes(quads, customPrefixes);
 ### Example
 
 ```javascript
-import { useTurtle } from 'unrdf';
+import { useTurtle } from '@unrdf/composables';
 
 const turtle = useTurtle({
   prefixes: {
@@ -462,7 +462,7 @@ const result = await customValidator.validate(dataQuads);
 ### Example
 
 ```javascript
-import { useValidator, useTurtle } from 'unrdf';
+import { useValidator, useTurtle } from '@unrdf/composables';
 
 const validator = useValidator({
   strict: true,
@@ -573,7 +573,7 @@ const consistent = await reasoner.isConsistent(quads);
 ### Example
 
 ```javascript
-import { useReasoner, useTurtle } from 'unrdf';
+import { useReasoner, useTurtle } from '@unrdf/composables';
 
 const reasoner = useReasoner({
   enableOWL: true,
@@ -670,7 +670,7 @@ const result = zodHelper.validate(personData, PersonSchema);
 ### Example
 
 ```javascript
-import { useZod } from 'unrdf';
+import { useZod } from '@unrdf/composables';
 import { z } from 'zod';
 
 const zodHelper = useZod({
@@ -750,7 +750,7 @@ const equal = await canon.compare(quads1, quads2);
 ### Example
 
 ```javascript
-import { useCanon, useTurtle } from 'unrdf';
+import { useCanon, useTurtle } from '@unrdf/composables';
 
 const canon = useCanon();
 const turtle = useTurtle();
@@ -778,7 +778,7 @@ import {
   useValidator, 
   useReasoner, 
   useZod 
-} from 'unrdf';
+} from '@unrdf/composables';
 
 // Create the pipeline
 const store = useStore();

@@ -8,3 +8,16 @@ packages:
   - 'examples/*'
   - 'playground'
   - 'benchmarks'
+allowBuilds:
+  esbuild: true
+  hnswlib-node: false
+  onnxruntime-node: false
+  protobufjs: true
+# pnpm >=10 no longer reads the `pnpm` field in package.json; these mirror the
+# legacy pnpm.overrides / peerDependencyRules that keep the non-npm optional
+# peer `pm4py` (Python bridge, stubbed by noop-package) from failing install.
+overrides:
+  pm4py: npm:noop-package@1.0.0
+peerDependencyRules:
+  ignoreMissing:
+    - pm4py

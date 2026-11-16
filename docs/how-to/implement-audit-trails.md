@@ -13,7 +13,8 @@ Use `LockchainWriter` to create persistent, cryptographically signed receipts fo
 Initialize a LockchainWriter for audit trail persistence:
 
 ```javascript
-import { LockchainWriter, createDarkMatterCore, DataFactory } from 'unrdf';
+import { LockchainWriter, createDarkMatterCore } from '@unrdf/knowledge-engine';
+import { DataFactory } from '@unrdf/core';
 const { namedNode, quad, literal } = DataFactory;
 
 // Initialize lockchain writer
@@ -97,7 +98,7 @@ console.log('Verification result:', verification);
 Track all personal data processing activities:
 
 ```javascript
-import { defineHook, registerHook } from 'unrdf';
+import { defineHook, registerHook } from '@unrdf/knowledge-engine';
 
 const gdprHook = defineHook({
   meta: {
@@ -515,7 +516,7 @@ if (!chainVerification.valid) {
 
 ```javascript
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { LockchainWriter } from 'unrdf';
+import { LockchainWriter } from '@unrdf/knowledge-engine';
 import { mkdirSync, rmSync } from 'fs';
 
 describe('Audit Trail', () => {

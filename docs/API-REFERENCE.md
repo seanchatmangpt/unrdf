@@ -26,7 +26,7 @@ import {
   PerformanceProfiler,
   createProfiler,
   generateFlamegraph  // Node.js only
-} from 'unrdf';
+} from '@unrdf/knowledge-engine';
 ```
 
 ### Security
@@ -38,7 +38,7 @@ import {
   ThreatDetector,
   validateEffectCode,
   signCode
-} from 'unrdf';
+} from '@unrdf/knowledge-engine';
 ```
 
 ---
@@ -401,7 +401,7 @@ if (leak.leak) {
 Analyze effect code for security threats (optional).
 
 ```javascript
-import { ThreatDetector } from 'unrdf';
+import { ThreatDetector } from '@unrdf/knowledge-engine';
 
 const detector = new ThreatDetector(options);
 ```
@@ -469,7 +469,7 @@ if (analysis.blocked) {
 Cryptographically sign effect code.
 
 ```javascript
-import { signCode, verifyCode } from 'unrdf';
+import { signCode, verifyCode } from '@unrdf/knowledge-engine';
 import { generateKeyPair } from 'crypto';
 ```
 
@@ -493,27 +493,35 @@ if (!valid) {
 
 ---
 
+## Interchangeable Parts
+
+Core ships an evidence-bounded interchangeable-parts API for treating software artifacts as substitutable parts with canonical, verifiable records.
+
+```javascript
+import {
+  createPartRequirement,
+  createPartPassport,
+  verifyPartRequirement,
+  verifyPartPassport,
+  evaluateSubstitution,
+  assertSubstitutable,
+  PartSubstitutionRefusal
+} from '@unrdf/core';
+```
+
+`createPartRequirement` and `createPartPassport` construct canonical requirement and passport records, and `verifyPartRequirement` / `verifyPartPassport` re-verify them — non-canonical records are refused. `evaluateSubstitution` judges a candidate passport against a requirement without raising, while `assertSubstitutable` throws a `PartSubstitutionRefusal` when the substitution does not hold. Resource ceilings are computed from own properties only, and part digests are injective, so distinct parts can never share a digest.
+
+---
+
 ## Backward Compatibility
 
 All v3.0.x APIs remain unchanged in latest:
 
 ```javascript
 // All these still work exactly as before:
-import {
-  createDarkMatterCore,
-  parseTurtle,
-  toTurtle,
-  defineHook,
-  registerHook,
-  deregisterHook,
-  evaluateHook,
-  TransactionManager,
-  LockchainWriter,
-  Observability,
-  Store,
-  Parser,
-  Writer
-} from 'unrdf';
+import { createDarkMatterCore, parseTurtle, toTurtle, defineHook, registerHook, deregisterHook, evaluateHook, TransactionManager, LockchainWriter, Observability } from '@unrdf/knowledge-engine';
+import { Store } from '@unrdf/oxigraph';
+import { Parser, Writer } from '@unrdf/core';
 ```
 
 ---

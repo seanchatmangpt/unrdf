@@ -424,7 +424,7 @@ All v3.0.x code works unchanged in latest:
 
 ```javascript
 // v3.0.x code - still works in latest
-import { KnowledgeEngine } from 'unrdf';
+import { KnowledgeEngine } from '@unrdf/knowledge-engine';
 const engine = new KnowledgeEngine();
 await engine.parse(data, { format: 'turtle' });
 // ✅ Works identically, now with isolated-vm under the hood

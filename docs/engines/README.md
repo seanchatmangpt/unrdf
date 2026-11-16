@@ -86,7 +86,7 @@ The core RDF engine that powers all unrdf operations.
 ### Engine Options
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 const engine = new RdfEngine({
   baseIRI: 'https://example.org/',
@@ -263,7 +263,7 @@ console.log('Performance metrics:', metrics);
 
 ```javascript
 import { describe, it, expect } from 'vitest';
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 describe('RdfEngine', () => {
   it('should create engine instance', () => {
@@ -276,7 +276,7 @@ describe('RdfEngine', () => {
 ### Integration Testing
 
 ```javascript
-import { RdfEngine } from 'unrdf';
+import { RdfEngine } from '@unrdf/knowledge-engine';
 
 describe('RdfEngine Integration', () => {
   it('should work with all operations', async () => {

@@ -11,7 +11,7 @@ UNRDF provides a universal `query()` function plus specialized functions for eac
 Extract data with variable bindings:
 
 ```javascript
-import { parseTurtle, select } from 'unrdf';
+import { parseTurtle, select } from '@unrdf/knowledge-engine';
 
 const ttl = `
 @prefix ex: <http://example.org/> .
@@ -53,7 +53,7 @@ results.forEach(row => {
 Boolean checks for pattern existence:
 
 ```javascript
-import { ask } from 'unrdf';
+import { ask } from '@unrdf/knowledge-engine';
 
 // Check if Alice exists
 const exists = ask(store, `
@@ -82,7 +82,7 @@ console.log(`Has relationships: ${hasFriends}`);  // true
 Transform graphs into new shapes:
 
 ```javascript
-import { construct, toTurtle } from 'unrdf';
+import { construct, toTurtle } from '@unrdf/knowledge-engine';
 
 // Transform schema.org → FOAF
 const newStore = construct(store, `
@@ -110,7 +110,7 @@ console.log(toTurtle(newStore));
 Extract all information about resources:
 
 ```javascript
-import { describe } from 'unrdf';
+import { describe } from '@unrdf/knowledge-engine';
 
 // Get all triples about Alice
 const aliceStore = describe(store, `
@@ -127,7 +127,7 @@ console.log(`Alice has ${aliceStore.size} triples`);
 Modify graphs with INSERT/DELETE:
 
 ```javascript
-import { update } from 'unrdf';
+import { update } from '@unrdf/knowledge-engine';
 
 // Add new data
 update(store, `
@@ -224,7 +224,7 @@ const byType = select(store, `
 Use composables for concise queries:
 
 ```javascript
-import { initStore, useGraph } from 'unrdf';
+import { initStore, useGraph } from '@unrdf/composables';
 
 await initStore();
 const graph = useGraph();
@@ -281,7 +281,8 @@ const results = select(store, query);
 Query across multiple stores:
 
 ```javascript
-import { mergeStores, select } from 'unrdf';
+import { mergeStores } from '@unrdf/core';
+import { select } from '@unrdf/knowledge-engine';
 
 const localStore = await readTurtleFile('./local.ttl');
 const remoteStore = await readTurtleFile('./remote.ttl');

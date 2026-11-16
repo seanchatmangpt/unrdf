@@ -92,7 +92,7 @@ const unknown = ns.compact('http://unknown.org/term');
 Integrate namespace manager with Turtle output:
 
 ```javascript
-import { createNamespaceManager, toTurtle, parseTurtle } from 'unrdf';
+import { createNamespaceManager, toTurtle, parseTurtle } from '@unrdf/knowledge-engine';
 
 const ns = createNamespaceManager();
 ns.register('ex', 'http://example.org/');
@@ -122,7 +122,7 @@ console.log(ttl);
 Combine with `usePrefixes()` composable:
 
 ```javascript
-import { initStore, usePrefixes, useGraph } from 'unrdf';
+import { initStore, usePrefixes, useGraph } from '@unrdf/composables';
 
 await initStore();
 const prefixes = usePrefixes();
